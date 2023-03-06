@@ -1,0 +1,32 @@
+[
+{"id" : 1, "name" : "Paper Bag #1", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 2, "name" : "Paper Bag #2", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 3, "name" : "Paper Bag #3", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 4, "name" : "Paper Bag #4", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 5, "name" : "Paper Bag #5", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 6, "name" : "Paper Bag #6", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 7, "name" : "Paper Bag #8", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 8, "name" : "Paper Bag #10", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 9, "name" : "Paper Bag #12", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 10, "name" : "Paper Bag #16", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 11, "name" : "Paper Bag #20", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 12, "name" : "Paper Bag #25", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id" : 13, "name" : "Paper Bag #45", "price": 100, "category" : "Paper Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945460-9670ee6c-78d1-4396-ab9a-c91d9ab5c57d.jpg"},
+{"id": 14, "name": "Plastic Bag XS", "price": 200, "category" : "Plastic Bag", "imageurl" : "https://user-images.githubusercontent.com/88258255/206945672-8a4e08e4-762b-45b3-bc9c-dc580c2b6667.jpg"},
+{"id": 15, "name": "Plastic Bag S", "price": 200, "category" : "Plastic Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/206945672-8a4e08e4-762b-45b3-bc9c-dc580c2b6667.jpg"},
+{"id": 16, "name": "Plastic Bag M", "price": 200, "category" : "Plastic Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/206945672-8a4e08e4-762b-45b3-bc9c-dc580c2b6667.jpg"},
+{"id": 17, "name": "Plastic Bag L", "price": 200, "category" : "Plastic Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/206945672-8a4e08e4-762b-45b3-bc9c-dc580c2b6667.jpg"},
+{"id": 18, "name": "Plastic Bag XL", "price": 200, "category" : "Plastic Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/206945672-8a4e08e4-762b-45b3-bc9c-dc580c2b6667.jpg"},
+{"id": 19, "name": "Plastic Bag XXL", "price": 200, "category" : "Plastic Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/206945672-8a4e08e4-762b-45b3-bc9c-dc580c2b6667.jpg"},
+{"id": 20, "name": "Trash Bag S", "price": 300,"category": "Trash Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207239718-db8da45e-7ee5-46d5-b9cf-355ee31b1726.jpg"},
+{"id": 21, "name": "Trash Bag M", "price": 300,"category": "Trash Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207239718-db8da45e-7ee5-46d5-b9cf-355ee31b1726.jpg"},
+{"id": 22, "name": "Trash Bag L", "price": 300,"category": "Trash Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207239718-db8da45e-7ee5-46d5-b9cf-355ee31b1726.jpg"},
+{"id": 23, "name": "Trash Bag XL", "price": 300,"category": "Trash Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207239718-db8da45e-7ee5-46d5-b9cf-355ee31b1726.jpg"},
+{"id": 24, "name": "Trash Bag XXL", "price": 300,"category": "Trash Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207239718-db8da45e-7ee5-46d5-b9cf-355ee31b1726.jpg"},
+{"id": 25, "name": "Roll Bag 5x9", "price": 300,"category": "Roll Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207240132-2d6d8b6d-6bf7-4ad4-8c1e-35513a85c3ff.jpg"},
+{"id": 26, "name": "Roll Bag 8x12", "price": 300,"category": "Roll Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207240132-2d6d8b6d-6bf7-4ad4-8c1e-35513a85c3ff.jpg"},
+{"id": 27, "name": "Roll Bag 10x16", "price": 300,"category": "Roll Bag","imageurl" : "https://user-images.githubusercontent.com/88258255/207240132-2d6d8b6d-6bf7-4ad4-8c1e-35513a85c3ff.jpg"}
+]
+
+
+

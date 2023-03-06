@@ -1,0 +1,91 @@
+import { TextField, Typography } from '@mui/material'
+import React from 'react'
+import { useEffect } from 'react'
+import firestoredb from './firestoredb'
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Autocomplete from '@mui/material/Autocomplete';
+
+
+
+const AdminCreatePayment = (props) => {
+
+  const firestore = new firestoredb()
+  const users = props.users
+  const [selectedName, setSelectedName] = React.useState('');
+  const [allUserNames, setAllUserNames] = React.useState([])
+  const [reference, setReference] = React.useState('')
+  const [paymentProvider, setPaymentProvider] = React.useState('')
+  const [amount, setAmount] = React.useState(0)
+
+
+  useEffect(() => {
+    
+    const customers = [];
+    users.map((user) => {
+      customers.push(user.name);
+    });
+    setAllUserNames(customers);
+
+  }, [users])
+
+  function onCreatePayment() {
+    // console.log(selectedName)
+    // console.log(reference)
+    // console.log(paymentProvider)
+    // console.log(amount)
+
+    users.map((user) => {
+      if(user.name === selectedName) {
+        console.log(user.uid)
+        // firestore.createPayment(user.uid,amount,reference,paymentProvider)
+        firestore.transactionCreatePayment(user.uid,amount,reference,paymentProvider)
+      }
+    })
+
+    // console.log
+
+    // console.log(allUserNames)
+  }
+
+  return (
+    <div className='flex flex-col'>
+      <Typography variant='h2' className='flex justify-center'> Create Payment </Typography>
+      <Autocomplete
+      onChange={(event,value) => setSelectedName(value)}
+      disablePortal
+      id="combo-box-demo"
+      options={allUserNames}
+      sx={{ width:'full' }}
+      renderInput={(params) => <TextField  {...params} label="Customer Name" />}
+    />
+      {/* <Box sx={{ minWidth: 120 }}>
+      <FormControl fullWidth>
+        <InputLabel required id="demo-simple-select-label">Customer Name</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={selectedName}
+          label="selectedName"
+          onChange={handleChange}
+        >
+          {users.map((user) => {
+            return <MenuItem value={user.uid}>{user.name}</MenuItem>
+          })}
+        </Select>
+      </FormControl>
+    </Box> */}
+    <TextField onChange={(event) => setAmount(event.target.value)} required label='Amount' /> 
+    <TextField onChange={(event) => setReference(event.target.value)} required label='Reference' />
+    <TextField onChange={(event) => setPaymentProvider(event.target.value)} required label='Payment Provider ex... GCash / Paymaya' />
+    <button onClick={onCreatePayment} className='p-3 bg-blue-300 rounded-lg'> Create Payment </button>
+    </div>
+
+    
+  )
+}
+
+export default AdminCreatePayment

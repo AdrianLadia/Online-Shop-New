@@ -1,0 +1,97 @@
+import React, { useEffect } from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { Link, Typography } from "@mui/material";
+
+const AccountStatementTable = (props) => {
+  function createData(date, reference, credit, debit, runningBalance, color) {
+    return { date, reference, credit, debit, runningBalance,color };
+  }
+
+  const tableData = props.tableData;
+  const [rows, setRows] = React.useState([]);
+  const orders = props.orders;
+  const setOrderInfoData = props.setOrderInfoData;
+  const setOpen = props.setOpen;
+
+  useEffect(() => {
+    const rowsdata = [];
+    tableData.map((item) => {
+      // console.log(item[0])
+      rowsdata.push(
+        createData(item[0], item[1], item[2], item[3], item[4], item[5])
+      );
+    });
+    setRows(rowsdata);
+  }, [tableData]);
+
+  function openOrderInfoModal(reference) {
+    orders.map((order) => {
+      if (order.reference === reference) {
+        setOrderInfoData(order);
+        console.log(order);
+        setOpen(true);
+      }
+    });
+  }
+
+  return (
+    <div>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell align="right">Reference</TableCell>
+              <TableCell align="right">Credit</TableCell>
+              <TableCell align="right">Debit</TableCell>
+              <TableCell align="right">Running Balance</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow
+                key={row.name}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                onClick={() => {
+                  openOrderInfoModal(row.reference);
+                }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.date}
+                </TableCell>
+
+                <TableCell align="right">
+                  <Link href="#">{row.reference}</Link>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="h7" color={"red"}>
+                    {row.credit}
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="h7" color={"green"}>
+                    {row.debit}
+                  </Typography>
+                </TableCell>
+
+                <TableCell align="right">
+                  <Typography variant="h7" color={row.color}>
+                    {row.runningBalance}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
+};
+
+export default AccountStatementTable;
