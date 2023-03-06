@@ -10,7 +10,10 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@googlemaps/react-wrapper": "^1.1.35",
+    "@mui/material": "^5.11.11",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",
     "react": "^18.2.0",

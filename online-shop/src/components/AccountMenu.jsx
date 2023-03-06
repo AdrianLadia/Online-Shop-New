@@ -79,6 +79,10 @@ const AccountMenu = (props) => {
     navigateTo("/accountstatement");
   }
 
+   function return1() {
+    return 1
+  }
+
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -181,4 +185,4 @@ const AccountMenu = (props) => {
   );
 };
 
-export default AccountMenu;
+export default AccountMenu
