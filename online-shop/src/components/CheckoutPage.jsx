@@ -562,6 +562,7 @@ const CheckoutPage = () => {
     // setLaunchPayMayaCheckout(true)
 
     // CHECK FOR OUT OF STOCKS
+    console.log('ran')
     checkStocksIfAvailableInFirestore().then((result) => {
       const [outOfStockDetected,message] = result
       if (outOfStockDetected) {
@@ -569,21 +570,7 @@ const CheckoutPage = () => {
         return
       }
     })
-    console.log('ran')
     
-    if (outOfStockDetected) {
-      alert(message)
-      return
-    }
-    console.log('ran')
-    console.log(message);
-    console.log(outOfStockItemDetected); 
-    
-    console.log(outOfStockItemDetected)
-    if (outOfStockItemDetected == true) {
-      alert("Out of stock item detected. Please refresh the page.")
-      return
-    }
     console.log('ran ran ran ran')
     if (userstate === "userloaded") {
       try {
@@ -618,7 +605,7 @@ const CheckoutPage = () => {
               needAssistance
             )
             .then(() => {
-              // setCart([]);
+              setCart([]);
             });
         } else {
           alert("Please fill up all the fields.");
@@ -713,7 +700,7 @@ const CheckoutPage = () => {
           </Typography>
         </div>
         <div className="flex justify-center w-full">
-          <button
+          <button data-testid="selectFromSavedAddressButton"
             className="bg-blue-300 p-3 rounded-lg mx-5 "
             onClick={handleOpenModalSavedAddress}
           >

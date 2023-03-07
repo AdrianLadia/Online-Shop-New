@@ -104,8 +104,6 @@ function App() {
         setOrders(data.orders);
         setPayments(data.payments);
         setContactPerson(data.contactPerson);
-        
-
         // LAST TO RUN
         setUserState("userloaded");
         setUserLoaded(true);
@@ -148,7 +146,7 @@ function App() {
   ]
 
   return (
-    <div>
+    <div data-testid='app' >
       <Routes>
         <Route
           path="/"

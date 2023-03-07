@@ -45,7 +45,8 @@ const AccountStatement = () => {
 
   useEffect(() => {
     const data = [];
-    console.log(orders);
+    console.log(orders)
+    console.log(payments)
     if (orders) {
       orders.map((order) => {
         let newObject = { ...order };
@@ -55,6 +56,8 @@ const AccountStatement = () => {
         data.push(newObject);
       });
     }
+
+    
 
     if (payments) {
       payments.map((payment) => {
@@ -71,11 +74,6 @@ const AccountStatement = () => {
     const dataToUse = [];
     data.map((item) => {
       if (item.paymentprovider) {
-        // console.log(item.date.toDate().toLocaleDateString())
-        // console.log(item.paymentprovider + ' ' + item.reference)
-
-        // console.log(item.amount)
-        // console.log(item.reference)
 
         dataToUse.push([
           item.date.toDate().toLocaleDateString(),
@@ -84,10 +82,6 @@ const AccountStatement = () => {
           parseFloat(item.amount),
         ]);
       } else {
-        // console.log(item.date.toDate().toLocaleDateString())
-        // console.log(item.reference)
-        // console.log(item.grandtotal)
-        // console.log(item.reference)
 
         dataToUse.push([
           item.date.toDate().toLocaleDateString(),
@@ -129,10 +123,7 @@ const AccountStatement = () => {
           setOpen={setOpen}
         />
       </div>
-      {/* {orderInfoData !== [] ? 
-      <MyOrderCardModal order={orderInfoData} open={open} handleClose={handleClose} />
-     
-      : null} */}
+
       {orderInfoData ? (
         <MyOrderCardModal
           order={orderInfoData}

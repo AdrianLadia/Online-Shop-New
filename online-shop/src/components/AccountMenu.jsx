@@ -79,9 +79,7 @@ const AccountMenu = (props) => {
     navigateTo("/accountstatement");
   }
 
-   function return1() {
-    return 1
-  }
+  
 
   return (
     <React.Fragment>
