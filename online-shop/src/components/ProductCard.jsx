@@ -6,7 +6,7 @@ import { useState, useContext} from "react";
 import UseWindowDimensions from "./UseWindowDimensions";
 import TextField from "@mui/material/TextField";
 import ProductCardModal from "./ProductCardModal";
-import businessCalculations from "./businessCalculations";
+import businessCalculations from "../../utils/businessCalculations"
 import AppContext from "../AppContext";
 
 

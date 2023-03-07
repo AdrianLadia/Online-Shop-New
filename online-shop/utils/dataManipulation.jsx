@@ -1,10 +1,13 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+// import firebase from 'firebase/app';
+// import 'firebase/firestore';
+import { format, utcToZonedTime } from 'date-fns-tz';
+import { parseISO } from 'date-fns';
 
 class dataManipulation {
   constructor() {}
 
   accountStatementData(orders,payments,forTesting = false) {
+    
     const data = [];
 
     if (orders) {
@@ -17,8 +20,6 @@ class dataManipulation {
       });
     }
 
-    // console.log(data)
-    
 
     if (payments) {
       payments.map((payment) => {
@@ -26,13 +27,14 @@ class dataManipulation {
       });
     }
 
-    // console.log(data)
 
     data.sort((a, b) => {
         if (forTesting) {
             return b.date - a.date
         }
-      return b.date.toDate() - a.date.toDate();
+        else {
+          return b.date.toDate() - a.date.toDate();
+        }
     });
 
     data.reverse();
@@ -40,15 +42,18 @@ class dataManipulation {
     const dataToUse = [];
     data.map((item) => {
       if (item.paymentprovider) {
-        dataToUse.push([
-          item.date.toDate().toLocaleDateString(),
+        const itemDate = forTesting ? format(item.date,'M/d/yyyy') : item.date.toDate();
+        const dataToPush = [
+          itemDate,
           item.paymentprovider + " " + item.reference,
           "",
           parseFloat(item.amount),
-        ]);
+        ]
+        dataToUse.push(dataToPush);
       } else {
+        const itemDate = forTesting ? format(item.date,'M/d/yyyy') : item.date.toDate();
         dataToUse.push([
-          item.date.toDate().toLocaleDateString(),
+          itemDate,
           item.reference,
           item.grandtotal,
           "",
@@ -67,6 +72,30 @@ class dataManipulation {
         item.push("green");
       }
     });
+    return dataToUse;
+  }
+  accountStatementTable(tableData,forTesting = false) {
+    function createData(date, reference, credit, debit, runningBalance, color) {
+      return { date, reference, credit, debit, runningBalance,color };
+    }
+    const rowsdata = [];
+    tableData.map((item) => {
+      
+      
+      let date = null
+      if (forTesting) {
+        const parsed = parseISO(item[0])
+        date = format(parsed,'M/d/yyyy')
+      }
+      else {
+        date = format(item[0],'M/d/yyyy')
+      }
+
+      rowsdata.push(
+        createData(date, item[1], item[2], item[3], item[4], item[5])
+      );
+    });
+    return rowsdata
   }
 }
 

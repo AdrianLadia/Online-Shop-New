@@ -16,7 +16,7 @@ import GoogleMapsModalSelectSaveAddress from "./GoogleMapsModalSelectSaveAddress
 import GoogleMapsModalSelectContactModal from "./GoogleMapsModalSelectContactModal";
 import Switch from "@mui/material/Switch";
 import Divider from "@mui/material/Divider";
-import businessCalculations from "./businessCalculations";
+import businessCalculations from "../../utils/businessCalculations";
 import { FaScribd } from "react-icons/fa";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };

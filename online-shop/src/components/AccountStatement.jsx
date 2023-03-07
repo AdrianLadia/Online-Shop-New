@@ -4,6 +4,8 @@ import AppContext from "../AppContext";
 import { useContext, useState, useEffect } from "react";
 import AccountStatementTable from "./AccountStatementTable";
 import MyOrderCardModal from "./MyOrderCardModal";
+import dataManipulation from "../../utils/dataManipulation";
+
 
 const AccountStatement = () => {
   const [
@@ -37,6 +39,7 @@ const AccountStatement = () => {
     setPayments,
   ] = useContext(AppContext);
 
+  const datamanipulation = new dataManipulation();
   const [orderInfoData, setOrderInfoData] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [open, setOpen] = React.useState(false);
@@ -44,65 +47,8 @@ const AccountStatement = () => {
   const handleClose = () => setOpen(false);
 
   useEffect(() => {
-    const data = [];
-    console.log(orders)
-    console.log(payments)
-    if (orders) {
-      orders.map((order) => {
-        let newObject = { ...order };
-        let value = newObject["orderdate"];
-        delete newObject["orderdate"];
-        newObject["date"] = value;
-        data.push(newObject);
-      });
-    }
+    const dataToUse = datamanipulation.accountStatementData(orders,payments)
 
-    
-
-    if (payments) {
-      payments.map((payment) => {
-        data.push(payment);
-      });
-    }
-
-    data.sort((a, b) => {
-      return b.date.toDate() - a.date.toDate();
-    });
-
-    data.reverse();
-
-    const dataToUse = [];
-    data.map((item) => {
-      if (item.paymentprovider) {
-
-        dataToUse.push([
-          item.date.toDate().toLocaleDateString(),
-          item.paymentprovider + " " + item.reference,
-          "",
-          parseFloat(item.amount),
-        ]);
-      } else {
-
-        dataToUse.push([
-          item.date.toDate().toLocaleDateString(),
-          item.reference,
-          item.grandtotal,
-          "",
-        ]);
-      }
-    });
-
-    let runningBalance = 0;
-    dataToUse.map((item) => {
-      runningBalance += item[2];
-      runningBalance -= item[3];
-      item.push(Math.round(runningBalance * 100) / 100);
-      if (runningBalance > 0) {
-        item.push("red");}
-      else {
-        item.push("green")
-      }
-    });
 
     console.log(dataToUse)
     setTableData(dataToUse);
