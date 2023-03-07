@@ -344,6 +344,18 @@ class firestoredb {
       return paidorders;
     });
   }
+
+  async readAllParentProducts() {
+    const parentProducts = [];
+    const products = await this.readAllProducts()
+    products.map((product) => {
+      if (product.parentProductId === "") {
+        parentProducts.push(product.itemid);
+      }
+    })
+    console.log(parentProducts);
+    return parentProducts;
+  }
 }
 
 export default firestoredb;

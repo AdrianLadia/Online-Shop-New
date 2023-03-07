@@ -19,6 +19,8 @@ class businessCalculations {
     });
     return counts;
   }
+
+  
 }
 
 export default businessCalculations;

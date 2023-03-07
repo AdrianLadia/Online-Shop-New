@@ -23,18 +23,17 @@ const AccountStatementTable = (props) => {
 
   useEffect(() => {
     const rowsdata = datamanipulation.accountStatementTable(tableData)
+
     setRows(rowsdata);
   }, [tableData]);
 
   function openOrderInfoModal(reference) {
-    // const filteredOrders = datamanipulation.getOrderFromReference(orders,reference)
-    
-    setOrderInfoData(filteredOrders);
+    const filter = datamanipulation.getOrderFromReference(reference,orders)
+    console.log(filter)
+    setOrderInfoData(filter);
     setOpen(true);
-    
   }
     
-  }
 
   return (
     <div>

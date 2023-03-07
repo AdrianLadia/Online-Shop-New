@@ -1,13 +1,14 @@
 // import firebase from 'firebase/app';
 // import 'firebase/firestore';
-import { format, utcToZonedTime } from 'date-fns-tz';
-import { parseISO } from 'date-fns';
+import { format, utcToZonedTime } from "date-fns-tz";
+import { parseISO } from "date-fns";
+
+
 
 class dataManipulation {
   constructor() {}
 
-  accountStatementData(orders,payments,forTesting = false) {
-    
+  accountStatementData(orders, payments, forTesting = false) {
     const data = [];
 
     if (orders) {
@@ -20,21 +21,18 @@ class dataManipulation {
       });
     }
 
-
     if (payments) {
       payments.map((payment) => {
         data.push(payment);
       });
     }
 
-
     data.sort((a, b) => {
-        if (forTesting) {
-            return b.date - a.date
-        }
-        else {
-          return b.date.toDate() - a.date.toDate();
-        }
+      if (forTesting) {
+        return b.date - a.date;
+      } else {
+        return b.date.toDate() - a.date.toDate();
+      }
     });
 
     data.reverse();
@@ -42,22 +40,21 @@ class dataManipulation {
     const dataToUse = [];
     data.map((item) => {
       if (item.paymentprovider) {
-        const itemDate = forTesting ? format(item.date,'M/d/yyyy') : item.date.toDate();
+        const itemDate = forTesting
+          ? format(item.date, "M/d/yyyy")
+          : item.date.toDate();
         const dataToPush = [
           itemDate,
           item.paymentprovider + " " + item.reference,
           "",
           parseFloat(item.amount),
-        ]
+        ];
         dataToUse.push(dataToPush);
       } else {
-        const itemDate = forTesting ? format(item.date,'M/d/yyyy') : item.date.toDate();
-        dataToUse.push([
-          itemDate,
-          item.reference,
-          item.grandtotal,
-          "",
-        ]);
+        const itemDate = forTesting
+          ? format(item.date, "M/d/yyyy")
+          : item.date.toDate();
+        dataToUse.push([itemDate, item.reference, item.grandtotal, ""]);
       }
     });
 
@@ -74,36 +71,42 @@ class dataManipulation {
     });
     return dataToUse;
   }
-  accountStatementTable(tableData,forTesting = false) {
+  accountStatementTable(tableData, forTesting = false) {
     function createData(date, reference, credit, debit, runningBalance, color) {
-      return { date, reference, credit, debit, runningBalance,color };
+      return { date, reference, credit, debit, runningBalance, color };
     }
     const rowsdata = [];
     tableData.map((item) => {
-      
-      
-      let date = null
+      let date = null;
       if (forTesting) {
-        const parsed = parseISO(item[0])
-        date = format(parsed,'M/d/yyyy')
-      }
-      else {
-        date = format(item[0],'M/d/yyyy')
+        const parsed = parseISO(item[0]);
+        date = format(parsed, "M/d/yyyy");
+      } else {
+        date = format(item[0], "M/d/yyyy");
       }
 
       rowsdata.push(
         createData(date, item[1], item[2], item[3], item[4], item[5])
       );
     });
-    return rowsdata
+    return rowsdata;
   }
-  getOrderFromReference(referencenumber,order) {
+  getOrderFromReference(referencenumber, orders) {
+    let orderfiltered = null
     orders.map((order) => {
-        if (order.reference === reference) { 
-            return order 
-         }
+      if (order.reference === referencenumber) {
+        orderfiltered = order
+      }
     });
-}
+    return orderfiltered
+  }
+
+  // convertTimestampToFirebaseTimestamp(timestamp) {
+  //   const date = new Date(timestamp.seconds * 1000);
+  //   date.setMilliseconds(timestamp.nanoseconds / 1000000);
+  //   const firebaseTimeStamp = firebase.firestore.Timestamp.fromDate(date);
+  //   return firebaseTimeStamp;
+  // }
 }
 
 export default dataManipulation;

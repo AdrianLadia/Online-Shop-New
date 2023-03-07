@@ -129,17 +129,12 @@ const AdminAddItemModal = (props) => {
   }
 
   useEffect(() => {
-    let parentProducts = [];
-    firestore.readAllProducts().then((products) => {
-      products.map((product)=>{
-        if (product.parentProductId === '') {
-          
-          parentProducts.push(product.itemid);
-        }  
-      })
-    });
-
-    setParentProducts(parentProducts);
+    firestore.readAllParentProducts().then((data) => {
+      console.log(data)
+      setParentProducts(data);
+    })
+    
+    // setParentProducts(parentProducts);
   }, []);
 
   return (
