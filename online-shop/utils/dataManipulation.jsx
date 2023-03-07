@@ -97,6 +97,13 @@ class dataManipulation {
     });
     return rowsdata
   }
+  getOrderFromReference(referencenumber,order) {
+    orders.map((order) => {
+        if (order.reference === reference) { 
+            return order 
+         }
+    });
+}
 }
 
 export default dataManipulation;

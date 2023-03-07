@@ -10,6 +10,7 @@ import { Link, Typography } from "@mui/material";
 import { format, utcToZonedTime } from 'date-fns-tz';
 import dataManipulation from "../../utils/dataManipulation";
 
+
 const AccountStatementTable = (props) => {
   
 
@@ -26,14 +27,13 @@ const AccountStatementTable = (props) => {
   }, [tableData]);
 
   function openOrderInfoModal(reference) {
-    orders.map((order) => {
-      if (order.reference === reference) {
-        
-        setOrderInfoData(order);
-        console.log(order);
-        setOpen(true);
-      }
-    });
+    // const filteredOrders = datamanipulation.getOrderFromReference(orders,reference)
+    
+    setOrderInfoData(filteredOrders);
+    setOpen(true);
+    
+  }
+    
   }
 
   return (
