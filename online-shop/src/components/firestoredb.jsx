@@ -353,7 +353,6 @@ class firestoredb {
         parentProducts.push(product.itemid);
       }
     })
-    console.log(parentProducts);
     return parentProducts;
   }
 }

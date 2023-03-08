@@ -8,12 +8,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Autocomplete from '@mui/material/Autocomplete';
+import dataManipulation from '../../utils/dataManipulation';
 
 
 
 const AdminCreatePayment = (props) => {
 
   const firestore = new firestoredb()
+  const datamanipulation = new dataManipulation()
   const users = props.users
   const [selectedName, setSelectedName] = React.useState('');
   const [allUserNames, setAllUserNames] = React.useState([])
@@ -24,31 +26,14 @@ const AdminCreatePayment = (props) => {
 
   useEffect(() => {
     
-    const customers = [];
-    users.map((user) => {
-      customers.push(user.name);
-    });
+    const customers = datamanipulation.getAllCustomerNamesFromUsers(users)
     setAllUserNames(customers);
 
   }, [users])
 
   function onCreatePayment() {
-    // console.log(selectedName)
-    // console.log(reference)
-    // console.log(paymentProvider)
-    // console.log(amount)
-
-    users.map((user) => {
-      if(user.name === selectedName) {
-        console.log(user.uid)
-        // firestore.createPayment(user.uid,amount,reference,paymentProvider)
-        firestore.transactionCreatePayment(user.uid,amount,reference,paymentProvider)
-      }
-    })
-
-    // console.log
-
-    // console.log(allUserNames)
+    const userid = datamanipulation.getUserUidFromUsers(users,selectedName)
+    firestore.transactionCreatePayment(userid,amount,reference,paymentProvider)
   }
 
   return (

@@ -370,12 +370,303 @@ describe("Data Manipulation", () => {
       expected
     );
   });
+  test("getAllCustomerNamesFromUsers", () => {
+    const datamanipulation = new dataManipulation();
+    const users = [
+      {
+        cart: [],
+        emailverfied: false,
+        orders: [
+          {
+            phonenumber: "09178927206",
+            shippingtotal: 110,
+            address: "Paper Boy",
+            username: "Adrian Anton Ladia",
+            latitude: 10.360742842162331,
+            cart: [
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+              "ppbag8-ppb-b",
+            ],
+            userphonenumber: "",
+            itemstotal: 42900,
+            longitude: 123.9338352876576,
+            name: "Adrian Ladia",
+            paid: false,
+            grandtotal: 48158,
+            delivered: false,
+            orderdate: {
+              seconds: 1675836819,
+              nanoseconds: 522000000,
+            },
+            reference: "1413182023-781625",
+            vat: 5148,
+          },
+          {
+            itemstotal: 10150,
+            grandtotal: 11433,
+            latitude: 10.361113842400885,
+            cart: ["ppb1-ppb", "ppb1-ppb", "ppb1-ppb", "ppb1-ppb", "ppb1-ppb"],
+            name: "Adrian Ladia",
+            address: "Paper Boy",
+            shippingtotal: 65,
+            longitude: 123.93403967370215,
+            paid: false,
+            userphonenumber: "",
+            vat: 1218,
+            phonenumber: "09178927206",
+            delivered: false,
+            username: "Adrian Anton Ladia",
+            orderdate: {
+              seconds: 1675836806,
+              nanoseconds: 678000000,
+            },
+            reference: "1413182023-760473",
+          },
+        ],
+        name: "Adrian Anton Ladia",
+        payments: [
+          {
+            paymentprovider: "asf",
+            date: {
+              seconds: 1675740484,
+              nanoseconds: 95000000,
+            },
+            amount: "20000",
+            reference: "124214",
+          },
+        ],
+        email: "adrian_ladia@yahoo.com",
+        latitude: 10.357048288916205,
+        contactPerson: [
+          {
+            name: "Adrian Ladia",
+            phonenumber: "09178927206",
+          },
+        ],
+        isanonymous: false,
+        deliveryaddress: [
+          {
+            address: "Paper Boy",
+            longitude: 123.9338352876576,
+            latitude: 10.360742842162331,
+          },
+        ],
+        uid: "LP6ARIs14qZm4qjj1YOLCSNjxsj1",
+        longitude: 123.93594982434351,
+        favoriteitems: [],
+        phonenumber: "",
+      },
+      {
+        deliveryaddress: [
+          {
+            longitude: 123.9415409,
+            address: "test",
+            latitude: 10.3595675,
+          },
+        ],
+        payments: [
+          {
+            date: {
+              seconds: 1678088607,
+              nanoseconds: 488000000,
+            },
+            reference: "325664343",
+            amount: "32424",
+            paymentprovider: "Gcash",
+          },
+          {
+            date: {
+              seconds: 1678088626,
+              nanoseconds: 128000000,
+            },
+            amount: "324253",
+            paymentprovider: "Maya",
+            reference: "3256643432",
+          },
+        ],
+        longitude: 123.93388587547149,
+        orders: [
+          {
+            vat: 157.79999999999998,
+            shippingtotal: 65,
+            longitude: 123.9415409,
+            userWhoAcceptedOrder: null,
+            cart: ["PPB#1"],
+            deliveryVehicle: "Motorcycle",
+            deliveryNotes: null,
+            orderdate: {
+              seconds: 1678091076,
+              nanoseconds: 330000000,
+            },
+            phonenumber: "t",
+            username: "Adrian Ladia",
+            paid: false,
+            clientIDWhoAcceptedOrder: null,
+            latitude: 10.3595675,
+            delivered: false,
+            userid: "PN4JqXrjsGfTsCUEEmaR5NO6rNF3",
+            userphonenumber: "",
+            orderAcceptedByClientDate: null,
+            itemstotal: 1315,
+            name: "t",
+            orderAcceptedByClient: false,
+            grandtotal: 1537.8,
+            address: "test",
+            needAssistance: false,
+            totalWeight: 20,
+            reference: "1624262023-899796",
+          },
+          {
+            orderAcceptedByClient: false,
+            delivered: false,
+            orderAcceptedByClientDate: null,
+            deliveryNotes: null,
+            grandtotal: 45976.8,
+            cart: [
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+              "PPB#1",
+            ],
+            phonenumber: "t",
+            vat: 4891.8,
+            totalWeight: 620,
+            latitude: 10.3595675,
+            paid: false,
+            orderdate: {
+              seconds: 1678155838,
+              nanoseconds: 194000000,
+            },
+            userWhoAcceptedOrder: null,
+            deliveryVehicle: "Van",
+            shippingtotal: 320,
+            needAssistance: false,
+            userid: "PN4JqXrjsGfTsCUEEmaR5NO6rNF3",
+            reference: "1023272023-873718",
+            clientIDWhoAcceptedOrder: null,
+            name: "t",
+            longitude: 123.9415409,
+            itemstotal: 40765,
+            username: "Adrian Ladia",
+            address: "test",
+            userphonenumber: "",
+          },
+        ],
+        latitude: 10.360743396481435,
+        contactPerson: [
+          {
+            name: "t",
+            phonenumber: "t",
+          },
+        ],
+        isanonymous: false,
+        name: "Adrian Ladia",
+        cart: [],
+        favoriteitems: ["PPB#2", "PPB#1PK"],
+        emailverfied: true,
+        uid: "PN4JqXrjsGfTsCUEEmaR5NO6rNF3",
+        phonenumber: "",
+        email: "ladiaadrian@gmail.com",
+      },
+      {
+        favoriteitems: [],
+        uid: "tkzNxUOPW5RFRY2HO5yqTiAzDpZ2",
+        deliveryaddress: [
+          {
+            address: "Cebu Philippines",
+            latitude: 10.375608301816845,
+            longitude: 123.91724270874339,
+          },
+        ],
+        latitude: 10.374823834823193,
+        orders: [],
+        email: "adrianang88888@gmail.com",
+        contactPerson: [
+          {
+            name: "Adri ladi",
+            phonenumber: "09173233345",
+          },
+        ],
+        isanonymous: false,
+        payments: [],
+        phonenumber: "",
+        cart: [],
+        longitude: 123.98224514316472,
+        name: "Adrian Ang",
+        emailverfied: true,
+      },
+    ];
 
-  describe("Database", () => {
-    test("readAllParentProducts", async () => {
-      const firestore = new firestoredb();
-      const data = await firestore.readAllParentProducts();
-      expect(data).not.toBe([]);
-    });
+    const expected = ["Adrian Anton Ladia", "Adrian Ladia", "Adrian Ang"];
+    const data = datamanipulation.getAllCustomerNamesFromUsers(users)
+    // const data = datamanipulation.getAllCustomerNamesFronUsers(users)
+    console.log(data) 
+    expect(data).toEqual(expected);
+  });
+});
+
+describe("Database", () => {
+  test("readAllParentProducts", async () => {
+    const firestore = new firestoredb();
+    const data = await firestore.readAllParentProducts();
+    expect(data).not.toBe([]);
   });
 });
