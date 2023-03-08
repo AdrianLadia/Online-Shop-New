@@ -1,0 +1,10 @@
+cd to root of your project
+
+type "firebase init"
+
+install functions,emulator,and firestore
+
+cd to functions folder and type npm install
+
+cd back to root and type "firebase emulators:start"
+

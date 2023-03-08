@@ -1,8 +1,8 @@
 import firestorefunctions from "../firestorefunctions";
 
 class firestoredb {
-  constructor() {
-    this.firestore = new firestorefunctions();
+  constructor(app,emulator=false) {
+    this.firestore = new firestorefunctions(app,emulator);
   }
 
   // USED FOR ADMIN INVENTORY
@@ -255,6 +255,19 @@ class firestoredb {
       },
       "payments"
     );
+  }
+
+  async createTestCollection() {
+    this.firestore.createDocument({ name: "test" }, "test", "test");
+  }
+
+  async readTestCollection() {
+    const data = await this.firestore.readAllDataFromCollection("test");
+    return data;
+  }
+
+  async deleteTestCollection() {
+    this.firestore.deleteDocumentFromCollection("test","test")
   }
 
   async transactionPlaceOrder(
