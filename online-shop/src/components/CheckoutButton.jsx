@@ -9,7 +9,7 @@ const CheckoutButton = () => {
     useContext(ContextOpenCart);
 
   function onCheckoutButtonClick() {
-    navigateTo("/checkout", { state: { finalCartData: "testtest" } });
+    navigateTo("/checkout");
   }
   
 

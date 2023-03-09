@@ -3,10 +3,16 @@
 import { format, utcToZonedTime } from "date-fns-tz";
 import { parseISO } from "date-fns";
 
-
-
 class dataManipulation {
   constructor() {}
+
+  convertDateToNanoSecondsAndSeconds(dateObject) {
+    const date = new Date(dateObject);
+    const nanoseconds = (date.getTime() % 1000) * 1000000;
+    const seconds = Math.floor(date.getTime() / 1000);
+    const result = { nanoseconds: nanoseconds, seconds: seconds };
+    return result;
+  }
 
   accountStatementData(orders, payments, forTesting = false) {
     const data = [];
@@ -39,22 +45,17 @@ class dataManipulation {
 
     const dataToUse = [];
     data.map((item) => {
+
       if (item.paymentprovider) {
-        const itemDate = forTesting
-          ? format(item.date, "M/d/yyyy")
-          : item.date.toDate();
         const dataToPush = [
-          itemDate,
+          item.date,
           item.paymentprovider + " " + item.reference,
           "",
           parseFloat(item.amount),
         ];
         dataToUse.push(dataToPush);
       } else {
-        const itemDate = forTesting
-          ? format(item.date, "M/d/yyyy")
-          : item.date.toDate();
-        dataToUse.push([itemDate, item.reference, item.grandtotal, ""]);
+        dataToUse.push([item.date, item.reference, item.grandtotal, ""]);
       }
     });
 
@@ -69,6 +70,13 @@ class dataManipulation {
         item.push("green");
       }
     });
+
+    if (forTesting) {
+      dataToUse.map((item) => {
+        item[0] = this.convertDateToNanoSecondsAndSeconds(item[0]);
+      });
+    }
+
     return dataToUse;
   }
   accountStatementTable(tableData, forTesting = false) {
@@ -82,7 +90,7 @@ class dataManipulation {
         const parsed = parseISO(item[0]);
         date = format(parsed, "M/d/yyyy");
       } else {
-        date = format(item[0], "M/d/yyyy");
+        date = item[0].toDate().toLocaleDateString();
       }
 
       rowsdata.push(
@@ -91,33 +99,135 @@ class dataManipulation {
     });
     return rowsdata;
   }
-  getOrderFromReference(referencenumber, orders) {
-    let orderfiltered = null
+  getOrderFromReference(referencenumber, orders, forTesting = false) {
+    let orderfiltered = null;
     orders.map((order) => {
       if (order.reference === referencenumber) {
-        orderfiltered = order
+        orderfiltered = order;
       }
     });
-    return orderfiltered
+
+
+    if (forTesting) {
+      orderfiltered["orderdate"] = this.convertDateToNanoSecondsAndSeconds(
+        orderfiltered["orderdate"]
+      );
+    }
+
+    return orderfiltered;
   }
 
   getAllCustomerNamesFromUsers(users) {
     const customers = [];
-    console.log(users);
     users.map((user) => {
       customers.push(user.name);
     });
-    console.log(customers)
     return customers;
   }
 
   getUserUidFromUsers(users, selectedName) {
     const user = users.find((user) => user.name === selectedName);
     if (user) {
-      console.log(user.uid);
       return user.uid;
     }
     return undefined;
+  }
+
+  
+
+  filterOrders(
+    orders,
+    startDate,
+    referenceNumber,
+    delivered,
+    paid,
+    selectedName
+  ) {
+
+    
+    let filterPaid = null;
+    let filterUnpaid = null;
+    let filterName = null;
+    let filterDate = null;
+    if (paid === true) {
+      filterPaid = true;
+    }
+    if (paid === false) {
+      filterUnpaid = true;
+    }
+    if (selectedName !== "") {
+      filterName = true;
+    } else {
+      filterName = false;
+    }
+    if (startDate !== "") {
+      filterDate = true;
+    } else {
+      filterDate = false;
+    }
+
+    const dataFilteredByDate = [];
+    // FILTER BY DATE
+    orders.map((order) => {
+      if (filterDate === true) {
+        if (
+          order.orderdate.toDate().toLocaleDateString() ===
+          startDate.toLocaleDateString()
+        ) {
+          dataFilteredByDate.push(order);
+        }
+      } else {
+        dataFilteredByDate.push(order);
+      }
+    });
+
+
+    const dataFilteredByName = [];
+    dataFilteredByDate.map((order) => {
+      if (filterName === true) {
+        if (order.username === selectedName) {
+          dataFilteredByName.push(order);
+        }
+      } else {
+        dataFilteredByName.push(order);
+      }
+    });
+
+
+    const dataFilteredByDelivered = [];
+    dataFilteredByName.map((order) => {
+      if (delivered === true) {
+        if (order.delivered === true) {
+          dataFilteredByDelivered.push(order);
+        }
+      }
+      if (delivered === false) {
+        if (order.delivered === false) {
+          dataFilteredByDelivered.push(order);
+        }
+      }
+      if (delivered === null) {
+        dataFilteredByDelivered.push(order);
+      }
+    });
+
+    const dataFilteredByPaid = [];
+    dataFilteredByDelivered.map((order) => {
+      if (paid === true) {
+        if (order.paid === true) {
+          dataFilteredByPaid.push(order);
+        }
+      }
+      if (paid === false) {
+        if (order.paid === false) {
+          dataFilteredByPaid.push(order);
+        }
+      }
+      if (paid === null) {
+        dataFilteredByPaid.push(order);
+      }
+    });
+    return dataFilteredByPaid;
   }
 
   // convertTimestampToFirebaseTimestamp(timestamp) {

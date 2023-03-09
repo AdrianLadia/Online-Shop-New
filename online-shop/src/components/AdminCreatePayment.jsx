@@ -36,6 +36,8 @@ const AdminCreatePayment = (props) => {
     firestore.transactionCreatePayment(userid,amount,reference,paymentProvider)
   }
 
+  
+
   return (
     <div className='flex flex-col'>
       <Typography variant='h2' className='flex justify-center'> Create Payment </Typography>

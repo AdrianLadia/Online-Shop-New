@@ -11,9 +11,11 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import AdminOrdersTable from "./AdminOrdersTable";
 import MyOrderCardModal from "./MyOrderCardModal";
+import dataManipulation from "../../utils/dataManipulation";
 
 const AdminOrders = (props) => {
   const firestore = new firestoredb();
+  const datamanipulation = new dataManipulation();
   const label = { inputProps: { "aria-label": "Switch demo" } };
   const [orders, setOrders] = React.useState([]);
   const [startDate, setStartDate] = useState("");
@@ -23,7 +25,7 @@ const AdminOrders = (props) => {
   const [selectedName, setSelectedName] = React.useState("");
   const [allUserNames, setAllUserNames] = React.useState([]);
   const [selectedOrderReference, setSelectedOrderReference] = useState(null);
-  const [selectedOrder,setSelectedOrder] = useState(null)
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
@@ -52,108 +54,19 @@ const AdminOrders = (props) => {
         }
       });
     } else {
-      let filterPaid = null;
-      let filterUnpaid = null;
-      let filterName = null;
-      let filterDate = null;
-      if (paid === true) {
-        filterPaid = true;
-      }
-      if (paid === false) {
-        filterUnpaid = true;
-      }
-      if (selectedName !== "") {
-        filterName = true;
-      } else {
-        filterName = false;
-      }
-      if (startDate !== "") {
-        filterDate = true;
-      } else {
-        filterDate = false;
-      }
-      console.log("-------------");
-      console.log("filterPaid", filterPaid);
-      console.log("filterUnpaid", filterUnpaid);
-      console.log("filterName", filterName);
-      console.log("filterDate", filterDate);
-
-      firestore.readAllOrders().then((orders) => {
-        const dataFilteredByDate = [];
-        console.log(orders);
-        // FILTER BY DATE
-        orders.map((order) => {
-          if (filterDate === true) {
-            console.log(order.orderdate.toDate().toLocaleDateString());
-            console.log(startDate.toLocaleDateString());
-            if (
-              order.orderdate.toDate().toLocaleDateString() ===
-              startDate.toLocaleDateString()
-            ) {
-              dataFilteredByDate.push(order);
-            }
-          } else {
-            dataFilteredByDate.push(order);
-          }
-        });
-
-        const dataFilteredByName = [];
-        dataFilteredByDate.map((order) => {
-          if (filterName === true) {
-            if (order.username === selectedName) {
-              dataFilteredByName.push(order);
-            }
-          } else {
-            dataFilteredByName.push(order);
-          }
-        });
-
-        const dataFilteredByDelivered = [];
-        dataFilteredByName.map((order) => {
-          if (delivered === true) {
-            if (order.delivered === true) {
-              dataFilteredByDelivered.push(order);
-            }
-          }
-          if (delivered === false) {
-            if (order.delivered === false) {
-              dataFilteredByDelivered.push(order);
-            }
-          }
-          if (delivered === null) {
-            dataFilteredByDelivered.push(order);
-          }
-        });
-
-        const dataFilteredByPaid = [];
-        dataFilteredByDelivered.map((order) => {
-          if (paid === true) {
-            if (order.paid === true) {
-              dataFilteredByPaid.push(order);
-            }
-          }
-          if (paid === false) {
-            if (order.paid === false) {
-              dataFilteredByPaid.push(order);
-            }
-          }
-          if (paid === null) {
-            dataFilteredByPaid.push(order);
-          }
-        });
-        console.log("dataFilteredByName", dataFilteredByPaid);
-        setOrders(dataFilteredByPaid);
+      firestore.readAllOrders().then((ordersFirestore) => {
+        const filteredOrders = datamanipulation.filterOrders(ordersFirestore,startDate, referenceNumber, delivered, paid, selectedName);
+        setOrders(filteredOrders);
       });
     }
   }, [startDate, referenceNumber, delivered, paid, selectedName]);
 
   useEffect(() => {
     orders.map((order) => {
-      if (order.reference === selectedOrderReference){
-        setSelectedOrder(order)
+      if (order.reference === selectedOrderReference) {
+        setSelectedOrder(order);
       }
     });
-    
   }, [selectedOrderReference]);
 
   return (
@@ -203,7 +116,14 @@ const AdminOrders = (props) => {
             <OrdersCalendar startDate={startDate} setStartDate={setStartDate} />
           </div>
           <div>
-            <button onClick={()=>{setStartDate('')}} className="px-2 rounded-lg bg-red-300 h-7">Clear</button>
+            <button
+              onClick={() => {
+                setStartDate("");
+              }}
+              className="px-2 rounded-lg bg-red-300 h-7"
+            >
+              Clear
+            </button>
           </div>
         </div>
         <div className="flex flex-row justify-center mt-5 lg:-mt-5 lg:w-1/4">
@@ -279,12 +199,20 @@ const AdminOrders = (props) => {
         </div>
       </div>
       <div className="lg:mx-20 mt-5">
-        <AdminOrdersTable orders={orders} setSelectedOrderReference={setSelectedOrderReference} handleOpenModal={handleOpenModal} />
+        <AdminOrdersTable
+          orders={orders}
+          setSelectedOrderReference={setSelectedOrderReference}
+          handleOpenModal={handleOpenModal}
+        />
       </div>
 
-      {selectedOrder !== null ? 
-      <MyOrderCardModal open={openModal} handleClose={handleClose} order={selectedOrder}/>
-      : null}
+      {selectedOrder !== null ? (
+        <MyOrderCardModal
+          open={openModal}
+          handleClose={handleClose}
+          order={selectedOrder}
+        />
+      ) : null}
       {/* Table */}
       {/* Date */}
       {/* Reference # */}

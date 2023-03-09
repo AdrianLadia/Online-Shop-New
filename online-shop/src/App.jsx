@@ -17,15 +17,15 @@ import MyOrders from "./components/MyOrders";
 import AccountStatement from "./components/AccountStatement";
 
 function App() {
-  const firestore = new firestoredb();
-
+  
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
   // Get Authentication
   const auth = getAuth();
-  // Get Functions
+  // Initialize firestore class
+  const firestore = new firestoredb(app);
 
   const [userId, setUserId] = useState(null);
   const [userdata, setUserData] = useState(null);
