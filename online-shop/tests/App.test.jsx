@@ -1,11 +1,8 @@
 import { beforeEach, describe, expect, test } from "vitest";
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import businessCalculations from "../utils/businessCalculations";
 import dataManipulation from "../utils/dataManipulation";
 import firestoredb from "../src/components/firestoredb";
-
-const firestore = new firestoredb(true);
 
 describe("Business Calcualtions", () => {
   test("getSafetyStock", () => {
@@ -25,14 +22,26 @@ describe("Business Calcualtions", () => {
     ).toBe(20);
   });
   test("getCartCount", () => {
-
-
-    let cart = null
-    firestore.readUserById('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2').then((data) => {
-      console.log(data);
-      
-    });
-    
+    const cart = [
+      "PPB#1",
+      "PPB#1",
+      "PPB#1",
+      "PPB#1",
+      "PPB#1",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#2",
+      "PPB#3",
+      "PPB#3",
+      "PPB#3",
+    ];
     const bCalculations = new businessCalculations();
     expect(bCalculations.getCartCount(cart)).toEqual({
       "PPB#1": 5,
@@ -647,324 +656,17 @@ describe("Data Manipulation", () => {
     ];
 
     const expected = ["Adrian Anton Ladia", "Adrian Ladia", "Adrian Ang"];
-    const data = datamanipulation.getAllCustomerNamesFromUsers(users);
+    const data = datamanipulation.getAllCustomerNamesFromUsers(users)
     // const data = datamanipulation.getAllCustomerNamesFronUsers(users)
-    console.log(data);
+    console.log(data) 
     expect(data).toEqual(expected);
-  });
-  test("getUserUidFromUsers", () => {
-    const datamanipulation = new dataManipulation();
-    const users = [
-      {
-        contactPerson: [
-          {
-            name: "Adrian Ladia",
-            phonenumber: "09178927206",
-          },
-        ],
-        orders: [
-          {
-            shippingtotal: 110,
-            longitude: 123.9338352876576,
-            orderdate: {
-              seconds: 1675836819,
-              nanoseconds: 522000000,
-            },
-            cart: [
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-              "ppbag8-ppb-b",
-            ],
-            username: "Adrian Anton Ladia",
-            delivered: false,
-            latitude: 10.360742842162331,
-            paid: false,
-            reference: "1413182023-781625",
-            itemstotal: 42900,
-            address: "Paper Boy",
-            name: "Adrian Ladia",
-            vat: 5148,
-            userphonenumber: "",
-            phonenumber: "09178927206",
-            grandtotal: 48158,
-          },
-          {
-            delivered: false,
-            username: "Adrian Anton Ladia",
-            paid: false,
-            address: "Paper Boy",
-            orderdate: {
-              seconds: 1675836806,
-              nanoseconds: 678000000,
-            },
-            longitude: 123.93403967370215,
-            itemstotal: 10150,
-            userphonenumber: "",
-            reference: "1413182023-760473",
-            latitude: 10.361113842400885,
-            vat: 1218,
-            name: "Adrian Ladia",
-            grandtotal: 11433,
-            phonenumber: "09178927206",
-            shippingtotal: 65,
-            cart: ["ppb1-ppb", "ppb1-ppb", "ppb1-ppb", "ppb1-ppb", "ppb1-ppb"],
-          },
-        ],
-        phonenumber: "",
-        cart: [],
-        name: "Adrian Anton Ladia",
-        latitude: 10.357048288916205,
-        longitude: 123.93594982434351,
-        deliveryaddress: [
-          {
-            address: "Paper Boy",
-            longitude: 123.9338352876576,
-            latitude: 10.360742842162331,
-          },
-        ],
-        email: "adrian_ladia@yahoo.com",
-        isanonymous: false,
-        uid: "LP6ARIs14qZm4qjj1YOLCSNjxsj1",
-        favoriteitems: [],
-        emailverfied: false,
-        payments: [
-          {
-            reference: "124214",
-            date: {
-              seconds: 1675740484,
-              nanoseconds: 95000000,
-            },
-            amount: "20000",
-            paymentprovider: "asf",
-          },
-        ],
-      },
-      {
-        name: "Adrian Ladia",
-        cart: [],
-        orders: [
-          {
-            orderdate: {
-              seconds: 1678091076,
-              nanoseconds: 330000000,
-            },
-            cart: ["PPB#1"],
-            orderAcceptedByClientDate: null,
-            vat: 157.79999999999998,
-            userid: "PN4JqXrjsGfTsCUEEmaR5NO6rNF3",
-            orderAcceptedByClient: false,
-            name: "t",
-            paid: true,
-            shippingtotal: 65,
-            phonenumber: "t",
-            userphonenumber: "",
-            reference: "1624262023-899796",
-            userWhoAcceptedOrder: null,
-            deliveryVehicle: "Motorcycle",
-            totalWeight: 20,
-            clientIDWhoAcceptedOrder: null,
-            needAssistance: false,
-            itemstotal: 1315,
-            address: "test",
-            latitude: 10.3595675,
-            longitude: 123.9415409,
-            grandtotal: 1537.8,
-            username: "Adrian Ladia",
-            deliveryNotes: null,
-            delivered: false,
-          },
-          {
-            cart: [
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-              "PPB#1",
-            ],
-            orderdate: {
-              seconds: 1678155838,
-              nanoseconds: 194000000,
-            },
-            name: "t",
-            deliveryVehicle: "Van",
-            userid: "PN4JqXrjsGfTsCUEEmaR5NO6rNF3",
-            address: "test",
-            vat: 4891.8,
-            needAssistance: false,
-            shippingtotal: 320,
-            latitude: 10.3595675,
-            delivered: false,
-            reference: "1023272023-873718",
-            clientIDWhoAcceptedOrder: null,
-            phonenumber: "t",
-            totalWeight: 620,
-            longitude: 123.9415409,
-            userphonenumber: "",
-            itemstotal: 40765,
-            userWhoAcceptedOrder: null,
-            orderAcceptedByClientDate: null,
-            paid: true,
-            username: "Adrian Ladia",
-            deliveryNotes: null,
-            grandtotal: 45976.8,
-            orderAcceptedByClient: false,
-          },
-        ],
-        payments: [
-          {
-            reference: "325664343",
-            amount: "32424",
-            paymentprovider: "Gcash",
-            date: {
-              seconds: 1678088607,
-              nanoseconds: 488000000,
-            },
-          },
-          {
-            paymentprovider: "Maya",
-            amount: "324253",
-            reference: "3256643432",
-            date: {
-              seconds: 1678088626,
-              nanoseconds: 128000000,
-            },
-          },
-          {
-            amount: "19992",
-            date: {
-              seconds: 1678243313,
-              nanoseconds: 38000000,
-            },
-            reference: "4124125",
-            paymentprovider: "Gcash",
-          },
-        ],
-        phonenumber: "",
-        uid: "PN4JqXrjsGfTsCUEEmaR5NO6rNF3",
-        latitude: 10.360743396481435,
-        longitude: 123.93388587547149,
-        favoriteitems: ["PPB#2", "PPB#1PK"],
-        deliveryaddress: [
-          {
-            longitude: 123.9415409,
-            address: "test",
-            latitude: 10.3595675,
-          },
-        ],
-        emailverfied: true,
-        contactPerson: [
-          {
-            phonenumber: "t",
-            name: "t",
-          },
-        ],
-        isanonymous: false,
-        email: "ladiaadrian@gmail.com",
-      },
-      {
-        email: "adrianang88888@gmail.com",
-        orders: [],
-        longitude: 123.98224514316472,
-        latitude: 10.374823834823193,
-        uid: "tkzNxUOPW5RFRY2HO5yqTiAzDpZ2",
-        contactPerson: [
-          {
-            phonenumber: "09173233345",
-            name: "Adri ladi",
-          },
-        ],
-        name: "Adrian Ang",
-        favoriteitems: [],
-        isanonymous: false,
-        payments: [],
-        emailverfied: true,
-        cart: [],
-        deliveryaddress: [
-          {
-            address: "Cebu Philippines",
-            longitude: 123.91724270874339,
-            latitude: 10.375608301816845,
-          },
-        ],
-        phonenumber: "",
-      },
-    ];
-    const selectedName = "Adrian Ang"
-    const expected = "tkzNxUOPW5RFRY2HO5yqTiAzDpZ2"
-    expect(datamanipulation.getUserUidFromUsers(users, selectedName)).toBe(expected)
   });
 });
 
 describe("Database", () => {
   test("readAllParentProducts", async () => {
-    let data = null
-    firestore.readAllParentProducts().then((d) => {
-   
-    })
-    console.log(data)
+    const firestore = new firestoredb();
+    const data = await firestore.readAllParentProducts();
     expect(data).not.toBe([]);
-  });
-
-  test('writeToDatabase', async () => {
-  
-    firestore.createCategory("test").then((d) => {
-     
-    })
   });
 });

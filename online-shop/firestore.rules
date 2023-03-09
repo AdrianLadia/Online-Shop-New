@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    //ADMIN RULES
+    match /{document=**} {
+      allow create,read,update,delete:
+      	if request.auth.token.email == "ladiaadrian@gmail.com"
+    }
+    
+    //USER RULES
+    match /Users/{userId} {
+     	allow read, update, delete:
+      	if request.auth != null && request.auth.uid == userId;
+      allow create:
+      	if request.auth != null;
+   }
+    
+    //Allow everybody to read products
+    match /Products/{product} {
+    	allow read
+    }
+    
+    //Allow Everyvody to read category
+    match /Categories/{category}{
+    	allow read
+    }
+    
+  
+  }
+}

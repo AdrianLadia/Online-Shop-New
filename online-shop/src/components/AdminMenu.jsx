@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import firestoredb from "./firestoredb";
 import { Divider } from "@material-ui/core";
 import AdminCreatePayment from "./AdminCreatePayment";
+import AdminDelivery from "./AdminDelivery";
 import AdminOrders from "./AdminOrders";
 
 const AdminMenu = () => {

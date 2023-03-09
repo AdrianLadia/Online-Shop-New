@@ -33,7 +33,7 @@ const AdminCreatePayment = (props) => {
 
   function onCreatePayment() {
     const userid = datamanipulation.getUserUidFromUsers(users,selectedName)
-    // firestore.transactionCreatePayment(userid,amount,reference,paymentProvider)
+    firestore.transactionCreatePayment(userid,amount,reference,paymentProvider)
   }
 
   return (
