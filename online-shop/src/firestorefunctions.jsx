@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore,connectFirestoreEmulator } from "firebase/firestore";
 import {
   collection,
   doc,
@@ -13,17 +13,28 @@ import {
   runTransaction,
 } from "firebase/firestore";
 import firebaseConfig from "./firebase_config";
-import * as firebase from "firebase/app";
+
 
 const consolelog = false;
 
 class firestorefunctions {
-  constructor() {
+  constructor(app,emulator = false) {
+    if (emulator === true) {
+      // console.log("Connecting to firestore emulator")
+    
+      const db = getFirestore();
+      connectFirestoreEmulator(db, '127.0.0.1', 8080)
+      this.db = db;
+      console.log(db)
+    }
+    if (emulator === false) {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     // Initialize Cloud Firestore and get a reference to the service
     const db = getFirestore(app);
     this.db = db;
+
+    }
   }
 
   async createDocument(data, id, collection) {

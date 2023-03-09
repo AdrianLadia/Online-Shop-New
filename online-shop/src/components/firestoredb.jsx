@@ -1,8 +1,14 @@
+import { tr } from "date-fns/locale";
 import firestorefunctions from "../firestorefunctions";
 
 class firestoredb {
-  constructor() {
-    this.firestore = new firestorefunctions();
+  constructor(app,emulator = false) {
+    if (emulator === false) {
+      this.firestore = new firestorefunctions(app);
+    }
+    if (emulator === true) {
+      this.firestore = new firestorefunctions(app,true);
+    }
   }
 
   // USED FOR ADMIN INVENTORY

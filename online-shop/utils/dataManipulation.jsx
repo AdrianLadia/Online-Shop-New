@@ -103,18 +103,16 @@ class dataManipulation {
 
   getAllCustomerNamesFromUsers(users) {
     const customers = [];
-    console.log(users);
     users.map((user) => {
       customers.push(user.name);
     });
-    console.log(customers)
     return customers;
   }
 
   getUserUidFromUsers(users, selectedName) {
+    
     const user = users.find((user) => user.name === selectedName);
     if (user) {
-      console.log(user.uid);
       return user.uid;
     }
     return undefined;
