@@ -3,6 +3,12 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import businessCalculations from "../utils/businessCalculations";
 import dataManipulation from "../utils/dataManipulation";
 import firestoredb from "../src/components/firestoredb";
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from "../src/firebase_config";
+
+const app = initializeApp(firebaseConfig)
+const firestore = new firestoredb(app,true)
+
 
 describe("Business Calcualtions", () => {
   test("getSafetyStock", () => {
@@ -663,10 +669,28 @@ describe("Data Manipulation", () => {
   });
 });
 
-describe("Database", () => {
-  test("readAllParentProducts", async () => {
-    const firestore = new firestoredb();
-    const data = await firestore.readAllParentProducts();
-    expect(data).not.toBe([]);
+describe("Emulator", () => {
+  test("Emulator Connected to Firestore", async () => {
+    await firestore.createTestCollection()
   });
-});
+
+  test("read test collection", async () => {
+    const data = await firestore.readTestCollection()
+    console.log(data)
+    expect(data).toEqual([ { name: 'test' } ]);
+  });
+
+  test("delete test collection", async () => {
+    await firestore.deleteTestCollection()
+    const data = await firestore.readTestCollection()
+    console.log(data)
+    expect(data).toEqual([]);
+  })
+})
+
+// describe("Database", () => {
+//   test("readAllParentProducts", async () => {
+//     const data = await firestore.readAllParentProducts();
+//     expect(data).not.toBe([]);
+//   });
+// });
