@@ -5,6 +5,7 @@ import dataManipulation from "../utils/dataManipulation";
 import firestoredb from "../src/components/firestoredb";
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from "../src/firebase_config";
+import { runTransaction } from "firebase/firestore";
 // 
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig)
@@ -345,7 +346,6 @@ describe("Data Manipulation", () => {
   ]
     expect(filtered).toEqual(expected);
     filtered = datamanipulation.filterOrders(orders,'','',null,null,'Adrian Ladia')
-    console.log(filtered)
 
     filtered.map((order) => {
       expect(order.name).toEqual('Adrian Ladia')
@@ -383,5 +383,75 @@ describe("Database", () => {
     const data = await firestore.readAllParentProducts();
     expect(data).not.toBe([]);
   });
+  // a
+  test("transactionPlaceOrder", async () => {
+    const userdata = await firestore.readUserById('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2')
+    const date = new Date()
+    await firestore.transactionPlaceOrder(
+    "PN4JqXrjsGfTsCUEEmaR5NO6rNF3",
+    "Paper Boy",
+    10.360648471259719,
+    123.93387574188152,
+    "09178927206",
+    "Adrian Ladia",
+    date,
+    "Adrian Ladia",
+    "Paper Boy",
+    "09178927206",
+    [
+        "PPB#1",
+        "PPB#1",
+        "PPB#1",
+        "PPB#1",
+        "PPB#1",
+        "PPB#10",
+        "PPB#10",
+        "PPB#10",
+        "PPB#10",
+        "PPB#10",
+        "PPB#12",
+        "PPB#12",
+        "PPB#12",
+        "PPB#16",
+        "PPB#16",
+        "PPB#16"
+    ],
+    21975,
+    2637,
+    230,
+    24842,
+    "1545292023-662438",
+    "Adrian Ladia",
+    "",
+    null,
+    320,
+    "Pick Up",
+    false)
+
+    const user = await firestore.readUserById('PN4JqXrjsGfTsCUEEmaR5NO6rNF3')
+    const orders = user.orders
+    
+    let foundorder = false
+    orders.map((order) => {
+      console.log(order.reference)
+      if (order.reference === "1545292023-662438") {
+        console.log('found')
+        foundorder = true
+      }
+    })
+    expect(foundorder).toEqual(true)
+
+  });
+  test('transactionCreatePayment', async () => {
+    await firestore.transactionCreatePayment('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2',1999,'124532-1235','GCASH')
+    
+  })
+  test('updatedoc', async () => {
+    await firestore.updatePhoneNumber('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2','09178927206')
+    const user = await firestore.readUserById('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2')
+    const phone = user.phonenumber
+    expect(phone).toEqual('09178927206')
+  })
+  
 
 });

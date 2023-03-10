@@ -576,37 +576,56 @@ const CheckoutPage = () => {
       try {
         // setLaunchPayMayaCheckout(true);
         if (securityOrderDataIsValid()) {
-          firestore
-            .transactionPlaceOrder(
-              userdata.uid,
-              localDeliveryAddress,
-              locallatitude,
-              locallongitude,
-              localphonenumber,
-              localname,
-              userdata.orders,
-              new Date(),
-              localname,
-              localDeliveryAddress,
-              localphonenumber,
-              latitude,
-              longitude,
-              cart,
-              total,
-              vat,
-              deliveryFee,
-              grandtotal,
-              generateOrderReference(),
-              userdata.name,
-              userdata.phonenumber,
-              deliveryNotes,
-              totalWeight,
-              deliveryVehicle[0],
-              needAssistance
-            )
-            .then(() => {
-              setCart([]);
-            });
+          console.log( [userdata.uid,
+            localDeliveryAddress,
+            locallatitude,
+            locallongitude,
+            localphonenumber,
+            localname,
+            new Date(),
+            localname,
+            localDeliveryAddress,
+            localphonenumber,
+            cart,
+            total,
+            vat,
+            deliveryFee,
+            grandtotal,
+            generateOrderReference(),
+            userdata.name,
+            userdata.phonenumber,
+            deliveryNotes,
+            totalWeight,
+            deliveryVehicle[0],
+            needAssistance]);
+          // firestore
+          //   .transactionPlaceOrder(
+          //     userdata.uid,
+          //     localDeliveryAddress,
+          //     locallatitude,
+          //     locallongitude,
+          //     localphonenumber,
+          //     localname,
+          //     new Date(),
+          //     localname,
+          //     localDeliveryAddress,
+          //     localphonenumber,
+          //     cart,
+          //     total,
+          //     vat,
+          //     deliveryFee,
+          //     grandtotal,
+          //     generateOrderReference(),
+          //     userdata.name,
+          //     userdata.phonenumber,
+          //     deliveryNotes,
+          //     totalWeight,
+          //     deliveryVehicle[0],
+          //     needAssistance
+          //   )
+            // .then(() => {
+            //   setCart([]);
+            // });
         } else {
           alert("Please fill up all the fields.");
         }

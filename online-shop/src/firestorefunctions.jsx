@@ -170,13 +170,10 @@ class firestorefunctions {
     locallongitude,
     localphonenumber,
     localname,
-    old_orders,
     orderdate,
     name,
     address,
     phonenumber,
-    latitude,
-    longitude,
     cart,
     itemstotal,
     vat,
@@ -190,28 +187,17 @@ class firestorefunctions {
     deliveryVehicle,
     needAssistance
   ) {
-    console.log("transactionPlaceOrder");
-    console.log(userid);
-    console.log(localDeliveryAddress);
-    console.log(locallatitude);
-    console.log(locallongitude);
-    
-
-
-
-    // cartReferences = []
-    // cart.map((c) => {
-    //   cartReferences.push(productRef = doc(this.db, "Products" + "/", c))
-    // })
 
 
     try {
       await runTransaction(this.db, async (transaction) => {
         // READ
+
         const docRef = doc(this.db, "Users" + "/", userid);
         const usersdoc = await transaction.get(docRef);
         const deliveryAddress = usersdoc.data().deliveryaddress;
         const contactPerson = usersdoc.data().contactPerson;
+        
         const cartUniqueItems = Array.from(new Set(cart))
 
         const currentInventory = {}
@@ -222,7 +208,6 @@ class firestorefunctions {
           currentInventory[c] = productdoc.data().stocksAvailable
         }))
         
-        console.log(currentInventory)
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
         
