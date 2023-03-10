@@ -39,6 +39,8 @@ class firestorefunctions {
       }
     } catch (e) {
       if (consolelog) {
+        console.log('____________________________')
+        console.log(data)
         console.error("Error adding document: ", e);
       }
     }
@@ -348,7 +350,6 @@ class firestorefunctions {
 
         payments.map((payment) => {
           data.push(payment);
-          console.log(parseFloat(payment.amount));
           totalpayments += parseFloat(payment.amount);
         });
 
@@ -359,7 +360,7 @@ class firestorefunctions {
           );
         });
 
-        console.log("Total Payments: ", totalpayments);
+      
         orders.map((order) => {
           totalpayments -= parseFloat(order.grandtotal);
           totalpayments = Math.round(totalpayments);
