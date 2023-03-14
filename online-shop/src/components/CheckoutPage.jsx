@@ -1,29 +1,29 @@
-import { Typography } from "@mui/material";
-import React from "react";
-import { useEffect } from "react";
-import CheckoutSummary from "./CheckoutSummary";
-import GoogleMaps from "./GoogleMaps";
-import AppContext from "../AppContext";
-import { useState } from "react";
-import TextField from "@mui/material/TextField";
-import firestoredb from "./firestoredb";
-import Paper from "@mui/material/Paper";
+import { Typography } from '@mui/material';
+import React from 'react';
+import { useEffect } from 'react';
+import CheckoutSummary from './CheckoutSummary';
+import GoogleMaps from './GoogleMaps';
+import AppContext from '../AppContext';
+import { useState } from 'react';
+import TextField from '@mui/material/TextField';
+import firestoredb from './firestoredb';
+import Paper from '@mui/material/Paper';
 // import PaymentMenuCard from "./PaymentMenuCard";
-import PaymentMethods from "./PaymentMethods";
-import CheckoutPageContext from "./CheckoutPageContext";
-import PaymentMenuCard from "./PaymentMenuCard";
-import GoogleMapsModalSelectSaveAddress from "./GoogleMapsModalSelectSaveAddress";
-import GoogleMapsModalSelectContactModal from "./GoogleMapsModalSelectContactModal";
-import Switch from "@mui/material/Switch";
-import Divider from "@mui/material/Divider";
-import businessCalculations from "../../utils/businessCalculations";
-import { FaScribd } from "react-icons/fa";
-import serviceAreas from "../data/serviceAreas";
-import paperBoyLocation from "../data/paperBoyLocation";
-import lalamoveDeliveryVehicles from "../data/lalamoveDeliveryVehicles";
-import dataManipulation from "../../utils/dataManipulation";
+import PaymentMethods from './PaymentMethods';
+import CheckoutPageContext from './CheckoutPageContext';
+import PaymentMenuCard from './PaymentMenuCard';
+import GoogleMapsModalSelectSaveAddress from './GoogleMapsModalSelectSaveAddress';
+import GoogleMapsModalSelectContactModal from './GoogleMapsModalSelectContactModal';
+import Switch from '@mui/material/Switch';
+import Divider from '@mui/material/Divider';
+import businessCalculations from '../../utils/businessCalculations';
+import { FaScribd } from 'react-icons/fa';
+import serviceAreas from '../data/serviceAreas';
+import paperBoyLocation from '../data/paperBoyLocation';
+import lalamoveDeliveryVehicles from '../data/lalamoveDeliveryVehicles';
+import dataManipulation from '../../utils/dataManipulation';
 
-const label = { inputProps: { "aria-label": "Switch demo" } };
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
   const [
@@ -58,16 +58,15 @@ const CheckoutPage = () => {
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
   const [launchPayMayaCheckout, setLaunchPayMayaCheckout] = useState(false);
   const [total, setTotal] = React.useState(0);
-  const [localname, setLocalName] = React.useState("");
-  const [localemail, setLocalEmail] = React.useState("");
-  const [localphonenumber, setLocalPhoneNumber] = React.useState("");
+  const [localname, setLocalName] = React.useState('');
+  const [localemail, setLocalEmail] = React.useState('');
+  const [localphonenumber, setLocalPhoneNumber] = React.useState('');
   const [vat, setVat] = React.useState(0);
   const [deliveryFee, setDeliveryFee] = React.useState(0);
   const [grandtotal, setGrandTotal] = React.useState(0);
-  const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState("");
+  const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
 
-  const [openModalSavedAddress, setOpenModalSavedAddress] =
-    React.useState(false);
+  const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
   const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
   const handleCloseModalSavedAddress = () => setOpenModalSavedAddress(false);
 
@@ -91,7 +90,6 @@ const CheckoutPage = () => {
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
 
-
   const lalamoveServiceArea = serviceareas.lalamoveServiceArea;
   const iloiloArea = serviceareas.iloiloArea;
   const bacolodArea = serviceareas.bacolodArea;
@@ -110,185 +108,63 @@ const CheckoutPage = () => {
   const pagadianArea = serviceareas.pagadianArea;
   const davaoArea = serviceareas.davaoArea;
   const generalSantosArea = serviceareas.generalSantosArea;
-  const paperboylatitude = paperboylocation.latitide
-  const paperboylongitude = paperboylocation.longitude
+  const paperboylatitude = paperboylocation.latitude;
+  const paperboylongitude = paperboylocation.longitude;
 
   const deliveryFeePerKmMotor = lalamovedeliveryvehicles.motorcycle.deliveryFeePerKm;
   const maxWeightMotor = lalamovedeliveryvehicles.motorcycle.maxWeight;
-  const minDelFeeMotor = lalamovedeliveryvehicles.motorcycle.minDelFee
-  const driverAssistsMotor = lalamovedeliveryvehicles.motorcycle.driverAssistsPrice
+  const minDelFeeMotor = lalamovedeliveryvehicles.motorcycle.minDelFee;
+  const driverAssistsMotor = lalamovedeliveryvehicles.motorcycle.driverAssistsPrice;
 
   const deliveryFeePerKmSedan = lalamovedeliveryvehicles.sedan.deliveryFeePerKm;
-  const minDelFeeSedan = lalamovedeliveryvehicles.sedan.minDelFee
+  const minDelFeeSedan = lalamovedeliveryvehicles.sedan.minDelFee;
   const maxWeightSedan = lalamovedeliveryvehicles.sedan.maxWeight;
-  const driverAssistsSedan = lalamovedeliveryvehicles.sedan.driverAssistsPrice
+  const driverAssistsSedan = lalamovedeliveryvehicles.sedan.driverAssistsPrice;
 
   const deliveryFeePerKmMPV = lalamovedeliveryvehicles.mpv.deliveryFeePerKm;
-  const minDelFeeMPV = lalamovedeliveryvehicles.mpv.minDelFee
+  const minDelFeeMPV = lalamovedeliveryvehicles.mpv.minDelFee;
   const maxWeightMPV = lalamovedeliveryvehicles.mpv.maxWeight;
-  const driverAssistsMPV = lalamovedeliveryvehicles.mpv.driverAssistsPrice
+  const driverAssistsMPV = lalamovedeliveryvehicles.mpv.driverAssistsPrice;
 
   const deliveryFeePerKmPickUp = lalamovedeliveryvehicles.pickup.deliveryFeePerKm;
-  const minDelFeePickUp = lalamovedeliveryvehicles.pickup.minDelFee
+  const minDelFeePickUp = lalamovedeliveryvehicles.pickup.minDelFee;
   const maxWeightPickUp = lalamovedeliveryvehicles.pickup.maxWeight;
-  const driverAssistsPickUp = lalamovedeliveryvehicles.pickup.driverAssistsPrice
+  const driverAssistsPickUp = lalamovedeliveryvehicles.pickup.driverAssistsPrice;
 
   const deliveryFeePerKmVan = lalamovedeliveryvehicles.van.deliveryFeePerKm;
-  const minDelFeeVan = lalamovedeliveryvehicles.van.minDelFee
+  const minDelFeeVan = lalamovedeliveryvehicles.van.minDelFee;
   const maxWeightVan = lalamovedeliveryvehicles.van.maxWeight;
-  const driverAssistsVan = lalamovedeliveryvehicles.van.driverAssistsPrice
+  const driverAssistsVan = lalamovedeliveryvehicles.van.driverAssistsPrice;
 
   const deliveryFeePerKmClosedVan = lalamovedeliveryvehicles.closedvan.deliveryFeePerKm;
-  const minDelFeeClosedVan =  lalamovedeliveryvehicles.closedvan.minDelFee
+  const minDelFeeClosedVan = lalamovedeliveryvehicles.closedvan.minDelFee;
   const maxWeightClosedVan = lalamovedeliveryvehicles.closedvan.maxWeight;
-  const driverAssistsClosedVan = lalamovedeliveryvehicles.closedvan.driverAssistsPrice
-
-  function isPointInPolygon(point, polygon) {
-    let x = point[0],
-      y = point[1];
-    let inside = false;
-
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      let xi = polygon[i][0],
-        yi = polygon[i][1];
-      let xj = polygon[j][0],
-        yj = polygon[j][1];
-
-      let intersect =
-        yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-      if (intersect) inside = !inside;
-    }
-
-    return inside;
-  }
-
-  function checkDeliveryArea(deliveryPoint) {
-    
-    const locations = [
-      [lalamoveServiceArea, "lalamoveServiceArea"],
-      [iloiloArea, "iloiloArea"],
-      [leyteMaasinArea, "leyteMaasinArea"],
-      [cagayanDeOroArea, "cagayanDeOroArea"],
-      [surigaoArea, "surigaoArea"],
-      [butuanArea, "butuanArea"],
-      [dapitanArea, "dapitanArea"],
-      [zamboangaArea, "zamboangaArea"],
-      [pagadianArea, "pagadianArea"],
-      [davaoArea, "davaoArea"],
-      [generalSantosArea, "generalSantosArea"],
-      [bacolodArea, "bacolodArea"],
-      [dumagueteArea, "dumagueteArea"],
-      [boholArea, "boholArea"],
-      [masbateArea, "masbateArea"],
-      [manilaArea, "manilaArea"],
-      [samarArea, "samarArea"],
-      [leytePalomponArea, "leytePalomponArea"],
-    ];
-
-    const locationsInDeliveryPoint = [];
-
-    locations.map((location) => {
-      const polygon = location[0];
-      const name = location[1];
-      const result = isPointInPolygon(deliveryPoint, polygon);
-
-      if (result) {
-        locationsInDeliveryPoint.push(name);
-      }
-    });
-    console.log(locationsInDeliveryPoint);
-    setArea(locationsInDeliveryPoint);
-    return locationsInDeliveryPoint;
-  }
+  const driverAssistsClosedVan = lalamovedeliveryvehicles.closedvan.driverAssistsPrice;
 
   useEffect(() => {
-    console.log(locallatitude, locallongitude)
-    console.log("lat","lng")
-    const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(paperboylatitude,paperboylongitude,locallatitude,locallongitude);
-    console.log(totaldifference)
+    const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
+      paperboylatitude,
+      paperboylongitude,
+      locallatitude,
+      locallongitude
+    );
     const kilometers = businesscalculations.convertTotalDifferenceToKilometers(totaldifference);
-    const deliveryLocation = [locallatitude, locallongitude];
-    const areasInsideDeliveryLocation = checkDeliveryArea(deliveryLocation);
-
-    if (areasInsideDeliveryLocation.includes("lalamoveServiceArea")) {
-      if (totalWeight <= maxWeightMotor) {
-        let deliveryfee = kilometers * deliveryFeePerKmMotor;
-        if (deliveryfee < minDelFeeMotor) {
-          deliveryfee = minDelFeeMotor;
-        }
-
-        setDeliveryFee(Math.round(deliveryfee));
-        setDeliveryVehicle(["Motorcycle", maxWeightMotor]);
-      }
-
-      if (totalWeight > maxWeightMotor && totalWeight <= maxWeightSedan) {
-        const assistance = needAssistance ? driverAssistsSedan : 0;
-        let deliveryfee = kilometers * deliveryFeePerKmSedan;
-
-        if (deliveryfee < minDelFeeSedan) {
-          deliveryfee = minDelFeeSedan;
-        }
-
-        setDeliveryFee(Math.round(deliveryfee + assistance));
-        setDeliveryVehicle(["Sedan", maxWeightSedan]);
-      }
-
-      if (totalWeight > maxWeightSedan && totalWeight <= maxWeightMPV) {
-        const assistance = needAssistance ? driverAssistsMPV : 0;
-        let deliveryfee = kilometers * deliveryFeePerKmMPV;
-
-        if (deliveryfee < minDelFeeMPV) {
-          deliveryfee = minDelFeeMPV;
-        }
-        setDeliveryFee(Math.round(deliveryfee + assistance));
-        setDeliveryVehicle(["MPV", maxWeightMPV]);
-      }
-
-      if (totalWeight > maxWeightMPV && totalWeight <= maxWeightPickUp) {
-        const assistance = needAssistance ? driverAssistsPickUp : 0;
-        let deliveryfee = kilometers * deliveryFeePerKmPickUp;
-
-        if (deliveryfee < minDelFeePickUp) {
-          deliveryfee = minDelFeePickUp;
-        }
-
-        setDeliveryFee(Math.round(deliveryfee + assistance));
-        setDeliveryVehicle(["Pick Up", maxWeightPickUp]);
-      }
-
-      if (totalWeight > maxWeightPickUp && totalWeight <= maxWeightVan) {
-        const assistance = needAssistance ? driverAssistsVan : 0;
-
-        let deliveryfee = kilometers * deliveryFeePerKmVan;
-
-        if (deliveryfee < minDelFeeVan) {
-          deliveryfee = minDelFeeVan;
-        }
-
-        setDeliveryFee(Math.round(deliveryfee + assistance));
-        setDeliveryVehicle(["Van", maxWeightVan]);
-      }
-
-      if (totalWeight > maxWeightVan && totalWeight <= maxWeightClosedVan) {
-        const assistance = needAssistance ? driverAssistsClosedVan : 0;
-        let deliveryfee = kilometers * deliveryFeePerKmClosedVan;
-
-        if (deliveryfee < minDelFeeClosedVan) {
-          deliveryfee = minDelFeeClosedVan;
-        }
-
-        setDeliveryFee(Math.round(deliveryfee + assistance));
-        setDeliveryVehicle(["Closed Van", maxWeightClosedVan]);
-        // }
-      }
+    const areasInsideDeliveryLocation = businesscalculations.getLocationsInPoint(locallatitude, locallongitude);
+    setArea(areasInsideDeliveryLocation);
+    const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
+    if (inLalamoveSericeArea) {
+      console.log(needAssistance)
+      const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight)
+      const deliveryFee = businesscalculations.getDeliveryFee(kilometers,vehicleObject,needAssistance);
+      console.log(deliveryFee)
+      setDeliveryFee(deliveryFee);
+      setDeliveryVehicle(vehicleObject);
+    
     }
 
-    if (
-      !areasInsideDeliveryLocation.includes("lalamoveServiceArea") &&
-      area.length > 0
-    ) {
+    if (!areasInsideDeliveryLocation.includes('lalamoveServiceArea') && area.length > 0) {
       setDeliveryFee(500);
-      setDeliveryVehicle(["Shipping Lines", 0]);
+      setDeliveryVehicle(['Shipping Lines', 0]);
     }
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
@@ -301,7 +177,7 @@ const CheckoutPage = () => {
       date.getMonth().toString() +
       date.getDate().toString() +
       date.getFullYear().toString() +
-      "-" +
+      '-' +
       randomNumber
     );
   }
@@ -333,45 +209,37 @@ const CheckoutPage = () => {
       return counts;
     }
     // CONFIRM AGAIN IF STOCKS AVAILABLE
-    let message =
-      "Unfortunately someone else might have bought the stocks listed below. \n \n";
+    let message = 'Unfortunately someone else might have bought the stocks listed below. \n \n';
     let outOfStockDetected = false;
     const count = countStrings(cart);
     const countEntries = Object.entries(count);
     const calculations = new businessCalculations();
     const products = await firestore.readAllProducts();
-    
+
     countEntries.map(([itemid, quantity]) => {
       console.log(itemid, quantity);
-      products.map((dataitem) => { 
+      products.map((dataitem) => {
         if (dataitem.itemid === itemid) {
-          const stocksAvailableLessSafetyStock = calculations.getStocksAvailableLessSafetyStock(dataitem.stocksAvailable,dataitem.averageSalesPerDay)
+          const stocksAvailableLessSafetyStock = calculations.getStocksAvailableLessSafetyStock(
+            dataitem.stocksAvailable,
+            dataitem.averageSalesPerDay
+          );
           if (stocksAvailableLessSafetyStock < quantity) {
-      
             message = message + `${dataitem.itemname} - ${stocksAvailableLessSafetyStock} stocks left \n`;
-            console.log(
-              itemid,
-              "firestore:",
-              stocksAvailableLessSafetyStock,
-              "order:",
-              quantity
-            );
-            outOfStockDetected = true
-            
+            console.log(itemid, 'firestore:', stocksAvailableLessSafetyStock, 'order:', quantity);
+            outOfStockDetected = true;
           }
         }
       });
-      message += "\nPlease refresh the page to see the updated stocks."
+      message += '\nPlease refresh the page to see the updated stocks.';
     });
-    
 
     if (outOfStockDetected) {
       console.log(message);
-      return [true,message] }
-    else {
-      return [false,message]
+      return [true, message];
+    } else {
+      return [false, message];
     }
-    
   }
 
   useEffect(() => {
@@ -382,21 +250,22 @@ const CheckoutPage = () => {
     // setLaunchPayMayaCheckout(true)
 
     // CHECK FOR OUT OF STOCKS
-    console.log('ran')
+    console.log('ran');
     checkStocksIfAvailableInFirestore().then((result) => {
-      const [outOfStockDetected,message] = result
+      const [outOfStockDetected, message] = result;
       if (outOfStockDetected) {
-        alert(message)
-        return
+        alert(message);
+        return;
       }
-    })
-    
-    console.log('ran ran ran ran')
-    if (userstate === "userloaded") {
+    });
+
+    console.log('ran ran ran ran');
+    if (userstate === 'userloaded') {
       try {
         // setLaunchPayMayaCheckout(true);
         if (securityOrderDataIsValid()) {
-          console.log( [userdata.uid,
+          console.log([
+            userdata.uid,
             localDeliveryAddress,
             locallatitude,
             locallongitude,
@@ -417,7 +286,8 @@ const CheckoutPage = () => {
             deliveryNotes,
             totalWeight,
             deliveryVehicle[0],
-            needAssistance]);
+            needAssistance,
+          ]);
           // firestore
           //   .transactionPlaceOrder(
           //     userdata.uid,
@@ -443,15 +313,15 @@ const CheckoutPage = () => {
           //     deliveryVehicle[0],
           //     needAssistance
           //   )
-            // .then(() => {
-            //   setCart([]);
-            // });
+          // .then(() => {
+          //   setCart([]);
+          // });
         } else {
-          alert("Please fill up all the fields.");
+          alert('Please fill up all the fields.');
         }
       } catch (error) {
-        console.log("error");
-        alert("Failed to place order. Please try again.");
+        console.log('error');
+        alert('Failed to place order. Please try again.');
       }
     }
   }
@@ -481,7 +351,7 @@ const CheckoutPage = () => {
     setVat(total * 0.12);
     setGrandTotal(total + vat + deliveryFee);
 
-    if (!area.includes("lalamoveServiceArea") && area.length > 0) {
+    if (!area.includes('lalamoveServiceArea') && area.length > 0) {
       if (total < 10000) setAllowShipping(false);
       else {
         setAllowShipping(true);
@@ -494,37 +364,35 @@ const CheckoutPage = () => {
   useEffect(() => {}, [deliveryaddress]);
 
   function responsiveAssistancePrice() {
-    if (deliveryVehicle[0] == "Motorcycle") {
+    if (deliveryVehicle[0] == 'Motorcycle') {
       return driverAssistsMotor;
     }
 
-    if (deliveryVehicle[0] == "Sedan") {
+    if (deliveryVehicle[0] == 'Sedan') {
       return driverAssistsSedan;
     }
-    if (deliveryVehicle[0] == "MPV") {
+    if (deliveryVehicle[0] == 'MPV') {
       return driverAssistsMPV;
     }
-    if (deliveryVehicle[0] == "Pick Up") {
+    if (deliveryVehicle[0] == 'Pick Up') {
       return driverAssistsPickUp;
     }
-    if (deliveryVehicle[0] == "Van") {
+    if (deliveryVehicle[0] == 'Van') {
       return driverAssistsVan;
     }
-    if (deliveryVehicle[0] == "Closed Van") {
+    if (deliveryVehicle[0] == 'Closed Van') {
       return driverAssistsClosedVan;
     }
   }
 
   return (
     <div className="flex flex-col">
-      <CheckoutPageContext.Provider
-        value={[payMayaCardSelected, setPayMayaCardSelected]}
-      >
+      <CheckoutPageContext.Provider value={[payMayaCardSelected, setPayMayaCardSelected]}>
         {/* <PaymentMethods /> */}
         {launchPayMayaCheckout ? (
           <PaymentMenuCard
-            firstname={localname.split(" ")[0]}
-            lastname={localname.split(" ")[1]}
+            firstname={localname.split(' ')[0]}
+            lastname={localname.split(' ')[1]}
             email={localemail}
             phonenumber={localphonenumber}
             totalprice={grandtotal}
@@ -534,12 +402,13 @@ const CheckoutPage = () => {
 
       <div className="flex flex-row my-5 ">
         <div className="flex justify-center w-full mt-5 ml-5 ">
-          <Typography variant="h5" className="bold" sx={{ fontWeight: "bold" }}>
+          <Typography variant="h5" className="bold" sx={{ fontWeight: 'bold' }}>
             Delivery Address
           </Typography>
         </div>
         <div className="flex justify-center w-full">
-          <button data-testid="selectFromSavedAddressButton"
+          <button
+            data-testid="selectFromSavedAddressButton"
             className="bg-blue-300 p-3 rounded-lg mx-5 "
             onClick={handleOpenModalSavedAddress}
           >
@@ -573,19 +442,12 @@ const CheckoutPage = () => {
 
         <div className="flex flex-row my-5 ">
           <div className="flex justify-center w-full mt-7 ml-5 ">
-            <Typography
-              variant="h5"
-              className="bold"
-              sx={{ fontWeight: "bold" }}
-            >
+            <Typography variant="h5" className="bold" sx={{ fontWeight: 'bold' }}>
               Contact Details
             </Typography>
           </div>
           <div className="flex justify-center w-full">
-            <button
-              className="bg-blue-300 p-3 rounded-lg mt-2 mx-5"
-              onClick={handleOpenContactModal}
-            >
+            <button className="bg-blue-300 p-3 rounded-lg mt-2 mx-5" onClick={handleOpenContactModal}>
               Select From Saved Contacts
             </button>
           </div>
@@ -597,7 +459,7 @@ const CheckoutPage = () => {
           variant="filled"
           className="w-full"
           onChange={(event) => setLocalPhoneNumber(event.target.value)}
-          value={localphonenumber || ""}
+          value={localphonenumber || ''}
           sx={{ marginTop: 1 }}
         />
         <TextField
@@ -606,7 +468,7 @@ const CheckoutPage = () => {
           variant="filled"
           className="w-full"
           onChange={(event) => setLocalName(event.target.value)}
-          value={localname || ""}
+          value={localname || ''}
           sx={{ marginTop: 1 }}
         />
       </div>
@@ -627,183 +489,143 @@ const CheckoutPage = () => {
             </div>
           ) : (
             <>
-              {area.includes("lalamoveServiceArea") ? (
+              {area.includes('lalamoveServiceArea') ? (
                 <div>
                   <div className="flex justify-center mt-5">
-                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                       Assistance
                     </Typography>
                   </div>
                   <div className="flex justify-center mt-5">
                     <Typography variant="h6">
                       Driver helps unload items?
-                      {deliveryVehicle != null
-                        ? " ₱" + responsiveAssistancePrice()
-                        : null}
+                      {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
                     </Typography>
-                    <Switch
-                      {...label}
-                      color="success"
-                      onClick={() => setNeedAssistance(!needAssistance)}
-                    />
+                    <Switch {...label} color="success" onClick={() => setNeedAssistance(!needAssistance)} />
                   </div>
                 </div>
               ) : null}
 
-              {area.includes("lalamoveServiceArea") ||
-              area.length == 0 ? null : (
+              {area.includes('lalamoveServiceArea') || area.length == 0 ? null : (
                 <div className="flex justify-center mt-5 mb-5">
-                  <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                     Shipping Option
                   </Typography>
                 </div>
               )}
 
-              {area.includes("davaoArea") ? (
+              {area.includes('davaoArea') ? (
                 <div className="flex flex-col justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Davao Port via Sulpicio Lines
+                  <Typography variant="h6">We can ship to Davao Port via Sulpicio Lines</Typography>
+                  <Typography variant="h6" sx={{ marginTop: 2 }}>
+                    When we ship to your place we will charge 500 pesos to deliver it to the port. This includes Cebu
+                    Port Authority, and Handling Charges.
                   </Typography>
                   <Typography variant="h6" sx={{ marginTop: 2 }}>
-                    When we ship to your place we will charge 500 pesos to
-                    deliver it to the port. This includes Cebu Port Authority,
-                    and Handling Charges.
-                  </Typography>
-                  <Typography variant="h6" sx={{ marginTop: 2 }}>
-                    In order to claim the items from the Port you need to pay
-                    the shipping fee in their office.
+                    In order to claim the items from the Port you need to pay the shipping fee in their office.
                   </Typography>
                 </div>
               ) : null}
 
-              {area.includes("iloiloArea") ? (
+              {area.includes('iloiloArea') ? (
+                <div className="flex justify-center text-center mx-10">
+                  <Typography variant="h6">We can ship to Iloilo Port via Cokaliong or Trans Asia</Typography>
+                </div>
+              ) : null}
+
+              {area.includes('leyteMaasinArea') ? (
+                <div className="flex justify-center text-center mx-10">
+                  <Typography variant="h6">We can ship to Leyte Maasin Port via Cokaliong.</Typography>
+                </div>
+              ) : null}
+
+              {area.includes('cagayanDeOroArea') ? (
                 <div className="flex justify-center text-center mx-10">
                   <Typography variant="h6">
-                    We can ship to Iloilo Port via Cokaliong or Trans Asia
+                    We can ship to Cagayan De Oro Port cia Trans Asia, Cokaliong or Sulpicio.
                   </Typography>
                 </div>
               ) : null}
 
-              {area.includes("leyteMaasinArea") ? (
+              {area.includes('surigaoArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Leyte Maasin Port via Cokaliong.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Surigao Port via Cokaliong.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("cagayanDeOroArea") ? (
+              {area.includes('butuanArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Cagayan De Oro Port cia Trans Asia, Cokaliong
-                    or Sulpicio.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Butuan Port via Cokaliong.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("surigaoArea") ? (
+              {area.includes('dapitanArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Surigao Port via Cokaliong.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Dapitan Port via Cokaliong.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("butuanArea") ? (
+              {area.includes('zamboangaArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Butuan Port via Cokaliong.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Zamboanga Port via Alison.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("dapitanArea") ? (
+              {area.includes('pagadianArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Dapitan Port via Cokaliong.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Pagadian Port via Roble.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("zamboangaArea") ? (
-                <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Zamboanga Port via Alison.
-                  </Typography>
-                </div>
-              ) : null}
-
-              {area.includes("pagadianArea") ? (
-                <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Pagadian Port via Roble.
-                  </Typography>
-                </div>
-              ) : null}
-
-              {area.includes("generalSantosArea text-center mx-10") ? (
+              {area.includes('generalSantosArea text-center mx-10') ? (
                 <div className="flex justify-center">
+                  <Typography variant="h6">We can ship to General Santos Port via Sulpicio.</Typography>
+                </div>
+              ) : null}
+
+              {area.includes('bacolodArea text-center mx-10') ? (
+                <div className="flex justify-center text-center mx-10">
                   <Typography variant="h6">
-                    We can ship to General Santos Port via Sulpicio.
+                    We can ship to Bacolod Port via Diamante trucking, or your preferred logistics company.
                   </Typography>
                 </div>
               ) : null}
 
-              {area.includes("bacolodArea text-center mx-10") ? (
+              {area.includes('dumagueteArea text-center mx-10') ? (
                 <div className="flex justify-center text-center mx-10">
                   <Typography variant="h6">
-                    We can ship to Bacolod Port via Diamante trucking, or your
-                    preferred logistics company.
+                    We can ship to Dumaguete using Matiao Trucking, or your preferred logistics company.
                   </Typography>
                 </div>
               ) : null}
 
-              {area.includes("dumagueteArea text-center mx-10") ? (
+              {area.includes('boholArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Dumaguete using Matiao Trucking, or your
-                    preferred logistics company.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Bohol Port via Lite Shipping.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("boholArea") ? (
+              {area.includes('masbateArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Bohol Port via Lite Shipping.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Masbate Port via Cokaliong.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("masbateArea") ? (
+              {area.includes('manilaArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Masbate Port via Cokaliong.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Manila Port via 2GO, or Cokaliong.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("manilaArea") ? (
+              {area.includes('samarArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Manila Port via 2GO, or Cokaliong.
-                  </Typography>
+                  <Typography variant="h6">We can ship to Samar Port via Cokaliong.</Typography>
                 </div>
               ) : null}
 
-              {area.includes("samarArea") ? (
+              {area.includes('leytePalomponArea') ? (
                 <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Samar Port via Cokaliong.
-                  </Typography>
-                </div>
-              ) : null}
-
-              {area.includes("leytePalomponArea") ? (
-                <div className="flex justify-center text-center mx-10">
-                  <Typography variant="h6">
-                    We can ship to Leyte Palompon Port via Cokaliong
-                  </Typography>
+                  <Typography variant="h6">We can ship to Leyte Palompon Port via Cokaliong</Typography>
                 </div>
               ) : null}
 
@@ -813,7 +635,7 @@ const CheckoutPage = () => {
               )} */}
 
               <div className="flex justify-center my-5">
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                   Checkout Summary
                 </Typography>
               </div>
@@ -827,7 +649,7 @@ const CheckoutPage = () => {
                   grandtotal={grandtotal}
                   totalWeight={totalWeight}
                   setTotalWeight={setTotalWeight}
-                  deliveryVehicle={deliveryVehicle}
+                  deliveryVehicleObject={deliveryVehicle}
                   setDeliveryVehicle={setDeliveryVehicle}
                   area={area}
                 />
@@ -835,7 +657,7 @@ const CheckoutPage = () => {
               <Divider sx={{ marginTop: 3 }} />
 
               <div className="flex justify-center mt-5">
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                   Payment
                 </Typography>
               </div>
@@ -858,8 +680,8 @@ const CheckoutPage = () => {
                   onClick={onPlaceOrder}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-5"
                 >
-                  {" "}
-                  Place Order{" "}
+                  {' '}
+                  Place Order{' '}
                 </button>
               </div>
             </>

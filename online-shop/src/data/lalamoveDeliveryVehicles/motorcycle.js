@@ -4,6 +4,7 @@ class motorcycle {
         this.maxWeight = 20
         this.minDelFee = 65
         this.driverAssistsPrice = 0
+        this.name = 'motorcycle'
     }
 }
 

@@ -4,6 +4,7 @@ class pickup {
         this.maxWeight = 600
         this.minDelFee = 230
         this.driverAssistsPrice = 200
+        this.name='pickup'
     }
 }
 

@@ -50,7 +50,8 @@ const CheckoutSummary = (props) => {
   const vat = props.vat;
   const setTotalWeight = props.setTotalWeight;
   const totalWeight = props.totalWeight;
-  const deliveryVehicle = props.deliveryVehicle;
+  const deliveryVehicle = props.deliveryVehicleObject.name
+  const maxWeight = props.deliveryVehicleObject.maxWeight
   const area = props.area
 
 
@@ -155,8 +156,8 @@ const CheckoutSummary = (props) => {
             <div className="flex w-full flex-col mt-5 ml-5 items-start">
               {area.includes('lalamoveServiceArea') ? 
               <div>
-                <Typography variant="h5">Delivery Vehicle : {deliveryVehicle[0]}</Typography>
-                <Typography variant="h5"> Max Weight : {deliveryVehicle[1]} Kg</Typography>
+                <Typography variant="h5">Delivery Vehicle : {deliveryVehicle}</Typography>
+                <Typography variant="h5"> Max Weight : {maxWeight} Kg</Typography>
               </div>
               : null}
               <Typography variant="h5">Weight of Items: {totalWeight} Kg</Typography>

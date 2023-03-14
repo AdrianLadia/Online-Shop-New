@@ -4,6 +4,7 @@ class van {
         this.maxWeight = 1000
         this.minDelFee = 320
         this.driverAssistsPrice = 200
+        this.name = 'van'
     }
 }
 

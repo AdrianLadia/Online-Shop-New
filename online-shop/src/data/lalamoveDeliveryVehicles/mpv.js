@@ -4,6 +4,7 @@ class mpv {
         this.maxWeight = 300
         this.minDelFee = 130
         this.driverAssistsPrice = 200
+        this.name = 'mpv'
     }
 }
 

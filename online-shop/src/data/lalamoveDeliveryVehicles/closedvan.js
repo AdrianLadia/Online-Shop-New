@@ -4,6 +4,7 @@ class closedvan {
         this.maxWeight = 2000
         this.minDelFee = 1500
         this.driverAssistsPrice = 200
+        this.name = "closedvan"
     }
 }
 
