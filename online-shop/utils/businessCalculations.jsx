@@ -20,7 +20,23 @@ class businessCalculations {
     return counts;
   }
 
-  
+  getLatitudeDifferenceOfPaperboyAndSelectedLocation(paperboylatitude, selectedlatitudem) {
+    return Math.abs(paperboylatitude - selectedlatitudem)
+  }
+
+  getLongitudeDifferenceOfPaperboyAndSelectedLocation(paperboylongitude, selectedlongitudem) {
+    return Math.abs(paperboylongitude - selectedlongitudem)
+  }
+
+  getTotalDifferenceOfPaperboyAndSelectedLocation(paperboylatitude, paperboylongitude, selectedlatitudem, selectedlongitudem) {
+    const latdifference = this.getLatitudeDifferenceOfPaperboyAndSelectedLocation(paperboylatitude, selectedlatitudem)
+    const longdifference = this.getLongitudeDifferenceOfPaperboyAndSelectedLocation(paperboylongitude, selectedlongitudem)
+    return latdifference + longdifference
+  }
+
+  convertTotalDifferenceToKilometers(totaldifference) {
+    return totaldifference * 111.1
+  }
 }
 
 export default businessCalculations;

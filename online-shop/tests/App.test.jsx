@@ -5,12 +5,15 @@ import dataManipulation from "../utils/dataManipulation";
 import firestoredb from "../src/components/firestoredb";
 import { initializeApp } from "firebase/app";
 import firebaseConfig from "../src/firebase_config";
-import { runTransaction } from "firebase/firestore";
+import paperBoyLocation from "../src/data/paperBoyLocation";
 //
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
 const firestore = new firestoredb(app, true);
 const user = await firestore.readUserById("PN4JqXrjsGfTsCUEEmaR5NO6rNF3");
+const businesscalculations = new businessCalculations();
+const paperboylocation = new paperBoyLocation();
+
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,16 +21,14 @@ function delay(ms) {
 
 describe("Business Calcualtions", () => {
   test("getSafetyStock", () => {
-    const bCalculations = new businessCalculations();
     const averageSalesPerDay = 20;
-    expect(bCalculations.getSafetyStock(averageSalesPerDay)).toBe(40);
+    expect(businesscalculations.getSafetyStock(averageSalesPerDay)).toBe(40);
   });
   test("getStocksAvailableLessSafetyStock", () => {
-    const bCalculations = new businessCalculations();
     const stocksAvailable = 100;
     const safetyStock = 40;
     expect(
-      bCalculations.getStocksAvailableLessSafetyStock(
+      businesscalculations.getStocksAvailableLessSafetyStock(
         stocksAvailable,
         safetyStock
       )
@@ -35,14 +36,22 @@ describe("Business Calcualtions", () => {
   });
   test("getCartCount", async () => {
     const cart = user.cart;
-    const bCalculations = new businessCalculations();
-    expect(bCalculations.getCartCount(cart)).toEqual({
+    expect(businesscalculations.getCartCount(cart)).toEqual({
       "PPB#1": 5,
       "PPB#10": 5,
       "PPB#12": 3,
       "PPB#16": 3,
     });
   });
+  test('getTotalDifferenceOfPaperboyAndSelectedLocation', () => {
+    const paperboylatitude = paperboylocation.latitude
+    const paperboylongitude = paperboylocation.longitude
+    const selectedlatitude = 10.333629311391931
+    const selectedlongitude = 123.93851059905926
+    const expected = 0.031733047732064534
+    const difference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(paperboylatitude, paperboylongitude, selectedlatitude, selectedlongitude)
+    expect(difference).toBe(expected)
+  })
 });
 
 describe("Data Manipulation", () => {
@@ -351,6 +360,15 @@ describe("Data Manipulation", () => {
       expect(order.delivered).toEqual(true);
     });
   });
+  test('getCategoryList', async () => {
+    const categories = await firestore.readAllCategories()
+    const allCategories = datamanipulation.getCategoryList(categories)
+    const expected = ['Favorites']
+    categories.map(category => {
+      expected.push(category.category)
+    })
+    expect(allCategories).toEqual(expected)
+  })
 });
 
 describe("Emulator", () => {
