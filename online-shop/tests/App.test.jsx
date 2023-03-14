@@ -504,6 +504,8 @@ describe("Transaction Place Order", async () => {
 
 });
 
+
+
 describe("Database", () => {
   test("readAllParentProducts", async () => {
     const data = await firestore.readAllParentProducts();
