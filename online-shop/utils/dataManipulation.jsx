@@ -122,7 +122,6 @@ class dataManipulation {
     return undefined;
   }
 
-  
   filterOrders(orders, startDate, referenceNumber, delivered, paid, selectedName) {
     let filterPaid = null;
     let filterUnpaid = null;
@@ -156,7 +155,7 @@ class dataManipulation {
         dataFilteredByDate.push(order);
       }
     });
-    
+
     const dataFilteredByName = [];
     dataFilteredByDate.map((order) => {
       if (filterName === true) {
@@ -167,7 +166,7 @@ class dataManipulation {
         dataFilteredByName.push(order);
       }
     });
-    
+
     const dataFilteredByDelivered = [];
     dataFilteredByName.map((order) => {
       if (delivered === true) {
@@ -184,7 +183,7 @@ class dataManipulation {
         dataFilteredByDelivered.push(order);
       }
     });
-    
+
     const dataFilteredByPaid = [];
     dataFilteredByDelivered.map((order) => {
       if (paid === true) {
@@ -203,13 +202,54 @@ class dataManipulation {
     });
     return dataFilteredByPaid;
   }
-  
+
   getCategoryList(categories) {
     const c = ['Favorites'];
     categories.map((category) => {
       c.push(category.category);
     });
-    return c
+    return c;
+  }
+
+  getCheckoutPageTableDate(product_list, cart) {
+
+    function createData(itemimage, itemname, itemquantity, itemprice, itemtotal, weighttotal) {
+      return { itemimage, itemname, itemquantity, itemprice, itemtotal, weighttotal };
+    }
+
+    let rows_non_state = [];
+    let total_non_state = 0;
+    let total_weight_non_state = 0;
+    const items = [...new Set(cart)];
+    let item_count = {};
+    items.map((item, index) => {
+      item_count[item] = 0;
+    });
+
+    cart.map((item, index) => {
+      item_count[item] += 1;
+    });
+
+    Object.entries(item_count).map(([key, quantity]) => {
+      product_list.map((product) => {
+        if (product.itemid === key) {
+          total_weight_non_state += product.weight * quantity;
+          total_non_state += product.price * quantity;
+
+          let row = createData(
+            product.imagelinks[0],
+            product.itemname,
+            quantity.toLocaleString(),
+            parseInt(product.price).toLocaleString(),
+            (product.price * quantity).toLocaleString(),
+            total_weight_non_state
+          );
+          rows_non_state.push(row);
+        }
+      });
+    });
+
+    return [rows_non_state,total_non_state,total_weight_non_state];
   }
   // convertTimestampToFirebaseTimestamp(timestamp) {
   //   const date = new Date(timestamp.seconds * 1000);

@@ -125,6 +125,21 @@ describe('Business Calcualtions', () => {
       'PPB#1',
     ]);
   });
+  test('getValueAddedTax', () => {
+    const subtotal = 100;
+    const expected = 12;
+    const vat = businesscalculations.getValueAddedTax(subtotal);
+    expect(vat).toBe(expected);
+  });
+
+  test('getGrandTotalAmount', () => {
+    const subtotal = 100;
+    const vat = 12;
+    const deliveryfee = 10;
+    const expected = 122;
+    const grandtotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
+    expect(grandtotal).toBe(expected);
+  });
 });
 
 describe('Data Manipulation', () => {
@@ -378,6 +393,11 @@ describe('Data Manipulation', () => {
       expected.push(category.category);
     });
     expect(allCategories).toEqual(expected);
+  });
+  test('getCheckoutPageTableDate', async () => {
+    const products = await firestore.readAllProducts()
+    const cart = user.cart
+    const data = datamanipulation.getCheckoutPageTableDate(products,cart)
   });
 });
 
