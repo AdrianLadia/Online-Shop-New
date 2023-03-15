@@ -315,7 +315,7 @@ class firestorefunctions {
             orderAcceptedByClientDate : null,
             clientIDWhoAcceptedOrder : null,
             totalWeight : totalWeight,
-            deliveryVehicle : deliveryVehicle,
+            deliveryVehicle : deliveryVehicle.name,
             needAssistance : needAssistance,
             userid : userid
           }
@@ -332,7 +332,7 @@ class firestorefunctions {
 
       console.log("Checkout Transaction successfully committed!");
     } catch (e) {
-      console.log("Transaction failed: ", e);
+      console.error("Transaction failed: ", e);
     }
   }
 
@@ -412,7 +412,7 @@ class firestorefunctions {
       });
       console.log("Transaction successfully committed!");
     } catch (e) {
-      console.log("Transaction failed: ", e);
+      console.error("Transaction failed: ", e);
     }
   }
 }

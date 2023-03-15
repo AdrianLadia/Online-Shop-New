@@ -22,6 +22,8 @@ import serviceAreas from '../data/serviceAreas';
 import paperBoyLocation from '../data/paperBoyLocation';
 import lalamoveDeliveryVehicles from '../data/lalamoveDeliveryVehicles';
 import dataManipulation from '../../utils/dataManipulation';
+import dataValidation from '../../utils/dataValidation';
+import orderData from '../data/orderData';
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
@@ -65,6 +67,7 @@ const CheckoutPage = () => {
   const [deliveryFee, setDeliveryFee] = React.useState(0);
   const [grandtotal, setGrandTotal] = React.useState(0);
   const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
+  const [orderDataObject, setOrderDataObject] = React.useState(null);
 
   const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
   const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
@@ -82,64 +85,14 @@ const CheckoutPage = () => {
   const [deliveryVehicle, setDeliveryVehicle] = useState(null);
   const [needAssistance, setNeedAssistance] = useState(false);
   const [area, setArea] = useState([]);
-  const [deliveryNotes, setDeliveryNotes] = useState(null);
+  const [deliveryNotes, setDeliveryNotes] = useState('');
   const [allowShipping, setAllowShipping] = useState(true);
-  const serviceareas = new serviceAreas();
+  const [useShippingLine, setUseShippingLine] = useState(false);
   const paperboylocation = new paperBoyLocation();
-  const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
-  const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
 
-  const lalamoveServiceArea = serviceareas.lalamoveServiceArea;
-  const iloiloArea = serviceareas.iloiloArea;
-  const bacolodArea = serviceareas.bacolodArea;
-  const dumagueteArea = serviceareas.dumagueteArea;
-  const boholArea = serviceareas.boholArea;
-  const masbateArea = serviceareas.masbateArea;
-  const manilaArea = serviceareas.manilaArea;
-  const samarArea = serviceareas.samarArea;
-  const leyteMaasinArea = serviceareas.leyteMaasinArea;
-  const leytePalomponArea = serviceareas.leytePalomponArea;
-  const cagayanDeOroArea = serviceareas.cagayanDeOroArea;
-  const surigaoArea = serviceareas.surigaoArea;
-  const butuanArea = serviceareas.butuanArea;
-  const dapitanArea = serviceareas.dapitanArea;
-  const zamboangaArea = serviceareas.zamboangaArea;
-  const pagadianArea = serviceareas.pagadianArea;
-  const davaoArea = serviceareas.davaoArea;
-  const generalSantosArea = serviceareas.generalSantosArea;
   const paperboylatitude = paperboylocation.latitude;
   const paperboylongitude = paperboylocation.longitude;
-
-  const deliveryFeePerKmMotor = lalamovedeliveryvehicles.motorcycle.deliveryFeePerKm;
-  const maxWeightMotor = lalamovedeliveryvehicles.motorcycle.maxWeight;
-  const minDelFeeMotor = lalamovedeliveryvehicles.motorcycle.minDelFee;
-  const driverAssistsMotor = lalamovedeliveryvehicles.motorcycle.driverAssistsPrice;
-
-  const deliveryFeePerKmSedan = lalamovedeliveryvehicles.sedan.deliveryFeePerKm;
-  const minDelFeeSedan = lalamovedeliveryvehicles.sedan.minDelFee;
-  const maxWeightSedan = lalamovedeliveryvehicles.sedan.maxWeight;
-  const driverAssistsSedan = lalamovedeliveryvehicles.sedan.driverAssistsPrice;
-
-  const deliveryFeePerKmMPV = lalamovedeliveryvehicles.mpv.deliveryFeePerKm;
-  const minDelFeeMPV = lalamovedeliveryvehicles.mpv.minDelFee;
-  const maxWeightMPV = lalamovedeliveryvehicles.mpv.maxWeight;
-  const driverAssistsMPV = lalamovedeliveryvehicles.mpv.driverAssistsPrice;
-
-  const deliveryFeePerKmPickUp = lalamovedeliveryvehicles.pickup.deliveryFeePerKm;
-  const minDelFeePickUp = lalamovedeliveryvehicles.pickup.minDelFee;
-  const maxWeightPickUp = lalamovedeliveryvehicles.pickup.maxWeight;
-  const driverAssistsPickUp = lalamovedeliveryvehicles.pickup.driverAssistsPrice;
-
-  const deliveryFeePerKmVan = lalamovedeliveryvehicles.van.deliveryFeePerKm;
-  const minDelFeeVan = lalamovedeliveryvehicles.van.minDelFee;
-  const maxWeightVan = lalamovedeliveryvehicles.van.maxWeight;
-  const driverAssistsVan = lalamovedeliveryvehicles.van.driverAssistsPrice;
-
-  const deliveryFeePerKmClosedVan = lalamovedeliveryvehicles.closedvan.deliveryFeePerKm;
-  const minDelFeeClosedVan = lalamovedeliveryvehicles.closedvan.minDelFee;
-  const maxWeightClosedVan = lalamovedeliveryvehicles.closedvan.maxWeight;
-  const driverAssistsClosedVan = lalamovedeliveryvehicles.closedvan.driverAssistsPrice;
 
   useEffect(() => {
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
@@ -153,19 +106,45 @@ const CheckoutPage = () => {
     setArea(areasInsideDeliveryLocation);
     const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
-      console.log(needAssistance)
-      const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight)
-      const deliveryFee = businesscalculations.getDeliveryFee(kilometers,vehicleObject,needAssistance);
-      console.log(deliveryFee)
+      console.log(needAssistance);
+      const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
+      const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
+      console.log(deliveryFee);
       setDeliveryFee(deliveryFee);
       setDeliveryVehicle(vehicleObject);
-    
     }
 
     if (!areasInsideDeliveryLocation.includes('lalamoveServiceArea') && area.length > 0) {
       setDeliveryFee(500);
-      setDeliveryVehicle(['Shipping Lines', 0]);
+      setDeliveryVehicle(null);
+      setUseShippingLine(true);
     }
+    let orderdata = null;
+    if (userdata) {
+      orderdata = new orderData(
+        userdata.uid,
+        userdata.phonenumber,
+        userdata.name,
+        localDeliveryAddress,
+        locallatitude,
+        locallongitude,
+        new Date(),
+        cart,
+        total,
+        vat,
+        deliveryFee,
+        grandtotal,
+        generateOrderReference(),
+        localname,
+        localphonenumber,
+        deliveryNotes,
+        totalWeight,
+        deliveryVehicle,
+        needAssistance
+      );
+    }
+
+    setOrderDataObject(orderdata);
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   function generateOrderReference() {
@@ -182,147 +161,24 @@ const CheckoutPage = () => {
     );
   }
 
-  function securityOrderDataIsValid() {
-    if (
-      localname.length > 0 &&
-      localphonenumber.length > 0 &&
-      localDeliveryAddress.length > 0 &&
-      locallatitude !== 0 &&
-      locallongitude !== 0 &&
-      grandtotal === total + vat + deliveryFee &&
-      grandtotal > 0 &&
-      cart.length > 0 &&
-      totalWeight > 0
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  async function checkStocksIfAvailableInFirestore() {
-    function countStrings(arr) {
-      const counts = {};
-      arr.forEach((str) => {
-        counts[str] = counts[str] ? counts[str] + 1 : 1;
-      });
-      return counts;
-    }
-    // CONFIRM AGAIN IF STOCKS AVAILABLE
-    let message = 'Unfortunately someone else might have bought the stocks listed below. \n \n';
-    let outOfStockDetected = false;
-    const count = countStrings(cart);
-    const countEntries = Object.entries(count);
-    const calculations = new businessCalculations();
-    const products = await firestore.readAllProducts();
-
-    countEntries.map(([itemid, quantity]) => {
-      console.log(itemid, quantity);
-      products.map((dataitem) => {
-        if (dataitem.itemid === itemid) {
-          const stocksAvailableLessSafetyStock = calculations.getStocksAvailableLessSafetyStock(
-            dataitem.stocksAvailable,
-            dataitem.averageSalesPerDay
-          );
-          if (stocksAvailableLessSafetyStock < quantity) {
-            message = message + `${dataitem.itemname} - ${stocksAvailableLessSafetyStock} stocks left \n`;
-            console.log(itemid, 'firestore:', stocksAvailableLessSafetyStock, 'order:', quantity);
-            outOfStockDetected = true;
-          }
-        }
-      });
-      message += '\nPlease refresh the page to see the updated stocks.';
-    });
-
+  async function onPlaceOrder() {
+    // Check if order has enough stocks
+    const readproducts = await firestore.readAllProducts();
+    const [outOfStockDetected, message] = await businesscalculations.checkStocksIfAvailableInFirestore(
+      readproducts,
+      cart
+    );
     if (outOfStockDetected) {
-      console.log(message);
-      return [true, message];
-    } else {
-      return [false, message];
+      alert(message);
+      return;
     }
-  }
 
-  useEffect(() => {
-    console.log(cart);
-  }, []);
-
-  function onPlaceOrder() {
-    // setLaunchPayMayaCheckout(true)
-
-    // CHECK FOR OUT OF STOCKS
-    console.log('ran');
-    checkStocksIfAvailableInFirestore().then((result) => {
-      const [outOfStockDetected, message] = result;
-      if (outOfStockDetected) {
-        alert(message);
-        return;
-      }
-    });
-
-    console.log('ran ran ran ran');
+    // Check if userstate is userloaded
     if (userstate === 'userloaded') {
-      try {
-        // setLaunchPayMayaCheckout(true);
-        if (securityOrderDataIsValid()) {
-          console.log([
-            userdata.uid,
-            localDeliveryAddress,
-            locallatitude,
-            locallongitude,
-            localphonenumber,
-            localname,
-            new Date(),
-            localname,
-            localDeliveryAddress,
-            localphonenumber,
-            cart,
-            total,
-            vat,
-            deliveryFee,
-            grandtotal,
-            generateOrderReference(),
-            userdata.name,
-            userdata.phonenumber,
-            deliveryNotes,
-            totalWeight,
-            deliveryVehicle[0],
-            needAssistance,
-          ]);
-          // firestore
-          //   .transactionPlaceOrder(
-          //     userdata.uid,
-          //     localDeliveryAddress,
-          //     locallatitude,
-          //     locallongitude,
-          //     localphonenumber,
-          //     localname,
-          //     new Date(),
-          //     localname,
-          //     localDeliveryAddress,
-          //     localphonenumber,
-          //     cart,
-          //     total,
-          //     vat,
-          //     deliveryFee,
-          //     grandtotal,
-          //     generateOrderReference(),
-          //     userdata.name,
-          //     userdata.phonenumber,
-          //     deliveryNotes,
-          //     totalWeight,
-          //     deliveryVehicle[0],
-          //     needAssistance
-          //   )
-          // .then(() => {
-          //   setCart([]);
-          // });
-        } else {
-          alert('Please fill up all the fields.');
-        }
-      } catch (error) {
-        console.log('error');
-        alert('Failed to place order. Please try again.');
-      }
+      // Place Order
+      // setLaunchPayMayaCheckout(true);
+      orderDataObject.transactionPlaceOrder();
+      setCart([]);
     }
   }
 
@@ -348,9 +204,6 @@ const CheckoutPage = () => {
   }, [userdata]);
 
   useEffect(() => {
-    setVat(total * 0.12);
-    setGrandTotal(total + vat + deliveryFee);
-
     if (!area.includes('lalamoveServiceArea') && area.length > 0) {
       if (total < 10000) setAllowShipping(false);
       else {
@@ -359,31 +212,17 @@ const CheckoutPage = () => {
     } else {
       setAllowShipping(true);
     }
-  }, [total, vat, grandtotal, deliveryFee, latitude, longitude, area]);
+  }, [area]);
 
-  useEffect(() => {}, [deliveryaddress]);
+  useEffect(() => {
+    const vat = businesscalculations.getValueAddedTax(total);
+    setVat(vat);
+  }, [total, vat, deliveryFee]);
 
-  function responsiveAssistancePrice() {
-    if (deliveryVehicle[0] == 'Motorcycle') {
-      return driverAssistsMotor;
-    }
-
-    if (deliveryVehicle[0] == 'Sedan') {
-      return driverAssistsSedan;
-    }
-    if (deliveryVehicle[0] == 'MPV') {
-      return driverAssistsMPV;
-    }
-    if (deliveryVehicle[0] == 'Pick Up') {
-      return driverAssistsPickUp;
-    }
-    if (deliveryVehicle[0] == 'Van') {
-      return driverAssistsVan;
-    }
-    if (deliveryVehicle[0] == 'Closed Van') {
-      return driverAssistsClosedVan;
-    }
-  }
+  useEffect(() => {
+    const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee);
+    setGrandTotal(grandTotal);
+  }, [grandtotal]);
 
   return (
     <div className="flex flex-col">

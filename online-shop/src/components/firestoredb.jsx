@@ -334,6 +334,10 @@ class firestoredb {
       stocksAvailable: stocksAvailable,
     });
   }
+
+  async addOrderDataToTests(orderData) {
+    this.firestore.updateDocumentFromCollection('Tests','orderData',{'data' : orderData})
+  }
 }
 
 export default firestoredb;
