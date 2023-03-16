@@ -23,7 +23,7 @@ const ProductList = () => {
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,
@@ -36,7 +36,6 @@ const ProductList = () => {
     setUserLoaded,
   ] = React.useContext(AppContext);
   const favorites = favoriteitems;
-  const firestore = new firestoredb();
 
   useEffect(() => {
     firestore.readAllProducts().then((products) => {

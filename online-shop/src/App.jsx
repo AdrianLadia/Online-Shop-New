@@ -20,8 +20,6 @@ function App() {
   
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
-  // Initialize Cloud Firestore and get a reference to the service
-  const db = getFirestore(app);
   // Get Authentication
   const auth = getAuth();
   // Initialize firestore class
@@ -116,7 +114,7 @@ function App() {
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,

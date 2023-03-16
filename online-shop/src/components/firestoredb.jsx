@@ -70,10 +70,6 @@ class firestoredb {
     return user;
   }
 
-  async createFavoriteItem(data, userid) {
-    this.firestore.updateDocumentFromCollection('Users', userid, data);
-  }
-
   async addItemToFavorites(userid, data) {
     console.log('ran');
     this.firestore.addDocumentArrayFromCollection('Users', userid, data, 'favoriteitems');
@@ -100,18 +96,6 @@ class firestoredb {
     return user.deliveryaddress;
   }
 
-  async updateAddress(userid, latitude, longitude, address) {
-    console.log('updating address');
-    this.readUserById(userid).then((user) => {
-      const userAddressList = user.deliveryaddress;
-      const newAddress = [{ latitude: latitude, longitude: longitude, address: address }];
-      const updatedAddressList = [...newAddress, ...userAddressList];
-
-      this.firestore.updateDocumentFromCollection('Users', userid, {
-        deliveryaddress: filteredData,
-      });
-    });
-  }
 
   async deleteAddress(userid, latitude, longitude, address) {
     console.log('deleting address');
@@ -136,26 +120,6 @@ class firestoredb {
       { name: name, phonenumber: phonenumber },
       'contactPerson'
     );
-  }
-
-  async updateContactPersons(userid, name, phonenumber) {
-    console.log('updating contact persons');
-    this.readUserById(userid).then((user) => {
-      const userContactPersonList = user.contactPerson;
-      const newContactPerson = [{ name: name, phonenumber: phonenumber }];
-      const updatedContactPersonList = [...newContactPerson, ...userContactPersonList];
-
-      // WE DO THIS TO REMOVE THE EMPTY CONTACT PERSONS THAT ARE CREATED WHEN THE USER DELETES THE LAST CONTACT PERSON
-      let filteredData = updatedContactPersonList.filter((item) => {
-        return item.name !== '' && item.phonenumber !== '';
-      });
-
-      // console.log(filteredData)
-
-      this.firestore.updateDocumentFromCollection('Users', userid, {
-        contactPerson: filteredData,
-      });
-    });
   }
 
   async updateLatitudeLongitude(userid, latitude, longitude) {

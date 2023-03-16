@@ -144,8 +144,7 @@ class firestorefunctions {
     collectionname,
     id,
     data,
-    arrayname,
-    localphonenumber
+    arrayname
   ) {
     const arrayRef = doc(this.db, collectionname + "/", id);
 

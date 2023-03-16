@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, use, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -42,7 +42,7 @@ const AccountMenu = (props) => {
     setLongitude,
     userstate,
     setUserState,
-  ] = useContext(AppContext);
+   ] = useContext(AppContext);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
 
@@ -79,6 +79,7 @@ const AccountMenu = (props) => {
     navigateTo("/accountstatement");
   }
 
+  useEffect(() => {console.log(userdata)}, []);
   
 
   return (

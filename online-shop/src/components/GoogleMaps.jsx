@@ -95,10 +95,8 @@ const GoogleMaps = (props) => {
     if (latitude === 0 && longitude === 0) {
       getLocation();
       setSelectedAddress(false);
-      setInfoVisible(true);
       setZoom(7);
     } else {
-      setInfoVisible(false);
       setLocalLatitude(latitude);
       setLocalLongitude(longitude);
       setSelectedAddress(true);

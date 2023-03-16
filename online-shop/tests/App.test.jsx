@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import businessCalculations from '../utils/businessCalculations';
 import dataManipulation from '../utils/dataManipulation';
@@ -148,11 +148,11 @@ describe('Business Calcualtions', () => {
     const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
     expect(newCart3).toEqual([...newCart]);
   });
-  test('addToCartWithQuantity' , () => {
+  test('addToCartWithQuantity', () => {
     const cart = user.cart;
-    const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5,cart);
+    const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5, cart);
     expect(newCart).toEqual([...cart, 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1']);
-  })
+  });
 });
 
 describe('Data Manipulation', () => {
@@ -427,12 +427,11 @@ describe('Data Manipulation', () => {
     ];
     expect(cart_data).toEqual(expected);
   });
-  test('getAllProductsInCategory', async ()=>{
+  test('getAllProductsInCategory', async () => {
     const products = await firestore.readAllProducts();
-    const favorites = user.favoriteitems
-    const selected_products = datamanipulation.getAllProductsInCategory(products, 'Favorites',true,false,favorites);
-  })
-  
+    const favorites = user.favoriteitems;
+    const selected_products = datamanipulation.getAllProductsInCategory(products, 'Favorites', true, false, favorites);
+  });
 });
 
 describe('Emulator', () => {
@@ -451,6 +450,97 @@ describe('Emulator', () => {
 
     expect(data).toEqual([]);
     // tet
+  });
+});
+
+describe('firestorefunctions', () => {
+  test('createDocument', async () => {
+    firestore.firestore.createDocument({ test: 'test' }, 'test', 'Products');
+  });
+  test('readAllDataFromCollection', async () => {
+    const data = await firestore.firestore.readAllDataFromCollection('Products');
+    expect(data).not.toBe([]);
+  });
+  test('readAllIdsFromCollection', async () => {
+    const data = await firestore.firestore.readAllIdsFromCollection('Products');
+    expect(data).not.toBe([]);
+  });
+  test('readSelectedDataFromCollection', async () => {
+    const data = await firestore.firestore.readSelectedDataFromCollection('Products', 'test', 'test');
+    expect(data).not.toBe([]);
+  });
+  test('updateDocumentFromCollection', async () => {
+    const olddata = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
+    await firestore.firestore.updateDocumentFromCollection('Products', 'test', { test: 'test2' });
+    const newdata = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
+    expect(newdata).not.toBe(olddata);
+  });
+  test('deleteDocumentFromCollection', async () => {
+    const olddata = await firestore.firestore.readAllIdsFromCollection('Products');
+    const newdata = firestore.firestore.deleteDocumentFromCollection('Products', 'test');
+    expect(newdata).not.toBe(olddata);
+  });
+  test('addDocumentArrayFromCollection', async () => {
+    await firestore.firestore.createDocument({ testarray: [] }, 'test', 'Products');
+    await firestore.firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray' }, 'testarray');
+    await firestore.firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray2' }, 'testarray');
+    const selected = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
+    const testfield = selected.testarray;
+
+    expect(testfield).toEqual([{ test: 'testarray' }, { test: 'testarray2' }]);
+  });
+  test('deleteDocumentArrayFromCollection', async () => {
+    await firestore.firestore.deleteDocumentFromCollectionArray(
+      'Products',
+      'test',
+      { test: 'testarray2' },
+      'testarray'
+    );
+    const selected = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
+    const testfield = selected.testarray;
+    expect(testfield).toEqual([{ test: 'testarray' }]);
+    await firestore.firestore.deleteDocumentFromCollection('Products', 'test');
+  });
+});
+
+describe('Database', () => {
+  test('readAllParentProducts', async () => {
+    const data = await firestore.readAllParentProducts();
+    expect(data).not.toBe([]);
+  });
+  // a
+
+  test('transactionCreatePayment', async () => {
+    await firestore.transactionCreatePayment('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2', 1999, '124532-1235', 'GCASH');
+  });
+  test('updatedoc', async () => {
+    await firestore.updatePhoneNumber('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2', '09178927206');
+    const user = await firestore.readUserById('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2');
+    const phone = user.phonenumber;
+    expect(phone).toEqual('09178927206');
+  });
+});
+
+describe('Data Validation', () => {
+  test('isString isNumber isArray isBoolean', () => {
+    const string = 'test';
+    const number = 123;
+    const array = [];
+    const boolean = true;
+
+    expect(datavalidation.isString(string)).toEqual(true);
+    expect(datavalidation.isString(number)).toEqual(false);
+    expect(datavalidation.isString(array)).toEqual(false);
+    expect(datavalidation.isNumber(string)).toEqual(false);
+    expect(datavalidation.isNumber(number)).toEqual(true);
+    expect(datavalidation.isNumber(array)).toEqual(false);
+    expect(datavalidation.isArray(string)).toEqual(false);
+    expect(datavalidation.isArray(number)).toEqual(false);
+    expect(datavalidation.isArray(array)).toEqual(true);
+    expect(datavalidation.isBoolean(string)).toEqual(false);
+    expect(datavalidation.isBoolean(number)).toEqual(false);
+    expect(datavalidation.isBoolean(array)).toEqual(false);
+    expect(datavalidation.isBoolean(boolean)).toEqual(true);
   });
 });
 
@@ -578,53 +668,216 @@ describe('Transaction Place Order', async () => {
   });
 
   test('CheckifInventoryUpdated', async () => {
-    Object.entries(cartCount).map(async ([item, count]) => {
-      const product = await firestore.readSelectedProduct(item);
-      const stocksAvailable = product.stocksAvailable;
-      const initialCount = initialProductCount[item];
-      const expected = initialCount - count;
-      expect(stocksAvailable).toEqual(expected);
+    await Promise.all(
+      Object.entries(cartCount).map(async ([item, count]) => {
+        const product = await firestore.readSelectedProduct(item);
+        const stocksAvailable = product.stocksAvailable;
+        const initialCount = initialProductCount[item];
+        const expected = initialCount - count;
+        expect(stocksAvailable).toEqual(expected);
+      })
+    );
+  });
+});
+
+describe('Transaction Create Payment', async () => {
+  beforeEach(async () => {
+    await firestore.createNewUser(
+      {
+        uid: 'testuser',
+        name: 'test',
+        email: 'test@gmail.com',
+        emailverfied: true,
+        phonenumber: '09178927206',
+        deliveryaddress: [],
+        contactPerson: [],
+        isanonymous: false,
+        orders: [],
+        cart: [],
+        favoriteitems: [],
+        payments: [],
+      },
+      'testuser'
+    );
+    await delay(300);
+    firestore.firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
+    await delay(300);
+  });
+  test('Check if payment is added to payment field', async () => {
+    const user = await firestore.readUserById('testuser');
+    const payments = user.payments;
+    const amount = payments[0].amount;
+    const reference = payments[0].reference;
+    const paymentprovider = payments[0].paymentprovider;
+    expect(amount).toEqual(1000);
+    expect(reference).toEqual('1234567890');
+    expect(paymentprovider).toEqual('GCASH');
+  });
+
+  afterEach(async () => {
+    firestore.deleteUserByUserId('testuser');
+  });
+});
+
+describe('firestoredb', async () => {
+  beforeEach(async () => {
+    await firestore.createNewUser({ test: 'test' }, 'test');
+    await firestore.createNewUser(
+      {
+        uid: 'testuser',
+        name: 'test',
+        email: 'test@gmail.com',
+        emailverfied: true,
+        latitude: null,
+        longitude: null,
+        phonenumber: '09178927206',
+        deliveryaddress: [{ address: 'Paper Boy', latitude: 1, longitude: 0 }],
+        contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
+        isanonymous: false,
+        orders: [],
+        cart: [],
+        favoriteitems: [],
+        payments: [],
+      },
+      'testuser'
+    );
+  });
+  afterEach(async () => {
+    await firestore.deleteUserByUserId('test');
+    await firestore.deleteUserByUserId('testuser');
+  });
+  test('createProduct and readAll Products', async () => {
+    await firestore.createProduct({ test: 'test' }, 'test');
+    const products = await firestore.readAllProducts();
+    console.log(products);
+    console.log(products[0].test);
+    let found = false;
+    products.map((product) => {
+      if (product.test === 'test') {
+        found = true;
+      }
     });
+    expect(found).toEqual(true);
   });
-});
-
-describe('Database', () => {
-  test('readAllParentProducts', async () => {
-    const data = await firestore.readAllParentProducts();
-    expect(data).not.toBe([]);
+  test('readSelectedProduct', async () => {
+    const product = await firestore.readSelectedProduct('test');
+    expect(product.test).toEqual('test');
   });
-  // a
-
-  test('transactionCreatePayment', async () => {
-    await firestore.transactionCreatePayment('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2', 1999, '124532-1235', 'GCASH');
+  test('updateProduct', async () => {
+    await firestore.updateProduct('test', { test: 'test2' });
+    const product = await firestore.readSelectedProduct('test');
+    expect(product.test).toEqual('test2');
   });
-  test('updatedoc', async () => {
-    await firestore.updatePhoneNumber('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2', '09178927206');
-    const user = await firestore.readUserById('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2');
-    const phone = user.phonenumber;
-    expect(phone).toEqual('09178927206');
+
+  test('deleteProduct', async () => {
+    await firestore.deleteProduct('test');
+    const product = await firestore.readSelectedProduct('test');
+    expect(product).toEqual(undefined);
   });
-});
 
-describe('Data Validation', () => {
-  test('isString isNumber isArray isBoolean', () => {
-    const string = 'test';
-    const number = 123;
-    const array = [];
-    const boolean = true;
+  test('createCategory amd readAllCategories', async () => {
+    await firestore.createCategory('testtest');
+    const categories = await firestore.readAllCategories();
+    let found = false;
+    categories.map((category) => {
+      if (category.category === 'Testtest') {
+        found = true;
+      }
+    });
+    expect(found).toEqual(true);
+  });
 
-    expect(datavalidation.isString(string)).toEqual(true);
-    expect(datavalidation.isString(number)).toEqual(false);
-    expect(datavalidation.isString(array)).toEqual(false);
-    expect(datavalidation.isNumber(string)).toEqual(false);
-    expect(datavalidation.isNumber(number)).toEqual(true);
-    expect(datavalidation.isNumber(array)).toEqual(false);
-    expect(datavalidation.isArray(string)).toEqual(false);
-    expect(datavalidation.isArray(number)).toEqual(false);
-    expect(datavalidation.isArray(array)).toEqual(true);
-    expect(datavalidation.isBoolean(string)).toEqual(false);
-    expect(datavalidation.isBoolean(number)).toEqual(false);
-    expect(datavalidation.isBoolean(array)).toEqual(false);
-    expect(datavalidation.isBoolean(boolean)).toEqual(true);
+  test('readAllUserIds', async () => {
+    const usersId = await firestore.readAllUserIds();
+    console.log(usersId);
+    let found = false;
+    usersId.map((user) => {
+      if (user === 'test') {
+        found = true;
+      }
+    });
+    expect(found).toEqual(true);
+  });
+
+  test('readAllUsers', async () => {
+    const users = await firestore.readAllUsers();
+    let found = false;
+    users.map((user) => {
+      if (user.test === 'test') {
+        found = true;
+      }
+    });
+    expect(found).toEqual(true);
+  });
+
+  test('readUserById', async () => {
+    const user = await firestore.readUserById('test');
+    expect(user.test).toEqual('test');
+  });
+
+  test('addItemToFavorites and removeItemFromFavorites', async () => {
+    await firestore.addItemToFavorites('testuser', 'test');
+    const user = await firestore.readUserById('testuser');
+    const favorites = user.favoriteitems;
+    let found = false;
+    favorites.map((favorite) => {
+      if (favorite === 'test') {
+        found = true;
+      }
+    });
+    expect(found).toEqual(true);
+
+    await firestore.removeItemFromFavorites('testuser', 'test');
+    const user2 = await firestore.readUserById('testuser');
+    const favorites2 = user2.favoriteitems;
+    let found2 = false;
+    favorites2.map((favorite) => {
+      if (favorite === 'test') {
+        found2 = true;
+      }
+    });
+    expect(found2).toEqual(false);
+  });
+
+  test('createUserCart and deleteUserCart', async () => {
+    await firestore.createUserCart(['testitem', 'testitem'], 'testuser');
+    const user = await firestore.readUserById('testuser');
+    const cart = user.cart;
+    expect(cart).toEqual(['testitem', 'testitem']);
+
+    await firestore.deleteAllUserCart('testuser');
+    const user2 = await firestore.readUserById('testuser');
+    const cart2 = user2.cart;
+    expect(cart2).toEqual([]);
+  });
+
+  test('deleteAddress', async () => {
+    await firestore.deleteAddress('testuser', 1, 0, 'Paper Boy');
+    const user = await firestore.readUserById('testuser');
+    const address = user.deliveryaddress;
+    expect(address).toEqual([]);
+  });
+
+  test('deleteUserContactPerson', async () => {
+    await firestore.deleteUserContactPersons('testuser', 'testname', '09178927206');
+    const user = await firestore.readUserById('testuser');
+    const contactPerson = user.contactPerson;
+    expect(contactPerson).toEqual([]);
+  });
+
+  test('updateLatitudeLongitude', async () => {
+    await firestore.updateLatitudeLongitude('testuser', 1, 0);
+    const user = await firestore.readUserById('testuser');
+    const latitude = user.latitude;
+    const longitude = user.longitude;
+    expect(latitude).toEqual(1);
+    expect(longitude).toEqual(0);
+  });
+
+  test('updatePhoneNumber', async () => {
+    await firestore.updatePhoneNumber('testuser', '09178927206');
+    const user = await firestore.readUserById('testuser');
+    const phonenumber = user.phonenumber;
+    expect(phonenumber).toEqual('09178927206');
   });
 });
