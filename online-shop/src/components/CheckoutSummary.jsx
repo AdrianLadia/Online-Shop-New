@@ -19,7 +19,7 @@ const CheckoutSummary = (props) => {
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,
@@ -35,7 +35,6 @@ const CheckoutSummary = (props) => {
   ] = useContext(AppContext);
 
   let [rows, setRows] = React.useState([]);
-  const firestore = new firestoredb();
   const [loading, setLoading] = React.useState(true);
 
   const datamanipulation = new dataManipulation();

@@ -10,7 +10,7 @@ const GoogleMapsModalSelectContactModalButton = (props) => {
         userdata,
         setUserData,
         isadmin,
-        db,
+        firestore,
         cart,
         setCart,
         favoriteitems,
@@ -41,7 +41,6 @@ const GoogleMapsModalSelectContactModalButton = (props) => {
 
     const name = props.contact.name
     const phonenumber = props.contact.phonenumber
-    const firestore = new firestoredb()
 
 
       

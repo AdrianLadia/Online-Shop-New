@@ -27,7 +27,7 @@ const OpenCartButton = () => {
         userdata,
         setUserData,
         isadmin,
-        db,
+        firestore,
         ,
         ,
         favoriteitems,

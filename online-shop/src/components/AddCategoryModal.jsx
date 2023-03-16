@@ -4,6 +4,8 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import { TextField } from '@mui/material';
 import firestoredb from './firestoredb';
+import { useContext } from 'react';
+import AppContext from '../AppContext';
 
 const style = {
     position: 'absolute',
@@ -21,8 +23,40 @@ const style = {
 
 const AddCategoryModal = (props) => {
 
+    const [
+      userdata,
+      setUserData,
+      isadmin,
+      firestore,
+      cart,
+      setCart,
+      favoriteitems,
+      setFavoriteItems,
+      userId,
+      setUserId,
+      refreshUser,
+      setRefreshUser,
+      userLoaded,
+      setUserLoaded,
+      deliveryaddress,
+      setDeliveryAddress,
+      latitude,
+      setLatitude,
+      longitude,
+      setLongitude,
+      userstate,
+      setUserState,
+      phonenumber,
+      setPhoneNumber,
+      orders,
+      setOrders,
+      payments,
+      setPayments,
+      contactPerson,
+      setContactPerson
+    ] = useContext(AppContext);
+
     const open = props.openAddCategoryModal
-    const firestore = new firestoredb();
     const [category, setCategory] = React.useState('')
 
     function close() {

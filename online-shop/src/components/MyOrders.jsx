@@ -10,7 +10,7 @@ function MyOrders() {
         userdata,
         setUserData,
         isadmin,
-        db,
+        firestore,
         cart,
         setCart,
         favoriteitems,

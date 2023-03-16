@@ -6,6 +6,7 @@ import { Box } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
+import AppContext from '../AppContext';
 
 // Style for Modal
 const style = {
@@ -29,11 +30,42 @@ const style = {
 
 const AdminDeleteItemModal = (props) => {
 
+  const [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+    orders,
+    setOrders,
+    payments,
+    setPayments,
+    contactPerson,
+    setContactPerson
+  ] = React.useContext(AppContext);
+
   const [selectedItemToBeDeleted, setSelectedItemToBeDeleted] = React.useState('');
   const products = props.products;
-  const firestore = new firestoredb();
-
-
+  
   const handleChange = (event) => {
     setSelectedItemToBeDeleted(event.target.value);
   };

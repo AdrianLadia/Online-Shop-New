@@ -12,9 +12,36 @@ import Autocomplete from "@mui/material/Autocomplete";
 import AdminOrdersTable from "./AdminOrdersTable";
 import MyOrderCardModal from "./MyOrderCardModal";
 import dataManipulation from "../../utils/dataManipulation";
+import AppContext from "../AppContext";
 
 const AdminOrders = (props) => {
-  const firestore = new firestoredb();
+  const [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+  ] = React.useContext(AppContext);
+  
   const datamanipulation = new dataManipulation();
   const label = { inputProps: { "aria-label": "Switch demo" } };
   const [orders, setOrders] = React.useState([]);

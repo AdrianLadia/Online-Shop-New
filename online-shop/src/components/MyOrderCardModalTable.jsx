@@ -10,8 +10,42 @@ import firestoredb from "./firestoredb";
 import useWindowDimensions from "./useWindowDimensions";
 import dataManipulation from "../../utils/dataManipulation";
 import { ContentCutOutlined } from "@mui/icons-material";
+import AppContext from "../AppContext";
 
 const MyOrderCardModalTable = (props) => {
+
+  const [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    ,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+    orders,
+    setOrders,
+    payments,
+    setPayments,
+    contactPerson,
+    setContactPerson
+  ] = React.useContext(AppContext);
 
   const {width, height} = useWindowDimensions();
   function getMaxHeightTable() {
@@ -19,7 +53,6 @@ const MyOrderCardModalTable = (props) => {
   }
   const order = props.order;
   const cart = order.cart;
-  const firestore = new firestoredb();
   const datamanipulation = new dataManipulation();
 
 

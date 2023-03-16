@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import firestoredb from "./firestoredb";
 import TextField from "@mui/material/TextField";
+import AppContext from "../AppContext";
 
 // Style for Modal
 const style = {
@@ -29,6 +30,39 @@ const style = {
 };
 
 const AdminEditItemModal = (props) => {
+
+  const [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+    orders,
+    setOrders,
+    payments,
+    setPayments,
+    contactPerson,
+    setContactPerson
+  ] = React.useContext(AppContext);
   const products = props.products;
   const [selectedItemToBeEdited, setSelectedItemToBeEdited] = useState("");
   const [itemID, setItemID] = useState("");
@@ -59,7 +93,6 @@ const AdminEditItemModal = (props) => {
   function handleChange(event) {
     setSelectedItemToBeEdited(event.target.value);
     console.log(event.target.value);
-    const firestore = new firestoredb();
     firestore.readSelectedProduct(event.target.value).then((product) => {
       setItemID(product.itemid);
       setItemName(product.itemname);
@@ -96,7 +129,6 @@ const AdminEditItemModal = (props) => {
       }
     }
 
-    const firestore = new firestoredb();
     let imagelinks = [
       imagelink1,
       imagelink2,

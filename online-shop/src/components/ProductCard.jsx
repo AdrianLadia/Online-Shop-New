@@ -25,7 +25,7 @@ const ProductCard = (props) => {
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,

@@ -9,12 +9,46 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Autocomplete from '@mui/material/Autocomplete';
 import dataManipulation from '../../utils/dataManipulation';
+import AppContext from '../AppContext';
+import { useContext } from 'react';
 
 
 
 const AdminCreatePayment = (props) => {
 
-  const firestore = new firestoredb()
+  [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+    orders,
+    setOrders,
+    payments,
+    setPayments,
+    contactPerson,
+    setContactPerson
+  ] = useContext(AppContext);
+
   const datamanipulation = new dataManipulation()
   const users = props.users
   const [selectedName, setSelectedName] = React.useState('');

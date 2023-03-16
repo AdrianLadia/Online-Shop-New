@@ -17,7 +17,6 @@ const GoogleMaps = (props) => {
     googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
   });
 
-  const firestore = new firestoredb();
   const [noAddressHistory, setNoAddressHistory] = useState(undefined);
   const setSelectedAddress = props.setSelectedAddress;
 
@@ -38,7 +37,7 @@ const GoogleMaps = (props) => {
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,

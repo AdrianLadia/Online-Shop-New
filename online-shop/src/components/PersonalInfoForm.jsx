@@ -8,7 +8,7 @@ const PersonalInfoForm = () => {
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,

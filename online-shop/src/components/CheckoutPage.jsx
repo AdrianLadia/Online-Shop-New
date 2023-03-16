@@ -32,7 +32,7 @@ const CheckoutPage = () => {
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,
@@ -56,7 +56,6 @@ const CheckoutPage = () => {
   ] = React.useContext(AppContext);
 
   const [selectedAddress, setSelectedAddress] = useState(false);
-  const firestore = new firestoredb();
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
   const [launchPayMayaCheckout, setLaunchPayMayaCheckout] = useState(false);
   const [total, setTotal] = React.useState(0);
@@ -177,7 +176,7 @@ const CheckoutPage = () => {
     if (userstate === 'userloaded') {
       // Place Order
       // setLaunchPayMayaCheckout(true);
-      orderDataObject.transactionPlaceOrder();
+      orderDataObject.transactionPlaceOrder(firestore);
       setCart([]);
     }
   }
@@ -217,13 +216,11 @@ const CheckoutPage = () => {
   useEffect(() => {
     const vat = businesscalculations.getValueAddedTax(total);
     setVat(vat);
-  }, [total, vat, deliveryFee]);
-
-  useEffect(() => {
     const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee);
     setGrandTotal(grandTotal);
-  }, [grandtotal]);
+  }, [total, vat, deliveryFee]);
 
+ 
   return (
     <div className="flex flex-col">
       <CheckoutPageContext.Provider value={[payMayaCardSelected, setPayMayaCardSelected]}>

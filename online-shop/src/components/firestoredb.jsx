@@ -135,56 +135,6 @@ class firestoredb {
     });
   }
 
-  async updateUserOrders(
-    userid,
-    old_orders,
-    orderdate,
-    name,
-    address,
-    phonenumber,
-    latitude,
-    longitude,
-    cart,
-    itemstotal,
-    vat,
-    shippingtotal,
-    grandtotal,
-    reference
-  ) {
-    const new_orders = {
-      orderdate: orderdate,
-      name: name,
-      address: address,
-      phonenumber: phonenumber,
-      latitude: latitude,
-      longitude: longitude,
-      cart: cart,
-      itemstotal: itemstotal,
-      vat: vat,
-      shippingtotal: shippingtotal,
-      grandtotal: grandtotal,
-      delivered: false,
-      reference: reference,
-      paid: false,
-    };
-
-    this.firestore.addDocumentArrayFromCollection('Users', userid, new_orders, 'orders');
-  }
-
-  async createPayment(userid, amount, reference, paymentprovider) {
-    this.firestore.addDocumentArrayFromCollection(
-      'Users',
-      userid,
-      {
-        date: new Date(),
-        amount: amount,
-        reference: reference,
-        paymentprovider: paymentprovider,
-      },
-      'payments'
-    );
-  }
-
   async createTestCollection() {
     this.firestore.createDocument({ name: 'test' }, 'test', 'test');
   }

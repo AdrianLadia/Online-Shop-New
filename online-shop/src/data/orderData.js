@@ -67,7 +67,7 @@ class orderData {
     
   }
 
-  transactionPlaceOrder() {
+  transactionPlaceOrder(firestore) {
     const datavalidation = new dataValidation();
     if (this.deliveryAddress === '') {
       alert('Delivery address is empty');
@@ -114,7 +114,6 @@ class orderData {
     }
 
 
-    const firestore = new firestoredb();
     firestore.transactionPlaceOrder(
       this.userUid,
       this.deliveryAddress,

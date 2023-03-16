@@ -10,8 +10,42 @@ import { useEffect, useState } from "react";
 import firestoredb from "./firestoredb";
 import AdminCreatePayment from "./AdminCreatePayment";
 import AdminOrders from "./AdminOrders";
+import AppContext from "../AppContext";
 
 const AdminMenu = () => {
+  const [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+    orders,
+    setOrders,
+    payments,
+    setPayments,
+    contactPerson,
+    setContactPerson
+  ] = React.useContext(AppContext);
+  
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -48,7 +82,6 @@ const AdminMenu = () => {
   };
 
   useEffect(() => {
-    const firestore = new firestoredb();
     firestore.readAllProducts().then((products) => {
       setProducts(products);
     });

@@ -8,21 +8,19 @@ import useWindowDimensions from "./UseWindowDimensions";
 import CheckoutButton from "./CheckoutButton";
 import CartTable from "./CartTable";
 import Fade from "@mui/material/Fade";
-import TablePagination from "@mui/material/TablePagination";
 import AppContext from "../AppContext";
-import firestoredb from "./firestoredb";
+
 
 const CartModal = () => {
   const [openCart, setOpenCart, finalCartData, totalPrice] =
     useContext(ContextOpenCart);
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
-  const firestore = new firestoredb();
   const [
     userdata,
     setUserData,
     isadmin,
-    db,
+    firestore,
     cart,
     setCart,
     favoriteitems,

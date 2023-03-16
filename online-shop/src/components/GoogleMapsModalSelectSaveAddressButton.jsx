@@ -1,20 +1,18 @@
 import React from 'react'
 import {FaRegTrashAlt} from 'react-icons/fa'
 import AppContext from '../AppContext'
-import firestoredb from './firestoredb'
 
 const GoogleMapsModalSelectSaveAddressButton = (props) => {
 
     const savedlongitude = props.savedlongitude
     const savedlatitude = props.savedlatitude
     const address = props.address
-    const firestore = new firestoredb()
 
     const [
         userdata,
         setUserData,
         isadmin,
-        db,
+        firestore,
         cart,
         setCart,
         favoriteitems,

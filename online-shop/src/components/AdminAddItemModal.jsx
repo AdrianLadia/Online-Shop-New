@@ -12,6 +12,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { Checkbox, Typography } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
+import AppContext from "../AppContext";
 
 // Style for Modal
 const style = {
@@ -33,8 +34,39 @@ const style = {
 };
 
 const AdminAddItemModal = (props) => {
+  const [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+    orders,
+    setOrders,
+    payments,
+    setPayments,
+    contactPerson,
+    setContactPerson
+  ] = React.useContext(AppContext);
   const { width, height } = useWindowDimensions();
-  const firestore = new firestoredb();
   const [itemID, setItemID] = React.useState("");
   const [itemName, setItemName] = React.useState("");
   const [description, setDescription] = React.useState("");

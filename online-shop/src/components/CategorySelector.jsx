@@ -7,9 +7,43 @@ import { Typography } from '@mui/material';
 import firestoredb from './firestoredb';
 import { useEffect } from 'react';
 import dataManipulation from '../../utils/dataManipulation';
+import AppContext from '../AppContext';
 
 const CategorySelector = () => {
-  const firestore = new firestoredb();
+
+  const [
+    userdata,
+    setUserData,
+    isadmin,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    setFavoriteItems,
+    userId,
+    setUserId,
+    refreshUser,
+    setRefreshUser,
+    userLoaded,
+    setUserLoaded,
+    deliveryaddress,
+    setDeliveryAddress,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    userstate,
+    setUserState,
+    phonenumber,
+    setPhoneNumber,
+    orders,
+    setOrders,
+    payments,
+    setPayments,
+    contactPerson,
+    setContactPerson
+  ] = useContext(AppContext);
+
   const datamanipulation = new dataManipulation()
   const [categories, setCategories] = useState([]);
   const [wholesale, setWholesale] = useState(true);
