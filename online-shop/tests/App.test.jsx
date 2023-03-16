@@ -131,7 +131,6 @@ describe('Business Calcualtions', () => {
     const vat = businesscalculations.getValueAddedTax(subtotal);
     expect(vat).toBe(expected);
   });
-
   test('getGrandTotalAmount', () => {
     const subtotal = 100;
     const vat = 12;
@@ -140,6 +139,20 @@ describe('Business Calcualtions', () => {
     const grandtotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
     expect(grandtotal).toBe(expected);
   });
+  test('addToCart and removeFromCart', () => {
+    const cart = user.cart;
+    const newCart = businesscalculations.addToCart(cart, 'PPB#1');
+    expect(newCart).toEqual([...cart, 'PPB#1']);
+    const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
+    expect(newCart2).toEqual([...newCart, 'PPB#2']);
+    const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
+    expect(newCart3).toEqual([...newCart]);
+  });
+  test('addToCartWithQuantity' , () => {
+    const cart = user.cart;
+    const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5,cart);
+    expect(newCart).toEqual([...cart, 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1']);
+  })
 });
 
 describe('Data Manipulation', () => {
@@ -395,10 +408,31 @@ describe('Data Manipulation', () => {
     expect(allCategories).toEqual(expected);
   });
   test('getCheckoutPageTableDate', async () => {
-    const products = await firestore.readAllProducts()
-    const cart = user.cart
-    const data = datamanipulation.getCheckoutPageTableDate(products,cart)
+    const products = await firestore.readAllProducts();
+    const cart = user.cart;
+    const data = datamanipulation.getCheckoutPageTableDate(products, cart);
   });
+  test('manipulateCartData', () => {
+    const cart = ['PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#2', 'PPB#2'];
+    const cart_data = datamanipulation.manipulateCartData(cart);
+    const expected = [
+      {
+        itemid: 'PPB#1',
+        quantity: 5,
+      },
+      {
+        itemid: 'PPB#2',
+        quantity: 2,
+      },
+    ];
+    expect(cart_data).toEqual(expected);
+  });
+  test('getAllProductsInCategory', async ()=>{
+    const products = await firestore.readAllProducts();
+    const favorites = user.favoriteitems
+    const selected_products = datamanipulation.getAllProductsInCategory(products, 'Favorites',true,false,favorites);
+  })
+  
 });
 
 describe('Emulator', () => {
@@ -492,10 +526,9 @@ describe('Transaction Place Order', async () => {
       320,
       lalamovedeliveryvehicles.pickup,
       false
-
     );
 
-    orderdata.transactionPlaceOrder()
+    orderdata.transactionPlaceOrder();
 
     await delay(300);
   });

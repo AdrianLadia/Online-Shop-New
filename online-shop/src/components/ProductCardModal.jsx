@@ -72,8 +72,6 @@ const ProductCardModal = (props) => {
       setHeart(!heart);
       setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemid))
       firestore.removeItemFromFavorites(userdata.uid,props.product.itemid)
-      
-      
     }
     else {
       setHeart(!heart);

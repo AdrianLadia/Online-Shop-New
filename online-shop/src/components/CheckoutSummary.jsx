@@ -54,7 +54,6 @@ const CheckoutSummary = (props) => {
   useEffect(() => {
     async function getTableData() {
       const products = await firestore.readAllProducts(); 
-      // const products = readAllProducts();
       const [rows_non_state,total_non_state,total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(products,cart)
   
       setRows(rows_non_state);

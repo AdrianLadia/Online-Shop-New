@@ -8,6 +8,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import firestoredb from "./firestoredb";
 import useWindowDimensions from "./useWindowDimensions";
+import dataManipulation from "../../utils/dataManipulation";
+import { ContentCutOutlined } from "@mui/icons-material";
 
 const MyOrderCardModalTable = (props) => {
 
@@ -16,60 +18,23 @@ const MyOrderCardModalTable = (props) => {
       return height - 10000
   }
   const order = props.order;
+  const cart = order.cart;
   const firestore = new firestoredb();
+  const datamanipulation = new dataManipulation();
 
-
-  function createData(itemimage, itemname, itemquantity, itemprice, itemtotal,weighttotal) {
-    return { itemimage, itemname, itemquantity, itemprice, itemtotal,weighttotal };
-  }
 
   const [rows, setRows] = React.useState([]);
 
   useEffect(() => {
-    console.log(order.cart);
-    firestore.readAllProducts().then((product_list) => {
-      const items = [...new Set(order.cart)];
-      let item_count = {};
-      items.map((item, index) => {
-        item_count[item] = 0;
-      });
+    
+    async function getTableData() {
+      const products = await firestore.readAllProducts(); 
+      const [rows_non_state,total_non_state,total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(products,cart)
+      console.log("rows_non_state",rows_non_state)
+      console.log(order)
+      setRows(rows_non_state);}
 
-      order.cart.map((item, index) => {
-        item_count[item] += 1;
-      });
-
-      let rows_non_state = [];
-      let total_non_state = 0;
-      let total_weight_non_state = 0;
-
-      try {
-        console.log(item_count);
-        Object.entries(item_count).map(([key, quantity]) => {
-          product_list.map((product) => {
-            if (product.itemid === key) {
-              total_weight_non_state += product.weight * quantity;
-              total_non_state += product.price * quantity;
-              console.log(product.weight);
-              let row = createData(
-                product.imagelinks[0],
-                product.itemname,
-                quantity.toLocaleString(),
-                parseInt(product.price).toLocaleString(),
-                (product.price * quantity).toLocaleString(),
-                total_weight_non_state
-              );
-              rows_non_state.push(row);
-            }
-          });
-        });
-
-        setRows(rows_non_state);
-        console.log(rows_non_state)
-      } catch (error) {
-        console.log(error);
-      }
-
-    });
+    getTableData();
   }, []);
 
   return (

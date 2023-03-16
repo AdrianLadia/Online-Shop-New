@@ -9,11 +9,15 @@ import ContextOpenCart from './ContextOpenCart'
 import { Outlet, useLocation } from "react-router-dom";
 import AppContext from '../AppContext'
 import CircularProgress from '@mui/material/CircularProgress';
+import businessCalculations from '../../utils/businessCalculations'
+import dataManipulation from '../../utils/dataManipulation'
 
 
 
 const OpenCartButton = () => {
 
+    const businesscalculations = new businessCalculations()
+    const datamanipulation = new dataManipulation()
     let [totalPrice, setTotalPrice] = useState(0)
     let [openCart, setOpenCart] = useState(false)
     let [finalCartData, setFinalCartData] = useState([])
@@ -44,60 +48,24 @@ const OpenCartButton = () => {
         setUserState
     ] = useContext(AppContext)
 
-    function AddToCart(product) {
-
-        setCart([...cart, product])
+    function onAddToCartClick(product) {
+        const newCart = businesscalculations.addToCart(cart,product)
+        console.log(newCart)
+        setCart(newCart)
 
     }
-
-    
-
 
     function RemoveFromCart(product) {
-        let toRemove = cart.indexOf(product)
-        let cartCopy = [...cart]
-
-        if (toRemove > -1) {
-            cartCopy.splice(toRemove, 1)
-        }
-
-        setCart(cartCopy)
-    }
-
-    function ManipulateCartData() {
-
-        //get unique items of array
-        function set(arr) {
-            return [...new Set(arr)]
-        }
-
-        let unique_items = set(cart)
-        
-
-
-        let cart_data = []
-        unique_items.map((item, index) => { 
-            cart_data.push({itemid: item, quantity: 0})
-        })
-
-        cart_data.map((item, index) => {
-            cart.map((cart_item, index) => {
-                if (item.itemid === cart_item) {
-                    item.quantity += 1
-                }
-            })
-        })
-    
-        return cart_data
+        const newCart = businesscalculations.removeFromCart(cart,product)
+        setCart(newCart)
     }
 
     function GetPricePerProduct() {
-        
         let prices = []
-        ManipulateCartData().map((item, index) => {
+            datamanipulation.manipulateCartData(cart).map((item, index) => {
             products.map((product, index) => {
                 if (item.itemid === product.itemid) {
-                    prices.push({itemimage:product.imagelinks[0], itemname:product.itemname,itemid:item.itemid,quantity:item.quantity,price:product.price,total:product.price * item.quantity,addbutton:<button onClick={() => AddToCart(item.itemid)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" >+</button>,removebutton:<button onClick={() => RemoveFromCart(item.itemid)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">-</button>})
+                    prices.push({itemimage:product.imagelinks[0], itemname:product.itemname,itemid:item.itemid,quantity:item.quantity,price:product.price,total:product.price * item.quantity,addbutton:<button onClick={() => onAddToCartClick(item.itemid)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" >+</button>,removebutton:<button onClick={() => RemoveFromCart(item.itemid)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">-</button>})
                 }
             })
         })

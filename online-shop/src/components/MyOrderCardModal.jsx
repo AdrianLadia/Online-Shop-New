@@ -41,15 +41,6 @@ const MyOrderCardModal = (props) => {
     console.log(order);
   }, []);
 
-  function responsiveCssPaperColorIfPaid() {
-    if (order.paid) {
-      return "bg-green-300";
-    }
-    if (!order.paid) {
-      return "bg-red-400";
-    }
-  }
-
   return (
     <div>
       <Modal

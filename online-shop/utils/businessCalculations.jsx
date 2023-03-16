@@ -195,14 +195,13 @@ class businessCalculations {
       });
       message += '\nPlease refresh the page to see the updated stocks.';
     });
-  
+
     if (outOfStockDetected) {
       console.log(message);
       return [true, message];
     } else {
       return [false, message];
     }
-    
   }
 
   getValueAddedTax(totalPrice) {
@@ -213,6 +212,28 @@ class businessCalculations {
     return totalPrice + valueAddedTax + deliveryFee;
   }
 
+  addToCart(cart, product) {
+    return [...cart, product];
+  }
+
+  removeFromCart(cart, product) {
+    let toRemove = cart.indexOf(product);
+    let cartCopy = [...cart];
+
+    if (toRemove > -1) {
+      cartCopy.splice(toRemove, 1);
+    }
+
+    return cartCopy;
+  }
+
+  addToCartWithQuantity(itemId, quantity,cart) {
+    let items = [];
+    for (let i = 0; i < quantity; i++) {
+      items.push(itemId);
+    }
+    return [...cart, ...items];
+  }
 }
 
 export default businessCalculations;

@@ -212,7 +212,6 @@ class dataManipulation {
   }
 
   getCheckoutPageTableDate(product_list, cart) {
-
     function createData(itemimage, itemname, itemquantity, itemprice, itemtotal, weighttotal) {
       return { itemimage, itemname, itemquantity, itemprice, itemtotal, weighttotal };
     }
@@ -249,8 +248,72 @@ class dataManipulation {
       });
     });
 
-    return [rows_non_state,total_non_state,total_weight_non_state];
+    return [rows_non_state, total_non_state, total_weight_non_state];
   }
+
+  manipulateCartData(cart) {
+    //get unique items of array
+    function set(arr) {
+      return [...new Set(arr)];
+    }
+
+    let unique_items = set(cart);
+
+    let cart_data = [];
+    unique_items.map((item, index) => {
+      cart_data.push({ itemid: item, quantity: 0 });
+    });
+
+    cart_data.map((item, index) => {
+      cart.map((cart_item, index) => {
+        if (item.itemid === cart_item) {
+          item.quantity += 1;
+        }
+      });
+    });
+    console.log(cart_data);
+    return cart_data;
+  }
+
+  getAllProductsInCategory(products, categorySelected,wholesale,retail,favorites) {
+    if (categorySelected === 'Favorites') {
+      let selected_products = [];
+      products.map((product) => {
+        if (favorites.includes(product.itemid)) {
+          selected_products.push(product);
+        }
+      });
+      return selected_products;
+    }
+
+    let selected_products_by_category = [];
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].category === categorySelected) {
+        selected_products_by_category.push(products[i]);
+      }
+    }
+
+    let selected_products = [];
+    if (wholesale) {
+      selected_products_by_category.map((product) => {
+        if (product.unit !== 'Pack') {
+          selected_products.push(product);
+        }
+      });
+    }
+
+    if (retail) {
+      selected_products_by_category.map((product) => {
+        if (product.unit === 'Pack') {
+          selected_products.push(product);
+        }
+      });
+    }
+
+    return selected_products;
+  }
+
+
   // convertTimestampToFirebaseTimestamp(timestamp) {
   //   const date = new Date(timestamp.seconds * 1000);
   //   date.setMilliseconds(timestamp.nanoseconds / 1000000);
