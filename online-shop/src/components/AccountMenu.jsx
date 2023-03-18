@@ -19,30 +19,13 @@ import { GrUserAdmin } from "react-icons/gr";
 
 const AccountMenu = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [
+  const {
     userdata,
-    setUserData,
     isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
     refreshUser,
     setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
     setUserState,
-   ] = useContext(AppContext);
+   } = useContext(AppContext);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
 

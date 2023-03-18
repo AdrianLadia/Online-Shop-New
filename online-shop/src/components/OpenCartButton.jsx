@@ -23,30 +23,11 @@ const OpenCartButton = () => {
     let [finalCartData, setFinalCartData] = useState([])
     let [cart,setCart,products] = useContext(CartContext)
     const location = useLocation();
-    const [
-        userdata,
-        setUserData,
-        isadmin,
-        firestore,
-        ,
-        ,
-        favoriteitems,
-        setFavoriteItems,
-        userId,
-        setUserId,
+    const {
         refreshUser,
         setRefreshUser,
-        userLoaded,
-        setUserLoaded,
-        deliveryaddress,
-        setDeliveryAddress,
-        latitude,
-        setLatitude,
-        longitude,
-        setLongitude,
         userstate,
-        setUserState
-    ] = useContext(AppContext)
+     } = useContext(AppContext)
 
     function onAddToCartClick(product) {
         const newCart = businesscalculations.addToCart(cart,product)

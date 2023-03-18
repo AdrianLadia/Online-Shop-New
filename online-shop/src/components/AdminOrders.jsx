@@ -1,55 +1,30 @@
-import React from "react";
-import firestoredb from "./firestoredb";
-import { useEffect, useState } from "react";
-import OrdersCalendar from "./OrdersCalendar";
-import { Typography } from "@mui/material";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import AdminOrdersTable from "./AdminOrdersTable";
-import MyOrderCardModal from "./MyOrderCardModal";
-import dataManipulation from "../../utils/dataManipulation";
-import AppContext from "../AppContext";
+import React from 'react';
+import firestoredb from './firestoredb';
+import { useEffect, useState } from 'react';
+import OrdersCalendar from './OrdersCalendar';
+import { Typography } from '@mui/material';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import AdminOrdersTable from './AdminOrdersTable';
+import MyOrderCardModal from './MyOrderCardModal';
+import dataManipulation from '../../utils/dataManipulation';
+import AppContext from '../AppContext';
 
 const AdminOrders = (props) => {
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-  ] = React.useContext(AppContext);
-  
+  const { firestore } = React.useContext(AppContext);
+
   const datamanipulation = new dataManipulation();
-  const label = { inputProps: { "aria-label": "Switch demo" } };
+  const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const [orders, setOrders] = React.useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [referenceNumber, setReferenceNumber] = useState("");
+  const [startDate, setStartDate] = useState('');
+  const [referenceNumber, setReferenceNumber] = useState('');
   const [delivered, setDelivered] = useState(null);
   const [paid, setPaid] = useState(null);
-  const [selectedName, setSelectedName] = React.useState("");
+  const [selectedName, setSelectedName] = React.useState('');
   const [allUserNames, setAllUserNames] = React.useState([]);
   const [selectedOrderReference, setSelectedOrderReference] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -72,7 +47,7 @@ const AdminOrders = (props) => {
   }, [users]);
 
   useEffect(() => {
-    if (referenceNumber !== "") {
+    if (referenceNumber !== '') {
       orders.map((order) => {
         if (order.reference === referenceNumber) {
           console.log(order.orderdate.toDate().toLocaleDateString());
@@ -82,7 +57,14 @@ const AdminOrders = (props) => {
       });
     } else {
       firestore.readAllOrders().then((ordersFirestore) => {
-        const filteredOrders = datamanipulation.filterOrders(ordersFirestore,startDate, referenceNumber, delivered, paid, selectedName);
+        const filteredOrders = datamanipulation.filterOrders(
+          ordersFirestore,
+          startDate,
+          referenceNumber,
+          delivered,
+          paid,
+          selectedName
+        );
         setOrders(filteredOrders);
       });
     }
@@ -108,7 +90,7 @@ const AdminOrders = (props) => {
               id="outlined-basic"
               label="Reference #"
               variant="outlined"
-              sx={{ width: "100%" }}
+              sx={{ width: '100%' }}
               onChange={(e) => {
                 setReferenceNumber(e.target.value);
               }}
@@ -125,10 +107,8 @@ const AdminOrders = (props) => {
               disablePortal
               id="combo-box-demo"
               options={allUserNames}
-              sx={{ width: "100%" }}
-              renderInput={(params) => (
-                <TextField {...params} label="Customer Name" />
-              )}
+              sx={{ width: '100%' }}
+              renderInput={(params) => <TextField {...params} label="Customer Name" />}
             />
           </div>
           <div className="flex">
@@ -145,7 +125,7 @@ const AdminOrders = (props) => {
           <div>
             <button
               onClick={() => {
-                setStartDate("");
+                setStartDate('');
               }}
               className="px-2 rounded-lg bg-red-300 h-7"
             >
@@ -234,11 +214,7 @@ const AdminOrders = (props) => {
       </div>
 
       {selectedOrder !== null ? (
-        <MyOrderCardModal
-          open={openModal}
-          handleClose={handleClose}
-          order={selectedOrder}
-        />
+        <MyOrderCardModal open={openModal} handleClose={handleClose} order={selectedOrder} />
       ) : null}
       {/* Table */}
       {/* Date */}

@@ -16,19 +16,11 @@ const CartModal = () => {
     useContext(ContextOpenCart);
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
-  const [
+  const {
     userdata,
-    setUserData,
-    isadmin,
     firestore,
-    cart,
     setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId, setUserId,
-    refreshUser, setRefreshUser,
-    userLoaded, setUserLoaded
-  ] = React.useContext(AppContext);
+   } = React.useContext(AppContext);
 
   const style = {
     position: "absolute",

@@ -21,38 +21,7 @@ const ProductCard = (props) => {
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
   const calculations = new businessCalculations();
   const safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
-  const  [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-    orders,
-    setOrders,
-    payments,
-    setPayments,
-    contactPerson,
-    setContactPerson
-  ] = useContext(AppContext);
+  const  {cart} = useContext(AppContext);
 
   function ClearForm() {
     document.getElementById("inputquantity" + props.product.itemname).value =

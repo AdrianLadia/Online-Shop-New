@@ -19,22 +19,13 @@ const ProductList = () => {
   const [selected, wholesale, retail] = useContext(SelectedCategoryContext);
   const [productdataloading, setProductDataLoading] = useState(true);
   // const [cart, setCart] = useState([])
-  const [
+  const {
     userdata,
-    setUserData,
-    isadmin,
     firestore,
     cart,
     setCart,
     favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-  ] = React.useContext(AppContext);
+ } = React.useContext(AppContext);
   const favorites = favoriteitems;
 
   useEffect(() => {

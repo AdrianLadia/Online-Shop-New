@@ -7,7 +7,7 @@ import AdminMenu from './AdminMenu'
 const AdminSecurity = () => {
     
     // Check if admin
-    const [userdata, setUserData, isadmin] = useContext(AppContext)
+    const {isadmin} = useContext(AppContext)
   
     return (
     <div>

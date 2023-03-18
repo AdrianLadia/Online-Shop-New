@@ -13,26 +13,7 @@ import { Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
 
 const CheckoutSummary = (props) => {
-
-
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-  ] = useContext(AppContext);
+  const { firestore, cart } = useContext(AppContext);
 
   let [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -52,16 +33,18 @@ const CheckoutSummary = (props) => {
 
   useEffect(() => {
     async function getTableData() {
-      const products = await firestore.readAllProducts(); 
-      const [rows_non_state,total_non_state,total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(products,cart)
-  
+      const products = await firestore.readAllProducts();
+      const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
+        products,
+        cart
+      );
+
       setRows(rows_non_state);
       setLoading(false);
       setTotal(total_non_state);
       setTotalWeight(total_weight_non_state);
     }
-    getTableData()
-
+    getTableData();
   }, [cart]);
 
   return (

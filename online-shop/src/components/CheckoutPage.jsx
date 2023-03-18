@@ -28,32 +28,7 @@ import orderData from '../data/orderData';
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-  ] = React.useContext(AppContext);
+  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate } = React.useContext(AppContext);
 
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -220,7 +195,6 @@ const CheckoutPage = () => {
     setGrandTotal(grandTotal);
   }, [total, vat, deliveryFee]);
 
- 
   return (
     <div className="flex flex-col">
       <CheckoutPageContext.Provider value={[payMayaCardSelected, setPayMayaCardSelected]}>

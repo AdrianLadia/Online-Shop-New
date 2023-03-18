@@ -41,56 +41,6 @@ function App() {
   const [orders, setOrders] = useState([]);
   const [payments, setPayments] = useState([]);
 
-  // Listen for authentication state to change.
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        console.log("onAuthStateChanged ran");
-        setUserState("userloading");
-        setUserId(user.uid);
-        if (user.uid === "PN4JqXrjsGfTsCUEEmaR5NO6rNF3") {
-          setIsAdmin(true);
-        }
-        firestore.readAllUserIds().then((ids) => {
-          if (ids.includes(user.uid)) {
-
-          } else {
-
-            firestore.createNewUser(
-              {
-                uid: user.uid,
-                name: user.displayName,
-                email: user.email,
-                emailverfied: user.emailVerified,
-                phonenumber: "",
-                deliveryaddress: [],
-                contactPerson: [],
-                isanonymous: user.isAnonymous,
-                orders: [],
-                cart: [],
-                favoriteitems: [],
-                payments: []
-              },
-              user.uid
-            );
-          }
-        });
-
-        //
-        // ...
-      } else {
-        // User is signed out
-        // ...
-        setUserId(null);
-        setUserData(null);
-        setUserLoaded(true);
-        setUserState("guest");
-      }
-    });
-  }, []);
-
   useEffect(() => {
     if (userId) {
       firestore.readUserById(userId).then((data) => {
@@ -110,38 +60,40 @@ function App() {
     }
   }, [userId, refreshUser]);
 
-  const appContextValue = [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-    orders,
-    setOrders,
-    payments,
-    setPayments,
-    contactPerson,
-    setContactPerson
-  ]
+  const appContextValue = {
+    userdata : userdata,
+    setUserData : setUserData,
+    isadmin : isadmin,
+    firestore: firestore,
+    cart: cart,
+    setCart: setCart,
+    favoriteitems: favoriteitems,
+    setFavoriteItems: setFavoriteItems,
+    userId: userId,
+    setUserId: setUserId,
+    refreshUser: refreshUser,
+    setRefreshUser: setRefreshUser,
+    userLoaded: userLoaded,
+    setUserLoaded: setUserLoaded,
+    deliveryaddress: deliveryaddress,
+    setDeliveryAddress: setDeliveryAddress,
+    latitude: latitude,
+    setLatitude: setLatitude,
+    longitude: longitude,
+    setLongitude: setLongitude,
+    userstate: userstate,
+    setUserState: setUserState,
+    phonenumber: phonenumber,
+    setPhoneNumber: setPhoneNumber,
+    orders: orders,
+    setOrders: setOrders,
+    payments: payments,
+    setPayments: setPayments,
+    contactPerson: contactPerson,
+    setContactPerson : setContactPerson,
+    auth: auth,
+    setIsAdmin: setIsAdmin
+  }
 
   return (
     <div data-testid='app' >

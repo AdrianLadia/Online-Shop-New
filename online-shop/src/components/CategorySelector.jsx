@@ -11,38 +11,9 @@ import AppContext from '../AppContext';
 
 const CategorySelector = () => {
 
-  const [
-    userdata,
-    setUserData,
-    isadmin,
+  const {
     firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-    orders,
-    setOrders,
-    payments,
-    setPayments,
-    contactPerson,
-    setContactPerson
-  ] = useContext(AppContext);
+   } = useContext(AppContext);
 
   const datamanipulation = new dataManipulation()
   const [categories, setCategories] = useState([]);

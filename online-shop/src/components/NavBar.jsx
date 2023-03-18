@@ -7,22 +7,58 @@ import MenuItem from "@mui/material/MenuItem";
 import AccountMenu from "./AccountMenu";
 import {
   GoogleAuthProvider,
-  signInWithRedirect,
+  signInWithPopup,
   FacebookAuthProvider,
   getAuth,
   signOut,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import Logo from "./Logo";
 
 function PositionedMenu() {
+  const {setUserState, setUserId,firestore,auth,setIsAdmin,setUserLoaded,setUserData} = useContext(AppContext);
+  async function signIn(signInProvider) {
+    const result = await signInWithPopup(auth, signInProvider);
+    const user = result.user;
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      console.log("onAuthStateChanged ran");
+      setUserState("userloading");
+      setUserId(user.uid);
+      if (user.uid === "PN4JqXrjsGfTsCUEEmaR5NO6rNF3") {
+        setIsAdmin(true);
+      }
+      firestore.readAllUserIds().then((ids) => {
+        if (ids.includes(user.uid)) {
 
-  function GoogleSignIn() {
-    signInWithRedirect(getAuth(), new GoogleAuthProvider());
+        } else {
+
+          firestore.createNewUser(
+            {
+              uid: user.uid,
+              name: user.displayName,
+              email: user.email,
+              emailverfied: user.emailVerified,
+              phonenumber: "",
+              deliveryaddress: [],
+              contactPerson: [],
+              isanonymous: user.isAnonymous,
+              orders: [],
+              cart: [],
+              favoriteitems: [],
+              payments: []
+            },
+            user.uid
+          );
+        }
+      });
+    } 
   }
 
-  function FacebookSignIn(auth) {
-    signInWithRedirect(getAuth(), new FacebookAuthProvider());
+  async function FacebookSignIn() {
+    signInWithPopup(getAuth(), new FacebookAuthProvider());
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -61,11 +97,11 @@ function PositionedMenu() {
           horizontal: "left",
         }}
       >
-        <MenuItem onClick={GoogleSignIn}>
+        <MenuItem onClick={()=>{signIn(new GoogleAuthProvider())}}>
           <FcGoogle className="mr-2" />
           Login With Google
         </MenuItem>
-        <MenuItem onClick={FacebookSignIn}>
+        <MenuItem onClick={()=>{signIn(new FacebookAuthProvider())}}>
           <FaFacebook className="mr-2" />
           Login With Facebook
         </MenuItem>
@@ -77,18 +113,28 @@ function PositionedMenu() {
 const userMenu = ["My Account", "Orders History", "Logout"];
 
 const NavBar = () => {
-  const [userdata, setUserData] = useContext(AppContext);
+  const {userdata, setUserData,auth,setUserLoaded,setUserState,setUserId,setCart} = useContext(AppContext);
+  async function logOutClick() {
+    await signOut(auth)
+    setUserId(null);
+    setUserData(null);
+    setUserLoaded(true);
+    setUserState("guest");
+    setCart([]);
+    console.log("logged out");
+
+  }
 
   return (
     <div>
       <div className="flex items-center justify-between flex-wrap bg-teal-500 w-full h-16 ">
-      <Logo     />
+      <Logo/>
 
         <div className="flex flex-row mr-5 ">
           {userdata ? (
             <AccountMenu
               userdata={userdata}
-              signout={() => signOut(getAuth())}
+              signout={logOutClick}
             />
           ) : (
             <PositionedMenu />

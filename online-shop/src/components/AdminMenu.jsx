@@ -1,56 +1,25 @@
-import React from "react";
-import { IoArrowBackSharp } from "react-icons/io5";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { useNavigate } from "react-router-dom";
-import AdminInventory from "./AdminInventory";
-import { useEffect, useState } from "react";
-import firestoredb from "./firestoredb";
-import AdminCreatePayment from "./AdminCreatePayment";
-import AdminOrders from "./AdminOrders";
-import AppContext from "../AppContext";
+import React from 'react';
+import { IoArrowBackSharp } from 'react-icons/io5';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { GiHamburgerMenu } from 'react-icons/gi';
+import { useNavigate } from 'react-router-dom';
+import AdminInventory from './AdminInventory';
+import { useEffect, useState } from 'react';
+import firestoredb from './firestoredb';
+import AdminCreatePayment from './AdminCreatePayment';
+import AdminOrders from './AdminOrders';
+import AppContext from '../AppContext';
 
 const AdminMenu = () => {
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-    orders,
-    setOrders,
-    payments,
-    setPayments,
-    contactPerson,
-    setContactPerson
-  ] = React.useContext(AppContext);
-  
+  const { firestore } = React.useContext(AppContext);
+
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState("Dashboard");
+  const [selectedMenu, setSelectedMenu] = React.useState('Dashboard');
   let [products, setProducts] = useState([]);
   let [categories, setCategories] = useState([]);
   let [users, setUsers] = useState([]);
@@ -64,21 +33,21 @@ const AdminMenu = () => {
 
   const handleClickInventory = () => {
     setAnchorEl(null);
-    setSelectedMenu("Inventory");
+    setSelectedMenu('Inventory');
   };
 
   const handleClickCreatePayment = () => {
     setAnchorEl(null);
-    setSelectedMenu("Create Payment");
+    setSelectedMenu('Create Payment');
   };
 
   const handleClickCustomerOrders = () => {
     setAnchorEl(null);
-    setSelectedMenu("Customer Orders");
-  }
+    setSelectedMenu('Customer Orders');
+  };
 
   const handleBack = () => {
-    navigateTo("/");
+    navigateTo('/');
   };
 
   useEffect(() => {
@@ -101,20 +70,16 @@ const AdminMenu = () => {
     <div className="flex flex-col">
       <div className="flex flex-row w-full justify-between bg-green-300 py-3">
         {/* Back Button */}
-        <IoArrowBackSharp
-          size={30}
-          className="mt-1 ml-2 cursor-pointer"
-          onClick={handleBack}
-        />
+        <IoArrowBackSharp size={30} className="mt-1 ml-2 cursor-pointer" onClick={handleBack} />
         <div>
           {/* Menu Button */}
           <Button
             id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
+            aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+            aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
-            sx={{ color: "white" }}
+            sx={{ color: 'white' }}
           >
             <GiHamburgerMenu size={25} />
           </Button>
@@ -124,35 +89,24 @@ const AdminMenu = () => {
             open={open}
             onClose={handleClose}
             MenuListProps={{
-              "aria-labelledby": "basic-button",
+              'aria-labelledby': 'basic-button',
             }}
           >
             <MenuItem onClick={handleClickInventory}>Inventory</MenuItem>
             {/* <Divider>Cust</Divider> */}
-            <MenuItem onClick={handleClickCreatePayment}>
-              Create Payment
-            </MenuItem>
-            <MenuItem onClick={handleClickCustomerOrders}>
-              Customer Orders
-            </MenuItem>
+            <MenuItem onClick={handleClickCreatePayment}>Create Payment</MenuItem>
+            <MenuItem onClick={handleClickCustomerOrders}>Customer Orders</MenuItem>
           </Menu>
         </div>
       </div>
       {/* HERO */}
       <div>
-        {selectedMenu === "Dashboard" && <AdminOrders users={users} />}
-        {selectedMenu === "Inventory" && (
-          <AdminInventory
-            products={products}
-            categories={categories}
-            refresh={refresh}
-            setRefresh={setRefresh}
-          />
+        {selectedMenu === 'Dashboard' && <AdminOrders users={users} />}
+        {selectedMenu === 'Inventory' && (
+          <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} />
         )}
-        {selectedMenu === "Create Payment" && (
-          <AdminCreatePayment users={users} setUsers={setUsers} />
-        )}
-        {selectedMenu === "Customer Orders" && <AdminOrders users={users} />}
+        {selectedMenu === 'Create Payment' && <AdminCreatePayment users={users} setUsers={setUsers} />}
+        {selectedMenu === 'Customer Orders' && <AdminOrders users={users} />}
       </div>
     </div>
   );

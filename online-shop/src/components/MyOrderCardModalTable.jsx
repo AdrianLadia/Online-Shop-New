@@ -1,79 +1,49 @@
-import React, { useEffect } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import firestoredb from "./firestoredb";
-import useWindowDimensions from "./useWindowDimensions";
-import dataManipulation from "../../utils/dataManipulation";
-import { ContentCutOutlined } from "@mui/icons-material";
-import AppContext from "../AppContext";
+import React, { useEffect } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import firestoredb from './firestoredb';
+import useWindowDimensions from './useWindowDimensions';
+import dataManipulation from '../../utils/dataManipulation';
+import { ContentCutOutlined } from '@mui/icons-material';
+import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
+  const { firestore } = React.useContext(AppContext);
 
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    ,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-    orders,
-    setOrders,
-    payments,
-    setPayments,
-    contactPerson,
-    setContactPerson
-  ] = React.useContext(AppContext);
-
-  const {width, height} = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   function getMaxHeightTable() {
-      return height - 10000
+    return height - 10000;
   }
   const order = props.order;
   const cart = order.cart;
   const datamanipulation = new dataManipulation();
 
-
   const [rows, setRows] = React.useState([]);
 
   useEffect(() => {
-    
     async function getTableData() {
-      const products = await firestore.readAllProducts(); 
-      const [rows_non_state,total_non_state,total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(products,cart)
-      console.log("rows_non_state",rows_non_state)
-      console.log(order)
-      setRows(rows_non_state);}
+      const products = await firestore.readAllProducts();
+      const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
+        products,
+        cart
+      );
+      console.log('rows_non_state', rows_non_state);
+      console.log(order);
+      setRows(rows_non_state);
+    }
 
     getTableData();
   }, []);
 
   return (
     <div>
-      <TableContainer component={Paper} >
-        <Table sx={{ minWidth: 650}} aria-label="simple table">
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Image</TableCell>
@@ -86,23 +56,15 @@ const MyOrderCardModalTable = (props) => {
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <TableRow
-                key={row.itemname}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
+              <TableRow key={row.itemname} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row">
-                  <img
-                    src={row.itemimage}
-                    alt="item"
-                    width="100px"
-                    height="100px"
-                  />
+                  <img src={row.itemimage} alt="item" width="100px" height="100px" />
                 </TableCell>
                 <TableCell>{row.itemname}</TableCell>
                 <TableCell align="right">{row.itemquantity}</TableCell>
                 <TableCell align="right">{row.itemprice}</TableCell>
                 <TableCell align="right">{row.itemtotal}</TableCell>
-                <TableCell align="right">{row.weighttotal + " Kg"}</TableCell>
+                <TableCell align="right">{row.weighttotal + ' Kg'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

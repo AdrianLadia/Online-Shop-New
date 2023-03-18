@@ -33,28 +33,8 @@ const GoogleMaps = (props) => {
   const setZoom = props.setZoom;
   const setLocalDeliveryAddress = props.setLocalDeliveryAddress;
 
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-  ] = React.useContext(AppContext);
+  const { firestore, userId, deliveryaddress, latitude, setLatitude, longitude, setLongitude } =
+    React.useContext(AppContext);
 
   let getLocation = () => {
     if (navigator.geolocation) {

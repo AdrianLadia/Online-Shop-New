@@ -1,43 +1,13 @@
-import { Typography } from "@mui/material";
-import React from "react";
-import AppContext from "../AppContext";
-import { useContext, useState, useEffect } from "react";
-import AccountStatementTable from "./AccountStatementTable";
-import MyOrderCardModal from "./MyOrderCardModal";
-import dataManipulation from "../../utils/dataManipulation";
-
+import { Typography } from '@mui/material';
+import React from 'react';
+import AppContext from '../AppContext';
+import { useContext, useState, useEffect } from 'react';
+import AccountStatementTable from './AccountStatementTable';
+import MyOrderCardModal from './MyOrderCardModal';
+import dataManipulation from '../../utils/dataManipulation';
 
 const AccountStatement = () => {
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-    orders,
-    setOrders,
-    payments,
-    setPayments,
-  ] = useContext(AppContext);
+  const { orders, payments } = useContext(AppContext);
 
   const datamanipulation = new dataManipulation();
   const [orderInfoData, setOrderInfoData] = useState(null);
@@ -47,10 +17,9 @@ const AccountStatement = () => {
   const handleClose = () => setOpen(false);
 
   useEffect(() => {
-    const dataToUse = datamanipulation.accountStatementData(orders,payments)
+    const dataToUse = datamanipulation.accountStatementData(orders, payments);
 
-
-    console.log(dataToUse)
+    console.log(dataToUse);
     setTableData(dataToUse);
 
     // console.log(data)
@@ -70,13 +39,7 @@ const AccountStatement = () => {
         />
       </div>
 
-      {orderInfoData ? (
-        <MyOrderCardModal
-          order={orderInfoData}
-          open={open}
-          handleClose={handleClose}
-        />
-      ) : null}
+      {orderInfoData ? <MyOrderCardModal order={orderInfoData} open={open} handleClose={handleClose} /> : null}
     </div>
   );
 };

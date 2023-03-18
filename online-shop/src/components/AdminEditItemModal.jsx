@@ -1,93 +1,61 @@
-import React from "react";
-import { Box, Button } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import { useState } from "react";
-import MenuItem from "@mui/material/MenuItem";
-import Modal from "@mui/material/Modal";
-import firestoredb from "./firestoredb";
-import TextField from "@mui/material/TextField";
-import AppContext from "../AppContext";
+import React from 'react';
+import { Box, Button } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import { useState } from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+import firestoredb from './firestoredb';
+import TextField from '@mui/material/TextField';
+import AppContext from '../AppContext';
 
 // Style for Modal
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  height: "80%",
-  transform: "translate(-50%, -50%)",
-  width: "95%",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  height: '80%',
+  transform: 'translate(-50%, -50%)',
+  width: '95%',
 
-  "@media (min-width: 1024px)": {
-    width: "50%",
+  '@media (min-width: 1024px)': {
+    width: '50%',
   },
 
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
 
 const AdminEditItemModal = (props) => {
-
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-    userId,
-    setUserId,
-    refreshUser,
-    setRefreshUser,
-    userLoaded,
-    setUserLoaded,
-    deliveryaddress,
-    setDeliveryAddress,
-    latitude,
-    setLatitude,
-    longitude,
-    setLongitude,
-    userstate,
-    setUserState,
-    phonenumber,
-    setPhoneNumber,
-    orders,
-    setOrders,
-    payments,
-    setPayments,
-    contactPerson,
-    setContactPerson
-  ] = React.useContext(AppContext);
+  const { firestore } = React.useContext(AppContext);
   const products = props.products;
-  const [selectedItemToBeEdited, setSelectedItemToBeEdited] = useState("");
-  const [itemID, setItemID] = useState("");
-  const [itemName, setItemName] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [category, setCategory] = React.useState("");
-  const [color, setColor] = React.useState("");
-  const [material, setMaterial] = React.useState("");
-  const [size, setSize] = React.useState("");
-  const [weight, setWeight] = React.useState("");
-  const [dimensions, setDimensions] = React.useState("");
-  const [price, setPrice] = React.useState("");
-  const [brand, setBrand] = React.useState("");
-  const [pieces, setPieces] = React.useState("");
-  const [unit, setUnit] = React.useState("");
-  const [imagelink1, setImagelink1] = React.useState("");
-  const [imagelink2, setImagelink2] = React.useState("");
-  const [imagelink3, setImagelink3] = React.useState("");
-  const [imagelink4, setImagelink4] = React.useState("");
-  const [imagelink5, setImagelink5] = React.useState("");
-  const [imagelink6, setImagelink6] = React.useState("");
-  const [imagelink7, setImagelink7] = React.useState("");
-  const [imagelink8, setImagelink8] = React.useState("");
-  const [imagelink9, setImagelink9] = React.useState("");
-  const [imagelink10, setImagelink10] = React.useState("");
+  const [selectedItemToBeEdited, setSelectedItemToBeEdited] = useState('');
+  const [itemID, setItemID] = useState('');
+  const [itemName, setItemName] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [category, setCategory] = React.useState('');
+  const [color, setColor] = React.useState('');
+  const [material, setMaterial] = React.useState('');
+  const [size, setSize] = React.useState('');
+  const [weight, setWeight] = React.useState('');
+  const [dimensions, setDimensions] = React.useState('');
+  const [price, setPrice] = React.useState('');
+  const [brand, setBrand] = React.useState('');
+  const [pieces, setPieces] = React.useState('');
+  const [unit, setUnit] = React.useState('');
+  const [imagelink1, setImagelink1] = React.useState('');
+  const [imagelink2, setImagelink2] = React.useState('');
+  const [imagelink3, setImagelink3] = React.useState('');
+  const [imagelink4, setImagelink4] = React.useState('');
+  const [imagelink5, setImagelink5] = React.useState('');
+  const [imagelink6, setImagelink6] = React.useState('');
+  const [imagelink7, setImagelink7] = React.useState('');
+  const [imagelink8, setImagelink8] = React.useState('');
+  const [imagelink9, setImagelink9] = React.useState('');
+  const [imagelink10, setImagelink10] = React.useState('');
   const categories = props.categories;
 
   function handleChange(event) {
@@ -123,7 +91,7 @@ const AdminEditItemModal = (props) => {
   function handleEditItem() {
     function checkifUndefinedAndReturnBlankString(value) {
       if (value === undefined) {
-        return "";
+        return '';
       } else {
         return value;
       }
@@ -148,7 +116,7 @@ const AdminEditItemModal = (props) => {
       if (imagelink === undefined) {
         return;
       }
-      if (imagelink === "") {
+      if (imagelink === '') {
         return;
       } else {
         convertedtofirestore.push(imagelink);
@@ -186,11 +154,9 @@ const AdminEditItemModal = (props) => {
       >
         <Box sx={style}>
           <div className="flex flex-col h-full overflow-y-auto space-y-4">
-            <Box sx={{ width: "90%", marginTop: 3 }}>
+            <Box sx={{ width: '90%', marginTop: 3 }}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Select Item
-                </InputLabel>
+                <InputLabel id="demo-simple-select-label">Select Item</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -199,7 +165,7 @@ const AdminEditItemModal = (props) => {
                   onChange={handleChange}
                 >
                   {products.map((product) => (
-                    <MenuItem key={'adminEditItem-' +  product.itemid} value={product.itemid}>
+                    <MenuItem key={'adminEditItem-' + product.itemid} value={product.itemid}>
                       {product.itemname}
                     </MenuItem>
                   ))}
@@ -214,7 +180,7 @@ const AdminEditItemModal = (props) => {
               label="Item ID"
               variant="outlined"
               value={itemID}
-              sx={{ width: "90%" }}
+              sx={{ width: '90%' }}
               onChange={(event) => setItemID(event.target.value)}
             />
             <TextField
@@ -222,8 +188,8 @@ const AdminEditItemModal = (props) => {
               id="outlined-basic"
               label="Item Name"
               variant="outlined"
-              value={itemName || ""}
-              sx={{ width: "90%" }}
+              value={itemName || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setItemName(event.target.value)}
             />
             <TextField
@@ -231,11 +197,11 @@ const AdminEditItemModal = (props) => {
               id="outlined-basic"
               label="Price"
               variant="outlined"
-              value={price || ""}
-              sx={{ width: "90%" }}
+              value={price || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setPrice(event.target.value)}
             />
-            <Box sx={{ width: "90%", marginTop: 3 }}>
+            <Box sx={{ width: '90%', marginTop: 3 }}>
               <FormControl fullWidth>
                 <InputLabel required={true} id="demo-simple-select-label">
                   Category
@@ -243,7 +209,7 @@ const AdminEditItemModal = (props) => {
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={category || ""}
+                  value={category || ''}
                   label="Age"
                   onChange={handleChange}
                 >
@@ -259,48 +225,48 @@ const AdminEditItemModal = (props) => {
               id="outlined-basic"
               label="Description"
               variant="outlined"
-              value={description || ""}
-              sx={{ width: "90%" }}
+              value={description || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setDescription(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Color"
               variant="outlined"
-              value={color || ""}
-              sx={{ width: "90%" }}
+              value={color || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setColor(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Material"
               variant="outlined"
-              value={material || ""}
-              sx={{ width: "90%" }}
+              value={material || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setMaterial(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Size"
               variant="outlined"
-              value={size || ""}
-              sx={{ width: "90%" }}
+              value={size || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setSize(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Weight"
               variant="outlined"
-              value={weight || ""}
-              sx={{ width: "90%" }}
+              value={weight || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setWeight(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Dimensions"
               variant="outlined"
-              value={dimensions || ""}
-              sx={{ width: "90%" }}
+              value={dimensions || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setDimensions(event.target.value)}
             />
 
@@ -308,110 +274,107 @@ const AdminEditItemModal = (props) => {
               id="outlined-basic"
               label="Brand"
               variant="outlined"
-              value={brand || ""}
-              sx={{ width: "90%" }}
+              value={brand || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setBrand(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Pieces"
               variant="outlined"
-              value={pieces || ""}
-              sx={{ width: "90%" }}
+              value={pieces || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setPieces(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Unit"
               variant="outlined"
-              value={unit || ""}
-              sx={{ width: "90%" }}
+              value={unit || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setUnit(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 1"
               variant="outlined"
-              value={imagelink1 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink1 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink1(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 2"
               variant="outlined"
-              value={imagelink2 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink2 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink2(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 3"
               variant="outlined"
-              value={imagelink3 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink3 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink3(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 4"
               variant="outlined"
-              value={imagelink4 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink4 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink4(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 5"
               variant="outlined"
-              value={imagelink5 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink5 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink5(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 6"
               variant="outlined"
-              value={imagelink6 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink6 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink6(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 7"
               variant="outlined"
-              value={imagelink7 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink7 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink7(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 8"
               variant="outlined"
-              value={imagelink8 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink8 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink8(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 9"
               variant="outlined"
-              value={imagelink9 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink9 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink9(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 10"
               variant="outlined"
-              value={imagelink10 || ""}
-              sx={{ width: "90%" }}
+              value={imagelink10 || ''}
+              sx={{ width: '90%' }}
               onChange={(event) => setImagelink10(event.target.value)}
             />
-            <button
-              onClick={handleEditItem}
-              className="bg-yellow-300 hover:bg-yellow-500 rounded-lg p-4"
-            >
+            <button onClick={handleEditItem} className="bg-yellow-300 hover:bg-yellow-500 rounded-lg p-4">
               Edit Item
             </button>
           </div>

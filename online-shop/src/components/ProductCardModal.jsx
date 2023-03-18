@@ -63,7 +63,7 @@ const ProductCardModal = (props) => {
   const { height, width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
-  const [userdata, setUserData, isadmin, firestore,cart,setCart,favoriteitems,setFavoriteItems] = React.useContext(AppContext);
+  const {userdata,firestore,favoriteitems,setFavoriteItems} = React.useContext(AppContext);
   const [onInitialize, setOninitialize] = useState(true);
 
   function onHeartClick() {
