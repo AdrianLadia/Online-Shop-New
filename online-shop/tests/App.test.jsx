@@ -618,7 +618,7 @@ describe('Transaction Place Order', async () => {
       false
     );
 
-    orderdata.transactionPlaceOrder();
+    orderdata.transactionPlaceOrder(firestore);
 
     await delay(300);
   });

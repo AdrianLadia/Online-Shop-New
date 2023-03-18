@@ -1,5 +1,4 @@
 import dataValidation from '../../utils/dataValidation';
-import firestoredb from '../components/firestoredb';
 
 class orderData {
   constructor(

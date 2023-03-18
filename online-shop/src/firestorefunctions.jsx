@@ -39,8 +39,6 @@ class firestorefunctions {
       }
     } catch (e) {
       if (consolelog) {
-        console.log('____________________________')
-        console.log(data)
         console.error("Error adding document: ", e);
       }
     }
@@ -94,6 +92,7 @@ class firestorefunctions {
     }
   }
 
+  
   async deleteDocumentFromCollection(collectionname, id) {
     const docRef = doc(this.db, collectionname + "/", id);
 
@@ -144,7 +143,8 @@ class firestorefunctions {
     collectionname,
     id,
     data,
-    arrayname
+    arrayname,
+    localphonenumber
   ) {
     const arrayRef = doc(this.db, collectionname + "/", id);
 
@@ -188,17 +188,28 @@ class firestorefunctions {
     deliveryVehicle,
     needAssistance
   ) {
+    console.log("transactionPlaceOrder");
+    console.log(userid);
+    console.log(localDeliveryAddress);
+    console.log(locallatitude);
+    console.log(locallongitude);
+    
+
+
+
+    // cartReferences = []
+    // cart.map((c) => {
+    //   cartReferences.push(productRef = doc(this.db, "Products" + "/", c))
+    // })
 
 
     try {
       await runTransaction(this.db, async (transaction) => {
         // READ
-
         const docRef = doc(this.db, "Users" + "/", userid);
         const usersdoc = await transaction.get(docRef);
         const deliveryAddress = usersdoc.data().deliveryaddress;
         const contactPerson = usersdoc.data().contactPerson;
-        
         const cartUniqueItems = Array.from(new Set(cart))
 
         const currentInventory = {}
@@ -209,6 +220,7 @@ class firestorefunctions {
           currentInventory[c] = productdoc.data().stocksAvailable
         }))
         
+        console.log(currentInventory)
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
         
@@ -331,7 +343,7 @@ class firestorefunctions {
 
       console.log("Checkout Transaction successfully committed!");
     } catch (e) {
-      console.error("Transaction failed: ", e);
+      console.log("Transaction failed: ", e);
     }
   }
 
@@ -349,6 +361,7 @@ class firestorefunctions {
 
         payments.map((payment) => {
           data.push(payment);
+          console.log(parseFloat(payment.amount));
           totalpayments += parseFloat(payment.amount);
         });
 
@@ -359,7 +372,7 @@ class firestorefunctions {
           );
         });
 
-      
+        console.log("Total Payments: ", totalpayments);
         orders.map((order) => {
           totalpayments -= parseFloat(order.grandtotal);
           totalpayments = Math.round(totalpayments);
@@ -411,7 +424,7 @@ class firestorefunctions {
       });
       console.log("Transaction successfully committed!");
     } catch (e) {
-      console.error("Transaction failed: ", e);
+      console.log("Transaction failed: ", e);
     }
   }
 }
