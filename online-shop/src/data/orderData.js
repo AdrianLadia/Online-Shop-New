@@ -62,53 +62,41 @@ class orderData {
     datavalidation.isNumber(this.totalWeight);
     datavalidation.isObject(this.deliveryVehicle);
     datavalidation.isBoolean(this.needAssistance);
-
-    
   }
 
   transactionPlaceOrder(firestore) {
     const datavalidation = new dataValidation();
     if (this.deliveryAddress === '') {
-      alert('Delivery address is empty');
       throw new Error('Delivery address is empty');
     }
 
     if (this.contactName === '') {
-      alert('Contact name is empty');
       throw new Error('Contact name is empty');
     }
 
     if (this.contactPhoneNumber === '') {
-      alert('Contact phone number is empty');
       throw new Error('Contact phone number is empty');
     }
 
     if (this.cart.length === 0) {
-      alert('Cart is empty');
       throw new Error('Cart is empty');
     }
     if (this.itemsTotal < 0) {
-      alert('Items total is less than 0')
       throw new Error('Items total is less than 0');
     }
     if (this.vat < 0) {
-      alert('VAT is less than 0')
       throw new Error('VAT is less than 0');
     }
     if (this.deliveryFee < 0) {
-      alert('Delivery fee is less than 0')
       throw new Error('Delivery fee is less than 0');
     }
     if (this.grandTotal < 0) {
-      alert('Grand total is less than 0')
       throw new Error('Grand total is less than 0');
     }
     if (this.totalWeight < 0) {
-      alert('Total weight is less than 0')
       throw new Error('Total weight is less than 0');
     }
     if (datavalidation.error === true) {
-        alert('data validation error');
         throw new Error('data validation error');
     }
 
