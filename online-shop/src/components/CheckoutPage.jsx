@@ -24,6 +24,7 @@ import lalamoveDeliveryVehicles from '../data/lalamoveDeliveryVehicles';
 import dataManipulation from '../../utils/dataManipulation';
 import dataValidation from '../../utils/dataValidation';
 import orderData from '../data/orderData';
+import userData from '../data/userData';
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
@@ -95,15 +96,18 @@ const CheckoutPage = () => {
     }
     let orderdata = null;
     if (userdata) {
+      console.log(userdata);
+      const userObject = new userData(userdata.uid,userdata.name,userdata.email,userdata.emailverfied,userdata.phonenumber,userdata.isanonymous,userdata.cart)
+      console.log(userObject)
       orderdata = new orderData(
-        userdata.uid,
-        userdata.phonenumber,
-        userdata.name,
+        userObject.uid,
+        userObject.phoneNumber,
+        userObject.name,
         localDeliveryAddress,
         locallatitude,
         locallongitude,
         new Date(),
-        cart,
+        userObject.cart,
         total,
         vat,
         deliveryFee,

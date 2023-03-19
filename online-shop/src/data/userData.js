@@ -1,7 +1,7 @@
 import dataValidation from '../../utils/dataValidation';
 
 class userData {
-  constructor(uid, name, email, emailVerified, phoneNumber, isAnonymous) {
+  constructor(uid, name, email, emailVerified, phoneNumber, isAnonymous,cart) {
     (this.uid = uid),
       (this.name = name),
       (this.email = email),
@@ -11,7 +11,7 @@ class userData {
       (this.contactPerson = []),
       (this.isAnonymous = isAnonymous),
       (this.orders = []),
-      (this.cart = []),
+      (this.cart = cart),
       (this.favoriteItems = []),
       (this.payments = []);
 
