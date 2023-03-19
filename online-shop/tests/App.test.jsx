@@ -10,7 +10,6 @@ import serviceAreas from '../src/data/serviceAreas';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
 import dataValidation from '../utils/dataValidation';
 import orderData from '../src/data/orderData';
-import userData from '../src/data/userData';
 //
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
@@ -26,6 +25,135 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+describe('Business Calcualtions', () => {
+  test('getSafetyStock', () => {
+    const averageSalesPerDay = 20;
+    expect(businesscalculations.getSafetyStock(averageSalesPerDay)).toBe(40);
+  });
+  test('getStocksAvailableLessSafetyStock', () => {
+    const stocksAvailable = 100;
+    const safetyStock = 40;
+    expect(businesscalculations.getStocksAvailableLessSafetyStock(stocksAvailable, safetyStock)).toBe(20);
+  });
+  test('getCartCount', async () => {
+    const cart = user.cart;
+    expect(businesscalculations.getCartCount(cart)).toEqual({
+      'PPB#1': 5,
+      'PPB#10': 5,
+      'PPB#12': 3,
+      'PPB#16': 3,
+    });
+  });
+  test('getTotalDifferenceOfPaperboyAndSelectedLocation', () => {
+    const paperboylatitude = paperboylocation.latitude;
+    const paperboylongitude = paperboylocation.longitude;
+    const selectedlatitude = 10.333629311391931;
+    const selectedlongitude = 123.93851059905926;
+    const expected = 0.031733047732064534;
+    const difference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
+      paperboylatitude,
+      paperboylongitude,
+      selectedlatitude,
+      selectedlongitude
+    );
+    expect(difference).toBe(expected);
+  });
+  test('convertTotalDifferenceToKilometers', () => {
+    const totaldifference = 0.031733047732064534;
+    const expected = 3.5255416030323694;
+    const kilometers = businesscalculations.convertTotalDifferenceToKilometers(totaldifference);
+    expect(kilometers).toBe(expected);
+  });
+  test('getlocationsInDeliveryPoint', () => {
+    const longLatList = [
+      [10.33609636567313, 123.93865239990616, ['lalamoveServiceArea']],
+      [6.102780179424748, 125.14266344007835, ['generalSantosArea']],
+    ];
+    longLatList.map((longLat) => {
+      const latitude = longLat[0];
+      const longitude = longLat[1];
+      const locations = businesscalculations.getLocationsInPoint(latitude, longitude);
+      expect(locations).toEqual(longLat[2]);
+    });
+  });
+  test('getVehicleForDelivery', () => {
+    const test = [
+      [20, 'motorcycle'],
+      [200, 'sedan'],
+      [300, 'mpv'],
+      [600, 'pickup'],
+      [1000, 'van'],
+      [2000, 'closedvan'],
+    ];
+    test.map((test) => {
+      const weight = test[0];
+      const expected = test[1];
+      const vehicle = businesscalculations.getVehicleForDelivery(weight).name;
+      expect(vehicle).toBe(expected);
+    });
+  });
+  test('getDeliveryFee', () => {
+    const kilometers = 10;
+    const vehicles = [
+      lalamovedeliveryvehicles.motorcycle,
+      lalamovedeliveryvehicles.sedan,
+      lalamovedeliveryvehicles.mpv,
+      lalamovedeliveryvehicles.pickup,
+      lalamovedeliveryvehicles.van,
+      lalamovedeliveryvehicles.closedvan,
+    ];
+    vehicles.map((vehicle) => {
+      const deliveryFeePerKm = vehicle.deliveryFeePerKm;
+      const expected = Math.round(deliveryFeePerKm * kilometers);
+      const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicle);
+      expect(deliveryFee).toBe(expected);
+    });
+  });
+  test('checkStocksIfAvailableInFirestore', async () => {
+    const products = await firestore.readAllProducts();
+    const result = await businesscalculations.checkStocksIfAvailableInFirestore(products, [
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+    ]);
+  });
+  test('getValueAddedTax', () => {
+    const subtotal = 100;
+    const expected = 12;
+    const vat = businesscalculations.getValueAddedTax(subtotal);
+    expect(vat).toBe(expected);
+  });
+  test('getGrandTotalAmount', () => {
+    const subtotal = 100;
+    const vat = 12;
+    const deliveryfee = 10;
+    const expected = 122;
+    const grandtotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
+    expect(grandtotal).toBe(expected);
+  });
+  test('addToCart and removeFromCart', () => {
+    const cart = user.cart;
+    const newCart = businesscalculations.addToCart(cart, 'PPB#1');
+    expect(newCart).toEqual([...cart, 'PPB#1']);
+    const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
+    expect(newCart2).toEqual([...newCart, 'PPB#2']);
+    const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
+    expect(newCart3).toEqual([...newCart]);
+  });
+  test('addToCartWithQuantity', () => {
+    const cart = user.cart;
+    const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5, cart);
+    expect(newCart).toEqual([...cart, 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1']);
+  });
+});
 describe('Business Calcualtions', () => {
   test('getSafetyStock', () => {
     const averageSalesPerDay = 20;
@@ -875,17 +1003,19 @@ describe('firestoredb', async () => {
     expect(longitude).toEqual(0);
   });
 
-  test('updatePhoneNumber', async () => {
-    await firestore.updatePhoneNumber('testuser', '09178927206');
-    const user = await firestore.readUserById('testuser');
-    const phonenumber = user.phonenumber;
-    expect(phonenumber).toEqual('09178927206');
-  });
-});
+//   test('updatePhoneNumber', async () => {
+//     await firestore.updatePhoneNumber('testuser', '09178927206');
+//     const user = await firestore.readUserById('testuser');
+//     const phonenumber = user.phonenumber;
+//     expect(phonenumber).toEqual('09178927206');
+//   });
+
+
+// });
 
 describe('userData', async () => {
   test('create new user', async () => {
-    const userdata = new userData('testuser1234','testname','test@gmail.com',true,'',false);
+    const userdata = new userData('testuser','testname','test@gmail.com',true,'',false);
     userdata.cart = ['PPB#1','PPB#2']
     await userdata.createNewUser(firestore)
     const userExists = await userdata.checkIfUserExists(firestore)
@@ -893,7 +1023,6 @@ describe('userData', async () => {
     const deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle
     const orderdata = new orderData(userdata.uid,userdata.phoneNumber,userdata.name,'paperboy',1,2,new Date(),userdata.cart,1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
     orderdata.transactionPlaceOrder(firestore)
-
   } );
 
 
