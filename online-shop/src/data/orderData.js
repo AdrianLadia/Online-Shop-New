@@ -64,7 +64,7 @@ class orderData {
     datavalidation.isBoolean(this.needAssistance);
   }
 
-  async transactionPlaceOrder(firestore) {
+  transactionPlaceOrder(firestore) {
     const datavalidation = new dataValidation();
     if (this.deliveryAddress === '') {
       throw new Error('Delivery address is empty');
@@ -101,7 +101,7 @@ class orderData {
     }
 
 
-    await firestore.transactionPlaceOrder(
+    firestore.transactionPlaceOrder(
       this.userUid,
       this.deliveryAddress,
       this.latitude,

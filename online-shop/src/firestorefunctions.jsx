@@ -191,14 +191,14 @@ class firestorefunctions {
 
     try {
       await runTransaction(this.db, async (transaction) => {
-        // READ
-        // const docRef = doc(this.db, "Users" + "/", userid);
-        // const usersdoc = await transaction.get(docRef);
-        // const deliveryAddress = usersdoc.data().deliveryaddress;
-        // const contactPerson = usersdoc.data().contactPerson;
-        // const cartUniqueItems = Array.from(new Set(cart))
+        READ
+        const docRef = doc(this.db, "Users" + "/", userid);
+        const usersdoc = await transaction.get(docRef);
+        const deliveryAddress = usersdoc.data().deliveryaddress;
+        const contactPerson = usersdoc.data().contactPerson;
+        const cartUniqueItems = Array.from(new Set(cart))
 
-        // const currentInventory = {}
+        const currentInventory = {}
         await Promise.all(cartUniqueItems.map(async(c) => {
           const productRef = doc(this.db, "Products" + "/", c);
           const productdoc = await transaction.get(productRef);

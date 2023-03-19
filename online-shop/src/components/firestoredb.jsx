@@ -148,7 +148,7 @@ class firestoredb {
     this.firestore.deleteDocumentFromCollection('test', 'test');
   }
 
-  async transactionPlaceOrder(
+  transactionPlaceOrder(
     userid,
     localDeliveryAddress,
     locallatitude,
