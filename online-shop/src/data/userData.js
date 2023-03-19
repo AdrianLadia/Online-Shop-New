@@ -36,7 +36,7 @@ class userData {
 
   async createNewUser(firestore) {
     if (this.datavalidation.error == true) {
-      throw new Error('data validation error');
+      throw new Error(this.datavalidation.message);
     }
 
     firestore.createNewUser(

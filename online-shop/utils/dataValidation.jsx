@@ -3,6 +3,7 @@ class dataValidation {
   constructor() {
     this.firestore = new firestoredb();
     this.error = false;
+    this.messsage = '';
   }
 
   isString(string) {
@@ -11,6 +12,7 @@ class dataValidation {
     } else {
       console.error('isString: ' + string + ' is not a string');
       this.error = true;
+      this.messsage = 'isString: ' + string + ' is not a string';
       return false
     }
   }
@@ -21,6 +23,7 @@ class dataValidation {
     } else {
       console.error('isNumber: ' + number + ' is not a number');
       this.error = true;
+      this.messsage = 'isNumber: ' + number + ' is not a number';
       return false
     }
   }
@@ -31,6 +34,7 @@ class dataValidation {
     } else {
       console.error('isDateObject: ' + dateObject + ' is not a date object');
       this.error = true;
+      this.messsage = 'isDateObject: ' + dateObject + ' is not a date object';
       return false
     }
   }
@@ -41,6 +45,7 @@ class dataValidation {
     } else {
       console.error('isArray: ' + array + ' is not an array');
       this.error = true;
+      this.messsage = 'isArray: ' + array + ' is not an array';
       return false
     }
   }
@@ -52,6 +57,7 @@ class dataValidation {
     } else {
       console.error('isBoolean: ' + bool + ' is not a boolean');
       this.error = true;
+      this.messsage = 'isBoolean: ' + bool + ' is not a boolean';
       return false
     }
   }
@@ -63,6 +69,7 @@ class dataValidation {
     } else {
       console.error('isObject: ' + object + ' is not an object');
       this.error = true;
+      this.messsage = 'isObject: ' + object + ' is not an object';
       return false
     }
   }
