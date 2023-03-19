@@ -42,9 +42,6 @@ class orderData {
     this.deliveryVehicle = deliveryvehicle;
     this.needAssistance = needassistance;
 
-    console.log(this.userPhoneNumber)
-    console.log(this.contactPhoneNumber)
-
     const datavalidation = new dataValidation();
     datavalidation.isString(this.userUid);
     datavalidation.isString(this.userPhoneNumber);

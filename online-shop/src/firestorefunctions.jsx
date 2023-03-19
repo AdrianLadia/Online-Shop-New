@@ -12,6 +12,8 @@ import {
   runTransaction,
 } from "firebase/firestore";
 
+import * as firebase from "firebase/app";
+
 const consolelog = false;
 
 class firestorefunctions {
@@ -187,33 +189,9 @@ class firestorefunctions {
     needAssistance
   ) {
 
-    console.log( 
-      userid,
-      localDeliveryAddress,
-      locallatitude,
-      locallongitude,
-      localphonenumber,
-      localname,
-      orderdate,
-      name,
-      address,
-      phonenumber,
-      cart,
-      itemstotal,
-      vat,
-      shippingtotal,
-      grandtotal,
-      reference,
-      username,
-      userphonenumber,
-      deliveryNotes,
-      totalWeight,
-      deliveryVehicle,
-      needAssistance)
-
     try {
       await runTransaction(this.db, async (transaction) => {
-        // READ
+        READ
         const docRef = doc(this.db, "Users" + "/", userid);
         const usersdoc = await transaction.get(docRef);
         const deliveryAddress = usersdoc.data().deliveryaddress;
@@ -338,8 +316,6 @@ class firestorefunctions {
             needAssistance : needAssistance,
             userid : userid
           }
-
-          console.log(new_orders)
         
 
         // const updated_orders = [...new_orders, ...orders];

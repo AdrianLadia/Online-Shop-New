@@ -892,8 +892,7 @@ describe('userData', async () => {
     expect(userExists).toEqual(true)
     const deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle
     // const orderdata = new orderData(userdata.uid,userdata.phoneNumber,userdata.name,'paperboy',1,2,new Date(),userdata.cart,1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
-    const date = new Date()
-    const orderdata = new orderData('testuser1234','','testname','paperboy',1,2,date,['PPB#1','PPB#2'],1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
+    const orderdata = new orderData('testuser1234','','testname','paperboy',1,2,new Date(),['PPB#1','PPB#2'],1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
     const user = await firestore.readUserById('testuser')
     console.log(user)
     orderdata.transactionPlaceOrder(firestore)
