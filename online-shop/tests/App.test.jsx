@@ -878,8 +878,6 @@ describe('firestoredb', async () => {
   test('createProduct and readAll Products', async () => {
     await firestore.createProduct({ test: 'test' }, 'test');
     const products = await firestore.readAllProducts();
-    console.log(products);
-    console.log(products[0].test);
     let found = false;
     products.map((product) => {
       if (product.test === 'test') {
@@ -918,7 +916,6 @@ describe('firestoredb', async () => {
 
   test('readAllUserIds', async () => {
     const usersId = await firestore.readAllUserIds();
-    console.log(usersId);
     let found = false;
     usersId.map((user) => {
       if (user === 'test') {
@@ -1003,29 +1000,14 @@ describe('firestoredb', async () => {
     expect(longitude).toEqual(0);
   });
 
-//   test('updatePhoneNumber', async () => {
-//     await firestore.updatePhoneNumber('testuser', '09178927206');
-//     const user = await firestore.readUserById('testuser');
-//     const phonenumber = user.phonenumber;
-//     expect(phonenumber).toEqual('09178927206');
-//   });
-
-
-// });
-
-describe('userData', async () => {
-  test('create new user', async () => {
-    const userdata = new userData('testuser','testname','test@gmail.com',true,'',false);
-    userdata.cart = ['PPB#1','PPB#2']
-    await userdata.createNewUser(firestore)
-    const userExists = await userdata.checkIfUserExists(firestore)
-    expect(userExists).toEqual(true)
-    const deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle
-    const orderdata = new orderData(userdata.uid,userdata.phoneNumber,userdata.name,'paperboy',1,2,new Date(),userdata.cart,1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
-    orderdata.transactionPlaceOrder(firestore)
-  } );
-
-
+  test('updatePhoneNumber', async () => {
+    await firestore.updatePhoneNumber('testuser', '09178927206');
+    const user = await firestore.readUserById('testuser');
+    const phonenumber = user.phonenumber;
+    expect(phonenumber).toEqual('09178927206');
+  });
 
 
 });
+
+

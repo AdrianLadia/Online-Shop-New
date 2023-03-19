@@ -205,7 +205,7 @@ class firestorefunctions {
 
     try {
       await runTransaction(this.db, async (transaction) => {
-        READ
+
         const docRef = doc(this.db, "Users" + "/", userid);
         const usersdoc = await transaction.get(docRef);
         const deliveryAddress = usersdoc.data().deliveryaddress;
