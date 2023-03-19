@@ -14,8 +14,8 @@ import userData from '../src/data/userData';
 //
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
-const firestore = new firestoredb(app, true);
-const user = await firestore.readUserById('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+const firestore = new firestoredb(app,false);
+// const user = await firestore.readUserById('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
 const serviceareas = new serviceAreas();
@@ -893,7 +893,8 @@ describe('userData', async () => {
     const userExists = await userdata.checkIfUserExists(firestore)
     expect(userExists).toEqual(true)
     const deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle
-    const orderdata = new orderData(userdata.uid,userdata.phoneNumber,userdata.name,'paperboy',1,2,new Date(),userdata.cart,1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
+    // const orderdata = new orderData(userdata.uid,userdata.phoneNumber,userdata.name,'paperboy',1,2,new Date(),userdata.cart,1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
+    const orderdata = new orderData('testuser','','anton','paperboy',1,2,new Date(),['PPB#1','PPB#2'],1000,100,100,1200,'12345678','anton','09173248291','no notes',100,deliveryVehicle,true)
     orderdata.transactionPlaceOrder(firestore)
   } );
 
