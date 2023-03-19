@@ -14,8 +14,8 @@ import userData from '../src/data/userData';
 //
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
-const firestore = new firestoredb(app,false);
-// const user = await firestore.readUserById('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+const firestore = new firestoredb(app, true);
+const user = await firestore.readUserById('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
 const serviceareas = new serviceAreas();
