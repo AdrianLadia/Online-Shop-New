@@ -188,6 +188,20 @@ class firestorefunctions {
     deliveryVehicle,
     needAssistance
   ) {
+    console.log("transactionPlaceOrder");
+    console.log(userid);
+    console.log(localDeliveryAddress);
+    console.log(locallatitude);
+    console.log(locallongitude);
+    
+
+
+
+    // cartReferences = []
+    // cart.map((c) => {
+    //   cartReferences.push(productRef = doc(this.db, "Products" + "/", c))
+    // })
+
 
     try {
       await runTransaction(this.db, async (transaction) => {
