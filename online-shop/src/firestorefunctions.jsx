@@ -205,7 +205,7 @@ class firestorefunctions {
 
         const docRef = doc(this.db, "Users" + "/", data.userid);
         const usersdoc = await transaction.get(docRef);
-        const deliveryAddress = usersdoc.data().deliveryaddress;
+        const deliveryAddress = usersdoc.data().deliveryAddress;
         const contactPerson = usersdoc.data().contactPerson;
         const cartUniqueItems = Array.from(new Set(data.cart))
 
@@ -341,6 +341,7 @@ class firestorefunctions {
       console.log("Checkout Transaction successfully committed!");
     } catch (e) {
       console.log("Transaction failed: ", e);
+      throw new Error(e);
     }
   }
 
