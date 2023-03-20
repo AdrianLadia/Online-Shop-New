@@ -7,7 +7,8 @@ class firestoredb extends firestorefunctions {
   }
 
   // USED FOR ADMIN INVENTORY
-  async createProduct(data, id) {
+  async 
+  createProduct(data, id) {
     const schema = Joi.object(
       {
         itemId: Joi.string().required(),
@@ -25,10 +26,10 @@ class firestoredb extends firestorefunctions {
         material: Joi.string().required(),
         size: Joi.string().required(),
         stocksAvailable: Joi.number().required(),
-        stocksOnHold: Joi.number().required(),
+        stocksOnHold: Joi.array().required(),
         averageSalesPerDay: Joi.number().required(),
         parentProductID: Joi.string().required(),
-        stocksOnHoldCompleted: Joi.number().required(),
+        stocksOnHoldCompleted: Joi.array().required(),
       }
     ).unknown(false)
 

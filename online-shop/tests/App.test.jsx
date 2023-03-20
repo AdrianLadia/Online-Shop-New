@@ -877,7 +877,7 @@ describe('firestoredb', async () => {
   });
   test('createProduct and readAll Products', async () => {
     await firestore.createProduct({
-      itemid: 'test',
+      itemId: 'test',
       itemName: 'testname',
       unit: 'bale',
       price: 1000,
@@ -885,7 +885,7 @@ describe('firestoredb', async () => {
       weight: 15,
       dimensions: '10x12',
       category: 'Paper Bag',
-      imageLinks: 'testlink',
+      imageLinks: ['testlink'],
       brand: 'testbrand',
       pieces: 1999,
       color: 'red',
