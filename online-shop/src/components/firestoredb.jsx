@@ -1,37 +1,38 @@
 import firestorefunctions from '../firestorefunctions';
 
-class firestoredb {
+class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
-    this.firestore = new firestorefunctions(app, emulator);
+    super(app, emulator);
   }
+    
 
   // USED FOR ADMIN INVENTORY
   async createProduct(data, id) {
-    this.firestore.createDocument(data, id, 'Products');
+    this.createDocument(data, id, 'Products');
   }
 
   async readAllProducts() {
-    const products = await this.firestore.readAllDataFromCollection('Products');
+    const products = await this.readAllDataFromCollection('Products');
     return products;
   }
 
   async readSelectedProduct(id) {
-    const product = await this.firestore.readSelectedDataFromCollection('Products', id);
+    const product = await this.readSelectedDataFromCollection('Products', id);
     return product;
   }
 
   async deleteProduct(id) {
-    this.firestore.deleteDocumentFromCollection('Products', id);
+    this.deleteDocumentFromCollection('Products', id);
   }
 
   async updateProduct(id, data) {
-    await this.firestore.updateDocumentFromCollection('Products', id, data);
+    await this.updateDocumentFromCollection('Products', id, data);
   }
 
   // USED FOR STOREFRONT
 
   async createCategory(id) {
-    this.firestore.createDocument(
+    this.createDocument(
       {
         category: id
           .split(' ')
@@ -47,52 +48,52 @@ class firestoredb {
   }
 
   async readAllCategories() {
-    const categories = await this.firestore.readAllDataFromCollection('Categories');
+    const categories = await this.readAllDataFromCollection('Categories');
     return categories;
   }
 
   async readAllUserIds() {
-    const ids = await this.firestore.readAllIdsFromCollection('Users');
+    const ids = await this.readAllIdsFromCollection('Users');
     return ids;
   }
 
   async readAllUsers() {
-    const users = await this.firestore.readAllDataFromCollection('Users');
+    const users = await this.readAllDataFromCollection('Users');
     return users;
   }
 
   async createNewUser(data, id) {
-    this.firestore.createDocument(data, id, 'Users');
+    this.createDocument(data, id, 'Users');
   }
 
   async readUserById(id) {
-    const user = await this.firestore.readSelectedDataFromCollection('Users', id);
+    const user = await this.readSelectedDataFromCollection('Users', id);
     return user;
   }
 
   async addItemToFavorites(userid, data) {
     console.log('ran');
-    this.firestore.addDocumentArrayFromCollection('Users', userid, data, 'favoriteitems');
+    this.addDocumentArrayFromCollection('Users', userid, data, 'favoriteitems');
   }
 
   async removeItemFromFavorites(userid, data) {
-    this.firestore.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteitems');
+    this.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteitems');
   }
 
   async createUserCart(data, userid) {
-    this.firestore.updateDocumentFromCollection('Users', userid, {
+    this.updateDocumentFromCollection('Users', userid, {
       cart: data,
     });
   }
 
   async deleteAllUserCart(userid) {
-    this.firestore.updateDocumentFromCollection('Users', userid, {
+    this.updateDocumentFromCollection('Users', userid, {
       cart: [],
     });
   }
 
   async readUserAddress(userid) {
-    const user = await this.firestore.readSelectedDataFromCollection('Users', userid);
+    const user = await this.readSelectedDataFromCollection('Users', userid);
     return user.deliveryaddress;
   }
 
@@ -100,7 +101,7 @@ class firestoredb {
   async deleteAddress(userid, latitude, longitude, address) {
     console.log('deleting address');
     console.log(latitude, longitude, address);
-    this.firestore.deleteDocumentFromCollectionArray(
+    this.deleteDocumentFromCollectionArray(
       'Users',
       userid,
       { latitude: latitude, longitude: longitude, address: address },
@@ -109,12 +110,12 @@ class firestoredb {
   }
 
   async readUserContactPersons(userid) {
-    const user = await this.firestore.readSelectedDataFromCollection('Users', userid);
+    const user = await this.readSelectedDataFromCollection('Users', userid);
     return user.contactPerson;
   }
 
   async deleteUserContactPersons(userid, name, phonenumber) {
-    this.firestore.deleteDocumentFromCollectionArray(
+    this.deleteDocumentFromCollectionArray(
       'Users',
       userid,
       { name: name, phonenumber: phonenumber },
@@ -123,32 +124,32 @@ class firestoredb {
   }
 
   async updateLatitudeLongitude(userid, latitude, longitude) {
-    this.firestore.updateDocumentFromCollection('Users', userid, {
+    this.updateDocumentFromCollection('Users', userid, {
       latitude: latitude,
       longitude: longitude,
     });
   }
 
   async updatePhoneNumber(userid, phonenumber) {
-    this.firestore.updateDocumentFromCollection('Users', userid, {
+    this.updateDocumentFromCollection('Users', userid, {
       phonenumber: phonenumber,
     });
   }
 
   async createTestCollection() {
-    this.firestore.createDocument({ name: 'test' }, 'test', 'test');
+    this.createDocument({ name: 'test' }, 'test', 'test');
   }
 
   async readTestCollection() {
-    const data = await this.firestore.readAllDataFromCollection('test');
+    const data = await this.readAllDataFromCollection('test');
     return data;
   }
 
   async deleteTestCollection() {
-    this.firestore.deleteDocumentFromCollection('test', 'test');
+    this.deleteDocumentFromCollection('test', 'test');
   }
 
-  transactionPlaceOrder(
+  async transactionPlaceOrder(
     userid,
     localDeliveryAddress,
     locallatitude,
@@ -172,7 +173,7 @@ class firestoredb {
     deliveryVehicle,
     needAssistance
   ) {
-    this.firestore.transactionPlaceOrder(
+    this.transactionPlaceOrder(
       userid,
       localDeliveryAddress,
       locallatitude,
@@ -199,12 +200,12 @@ class firestoredb {
   }
 
   async transactionCreatePayment(userid, amount, reference, paymentprovider) {
-    this.firestore.transactionCreatePayment(userid, amount, reference, paymentprovider);
+    this.transactionCreatePayment(userid, amount, reference, paymentprovider);
   }
 
   async readAllOrders() {
     const orders = [];
-    const userdata = await this.firestore.readAllDataFromCollection('Users').then((data) => {
+    const userdata = await this.readAllDataFromCollection('Users').then((data) => {
       data.map((user) => {
         user.orders.map((order) => {
           orders.push(order);
@@ -235,7 +236,7 @@ class firestoredb {
   }
 
   async deleteUserByUserId(userId) {
-    await this.firestore.deleteDocumentFromCollection('Users', userId);
+    await this.deleteDocumentFromCollection('Users', userId);
   }
 
   async readProductStocksAvailable(productId) {
@@ -244,13 +245,13 @@ class firestoredb {
   }
 
   async updateProductStocksAvailable(productId, stocksAvailable) {
-    this.firestore.updateDocumentFromCollection('Products', productId, {
+    this.updateDocumentFromCollection('Products', productId, {
       stocksAvailable: stocksAvailable,
     });
   }
 
   async addOrderDataToTests(orderData) {
-    this.firestore.updateDocumentFromCollection('Tests','orderData',{'data' : orderData})
+    this.updateDocumentFromCollection('Tests','orderData',{'data' : orderData})
   }
 }
 

@@ -584,51 +584,51 @@ describe('Emulator', () => {
 
 describe('firestorefunctions', () => {
   test('createDocument', async () => {
-    firestore.firestore.createDocument({ test: 'test' }, 'test', 'Products');
+    firestore.createDocument({ test: 'test' }, 'test', 'Products');
   });
   test('readAllDataFromCollection', async () => {
-    const data = await firestore.firestore.readAllDataFromCollection('Products');
+    const data = await firestore.readAllDataFromCollection('Products');
     expect(data).not.toBe([]);
   });
   test('readAllIdsFromCollection', async () => {
-    const data = await firestore.firestore.readAllIdsFromCollection('Products');
+    const data = await firestore.readAllIdsFromCollection('Products');
     expect(data).not.toBe([]);
   });
   test('readSelectedDataFromCollection', async () => {
-    const data = await firestore.firestore.readSelectedDataFromCollection('Products', 'test', 'test');
+    const data = await firestore.readSelectedDataFromCollection('Products', 'test', 'test');
     expect(data).not.toBe([]);
   });
   test('updateDocumentFromCollection', async () => {
-    const olddata = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
-    await firestore.firestore.updateDocumentFromCollection('Products', 'test', { test: 'test2' });
-    const newdata = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
+    const olddata = await firestore.readSelectedDataFromCollection('Products', 'test');
+    await firestore.updateDocumentFromCollection('Products', 'test', { test: 'test2' });
+    const newdata = await firestore.readSelectedDataFromCollection('Products', 'test');
     expect(newdata).not.toBe(olddata);
   });
   test('deleteDocumentFromCollection', async () => {
-    const olddata = await firestore.firestore.readAllIdsFromCollection('Products');
-    const newdata = firestore.firestore.deleteDocumentFromCollection('Products', 'test');
+    const olddata = await firestore.readAllIdsFromCollection('Products');
+    const newdata = firestore.deleteDocumentFromCollection('Products', 'test');
     expect(newdata).not.toBe(olddata);
   });
   test('addDocumentArrayFromCollection', async () => {
-    await firestore.firestore.createDocument({ testarray: [] }, 'test', 'Products');
-    await firestore.firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray' }, 'testarray');
-    await firestore.firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray2' }, 'testarray');
-    const selected = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
+    await firestore.createDocument({ testarray: [] }, 'test', 'Products');
+    await firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray' }, 'testarray');
+    await firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray2' }, 'testarray');
+    const selected = await firestore.readSelectedDataFromCollection('Products', 'test');
     const testfield = selected.testarray;
 
     expect(testfield).toEqual([{ test: 'testarray' }, { test: 'testarray2' }]);
   });
   test('deleteDocumentArrayFromCollection', async () => {
-    await firestore.firestore.deleteDocumentFromCollectionArray(
+    await firestore.deleteDocumentFromCollectionArray(
       'Products',
       'test',
       { test: 'testarray2' },
       'testarray'
     );
-    const selected = await firestore.firestore.readSelectedDataFromCollection('Products', 'test');
+    const selected = await firestore.readSelectedDataFromCollection('Products', 'test');
     const testfield = selected.testarray;
     expect(testfield).toEqual([{ test: 'testarray' }]);
-    await firestore.firestore.deleteDocumentFromCollection('Products', 'test');
+    await firestore.deleteDocumentFromCollection('Products', 'test');
   });
 });
 
@@ -829,7 +829,7 @@ describe('Transaction Create Payment', async () => {
       'testuser'
     );
     await delay(300);
-    firestore.firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
+    firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
     await delay(300);
   });
   test('Check if payment is added to payment field', async () => {

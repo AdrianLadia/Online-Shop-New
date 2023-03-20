@@ -23,7 +23,7 @@ import paperBoyLocation from '../data/paperBoyLocation';
 import lalamoveDeliveryVehicles from '../data/lalamoveDeliveryVehicles';
 import dataManipulation from '../../utils/dataManipulation';
 import dataValidation from '../../utils/dataValidation';
-import orderData from '../data/orderData';
+
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
@@ -95,27 +95,33 @@ const CheckoutPage = () => {
     }
     let orderdata = null;
     if (userdata) {
-      orderdata = new orderData(
+
+      firestore.transactionPlaceOrder(
         userdata.uid,
-        userdata.phonenumber,
-        userdata.name,
         localDeliveryAddress,
         locallatitude,
         locallongitude,
+        userdata.phonenumber,
+        userdata.name,
         new Date(),
+        localname,
+        localDeliveryAddress,
+        localphonenumber,
         cart,
         total,
         vat,
         deliveryFee,
         grandtotal,
         generateOrderReference(),
-        localname,
+        userdata.name,
         localphonenumber,
         deliveryNotes,
         totalWeight,
         deliveryVehicle,
         needAssistance
-      );
+      )
+
+  
     }
 
     setOrderDataObject(orderdata);
