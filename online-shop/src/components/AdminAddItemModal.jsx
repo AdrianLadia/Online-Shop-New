@@ -117,7 +117,7 @@ const AdminAddItemModal = (props) => {
         stocksOnHold: [],
         averageSalesPerDay: 0,
         parentProductID: parentProductID,
-        stocksOnHoldCompleted: [],
+        stocksOnHoldCompleted: []
       },
       itemID
     );

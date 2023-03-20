@@ -1,5 +1,5 @@
 import firestorefunctions from '../firestorefunctions';
-import Joi from 'joi'
+import Joi from 'joi';
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
@@ -7,31 +7,29 @@ class firestoredb extends firestorefunctions {
   }
 
   // USED FOR ADMIN INVENTORY
-  async 
+  async;
   createProduct(data, id) {
-    const schema = Joi.object(
-      {
-        itemId: Joi.string().required(),
-        itemName: Joi.string().required(),
-        unit: Joi.string().required(),
-        price: Joi.number().required(),
-        description: Joi.string().required(),
-        weight: Joi.number().required(),
-        dimensions: Joi.string().required(),
-        category: Joi.string().required(),
-        imageLinks: Joi.array().required(),
-        brand: Joi.string().required(),
-        pieces: Joi.number().required(),
-        color: Joi.string().required(),
-        material: Joi.string().required(),
-        size: Joi.string().required(),
-        stocksAvailable: Joi.number().required(),
-        stocksOnHold: Joi.array().required(),
-        averageSalesPerDay: Joi.number().required(),
-        parentProductID: Joi.string().required(),
-        stocksOnHoldCompleted: Joi.array().required(),
-      }
-    ).unknown(false)
+    const schema = Joi.object({
+      itemId: Joi.string().required(),
+      itemName: Joi.string().required(),
+      unit: Joi.string().required(),
+      price: Joi.number().required(),
+      description: Joi.string().required(),
+      weight: Joi.number().required(),
+      dimensions: Joi.string(),
+      category: Joi.string().required(),
+      imageLinks: Joi.array(),
+      brand: Joi.string(),
+      pieces: Joi.number().required(),
+      color: Joi.string(),
+      material: Joi.string(),
+      size: Joi.string(),
+      stocksAvailable: Joi.number().required(),
+      stocksOnHold: Joi.array().required(),
+      averageSalesPerDay: Joi.number().required(),
+      parentProductID: Joi.string(),
+      stocksOnHoldCompleted: Joi.array().required(),
+    }).unknown(false);
 
     const { error } = schema.validate(data);
     if (error) {
@@ -56,20 +54,47 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProduct(id, data) {
+    const schema = Joi.object({
+      itemName: Joi.string().required(),
+      unit: Joi.string().required(),
+      price: Joi.number().required(),
+      description: Joi.string().required(),
+      weight: Joi.number().required(),
+      dimensions: Joi.string(),
+      category: Joi.string().required(),
+      imageLinks: Joi.array(),
+      brand: Joi.string(),
+      pieces: Joi.number().required(),
+      color: Joi.string(),
+      material: Joi.string(),
+      size: Joi.string(),
+    }).unknown(false);
+
+    const { error } = schema.validate(data);
+    if (error) {
+      throw new Error(error);
+    }
     await super.updateDocumentFromCollection('Products', id, data);
   }
 
   // USED FOR STOREFRONT
 
-  async createCategory(id) {
+  async createCategory(categoryId) {
+    const schema = Joi.string().required();
+
+    const { error } = schema.validate(categoryId);
+    if (error) {
+      throw new Error(error);
+    }
+
     super.createDocument(
       {
-        category: id
+        category: categoryId
           .split(' ')
           .map((word) => word[0].toUpperCase() + word.slice(1))
           .join(' '),
       },
-      id
+      categoryId
         .split(' ')
         .map((word) => word[0].toUpperCase() + word.slice(1))
         .join(' '),
@@ -93,6 +118,26 @@ class firestoredb extends firestorefunctions {
   }
 
   async createNewUser(data, id) {
+    const schema = Joi.object({
+      uid: Joi.string().required(),
+      name: Joi.string(),
+      email: Joi.string(),
+      emailVerified: Joi.boolean(),
+      phoneNumber: Joi.string(),
+      deliveryAddress: Joi.array(),
+      contactPerson: Joi.array(),
+      isAnonymous: Joi.boolean(),
+      orders: Joi.array(),
+      cart: Joi.array(),
+      favoriteItems: Joi.array(),
+      payments: Joi.array(),
+    }).unknown(false);
+
+    const { error } = schema.validate(data);
+    if (error) {
+      throw new Error(error);
+    }
+
     super.createDocument(data, id, 'Users');
   }
 
@@ -103,11 +148,11 @@ class firestoredb extends firestorefunctions {
 
   async addItemToFavorites(userid, data) {
     console.log('ran');
-    super.addDocumentArrayFromCollection('Users', userid, data, 'favoriteitems');
+    super.addDocumentArrayFromCollection('Users', userid, data, 'favoriteItems');
   }
 
   async removeItemFromFavorites(userid, data) {
-    super.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteitems');
+    super.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteItems');
   }
 
   async createUserCart(data, userid) {
@@ -127,7 +172,6 @@ class firestoredb extends firestorefunctions {
     return user.deliveryaddress;
   }
 
-
   async deleteAddress(userid, latitude, longitude, address) {
     console.log('deleting address');
     console.log(latitude, longitude, address);
@@ -135,7 +179,7 @@ class firestoredb extends firestorefunctions {
       'Users',
       userid,
       { latitude: latitude, longitude: longitude, address: address },
-      'deliveryaddress'
+      'deliveryAddress'
     );
   }
 
@@ -145,12 +189,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteUserContactPersons(userid, name, phonenumber) {
-    super.deleteDocumentFromCollectionArray(
-      'Users',
-      userid,
-      { name: name, phonenumber: phonenumber },
-      'contactPerson'
-    );
+    super.deleteDocumentFromCollectionArray('Users', userid, { name: name, phonenumber: phonenumber }, 'contactPerson');
   }
 
   async updateLatitudeLongitude(userid, latitude, longitude) {
@@ -179,59 +218,59 @@ class firestoredb extends firestorefunctions {
     super.deleteDocumentFromCollection('test', 'test');
   }
 
-  async transactionPlaceOrder(
-    userid,
-    localDeliveryAddress,
-    locallatitude,
-    locallongitude,
-    localphonenumber,
-    localname,
-    orderdate,
-    name,
-    address,
-    phonenumber,
-    cart,
-    itemstotal,
-    vat,
-    shippingtotal,
-    grandtotal,
-    reference,
-    username,
-    userphonenumber,
-    deliveryNotes,
-    totalWeight,
-    deliveryVehicle,
-    needAssistance
-  ) {
-    super.transactionPlaceOrder(
-      userid,
-      localDeliveryAddress,
-      locallatitude,
-      locallongitude,
-      localphonenumber,
-      localname,
-      orderdate,
-      name,
-      address,
-      phonenumber,
-      cart,
-      itemstotal,
-      vat,
-      shippingtotal,
-      grandtotal,
-      reference,
-      username,
-      userphonenumber,
-      deliveryNotes,
-      totalWeight,
-      deliveryVehicle,
-      needAssistance
-    );
-  }
+  // async transactionPlaceOrder(
+  //   userId,
+  //   deliveryAddress,
+  //   locallatitude,
+  //   locallongitude,
+  //   localphonenumber,
+  //   localname,
+  //   orderdate,
+  //   name,
+  //   address,
+  //   phonenumber,
+  //   cart,
+  //   itemstotal,
+  //   vat,
+  //   shippingtotal,
+  //   grandtotal,
+  //   reference,
+  //   username,
+  //   userphonenumber,
+  //   deliveryNotes,
+  //   totalWeight,
+  //   deliveryVehicle,
+  //   needAssistance
+  // ) {
+  //   super.transactionPlaceOrder(
+  //     userId,
+  //     deliveryAddress,
+  //     locallatitude,
+  //     locallongitude,
+  //     localphonenumber,
+  //     localname,
+  //     orderdate,
+  //     name,
+  //     address,
+  //     phonenumber,
+  //     cart,
+  //     itemstotal,
+  //     vat,
+  //     shippingtotal,
+  //     grandtotal,
+  //     reference,
+  //     username,
+  //     userphonenumber,
+  //     deliveryNotes,
+  //     totalWeight,
+  //     deliveryVehicle,
+  //     needAssistance
+  //   );
+  // }
 
-  async transactionCreatePayment(userid, amount, reference, paymentprovider) {
-    super.transactionCreatePayment(userid, amount, reference, paymentprovider);
-  }
+  // async transactionCreatePayment(userid, amount, reference, paymentprovider) {
+  //   super.transactionCreatePayment(userid, amount, reference, paymentprovider);
+  // }
 
   async readAllOrders() {
     const orders = [];
@@ -270,8 +309,8 @@ class firestoredb extends firestorefunctions {
   }
 
   async readProductStocksAvailable(productId) {
-    const product = await this.readSelectedProduct(productId)
-    return product.stocksAvailable
+    const product = await this.readSelectedProduct(productId);
+    return product.stocksAvailable;
   }
 
   async updateProductStocksAvailable(productId, stocksAvailable) {
@@ -281,7 +320,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async addOrderDataToTests(orderData) {
-    super.updateDocumentFromCollection('Tests','orderData',{'data' : orderData})
+    super.updateDocumentFromCollection('Tests', 'orderData', { data: orderData });
   }
 }
 

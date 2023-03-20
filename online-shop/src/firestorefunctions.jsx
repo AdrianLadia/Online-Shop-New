@@ -11,6 +11,7 @@ import {
   arrayRemove,
   runTransaction,
 } from "firebase/firestore";
+import Joi from "joi";
 
 import * as firebase from "firebase/app";
 
@@ -165,52 +166,48 @@ class firestorefunctions {
   }
 
   async transactionPlaceOrder(
-    userid,
-    localDeliveryAddress,
-    locallatitude,
-    locallongitude,
-    localphonenumber,
-    localname,
-    orderdate,
-    name,
-    address,
-    phonenumber,
-    cart,
-    itemstotal,
-    vat,
-    shippingtotal,
-    grandtotal,
-    reference,
-    username,
-    userphonenumber,
-    deliveryNotes,
-    totalWeight,
-    deliveryVehicle,
-    needAssistance
+    data
   ) {
-    console.log("transactionPlaceOrder");
-    console.log(userid);
-    console.log(localDeliveryAddress);
-    console.log(locallatitude);
-    console.log(locallongitude);
-    
+
+    const schema = Joi.object({
+      userid: Joi.string().required(),
+      username: Joi.string().required(),
+      localDeliveryAddress: Joi.string().required(),
+      locallatitude: Joi.number().required(),
+      locallongitude: Joi.number().required(),
+      localphonenumber: Joi.string().required(),
+      localname: Joi.string().required(),
+      orderdate: Joi.date().required(),
+      address: Joi.string().required(),
+      cart: Joi.array().required(),
+      itemstotal: Joi.number().required(),
+      vat: Joi.number().required(),
+      shippingtotal: Joi.number().required(),
+      grandtotal: Joi.number().required(),
+      reference: Joi.string().required(),
+      userphonenumber: Joi.string().required(),
+      deliveryNotes: Joi.string().required(),
+      totalWeight: Joi.number().required(),
+      deliveryVehicle: Joi.string().required(),
+      needAssistance: Joi.boolean().required(),
+    }).unknown(false);
 
 
+    const { error} = schema.validate(data)
+    if (error) {
+      throw new Error(error)
+    }
 
-    // cartReferences = []
-    // cart.map((c) => {
-    //   cartReferences.push(productRef = doc(this.db, "Products" + "/", c))
-    // })
 
 
     try {
       await runTransaction(this.db, async (transaction) => {
 
-        const docRef = doc(this.db, "Users" + "/", userid);
+        const docRef = doc(this.db, "Users" + "/", data.userid);
         const usersdoc = await transaction.get(docRef);
         const deliveryAddress = usersdoc.data().deliveryaddress;
         const contactPerson = usersdoc.data().contactPerson;
-        const cartUniqueItems = Array.from(new Set(cart))
+        const cartUniqueItems = Array.from(new Set(data.cart))
 
         const currentInventory = {}
         await Promise.all(cartUniqueItems.map(async(c) => {
@@ -226,9 +223,9 @@ class firestorefunctions {
         
         await Promise.all(cartUniqueItems.map(async (itemid) => {
           const prodref = doc(this.db, "Products" + "/", itemid);
-          const orderQuantity = cart.filter((c) => c == itemid).length
+          const orderQuantity = data.cart.filter((c) => c == itemid).length
           const newStocksAvailable = currentInventory[itemid] - orderQuantity
-          await transaction.update(prodref, {['stocksOnHold']: arrayUnion({reference: reference, quantity: orderQuantity, userid: userid})});
+          await transaction.update(prodref, {['stocksOnHold']: arrayUnion({reference: data.reference, quantity: orderQuantity, userId: data.userid})});
           await transaction.update(prodref, {['stocksAvailable']: newStocksAvailable});
         }))
 
@@ -239,15 +236,15 @@ class firestorefunctions {
         let latitudeexists = false;
         let longitudeexists = false;
         deliveryAddress.map((d) => {
-          if (d.address == localDeliveryAddress) {
+          if (d.address == data.localDeliveryAddress) {
             console.log("address already exists");
             addressexists = true;
           }
-          if (d.latitude == locallatitude) {
+          if (d.latitude == data.locallatitude) {
             console.log("latitude already exists");
             latitudeexists = true;
           }
-          if (d.longitude == locallongitude) {
+          if (d.longitude == data.locallongitude) {
             console.log("longitude already exists");
             longitudeexists = true;
           }
@@ -260,9 +257,9 @@ class firestorefunctions {
           console.log("adding new address");
           const newAddress = [
             {
-              latitude: locallatitude,
-              longitude: locallongitude,
-              address: localDeliveryAddress,
+              latitude: data.locallatitude,
+              longitude: data.locallongitude,
+              address: data.localDeliveryAddress,
             },
           ];
           const updatedAddressList = [...newAddress, ...deliveryAddress];
@@ -278,11 +275,11 @@ class firestorefunctions {
         let phonenumberexists = false;
         let nameexists = false;
         contactPerson.map((d) => {
-          if (d.phonenumber == localphonenumber) {
+          if (d.phoneNumber == data.localphonenumber) {
             console.log("phonenumber already exists");
             phonenumberexists = true;
           }
-          if (d.name == localname) {
+          if (d.name == data.localname) {
             console.log("name already exists");
             nameexists = true;
           }
@@ -290,7 +287,7 @@ class firestorefunctions {
         if (phonenumberexists == false || nameexists == false) {
           console.log("updating contact");
           const newContact = [
-            { name: localname, phonenumber: localphonenumber },
+            { name: data.localname, phoneNumber: data.localphonenumber },
           ];
           const updatedContactList = [...newContact, ...contactPerson];
           console.log(updatedContactList);
@@ -304,31 +301,31 @@ class firestorefunctions {
 
         const new_orders = 
           {
-            orderdate: orderdate,
-            name: name,
-            address: address,
-            phonenumber: phonenumber,
-            latitude: locallatitude,
-            longitude: locallongitude,
-            cart: cart,
-            itemstotal: itemstotal,
-            vat: vat,
-            shippingtotal: shippingtotal,
-            grandtotal: grandtotal,
+            orderDate: data.orderdate,
+            contactName: data.localname,
+            deliveryAddress: data.address,
+            contactPhoneNumber: data.localphonenumber,
+            deliveryAddressLatitude: data.locallatitude,
+            deliveryAddressLongitude: data.locallongitude,
+            cart: data.cart,
+            itemsTotal: data.itemstotal,
+            vat: data.vat,
+            shippingTotal: data.shippingtotal,
+            grandTotal: data.grandtotal,
             delivered: false,
-            reference: reference,
+            reference: data.reference,
             paid: false,
-            username: username,
-            userphonenumber : userphonenumber,
-            deliveryNotes : deliveryNotes,
+            userName: data.username,
+            userPhoneNumber : data.userphonenumber,
+            deliveryNotes : data.deliveryNotes,
             orderAcceptedByClient : false,
             userWhoAcceptedOrder : null,
             orderAcceptedByClientDate : null,
             clientIDWhoAcceptedOrder : null,
-            totalWeight : totalWeight,
-            deliveryVehicle : deliveryVehicle.name,
-            needAssistance : needAssistance,
-            userid : userid
+            totalWeight : data.totalWeight,
+            deliveryVehicle : data.deliveryVehicle,
+            needAssistance : data.needAssistance,
+            userId : data.userid
           }
         
 
@@ -367,14 +364,14 @@ class firestorefunctions {
 
         orders.sort((a, b) => {
           return (
-            new Date(a.orderdate.seconds * 1000).getTime() -
-            new Date(b.orderdate.seconds * 1000).getTime()
+            new Date(a.orderDate.seconds * 1000).getTime() -
+            new Date(b.orderDate.seconds * 1000).getTime()
           );
         });
 
         console.log("Total Payments: ", totalpayments);
         orders.map((order) => {
-          totalpayments -= parseFloat(order.grandtotal);
+          totalpayments -= parseFloat(order.grandTotal);
           totalpayments = Math.round(totalpayments);
           if (totalpayments >= 0) {
             console.log("Order Paid");

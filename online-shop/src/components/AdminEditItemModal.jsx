@@ -127,7 +127,7 @@ const AdminEditItemModal = (props) => {
     console.log(color);
 
     firestore.updateProduct(selectedItemToBeEdited, {
-      itemname: checkifUndefinedAndReturnBlankString(itemName),
+      itemName: checkifUndefinedAndReturnBlankString(itemName),
       description: checkifUndefinedAndReturnBlankString(description),
       category: checkifUndefinedAndReturnBlankString(category),
       color: checkifUndefinedAndReturnBlankString(color),
@@ -139,7 +139,7 @@ const AdminEditItemModal = (props) => {
       brand: checkifUndefinedAndReturnBlankString(brand),
       pieces: checkifUndefinedAndReturnBlankString(pieces),
       unit: checkifUndefinedAndReturnBlankString(unit),
-      imagelinks: convertedtofirestore,
+      imageLinks: convertedtofirestore,
     });
     props.setRefresh(!props.refresh);
   }
