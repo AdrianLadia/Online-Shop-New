@@ -100,14 +100,14 @@ const AdminAddItemModal = (props) => {
     firestore.createProduct(
       {
         itemid: itemID,
-        itemname: itemName,
+        itemName: itemName,
         unit: unit,
         price: price,
         description: description,
         weight: weight,
         dimensions: dimensions,
         category: category,
-        imagelinks: filteredimagelinks,
+        imageLinks: filteredimagelinks,
         brand: brand,
         pieces: pieces,
         color: color,

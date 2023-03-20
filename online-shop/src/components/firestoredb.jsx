@@ -1,38 +1,67 @@
 import firestorefunctions from '../firestorefunctions';
+import Joi from 'joi'
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
     super(app, emulator);
   }
-    
 
   // USED FOR ADMIN INVENTORY
   async createProduct(data, id) {
-    this.createDocument(data, id, 'Products');
+    const schema = Joi.object(
+      {
+        itemId: Joi.string().required(),
+        itemName: Joi.string().required(),
+        unit: Joi.string().required(),
+        price: Joi.number().required(),
+        description: Joi.string().required(),
+        weight: Joi.number().required(),
+        dimensions: Joi.string().required(),
+        category: Joi.string().required(),
+        imageLinks: Joi.array().required(),
+        brand: Joi.string().required(),
+        pieces: Joi.number().required(),
+        color: Joi.string().required(),
+        material: Joi.string().required(),
+        size: Joi.string().required(),
+        stocksAvailable: Joi.number().required(),
+        stocksOnHold: Joi.number().required(),
+        averageSalesPerDay: Joi.number().required(),
+        parentProductID: Joi.string().required(),
+        stocksOnHoldCompleted: Joi.number().required(),
+      }
+    ).unknown(false)
+
+    const { error } = schema.validate(data);
+    if (error) {
+      throw new Error(error);
+    }
+
+    super.createDocument(data, id, 'Products');
   }
 
   async readAllProducts() {
-    const products = await this.readAllDataFromCollection('Products');
+    const products = await super.readAllDataFromCollection('Products');
     return products;
   }
 
   async readSelectedProduct(id) {
-    const product = await this.readSelectedDataFromCollection('Products', id);
+    const product = await super.readSelectedDataFromCollection('Products', id);
     return product;
   }
 
   async deleteProduct(id) {
-    this.deleteDocumentFromCollection('Products', id);
+    super.deleteDocumentFromCollection('Products', id);
   }
 
   async updateProduct(id, data) {
-    await this.updateDocumentFromCollection('Products', id, data);
+    await super.updateDocumentFromCollection('Products', id, data);
   }
 
   // USED FOR STOREFRONT
 
   async createCategory(id) {
-    this.createDocument(
+    super.createDocument(
       {
         category: id
           .split(' ')
@@ -48,52 +77,52 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllCategories() {
-    const categories = await this.readAllDataFromCollection('Categories');
+    const categories = await super.readAllDataFromCollection('Categories');
     return categories;
   }
 
   async readAllUserIds() {
-    const ids = await this.readAllIdsFromCollection('Users');
+    const ids = await super.readAllIdsFromCollection('Users');
     return ids;
   }
 
   async readAllUsers() {
-    const users = await this.readAllDataFromCollection('Users');
+    const users = await super.readAllDataFromCollection('Users');
     return users;
   }
 
   async createNewUser(data, id) {
-    this.createDocument(data, id, 'Users');
+    super.createDocument(data, id, 'Users');
   }
 
   async readUserById(id) {
-    const user = await this.readSelectedDataFromCollection('Users', id);
+    const user = await super.readSelectedDataFromCollection('Users', id);
     return user;
   }
 
   async addItemToFavorites(userid, data) {
     console.log('ran');
-    this.addDocumentArrayFromCollection('Users', userid, data, 'favoriteitems');
+    super.addDocumentArrayFromCollection('Users', userid, data, 'favoriteitems');
   }
 
   async removeItemFromFavorites(userid, data) {
-    this.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteitems');
+    super.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteitems');
   }
 
   async createUserCart(data, userid) {
-    this.updateDocumentFromCollection('Users', userid, {
+    super.updateDocumentFromCollection('Users', userid, {
       cart: data,
     });
   }
 
   async deleteAllUserCart(userid) {
-    this.updateDocumentFromCollection('Users', userid, {
+    super.updateDocumentFromCollection('Users', userid, {
       cart: [],
     });
   }
 
   async readUserAddress(userid) {
-    const user = await this.readSelectedDataFromCollection('Users', userid);
+    const user = await super.readSelectedDataFromCollection('Users', userid);
     return user.deliveryaddress;
   }
 
@@ -101,7 +130,7 @@ class firestoredb extends firestorefunctions {
   async deleteAddress(userid, latitude, longitude, address) {
     console.log('deleting address');
     console.log(latitude, longitude, address);
-    this.deleteDocumentFromCollectionArray(
+    super.deleteDocumentFromCollectionArray(
       'Users',
       userid,
       { latitude: latitude, longitude: longitude, address: address },
@@ -110,12 +139,12 @@ class firestoredb extends firestorefunctions {
   }
 
   async readUserContactPersons(userid) {
-    const user = await this.readSelectedDataFromCollection('Users', userid);
+    const user = await super.readSelectedDataFromCollection('Users', userid);
     return user.contactPerson;
   }
 
   async deleteUserContactPersons(userid, name, phonenumber) {
-    this.deleteDocumentFromCollectionArray(
+    super.deleteDocumentFromCollectionArray(
       'Users',
       userid,
       { name: name, phonenumber: phonenumber },
@@ -124,29 +153,29 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateLatitudeLongitude(userid, latitude, longitude) {
-    this.updateDocumentFromCollection('Users', userid, {
+    super.updateDocumentFromCollection('Users', userid, {
       latitude: latitude,
       longitude: longitude,
     });
   }
 
   async updatePhoneNumber(userid, phonenumber) {
-    this.updateDocumentFromCollection('Users', userid, {
+    super.updateDocumentFromCollection('Users', userid, {
       phonenumber: phonenumber,
     });
   }
 
   async createTestCollection() {
-    this.createDocument({ name: 'test' }, 'test', 'test');
+    super.createDocument({ name: 'test' }, 'test', 'test');
   }
 
   async readTestCollection() {
-    const data = await this.readAllDataFromCollection('test');
+    const data = await super.readAllDataFromCollection('test');
     return data;
   }
 
   async deleteTestCollection() {
-    this.deleteDocumentFromCollection('test', 'test');
+    super.deleteDocumentFromCollection('test', 'test');
   }
 
   async transactionPlaceOrder(
@@ -173,7 +202,7 @@ class firestoredb extends firestorefunctions {
     deliveryVehicle,
     needAssistance
   ) {
-    this.transactionPlaceOrder(
+    super.transactionPlaceOrder(
       userid,
       localDeliveryAddress,
       locallatitude,
@@ -200,12 +229,12 @@ class firestoredb extends firestorefunctions {
   }
 
   async transactionCreatePayment(userid, amount, reference, paymentprovider) {
-    this.transactionCreatePayment(userid, amount, reference, paymentprovider);
+    super.transactionCreatePayment(userid, amount, reference, paymentprovider);
   }
 
   async readAllOrders() {
     const orders = [];
-    const userdata = await this.readAllDataFromCollection('Users').then((data) => {
+    const userdata = await super.readAllDataFromCollection('Users').then((data) => {
       data.map((user) => {
         user.orders.map((order) => {
           orders.push(order);
@@ -216,7 +245,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllPaidOrders() {
-    const orders = this.readAllOrders().then((orders) => {
+    const orders = super.readAllOrders().then((orders) => {
       const paidorders = orders.filter((order) => {
         return order.paid === true;
       });
@@ -236,7 +265,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteUserByUserId(userId) {
-    await this.deleteDocumentFromCollection('Users', userId);
+    await super.deleteDocumentFromCollection('Users', userId);
   }
 
   async readProductStocksAvailable(productId) {
@@ -245,13 +274,13 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProductStocksAvailable(productId, stocksAvailable) {
-    this.updateDocumentFromCollection('Products', productId, {
+    super.updateDocumentFromCollection('Products', productId, {
       stocksAvailable: stocksAvailable,
     });
   }
 
   async addOrderDataToTests(orderData) {
-    this.updateDocumentFromCollection('Tests','orderData',{'data' : orderData})
+    super.updateDocumentFromCollection('Tests','orderData',{'data' : orderData})
   }
 }
 
