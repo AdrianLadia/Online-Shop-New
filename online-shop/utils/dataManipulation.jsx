@@ -2,6 +2,7 @@
 // import 'firebase/firestore';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { parseISO } from 'date-fns';
+import Joi from 'joi';
 
 class dataManipulation {
   constructor() {}
@@ -16,6 +17,53 @@ class dataManipulation {
 
   accountStatementData(orders, payments, forTesting = false) {
     const data = [];
+
+    const schemaOrder = Joi.object(
+      {
+        userWhoAcceptedOrder: Joi.any(),
+        userPhoneNumber: Joi.string(),
+        delivered: Joi.boolean(),
+        cart: Joi.array(),
+        reference: Joi.string(),
+        orderAcceptedByClient: Joi.boolean(),
+        deliveryAddress: Joi.string(),
+        deliveryVehicle: Joi.string(),
+        orderAcceptedByClientDate: Joi.any(),
+        needAssistance: Joi.boolean(),
+        grandTotal: Joi.number(),
+        contactName: Joi.string(),
+        vat: Joi.number(),
+        userName: Joi.string(),
+        deliveryNotes: Joi.string(),
+        userId:   Joi.string(),
+        shippingTotal: Joi.number(),
+        deliveryAddressLatitude: Joi.number(),
+        itemsTotal: Joi.number(),
+        paid: Joi.boolean(),
+        totalWeight: Joi.number(),
+        contactPhoneNumber: Joi.string(),
+        deliveryAddressLongitude: Joi.number(),
+        clientIDWhoAcceptedOrder: Joi.string(),
+        orderDate: Joi.object()
+      }).unknown(false)
+
+    const schemaPayments = Joi.object(
+      {
+        amount: Joi.number(),
+        date: Joi.object(),
+        paymentprovider: Joi.string(),
+        reference: Joi.string()
+      }).unknown(false)
+
+      const {error1} = schemaPayments.validate(payments)
+      if (error1) {
+        throw new Error(error1)
+      }
+
+      const {error2} = schemaOrder.validate(orders)
+      if (error2) {
+        throw new Error(error2)
+      }
 
     if (orders) {
       orders.map((order) => {
@@ -73,6 +121,8 @@ class dataManipulation {
 
     return dataToUse;
   }
+
+
   accountStatementTable(tableData, forTesting = false) {
     function createData(date, reference, credit, debit, runningBalance, color) {
       return { date, reference, credit, debit, runningBalance, color };
@@ -92,6 +142,47 @@ class dataManipulation {
     return rowsdata;
   }
   getOrderFromReference(referencenumber, orders, forTesting = false) {
+
+    const referenceNumberSchema = Joi.string().required()
+    const {error} = referenceNumberSchema.validate(referencenumber)
+    if (error) {
+      throw new Error(error)
+    }
+
+    const schemaOrder = Joi.object(
+      {
+        userWhoAcceptedOrder: Joi.any(),
+        userPhoneNumber: Joi.string(),
+        delivered: Joi.boolean(),
+        cart: Joi.array(),
+        reference: Joi.string(),
+        orderAcceptedByClient: Joi.boolean(),
+        deliveryAddress: Joi.string(),
+        deliveryVehicle: Joi.string(),
+        orderAcceptedByClientDate: Joi.any(),
+        needAssistance: Joi.boolean(),
+        grandTotal: Joi.number(),
+        contactName: Joi.string(),
+        vat: Joi.number(),
+        userName: Joi.string(),
+        deliveryNotes: Joi.string(),
+        userId:   Joi.string(),
+        shippingTotal: Joi.number(),
+        deliveryAddressLatitude: Joi.number(),
+        itemsTotal: Joi.number(),
+        paid: Joi.boolean(),
+        totalWeight: Joi.number(),
+        contactPhoneNumber: Joi.string(),
+        deliveryAddressLongitude: Joi.number(),
+        clientIDWhoAcceptedOrder: Joi.string(),
+        orderDate: Joi.object()
+      }).unknown(false)
+
+      const {error2} = schemaOrder.validate(orders)
+      if (error2) {
+        throw new Error(error2)
+      }
+
     let orderfiltered = null;
     orders.map((order) => {
       if (order.reference === referencenumber) {
@@ -107,6 +198,14 @@ class dataManipulation {
   }
 
   getAllCustomerNamesFromUsers(users) {
+
+    const schemaUsers = Joi.array()
+
+    const {error} = schemaUsers.validate(users)
+    if (error) {
+      throw new Error(error)
+    }
+
     const customers = [];
     users.map((user) => {
       customers.push(user.name);
@@ -123,6 +222,26 @@ class dataManipulation {
   }
 
   filterOrders(orders, startDate, referenceNumber, delivered, paid, selectedName) {
+
+    const schemaOrder = Joi.array()
+
+    const {error} = schemaOrder.validate(orders)
+    if (error) {
+      throw new Error(error)
+    }
+
+    const schemaDate = Joi.string()
+    const {error2} = schemaDate.validate(startDate)
+    if (error2) {
+      throw new Error(error2)
+    } 
+
+    const schemaReferenceNumber = Joi.string()
+    const {error3} = schemaReferenceNumber.validate(referenceNumber)
+    if (error3) {
+      throw new Error(error3)
+    }
+
     let filterPaid = null;
     let filterUnpaid = null;
     let filterName = null;
@@ -276,6 +395,38 @@ class dataManipulation {
   }
 
   getAllProductsInCategory(products, categorySelected,wholesale,retail,favorites) {
+
+    const productsSchema = Joi.array()
+    const { error } = productsSchema.validate(products);
+    if (error) {
+      throw new Error(error);
+    }
+
+    const categorySchema = Joi.string().required();
+    const { error2 } = categorySchema.validate(categorySelected);
+    if (error2) {
+      throw new Error(error2);
+    }
+
+    const wholesaleSchema = Joi.boolean().required();
+    const { error3 } = wholesaleSchema.validate(wholesale);
+    if (error3) {
+      throw new Error(error3);
+    }
+
+    const retailSchema = Joi.boolean().required();
+    const { error4 } = retailSchema.validate(retail);
+    if (error4) {
+      throw new Error(error4);
+    }
+
+    const favoritesSchema = Joi.array().required();
+    const { error5 } = favoritesSchema.validate(favorites);
+    if (error5) {
+      throw new Error(error5);
+    }
+
+
     if (categorySelected === 'Favorites') {
       let selected_products = [];
       products.map((product) => {
