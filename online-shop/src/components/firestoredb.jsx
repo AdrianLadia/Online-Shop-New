@@ -123,7 +123,7 @@ class firestoredb extends firestorefunctions {
       name: Joi.string(),
       email: Joi.string(),
       emailVerified: Joi.boolean(),
-      phoneNumber: Joi.string(),
+      phoneNumber: Joi.string().allow(''),
       deliveryAddress: Joi.array(),
       contactPerson: Joi.array(),
       isAnonymous: Joi.boolean(),

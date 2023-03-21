@@ -678,17 +678,9 @@ describe('Transaction Place Order', async () => {
   let initialProductCount = {};
 
 
-  afterEach(async () => {
-    await delay(300);
-    await firestore.deleteUserByUserId('testuser');
-    await delay(300);
-    Object.entries(cartCount).map(async ([itemId, count]) => {
-      const stocksAvailable = await firestore.readProductStocksAvailable(itemId);
-      const resetStockCount = stocksAvailable + count;
-      await firestore.updateProductStocksAvailable(itemId, resetStockCount);
-    });
-    await delay(300);
-  });
+ 
+
+
 
   test('readIfTransactionSuccessful', async () => {
     const cart = [
@@ -740,7 +732,7 @@ describe('Transaction Place Order', async () => {
     await delay(300);
 
 
-    firestore.transactionPlaceOrder(
+    await firestore.transactionPlaceOrder(
       {userid: 'testuser',
         localDeliveryAddress: 'Paper Boy',
         locallatitude: 1.1,
@@ -748,7 +740,6 @@ describe('Transaction Place Order', async () => {
         localphonenumber: '09178238421',
         localname: 'Adrian Ladia',
         orderdate: new Date(),
-        address: 'Paper Boy',
         cart: cart,
         itemstotal: 20000,
         vat: 1200,
@@ -767,7 +758,7 @@ describe('Transaction Place Order', async () => {
     const orders = user.orders;
     let foundorder = false;
     orders.map((order) => {
-      if (order.reference === '1234567890') {
+      if (order.reference === 'testref-124124521') {
         foundorder = true;
       }
     });
@@ -776,12 +767,12 @@ describe('Transaction Place Order', async () => {
 
   test('check if deliveryaddress added', async () => {
     const user = await firestore.readUserById('testuser');
-    const deliveryaddress = user.deliveryaddress;
+    const deliveryaddress = user.deliveryAddress;
     const expected = [
       {
         address: 'Paper Boy',
-        latitude: 10.360648471259719,
-        longitude: 123.93387574188152,
+        latitude: 1.1,
+        longitude: 14.1,
       },
     ];
 
@@ -804,7 +795,18 @@ describe('Transaction Place Order', async () => {
         expect(stocksAvailable).toEqual(expected);
       })
     );
+    await delay(300);
+    await firestore.deleteUserByUserId('testuser');
+    await delay(300);
+    Object.entries(cartCount).map(async ([itemId, count]) => {
+      const stocksAvailable = await firestore.readProductStocksAvailable(itemId);
+      const resetStockCount = stocksAvailable + count;
+      await firestore.updateProductStocksAvailable(itemId, resetStockCount);
+    });
+    await delay(300);
+    
   });
+  
 });
 
 describe('Transaction Create Payment', async () => {

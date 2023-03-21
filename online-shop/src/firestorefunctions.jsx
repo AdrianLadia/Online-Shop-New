@@ -169,6 +169,7 @@ class firestorefunctions {
     data
   ) {
 
+    console.log(data)
     const schema = Joi.object({
       userid: Joi.string().required(),
       username: Joi.string().required(),
@@ -178,15 +179,14 @@ class firestorefunctions {
       localphonenumber: Joi.string().required(),
       localname: Joi.string().required(),
       orderdate: Joi.date().required(),
-      address: Joi.string().required(),
       cart: Joi.array().required(),
       itemstotal: Joi.number().required(),
       vat: Joi.number().required(),
       shippingtotal: Joi.number().required(),
       grandtotal: Joi.number().required(),
       reference: Joi.string().required(),
-      userphonenumber: Joi.string().required(),
-      deliveryNotes: Joi.string().required(),
+      userphonenumber: Joi.string().allow(''),
+      deliveryNotes: Joi.string().allow(''),
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
@@ -265,7 +265,7 @@ class firestorefunctions {
           const updatedAddressList = [...newAddress, ...deliveryAddress];
           console.log(updatedAddressList);
           await transaction.update(docRef, {
-            deliveryaddress: updatedAddressList,
+            deliveryAddress: updatedAddressList,
           });
         }
 
@@ -303,7 +303,7 @@ class firestorefunctions {
           {
             orderDate: data.orderdate,
             contactName: data.localname,
-            deliveryAddress: data.address,
+            deliveryAddress: data.localDeliveryAddress,
             contactPhoneNumber: data.localphonenumber,
             deliveryAddressLatitude: data.locallatitude,
             deliveryAddressLongitude: data.locallongitude,
@@ -331,7 +331,8 @@ class firestorefunctions {
 
         // const updated_orders = [...new_orders, ...orders];
         // console.log(updated_orders);
-
+        console.log(new_orders)
+        
         await transaction.update(docRef, { ['orders']: arrayUnion(new_orders) });
 
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY

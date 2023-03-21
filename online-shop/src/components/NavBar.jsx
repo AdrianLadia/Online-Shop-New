@@ -1,64 +1,52 @@
-import React from "react";
-import { useState, useContext } from "react";
-import AppContext from "../AppContext";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import AccountMenu from "./AccountMenu";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  FacebookAuthProvider,
-  getAuth,
-  signOut,
-} from "firebase/auth";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
-import Logo from "./Logo";
+import React from 'react';
+import { useState, useContext } from 'react';
+import AppContext from '../AppContext';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import AccountMenu from './AccountMenu';
+import { GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, getAuth, signOut } from 'firebase/auth';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook } from 'react-icons/fa';
+import Logo from './Logo';
 
 function PositionedMenu() {
-  const {setUserState, setUserId,firestore,auth,setIsAdmin,setUserLoaded,setUserData} = useContext(AppContext);
+  const { setUserState, setUserId, firestore, auth, setIsAdmin, setUserLoaded, setUserData } = useContext(AppContext);
+
   async function signIn(signInProvider) {
     const result = await signInWithPopup(auth, signInProvider);
     const user = result.user;
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      console.log("onAuthStateChanged ran");
-      setUserState("userloading");
-      setUserId(user.uid);
-      if (user.uid === "PN4JqXrjsGfTsCUEEmaR5NO6rNF3") {
-        setIsAdmin(true);
-      }
-      firestore.readAllUserIds().then((ids) => {
-        if (ids.includes(user.uid)) {
 
-        } else {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    // setUserState('userloading');
+    // setUserId(user.uid);
+    // if (user.uid === 'PN4JqXrjsGfTsCUEEmaR5NO6rNF3') {
+    //   setIsAdmin(true);
+    // }
+    // const allUserIds = await firestore.readAllUserIds();
+    // if (allUserIds.includes(user.uid)) {
+    // } else {
+    //   await firestore.createNewUser(
+    //     {
+    //       uid: user.uid,
+    //       name: user.displayName,
+    //       email: user.email,
+    //       emailVerified: user.emailVerified,
+    //       phoneNumber: '',
+    //       deliveryAddress: [],
+    //       contactPerson: [],
+    //       isAnonymous: user.isAnonymous,
+    //       orders: [],
+    //       cart: [],
+    //       favoriteItems: [],
+    //       payments: [],
+    //     },
+    //     user.uid
+    //   );
 
-          firestore.createNewUser(
-            {
-              uid: user.uid,
-              name: user.displayName,
-              email: user.email,
-              emailVerified: user.emailVerified,
-              phoneNumber: "",
-              deliveryAddress: [],
-              contactPerson: [],
-              isAnonymous: user.isAnonymous,
-              orders: [],
-              cart: [],
-              favoriteItems: [],
-              payments: []
-            },
-            user.uid
-          );
-        }
-      });
-    } 
-  }
-
-  async function FacebookSignIn() {
-    signInWithPopup(getAuth(), new FacebookAuthProvider());
+    //   setUserId(user.uid);
+    // }
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -74,11 +62,11 @@ function PositionedMenu() {
     <div>
       <Button
         id="demo-positioned-button"
-        aria-controls={open ? "demo-positioned-menu" : undefined}
+        aria-controls={open ? 'demo-positioned-menu' : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
+        aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        sx={{ bgcolor: "green" }}
+        sx={{ bgcolor: 'green' }}
       >
         Login
       </Button>
@@ -89,19 +77,27 @@ function PositionedMenu() {
         open={open}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
+          vertical: 'top',
+          horizontal: 'left',
         }}
         transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
+          vertical: 'top',
+          horizontal: 'left',
         }}
       >
-        <MenuItem onClick={()=>{signIn(new GoogleAuthProvider())}}>
+        <MenuItem
+          onClick={() => {
+            signIn(new GoogleAuthProvider());
+          }}
+        >
           <FcGoogle className="mr-2" />
           Login With Google
         </MenuItem>
-        <MenuItem onClick={()=>{signIn(new FacebookAuthProvider())}}>
+        <MenuItem
+          onClick={() => {
+            signIn(new FacebookAuthProvider());
+          }}
+        >
           <FaFacebook className="mr-2" />
           Login With Facebook
         </MenuItem>
@@ -110,35 +106,27 @@ function PositionedMenu() {
   );
 }
 
-const userMenu = ["My Account", "Orders History", "Logout"];
+const userMenu = ['My Account', 'Orders History', 'Logout'];
 
 const NavBar = () => {
-  const {userdata, setUserData,auth,setUserLoaded,setUserState,setUserId,setCart} = useContext(AppContext);
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart } = useContext(AppContext);
   async function logOutClick() {
-    await signOut(auth)
+    await signOut(auth);
     setUserId(null);
     setUserData(null);
     setUserLoaded(true);
-    setUserState("guest");
+    setUserState('guest');
     setCart([]);
-    console.log("logged out");
-
+    console.log('logged out');
   }
 
   return (
     <div>
       <div className="flex items-center justify-between flex-wrap bg-teal-500 w-full h-16 ">
-      <Logo/>
+        <Logo />
 
         <div className="flex flex-row mr-5 ">
-          {userdata ? (
-            <AccountMenu
-              userdata={userdata}
-              signout={logOutClick}
-            />
-          ) : (
-            <PositionedMenu />
-          )}
+          {userdata ? <AccountMenu userdata={userdata} signout={logOutClick} /> : <PositionedMenu />}
         </div>
       </div>
       <div></div>
@@ -147,6 +135,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
-
-  

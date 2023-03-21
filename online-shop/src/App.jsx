@@ -42,20 +42,82 @@ function App() {
   const [payments, setPayments] = useState([]);
 
   useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      console.log("onAuthStateChanged ran");
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        console.log("onAuthStateChanged ran");
+        setUserState("userloading");
+        
+        if (user.uid === "PN4JqXrjsGfTsCUEEmaR5NO6rNF3") {
+          setIsAdmin(true);
+        }
+        firestore.readAllUserIds().then((ids) => {
+          if (ids.includes(user.uid)) {
+
+          } else {
+
+            function delay(ms) {
+              return new Promise((resolve) => setTimeout(resolve, ms));
+            }
+
+            async function createNewUser() {
+              await firestore.createNewUser(
+                {
+                  uid: user.uid,
+                  name: user.displayName,
+                  email: user.email,
+                  emailVerified: user.emailVerified,
+                  phoneNumber: '',
+                  deliveryAddress: [],
+                  contactPerson: [],
+                  isAnonymous: user.isAnonymous,
+                  orders: [],
+                  cart: [],
+                  favoriteItems: [],
+                  payments: [],
+                },
+                user.uid
+              );
+            }
+            createNewUser();
+            delay(1000).then(() => {
+              setUserId(user.uid);
+            })
+          }
+        });
+
+        //
+        // ...
+      } else {
+        // User is signed out
+        // ...
+        setUserId(null);
+        setUserData(null);
+        setUserLoaded(true);
+        setUserState("guest");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(userId)
+
     if (userId) {
       firestore.readUserById(userId).then((data) => {
+        console.log(data)
         setUserData(data);
-        setFavoriteItems(data.favoriteitems);
+        setFavoriteItems(data.favoriteItems);
         setCart(data.cart);
-        setDeliveryAddress(data.deliveryaddress);
-        setPhoneNumber(data.phonenumber);
+        setDeliveryAddress(data.deliveryAddress);
+        setPhoneNumber(data.phoneNumber);
         setOrders(data.orders);
         setPayments(data.payments);
         setContactPerson(data.contactPerson);
         // LAST TO RUN
         setUserState("userloaded");
-        setUserLoaded(true);
-        
+        setUserLoaded(true); 
       });
     }
   }, [userId, refreshUser]);

@@ -24,7 +24,6 @@ import lalamoveDeliveryVehicles from '../data/lalamoveDeliveryVehicles';
 import dataManipulation from '../../utils/dataManipulation';
 import dataValidation from '../../utils/dataValidation';
 
-
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
@@ -41,7 +40,6 @@ const CheckoutPage = () => {
   const [deliveryFee, setDeliveryFee] = React.useState(0);
   const [grandtotal, setGrandTotal] = React.useState(0);
   const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
-  const [orderDataObject, setOrderDataObject] = React.useState(null);
 
   const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
   const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
@@ -94,37 +92,6 @@ const CheckoutPage = () => {
       setUseShippingLine(true);
     }
     let orderdata = null;
-    if (userdata) {
-
-      firestore.transactionPlaceOrder(
-        userdata.uid,
-        localDeliveryAddress,
-        locallatitude,
-        locallongitude,
-        userdata.phonenumber,
-        userdata.name,
-        new Date(),
-        localname,
-        localDeliveryAddress,
-        localphonenumber,
-        cart,
-        total,
-        vat,
-        deliveryFee,
-        grandtotal,
-        generateOrderReference(),
-        userdata.name,
-        localphonenumber,
-        deliveryNotes,
-        totalWeight,
-        deliveryVehicle,
-        needAssistance
-      )
-
-  
-    }
-
-    setOrderDataObject(orderdata);
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   function generateOrderReference() {
@@ -157,7 +124,30 @@ const CheckoutPage = () => {
     if (userstate === 'userloaded') {
       // Place Order
       // setLaunchPayMayaCheckout(true);
-      orderDataObject.transactionPlaceOrder(firestore);
+
+      console.log(userdata)
+      firestore.transactionPlaceOrder(
+        {        userid : userdata.uid,
+          localDeliveryAddress : localDeliveryAddress,
+          locallatitude:locallatitude,
+          locallongitude:locallongitude,
+          userphonenumber:userdata.phoneNumber,
+          username:userdata.name,
+          orderdate:new Date(),
+          localname:localname,
+          localphonenumber:localphonenumber,
+          cart:cart,
+          itemstotal:total,
+          vat:vat,
+          shippingtotal:deliveryFee,
+          grandtotal:grandtotal,
+          reference:generateOrderReference(),
+          deliveryNotes:deliveryNotes,
+          totalWeight:totalWeight,
+          deliveryVehicle:deliveryVehicle.name,
+          needAssistance:needAssistance}
+
+      )
       setCart([]);
     }
   }
@@ -174,7 +164,7 @@ const CheckoutPage = () => {
         setLocalPhoneNumber(userdata.contactPerson[0].phonenumber);
         setLocalName(userdata.contactPerson[0].name);
       }
-      if (userdata.deliveryaddress.length > 0) {
+      if (userdata.deliveryAddress.length > 0) {
         setLocalDeliveryAddress(userdata.deliveryaddress[0].address);
         setLocalLatitude(userdata.deliveryaddress[0].latitude);
         setLocalLongitude(userdata.deliveryaddress[0].longitude);

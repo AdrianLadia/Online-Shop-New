@@ -44,7 +44,7 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
       >
         <Box sx={style}>
           {userdata ? (
-            userdata.deliveryaddress.map((address, index) => {
+            userdata.deliveryAddress.map((address, index) => {
               return (
                 <GoogleMapsModalSelectSaveAddressButton
                   handleClose={props.handleClose}
