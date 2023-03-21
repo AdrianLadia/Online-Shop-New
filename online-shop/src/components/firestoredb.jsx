@@ -29,6 +29,9 @@ class firestoredb extends firestorefunctions {
       averageSalesPerDay: Joi.number().required(),
       parentProductID: Joi.string(),
       stocksOnHoldCompleted: Joi.array().required(),
+      forOnlineStore: Joi.boolean().required(),
+      isCustomized: Joi.boolean().required()
+
     }).unknown(false);
 
     const { error } = schema.validate(data);
