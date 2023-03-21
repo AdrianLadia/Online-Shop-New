@@ -16,7 +16,7 @@ const AdminOrdersTable = (props) => {
     customerName,
     paid,
     delivered,
-    grandtotal,
+    grandTotal,
     address,
     phonenumber,
     name,
@@ -31,7 +31,7 @@ const AdminOrdersTable = (props) => {
       customerName,
       paid,
       delivered,
-      grandtotal,
+      grandTotal,
       address,
       phonenumber,
       name,
@@ -56,14 +56,14 @@ const AdminOrdersTable = (props) => {
       localrows.push(
         createData(
           order.reference,
-          order.orderdate.toDate().toLocaleDateString(),
-          order.username,
+          order.orderDate.toDate().toLocaleDateString(),
+          order.userName,
           order.paid ? "YES" : "NO",
           order.delivered ? "YES" : "NO",
-          order.grandtotal,
-          order.address,
-          order.phonenumber,
-          order.name,
+          order.grandTotal,
+          order.deliveryAddress,
+          order.contactPhoneNumber,
+          order.contactName,
           order.latitude,
           order.longitude,
           order.cart,
@@ -126,15 +126,15 @@ const AdminOrdersTable = (props) => {
                     {row.delivered}
                   </Typography>
                 </TableCell>
-                <TableCell align="right">{row.grandtotal}</TableCell>
+                <TableCell align="right">{row.grandTotal}</TableCell>
                 <TableCell align="right">
                   <Link
                     onClick={() => {
                       window.location.assign(
                         "https://www.google.com/maps?q=" +
-                          row.latitude +
+                          row.deliveryAddressLatitude +
                           "," +
-                          row.longitude
+                          row.deliveryAddressLongitude
                       );
                     }}
                   >

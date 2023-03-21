@@ -11,42 +11,12 @@ import { FaFacebook } from 'react-icons/fa';
 import Logo from './Logo';
 
 function PositionedMenu() {
-  const { setUserState, setUserId, firestore, auth, setIsAdmin, setUserLoaded, setUserData } = useContext(AppContext);
+  const {auth} = useContext(AppContext);
 
   async function signIn(signInProvider) {
+    setAnchorEl(null);
     const result = await signInWithPopup(auth, signInProvider);
     const user = result.user;
-
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/firebase.User
-    // setUserState('userloading');
-    // setUserId(user.uid);
-    // if (user.uid === 'PN4JqXrjsGfTsCUEEmaR5NO6rNF3') {
-    //   setIsAdmin(true);
-    // }
-    // const allUserIds = await firestore.readAllUserIds();
-    // if (allUserIds.includes(user.uid)) {
-    // } else {
-    //   await firestore.createNewUser(
-    //     {
-    //       uid: user.uid,
-    //       name: user.displayName,
-    //       email: user.email,
-    //       emailVerified: user.emailVerified,
-    //       phoneNumber: '',
-    //       deliveryAddress: [],
-    //       contactPerson: [],
-    //       isAnonymous: user.isAnonymous,
-    //       orders: [],
-    //       cart: [],
-    //       favoriteItems: [],
-    //       payments: [],
-    //     },
-    //     user.uid
-    //   );
-
-    //   setUserId(user.uid);
-    // }
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null);

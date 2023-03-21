@@ -46,24 +46,24 @@ const AdminEditItemModal = (props) => {
   const [brand, setBrand] = React.useState('');
   const [pieces, setPieces] = React.useState('');
   const [unit, setUnit] = React.useState('');
-  const [imagelink1, setImagelink1] = React.useState('');
-  const [imagelink2, setImagelink2] = React.useState('');
-  const [imagelink3, setImagelink3] = React.useState('');
-  const [imagelink4, setImagelink4] = React.useState('');
-  const [imagelink5, setImagelink5] = React.useState('');
-  const [imagelink6, setImagelink6] = React.useState('');
-  const [imagelink7, setImagelink7] = React.useState('');
-  const [imagelink8, setImagelink8] = React.useState('');
-  const [imagelink9, setImagelink9] = React.useState('');
-  const [imagelink10, setImagelink10] = React.useState('');
+  const [imageLink1, setImageLink1] = React.useState('');
+  const [imageLink2, setImageLink2] = React.useState('');
+  const [imageLink3, setImageLink3] = React.useState('');
+  const [imageLink4, setImageLink4] = React.useState('');
+  const [imageLink5, setImageLink5] = React.useState('');
+  const [imageLink6, setImageLink6] = React.useState('');
+  const [imageLink7, setImageLink7] = React.useState('');
+  const [imageLink8, setImageLink8] = React.useState('');
+  const [imageLink9, setImageLink9] = React.useState('');
+  const [imageLink10, setImageLink10] = React.useState('');
   const categories = props.categories;
 
   function handleChange(event) {
     setSelectedItemToBeEdited(event.target.value);
     console.log(event.target.value);
     firestore.readSelectedProduct(event.target.value).then((product) => {
-      setItemID(product.itemid);
-      setItemName(product.itemname);
+      setItemID(product.itemId);
+      setItemName(product.itemName);
       setDescription(product.description);
       setCategory(product.category);
       setColor(product.color);
@@ -75,16 +75,16 @@ const AdminEditItemModal = (props) => {
       setBrand(product.brand);
       setPieces(product.pieces);
       setUnit(product.unit);
-      setImagelink1(product.imagelinks[0]);
-      setImagelink2(product.imagelinks[1]);
-      setImagelink3(product.imagelinks[2]);
-      setImagelink4(product.imagelinks[3]);
-      setImagelink5(product.imagelinks[4]);
-      setImagelink6(product.imagelinks[5]);
-      setImagelink7(product.imagelinks[6]);
-      setImagelink8(product.imagelinks[7]);
-      setImagelink9(product.imagelinks[8]);
-      setImagelink10(product.imagelinks[9]);
+      setImageLink1(product.imageLinks[0]);
+      setImageLink2(product.imageLinks[1]);
+      setImageLink3(product.imageLinks[2]);
+      setImageLink4(product.imageLinks[3]);
+      setImageLink5(product.imageLinks[4]);
+      setImageLink6(product.imageLinks[5]);
+      setImageLink7(product.imageLinks[6]);
+      setImageLink8(product.imageLinks[7]);
+      setImageLink9(product.imageLinks[8]);
+      setImageLink10(product.imageLinks[9]);
     });
   }
 
@@ -97,29 +97,29 @@ const AdminEditItemModal = (props) => {
       }
     }
 
-    let imagelinks = [
-      imagelink1,
-      imagelink2,
-      imagelink3,
-      imagelink4,
-      imagelink5,
-      imagelink6,
-      imagelink7,
-      imagelink8,
-      imagelink9,
-      imagelink10,
+    let imageLinks = [
+      imageLink1,
+      imageLink2,
+      imageLink3,
+      imageLink4,
+      imageLink5,
+      imageLink6,
+      imageLink7,
+      imageLink8,
+      imageLink9,
+      imageLink10,
     ];
     let convertedtofirestore = [];
     let index = 0;
-    imagelinks.map((imagelink) => {
+    imageLinks.map((imageLink) => {
       index = index + 1;
-      if (imagelink === undefined) {
+      if (imageLink === undefined) {
         return;
       }
-      if (imagelink === '') {
+      if (imageLink === '') {
         return;
       } else {
-        convertedtofirestore.push(imagelink);
+        convertedtofirestore.push(imageLink);
       }
       console.log(convertedtofirestore);
     });
@@ -165,8 +165,8 @@ const AdminEditItemModal = (props) => {
                   onChange={handleChange}
                 >
                   {products.map((product) => (
-                    <MenuItem key={'adminEditItem-' + product.itemid} value={product.itemid}>
-                      {product.itemname}
+                    <MenuItem key={'adminEditItem-' + product.itemId} value={product.itemId}>
+                      {product.itemName}
                     </MenuItem>
                   ))}
                 </Select>
@@ -298,81 +298,81 @@ const AdminEditItemModal = (props) => {
               id="outlined-basic"
               label="Image Link 1"
               variant="outlined"
-              value={imagelink1 || ''}
+              value={imageLink1 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink1(event.target.value)}
+              onChange={(event) => setImageLink1(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 2"
               variant="outlined"
-              value={imagelink2 || ''}
+              value={imageLink2 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink2(event.target.value)}
+              onChange={(event) => setImageLink2(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 3"
               variant="outlined"
-              value={imagelink3 || ''}
+              value={imageLink3 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink3(event.target.value)}
+              onChange={(event) => setImageLink3(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 4"
               variant="outlined"
-              value={imagelink4 || ''}
+              value={imageLink4 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink4(event.target.value)}
+              onChange={(event) => setImageLink4(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 5"
               variant="outlined"
-              value={imagelink5 || ''}
+              value={imageLink5 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink5(event.target.value)}
+              onChange={(event) => setImageLink5(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 6"
               variant="outlined"
-              value={imagelink6 || ''}
+              value={imageLink6 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink6(event.target.value)}
+              onChange={(event) => setImageLink6(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 7"
               variant="outlined"
-              value={imagelink7 || ''}
+              value={imageLink7 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink7(event.target.value)}
+              onChange={(event) => setImageLink7(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 8"
               variant="outlined"
-              value={imagelink8 || ''}
+              value={imageLink8 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink8(event.target.value)}
+              onChange={(event) => setImageLink8(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 9"
               variant="outlined"
-              value={imagelink9 || ''}
+              value={imageLink9 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink9(event.target.value)}
+              onChange={(event) => setImageLink9(event.target.value)}
             />
             <TextField
               id="outlined-basic"
               label="Image Link 10"
               variant="outlined"
-              value={imagelink10 || ''}
+              value={imageLink10 || ''}
               sx={{ width: '90%' }}
-              onChange={(event) => setImagelink10(event.target.value)}
+              onChange={(event) => setImageLink10(event.target.value)}
             />
             <button onClick={handleEditItem} className="bg-yellow-300 hover:bg-yellow-500 rounded-lg p-4">
               Edit Item

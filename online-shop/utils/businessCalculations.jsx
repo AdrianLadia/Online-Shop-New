@@ -178,17 +178,17 @@ class businessCalculations {
     const count = countStrings(cart);
     const countEntries = Object.entries(count);
 
-    countEntries.map(([itemid, quantity]) => {
-      console.log(itemid, quantity);
+    countEntries.map(([itemId, quantity]) => {
+      console.log(itemId, quantity);
       products.map((dataitem) => {
-        if (dataitem.itemid === itemid) {
+        if (dataitem.itemId === itemId) {
           const stocksAvailableLessSafetyStock = this.getStocksAvailableLessSafetyStock(
             dataitem.stocksAvailable,
             dataitem.averageSalesPerDay
           );
           if (stocksAvailableLessSafetyStock < quantity) {
-            message = message + `${dataitem.itemname} - ${stocksAvailableLessSafetyStock} stocks left \n`;
-            console.log(itemid, 'firestore:', stocksAvailableLessSafetyStock, 'order:', quantity);
+            message = message + `${dataitem.itemName} - ${stocksAvailableLessSafetyStock} stocks left \n`;
+            console.log(itemId, 'firestore:', stocksAvailableLessSafetyStock, 'order:', quantity);
             outOfStockDetected = true;
           }
         }

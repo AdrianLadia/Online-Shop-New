@@ -178,12 +178,12 @@ class firestorefunctions {
       locallongitude: Joi.number().required(),
       localphonenumber: Joi.string().required(),
       localname: Joi.string().required(),
-      orderdate: Joi.date().required(),
+      orderDate: Joi.date().required(),
       cart: Joi.array().required(),
       itemstotal: Joi.number().required(),
       vat: Joi.number().required(),
       shippingtotal: Joi.number().required(),
-      grandtotal: Joi.number().required(),
+      grandTotal: Joi.number().required(),
       reference: Joi.string().required(),
       userphonenumber: Joi.string().allow(''),
       deliveryNotes: Joi.string().allow(''),
@@ -221,10 +221,10 @@ class firestorefunctions {
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
         
-        await Promise.all(cartUniqueItems.map(async (itemid) => {
-          const prodref = doc(this.db, "Products" + "/", itemid);
-          const orderQuantity = data.cart.filter((c) => c == itemid).length
-          const newStocksAvailable = currentInventory[itemid] - orderQuantity
+        await Promise.all(cartUniqueItems.map(async (itemId) => {
+          const prodref = doc(this.db, "Products" + "/", itemId);
+          const orderQuantity = data.cart.filter((c) => c == itemId).length
+          const newStocksAvailable = currentInventory[itemId] - orderQuantity
           await transaction.update(prodref, {['stocksOnHold']: arrayUnion({reference: data.reference, quantity: orderQuantity, userId: data.userid})});
           await transaction.update(prodref, {['stocksAvailable']: newStocksAvailable});
         }))
@@ -301,7 +301,7 @@ class firestorefunctions {
 
         const new_orders = 
           {
-            orderDate: data.orderdate,
+            orderDate: data.orderDate,
             contactName: data.localname,
             deliveryAddress: data.localDeliveryAddress,
             contactPhoneNumber: data.localphonenumber,
@@ -311,7 +311,7 @@ class firestorefunctions {
             itemsTotal: data.itemstotal,
             vat: data.vat,
             shippingTotal: data.shippingtotal,
-            grandTotal: data.grandtotal,
+            grandTotal: data.grandTotal,
             delivered: false,
             reference: data.reference,
             paid: false,

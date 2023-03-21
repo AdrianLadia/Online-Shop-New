@@ -38,7 +38,7 @@ const CheckoutPage = () => {
   const [localphonenumber, setLocalPhoneNumber] = React.useState('');
   const [vat, setVat] = React.useState(0);
   const [deliveryFee, setDeliveryFee] = React.useState(0);
-  const [grandtotal, setGrandTotal] = React.useState(0);
+  const [grandTotal, setGrandTotal] = React.useState(0);
   const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
 
   const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
@@ -133,14 +133,14 @@ const CheckoutPage = () => {
           locallongitude:locallongitude,
           userphonenumber:userdata.phoneNumber,
           username:userdata.name,
-          orderdate:new Date(),
+          orderDate:new Date(),
           localname:localname,
           localphonenumber:localphonenumber,
           cart:cart,
           itemstotal:total,
           vat:vat,
           shippingtotal:deliveryFee,
-          grandtotal:grandtotal,
+          grandTotal:grandTotal,
           reference:generateOrderReference(),
           deliveryNotes:deliveryNotes,
           totalWeight:totalWeight,
@@ -165,9 +165,9 @@ const CheckoutPage = () => {
         setLocalName(userdata.contactPerson[0].name);
       }
       if (userdata.deliveryAddress.length > 0) {
-        setLocalDeliveryAddress(userdata.deliveryaddress[0].address);
-        setLocalLatitude(userdata.deliveryaddress[0].latitude);
-        setLocalLongitude(userdata.deliveryaddress[0].longitude);
+        setLocalDeliveryAddress(userdata.deliveryAddress[0].address);
+        setLocalLatitude(userdata.deliveryAddress[0].latitude);
+        setLocalLongitude(userdata.deliveryAddress[0].longitude);
         setZoom(15);
       }
     }
@@ -201,7 +201,7 @@ const CheckoutPage = () => {
             lastname={localname.split(' ')[1]}
             email={localemail}
             phonenumber={localphonenumber}
-            totalprice={grandtotal}
+            totalprice={grandTotal}
           />
         ) : null}
       </CheckoutPageContext.Provider>
@@ -452,7 +452,7 @@ const CheckoutPage = () => {
                   setTotal={setTotal}
                   vat={vat}
                   deliveryFee={deliveryFee}
-                  grandtotal={grandtotal}
+                  grandTotal={grandTotal}
                   totalWeight={totalWeight}
                   setTotalWeight={setTotalWeight}
                   deliveryVehicleObject={deliveryVehicle}

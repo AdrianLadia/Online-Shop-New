@@ -25,6 +25,7 @@ const MyOrderCardModalTable = (props) => {
 
   const [rows, setRows] = React.useState([]);
 
+
   useEffect(() => {
     async function getTableData() {
       const products = await firestore.readAllProducts();
@@ -39,6 +40,8 @@ const MyOrderCardModalTable = (props) => {
 
     getTableData();
   }, []);
+
+
 
   return (
     <div>
@@ -56,11 +59,11 @@ const MyOrderCardModalTable = (props) => {
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.itemname} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableRow key={row.itemName} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row">
                   <img src={row.itemimage} alt="item" width="100px" height="100px" />
                 </TableCell>
-                <TableCell>{row.itemname}</TableCell>
+                <TableCell>{row.itemName}</TableCell>
                 <TableCell align="right">{row.itemquantity}</TableCell>
                 <TableCell align="right">{row.itemprice}</TableCell>
                 <TableCell align="right">{row.itemtotal}</TableCell>

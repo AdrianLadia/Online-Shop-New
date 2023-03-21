@@ -24,7 +24,7 @@ const ProductCard = (props) => {
   const  {cart} = useContext(AppContext);
 
   function ClearForm() {
-    document.getElementById("inputquantity" + props.product.itemname).value =
+    document.getElementById("inputquantity" + props.product.itemName).value =
       "";
   }
 
@@ -42,10 +42,12 @@ const ProductCard = (props) => {
   function AddToCart() {
 
     const cartCount = calculations.getCartCount(cart);
-    const cartQuantity = cartCount[props.product.itemid];
+    let cartQuantity = cartCount[props.product.itemId];
+    if (cartQuantity == undefined) {
+      cartQuantity = 0;
+    }
     const totalOrder = cartQuantity + parseInt(quantity);
-    console.log("Total Order: " + totalOrder);
-  
+    
     if (totalOrder > calculations.getStocksAvailableLessSafetyStock(props.product.stocksAvailable, props.product.averageSalesPerDay)) {
       setQuantity('');
       alert("Not enough stocks available");
@@ -57,7 +59,7 @@ const ProductCard = (props) => {
       // opens snackbar
       setOpen(true);
       // adds to cart
-      props.addtocart(props.product.itemid, quantity);
+      props.addtocart(props.product.itemId, quantity);
       //back to 0
       setQuantity('');
     }
@@ -66,7 +68,7 @@ const ProductCard = (props) => {
 
 
   function DisplayItem() {
-    return props.product.itemname + " added to cart";
+    return props.product.itemName + " added to cart";
   }
 
   function responsiveStyle() {
@@ -89,15 +91,15 @@ const ProductCard = (props) => {
 
   React.useEffect(() => {
     console.log(
-      "Real Stock of " + product.itemname + " is " + product.stocksAvailable
+      "Real Stock of " + product.itemName + " is " + product.stocksAvailable
     );
-    console.log("Safety Stock of " + product.itemname + " is " + safetyStock);
+    console.log("Safety Stock of " + product.itemName + " is " + safetyStock);
     console.log(
-      "Low Stock of " + product.itemname + " is " + (50 + safetyStock)
+      "Low Stock of " + product.itemName + " is " + (50 + safetyStock)
     );
     console.log(
       "Adjusted Inventory of " +
-        product.itemname +
+        product.itemName +
         " is " +
         (product.stocksAvailable - safetyStock)
     );
@@ -119,8 +121,8 @@ const ProductCard = (props) => {
         {/* IMAGE */}
         <div className="w-3/5">
           <img
-            src={props.product.imagelinks[0]}
-            alt={props.product.itemname}
+            src={props.product.imageLinks[0]}
+            alt={props.product.itemName}
             className="h-full w-full object-cover rounded-lg"
             onClick={() => setModal(true)}
           ></img>
@@ -153,7 +155,7 @@ const ProductCard = (props) => {
           )}
           <div className="h-2/5" onClick={() => setModal(true)}>
             <Typography variant={responsiveStyle()} sx={{ mr: 2 }}>
-              {props.product.itemname}
+              {props.product.itemName}
             </Typography>
           </div>
           <div className="h-1/5" onClick={() => setModal(true)}>

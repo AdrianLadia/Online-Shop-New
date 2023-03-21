@@ -30,7 +30,8 @@ const ProductList = () => {
 
   useEffect(() => {
     firestore.readAllProducts().then((products) => {
-      setProducts(products);
+      const filtered_products = products.filter((product) => product.forOnlineStore === true);
+      setProducts(filtered_products);
       setProductDataLoading(false);
     });
   }, [refresh]);
@@ -78,7 +79,7 @@ const ProductList = () => {
           RenderSelectedProducts(selected).map((product, index) => {
             return (
               <div>
-                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemid} />
+                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} />
               </div>
             );
           })

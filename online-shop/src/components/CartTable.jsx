@@ -23,7 +23,7 @@ const CartTable = (props) => {
 
     const columns = [
         { id: 'itemimage', label: 'image', minWidth: 100},
-        { id: 'itemname', label: 'item', minWidth:1 },
+        { id: 'itemName', label: 'item', minWidth:1 },
         { id: 'quantity', label: 'qty', minWidth: 1 },
         { id: 'addbutton', label: 'add', minWidth: 1 },
         { id: 'removebutton', label: 'remove', minWidth: 1 },

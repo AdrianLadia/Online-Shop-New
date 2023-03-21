@@ -13,7 +13,7 @@ class orderData {
     itemstotal,
     vat,
     deliveryfee,
-    grandtotal,
+    grandTotal,
     referencenumber,
     contactname,
     contactphonenumber,
@@ -33,7 +33,7 @@ class orderData {
     this.itemsTotal = itemstotal;
     this.vat = vat;
     this.deliveryFee = deliveryfee;
-    this.grandTotal = grandtotal;
+    this.grandTotal = grandTotal;
     this.referenceNumber = referencenumber;
     this.contactName = contactname;
     this.contactPhoneNumber = contactphonenumber;

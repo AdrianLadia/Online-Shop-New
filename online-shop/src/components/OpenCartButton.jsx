@@ -45,8 +45,8 @@ const OpenCartButton = () => {
         let prices = []
             datamanipulation.manipulateCartData(cart).map((item, index) => {
             products.map((product, index) => {
-                if (item.itemid === product.itemid) {
-                    prices.push({itemimage:product.imagelinks[0], itemname:product.itemname,itemid:item.itemid,quantity:item.quantity,price:product.price,total:product.price * item.quantity,addbutton:<button onClick={() => onAddToCartClick(item.itemid)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" >+</button>,removebutton:<button onClick={() => RemoveFromCart(item.itemid)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">-</button>})
+                if (item.itemId === product.itemId) {
+                    prices.push({itemimage:product.imageLinks[0], itemName:product.itemName,itemId:item.itemId,quantity:item.quantity,price:product.price,total:product.price * item.quantity,addbutton:<button onClick={() => onAddToCartClick(item.itemId)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" >+</button>,removebutton:<button onClick={() => RemoveFromCart(item.itemId)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">-</button>})
                 }
             })
         })

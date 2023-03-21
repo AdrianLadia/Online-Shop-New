@@ -66,8 +66,8 @@ const AdminDeleteItemModal = (props) => {
                     onChange={handleChange}
                   >
                     {products.map((product) => (
-                      <MenuItem key={product.itemid} value={product.itemid}>
-                        {product.itemname}
+                      <MenuItem key={product.itemId} value={product.itemId}>
+                        {product.itemName}
                       </MenuItem>
                     ))}
                   </Select>

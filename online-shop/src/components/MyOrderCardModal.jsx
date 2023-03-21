@@ -89,7 +89,7 @@ const MyOrderCardModal = (props) => {
                 <ListItemText
                   primary="Order Date"
                   secondary={
-                    order !== [] ? order.orderdate.toDate().toString() : null
+                    order !== [] ? order.orderDate.toDate().toString() : null
                   }
                 />
               </ListItem>
@@ -116,7 +116,7 @@ const MyOrderCardModal = (props) => {
                 <ListItem>
                   <ListItemText
                     primary="Items Total"
-                    secondary={order.itemstotal}
+                    secondary={order.itemsTotal}
                   />
                 </ListItem>
                 <Divider />
@@ -127,14 +127,14 @@ const MyOrderCardModal = (props) => {
                 <ListItem>
                   <ListItemText
                     primary="Shipping"
-                    secondary={order.shippingtotal}
+                    secondary={order.shippingTotal}
                   />
                 </ListItem>
                 <Divider />
                 <ListItem>
                   <ListItemText
                     primary="Grand Total"
-                    secondary={order.grandtotal}
+                    secondary={order.grandTotal}
                   />
                 </ListItem>
                 <Divider />
@@ -149,13 +149,13 @@ const MyOrderCardModal = (props) => {
                 <GoogleMap
                   clickableIcons={false}
                   zoom={16}
-                  center={{ lat: order.latitude, lng: order.longitude }}
+                  center={{ lat: order.deliveryAddressLatitude, lng: order.deliveryAddressLongitude }}
                   mapContainerClassName="w-full h-[calc(100vh-200px)]"
                   disableDefaultUI={true}
                   mapTypeControl={false}
                 >
                   <MarkerF
-                    position={{ lat: order.latitude, lng: order.longitude }}
+                    position={{ lat: order.deliveryAddressLatitude, lng: order.deliveryAddressLongitude }}
                   />
                 </GoogleMap>
               </div>
@@ -170,17 +170,17 @@ const MyOrderCardModal = (props) => {
             >
               <Divider />
               <ListItem>
-                <ListItemText primary="Address" secondary={order.address} />
+                <ListItemText primary="Address" secondary={order.deliveryAddress} />
               </ListItem>
               <Divider />
               <ListItem>
-                <ListItemText primary="Contact Person" secondary={order.name} />
+                <ListItemText primary="Contact Person" secondary={order.contactName} />
               </ListItem>
               <Divider />
               <ListItem>
                 <ListItemText
                   primary="Contact Number"
-                  secondary={order.phonenumber}
+                  secondary={order.contactPhoneNumber}
                 />
               </ListItem>
               <Divider />

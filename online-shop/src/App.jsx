@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import AppContext from "./AppContext";
 import { Routes, Route } from "react-router-dom";
 import firebase from "firebase/compat/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import AdminSecurity from "./components/AdminSecurity";
 import firebaseConfig from "./firebase_config";
@@ -22,6 +22,7 @@ function App() {
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth();
+  
   // Initialize firestore class
   const firestore = new firestoredb(app);
 
@@ -47,17 +48,19 @@ function App() {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        console.log("onAuthStateChanged ran");
+        console.log("FOUND USER", user.uid);
         setUserState("userloading");
         
         if (user.uid === "PN4JqXrjsGfTsCUEEmaR5NO6rNF3") {
           setIsAdmin(true);
         }
         firestore.readAllUserIds().then((ids) => {
+          console.log('ids in firestore', ids);
           if (ids.includes(user.uid)) {
-
+            console.log("user exists");
+            setUserId(user.uid);
           } else {
-
+            console.log("user does not exist");
             function delay(ms) {
               return new Promise((resolve) => setTimeout(resolve, ms));
             }
@@ -81,6 +84,7 @@ function App() {
                 user.uid
               );
             }
+            console.log("creating new user");
             createNewUser();
             delay(1000).then(() => {
               setUserId(user.uid);

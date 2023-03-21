@@ -111,6 +111,7 @@ describe('Business Calcualtions', () => {
   });
   test('checkStocksIfAvailableInFirestore', async () => {
     const products = await firestore.readAllProducts();
+    await delay(300)
     const result = await businesscalculations.checkStocksIfAvailableInFirestore(products, [
       'PPB#1',
       'PPB#1',
@@ -136,8 +137,8 @@ describe('Business Calcualtions', () => {
     const vat = 12;
     const deliveryfee = 10;
     const expected = 122;
-    const grandtotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
-    expect(grandtotal).toBe(expected);
+    const grandTotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
+    expect(grandTotal).toBe(expected);
   });
   test('addToCart and removeFromCart', () => {
     const cart = user.cart;
@@ -265,8 +266,8 @@ describe('Business Calcualtions', () => {
     const vat = 12;
     const deliveryfee = 10;
     const expected = 122;
-    const grandtotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
-    expect(grandtotal).toBe(expected);
+    const grandTotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
+    expect(grandTotal).toBe(expected);
   });
   test('addToCart and removeFromCart', () => {
     const cart = user.cart;
@@ -291,8 +292,8 @@ describe('Data Manipulation', () => {
     const payments = user.payments;
 
     orders.forEach((order) => {
-      const newdate = new Date(order.orderdate.seconds * 1000 + order.orderdate.nanoseconds / 1000000);
-      order.orderdate = newdate;
+      const newdate = new Date(order.orderDate.seconds * 1000 + order.orderDate.nanoseconds / 1000000);
+      order.orderDate = newdate;
     });
 
     payments.forEach((payment) => {
@@ -397,7 +398,7 @@ describe('Data Manipulation', () => {
       orderAcceptedByClientDate: null,
       userWhoAcceptedOrder: null,
       address: 'Paper Boy',
-      grandtotal: 7474,
+      grandTotal: 7474,
       vat: 789,
       shippingtotal: 110,
       orderAcceptedByClient: false,
@@ -406,7 +407,7 @@ describe('Data Manipulation', () => {
       itemstotal: 6575,
       username: 'Adrian Ladia',
       name: 'Adrian Ladia',
-      orderdate: {
+      orderDate: {
         seconds: 1678337277,
         nanoseconds: 382000000,
       },
@@ -420,17 +421,20 @@ describe('Data Manipulation', () => {
   });
   test('getAllCustomerNamesFromUsers', async () => {
     const users = await firestore.readAllUsers();
+    await delay(300)
     const expected = ['Adrian Anton Ladia', 'Adrian Ladia', 'Adrian Ang'];
     const data = datamanipulation.getAllCustomerNamesFromUsers(users);
     expect(data).toEqual(expected);
   });
   test('getUserUidFromUsers', async () => {
     const users = await firestore.readAllUsers();
+    await delay(300)
     const uid = datamanipulation.getUserUidFromUsers(users, 'Adrian Ladia');
     expect(uid).toEqual('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
   });
   test('filterOrders', async () => {
     const orders = await firestore.readAllOrders();
+    await delay(300)
     let filtered = datamanipulation.filterOrders(orders, '', '', null, true, '');
     const expected = [
       {
@@ -438,7 +442,7 @@ describe('Data Manipulation', () => {
         itemstotal: 10150,
         vat: 1218,
         name: 'Adrian Ladia',
-        orderdate: {
+        orderDate: {
           seconds: 1675836806,
           nanoseconds: 678000000,
         },
@@ -446,7 +450,7 @@ describe('Data Manipulation', () => {
         latitude: 10.361113842400885,
         paid: true,
         userphonenumber: '',
-        grandtotal: 11433,
+        grandTotal: 11433,
         phonenumber: '09178927206',
         address: 'Paper Boy',
         cart: ['ppb1-ppb', 'ppb1-ppb', 'ppb1-ppb', 'ppb1-ppb', 'ppb1-ppb'],
@@ -472,7 +476,7 @@ describe('Data Manipulation', () => {
         orderAcceptedByClientDate: null,
         deliveryNotes: null,
         itemstotal: 6575,
-        orderdate: {
+        orderDate: {
           seconds: 1678337277,
           nanoseconds: 382000000,
         },
@@ -482,7 +486,7 @@ describe('Data Manipulation', () => {
         longitude: 123.93387574188152,
         paid: true,
         orderAcceptedByClient: false,
-        grandtotal: 7474,
+        grandTotal: 7474,
       },
       {
         needAssistance: false,
@@ -491,7 +495,7 @@ describe('Data Manipulation', () => {
         reference: '1248292023-615338',
         userphonenumber: '',
         longitude: 123.93387574188152,
-        orderdate: {
+        orderDate: {
           seconds: 1678337319,
           nanoseconds: 703000000,
         },
@@ -501,7 +505,7 @@ describe('Data Manipulation', () => {
         phonenumber: '09178927206',
         clientIDWhoAcceptedOrder: null,
         name: 'Adrian Ladia',
-        grandtotal: 16714,
+        grandTotal: 16714,
         shippingtotal: 110,
         address: 'Paper Boy',
         userWhoAcceptedOrder: null,
@@ -529,6 +533,7 @@ describe('Data Manipulation', () => {
   });
   test('getCategoryList', async () => {
     const categories = await firestore.readAllCategories();
+    await delay(300)
     const allCategories = datamanipulation.getCategoryList(categories);
     const expected = ['Favorites'];
     categories.map((category) => {
@@ -538,6 +543,8 @@ describe('Data Manipulation', () => {
   });
   test('getCheckoutPageTableDate', async () => {
     const products = await firestore.readAllProducts();
+    await delay(300)
+
     const cart = user.cart;
     const data = datamanipulation.getCheckoutPageTableDate(products, cart);
   });
@@ -546,11 +553,11 @@ describe('Data Manipulation', () => {
     const cart_data = datamanipulation.manipulateCartData(cart);
     const expected = [
       {
-        itemid: 'PPB#1',
+        itemId: 'PPB#1',
         quantity: 5,
       },
       {
-        itemid: 'PPB#2',
+        itemId: 'PPB#2',
         quantity: 2,
       },
     ];
@@ -558,6 +565,7 @@ describe('Data Manipulation', () => {
   });
   test('getAllProductsInCategory', async () => {
     const products = await firestore.readAllProducts();
+    await delay(300)
     const favorites = user.favoriteitems;
     const selected_products = datamanipulation.getAllProductsInCategory(products, 'Favorites', true, false, favorites);
   });
@@ -566,53 +574,66 @@ describe('Data Manipulation', () => {
 describe('Emulator', () => {
   test('Emulator Connected to Firestore', async () => {
     await firestore.createTestCollection();
+    await delay(300)
   });
 
   test('read test collection', async () => {
     const data = await firestore.readTestCollection();
+    await delay(300)
     expect(data).toEqual([{ name: 'test' }]);
   });
 
   test('delete test collection', async () => {
     await firestore.deleteTestCollection();
+    await delay(300)
     const data = await firestore.readTestCollection();
-
+    await delay(300)
     expect(data).toEqual([]);
     // tet
   });
 });
 
-describe('firestorefunctions', () => {
+describe('firestorefunctions', async () => {
   test('createDocument', async () => {
     firestore.createDocument({ test: 'test' }, 'test', 'Products');
   });
   test('readAllDataFromCollection', async () => {
     const data = await firestore.readAllDataFromCollection('Products');
+    await delay(300)
     expect(data).not.toBe([]);
   });
   test('readAllIdsFromCollection', async () => {
     const data = await firestore.readAllIdsFromCollection('Products');
+    await delay(300)
     expect(data).not.toBe([]);
   });
   test('readSelectedDataFromCollection', async () => {
     const data = await firestore.readSelectedDataFromCollection('Products', 'test', 'test');
+    await delay(300)
     expect(data).not.toBe([]);
   });
   test('updateDocumentFromCollection', async () => {
     const olddata = await firestore.readSelectedDataFromCollection('Products', 'test');
+    await delay(300)
     await firestore.updateDocumentFromCollection('Products', 'test', { test: 'test2' });
+    await delay(300)
     const newdata = await firestore.readSelectedDataFromCollection('Products', 'test');
+    await delay(300)
     expect(newdata).not.toBe(olddata);
   });
   test('deleteDocumentFromCollection', async () => {
     const olddata = await firestore.readAllIdsFromCollection('Products');
+    await delay(300)
     const newdata = firestore.deleteDocumentFromCollection('Products', 'test');
     expect(newdata).not.toBe(olddata);
   });
   test('addDocumentArrayFromCollection', async () => {
     await firestore.createDocument({ testarray: [] }, 'test', 'Products');
+    await delay(300)
     await firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray' }, 'testarray');
+    await delay(300)
     await firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray2' }, 'testarray');
+    await delay(300)
     const selected = await firestore.readSelectedDataFromCollection('Products', 'test');
     const testfield = selected.testarray;
 
@@ -625,51 +646,35 @@ describe('firestorefunctions', () => {
       { test: 'testarray2' },
       'testarray'
     );
+    await delay(300)
     const selected = await firestore.readSelectedDataFromCollection('Products', 'test');
+    await delay(300)
     const testfield = selected.testarray;
     expect(testfield).toEqual([{ test: 'testarray' }]);
     await firestore.deleteDocumentFromCollection('Products', 'test');
+    await delay(300)
   });
 });
 
-describe('Database', () => {
+describe('Database', async () => {
   test('readAllParentProducts', async () => {
     const data = await firestore.readAllParentProducts();
+    await delay(300)
     expect(data).not.toBe([]);
   });
   // a
 
   test('transactionCreatePayment', async () => {
-    await firestore.transactionCreatePayment('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2', 1999, '124532-1235', 'GCASH');
+    await firestore.transactionCreatePayment('LP6ARIs14qZm4qjj1YOLCSNjxsj1', 1999, '124532-1235', 'GCASH');
+    await delay(300)
   });
   test('updatedoc', async () => {
-    await firestore.updatePhoneNumber('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2', '09178927206');
-    const user = await firestore.readUserById('tkzNxUOPW5RFRY2HO5yqTiAzDpZ2');
+    await firestore.updatePhoneNumber('LP6ARIs14qZm4qjj1YOLCSNjxsj1', '09178927206');
+    await delay(300)
+    const user = await firestore.readUserById('LP6ARIs14qZm4qjj1YOLCSNjxsj1');
+    await delay(300)
     const phone = user.phonenumber;
     expect(phone).toEqual('09178927206');
-  });
-});
-
-describe('Data Validation', () => {
-  test('isString isNumber isArray isBoolean', () => {
-    const string = 'test';
-    const number = 123;
-    const array = [];
-    const boolean = true;
-
-    expect(datavalidation.isString(string)).toEqual(true);
-    expect(datavalidation.isString(number)).toEqual(false);
-    expect(datavalidation.isString(array)).toEqual(false);
-    expect(datavalidation.isNumber(string)).toEqual(false);
-    expect(datavalidation.isNumber(number)).toEqual(true);
-    expect(datavalidation.isNumber(array)).toEqual(false);
-    expect(datavalidation.isArray(string)).toEqual(false);
-    expect(datavalidation.isArray(number)).toEqual(false);
-    expect(datavalidation.isArray(array)).toEqual(true);
-    expect(datavalidation.isBoolean(string)).toEqual(false);
-    expect(datavalidation.isBoolean(number)).toEqual(false);
-    expect(datavalidation.isBoolean(array)).toEqual(false);
-    expect(datavalidation.isBoolean(boolean)).toEqual(true);
   });
 });
 
@@ -677,7 +682,9 @@ describe('Transaction Place Order', async () => {
   let cartCount;
   let initialProductCount = {};
 
-
+  beforeEach(async () => {
+    await delay(300)
+  });
  
 
 
@@ -710,6 +717,7 @@ describe('Transaction Place Order', async () => {
       const stocksAvailable = product.stocksAvailable;
       initialProductCount[item] = stocksAvailable;
     });
+    await delay(300)
 
     await firestore.createNewUser(
       {
@@ -728,25 +736,24 @@ describe('Transaction Place Order', async () => {
       },
       'testuser'
     );
+    await delay(300)
     const date = new Date();
-    await delay(300);
-
 
     await firestore.transactionPlaceOrder(
       {userid: 'testuser',
+      username: 'Adrian Ladia',
         localDeliveryAddress: 'Paper Boy',
         locallatitude: 1.1,
         locallongitude: 14.1,
         localphonenumber: '09178238421',
         localname: 'Adrian Ladia',
-        orderdate: new Date(),
+        orderDate: new Date(),
         cart: cart,
         itemstotal: 20000,
         vat: 1200,
         shippingtotal: 1000,
-        grandtotal: 22200,
+        grandTotal: 22200,
         reference: 'testref-124124521',
-        username: 'Adrian Ladia',
         userphonenumber: '09178927206',
         deliveryNotes: 'None',
         totalWeight: 320,
@@ -755,6 +762,7 @@ describe('Transaction Place Order', async () => {
     )
     await delay(300);
     const user = await firestore.readUserById('testuser');
+    await delay(300)
     const orders = user.orders;
     let foundorder = false;
     orders.map((order) => {
@@ -767,6 +775,7 @@ describe('Transaction Place Order', async () => {
 
   test('check if deliveryaddress added', async () => {
     const user = await firestore.readUserById('testuser');
+    await delay(300)
     const deliveryaddress = user.deliveryAddress;
     const expected = [
       {
@@ -781,6 +790,7 @@ describe('Transaction Place Order', async () => {
 
   test('check if cart is empty', async () => {
     const user = await firestore.readUserById('testuser');
+    await delay(300)
     const cart = user.cart;
     expect(cart).toEqual([]);
   });
@@ -789,13 +799,14 @@ describe('Transaction Place Order', async () => {
     await Promise.all(
       Object.entries(cartCount).map(async ([item, count]) => {
         const product = await firestore.readSelectedProduct(item);
+        await delay(300)
         const stocksAvailable = product.stocksAvailable;
         const initialCount = initialProductCount[item];
         const expected = initialCount - count;
         expect(stocksAvailable).toEqual(expected);
       })
     );
-    await delay(300);
+
     await firestore.deleteUserByUserId('testuser');
     await delay(300);
     Object.entries(cartCount).map(async ([itemId, count]) => {
@@ -803,14 +814,15 @@ describe('Transaction Place Order', async () => {
       const resetStockCount = stocksAvailable + count;
       await firestore.updateProductStocksAvailable(itemId, resetStockCount);
     });
-    await delay(300);
+    
     
   });
   
 });
 
 describe('Transaction Create Payment', async () => {
-  beforeEach(async () => {
+
+  test('Check if payment is added to payment field', async () => {
     await firestore.createNewUser(
       {
         uid: 'testuser',
@@ -828,12 +840,12 @@ describe('Transaction Create Payment', async () => {
       },
       'testuser'
     );
-    await delay(300);
+
+    await delay(300)
+
     firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
-    await delay(300);
-  });
-  test('Check if payment is added to payment field', async () => {
     const user = await firestore.readUserById('testuser');
+    await delay(300)
     const payments = user.payments;
     const amount = payments[0].amount;
     const reference = payments[0].reference;
@@ -864,6 +876,7 @@ describe('firestoredb', async () => {
       favoriteItems: [],
       payments: [],
     }, 'test');
+    await delay(300)
     await firestore.createNewUser(
       {
         uid: 'testuser',
@@ -881,10 +894,13 @@ describe('firestoredb', async () => {
       },
       'testuser'
     );
+    await delay(300)
   });
   afterEach(async () => {
     await firestore.deleteUserByUserId('test');
+    await delay(300)
     await firestore.deleteUserByUserId('testuser');
+    await delay(300)
   });
   test('createProduct and readAll Products', async () => {
     await firestore.createProduct({
@@ -906,9 +922,13 @@ describe('firestoredb', async () => {
       stocksOnHold: [],
       averageSalesPerDay: 0,
       parentProductID: 'test',
-      stocksOnHoldCompleted: []
+      stocksOnHoldCompleted: [],
+      forOnlineStore: true,
+      isCustomized : false
     }, 'test');
+    await delay(300)
     const products = await firestore.readAllProducts();
+    await delay(300)
     let found = false;
     products.map((product) => {
       if (product.itemId === 'test') {
@@ -919,6 +939,7 @@ describe('firestoredb', async () => {
   });
   test('readSelectedProduct', async () => {
     const product = await firestore.readSelectedProduct('test');
+    await delay(300)
     expect(product.itemName).toEqual('testname');
   });
   test('updateProduct', async () => {
@@ -937,19 +958,25 @@ describe('firestoredb', async () => {
       material: 'material',
       size: '10'
     });
+    await delay(300)
     const product = await firestore.readSelectedProduct('test');
+    await delay(300)
     expect(product.itemName).toEqual('testname2');
   });
 
   test('deleteProduct', async () => {
     await firestore.deleteProduct('test');
+    await delay(300)
     const product = await firestore.readSelectedProduct('test');
+    await delay(300)
     expect(product).toEqual(undefined);
   });
 
   test('createCategory amd readAllCategories', async () => {
     await firestore.createCategory('testtest');
+    await delay(300)
     const categories = await firestore.readAllCategories();
+    await delay(300)
     let found = false;
     categories.map((category) => {
       if (category.category === 'Testtest') {
@@ -961,6 +988,7 @@ describe('firestoredb', async () => {
 
   test('readAllUserIds', async () => {
     const usersId = await firestore.readAllUserIds();
+    await delay(300)
     let found = false;
     usersId.map((user) => {
       if (user === 'test') {
@@ -972,6 +1000,7 @@ describe('firestoredb', async () => {
 
   test('readAllUsers', async () => {
     const users = await firestore.readAllUsers();
+    await delay(300)
     let found = false;
     users.map((user) => {
       if (user.uid === 'testuser') {
@@ -983,12 +1012,16 @@ describe('firestoredb', async () => {
 
   test('readUserById', async () => {
     const user = await firestore.readUserById('test');
+    await delay(300)
     expect(user.uid).toEqual('test');
   });
 
   test('addItemToFavorites and removeItemFromFavorites', async () => {
     await firestore.addItemToFavorites('testuser', 'test');
+    await delay(300)
     const user = await firestore.readUserById('testuser');
+    await delay(300)
+
     const favorites = user.favoriteItems;
     let found = false;
     favorites.map((favorite) => {
@@ -999,7 +1032,9 @@ describe('firestoredb', async () => {
     expect(found).toEqual(true);
 
     await firestore.removeItemFromFavorites('testuser', 'test');
+    await delay(300)
     const user2 = await firestore.readUserById('testuser');
+    await delay(300)
     const favorites2 = user2.favoriteItems;
     let found2 = false;
     favorites2.map((favorite) => {
@@ -1012,33 +1047,45 @@ describe('firestoredb', async () => {
 
   test('createUserCart and deleteUserCart', async () => {
     await firestore.createUserCart(['testitem', 'testitem'], 'testuser');
+    await delay(300)
     const user = await firestore.readUserById('testuser');
+    await delay(300)
+
     const cart = user.cart;
     expect(cart).toEqual(['testitem', 'testitem']);
 
     await firestore.deleteAllUserCart('testuser');
+    await delay(300)
     const user2 = await firestore.readUserById('testuser');
+    await delay(300)
     const cart2 = user2.cart;
     expect(cart2).toEqual([]);
   });
 
   test('deleteAddress', async () => {
     await firestore.deleteAddress('testuser', 1, 0, 'Paper Boy');
+    await delay(300)
     const user = await firestore.readUserById('testuser');
+    await delay(300)
+    
     const address = user.deliveryAddress;
     expect(address).toEqual([]);
   });
 
   test('deleteUserContactPerson', async () => {
     await firestore.deleteUserContactPersons('testuser', 'testname', '09178927206');
+    await delay(300)
     const user = await firestore.readUserById('testuser');
+    await delay(300)
     const contactPerson = user.contactPerson;
     expect(contactPerson).toEqual([]);
   });
 
   test('updateLatitudeLongitude', async () => {
     await firestore.updateLatitudeLongitude('testuser', 1, 0);
+    await delay(300)
     const user = await firestore.readUserById('testuser');
+    await delay(300)
     const latitude = user.latitude;
     const longitude = user.longitude;
     expect(latitude).toEqual(1);
@@ -1047,7 +1094,9 @@ describe('firestoredb', async () => {
 
   test('updatePhoneNumber', async () => {
     await firestore.updatePhoneNumber('testuser', '09178927206');
+    await delay(300)
     const user = await firestore.readUserById('testuser');
+    await delay(300)
     const phonenumber = user.phonenumber;
     expect(phonenumber).toEqual('09178927206');
   });

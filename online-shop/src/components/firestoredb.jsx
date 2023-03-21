@@ -301,7 +301,7 @@ class firestoredb extends firestorefunctions {
     const products = await this.readAllProducts();
     products.map((product) => {
       if (product.parentProductId === '') {
-        parentProducts.push(product.itemid);
+        parentProducts.push(product.itemId);
       }
     });
     return parentProducts;

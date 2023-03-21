@@ -69,19 +69,19 @@ const ProductCardModal = (props) => {
   function onHeartClick() {
     if (heart) {
       setHeart(!heart);
-      setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemid))
-      firestore.removeItemFromFavorites(userdata.uid,props.product.itemid)
+      setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemId))
+      firestore.removeItemFromFavorites(userdata.uid,props.product.itemId)
     }
     else {
       setHeart(!heart);
-      setFavoriteItems([...favoriteitems, props.product.itemid])
-      firestore.addItemToFavorites(userdata.uid,props.product.itemid)
+      setFavoriteItems([...favoriteitems, props.product.itemId])
+      firestore.addItemToFavorites(userdata.uid,props.product.itemId)
     }
   }
 
   useEffect (() => {
 
-    if (favoriteitems.includes(props.product.itemid)) {
+    if (favoriteitems.includes(props.product.itemId)) {
       setHeart(true);
     }
 
@@ -158,7 +158,7 @@ const ProductCardModal = (props) => {
             <div className="flex flex-col">
               {/* TITLE */}
               <Typography variant="h4" className="mb-5" align="center">
-                {props.product.itemname}
+                {props.product.itemName}
               </Typography>
               {/* IMAGE */}
                 <ImageList
@@ -166,7 +166,7 @@ const ProductCardModal = (props) => {
                   cols={responsiveimagemodal()}
                   rowHeight="auto"
                 >
-                  { props.product.imagelinks.map((imagelink) => (
+                  { props.product.imageLinks.map((imagelink) => (
                     <ImageListItem key={imagelink}>
                       <Paper elevation={10}>
                         <img src={imagelink} alt={"title"} />

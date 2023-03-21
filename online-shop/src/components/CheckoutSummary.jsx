@@ -23,7 +23,7 @@ const CheckoutSummary = (props) => {
   const total = props.total;
   const setTotal = props.setTotal;
   const deliveryFee = props.deliveryFee;
-  const grandtotal = props.grandtotal;
+  const grandTotal = props.grandTotal;
   const vat = props.vat;
   const setTotalWeight = props.setTotalWeight;
   const totalWeight = props.totalWeight;
@@ -67,11 +67,11 @@ const CheckoutSummary = (props) => {
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <TableRow key={row.itemname} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableRow key={row.itemName} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell component="th" scope="row">
                       <img src={row.itemimage} alt="item" width="100px" height="100px" />
                     </TableCell>
-                    <TableCell>{row.itemname}</TableCell>
+                    <TableCell>{row.itemName}</TableCell>
                     <TableCell align="right">{row.itemquantity}</TableCell>
                     <TableCell align="right">{row.itemprice}</TableCell>
                     <TableCell align="right">{row.itemtotal}</TableCell>
@@ -106,7 +106,7 @@ const CheckoutSummary = (props) => {
                 </div>
               )}
 
-              <Typography variant="h5">Grand Total: ₱ {grandtotal.toLocaleString()}</Typography>
+              <Typography variant="h5">Grand Total: ₱ {grandTotal.toLocaleString()}</Typography>
             </div>
           </div>
         </div>

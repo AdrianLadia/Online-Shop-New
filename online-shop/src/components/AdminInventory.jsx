@@ -15,7 +15,7 @@ import { useEffect } from "react";
 
 function createData(
   itemID,
-  itemname,
+  itemName,
   unit,
   stocksAvailable,
   pieces,
@@ -32,7 +32,7 @@ function createData(
 ) {
   return {
     itemID,
-    itemname,
+    itemName,
     unit,
     stocksAvailable,
     pieces,
@@ -74,8 +74,8 @@ const AdminInventory = (props) => {
   productlist.map((product) => {
     rows.push(
       createData(
-        product.itemid,
-        product.itemname,
+        product.itemId,
+        product.itemName,
         product.unit,
         product.stocksAvailable,
         product.pieces,
@@ -88,7 +88,7 @@ const AdminInventory = (props) => {
         product.weight,
         product.dimensions,
         product.description,
-        product.imagelinks
+        product.imageLinks
       )
     );
   });
@@ -171,7 +171,7 @@ const AdminInventory = (props) => {
                       className="w-5 h-5"
                     />
                   </TableCell>
-                  <TableCell align="center">{row.itemname}</TableCell>
+                  <TableCell align="center">{row.itemName}</TableCell>
                   <TableCell align="center">{row.unit}</TableCell>
                   <TableCell align="center">{row.stocksAvailable}</TableCell>
                   <TableCell align="center">{row.pieces}</TableCell>

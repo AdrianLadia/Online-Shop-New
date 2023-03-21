@@ -53,7 +53,7 @@ function MyOrderCard(props) {
             </div>
             <div className="flex w-full justify-end mt-8 ">
               <Typography variant="h5" component="div">
-                {order.orderdate.toDate().toLocaleDateString()}
+                {order.orderDate.toDate().toLocaleDateString()}
               </Typography>
             </div>
           </div>
@@ -82,7 +82,7 @@ function MyOrderCard(props) {
               </Typography>
             </div>
             <div className="flex justify-end align-text-bottom">
-              <Typography variant="h5">₱ {order.grandtotal}</Typography>
+              <Typography variant="h5">₱ {order.grandTotal}</Typography>
             </div>
           </div>
         </div>

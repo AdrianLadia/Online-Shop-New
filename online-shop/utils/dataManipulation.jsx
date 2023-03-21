@@ -20,8 +20,8 @@ class dataManipulation {
     if (orders) {
       orders.map((order) => {
         let newObject = { ...order };
-        let value = newObject['orderdate'];
-        delete newObject['orderdate'];
+        let value = newObject['orderDate'];
+        delete newObject['orderDate'];
         newObject['date'] = value;
         data.push(newObject);
       });
@@ -49,7 +49,7 @@ class dataManipulation {
         const dataToPush = [item.date, item.paymentprovider + ' ' + item.reference, '', parseFloat(item.amount)];
         dataToUse.push(dataToPush);
       } else {
-        dataToUse.push([item.date, item.reference, item.grandtotal, '']);
+        dataToUse.push([item.date, item.reference, item.grandTotal, '']);
       }
     });
 
@@ -100,7 +100,7 @@ class dataManipulation {
     });
 
     if (forTesting) {
-      orderfiltered['orderdate'] = this.convertDateToNanoSecondsAndSeconds(orderfiltered['orderdate']);
+      orderfiltered['orderDate'] = this.convertDateToNanoSecondsAndSeconds(orderfiltered['orderDate']);
     }
 
     return orderfiltered;
@@ -148,7 +148,7 @@ class dataManipulation {
     // FILTER BY DATE
     orders.map((order) => {
       if (filterDate === true) {
-        if (order.orderdate.toDate().toLocaleDateString() === startDate.toLocaleDateString()) {
+        if (order.orderDate.toDate().toLocaleDateString() === startDate.toLocaleDateString()) {
           dataFilteredByDate.push(order);
         }
       } else {
@@ -159,7 +159,7 @@ class dataManipulation {
     const dataFilteredByName = [];
     dataFilteredByDate.map((order) => {
       if (filterName === true) {
-        if (order.username === selectedName) {
+        if (order.userName === selectedName) {
           dataFilteredByName.push(order);
         }
       } else {
@@ -212,8 +212,8 @@ class dataManipulation {
   }
 
   getCheckoutPageTableDate(product_list, cart) {
-    function createData(itemimage, itemname, itemquantity, itemprice, itemtotal, weighttotal) {
-      return { itemimage, itemname, itemquantity, itemprice, itemtotal, weighttotal };
+    function createData(itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal) {
+      return { itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal };
     }
 
     let rows_non_state = [];
@@ -231,13 +231,13 @@ class dataManipulation {
 
     Object.entries(item_count).map(([key, quantity]) => {
       product_list.map((product) => {
-        if (product.itemid === key) {
+        if (product.itemId === key) {
           total_weight_non_state += product.weight * quantity;
           total_non_state += product.price * quantity;
 
           let row = createData(
-            product.imagelinks[0],
-            product.itemname,
+            product.imageLinks[0],
+            product.itemName,
             quantity.toLocaleString(),
             parseInt(product.price).toLocaleString(),
             (product.price * quantity).toLocaleString(),
@@ -261,12 +261,12 @@ class dataManipulation {
 
     let cart_data = [];
     unique_items.map((item, index) => {
-      cart_data.push({ itemid: item, quantity: 0 });
+      cart_data.push({ itemId: item, quantity: 0 });
     });
 
     cart_data.map((item, index) => {
       cart.map((cart_item, index) => {
-        if (item.itemid === cart_item) {
+        if (item.itemId === cart_item) {
           item.quantity += 1;
         }
       });
@@ -279,7 +279,7 @@ class dataManipulation {
     if (categorySelected === 'Favorites') {
       let selected_products = [];
       products.map((product) => {
-        if (favorites.includes(product.itemid)) {
+        if (favorites.includes(product.itemId)) {
           selected_products.push(product);
         }
       });
