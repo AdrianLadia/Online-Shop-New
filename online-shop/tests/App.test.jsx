@@ -642,7 +642,8 @@ describe('firestoredb', async () => {
       parentProductID: 'test',
       stocksOnHoldCompleted: [],
       forOnlineStore: true,
-      isCustomized : false
+      isCustomized : false,
+      salesPerMonth : []
     }, 'test');
     await delay(100)
     const products = await firestore.readAllProducts();

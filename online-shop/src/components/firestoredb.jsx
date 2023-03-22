@@ -30,12 +30,13 @@ class firestoredb extends firestorefunctions {
       stocksOnHoldCompleted: Joi.array().required(),
       forOnlineStore: Joi.boolean().required(),
       isCustomized: Joi.boolean().required(),
+      salesPerMonth: Joi.array().required()
     }).unknown(false);
 
     try {
       await schema.validateAsync(data);
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
 
     super.createDocument(data, id, 'Products');
@@ -47,21 +48,21 @@ class firestoredb extends firestorefunctions {
     const productsSchema = Joi.array().items(
       Joi.object({
         averageSalesPerDay: Joi.number().required(),
-        brand: Joi.string(),
+        brand: Joi.string().allow(''),
         category: Joi.string().required(),
-        color: Joi.string(),
-        description: Joi.string().required(),
-        dimensions: Joi.string(),
+        color: Joi.string().allow(''),
+        description: Joi.string().required().allow(''),
+        dimensions: Joi.string().allow(''),
         forOnlineStore: Joi.boolean().required(),
         imageLinks: Joi.array(),
         itemId: Joi.string().required(),
         itemName: Joi.string().required(),
         isCustomized: Joi.boolean().required(),
-        material: Joi.string(),
-        parentProductID: Joi.string(),
+        material: Joi.string().allow(''),
+        parentProductID: Joi.string().allow(''),
         pieces: Joi.number().required(),
         price: Joi.number().required(),
-        size: Joi.string(),
+        size: Joi.string().allow(''),
         stocksAvailable: Joi.number().required(),
         stocksOnHold: Joi.array().required(),
         stocksOnHoldCompleted: Joi.array().required(),
