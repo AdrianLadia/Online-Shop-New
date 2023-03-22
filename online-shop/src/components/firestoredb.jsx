@@ -36,7 +36,7 @@ class firestoredb extends firestorefunctions {
     try {
       await schema.validateAsync(data);
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
 
     super.createDocument(data, id, 'Products');
@@ -75,7 +75,7 @@ class firestoredb extends firestorefunctions {
       await productsSchema.validateAsync(products);
     }
     catch(error){
-      throw error;
+      throw new Error(error);
     }
 
     return products;
