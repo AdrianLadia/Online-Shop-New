@@ -12,58 +12,64 @@ class dataManipulation {
     const nanoseconds = (date.getTime() % 1000) * 1000000;
     const seconds = Math.floor(date.getTime() / 1000);
     const result = { nanoseconds: nanoseconds, seconds: seconds };
+
+    const schema = Joi.object();
+
+    const { error } = schema.validate(result);
+    if (error) {
+      throw new Error(error);
+    }
+
     return result;
   }
 
   accountStatementData(orders, payments, forTesting = false) {
     const data = [];
 
-    const schemaOrder = Joi.object(
-      {
-        userWhoAcceptedOrder: Joi.any(),
-        userPhoneNumber: Joi.string(),
-        delivered: Joi.boolean(),
-        cart: Joi.array(),
-        reference: Joi.string(),
-        orderAcceptedByClient: Joi.boolean(),
-        deliveryAddress: Joi.string(),
-        deliveryVehicle: Joi.string(),
-        orderAcceptedByClientDate: Joi.any(),
-        needAssistance: Joi.boolean(),
-        grandTotal: Joi.number(),
-        contactName: Joi.string(),
-        vat: Joi.number(),
-        userName: Joi.string(),
-        deliveryNotes: Joi.string(),
-        userId:   Joi.string(),
-        shippingTotal: Joi.number(),
-        deliveryAddressLatitude: Joi.number(),
-        itemsTotal: Joi.number(),
-        paid: Joi.boolean(),
-        totalWeight: Joi.number(),
-        contactPhoneNumber: Joi.string(),
-        deliveryAddressLongitude: Joi.number(),
-        clientIDWhoAcceptedOrder: Joi.string(),
-        orderDate: Joi.object()
-      }).unknown(false)
+    const schemaOrder = Joi.object({
+      userWhoAcceptedOrder: Joi.any(),
+      userPhoneNumber: Joi.string(),
+      delivered: Joi.boolean(),
+      cart: Joi.array(),
+      reference: Joi.string(),
+      orderAcceptedByClient: Joi.boolean(),
+      deliveryAddress: Joi.string(),
+      deliveryVehicle: Joi.string(),
+      orderAcceptedByClientDate: Joi.any(),
+      needAssistance: Joi.boolean(),
+      grandTotal: Joi.number(),
+      contactName: Joi.string(),
+      vat: Joi.number(),
+      userName: Joi.string(),
+      deliveryNotes: Joi.string(),
+      userId: Joi.string(),
+      shippingTotal: Joi.number(),
+      deliveryAddressLatitude: Joi.number(),
+      itemsTotal: Joi.number(),
+      paid: Joi.boolean(),
+      totalWeight: Joi.number(),
+      contactPhoneNumber: Joi.string(),
+      deliveryAddressLongitude: Joi.number(),
+      clientIDWhoAcceptedOrder: Joi.string(),
+      orderDate: Joi.object(),
+    }).unknown(false);
 
-    const schemaPayments = Joi.object(
-      {
-        amount: Joi.number(),
-        date: Joi.object(),
-        paymentprovider: Joi.string(),
-        reference: Joi.string()
-      }).unknown(false)
+    const schemaPayments = Joi.object({
+      amount: Joi.number(),
+      date: Joi.object(),
+      paymentprovider: Joi.string(),
+      reference: Joi.string(),
+    }).unknown(false);
 
-      const {error1} = schemaPayments.validate(payments)
-      if (error1) {
-        throw new Error(error1)
-      }
+    const { error1 } = schemaPayments.validate(payments);
+    if (error1) {
+      throw new Error(error1);
+    }
 
-      const {error2} = schemaOrder.validate(orders)
-      if (error2) {
-        throw new Error(error2)
-      }
+    const { error2 } = schemaOrder.validate(orders);
+    if (error2) {
+      throw new Error(error2);
+    }
 
     if (orders) {
       orders.map((order) => {
@@ -119,9 +125,15 @@ class dataManipulation {
       });
     }
 
+    const dataToUseSchema = Joi.array().items(Joi.array().length(6).required()).required();
+
+    const { error } = dataToUseSchema.validate(dataToUse);
+    if (error) {
+      throw new Error(error);
+    }
+
     return dataToUse;
   }
-
 
   accountStatementTable(tableData, forTesting = false) {
     function createData(date, reference, credit, debit, runningBalance, color) {
@@ -142,46 +154,44 @@ class dataManipulation {
     return rowsdata;
   }
   getOrderFromReference(referencenumber, orders, forTesting = false) {
-
-    const referenceNumberSchema = Joi.string().required()
-    const {error} = referenceNumberSchema.validate(referencenumber)
+    const referenceNumberSchema = Joi.string().required();
+    const { error } = referenceNumberSchema.validate(referencenumber);
     if (error) {
-      throw new Error(error)
+      throw new Error(error);
     }
 
-    const schemaOrder = Joi.object(
-      {
-        userWhoAcceptedOrder: Joi.any(),
-        userPhoneNumber: Joi.string(),
-        delivered: Joi.boolean(),
-        cart: Joi.array(),
-        reference: Joi.string(),
-        orderAcceptedByClient: Joi.boolean(),
-        deliveryAddress: Joi.string(),
-        deliveryVehicle: Joi.string(),
-        orderAcceptedByClientDate: Joi.any(),
-        needAssistance: Joi.boolean(),
-        grandTotal: Joi.number(),
-        contactName: Joi.string(),
-        vat: Joi.number(),
-        userName: Joi.string(),
-        deliveryNotes: Joi.string(),
-        userId:   Joi.string(),
-        shippingTotal: Joi.number(),
-        deliveryAddressLatitude: Joi.number(),
-        itemsTotal: Joi.number(),
-        paid: Joi.boolean(),
-        totalWeight: Joi.number(),
-        contactPhoneNumber: Joi.string(),
-        deliveryAddressLongitude: Joi.number(),
-        clientIDWhoAcceptedOrder: Joi.string(),
-        orderDate: Joi.object()
-      }).unknown(false)
+    const schemaOrder = Joi.object({
+      userWhoAcceptedOrder: Joi.any(),
+      userPhoneNumber: Joi.string(),
+      delivered: Joi.boolean(),
+      cart: Joi.array(),
+      reference: Joi.string(),
+      orderAcceptedByClient: Joi.boolean(),
+      deliveryAddress: Joi.string(),
+      deliveryVehicle: Joi.string(),
+      orderAcceptedByClientDate: Joi.any(),
+      needAssistance: Joi.boolean(),
+      grandTotal: Joi.number(),
+      contactName: Joi.string(),
+      vat: Joi.number(),
+      userName: Joi.string(),
+      deliveryNotes: Joi.string(),
+      userId: Joi.string(),
+      shippingTotal: Joi.number(),
+      deliveryAddressLatitude: Joi.number(),
+      itemsTotal: Joi.number(),
+      paid: Joi.boolean(),
+      totalWeight: Joi.number(),
+      contactPhoneNumber: Joi.string(),
+      deliveryAddressLongitude: Joi.number(),
+      clientIDWhoAcceptedOrder: Joi.string(),
+      orderDate: Joi.object(),
+    }).unknown(false);
 
-      const {error2} = schemaOrder.validate(orders)
-      if (error2) {
-        throw new Error(error2)
-      }
+    const { error2 } = schemaOrder.validate(orders);
+    if (error2) {
+      throw new Error(error2);
+    }
 
     let orderfiltered = null;
     orders.map((order) => {
@@ -194,52 +204,109 @@ class dataManipulation {
       orderfiltered['orderDate'] = this.convertDateToNanoSecondsAndSeconds(orderfiltered['orderDate']);
     }
 
+    const orderFilteredSchema = Joi.object({
+      userWhoAcceptedOrder: Joi.any(),
+      userPhoneNumber: Joi.string(),
+      delivered: Joi.boolean().required(),
+      cart: Joi.array().required(),
+      reference: Joi.string().required(),
+      orderAcceptedByClient: Joi.boolean().required(),
+      deliveryAddress: Joi.string().required(),
+      deliveryVehicle: Joi.string().required(),
+      orderAcceptedByClientDate: Joi.any(),
+      needAssistance: Joi.boolean().required(),
+      grandTotal: Joi.number().required(),
+      contactName: Joi.string().required(),
+      vat: Joi.number().required(),
+      userName: Joi.string().required(),
+      deliveryNotes: Joi.string().required(),
+      userId: Joi.string().required(),
+      shippingTotal: Joi.number().required(),
+      deliveryAddressLatitude: Joi.number().required(),
+      itemsTotal: Joi.number().required(),
+      paid: Joi.boolean().required(),
+      totalWeight: Joi.number().required(),
+      contactPhoneNumber: Joi.string().required(),
+      deliveryAddressLongitude: Joi.number().required(),
+      clientIDWhoAcceptedOrder: Joi.string().required(),
+      orderDate: Joi.object().required(),
+    }).unknown(false);
+
+    const { error3 } = orderFilteredSchema.validate(orderfiltered);
+    if (error3) {
+      throw new Error(error3);
+    }
+
     return orderfiltered;
   }
 
   getAllCustomerNamesFromUsers(users) {
+    const schemaUsers = Joi.array();
 
-    const schemaUsers = Joi.array()
-
-    const {error} = schemaUsers.validate(users)
+    const { error } = schemaUsers.validate(users);
     if (error) {
-      throw new Error(error)
+      throw new Error(error);
     }
 
     const customers = [];
     users.map((user) => {
       customers.push(user.name);
     });
+
+    const schemaCustomers = Joi.array();
+
+    const { error2 } = schemaCustomers.validate(customers);
+    if (error2) {
+      throw new Error(error2);
+    }
+
     return customers;
   }
 
   getUserUidFromUsers(users, selectedName) {
+    const schemaUsers = Joi.array();
+    const schemaSelectedName = Joi.string();
+
+    const { error1 } = schemaSelectedName.validate(selectedName);
+    const { error } = schemaUsers.validate(users);
+
+    if (error || error1) {
+      throw new Error(error);
+    }
+
     const user = users.find((user) => user.name === selectedName);
     if (user) {
-      return user.uid;
+      const userId = user.uid;
+
+      const schemaUserId = Joi.string();
+      const { error2 } = schemaUserId.validate(userId);
+      if (error2) {
+        throw new Error(error2);
+      }
+
+      return userId;
     }
     return undefined;
   }
 
   filterOrders(orders, startDate, referenceNumber, delivered, paid, selectedName) {
+    const schemaOrder = Joi.array();
 
-    const schemaOrder = Joi.array()
-
-    const {error} = schemaOrder.validate(orders)
+    const { error } = schemaOrder.validate(orders);
     if (error) {
-      throw new Error(error)
+      throw new Error(error);
     }
 
-    const schemaDate = Joi.string()
-    const {error2} = schemaDate.validate(startDate)
+    const schemaDate = Joi.string();
+    const { error2 } = schemaDate.validate(startDate);
     if (error2) {
-      throw new Error(error2)
-    } 
+      throw new Error(error2);
+    }
 
-    const schemaReferenceNumber = Joi.string()
-    const {error3} = schemaReferenceNumber.validate(referenceNumber)
+    const schemaReferenceNumber = Joi.string();
+    const { error3 } = schemaReferenceNumber.validate(referenceNumber);
     if (error3) {
-      throw new Error(error3)
+      throw new Error(error3);
     }
 
     let filterPaid = null;
@@ -319,6 +386,43 @@ class dataManipulation {
         dataFilteredByPaid.push(order);
       }
     });
+
+    const dataFilteredByPaidSchema = Joi.array().items(
+      Joi.object({
+        userWhoAcceptedOrder: Joi.any().required(),
+        userPhoneNumber: Joi.string().required(),
+        delivered: Joi.boolean().required(),
+        cart: Joi.array().required(),
+        reference: Joi.string().required(),
+        orderAcceptedByClient: Joi.boolean().required(),
+        deliveryAddress: Joi.string().required(),
+        deliveryVehicle: Joi.string().required(),
+        orderAcceptedByClientDate: Joi.any().required(),
+        needAssistance: Joi.boolean().required(),
+        grandTotal: Joi.number().required(),
+        contactName: Joi.string().required(),
+        vat: Joi.number().required(),
+        userName: Joi.string().required(),
+        deliveryNotes: Joi.string().required(),
+        userId: Joi.string().required(),
+        shippingTotal: Joi.number().required(),
+        deliveryAddressLatitude: Joi.number().required(),
+        itemsTotal: Joi.number().required(),
+        paid: Joi.boolean().required(),
+        totalWeight: Joi.number().required(),
+        contactPhoneNumber: Joi.string().required(),
+        deliveryAddressLongitude: Joi.number().required(),
+        clientIDWhoAcceptedOrder: Joi.string().required(),
+        orderDate: Joi.object().required(),
+      }).unknown(false)
+    );
+
+    const { error6 } = dataFilteredByPaidSchema.validate(dataFilteredByPaid);
+
+    if (error6) {
+      throw new Error(error6);
+    }
+
     return dataFilteredByPaid;
   }
 
@@ -327,10 +431,27 @@ class dataManipulation {
     categories.map((category) => {
       c.push(category.category);
     });
+
+    const schema = Joi.array();
+    const { error } = schema.validate(c);
+    if (error) {
+      throw new Error(error);
+    }
+
     return c;
   }
 
   getCheckoutPageTableDate(product_list, cart) {
+    const productListSchema = Joi.array();
+    const productListCart = Joi.array();
+
+    const { error1 } = productListSchema.validate(product_list);
+    const { error2 } = productListCart.validate(cart);
+
+    if (error1 || error2) {
+      throw new Error(error1);
+    }
+
     function createData(itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal) {
       return { itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal };
     }
@@ -367,10 +488,30 @@ class dataManipulation {
       });
     });
 
-    return [rows_non_state, total_non_state, total_weight_non_state];
+    const toReturn = [rows_non_state, total_non_state, total_weight_non_state];
+    
+    const schema = Joi.array().ordered(
+      Joi.array(),
+      Joi.number(),
+      Joi.number()
+    )
+
+    const { error3 } = schema.validate(toReturn);
+
+    if (error3) {
+      throw new Error(error3);
+    }
+
+    return toReturn 
   }
 
   manipulateCartData(cart) {
+    const cartSchema = Joi.array();
+    const { error } = cartSchema.validate(cart);
+    if (error) {
+      throw new Error(error);
+    }
+
     //get unique items of array
     function set(arr) {
       return [...new Set(arr)];
@@ -391,12 +532,27 @@ class dataManipulation {
       });
     });
     console.log(cart_data);
+
+    const cartDataSchema = Joi.array().items(
+      Joi.object({
+        itemId: Joi.string().required(),
+        quantity: Joi.number().required(),
+      }).unknown(false)
+    )
+
+    const { error2 } = cartDataSchema.validate(cart_data);
+      
+    if (error2) {
+      throw new Error(error2);
+    }
+
     return cart_data;
   }
 
-  getAllProductsInCategory(products, categorySelected,wholesale,retail,favorites) {
+  getAllProductsInCategory(products, categorySelected, wholesale, retail, favorites) {
+    // const productsSchema = Joi.array()
 
-    const productsSchema = Joi.array()
+    const productsSchema = Joi.array();
     const { error } = productsSchema.validate(products);
     if (error) {
       throw new Error(error);
@@ -425,7 +581,6 @@ class dataManipulation {
     if (error5) {
       throw new Error(error5);
     }
-
 
     if (categorySelected === 'Favorites') {
       let selected_products = [];
@@ -461,9 +616,15 @@ class dataManipulation {
       });
     }
 
+    const selectedProductsSchema = Joi.array();
+
+    const { error6 } = selectedProductsSchema.validate(selected_products);
+    if (error6) {
+      throw new Error(error6);
+    }
+
     return selected_products;
   }
-
 
   // convertTimestampToFirebaseTimestamp(timestamp) {
   //   const date = new Date(timestamp.seconds * 1000);

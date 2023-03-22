@@ -106,7 +106,7 @@ describe('Business Calcualtions', () => {
     vehicles.map((vehicle) => {
       const deliveryFeePerKm = vehicle.deliveryFeePerKm;
       const expected = Math.round(deliveryFeePerKm * kilometers);
-      const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicle);
+      const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicle, false);
       expect(deliveryFee).toBe(expected);
     });
   });
@@ -154,6 +154,11 @@ describe('Business Calcualtions', () => {
     const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5, cart);
     expect(newCart).toEqual([...cart, 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1']);
   });
+  test('checkIfAreasHasLalamoveServiceArea' , () => {
+    const areas = ['generalSantosArea', 'lalamoveServiceArea'];
+    const result = businesscalculations.checkIfAreasHasLalamoveServiceArea(areas);
+    expect(result).toBe(true);
+  })
 });
 
 describe('Data Manipulation', () => {
