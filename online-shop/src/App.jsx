@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import AppContext from "./AppContext";
 import { Routes, Route } from "react-router-dom";
 import firebase from "firebase/compat/app";
-import { getAuth, onAuthStateChanged} from "firebase/auth";
+import { getAuth, onAuthStateChanged,connectAuthEmulator} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import AdminSecurity from "./components/AdminSecurity";
 import firebaseConfig from "./firebase_config";
@@ -21,10 +21,19 @@ function App() {
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
-  const auth = getAuth();
+  const auth = getAuth(app);
+
+  const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
+  
+  useEffect(() => {
+    if (!authEmulatorConnected) {
+      connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true })
+      setAuthEmulatorConnected(true);
+    }
+  }, [authEmulatorConnected]);
   
   // Initialize firestore class
-  const firestore = new firestoredb(app);
+  const firestore = new firestoredb(app,true);
 
   const [userId, setUserId] = useState(null);
   const [userdata, setUserData] = useState(null);

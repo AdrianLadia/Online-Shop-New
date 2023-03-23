@@ -26,9 +26,10 @@ class firestorefunctions {
     }
     if(emulator === true) {
       const db = getFirestore();
-      connectFirestoreEmulator(db, "localhost", 8080);
+      if (!db._settingsFrozen) {
+        connectFirestoreEmulator(db, "localhost", 8080);
+      }
       this.db = db;
-
     }
   }
 
