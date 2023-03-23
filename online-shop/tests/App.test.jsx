@@ -9,7 +9,8 @@ import paperBoyLocation from '../src/data/paperBoyLocation';
 import serviceAreas from '../src/data/serviceAreas';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
 import dataValidation from '../utils/dataValidation';
-import { getAuth, connectAuthEmulator } from "firebase/auth";
+// import { getAuth, connectAuthEmulator } from "firebase/auth";
+import cloudFirestoreFunctions from '../src/cloudFirestoreFunctions';
 //
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
@@ -20,6 +21,8 @@ const paperboylocation = new paperBoyLocation();
 const serviceareas = new serviceAreas();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
 const datavalidation = new dataValidation();
+const cloudfirestorefunctions = new cloudFirestoreFunctions();
+
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -312,8 +315,12 @@ function delay(ms) {
 
 // describe('firestorefunctions', async () => {
 //   test('createDocument', async () => {
-//     firestore.createDocument({ test: 'test' }, 'test', 'Products');
+//     await firestore.createDocument({ test: 'test' }, 'test', 'Products');
+//     await delay(100)
+//     const data = await firestore.readSelectedDataFromCollection('Products', 'test');
+//     expect(data).toEqual({ test: 'test' });
 //   });
+
 //   test('readAllDataFromCollection', async () => {
 //     const data = await firestore.readAllDataFromCollection('Products');
 //     await delay(100)
@@ -823,11 +830,76 @@ function delay(ms) {
 
 // });
 
-describe('security rules', () => {
-  test('everybody can read products', async () => {
-    const products = await firestore.readAllProducts();
-    expect(products.length).toBeGreaterThan(0);
+
+describe('cloudfirestorefunctions', async () => {
+  test('createDocument', async () => {
+    await cloudfirestorefunctions.createDocument({ test: 'test' }, 'test', 'Products');
+    await delay(100)
+    const data = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
+    // console.log(data);
+    expect(data).toEqual({ test: 'test' });
+
   });
+
+  // test('readAllDataFromCollection', async () => {
+  //   const data = await cloudfirestorefunctions.readAllDataFromCollection('Products');
+  //   await delay(100)
+  //   expect(data).toBeInstanceOf(Array);
+  // });
+  // test('readAllIdsFromCollection', async () => {
+  //   const data = await cloudfirestorefunctions.readAllIdsFromCollection('Products');
+  //   await delay(100)
+  //   console.log(data);
+  //   expect(data).toBeInstanceOf(Array);
+  // });
+  // test('readSelectedDataFromCollection', async () => {
+  //   const data = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test', 'test');
+  //   await delay(100)
+  //   expect(data).not.toBe([]);
+  // });
+  test('updateDocumentFromCollection', async () => {
+    const olddata = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
+    await delay(100)
+    await cloudfirestorefunctions.updateDocumentFromCollection('Products', 'test', { test: 'test222' });
+    await delay(100)
+    const newdata = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
+    await delay(100)
+    expect(newdata).not.toEqual(olddata);
+  });
+  test('deleteDocumentFromCollection', async () => {
+    await cloudfirestorefunctions.deleteDocumentFromCollection('Products', 'test');
+    await delay(100)
+    const ids = await cloudfirestorefunctions.readAllIdsFromCollection('Products');
+    await delay(100)
+
+    if (ids.includes('test')) {
+      expect(true).toEqual(false);
+    }
+  });
+  test('addDocumentArrayFromCollection', async () => {
+    await cloudfirestorefunctions.createDocument({ testarray: [] }, 'test', 'Products');
+    await delay(100)
+    await cloudfirestorefunctions.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray' }, 'testarray');
+    await delay(100)
+    await cloudfirestorefunctions.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray2' }, 'testarray');
+    await delay(100)
+    const selected = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
+    const testfield = selected.testarray;
+    expect(testfield).toEqual([{ test: 'testarray' }, { test: 'testarray2' }]);
+  });
+  // test('deleteDocumentArrayFromCollection', async () => {
+  //   await cloudfirestorefunctions.deleteDocumentFromCollectionArray(
+  //     'Products',
+  //     'test',
+  //     { test: 'testarray2' },
+  //     'testarray'
+  //   );
+  //   await delay(100)
+  //   const selected = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
+  //   await delay(100)
+  //   const testfield = selected.testarray;
+  //   expect(testfield).toEqual([{ test: 'testarray' }]);
+  //   await cloudfirestorefunctions.deleteDocumentFromCollection('Products', 'test');
+  //   await delay(100)
+  // });
 });
-
-
