@@ -109,6 +109,7 @@ function App() {
     console.log(userId)
 
     if (userId) {
+      console.log(userId)
       firestore.readUserById(userId).then((data) => {
         console.log(data)
         setUserData(data);

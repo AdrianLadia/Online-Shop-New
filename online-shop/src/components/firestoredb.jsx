@@ -30,7 +30,8 @@ class firestoredb extends firestorefunctions {
       stocksOnHoldCompleted: Joi.array().required(),
       forOnlineStore: Joi.boolean().required(),
       isCustomized: Joi.boolean().required(),
-      salesPerMonth: Joi.array().required()
+      salesPerMonth: Joi.array().required(),
+      stocksIns: Joi.array().required(),
     }).unknown(false);
 
     try {
@@ -67,14 +68,15 @@ class firestoredb extends firestorefunctions {
         stocksOnHold: Joi.array().required(),
         stocksOnHoldCompleted: Joi.array().required(),
         unit: Joi.string().required(),
-        weight: Joi.number().required()
+        weight: Joi.number().required(),
+        salesPerMonth: Joi.array().required(),
+        stocksIns: Joi.array().required(),
       }).unknown(false)
-    )
+    );
 
-    try{
+    try {
       await productsSchema.validateAsync(products);
-    }
-    catch(error){
+    } catch (error) {
       throw new Error(error);
     }
 
@@ -83,6 +85,39 @@ class firestoredb extends firestorefunctions {
 
   async readSelectedProduct(id) {
     const product = await super.readSelectedDataFromCollection('Products', id);
+
+    const productsSchema = Joi.object({
+      averageSalesPerDay: Joi.number().required(),
+      brand: Joi.string().allow(''),
+      category: Joi.string().required(),
+      color: Joi.string().allow(''),
+      description: Joi.string().required().allow(''),
+      dimensions: Joi.string().allow(''),
+      forOnlineStore: Joi.boolean().required(),
+      imageLinks: Joi.array(),
+      itemId: Joi.string().required(),
+      itemName: Joi.string().required(),
+      isCustomized: Joi.boolean().required(),
+      material: Joi.string().allow(''),
+      parentProductID: Joi.string().allow(''),
+      pieces: Joi.number().required(),
+      price: Joi.number().required(),
+      size: Joi.string().allow(''),
+      stocksAvailable: Joi.number().required(),
+      stocksOnHold: Joi.array().required(),
+      stocksOnHoldCompleted: Joi.array().required(),
+      unit: Joi.string().required(),
+      weight: Joi.number().required(),
+      salesPerMonth: Joi.array().required(),
+      stocksIns: Joi.array().required(),
+    }).unknown(false);
+
+    try {
+      await productsSchema.validateAsync(product);
+    } catch (error) {
+      throw new Error(error);
+    }
+
     return product;
   }
 
@@ -107,10 +142,12 @@ class firestoredb extends firestorefunctions {
       size: Joi.string(),
     }).unknown(false);
 
-    const { error } = schema.validate(data);
-    if (error) {
+    try {
+      await schema.validateAsync(data);
+    } catch (error) {
       throw new Error(error);
     }
+
     await super.updateDocumentFromCollection('Products', id, data);
   }
 
@@ -119,8 +156,9 @@ class firestoredb extends firestorefunctions {
   async createCategory(categoryId) {
     const schema = Joi.string().required();
 
-    const { error } = schema.validate(categoryId);
-    if (error) {
+    try {
+      await schema.validateAsync(categoryId);
+    } catch (error) {
       throw new Error(error);
     }
 
@@ -141,11 +179,29 @@ class firestoredb extends firestorefunctions {
 
   async readAllCategories() {
     const categories = await super.readAllDataFromCollection('Categories');
+
+    const categoriesSchema = Joi.array();
+
+    try {
+      await categoriesSchema.validateAsync(categories);
+    } catch (error) {
+      throw new Error(error);
+    }
+
     return categories;
   }
 
   async readAllUserIds() {
     const ids = await super.readAllIdsFromCollection('Users');
+
+    const idsSchema = Joi.array().items(Joi.string().required());
+
+    try {
+      await idsSchema.validateAsync(ids);
+    } catch (error) {
+      throw new Error(error);
+    }
+
     return ids;
   }
 

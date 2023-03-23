@@ -2,10 +2,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // No Rules
-    match /{document=**} {
-      allow create, read, update, delete:
-      	if true;
+   //Allow everybody to read products
+    match /Products/{product} {
+    	allow read
     }
     
   }
