@@ -8,6 +8,7 @@ class cloudFirestoreFunctions {
     }
   }
 
+
   async createDocument(firestoreData, id, collection) {
     const encodedData = encodeURIComponent(JSON.stringify({ collection, id, firestoreData }));
     try {

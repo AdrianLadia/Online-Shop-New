@@ -16,32 +16,25 @@ function parseData(data) {
   return parsedData;
 }
 
-exports.addDocumentArrayFromCollection = functions.https.onRequest(async (req, res) => {
+
+exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const data = parseData(req.query.data);
-    const collectionName = data.collectionName;
-    const id = data.id;
-    const firestoreData = data.firestoreData;
-    const arrayName = data.arrayName;
+    console.log('RANNNNNNNNNNNNNNNNNNN')
     const db = admin.firestore();
-
-    console.log('RAN RAN RAN');
-    console.log('collectionName : ' + collectionName);
-    console.log('id : ' + id);
-    console.log('firestoreData : ' + firestoreData);
-    console.log('arrayName : ' + arrayName);
-
-    try {
-      await db.collection(collectionName).doc(id).update({
-        [arrayName]: admin.firestore.FieldValue.arrayUnion(firestoreData),
-      });
-      res.json({ result: `Document with ID: ${id} updated.` });
-    } catch (error) {
-      console.error('Error updating document:', error);
-      res.status(500).send('Error updating document.');
+    const userId = req.userId
+    try{
+      const data = await db.collection('Users').get()
+      data.map(user => {
+        if(user.id === req.query.id){
+          res.json({result: true})
+        }
+      })
+    }catch(error){
+      console.error('Error fetching document:', error);
+      res.status(500).send('Error fetching document.');
     }
-
-  });
+      
+  
 });
 
 exports.deleteDocumentFromCollection = functions.https.onRequest(async (req, res) => {
