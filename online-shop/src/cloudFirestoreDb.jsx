@@ -1,5 +1,5 @@
 import cloudFirestoreFunctions from "./cloudFirestoreFunctions";
-const axios = require('axios');
+import axios from "axios";
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
     constructor() {
@@ -10,6 +10,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         try {
             console.log('RAN')
             const response = await axios.get(`http://127.0.0.1:5001/online-store-paperboy/us-central1/checkIfUserIdAlreadyExist?userId=${userId}`)
+            console.log(response.data)
             return response.data;
         }
         catch (error){

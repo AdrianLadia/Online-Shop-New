@@ -19,22 +19,16 @@ function parseData(data) {
 
 exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    console.log('RANNNNNNNNNNNNNNNNNNN')
+    const userId = req.query.userId;
     const db = admin.firestore();
-    const userId = req.userId
-    try{
-      const data = await db.collection('Users').get()
-      data.map(user => {
-        if(user.id === req.query.id){
-          res.json({result: true})
-        }
-      })
-    }catch(error){
-      console.error('Error fetching document:', error);
-      res.status(500).send('Error fetching document.');
+    const user = await db.collection('Users').doc(userId).get();
+    if (user.data() == undefined) {
+      res.send(false);
     }
-      
-  
+    else {
+      res.send(true);
+    }
+  });
 });
 
 exports.deleteDocumentFromCollection = functions.https.onRequest(async (req, res) => {

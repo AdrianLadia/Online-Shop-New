@@ -93,6 +93,7 @@ class firestorefunctions {
   }
 
   
+
   async deleteDocumentFromCollection(collectionname, id) {
     const docRef = doc(this.db, collectionname + "/", id);
 

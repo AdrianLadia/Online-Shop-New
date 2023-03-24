@@ -1,39 +1,40 @@
-import "./App.css";
-import NavBar from "./components/NavBar";
-import Shop from "./components/Shop";
-import { useEffect, useState } from "react";
-import AppContext from "./AppContext";
-import { Routes, Route } from "react-router-dom";
-import firebase from "firebase/compat/app";
-import { getAuth, onAuthStateChanged,connectAuthEmulator} from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import AdminSecurity from "./components/AdminSecurity";
-import firebaseConfig from "./firebase_config";
-import firestoredb from "./components/firestoredb";
-import PersonalInfoForm from "./components/PersonalInfoForm";
-import CheckoutPage from "./components/CheckoutPage";
-import { CircularProgress, Typography } from "@mui/material";
-import MyOrders from "./components/MyOrders";
-import AccountStatement from "./components/AccountStatement";
+import './App.css';
+import NavBar from './components/NavBar';
+import Shop from './components/Shop';
+import { useEffect, useState } from 'react';
+import AppContext from './AppContext';
+import { Routes, Route } from 'react-router-dom';
+import firebase from 'firebase/compat/app';
+import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import AdminSecurity from './components/AdminSecurity';
+import firebaseConfig from './firebase_config';
+import firestoredb from './components/firestoredb';
+import PersonalInfoForm from './components/PersonalInfoForm';
+import CheckoutPage from './components/CheckoutPage';
+import { CircularProgress, Typography } from '@mui/material';
+import MyOrders from './components/MyOrders';
+import AccountStatement from './components/AccountStatement';
+import cloudFirestoreDb from './cloudFirestoreDb';
 
 function App() {
-  
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
 
   const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
-  
+
   useEffect(() => {
     if (!authEmulatorConnected) {
-      connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true })
+      connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
       setAuthEmulatorConnected(true);
     }
   }, [authEmulatorConnected]);
-  
+
   // Initialize firestore class
-  const firestore = new firestoredb(app,true);
+  const firestore = new firestoredb(app, true);
+  const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);
   const [userdata, setUserData] = useState(null);
@@ -46,30 +47,31 @@ function App() {
   const [contactPerson, setContactPerson] = useState([]);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const [userstate, setUserState] = useState("guest");
+  const [userstate, setUserState] = useState('guest');
   const [phonenumber, setPhoneNumber] = useState(null);
   const [orders, setOrders] = useState([]);
   const [payments, setPayments] = useState([]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log("onAuthStateChanged ran");
+      console.log('onAuthStateChanged ran');
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        console.log("FOUND USER", user.uid);
-        setUserState("userloading");
-        
-        if (user.uid === "PN4JqXrjsGfTsCUEEmaR5NO6rNF3") {
+        console.log('FOUND USER', user.uid);
+        setUserState('userloading');
+
+        if (user.uid === 'PN4JqXrjsGfTsCUEEmaR5NO6rNF3') {
           setIsAdmin(true);
         }
-        firestore.readAllUserIds().then((ids) => {
-          console.log('ids in firestore', ids);
-          if (ids.includes(user.uid)) {
-            console.log("user exists");
+
+        cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
+          console.log(userExists);
+          if (userExists) {
+            console.log('user exists');
             setUserId(user.uid);
           } else {
-            console.log("user does not exist");
+            console.log('user does not exist');
             function delay(ms) {
               return new Promise((resolve) => setTimeout(resolve, ms));
             }
@@ -93,11 +95,11 @@ function App() {
                 user.uid
               );
             }
-            console.log("creating new user");
+            console.log('creating new user');
             createNewUser();
             delay(1000).then(() => {
               setUserId(user.uid);
-            })
+            });
           }
         });
 
@@ -109,18 +111,18 @@ function App() {
         setUserId(null);
         setUserData(null);
         setUserLoaded(true);
-        setUserState("guest");
+        setUserState('guest');
       }
     });
   }, []);
 
   useEffect(() => {
-    console.log(userId)
+    console.log(userId);
 
     if (userId) {
-      console.log(userId)
+      console.log(userId);
       firestore.readUserById(userId).then((data) => {
-        console.log(data)
+        console.log(data);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
         setCart(data.cart);
@@ -130,16 +132,16 @@ function App() {
         setPayments(data.payments);
         setContactPerson(data.contactPerson);
         // LAST TO RUN
-        setUserState("userloaded");
-        setUserLoaded(true); 
+        setUserState('userloaded');
+        setUserLoaded(true);
       });
     }
   }, [userId, refreshUser]);
 
   const appContextValue = {
-    userdata : userdata,
-    setUserData : setUserData,
-    isadmin : isadmin,
+    userdata: userdata,
+    setUserData: setUserData,
+    isadmin: isadmin,
     firestore: firestore,
     cart: cart,
     setCart: setCart,
@@ -166,20 +168,18 @@ function App() {
     payments: payments,
     setPayments: setPayments,
     contactPerson: contactPerson,
-    setContactPerson : setContactPerson,
+    setContactPerson: setContactPerson,
     auth: auth,
-    setIsAdmin: setIsAdmin
-  }
+    setIsAdmin: setIsAdmin,
+  };
 
   return (
-    <div data-testid='app' >
+    <div data-testid="app">
       <Routes>
         <Route
           path="/"
           element={
-            <AppContext.Provider
-              value={appContextValue}
-            >
+            <AppContext.Provider value={appContextValue}>
               <NavBar />
               <Shop />
             </AppContext.Provider>
@@ -188,9 +188,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <AppContext.Provider
-              value={appContextValue}
-            >
+            <AppContext.Provider value={appContextValue}>
               <AdminSecurity />
             </AppContext.Provider>
           }
@@ -198,9 +196,7 @@ function App() {
         <Route
           path="/profile"
           element={
-            <AppContext.Provider
-              value={appContextValue}
-            >
+            <AppContext.Provider value={appContextValue}>
               <NavBar />
               <PersonalInfoForm />
             </AppContext.Provider>
@@ -209,11 +205,9 @@ function App() {
         <Route
           path="/checkout"
           element={
-            <AppContext.Provider
-              value={appContextValue}
-            >
+            <AppContext.Provider value={appContextValue}>
               <NavBar />
-              {userstate === "userloading" ? (
+              {userstate === 'userloading' ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">
                     <div className="flex justify-center ">
@@ -235,11 +229,9 @@ function App() {
         <Route
           path="/myorders"
           element={
-            <AppContext.Provider
-              value={appContextValue}
-            >
+            <AppContext.Provider value={appContextValue}>
               <NavBar />
-              {userstate === "userloading" ? (
+              {userstate === 'userloading' ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">
                     <div className="flex justify-center ">
@@ -263,11 +255,9 @@ function App() {
         <Route
           path="/accountstatement"
           element={
-            <AppContext.Provider
-              value={appContextValue}
-            >
+            <AppContext.Provider value={appContextValue}>
               <NavBar />
-              {userstate === "userloading" ? (
+              {userstate === 'userloading' ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">
                     <div className="flex justify-center ">
@@ -286,7 +276,6 @@ function App() {
                 </div>
               )}
             </AppContext.Provider>
-            
           }
         />
       </Routes>

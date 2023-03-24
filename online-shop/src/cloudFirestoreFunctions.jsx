@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 class cloudFirestoreFunctions {
   constructor(emulator = false) {
@@ -15,6 +15,8 @@ class cloudFirestoreFunctions {
       const response = await axios.get(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/createDocument?data=${encodedData}`
       );
+      console.log(response.data);
+      return response.data;
     } catch (error) {
       console.error('Error adding document:', error);
     }
