@@ -6,8 +6,6 @@ import GoogleMaps from './GoogleMaps';
 import AppContext from '../AppContext';
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
-import firestoredb from './firestoredb';
-import Paper from '@mui/material/Paper';
 // import PaymentMenuCard from "./PaymentMenuCard";
 import PaymentMethods from './PaymentMethods';
 import CheckoutPageContext from './CheckoutPageContext';
@@ -17,12 +15,9 @@ import GoogleMapsModalSelectContactModal from './GoogleMapsModalSelectContactMod
 import Switch from '@mui/material/Switch';
 import Divider from '@mui/material/Divider';
 import businessCalculations from '../../utils/businessCalculations';
-import { FaScribd } from 'react-icons/fa';
-import serviceAreas from '../data/serviceAreas';
+
 import paperBoyLocation from '../data/paperBoyLocation';
-import lalamoveDeliveryVehicles from '../data/lalamoveDeliveryVehicles';
-import dataManipulation from '../../utils/dataManipulation';
-import dataValidation from '../../utils/dataValidation';
+import cloudFirestoreDb from '../cloudFirestoreDb';
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
@@ -40,6 +35,7 @@ const CheckoutPage = () => {
   const [deliveryFee, setDeliveryFee] = React.useState(0);
   const [grandTotal, setGrandTotal] = React.useState(0);
   const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
+  const cloudfirestoredb = new cloudFirestoreDb();
 
   const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
   const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
@@ -126,7 +122,7 @@ const CheckoutPage = () => {
       // setLaunchPayMayaCheckout(true);
 
       console.log(userdata)
-      firestore.transactionPlaceOrder(
+      cloudfirestoredb.transactionPlaceOrder(
         {        userid : userdata.uid,
           localDeliveryAddress : localDeliveryAddress,
           locallatitude:locallatitude,

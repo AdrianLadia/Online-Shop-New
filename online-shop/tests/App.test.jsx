@@ -16,6 +16,7 @@ import cloudFirestoreDb from '../src/cloudFirestoreDb';
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
 const firestore = new firestoredb(app, true);
+const category = await firestore.readAllCategories()
 // const user = await firestore.readUserById('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
@@ -891,6 +892,143 @@ describe('cloudfirestoredb', async () => {
     await delay(100)
     expect(falseUser).toEqual(false);
   });
+  test('transactionPlaceOrder',async () => {
+
+
+        await firestore.createNewUser(
+      {
+        uid: 'testuser',
+        name: 'test',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: [],
+        favoriteItems: [],
+        payments: [],
+      },
+      'testuser'
+    );
+    // await firestore.createNewUser({
+    //   uid: 'testuser',
+    //   name: 'testname',
+    //   email: 'testemail.gmail.com',
+    //   emailVerified: true,
+    //   phoneNumber: '',
+    //   deliveryAddress: [],
+    //   contactPerson: [],
+    //   isAnonymous: false,
+    //   orders: [],
+    //   cart: ['PPB#5','PPB#5','PPB#5'],
+    //   favoriteItems: [],
+    //   payments: [], 
+    // },'testuser')
+
+    await delay(100)
+
+    let data = {
+      userid: 'testuser',
+      username: 'testname',
+      localDeliveryAddress: 'PPB',
+      locallatitude: 1.12,
+      locallongitude: 1.3,
+      localphonenumber: '09138927206',
+      localname: 'Contact Person',
+      orderDate: new Date(),
+      cart: ['PPB#5', 'PPB#5','PPB#5'],
+      itemstotal: 10000,
+      vat: 1200,
+      shippingtotal: 200,
+      grandTotal: 11400,
+      reference: 'testref1234567',
+      userphonenumber: '',
+      deliveryNotes: 'none',
+      totalWeight: 50,
+      deliveryVehicle: 'motorcycle',
+      needAssistance: true,
+    }
+    await cloudfirestoredb.transactionPlaceOrder(data)
+
+    const testUser = await firestore.readSelectedDataFromCollection('Users','testuser')
+    const deliveryAddress = testUser.deliveryAddress
+    const contactPerson = testUser.contactPerson
+    const orders = testUser.orders
+
+
+    expect(deliveryAddress).length(1)
+    expect(contactPerson).length(1)
+    expect(orders).length(1)
+
+    
+    data = {
+      userid: 'testuser',
+      username: 'testname',
+      localDeliveryAddress: 'PPB',
+      locallatitude: 1.12,
+      locallongitude: 1.3,
+      localphonenumber: '09138927206',
+      localname: 'Contact Person 2',
+      orderDate: new Date(),
+      cart: ['PPB#5', 'PPB#5','PPB#5'],
+      itemstotal: 10000,
+      vat: 1200,
+      shippingtotal: 200,
+      grandTotal: 11400,
+      reference: 'testref1234567',
+      userphonenumber: '',
+      deliveryNotes: 'none',
+      totalWeight: 50,
+      deliveryVehicle: 'motorcycle',
+      needAssistance: true,
+    }
+    await cloudfirestoredb.transactionPlaceOrder(data)
+
+    const testUser2 = await firestore.readSelectedDataFromCollection('Users','testuser')
+    const deliveryAddress2 = testUser2.deliveryAddress
+    const contactPerson2 = testUser2.contactPerson
+    const orders2 = testUser2.orders
+    
+    expect(deliveryAddress2).length(1)
+    expect(contactPerson2).length(2)
+    expect(orders2).length(2)
+
+    data = {
+      userid: 'testuser',
+      username: 'testname',
+      localDeliveryAddress: 'PPB2',
+      locallatitude: 1.12,
+      locallongitude: 1.3,
+      localphonenumber: '09138927206',
+      localname: 'Contact Person 2',
+      orderDate: new Date(),
+      cart: ['PPB#5', 'PPB#5','PPB#5'],
+      itemstotal: 10000,
+      vat: 1200,
+      shippingtotal: 200,
+      grandTotal: 11400,
+      reference: 'testref1234567',
+      userphonenumber: '',
+      deliveryNotes: 'none',
+      totalWeight: 50,
+      deliveryVehicle: 'motorcycle',
+      needAssistance: true,
+    }
+    await cloudfirestoredb.transactionPlaceOrder(data)
+
+    const testUser3 = await firestore.readSelectedDataFromCollection('Users','testuser')
+    const deliveryAddress3 = testUser3.deliveryAddress
+    const contactPerson3 = testUser3.contactPerson
+    const orders3 = testUser3.orders
+    
+    expect(deliveryAddress3).length(2)
+    expect(contactPerson3).length(2)
+    expect(orders3).length(3)
+    
+    await firestore.deleteUserByUserId('testuser')
+  }, 100000);
 });
 
 
