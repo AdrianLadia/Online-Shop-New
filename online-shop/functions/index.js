@@ -17,32 +17,35 @@ function parseData(data) {
 }
 
 exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
-    corsHandler(req, res, async () => {
-      const data = parseData(req.query.data);
-      const userid = data.userid;
-      const username = data.username;
-      const localDeliveryAddress = data.localDeliveryAddress;
-      const locallatitude = data.locallatitude;
-      const locallongitude = data.locallongitude;
-      const localphonenumber = data.localphonenumber;
-      const localname = data.localname;
-      const orderDate = data.orderDate;
-      const cart = data.cart;
-      const itemstotal = data.itemstotal;
-      const vat = data.vat;
-      const shippingtotal = data.shippingtotal;
-      const grandTotal = data.grandTotal;
-      const reference = data.reference;
-      const userphonenumber = data.userphonenumber;
-      const deliveryNotes = data.deliveryNotes;
-      const totalWeight = data.totalWeight;
-      const deliveryVehicle = data.deliveryVehicle;
-      const needAssistance = data.needAssistance;
-      const db = admin.firestore();
+  corsHandler(req, res, async () => {
+    console.log('running transactionPlaceOrder')
+    const data = parseData(req.query.data);
+    const userid = data.userid;
+    const username = data.username;
+    const localDeliveryAddress = data.localDeliveryAddress;
+    const locallatitude = data.locallatitude;
+    const locallongitude = data.locallongitude;
+    const localphonenumber = data.localphonenumber;
+    const localname = data.localname;
+    const orderDate = data.orderDate;
+    const cart = data.cart;
+    const itemstotal = data.itemstotal;
+    const vat = data.vat;
+    const shippingtotal = data.shippingtotal;
+    const grandTotal = data.grandTotal;
+    const reference = data.reference;
+    const userphonenumber = data.userphonenumber;
+    const deliveryNotes = data.deliveryNotes;
+    const totalWeight = data.totalWeight;
+    const deliveryVehicle = data.deliveryVehicle;
+    const needAssistance = data.needAssistance;
+    const db = admin.firestore();
 
+    db.runTransaction(async (transaction) => {
       try {
         // read user data
-        const user = await db.collection('Users').doc(userid).get();
+        const userRef = db.collection('Users').doc(userid);
+        const user = await transaction.get(userRef);
         const userData = user.data();
         const deliveryAddress = userData.deliveryAddress;
         const contactPerson = userData.contactPerson;
@@ -74,9 +77,8 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
               address: localDeliveryAddress,
             },
           ];
-          const updatedAddressList = [...newAddress, ...deliveryAddress];
-          console.log(updatedAddressList);
-          await db.collection('Users').doc(userid).update({ deliveryAddress: updatedAddressList });
+          const updatedAddressList = [...newAddress, ...deliveryAddress]; 
+          transaction.update(userRef, { deliveryAddress: updatedAddressList });
         }
 
         // WRITE TO CONTACT NUMBER
@@ -99,13 +101,10 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
           const newContact = [{ name: localname, phoneNumber: localphonenumber }];
           const updatedContactList = [...newContact, ...contactPerson];
           console.log(updatedContactList);
-          await db.collection('Users').doc(userid).update({ contactPerson: updatedContactList });
-        }
+          transaction.update(userRef, { contactPerson: updatedContactList });
+        } 
 
         const oldOrders = userData.orders;
-
-        console.log('oldOrders', oldOrders);
-
         const newOrder = {
           orderDate: orderDate,
           contactName: localname,
@@ -136,18 +135,17 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
 
         const updatedOrders = [newOrder, ...oldOrders];
 
-        console.log(updatedOrders);
-
-        await db.collection('Users').doc(userid).update({ orders: updatedOrders });
+        transaction.update(userRef,{ orders: updatedOrders });
 
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
-        await db.collection('Users').doc(userid).update({ cart: [] });
-        res.end()
+        transaction.update(userRef,{ cart: [] });
+        res.end();
       } catch (e) {
         console.log(e);
       }
     });
   });
+});
 
 exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -161,6 +159,152 @@ exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) =
     }
   });
 });
+
+// exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
+//     corsHandler(req, res, async () => {
+//       const data = parseData(req.query.data);
+//       const userid = data.userid;
+//       const username = data.username;
+//       const localDeliveryAddress = data.localDeliveryAddress;
+//       const locallatitude = data.locallatitude;
+//       const locallongitude = data.locallongitude;
+//       const localphonenumber = data.localphonenumber;
+//       const localname = data.localname;
+//       const orderDate = data.orderDate;
+//       const cart = data.cart;
+//       const itemstotal = data.itemstotal;
+//       const vat = data.vat;
+//       const shippingtotal = data.shippingtotal;
+//       const grandTotal = data.grandTotal;
+//       const reference = data.reference;
+//       const userphonenumber = data.userphonenumber;
+//       const deliveryNotes = data.deliveryNotes;
+//       const totalWeight = data.totalWeight;
+//       const deliveryVehicle = data.deliveryVehicle;
+//       const needAssistance = data.needAssistance;
+//       const db = admin.firestore();
+
+//       try {
+//         // read user data
+//         const user = await db.collection('Users').doc(userid).get();
+//         const userData = user.data();
+//         const deliveryAddress = userData.deliveryAddress;
+//         const contactPerson = userData.contactPerson;
+
+//         // WRITE TO DELIVER ADDRESS LIST
+//         let addressexists = false;
+//         let latitudeexists = false;
+//         let longitudeexists = false;
+//         deliveryAddress.map((d) => {
+//           if (d.address == localDeliveryAddress) {
+//             console.log('address already exists');
+//             addressexists = true;
+//           }
+//           if (d.latitude == locallatitude) {
+//             console.log('latitude already exists');
+//             latitudeexists = true;
+//           }
+//           if (d.longitude == locallongitude) {
+//             console.log('longitude already exists');
+//             longitudeexists = true;
+//           }
+//         });
+//         if (addressexists == false || latitudeexists == false || longitudeexists == false) {
+//           console.log('adding new address');
+//           const newAddress = [
+//             {
+//               latitude: locallatitude,
+//               longitude: locallongitude,
+//               address: localDeliveryAddress,
+//             },
+//           ];
+//           const updatedAddressList = [...newAddress, ...deliveryAddress];
+//           console.log(updatedAddressList);
+//           await db.collection('Users').doc(userid).update({ deliveryAddress: updatedAddressList });
+//         }
+
+//         // WRITE TO CONTACT NUMBER
+//         // CHECKS IF CONTACTS ALREADY EXISTS IF NOT ADDS IT TO FIRESTORE
+
+//         let phonenumberexists = false;
+//         let nameexists = false;
+//         contactPerson.map((d) => {
+//           if (d.phoneNumber == localphonenumber) {
+//             console.log('phonenumber already exists');
+//             phonenumberexists = true;
+//           }
+//           if (d.name == localname) {
+//             console.log('name already exists');
+//             nameexists = true;
+//           }
+//         });
+//         if (phonenumberexists == false || nameexists == false) {
+//           console.log('updating contact');
+//           const newContact = [{ name: localname, phoneNumber: localphonenumber }];
+//           const updatedContactList = [...newContact, ...contactPerson];
+//           console.log(updatedContactList);
+//           await db.collection('Users').doc(userid).update({ contactPerson: updatedContactList });
+//         }
+
+//         const oldOrders = userData.orders;
+
+//         console.log('oldOrders', oldOrders);
+
+//         const newOrder = {
+//           orderDate: orderDate,
+//           contactName: localname,
+//           deliveryAddress: localDeliveryAddress,
+//           contactPhoneNumber: localphonenumber,
+//           deliveryAddressLatitude: locallatitude,
+//           deliveryAddressLongitude: locallongitude,
+//           cart: cart,
+//           itemsTotal: itemstotal,
+//           vat: vat,
+//           shippingTotal: shippingtotal,
+//           grandTotal: grandTotal,
+//           delivered: false,
+//           reference: reference,
+//           paid: false,
+//           userName: username,
+//           userPhoneNumber: userphonenumber,
+//           deliveryNotes: deliveryNotes,
+//           orderAcceptedByClient: false,
+//           userWhoAcceptedOrder: null,
+//           orderAcceptedByClientDate: null,
+//           clientIDWhoAcceptedOrder: null,
+//           totalWeight: totalWeight,
+//           deliveryVehicle: deliveryVehicle,
+//           needAssistance: needAssistance,
+//           userId: userid,
+//         };
+
+//         const updatedOrders = [newOrder, ...oldOrders];
+
+//         console.log(updatedOrders);
+
+//         await db.collection('Users').doc(userid).update({ orders: updatedOrders });
+
+//         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
+//         await db.collection('Users').doc(userid).update({ cart: [] });
+//         res.end()
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     });
+//   });
+
+// exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) => {
+//   corsHandler(req, res, async () => {
+//     const userId = req.query.userId;
+//     const db = admin.firestore();
+//     const user = await db.collection('Users').doc(userId).get();
+//     if (user.data() == undefined) {
+//       res.send(false);
+//     } else {
+//       res.send(true);
+//     }
+//   });
+// });
 
 exports.deleteDocumentFromCollection = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {

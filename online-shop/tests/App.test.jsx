@@ -886,15 +886,13 @@ function delay(ms) {
 describe('cloudfirestoredb', async () => {
   test('checkifuseridexist', async () => {
     const user = await cloudfirestoredb.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3')
-    await delay(100)
+    await delay(300)
     expect(user).toEqual(true);
     const falseUser = await cloudfirestoredb.checkIfUserIdAlreadyExist('testfalseuser12432456436')
-    await delay(100)
+    await delay(300)
     expect(falseUser).toEqual(false);
   });
   test('transactionPlaceOrder',async () => {
-
-
         await firestore.createNewUser(
       {
         uid: 'testuser',
@@ -927,7 +925,7 @@ describe('cloudfirestoredb', async () => {
     //   payments: [], 
     // },'testuser')
 
-    await delay(100)
+    await delay(300)
 
     let data = {
       userid: 'testuser',
@@ -951,6 +949,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
     }
     await cloudfirestoredb.transactionPlaceOrder(data)
+    await delay(300)
 
     const testUser = await firestore.readSelectedDataFromCollection('Users','testuser')
     const deliveryAddress = testUser.deliveryAddress
@@ -985,6 +984,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
     }
     await cloudfirestoredb.transactionPlaceOrder(data)
+    await delay(300)
 
     const testUser2 = await firestore.readSelectedDataFromCollection('Users','testuser')
     const deliveryAddress2 = testUser2.deliveryAddress
@@ -1017,6 +1017,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
     }
     await cloudfirestoredb.transactionPlaceOrder(data)
+    await delay(300)
 
     const testUser3 = await firestore.readSelectedDataFromCollection('Users','testuser')
     const deliveryAddress3 = testUser3.deliveryAddress
