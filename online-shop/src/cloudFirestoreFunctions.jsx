@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Joi from 'joi';
 
 class cloudFirestoreFunctions {
   constructor(emulator = false) {
@@ -10,9 +11,22 @@ class cloudFirestoreFunctions {
 
 
   async createDocument(firestoreData, id, collection) {
+
+    const firestoreDataSchema = Joi.object()
+    const idSchema = Joi.string()
+    const collectionSchema = Joi.string()
+
+    const { error1} = firestoreDataSchema.validate(firestoreData)
+    const { error2} = idSchema.validate(id)
+    const { error3} = collectionSchema.validate(collection)
+
+    if (error1 || error2 || error3) {
+      throw new Error('Data Validation Error')
+    }
+
     const encodedData = encodeURIComponent(JSON.stringify({ collection, id, firestoreData }));
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/createDocument?data=${encodedData}`
       );
       console.log(response.data);
@@ -23,44 +37,111 @@ class cloudFirestoreFunctions {
   }
 
   async readAllDataFromCollection(collectionName) {
+
+    const collectionNameSchema = Joi.string()
+
+    const { error1} = collectionNameSchema.validate(collectionName)
+
+    if (error1) {
+      throw new Error('Data Validation Error')
+    }
+
     try {
       const response = await axios.get(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllDataFromCollection?collectionName=${collectionName}`
       );
-      console.log(response.data);
-      return response.data;
+      const toReturn = response.data;
+      const toReturnSchema = Joi.array()
+      const { error2} = toReturnSchema.validate(toReturn)
+      if (error2) {
+        throw new Error('Data Validation Error')
+      }
+      else {
+        return toReturn
+      }
     } catch (error) {
       console.error('Error adding document:', error);
     }
   }
 
   async readAllIdsFromCollection(collectionName) {
+
+    const collectionNameSchema = Joi.string()
+
+    const { error1} = collectionNameSchema.validate(collectionName)
+
+    if (error1) {
+      throw new Error('Data Validation Error')
+    }
+
     try {
       const response = await axios.get(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllIdsFromCollection?collectionName=${collectionName}`
       );
-      return response.data;
+
+      const toReturn = response.data;
+      const toReturnSchema = Joi.array()
+      const { error2} = toReturnSchema.validate(toReturn)
+      if (error2) {
+        throw new Error('Data Validation Error')
+      }
+      else {
+        return toReturn;
+      }
     } catch (error) {
       console.error('Error reading document:', error);
     }
   }
 
   async readSelectedDataFromCollection(collectionName, id) {
+
+    const collectionNameSchema = Joi.string()
+    const idSchema = Joi.string()
+
+    const { error1} = collectionNameSchema.validate(collectionName)
+    const { error2} = idSchema.validate(id)
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error')
+    }
+
+
     const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id }));
     try {
       const response = await axios.get(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/readSelectedDataFromCollection?data=${encodedData}`
       );
-      return response.data;
+
+      const toReturn = response.data;
+      const toReturnSchema = Joi.object()
+      const { error3} = toReturnSchema.validate(toReturn)
+      if (error3) {
+        throw new Error('Data Validation Error')
+      }
+      else {
+        return toReturn;
+      }
+
     } catch (error) {
       console.error('Error adding document:', error);
     }
   }
 
   async deleteDocumentFromCollection(collectionName, id) {
+
+    const collectionNameSchema = Joi.string()
+    const idSchema = Joi.string()
+
+    const { error1} = collectionNameSchema.validate(collectionName)
+    const { error2} = idSchema.validate(id)
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error')
+    }
+
     const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id }));
     try {
-      const response = await axios.get(
+      const response = await axios.delete(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/deleteDocumentFromCollection?data=${encodedData}`
       );
       console.log(response.data);
@@ -70,9 +151,22 @@ class cloudFirestoreFunctions {
   }
 
   async updateDocumentFromCollection(collectionName, id, firestoreData) {
+
+    const collectionNameSchema = Joi.string()
+    const idSchema = Joi.string()
+    const firestoreDataSchema = Joi.object()
+
+    const { error1} = collectionNameSchema.validate(collectionName)
+    const { error2} = idSchema.validate(id)
+    const { error3} = firestoreDataSchema.validate(firestoreData)
+
+    if (error1 || error2 || error3) {
+      throw new Error('Data Validation Error')
+    }
+
     const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id, firestoreData }));
     try {
-      const response = await axios.get(
+      const response = await axios.put(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/updateDocumentFromCollection?data=${encodedData}`
       );
       console.log(response.data);
@@ -81,17 +175,32 @@ class cloudFirestoreFunctions {
     }
   }
 
-  async addDocumentArrayFromCollection(collectionName, id, arrayName, firestoreData) {
-    const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id, firestoreData, arrayName }));
-    try {
-      const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/addDocumentArrayFromCollection?data=${encodedData}`
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error adding document:', error);
-    }
-  }
+  // async addDocumentArrayFromCollection(collectionName, id, arrayName, firestoreData) {
+
+  //   const collectionNameSchema = Joi.string()
+  //   const idSchema = Joi.string()
+  //   const arrayNameSchema = Joi.string()
+  //   const firestoreDataSchema = Joi.object()
+
+  //   const { error1} = collectionNameSchema.validate(collectionName)
+  //   const { error2} = idSchema.validate(id)
+  //   const { error3} = arrayNameSchema.validate(arrayName)
+  //   const { error4} = firestoreDataSchema.validate(firestoreData)
+
+  //   if (error1 || error2 || error3 || error4) {
+  //     throw new Error('Data Validation Error')
+  //   }
+
+  //   const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id, firestoreData, arrayName }));
+  //   try {
+  //     const response = await axios.post(
+  //       `http://127.0.0.1:5001/online-store-paperboy/us-central1/addDocumentArrayFromCollection?data=${encodedData}`
+  //     );
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error('Error adding document:', error);
+  //   }
+  // }
 
   //   await updateDoc(arrayRef, {
   //     [arrayname]: arrayUnion(data),

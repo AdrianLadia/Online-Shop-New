@@ -8,11 +8,32 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async checkIfUserIdAlreadyExist(userId) {
+    const userIdSchema = Joi.string();
+
+    const { error } = userIdSchema.validate(userId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
     try {
       console.log('RAN');
       const response = await axios.get(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/checkIfUserIdAlreadyExist?userId=${userId}`
       );
+
+      const toReturn = response.data;
+
+      const toReturnSchema = Joi.boolean();
+
+      const { error } = toReturnSchema.validate(toReturn);
+
+      if (error) {
+        throw new Error(error.message);
+      } else {
+        return toReturn;
+      }
+
       return response.data;
     } catch (error) {
       throw new Error(error);
@@ -43,7 +64,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }).unknown(false);
 
     const { error } = schema.validate(data);
-
 
     const encodedData = encodeURIComponent(JSON.stringify(data));
 
