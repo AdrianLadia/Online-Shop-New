@@ -330,7 +330,7 @@ describe('firestorefunctions', async () => {
     expect(data).not.toBe([]);
   });
   test('readSelectedDataFromCollection', async () => {
-    const data = await firestore.readSelectedDataFromCollection('Products', 'test', 'test');
+    const data = await firestore.readSelectedDataFromCollection('Products','test');
     await delay(100)
     expect(data).not.toBe([]);
   });
