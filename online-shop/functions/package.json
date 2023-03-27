@@ -13,15 +13,11 @@
   },
   "main": "index.js",
   "dependencies": {
-    "business-calculations": "file:../utils/businessCalculation.js",
     "cors": "^2.8.5",
     "firebase-admin": "^11.5.0",
     "firebase-functions": "^4.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.21.0",
-    "@babel/core": "^7.21.3",
-    "@babel/preset-env": "^7.20.2",
     "firebase-functions-test": "^3.0.0"
   },
   "private": true

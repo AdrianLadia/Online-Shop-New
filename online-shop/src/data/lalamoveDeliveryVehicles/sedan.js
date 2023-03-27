@@ -8,4 +8,4 @@ class sedan {
     }
 }
 
-module.exports = sedan
+export default sedan

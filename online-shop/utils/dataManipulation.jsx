@@ -634,4 +634,4 @@ class dataManipulation {
   // }
 }
 
-module.exports = dataManipulation;
+export default dataManipulation;

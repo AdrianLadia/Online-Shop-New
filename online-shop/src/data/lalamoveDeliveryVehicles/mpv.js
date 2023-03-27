@@ -8,4 +8,4 @@ class mpv {
     }
 }
 
-module.exports = mpv
+export default mpv

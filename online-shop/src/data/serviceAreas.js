@@ -197,4 +197,4 @@ class serviceAreas {
     ];
   }
 }
-module.exports = serviceAreas
+export default serviceAreas

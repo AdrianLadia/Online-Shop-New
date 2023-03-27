@@ -5,4 +5,4 @@ class paperBoyLocation {
     }
 }
 
-module.exports = paperBoyLocation
+export default paperBoyLocation

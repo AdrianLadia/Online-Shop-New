@@ -16,4 +16,4 @@ class lalamoveDeliveryVehicles {
     }
 }
 
-module.exports = lalamoveDeliveryVehicles
+export default lalamoveDeliveryVehicles

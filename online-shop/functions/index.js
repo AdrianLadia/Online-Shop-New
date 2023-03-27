@@ -4,7 +4,6 @@ const cors = require('cors');
 admin.initializeApp();
 const corsHandler = cors({ origin: true });
 
-
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
   let parsedData;
@@ -41,9 +40,6 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
     const db = admin.firestore();
-
-    const businessCalculations = require('../utils/businessCalculation-compiled.js');
-
 
     db.runTransaction(async (transaction) => {
       try {
