@@ -1,8 +1,10 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors');
-admin.initializeApp();
 const corsHandler = cors({ origin: true });
+const Joi = require('joi');
+
+admin.initializeApp();
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
@@ -15,6 +17,9 @@ function parseData(data) {
   }
   return parsedData;
 }
+
+
+
 
 exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -40,6 +45,18 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
     const db = admin.firestore();
+
+    console.log(cart)
+
+    const cartSchema = Joi.array().items(Joi.string());
+    const { error } = cartSchema.validate(cart);
+    if (error) {
+      res.status(400).send('Invalid data format for cart');
+      return;
+    }
+
+    
+
 
     db.runTransaction(async (transaction) => {
       try {
