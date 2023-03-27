@@ -1,0 +1,587 @@
+import serviceAreas from '../src/data/serviceAreas';
+import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
+import Joi from 'joi';
+
+class businessCalculations {
+  constructor() {
+    this.serviceareas = new serviceAreas();
+    this.lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
+  }
+
+  getSafetyStock(averageSalesPerDay) {
+    const averageSalesPerDaySchema = Joi.number().required();
+
+    const { error } = averageSalesPerDaySchema.validate(averageSalesPerDay);
+    if (error) {
+      throw new Error(error.details[0].message);
+    }
+
+    // multiplier is equal to days
+    const multiplier = 2;
+
+    const safetyStock = Math.round(averageSalesPerDay) * multiplier;
+
+    const safetyStockSchema = Joi.number().required();
+    const { error2 } = safetyStockSchema.validate(safetyStock);
+    if (error2) {
+      throw new Error(error2.details[0].message);
+    }
+    return safetyStock;
+  }
+
+  getStocksAvailableLessSafetyStock(stocksAvailable, averageSalesPerDay) {
+    // VALIDATION
+    const stocksAvailableSchema = Joi.number().required();
+    const averageSalesPerDaySchema = Joi.number().required();
+    const { error1 } = stocksAvailableSchema.validate(stocksAvailable);
+    const { error2 } = averageSalesPerDaySchema.validate(averageSalesPerDay);
+    if (error1 || error2) {
+      throw new Error(error1.details[0].message);
+    }
+
+    // FUNCTION
+    const stocksAvailableLessSafetyStock= stocksAvailable - this.getSafetyStock(averageSalesPerDay);
+    
+
+    // VALIDATION
+    const stocksAvailableLessSafetyStockSchema = Joi.number().required();
+    const { error3 } = stocksAvailableLessSafetyStockSchema.validate(stocksAvailableLessSafetyStock);
+    if (error3) {
+      throw new Error(error3.details[0].message);
+    }
+    return stocksAvailableLessSafetyStock
+  }
+
+  //Counts the cart and returns an object for example { "itemID": 2, "itemID": 1 }
+  getCartCount(cart) {
+    // VALIDATION
+    const cartSchema = Joi.array().required();
+    const { error } = cartSchema.validate(cart);
+    if (error) {
+      throw new Error(error.details[0].message);
+    }
+
+    // FUNCTION
+    const counts = {};
+    cart.forEach((str) => {
+      counts[str] = counts[str] ? counts[str] + 1 : 1;
+    });
+
+    // VALIDATION
+    const countsSchema = Joi.object().required();
+    const { error2 } = countsSchema.validate(counts);
+    if (error2) {
+      throw new Error(error2.details[0].message);
+    }
+
+
+    return counts;
+  }
+
+  getLatitudeDifferenceOfPaperboyAndSelectedLocation(paperboylatitude, selectedlatitudem) {
+    const paperboylatitudeSchema = Joi.number().required();
+    const selectedlatitudemSchema = Joi.number().required();
+
+    const { error1 } = paperboylatitudeSchema.validate(paperboylatitude);
+    const { error2 } = selectedlatitudemSchema.validate(selectedlatitudem);
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error');
+    }
+
+    const difference = Math.abs(paperboylatitude - selectedlatitudem);
+    
+    const differenceSchema = Joi.number().required();
+    const { error3 } = differenceSchema.validate(difference);
+    if (error3) {
+      throw new Error('Data Validation Error');
+    }
+    
+    return difference;
+  }
+
+  getLongitudeDifferenceOfPaperboyAndSelectedLocation(paperboylongitude, selectedlongitudem) {
+    const paperboylongitudeSchema = Joi.number().required();
+    const selectedlongitudemSchema = Joi.number().required();
+
+    const { error1 } = paperboylongitudeSchema.validate(paperboylongitude);
+    const { error2 } = selectedlongitudemSchema.validate(selectedlongitudem);
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error');
+    }
+
+    const difference = Math.abs(paperboylongitude - selectedlongitudem);
+    
+    const differenceSchema = Joi.number().required();
+    const { error3 } = differenceSchema.validate(difference);
+    
+    if (error3) {
+      throw new Error('Data Validation Error');
+    }
+    
+    return difference
+  }
+
+  getTotalDifferenceOfPaperboyAndSelectedLocation(
+    paperboylatitude,
+    paperboylongitude,
+    selectedlatitudem,
+    selectedlongitudem
+  ) {
+    const paperboylatitudeSchema = Joi.number().required();
+    const paperboylongitudeSchema = Joi.number().required();
+    const selectedlatitudemSchema = Joi.number().required();
+    const selectedlongitudemSchema = Joi.number().required();
+
+    const { error1 } = paperboylatitudeSchema.validate(paperboylatitude);
+    const { error2 } = paperboylongitudeSchema.validate(paperboylongitude);
+    const { error3 } = selectedlatitudemSchema.validate(selectedlatitudem);
+    const { error4 } = selectedlongitudemSchema.validate(selectedlongitudem);
+
+    if (error1 || error2 || error3 || error4) {
+      throw new Error('Data Validation Error');
+    }
+
+    const latdifference = this.getLatitudeDifferenceOfPaperboyAndSelectedLocation(paperboylatitude, selectedlatitudem);
+    const longdifference = this.getLongitudeDifferenceOfPaperboyAndSelectedLocation(
+      paperboylongitude,
+      selectedlongitudem
+    );
+    
+    
+    const difference = latdifference + longdifference;
+    
+    const differenceSchema = Joi.number().required();
+    const { error5 } = differenceSchema.validate(difference);
+    if (error5) {
+      throw new Error('Data Validation Error');
+    }
+
+    return difference 
+  }
+
+  convertTotalDifferenceToKilometers(totaldifference) {
+    const totaldifferenceSchema = Joi.number().required();
+    const { error } = totaldifferenceSchema.validate(totaldifference);
+    if (error) {
+      throw new Error('Data Validation Error');
+    }
+
+    const km = totaldifference * 111.1;
+    
+    const kmSchema = Joi.number().required();
+    const { error2 } = kmSchema.validate(km);
+    if (error2) {
+      throw new Error('Data Validation Error');
+    }
+    
+    return km
+  }
+
+  getLocationsInPoint(latitude, longitude) {
+    const latitudeSchema = Joi.number().required();
+    const longitudeSchema = Joi.number().required();
+
+    const { error1 } = latitudeSchema.validate(latitude);
+    const { error2 } = longitudeSchema.validate(longitude);
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error');
+    }
+
+    function isPointInPolygon(point, polygon) {
+      let x = point[0],
+        y = point[1];
+      let inside = false;
+
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        let xi = polygon[i][0],
+          yi = polygon[i][1];
+        let xj = polygon[j][0],
+          yj = polygon[j][1];
+
+        let intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+        if (intersect) inside = !inside;
+      }
+
+
+      const insideSchema = Joi.boolean().required();
+      const { error3 } = insideSchema.validate(inside);
+      if (error3) {
+        throw new Error('Data Validation Error');
+      }
+
+      return inside;
+    }
+
+    const locations = [
+      [this.serviceareas.lalamoveServiceArea, 'lalamoveServiceArea'],
+      [this.serviceareas.iloiloArea, 'iloiloArea'],
+      [this.serviceareas.leyteMaasinArea, 'leyteMaasinArea'],
+      [this.serviceareas.cagayanDeOroArea, 'cagayanDeOroArea'],
+      [this.serviceareas.surigaoArea, 'surigaoArea'],
+      [this.serviceareas.butuanArea, 'butuanArea'],
+      [this.serviceareas.dapitanArea, 'dapitanArea'],
+      [this.serviceareas.zamboangaArea, 'zamboangaArea'],
+      [this.serviceareas.pagadianArea, 'pagadianArea'],
+      [this.serviceareas.davaoArea, 'davaoArea'],
+      [this.serviceareas.generalSantosArea, 'generalSantosArea'],
+      [this.serviceareas.bacolodArea, 'bacolodArea'],
+      [this.serviceareas.dumagueteArea, 'dumagueteArea'],
+      [this.serviceareas.boholArea, 'boholArea'],
+      [this.serviceareas.masbateArea, 'masbateArea'],
+      [this.serviceareas.manilaArea, 'manilaArea'],
+      [this.serviceareas.samarArea, 'samarArea'],
+      [this.serviceareas.leytePalomponArea, 'leytePalomponArea'],
+    ];
+
+    const locationsInDeliveryPoint = [];
+
+    locations.map((location) => {
+      const polygon = location[0];
+      const name = location[1];
+      const result = isPointInPolygon([latitude, longitude], polygon);
+
+      if (result) {
+        locationsInDeliveryPoint.push(name);
+      }
+    });
+    console.log('locationsInDeliveryPoint');
+    console.log(locationsInDeliveryPoint);
+
+
+    const locationsInDeliveryPointSchema = Joi.array().required();
+    const { error4 } = locationsInDeliveryPointSchema.validate(locationsInDeliveryPoint);
+    if (error4) {
+      throw new Error('Data Validation Error');
+    }
+
+    return locationsInDeliveryPoint;
+  }
+
+  checkIfAreasHasLalamoveServiceArea(areas) {
+    const areasSchema = Joi.array().required();
+    const { error } = areasSchema.validate(areas);
+    if (error) {
+      throw new Error('Data Validation Error');
+    }
+
+    if (areas.includes('lalamoveServiceArea')) {
+      return true;
+    }
+
+  }
+
+  getVehicleForDelivery(weightOfItems) {
+    const weightOfItemsSchema = Joi.number().required();
+    const { error } = weightOfItemsSchema.validate(weightOfItems);
+    if (error) {
+      throw new Error('Data Validation Error');
+    } 
+
+    const vehicleSchema = Joi.object().required();
+
+    if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
+
+      const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
+      
+      if (error2) {
+        throw new Error('Data Validation Error');
+      }
+      
+      return this.lalamovedeliveryvehicles.motorcycle;
+    }
+    if (
+      weightOfItems <= this.lalamovedeliveryvehicles.sedan.maxWeight &&
+      weightOfItems > this.lalamovedeliveryvehicles.motorcycle.maxWeight
+    ) {
+      
+      const { error3 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.sedan);
+
+      if (error3) {
+        throw new Error('Data Validation Error');
+      }
+      
+      return this.lalamovedeliveryvehicles.sedan;
+    }
+    if (
+      weightOfItems <= this.lalamovedeliveryvehicles.mpv.maxWeight &&
+      weightOfItems > this.lalamovedeliveryvehicles.sedan.maxWeight
+    ) {
+
+      const { error4 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.mpv);
+
+      if (error4) {
+        throw new Error('Data Validation Error');
+      }
+
+      return this.lalamovedeliveryvehicles.mpv;
+    }
+    if (
+      weightOfItems <= this.lalamovedeliveryvehicles.pickup.maxWeight &&
+      weightOfItems > this.lalamovedeliveryvehicles.mpv.maxWeight
+    ) {
+
+
+      const { error5 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.pickup);
+      if (error5) {
+        throw new Error('Data Validation Error');
+      }
+
+      return this.lalamovedeliveryvehicles.pickup;
+    }
+    if (
+      weightOfItems <= this.lalamovedeliveryvehicles.van.maxWeight &&
+      weightOfItems > this.lalamovedeliveryvehicles.pickup.maxWeight
+    ) {
+
+      const { error6 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.van);
+      if (error6) {
+        throw new Error('Data Validation Error');
+      }
+
+      return this.lalamovedeliveryvehicles.van;
+    }
+    if (
+      weightOfItems <= this.lalamovedeliveryvehicles.closedvan.maxWeight &&
+      weightOfItems > this.lalamovedeliveryvehicles.van.maxWeight
+    ) {
+
+      const { error7 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.closedvan);
+      if (error7) {
+        throw new Error('Data Validation Error');
+      }
+
+      return this.lalamovedeliveryvehicles.closedvan;
+    }
+    else {
+      throw new Error('No Vehicle Selected By Conditions');
+    }
+  }
+
+  getDeliveryFee(kilometers, vehicleObject, needAssistance) {
+    const kilometersSchema = Joi.number().required();
+    const vehicleObjectSchema = Joi.object().required();
+    const needAssistanceSchema = Joi.boolean().required();
+
+    const { error1 } = kilometersSchema.validate(kilometers);
+    const { error2 } = vehicleObjectSchema.validate(vehicleObject);
+    const { error3 } = needAssistanceSchema.validate(needAssistance);
+
+    if (error1 || error2 || error3) {
+      throw new Error('Data Validation Error');
+    }
+
+    let finalDelFee = null;
+    const delFeeWithoutMinimum = Math.round(kilometers * vehicleObject.deliveryFeePerKm);
+    if (delFeeWithoutMinimum < vehicleObject.minDelFee) {
+      finalDelFee = vehicleObject.minDelFee;
+    } else {
+      finalDelFee = delFeeWithoutMinimum;
+    }
+    if (needAssistance) {
+      finalDelFee = finalDelFee + vehicleObject.driverAssistsPrice;
+    }
+
+    const finalDelFeeSchema = Joi.number().required();
+    const { error4 } = finalDelFeeSchema.validate(finalDelFee);
+    if (error4) {
+      throw new Error('Data Validation Error');
+    }
+
+    return finalDelFee;
+  }
+
+  async checkStocksIfAvailableInFirestore(products, cart) {
+    const productsSchema = Joi.array().required();
+    const cartSchema = Joi.array().required();
+
+    const { error1 } = productsSchema.validate(products);
+    const { error2 } = cartSchema.validate(cart);
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error');
+    }
+
+    function countStrings(arr) {
+      const counts = {};
+      arr.forEach((str) => {
+        counts[str] = counts[str] ? counts[str] + 1 : 1;
+      });
+      return counts;
+    }
+    // CONFIRM AGAIN IF STOCKS AVAILABLE
+    let message = 'Unfortunately someone else might have bought the stocks listed below. \n \n';
+    let outOfStockDetected = false;
+    const count = countStrings(cart);
+    const countEntries = Object.entries(count);
+
+    countEntries.map(([itemId, quantity]) => {
+      console.log(itemId, quantity);
+      products.map((dataitem) => {
+        if (dataitem.itemId === itemId) {
+          const stocksAvailableLessSafetyStock = this.getStocksAvailableLessSafetyStock(
+            dataitem.stocksAvailable,
+            dataitem.averageSalesPerDay
+          );
+          if (stocksAvailableLessSafetyStock < quantity) {
+            message = message + `${dataitem.itemName} - ${stocksAvailableLessSafetyStock} stocks left \n`;
+            console.log(itemId, 'firestore:', stocksAvailableLessSafetyStock, 'order:', quantity);
+            outOfStockDetected = true;
+          }
+        }
+      });
+      message += '\nPlease refresh the page to see the updated stocks.';
+    });
+
+
+    const toReturnSchema = Joi.array().required();
+
+
+    if (outOfStockDetected) {
+      
+      const toReturn = [true, message];
+      const { error3 } = toReturnSchema.validate(toReturn);
+      if (error3) { 
+        throw new Error('Data Validation Error');
+      }
+      
+      return toReturn
+
+
+
+    } else {
+      const toReturn= [false, message];
+      const { error4 } = toReturnSchema.validate(toReturn);
+      if (error4) {
+        throw new Error('Data Validation Error');
+      }
+      return toReturn 
+    }
+  }
+
+  getValueAddedTax(totalPrice) {
+    const totalPriceSchema = Joi.number().required();
+    const { error } = totalPriceSchema.validate(totalPrice);
+    if (error) {
+      throw new Error('Data Validation Error');
+    }
+
+    const vat = totalPrice * 0.12;
+    
+    const vatSchema = Joi.number().required();
+    const { error2 } = vatSchema.validate(vat);
+    if (error2) {
+      throw new Error('Data Validation Error');
+    }
+    return vat;
+
+
+  }
+
+  getGrandTotal(totalPrice, valueAddedTax, deliveryFee) {
+    const totalPriceSchema = Joi.number().required();
+    const valueAddedTaxSchema = Joi.number().required();
+    const deliveryFeeSchema = Joi.number().required();
+
+    const { error1 } = totalPriceSchema.validate(totalPrice);
+    const { error2 } = valueAddedTaxSchema.validate(valueAddedTax);
+    const { error3 } = deliveryFeeSchema.validate(deliveryFee);
+
+    if (error1 || error2 || error3) {
+      throw new Error('Data Validation Error');
+    }
+
+    
+    const grandTotal = totalPrice + valueAddedTax + deliveryFee;
+    
+    const grandTotalSchema = Joi.number().required();
+    const { error4 } = grandTotalSchema.validate(grandTotal);
+    if (error4) {
+      throw new Error('Data Validation Error');
+    }
+    
+    return grandTotal
+  }
+
+  addToCart(cart, product) {
+    const cartSchema = Joi.array().required();
+    const productSchema = Joi.string().required();
+
+    const { error1 } = cartSchema.validate(cart);
+    const { error2 } = productSchema.validate(product);
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error');
+    }
+    
+    const newCart = [...cart, product];
+
+    const newCartSchema = Joi.array().required();
+    const { error3 } = newCartSchema.validate(newCart);
+    if (error3) {
+      throw new Error('Data Validation Error');
+    }
+
+    return newCart
+  }
+
+  removeFromCart(cart, product) {
+    const cartSchema = Joi.array().required();
+    const productSchema = Joi.string().required();
+
+    const { error1 } = cartSchema.validate(cart);
+    const { error2 } = productSchema.validate(product);
+
+    if (error1 || error2) {
+      throw new Error('Data Validation Error');
+    }
+
+    let toRemove = cart.indexOf(product);
+    let cartCopy = [...cart];
+
+    if (toRemove > -1) {
+      cartCopy.splice(toRemove, 1);
+    }
+
+    const cartCopySchema = Joi.array().required();
+    const { error3 } = cartCopySchema.validate(cartCopy);
+    if (error3) {
+      throw new Error('Data Validation Error');
+    }
+
+    return cartCopy;
+  }
+
+  addToCartWithQuantity(itemId, quantity, cart) {
+    const itemIdSchema = Joi.string().required();
+    const quantitySchema = Joi.number().required();
+    const cartSchema = Joi.array().required();
+
+    const { error1 } = itemIdSchema.validate(itemId);
+    const { error2 } = quantitySchema.validate(quantity);
+    const { error3 } = cartSchema.validate(cart);
+
+    if (error1 || error2 || error3) {
+      throw new Error('Data Validation Error');
+    }
+
+    let items = [];
+    for (let i = 0; i < quantity; i++) {
+      items.push(itemId);
+    }
+
+
+    const newCart = [...cart, ...items];
+    
+    const newCartSchema = Joi.array().required();
+    const { error4 } = newCartSchema.validate(newCart);
+    if (error4) {
+      throw new Error('Data Validation Error');
+    }
+
+    return newCart
+  }
+}
+module.exports = businessCalculations

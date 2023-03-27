@@ -3,6 +3,10 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 admin.initializeApp();
 const corsHandler = cors({ origin: true });
+import * as businessCalculations from './businessCalculations.js';
+
+
+
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
