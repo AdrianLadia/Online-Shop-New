@@ -9,15 +9,13 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "18"
+    "node": "16"
   },
   "main": "index.js",
-  "type" : "module",
   "dependencies": {
-    "businessCalculations": "file:./businessCalculations.js",
     "cors": "^2.8.5",
     "firebase-admin": "^11.5.0",
-    "firebase-functions": "^4.2.1"
+    "firebase-functions": "^4.2.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.0.0"

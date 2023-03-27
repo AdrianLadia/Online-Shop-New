@@ -585,4 +585,4 @@ class businessCalculations {
   }
 }
 
-module.exports = businessCalculations;
+export default businessCalculations;
