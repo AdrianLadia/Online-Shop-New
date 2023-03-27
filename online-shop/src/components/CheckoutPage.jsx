@@ -122,28 +122,34 @@ const CheckoutPage = () => {
       // setLaunchPayMayaCheckout(true);
 
       console.log(userdata)
-      cloudfirestoredb.transactionPlaceOrder(
-        {        userid : userdata.uid,
-          localDeliveryAddress : localDeliveryAddress,
-          locallatitude:locallatitude,
-          locallongitude:locallongitude,
-          userphonenumber:userdata.phoneNumber,
-          username:userdata.name,
-          orderDate:new Date(),
-          localname:localname,
-          localphonenumber:localphonenumber,
-          cart:cart,
-          itemstotal:total,
-          vat:vat,
-          shippingtotal:deliveryFee,
-          grandTotal:grandTotal,
-          reference:generateOrderReference(),
-          deliveryNotes:deliveryNotes,
-          totalWeight:totalWeight,
-          deliveryVehicle:deliveryVehicle.name,
-          needAssistance:needAssistance}
-
-      )
+      
+      try{
+        const status = await cloudfirestoredb.transactionPlaceOrder(
+          {        userid : userdata.uid,
+            localDeliveryAddress : localDeliveryAddress,
+            locallatitude:locallatitude,
+            locallongitude:locallongitude,
+            userphonenumber:userdata.phoneNumber,
+            username:userdata.name,
+            orderDate:new Date(),
+            localname:localname,
+            localphonenumber:localphonenumber,
+            cart:cart,
+            itemstotal:total,
+            vat:vat,
+            shippingtotal:deliveryFee,
+            grandTotal:grandTotal,
+            reference:generateOrderReference(),
+            deliveryNotes:deliveryNotes,
+            totalWeight:totalWeight,
+            deliveryVehicle:deliveryVehicle.name,
+            needAssistance:needAssistance}
+        )
+      }
+      catch(err){
+        console.log(err)
+      }
+  
       setCart([]);
     }
   }
@@ -157,7 +163,7 @@ const CheckoutPage = () => {
       setLocalEmail(userdata.email);
 
       if (userdata.contactPerson.length > 0) {
-        setLocalPhoneNumber(userdata.contactPerson[0].phonenumber);
+        setLocalPhoneNumber(userdata.contactPerson[0].phoneNumber);
         setLocalName(userdata.contactPerson[0].name);
       }
       if (userdata.deliveryAddress.length > 0) {

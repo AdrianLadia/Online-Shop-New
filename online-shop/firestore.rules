@@ -8,8 +8,8 @@ service cloud.firestore {
     //   allow read, write: if true
     // }
 
-    match /Users/{userId}/{documents=**} {
-      allow read: if request.auth != null && request.auth.uid == userId
+    match /Users/{userId} {
+      allow write: if request.auth != null && request.auth.uid == userId && "cart" in request.resource.data;
     }
 
     match /Products/{productId}/{product=**} {

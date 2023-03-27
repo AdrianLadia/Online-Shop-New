@@ -124,7 +124,12 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
       return;
     }
 
-    if (itemstotal < 0) {
+    if (cart.length <= 0) { 
+      res.status(400).send('You need to have items in your cart');
+      return;
+    }
+
+    if (itemstotal <= 0) {
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
     }
@@ -145,17 +150,17 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
     }
 
     if (localDeliveryAddress == '') {
-      res.status(400).send('Please Submit Delivery Address');
+      res.status(400).send('Please Enter Delivery Address');
       return; 
     }
 
     if (localphonenumber == '') {
-      res.status(400).send('Please Submit Phone Number');
+      res.status(400).send('Please Enter Phone Number');
       return;
     }
 
     if (localname == '') {
-      res.status(400).send('Please Submit Name');
+      res.status(400).send('Please Enter Contact Name');
       return;
     }
 
@@ -383,6 +388,9 @@ exports.readSelectedDataFromCollection = functions.https.onRequest(async (req, r
     const id = data.id;
 
     const db = admin.firestore();
+
+    console.log('collectionName: ', collectionName);
+    console.log('id: ', id);
 
     try {
       db.collection(collectionName)

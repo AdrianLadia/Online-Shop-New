@@ -29,6 +29,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const { error } = toReturnSchema.validate(toReturn);
 
       if (error) {
+        alert(error.message);
         throw new Error(error.message);
       } else {
         return toReturn;
@@ -36,7 +37,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
       return response.data;
     } catch (error) {
-      throw new Error(error);
+      // Handle the 400 error messages
+      const errorMessage = error.response.data;
+      console.error('Error:', errorMessage);
+      alert(errorMessage);
     }
   }
 
@@ -61,8 +65,35 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error);
     }
 
-    await this.createDocument(data, userId, 'Users');
+    try {
+      await this.createDocument(data, userId, 'Users');
+    } catch (error) {
+      // Handle the 400 error messages
+      const errorMessage = error.response.data;
+      console.error('Error:', errorMessage);
+      alert(errorMessage);
+    }
+  }
 
+  async readSelectedUserById(userId) {
+    const userIdSchema = Joi.string();
+
+    const { error } = userIdSchema.validate(userId);
+
+    if (error) {
+      alert(error.message);
+      throw new Error(error.message);
+    }
+
+    try {
+      const res = await this.readSelectedDataFromCollection('Users', userId);
+      return res;
+    } catch (error) {
+      // Handle the 400 error messages
+      const errorMessage = error.response.data;
+      console.error('Error:', errorMessage);
+      alert(errorMessage);
+    }
   }
 
   async transactionPlaceOrder(data) {
@@ -93,6 +124,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const encodedData = encodeURIComponent(JSON.stringify(data));
 
     if (error) {
+      alert(error.message);
       throw new Error(error.message);
     }
 
@@ -100,8 +132,18 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const response = await axios.get(
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/transactionPlaceOrder?data=${encodedData}`
       );
+      alert('Order placed successfully');
     } catch (error) {
-      throw new Error(error);
+      if (error.response && error.response.status === 400) {
+        // Handle the 400 error messages
+        const errorMessage = error.response.data;
+        console.error('Error:', errorMessage);
+        alert(errorMessage);
+      } else {
+        // Handle other errors
+        console.error('An error occurred:', error);
+        alert('An error occurred. Please try again later.');
+      }
     }
   }
 }

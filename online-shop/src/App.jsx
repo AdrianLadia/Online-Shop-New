@@ -123,7 +123,7 @@ function App() {
 
     if (userId) {
       console.log(userId);
-      firestore.readUserById(userId).then((data) => {
+      cloudfirestore.readSelectedUserById(userId).then((data) => {
         console.log(data);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);

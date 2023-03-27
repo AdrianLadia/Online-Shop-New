@@ -8,7 +8,7 @@ const GoogleMapsModalSelectContactModalButton = (props) => {
   const { firestore, userId, refreshUser, setRefreshUser } = React.useContext(AppContext);
 
   const name = props.contact.name;
-  const phonenumber = props.contact.phonenumber;
+  const phonenumber = props.contact.phoneNumber;
 
   function handleContactClick() {
     console.log('clicked');
