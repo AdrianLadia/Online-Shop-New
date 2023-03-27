@@ -8,4 +8,4 @@ class pickup {
     }
 }
 
-export default pickup
+module.exports = pickup

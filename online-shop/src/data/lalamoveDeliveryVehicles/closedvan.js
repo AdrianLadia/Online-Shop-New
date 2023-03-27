@@ -8,4 +8,4 @@ class closedvan {
     }
 }
 
-export default closedvan
+module.exports = closedvan

@@ -8,4 +8,4 @@ class van {
     }
 }
 
-export default van
+module.exports = van

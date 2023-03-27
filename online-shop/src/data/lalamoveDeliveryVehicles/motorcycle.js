@@ -8,4 +8,4 @@ class motorcycle {
     }
 }
 
-export default motorcycle
+module.exports = motorcycle
