@@ -19,8 +19,7 @@ const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
 const cloudfirestorefunctions = new cloudFirestoreFunctions();
 const cloudfirestoredb = new cloudFirestoreDb();
-const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users','PN4JqXrjsGfTsCUEEmaR5NO6rNF3')
-
+const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', 'PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -128,7 +127,7 @@ describe('Business Calcualtions', () => {
   });
   test('getValueAddedTax', () => {
     const subtotal = 100;
-    const expected = 12;
+    const expected = 10.71;
     const vat = businesscalculations.getValueAddedTax(subtotal);
     expect(vat).toBe(expected);
   });
@@ -235,7 +234,6 @@ describe('Data Manipulation', () => {
     const data = datamanipulation.getAllCustomerNamesFromUsers(users);
     // expect(data).toEqual(expected);
     expect(data).not.toBe([]);
-
 
   });
   test('getUserUidFromUsers', async () => {
@@ -407,9 +405,6 @@ describe('Transaction Place Order', async () => {
   beforeEach(async () => {
     await delay(100)
   });
- 
-
-
 
   test('readIfTransactionSuccessful', async () => {
     const cart = [
@@ -536,10 +531,9 @@ describe('Transaction Place Order', async () => {
       const resetStockCount = stocksAvailable + count;
       await firestore.updateProductStocksAvailable(itemId, resetStockCount);
     });
-    
-    
+
   });
-  
+
 });
 
 describe('Transaction Create Payment', async () => {
@@ -791,7 +785,7 @@ describe('firestoredb', async () => {
     await delay(100)
     const user = await firestore.readUserById('testuser');
     await delay(100)
-    
+
     const address = user.deliveryAddress;
     expect(address).toEqual([]);
   });
@@ -825,9 +819,7 @@ describe('firestoredb', async () => {
     expect(phonenumber).toEqual('09178927206');
   });
 
-
 });
-
 
 describe('cloudfirestorefunctions', async () => {
   test('createDocument', async () => {
@@ -875,20 +867,71 @@ describe('cloudfirestorefunctions', async () => {
     }
   });
   test('')
- 
+
 });
 
 describe('cloudfirestoredb', async () => {
   test('checkifuseridexist', async () => {
-    const user = await cloudfirestoredb.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3')
-    await delay(300)
+    const user = await cloudfirestoredb.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+    await delay(300);
     expect(user).toEqual(true);
-    const falseUser = await cloudfirestoredb.checkIfUserIdAlreadyExist('testfalseuser12432456436')
-    await delay(300)
+    const falseUser = await cloudfirestoredb.checkIfUserIdAlreadyExist('testfalseuser12432456436');
+    await delay(300);
     expect(falseUser).toEqual(false);
   });
-  test('transactionPlaceOrder',async () => {
-        await firestore.createNewUser(
+  test('transactionPlaceOrder', async () => {
+    
+    await firestore.createProduct({
+      itemId: 'test',
+      itemName: 'testname',
+      unit: 'bale',
+      price: 1000,
+      description: 'none',
+      weight: 10,
+      dimensions: '10x12',
+      category: 'Paper Bag',
+      imageLinks: ['testlink'],
+      brand: 'testbrand',
+      pieces: 1999,
+      color: 'red',
+      material: 'material',
+      size: '10',
+      stocksAvailable: 23,
+      stocksOnHold: [],
+      averageSalesPerDay: 0,
+      parentProductID: 'test',
+      stocksOnHoldCompleted: [],
+      forOnlineStore: true,
+      isCustomized : false,
+      salesPerMonth : [],
+      stocksIns: []
+    }, 'test');
+    await firestore.createProduct({
+      itemId: 'test2',
+      itemName: 'testname',
+      unit: 'bale',
+      price: 500,
+      description: 'none',
+      weight: 10,
+      dimensions: '10x12',
+      category: 'Paper Bag',
+      imageLinks: ['testlink'],
+      brand: 'testbrand',
+      pieces: 1999,
+      color: 'red',
+      material: 'material',
+      size: '10',
+      stocksAvailable: 23,
+      stocksOnHold: [],
+      averageSalesPerDay: 0,
+      parentProductID: 'test',
+      stocksOnHoldCompleted: [],
+      forOnlineStore: true,
+      isCustomized : false,
+      salesPerMonth : [],
+      stocksIns: []
+    }, 'test2');
+    await firestore.createNewUser(
       {
         uid: 'testuser',
         name: 'test',
@@ -906,7 +949,7 @@ describe('cloudfirestoredb', async () => {
       'testuser'
     );
 
-    await delay(300)
+    await delay(300);
 
     let data = {
       userid: 'testuser',
@@ -917,32 +960,30 @@ describe('cloudfirestoredb', async () => {
       localphonenumber: '09138927206',
       localname: 'Contact Person',
       orderDate: new Date(),
-      cart: ['PPB#5', 'PPB#5','PPB#5'],
-      itemstotal: 10000,
-      vat: 1200,
+      cart: ['test', 'test', 'test','test2'],
+      itemstotal: 3500,
+      vat: 375,
       shippingtotal: 200,
-      grandTotal: 11400,
+      grandTotal: 4075,
       reference: 'testref1234567',
       userphonenumber: '',
       deliveryNotes: 'none',
       totalWeight: 50,
       deliveryVehicle: 'motorcycle',
       needAssistance: true,
-    }
-    await cloudfirestoredb.transactionPlaceOrder(data)
-    await delay(300)
+    };
+    await cloudfirestoredb.transactionPlaceOrder(data);
+    await delay(300);
 
-    const testUser = await firestore.readSelectedDataFromCollection('Users','testuser')
-    const deliveryAddress = testUser.deliveryAddress
-    const contactPerson = testUser.contactPerson
-    const orders = testUser.orders
+    const testUser = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+    const deliveryAddress = testUser.deliveryAddress;
+    const contactPerson = testUser.contactPerson;
+    const orders = testUser.orders;
 
+    expect(deliveryAddress).length(1);
+    expect(contactPerson).length(1);
+    expect(orders).length(1);
 
-    expect(deliveryAddress).length(1)
-    expect(contactPerson).length(1)
-    expect(orders).length(1)
-
-    
     data = {
       userid: 'testuser',
       username: 'testname',
@@ -952,29 +993,29 @@ describe('cloudfirestoredb', async () => {
       localphonenumber: '09138927206',
       localname: 'Contact Person 2',
       orderDate: new Date(),
-      cart: ['PPB#5', 'PPB#5','PPB#5'],
-      itemstotal: 10000,
-      vat: 1200,
+      cart: ['test', 'test', 'test','test2'],
+      itemstotal: 3500,
+      vat: 375,
       shippingtotal: 200,
-      grandTotal: 11400,
+      grandTotal: 4075,
       reference: 'testref1234567',
       userphonenumber: '',
       deliveryNotes: 'none',
       totalWeight: 50,
       deliveryVehicle: 'motorcycle',
       needAssistance: true,
-    }
-    await cloudfirestoredb.transactionPlaceOrder(data)
-    await delay(300)
+    };
+    await cloudfirestoredb.transactionPlaceOrder(data);
+    await delay(300);
 
-    const testUser2 = await firestore.readSelectedDataFromCollection('Users','testuser')
-    const deliveryAddress2 = testUser2.deliveryAddress
-    const contactPerson2 = testUser2.contactPerson
-    const orders2 = testUser2.orders
-    
-    expect(deliveryAddress2).length(1)
-    expect(contactPerson2).length(2)
-    expect(orders2).length(2)
+    const testUser2 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+    const deliveryAddress2 = testUser2.deliveryAddress;
+    const contactPerson2 = testUser2.contactPerson;
+    const orders2 = testUser2.orders;
+
+    expect(deliveryAddress2).length(1);
+    expect(contactPerson2).length(2);
+    expect(orders2).length(2);
 
     data = {
       userid: 'testuser',
@@ -985,32 +1026,58 @@ describe('cloudfirestoredb', async () => {
       localphonenumber: '09138927206',
       localname: 'Contact Person 2',
       orderDate: new Date(),
-      cart: ['PPB#5', 'PPB#5','PPB#5'],
-      itemstotal: 10000,
-      vat: 1200,
+      cart: ['test', 'test', 'test','test2'],
+      itemstotal: 3500,
+      vat: 375,
       shippingtotal: 200,
-      grandTotal: 11400,
+      grandTotal: 4075,
       reference: 'testref1234567',
       userphonenumber: '',
       deliveryNotes: 'none',
       totalWeight: 50,
       deliveryVehicle: 'motorcycle',
       needAssistance: true,
-    }
-    await cloudfirestoredb.transactionPlaceOrder(data)
-    await delay(300)
+    };
+    await cloudfirestoredb.transactionPlaceOrder(data);
+    await delay(300);
 
-    const testUser3 = await firestore.readSelectedDataFromCollection('Users','testuser')
-    const deliveryAddress3 = testUser3.deliveryAddress
-    const contactPerson3 = testUser3.contactPerson
-    const orders3 = testUser3.orders
-    
-    expect(deliveryAddress3).length(2)
-    expect(contactPerson3).length(2)
-    expect(orders3).length(3)
-    
-    await firestore.deleteUserByUserId('testuser')
+    const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+    const deliveryAddress3 = testUser3.deliveryAddress;
+    const contactPerson3 = testUser3.contactPerson;
+    const orders3 = testUser3.orders;
+
+    expect(deliveryAddress3).length(2);
+    expect(contactPerson3).length(2);
+    expect(orders3).length(3);
+
+    await firestore.deleteUserByUserId('testuser');
+    await firestore.deleteProduct('test')
+    await firestore.deleteProduct('test2')
   }, 100000);
+
+  test('createNewUser', async () => {
+    await cloudfirestoredb.createNewUser(
+      {
+        uid: 'testuser',
+        name: 'Test User',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: [],
+        favoriteItems: [],
+        payments: [],
+      },
+      'testuser'
+    )
+    await delay(100);
+    const user = await firestore.readSelectedDataFromCollection('Users', 'testuser')
+    const email = user.email
+    await delay(100)
+    expect(email).toEqual('test@gmail.com')
+    await firestore.deleteUserByUserId('testuser')
+  });
 });
-
-

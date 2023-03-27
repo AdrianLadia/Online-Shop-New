@@ -70,14 +70,16 @@ function App() {
           if (userExists) {
             console.log('user exists');
             setUserId(user.uid);
-          } else {
+          } 
+          
+          else {
             console.log('user does not exist');
             function delay(ms) {
               return new Promise((resolve) => setTimeout(resolve, ms));
             }
 
             async function createNewUser() {
-              await firestore.createNewUser(
+              await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
                   name: user.displayName,

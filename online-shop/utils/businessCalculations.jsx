@@ -467,17 +467,16 @@ class businessCalculations {
     if (error) {
       throw new Error('Data Validation Error');
     }
-
-    const vat = totalPrice * 0.12;
+  
+    const vat = totalPrice - (totalPrice /  1.12)
+    const roundedVat = Math.round(vat * 100) / 100;
     
     const vatSchema = Joi.number().required();
     const { error2 } = vatSchema.validate(vat);
     if (error2) {
       throw new Error('Data Validation Error');
     }
-    return vat;
-
-
+    return roundedVat;
   }
 
   getGrandTotal(totalPrice, valueAddedTax, deliveryFee) {

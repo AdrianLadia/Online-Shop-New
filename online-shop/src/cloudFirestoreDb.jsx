@@ -40,6 +40,31 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
+  async createNewUser(data, userId) {
+    const schema = Joi.object({
+      uid: Joi.string().required(),
+      name: Joi.string(),
+      email: Joi.string(),
+      emailVerified: Joi.boolean(),
+      phoneNumber: Joi.string().allow(''),
+      deliveryAddress: Joi.array(),
+      contactPerson: Joi.array(),
+      isAnonymous: Joi.boolean(),
+      orders: Joi.array(),
+      cart: Joi.array(),
+      favoriteItems: Joi.array(),
+      payments: Joi.array(),
+    }).unknown(false);
+
+    const { error } = schema.validate(data);
+    if (error) {
+      throw new Error(error);
+    }
+
+    await this.createDocument(data, userId, 'Users');
+
+  }
+
   async transactionPlaceOrder(data) {
     const schema = Joi.object({
       userid: Joi.string().required(),

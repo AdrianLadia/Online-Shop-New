@@ -3,6 +3,7 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 admin.initializeApp();
 const corsHandler = cors({ origin: true });
+const Joi = require('joi');
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
@@ -16,9 +17,51 @@ function parseData(data) {
   return parsedData;
 }
 
+function getCartCount(cart) {
+  // VALIDATION
+  const cartSchema = Joi.array().required();
+  const { error } = cartSchema.validate(cart);
+  if (error) {
+    throw new Error(error.details[0].message);
+  }
+
+  // FUNCTION
+  const counts = {};
+  cart.forEach((str) => {
+    counts[str] = counts[str] ? counts[str] + 1 : 1;
+  });
+
+  // VALIDATION
+  const countsSchema = Joi.object().required();
+  const { error2 } = countsSchema.validate(counts);
+  if (error2) {
+    throw new Error(error2.details[0].message);
+  }
+
+  return counts;
+}
+
+function getValueAddedTax(totalPrice) {
+  const totalPriceSchema = Joi.number().required();
+  const { error } = totalPriceSchema.validate(totalPrice);
+  if (error) {
+    throw new Error('Data Validation Error');
+  }
+
+  const vat = totalPrice - totalPrice / 1.12;
+  const roundedVat = Math.round(vat * 100) / 100;
+
+  const vatSchema = Joi.number().required();
+  const { error2 } = vatSchema.validate(vat);
+  if (error2) {
+    throw new Error('Data Validation Error');
+  }
+  return roundedVat;
+}
+
 exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    console.log('running transactionPlaceOrder')
+    console.log('running transactionPlaceOrder');
     const data = parseData(req.query.data);
     const userid = data.userid;
     const username = data.username;
@@ -39,7 +82,82 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
     const totalWeight = data.totalWeight;
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
+
     const db = admin.firestore();
+    const cartCount = getCartCount(cart);
+
+    const vatBackend = getValueAddedTax(itemstotal);
+    
+    console.log('vatBackend', vatBackend);
+    console.log('vat', vat);
+
+
+    if (vatBackend != vat) {
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    let itemsTotalBackEnd = 0;
+    const itemKeys = Object.keys(cartCount);
+    
+    for (const key of itemKeys) {
+      const itemId = key;
+      const itemQuantity = cartCount[key];
+      const item = await db.collection('Products').doc(itemId).get();
+      const price = item.data().price;
+      const total = price * itemQuantity;
+      itemsTotalBackEnd += total;
+    }
+
+    if (itemsTotalBackEnd != itemstotal) {
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    if ((vat + itemstotal + shippingtotal) != grandTotal) {
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    if (shippingtotal < 0) { 
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    if (itemstotal < 0) {
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    if (vat < 0) {
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    if (grandTotal < 0) {
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    if (totalWeight < 0) {
+      res.status(400).send('Invalid data submitted. Please try again later');
+      return;
+    }
+
+    if (localDeliveryAddress == '') {
+      res.status(400).send('Please Submit Delivery Address');
+      return; 
+    }
+
+    if (localphonenumber == '') {
+      res.status(400).send('Please Submit Phone Number');
+      return;
+    }
+
+    if (localname == '') {
+      res.status(400).send('Please Submit Name');
+      return;
+    }
 
     db.runTransaction(async (transaction) => {
       try {
@@ -77,7 +195,7 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
               address: localDeliveryAddress,
             },
           ];
-          const updatedAddressList = [...newAddress, ...deliveryAddress]; 
+          const updatedAddressList = [...newAddress, ...deliveryAddress];
           transaction.update(userRef, { deliveryAddress: updatedAddressList });
         }
 
@@ -102,7 +220,7 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
           const updatedContactList = [...newContact, ...contactPerson];
           console.log(updatedContactList);
           transaction.update(userRef, { contactPerson: updatedContactList });
-        } 
+        }
 
         const oldOrders = userData.orders;
         const newOrder = {
@@ -135,10 +253,10 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
 
         const updatedOrders = [newOrder, ...oldOrders];
 
-        transaction.update(userRef,{ orders: updatedOrders });
+        transaction.update(userRef, { orders: updatedOrders });
 
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
-        transaction.update(userRef,{ cart: [] });
+        transaction.update(userRef, { cart: [] });
         res.end();
       } catch (e) {
         console.log(e);
@@ -159,152 +277,6 @@ exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) =
     }
   });
 });
-
-// exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
-//     corsHandler(req, res, async () => {
-//       const data = parseData(req.query.data);
-//       const userid = data.userid;
-//       const username = data.username;
-//       const localDeliveryAddress = data.localDeliveryAddress;
-//       const locallatitude = data.locallatitude;
-//       const locallongitude = data.locallongitude;
-//       const localphonenumber = data.localphonenumber;
-//       const localname = data.localname;
-//       const orderDate = data.orderDate;
-//       const cart = data.cart;
-//       const itemstotal = data.itemstotal;
-//       const vat = data.vat;
-//       const shippingtotal = data.shippingtotal;
-//       const grandTotal = data.grandTotal;
-//       const reference = data.reference;
-//       const userphonenumber = data.userphonenumber;
-//       const deliveryNotes = data.deliveryNotes;
-//       const totalWeight = data.totalWeight;
-//       const deliveryVehicle = data.deliveryVehicle;
-//       const needAssistance = data.needAssistance;
-//       const db = admin.firestore();
-
-//       try {
-//         // read user data
-//         const user = await db.collection('Users').doc(userid).get();
-//         const userData = user.data();
-//         const deliveryAddress = userData.deliveryAddress;
-//         const contactPerson = userData.contactPerson;
-
-//         // WRITE TO DELIVER ADDRESS LIST
-//         let addressexists = false;
-//         let latitudeexists = false;
-//         let longitudeexists = false;
-//         deliveryAddress.map((d) => {
-//           if (d.address == localDeliveryAddress) {
-//             console.log('address already exists');
-//             addressexists = true;
-//           }
-//           if (d.latitude == locallatitude) {
-//             console.log('latitude already exists');
-//             latitudeexists = true;
-//           }
-//           if (d.longitude == locallongitude) {
-//             console.log('longitude already exists');
-//             longitudeexists = true;
-//           }
-//         });
-//         if (addressexists == false || latitudeexists == false || longitudeexists == false) {
-//           console.log('adding new address');
-//           const newAddress = [
-//             {
-//               latitude: locallatitude,
-//               longitude: locallongitude,
-//               address: localDeliveryAddress,
-//             },
-//           ];
-//           const updatedAddressList = [...newAddress, ...deliveryAddress];
-//           console.log(updatedAddressList);
-//           await db.collection('Users').doc(userid).update({ deliveryAddress: updatedAddressList });
-//         }
-
-//         // WRITE TO CONTACT NUMBER
-//         // CHECKS IF CONTACTS ALREADY EXISTS IF NOT ADDS IT TO FIRESTORE
-
-//         let phonenumberexists = false;
-//         let nameexists = false;
-//         contactPerson.map((d) => {
-//           if (d.phoneNumber == localphonenumber) {
-//             console.log('phonenumber already exists');
-//             phonenumberexists = true;
-//           }
-//           if (d.name == localname) {
-//             console.log('name already exists');
-//             nameexists = true;
-//           }
-//         });
-//         if (phonenumberexists == false || nameexists == false) {
-//           console.log('updating contact');
-//           const newContact = [{ name: localname, phoneNumber: localphonenumber }];
-//           const updatedContactList = [...newContact, ...contactPerson];
-//           console.log(updatedContactList);
-//           await db.collection('Users').doc(userid).update({ contactPerson: updatedContactList });
-//         }
-
-//         const oldOrders = userData.orders;
-
-//         console.log('oldOrders', oldOrders);
-
-//         const newOrder = {
-//           orderDate: orderDate,
-//           contactName: localname,
-//           deliveryAddress: localDeliveryAddress,
-//           contactPhoneNumber: localphonenumber,
-//           deliveryAddressLatitude: locallatitude,
-//           deliveryAddressLongitude: locallongitude,
-//           cart: cart,
-//           itemsTotal: itemstotal,
-//           vat: vat,
-//           shippingTotal: shippingtotal,
-//           grandTotal: grandTotal,
-//           delivered: false,
-//           reference: reference,
-//           paid: false,
-//           userName: username,
-//           userPhoneNumber: userphonenumber,
-//           deliveryNotes: deliveryNotes,
-//           orderAcceptedByClient: false,
-//           userWhoAcceptedOrder: null,
-//           orderAcceptedByClientDate: null,
-//           clientIDWhoAcceptedOrder: null,
-//           totalWeight: totalWeight,
-//           deliveryVehicle: deliveryVehicle,
-//           needAssistance: needAssistance,
-//           userId: userid,
-//         };
-
-//         const updatedOrders = [newOrder, ...oldOrders];
-
-//         console.log(updatedOrders);
-
-//         await db.collection('Users').doc(userid).update({ orders: updatedOrders });
-
-//         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
-//         await db.collection('Users').doc(userid).update({ cart: [] });
-//         res.end()
-//       } catch (e) {
-//         console.log(e);
-//       }
-//     });
-//   });
-
-// exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) => {
-//   corsHandler(req, res, async () => {
-//     const userId = req.query.userId;
-//     const db = admin.firestore();
-//     const user = await db.collection('Users').doc(userId).get();
-//     if (user.data() == undefined) {
-//       res.send(false);
-//     } else {
-//       res.send(true);
-//     }
-//   });
-// });
 
 exports.deleteDocumentFromCollection = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -445,3 +417,8 @@ exports.login = functions.https.onRequest(async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching users data.' });
   }
 });
+
+
+
+exports.getCartCount = getCartCount;
+exports.getValueAddedTax = getValueAddedTax
