@@ -5,7 +5,7 @@ import SelectedCategoryContext from './SelectedCategoryContext';
 import ProductCard from './ProductCard';
 import OpenCartButton from './OpenCartButton';
 import { CartContext } from './CartContext';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import AppContext from '../AppContext';
 import CircularProgress from '@mui/material/CircularProgress';
 import dataManipulation from '../../utils/dataManipulation';

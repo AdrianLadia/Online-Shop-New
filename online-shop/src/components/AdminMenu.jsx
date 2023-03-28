@@ -7,7 +7,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 import AdminInventory from './AdminInventory';
 import { useEffect, useState } from 'react';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import AdminCreatePayment from './AdminCreatePayment';
 import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';

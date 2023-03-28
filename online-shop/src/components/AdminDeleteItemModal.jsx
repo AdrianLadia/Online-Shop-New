@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from '@mui/material/Modal';
 import MenuItem from '@mui/material/MenuItem';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import { Box } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';

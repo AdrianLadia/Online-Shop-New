@@ -9,7 +9,7 @@ import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore';
 import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
-import firestoredb from './components/firestoredb';
+import firestoredb from './firestoredb';
 import PersonalInfoForm from './components/PersonalInfoForm';
 import CheckoutPage from './components/CheckoutPage';
 import { CircularProgress, Typography } from '@mui/material';
@@ -85,6 +85,10 @@ function App() {
             
 
             async function createNewUser() {
+              // "member": Represents a registered user with standard privileges, such as creating and editing their own content.
+              // "moderator": Represents a user with additional privileges to manage and moderate content created by other users.
+              // "admin": Represents an administrator with broad system access, including managing users, settings, and other high-level functions.
+              // "superAdmin": Represents a super administrator with the highest level of access, able to manage all aspects of the system, including creating and managing other admin-level users.
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -99,6 +103,7 @@ function App() {
                   cart: [],
                   favoriteItems: [],
                   payments: [],
+                  userRole: 'member'
                 },
                 user.uid
               );

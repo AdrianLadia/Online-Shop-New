@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import useWindowDimensions from "./UseWindowDimensions";
 import AdminAddItemModal from "./AdminAddItemModal";
-import firestoredb from "./firestoredb";
+import firestoredb from "../firestoredb";
 import AdminDeleteItemModal from "./AdminDeleteItemModal";
 import AdminEditItemModal from "./AdminEditItemModal";
 import { useEffect } from "react";

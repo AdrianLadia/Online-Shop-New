@@ -4,7 +4,7 @@ import ProductList from './ProductList';
 import { useState, useContext } from 'react';
 import SelectedCategoryContext from './SelectedCategoryContext';
 import { Typography } from '@mui/material';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import { useEffect } from 'react';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';

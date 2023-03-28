@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import useWindowDimensions from './UseWindowDimensions';
 import AddCategoryModal from './AddCategoryModal';
 import InputLabel from '@mui/material/InputLabel';

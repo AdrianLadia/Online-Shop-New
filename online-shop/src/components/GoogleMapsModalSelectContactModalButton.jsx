@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 // import fireststore from firestored
 import AppContext from '../AppContext';
 

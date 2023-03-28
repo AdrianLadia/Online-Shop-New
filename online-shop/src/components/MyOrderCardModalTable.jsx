@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import useWindowDimensions from './useWindowDimensions';
 import dataManipulation from '../../utils/dataManipulation';
 import { ContentCutOutlined } from '@mui/icons-material';

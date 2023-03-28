@@ -3,7 +3,7 @@ import { GoogleMap, useLoadScript, MarkerF, InfoWindow } from '@react-google-map
 import React from 'react';
 import { useEffect } from 'react';
 import AppContext from '../AppContext';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import { CircularProgress } from '@mui/material';
 
 import UpdateMapMarkerModal from './UpdateMapMarkerModal';

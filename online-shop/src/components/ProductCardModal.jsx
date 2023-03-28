@@ -12,7 +12,7 @@ import UseWindowDimensions from "./UseWindowDimensions";
 import { Paper } from "@mui/material";
 import ProductCardModalTable from "./ProductCardModalTable";
 import AppContext from '../AppContext'
-import firestoredb from "./firestoredb";
+import firestoredb from "../firestoredb";
 import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({

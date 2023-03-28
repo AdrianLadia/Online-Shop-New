@@ -6,7 +6,7 @@ import Select from '@mui/material/Select';
 import { useState } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import TextField from '@mui/material/TextField';
 import AppContext from '../AppContext';
 

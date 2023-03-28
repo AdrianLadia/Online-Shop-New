@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import AppContext from '../AppContext';
 import { useContext } from 'react';
-import firestoredb from './firestoredb';
+import firestoredb from '../firestoredb';
 import { Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
 

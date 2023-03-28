@@ -450,6 +450,7 @@ describe('Transaction Place Order', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
+        userRole: 'member'
       },
       'testuser'
     );
@@ -553,6 +554,7 @@ describe('Transaction Create Payment', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
+        userRole: 'member'
       },
       'testuser'
     );
@@ -591,6 +593,7 @@ describe('firestoredb', async () => {
       cart: [],
       favoriteItems: [],
       payments: [],
+      userRole: 'member'
     }, 'test');
     await delay(100)
     await firestore.createNewUser(
@@ -607,6 +610,7 @@ describe('firestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
+        userRole: 'member'
       },
       'testuser'
     );
@@ -980,6 +984,7 @@ describe('cloudfirestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
+        userRole: 'member'
       },
       'testuser'
     );
@@ -1105,6 +1110,7 @@ describe('cloudfirestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
+        userRole: 'member'
       },
       'testuser'
     );
@@ -1131,6 +1137,7 @@ describe('cloudfirestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
+        userRole: 'member'
       },
       'testuser2'
     );
