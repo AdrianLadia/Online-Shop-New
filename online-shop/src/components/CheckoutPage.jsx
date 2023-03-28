@@ -126,6 +126,7 @@ const CheckoutPage = () => {
       // setLaunchPayMayaCheckout(true);
 
       try{
+        console.log(total)
         const status = await cloudfirestoredb.transactionPlaceOrder(
           {        userid : userdata.uid,
             localDeliveryAddress : localDeliveryAddress,
@@ -146,6 +147,7 @@ const CheckoutPage = () => {
             totalWeight:totalWeight,
             deliveryVehicle:deliveryVehicle.name,
             needAssistance:needAssistance}
+            
         )
       }
       catch(err){

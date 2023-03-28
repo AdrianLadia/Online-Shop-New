@@ -6,6 +6,10 @@ import MyOrderCardModal from "./MyOrderCardModal";
 
 function MyOrderCard(props) {
   const order = props.order;
+  const orderDate = new Date(order.orderDate).toLocaleDateString();
+
+  console.log(order)
+
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
@@ -51,7 +55,7 @@ function MyOrderCard(props) {
             </div>
             <div className="flex w-full justify-end mt-8 ">
               <Typography variant="h5" component="div">
-                {order.orderDate.toDate().toLocaleDateString()}
+                {orderDate}
               </Typography>
             </div>
           </div>

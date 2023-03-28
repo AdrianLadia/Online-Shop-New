@@ -893,11 +893,12 @@ function delay(ms) {
 // });
 
 describe('cloudfirestoredb', async () => {
-
   test('readAllProductsForOnlineStore', async () => {
     const products = await cloudfirestore.readAllProductsForOnlineStore();
     await delay(300);
+    
     expect(products).toBeInstanceOf(Array);
+    expect(products.length).toBeGreaterThan(0);
   })
 
   test('checkifuseridexist', async () => {

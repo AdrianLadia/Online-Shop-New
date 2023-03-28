@@ -69,10 +69,32 @@ exports.readAllProductsForOnlineStore = functions.https.onRequest(async (req, re
   
       // Fetch and process the documents
       const querySnapshot = await forOnlineStoreQuery.get();
+      console.log('querySnapshot', querySnapshot);
       const products = [];
       querySnapshot.forEach((doc) => {
         // Add each product to the products array along with its document ID
-        products.push({ ...doc.data(), id: doc.id });
+        const data = doc.data()
+        const productObject = {
+          averageSalesPerDay: data.averageSalesPerDay,
+          brand: data.brand, 
+          category: data.category,
+          color: data.color, 
+          description: data.description,
+          dimensions: data.dimensions,
+          imageLinks: data.imageLinks,
+          itemId: data.itemId,
+          isCustomized: data.isCustomized,
+          itemName: data.itemName,
+          material: data.material,
+          parentProductID: data.parentProductID,
+          pieces: data.pieces,
+          price: data.price,
+          size: data.size,
+          stocksAvailable: data.stocksAvailable,
+          unit: data.unit,
+          weight: data.weight
+        }
+        products.push(productObject);
       });
   
       // Send the products array as a JSON response
@@ -111,16 +133,6 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
     const db = admin.firestore();
     const cartCount = getCartCount(cart);
 
-    const vatBackend = getValueAddedTax(itemstotal);
-
-    console.log('vatBackend', vatBackend);
-    console.log('vat', vat);
-
-    if (vatBackend != vat) {
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
-
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cartCount);
 
@@ -133,17 +145,20 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
       itemsTotalBackEnd += total;
     }
 
-    if (itemsTotalBackEnd != itemstotal) {
+    if (itemsTotalBackEnd != itemstotal+vat) {
+      console.log('itemsTotalBackEnd != itemstotal');
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
     }
 
     if (vat + itemstotal + shippingtotal != grandTotal) {
+      console.log('vat + itemstotal + shippingtotal != grandTotal');
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
     }
 
     if (shippingtotal < 0) {
+
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
     }

@@ -36,6 +36,7 @@ const MyOrderCardModal = (props) => {
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
+  const orderDate = new Date(order.orderDate).toLocaleDateString();
 
 
   return (
@@ -86,7 +87,7 @@ const MyOrderCardModal = (props) => {
                 <ListItemText
                   primary="Order Date"
                   secondary={
-                    order !== [] ? order.orderDate.toDate().toString() : null
+                    order !== [] ? orderDate : null
                   }
                 />
               </ListItem>

@@ -10,10 +10,12 @@ import AppContext from '../AppContext';
 import CircularProgress from '@mui/material/CircularProgress';
 import dataManipulation from '../../utils/dataManipulation';
 import businessCalculations from '../../utils/businessCalculations';
+import cloudFirestoreDb from '../cloudFirestoreDb';
 
 const ProductList = () => {
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
+  const cloudfirestoredb = new cloudFirestoreDb();
 
   const [refresh, setRefresh] = useState(false);
   const [selected, wholesale, retail] = useContext(SelectedCategoryContext);
@@ -22,9 +24,8 @@ const ProductList = () => {
   const favorites = favoriteitems;
 
   useEffect(() => {
-    firestore.readAllProducts().then((products) => {
-      const filtered_products = products.filter((product) => product.forOnlineStore === true);
-      setProducts(filtered_products);
+    cloudfirestoredb.readAllProductsForOnlineStore().then((products) => {
+      setProducts(products);
       setProductDataLoading(false);
     });
   }, [refresh]);

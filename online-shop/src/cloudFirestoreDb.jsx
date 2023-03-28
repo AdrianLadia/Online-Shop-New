@@ -150,31 +150,43 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   async readAllProductsForOnlineStore() {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllProductsForOnlineStore?data=${encodedData}`
+        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllProductsForOnlineStore`
       );
       const toReturn = response.data;
       const toReturnSchema = Joi.array().items(
         Joi.object({
-          averageSalesPerDay: Joi.string().required(),
-          brand: Joi.string().required(),
-          category: Joi.number().required(),
-          color: Joi.string().required(),
-          description: Joi.string().required(),
-          dimensions: Joi.string().required(),
-          imageLinks: Joi.number().required(),
-          itemId: Joi.number().required(),
+          averageSalesPerDay: Joi.number().required(),
+          brand: Joi.string().allow('').required(),
+          category: Joi.string().required(),
+          color: Joi.string().required().allow(''),
+          description: Joi.string().required().allow(''),
+          dimensions: Joi.string().required().allow(''),
+          imageLinks: Joi.array(),
+          itemId: Joi.string().required(),
           isCustomized: Joi.boolean().required(),
           itemName: Joi.string().required(),
-          material: Joi.string().required(),
-          parentProductId: Joi.string().required(),
+          material: Joi.string().required().allow(''),
+          parentProductID: Joi.string().required().allow(''),
           pieces: Joi.number().required(),
           price: Joi.number().required(),
-          size: Joi.string().required(),
+          size: Joi.string().required().allow(''),
           stocksAvailable: Joi.number().required(),
           unit: Joi.string().required(),
-          weight: Joi.number().required()
+          weight: Joi.number().required(),
         }).unknown(false))
+
+        const {error} = toReturnSchema.validate(toReturn);
+
+        if(error) {
+          alert(error.message);
+          throw new Error(error.message);
+        }
+
+        return toReturn;
     }
+
+
+
     catch(error) {
       if (error.response && error.response.status === 400) {
         // Handle the 400 error messages
