@@ -58,6 +58,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       cart: Joi.array(),
       favoriteItems: Joi.array(),
       payments: Joi.array(),
+      userRole: Joi.string().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
