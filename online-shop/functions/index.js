@@ -146,6 +146,7 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
     }
 
     if (itemsTotalBackEnd != itemstotal+vat) {
+      
       console.log('itemsTotalBackEnd != itemstotal');
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
