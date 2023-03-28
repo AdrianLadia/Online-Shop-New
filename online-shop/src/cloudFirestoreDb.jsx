@@ -146,6 +146,49 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       }
     }
   }
+
+  async readAllProductsForOnlineStore() {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllProductsForOnlineStore?data=${encodedData}`
+      );
+      const toReturn = response.data;
+      const toReturnSchema = Joi.array().items(
+        Joi.object({
+          averageSalesPerDay: Joi.string().required(),
+          brand: Joi.string().required(),
+          category: Joi.number().required(),
+          color: Joi.string().required(),
+          description: Joi.string().required(),
+          dimensions: Joi.string().required(),
+          imageLinks: Joi.number().required(),
+          itemId: Joi.number().required(),
+          isCustomized: Joi.boolean().required(),
+          itemName: Joi.string().required(),
+          material: Joi.string().required(),
+          parentProductId: Joi.string().required(),
+          pieces: Joi.number().required(),
+          price: Joi.number().required(),
+          size: Joi.string().required(),
+          stocksAvailable: Joi.number().required(),
+          unit: Joi.string().required(),
+          weight: Joi.number().required()
+        }).unknown(false))
+    }
+    catch(error) {
+      if (error.response && error.response.status === 400) {
+        // Handle the 400 error messages
+        const errorMessage = error.response.data;
+        console.error('Error:', errorMessage);
+        alert(errorMessage);
+      } else {
+        // Handle other errors
+        console.error('An error occurred:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    }
+  }
+
 }
 
 export default cloudFirestoreDb;

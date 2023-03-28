@@ -10,7 +10,14 @@ import { FaFacebook } from 'react-icons/fa';
 const LoginButton = (props) => {
 
     const position = props.position
-    const handleCloseGuestSignInModal = props.handleCloseGuestSignInModal
+    let handleCloseGuestSignInModal = props.handleCloseGuestSignInModal
+
+    if (handleCloseGuestSignInModal == null) {
+        handleCloseGuestSignInModal = () => { }
+    }
+    else {
+        handleCloseGuestSignInModal = props.handleCloseGuestSignInModal
+    }
 
     const {auth} = useContext(AppContext);
 

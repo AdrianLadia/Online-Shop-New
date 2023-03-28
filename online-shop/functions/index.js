@@ -59,6 +59,31 @@ function getValueAddedTax(totalPrice) {
   return roundedVat;
 }
 
+exports.readAllProductsForOnlineStore = functions.https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      // Create a query for products where forOnlineStore is true
+      const db = admin.firestore();
+      const productsRef = db.collection('Products');
+      const forOnlineStoreQuery = productsRef.where('forOnlineStore', '==', true);
+  
+      // Fetch and process the documents
+      const querySnapshot = await forOnlineStoreQuery.get();
+      const products = [];
+      querySnapshot.forEach((doc) => {
+        // Add each product to the products array along with its document ID
+        products.push({ ...doc.data(), id: doc.id });
+      });
+  
+      // Send the products array as a JSON response
+      res.send(products);
+    }
+    catch (error) {
+      res.status(400).send('Error reading products. Please try again later');
+    }
+  });
+});
+
 exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     console.log('running transactionPlaceOrder');
@@ -87,10 +112,9 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
     const cartCount = getCartCount(cart);
 
     const vatBackend = getValueAddedTax(itemstotal);
-    
+
     console.log('vatBackend', vatBackend);
     console.log('vat', vat);
-
 
     if (vatBackend != vat) {
       res.status(400).send('Invalid data submitted. Please try again later');
@@ -99,7 +123,7 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cartCount);
-    
+
     for (const key of itemKeys) {
       const itemId = key;
       const itemQuantity = cartCount[key];
@@ -114,17 +138,17 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
       return;
     }
 
-    if ((vat + itemstotal + shippingtotal) != grandTotal) {
+    if (vat + itemstotal + shippingtotal != grandTotal) {
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
     }
 
-    if (shippingtotal < 0) { 
+    if (shippingtotal < 0) {
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
     }
 
-    if (cart.length <= 0) { 
+    if (cart.length <= 0) {
       res.status(400).send('You need to have items in your cart');
       return;
     }
@@ -151,7 +175,7 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
 
     if (localDeliveryAddress == '') {
       res.status(400).send('Please Enter Delivery Address');
-      return; 
+      return;
     }
 
     if (localphonenumber == '') {
@@ -426,7 +450,5 @@ exports.login = functions.https.onRequest(async (req, res) => {
   }
 });
 
-
-
 exports.getCartCount = getCartCount;
-exports.getValueAddedTax = getValueAddedTax
+exports.getValueAddedTax = getValueAddedTax;

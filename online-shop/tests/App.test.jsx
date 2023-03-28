@@ -893,6 +893,13 @@ function delay(ms) {
 // });
 
 describe('cloudfirestoredb', async () => {
+
+  test('readAllProductsForOnlineStore', async () => {
+    const products = await cloudfirestore.readAllProductsForOnlineStore();
+    await delay(300);
+    expect(products).toBeInstanceOf(Array);
+  })
+
   test('checkifuseridexist', async () => {
     const user = await cloudfirestore.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
     await delay(300);
