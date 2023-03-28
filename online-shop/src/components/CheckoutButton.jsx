@@ -1,26 +1,46 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import ContextOpenCart from "./ContextOpenCart";
-import { useContext } from "react";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useContext,useState } from 'react';
+import AppContext from '../AppContext';
+import GuestSignInModal from './GuestSignInModal';
+import { CircularProgress, Typography } from '@mui/material';
 
 const CheckoutButton = () => {
   const navigateTo = useNavigate();
-  const [openCart, setOpenCart, finalCartData, totalPrice] =
-    useContext(ContextOpenCart);
+  const { userId, cart,setGuestLoginClicked,goToCheckoutPage,setGoToCheckoutPage } = useContext(AppContext);
+  const [openGuestSignInModal,setOpenGuestSignInModal] = useState(false);
+
+  function handleCloseGuestSignInModal(){
+    setOpenGuestSignInModal(false)
+  }
 
   function onCheckoutButtonClick() {
-    navigateTo("/checkout");
+    if (userId === null) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+      setOpenGuestSignInModal(true);
+      setGuestLoginClicked(true);
+    }
+    if (userId !== null) {
+      setGoToCheckoutPage(true)
+    }
   }
-  
+
 
   return (
-    <button
-      id="cartcheckoutbutton"
-      onClick={onCheckoutButtonClick}
-      className="bg-blue-500 hover:bg-blue-700 hover:animate-bounce text-white p-2 rounded-md mt-5"
-    >
-      Checkout
-    </button>
+    <div>
+      <button
+        id="cartcheckoutbutton"
+        onClick={onCheckoutButtonClick}
+        className="bg-blue-500 w-24 hover:bg-blue-700 hover:animate-bounce text-white p-2 rounded-md mt-5"
+      >
+        {goToCheckoutPage ? 
+         <CircularProgress size="2vh" />
+         : "Checkout"}
+        
+      </button>
+
+      <GuestSignInModal handleCloseGuestSignInModal={handleCloseGuestSignInModal} openGuestSignInModal={openGuestSignInModal}/> 
+    </div>
   );
 };
 

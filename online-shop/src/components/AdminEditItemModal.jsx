@@ -60,7 +60,6 @@ const AdminEditItemModal = (props) => {
 
   function handleChange(event) {
     setSelectedItemToBeEdited(event.target.value);
-    console.log(event.target.value);
     firestore.readSelectedProduct(event.target.value).then((product) => {
       setItemID(product.itemId);
       setItemName(product.itemName);
@@ -121,10 +120,9 @@ const AdminEditItemModal = (props) => {
       } else {
         convertedtofirestore.push(imageLink);
       }
-      console.log(convertedtofirestore);
     });
 
-    console.log(color);
+  
 
     firestore.updateProduct(selectedItemToBeEdited, {
       itemName: checkifUndefinedAndReturnBlankString(itemName),

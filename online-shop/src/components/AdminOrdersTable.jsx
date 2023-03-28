@@ -52,7 +52,7 @@ const AdminOrdersTable = (props) => {
     const localrows = [];
 
     orders.map((order) => {
-      console.log(order);
+      
       localrows.push(
         createData(
           order.reference,
@@ -108,7 +108,7 @@ const AdminOrdersTable = (props) => {
                 onClick={() => {
                   handleRowClick(row.referenceNumber);
                 }}
-                // onClick={() => {console.log(row.referenceNumber)}}
+               
               >
                 {/* {referenceNumber, orderDate, customerName, paid, delivered, total, address, phonenumber, name} */}
                 <TableCell component="th" scope="row">

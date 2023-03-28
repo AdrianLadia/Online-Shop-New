@@ -25,8 +25,6 @@ function MyOrderCard(props) {
     }
   }
 
-  useEffect(() => {console.log(order)}, [])
-
   function onQuestionMarkClick() {
     handleOpenModal()
   }

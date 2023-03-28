@@ -58,7 +58,6 @@ const AdminMenu = () => {
       setCategories(c);
     });
     firestore.readAllUsers().then((user) => {
-      console.log(users);
       setUsers(user);
     });
   }, [refresh]);

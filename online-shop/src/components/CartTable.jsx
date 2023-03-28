@@ -17,7 +17,7 @@ const CartTable = (props) => {
 
 
     const rows = props.rows
-    console.log(rows)
+
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -68,7 +68,7 @@ const CartTable = (props) => {
                   <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                     {columns.map((column) => {
                       const value = row[column.id];
-                      console.log(column.id)
+                    
                       if (column.id === 'itemimage') {
                         return(
                           <TableCell key={column.id} align={column.align}>

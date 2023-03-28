@@ -16,6 +16,7 @@ import { CircularProgress, Typography } from '@mui/material';
 import MyOrders from './components/MyOrders';
 import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
   // Initialize Firebase
@@ -24,6 +25,7 @@ function App() {
   const auth = getAuth(app);
 
   const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
+  const navigateTo = useNavigate();
 
   useEffect(() => {
     if (!authEmulatorConnected) {
@@ -51,6 +53,14 @@ function App() {
   const [phonenumber, setPhoneNumber] = useState(null);
   const [orders, setOrders] = useState([]);
   const [payments, setPayments] = useState([]);
+  const [guestLoginClicked, setGuestLoginClicked] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
+  
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -70,13 +80,9 @@ function App() {
           if (userExists) {
             console.log('user exists');
             setUserId(user.uid);
-          } 
-          
-          else {
+          } else {
             console.log('user does not exist');
-            function delay(ms) {
-              return new Promise((resolve) => setTimeout(resolve, ms));
-            }
+            
 
             async function createNewUser() {
               await cloudfirestore.createNewUser(
@@ -119,15 +125,27 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log(userId);
+    const localStorageCart = JSON.parse(localStorage.getItem('cart'));
 
     if (userId) {
-      console.log(userId);
       cloudfirestore.readSelectedUserById(userId).then((data) => {
-        console.log(data);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
-        setCart(data.cart);
+
+        if (guestLoginClicked === true) {
+          setCart(localStorageCart);
+          firestore.createUserCart(localStorageCart, userId).then(() => {
+            localStorage.removeItem('cart');
+            console.log('cart removed from local storage');
+            setGuestLoginClicked(false);
+            setGoToCheckoutPage(true);
+          });
+        }
+        if (guestLoginClicked === false) {
+          console.log('guestLoginClicked is false');
+          setCart(data.cart);
+        }
+
         setDeliveryAddress(data.deliveryAddress);
         setPhoneNumber(data.phoneNumber);
         setOrders(data.orders);
@@ -139,6 +157,17 @@ function App() {
       });
     }
   }, [userId, refreshUser]);
+
+
+
+  useEffect(() => {
+    if (goToCheckoutPage) {
+      delay(2000).then(() => {
+        navigateTo('/checkout');
+        setGoToCheckoutPage(false);
+      });
+    }
+  }, [goToCheckoutPage]);
 
   const appContextValue = {
     userdata: userdata,
@@ -173,6 +202,11 @@ function App() {
     setContactPerson: setContactPerson,
     auth: auth,
     setIsAdmin: setIsAdmin,
+    setGuestLoginClicked: setGuestLoginClicked,
+    products: products,
+    setProducts: setProducts,
+    goToCheckoutPage: goToCheckoutPage,
+    setGoToCheckoutPage: setGoToCheckoutPage,
   };
 
   return (
@@ -209,7 +243,7 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <NavBar />
-              {userstate === 'userloading' ? (
+              {userstate === 'userloading' || cart === [] ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">
                     <div className="flex justify-center ">

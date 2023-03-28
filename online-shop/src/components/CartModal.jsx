@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Modal, Typography } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import { useContext, useState } from "react";
-import ContextOpenCart from "./ContextOpenCart";
 import { FaShoppingCart } from "react-icons/fa";
 import useWindowDimensions from "./UseWindowDimensions";
 import CheckoutButton from "./CheckoutButton";
@@ -11,9 +10,12 @@ import Fade from "@mui/material/Fade";
 import AppContext from "../AppContext";
 
 
-const CartModal = () => {
-  const [openCart, setOpenCart, finalCartData, totalPrice] =
-    useContext(ContextOpenCart);
+const CartModal = (props) => {
+  const openCart = props.openCart;
+  const setOpenCart = props.setOpenCart;
+  const finalCartData = props.finalCartData;
+  const totalPrice = props.totalPrice;
+
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
   const {

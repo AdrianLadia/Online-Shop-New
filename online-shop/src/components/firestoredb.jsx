@@ -240,7 +240,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async addItemToFavorites(userid, data) {
-    console.log('ran');
+    
     super.addDocumentArrayFromCollection('Users', userid, data, 'favoriteItems');
   }
 
@@ -266,8 +266,8 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteAddress(userid, latitude, longitude, address) {
-    console.log('deleting address');
-    console.log(latitude, longitude, address);
+  
+
     super.deleteDocumentFromCollectionArray(
       'Users',
       userid,

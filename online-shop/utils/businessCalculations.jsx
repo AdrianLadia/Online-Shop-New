@@ -247,8 +247,7 @@ class businessCalculations {
         locationsInDeliveryPoint.push(name);
       }
     });
-    console.log('locationsInDeliveryPoint');
-    console.log(locationsInDeliveryPoint);
+
 
 
     const locationsInDeliveryPointSchema = Joi.array().required();
@@ -418,7 +417,7 @@ class businessCalculations {
     const countEntries = Object.entries(count);
 
     countEntries.map(([itemId, quantity]) => {
-      console.log(itemId, quantity);
+  
       products.map((dataitem) => {
         if (dataitem.itemId === itemId) {
           const stocksAvailableLessSafetyStock = this.getStocksAvailableLessSafetyStock(
@@ -427,7 +426,6 @@ class businessCalculations {
           );
           if (stocksAvailableLessSafetyStock < quantity) {
             message = message + `${dataitem.itemName} - ${stocksAvailableLessSafetyStock} stocks left \n`;
-            console.log(itemId, 'firestore:', stocksAvailableLessSafetyStock, 'order:', quantity);
             outOfStockDetected = true;
           }
         }

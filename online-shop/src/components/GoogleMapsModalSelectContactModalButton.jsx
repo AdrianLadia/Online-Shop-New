@@ -11,14 +11,14 @@ const GoogleMapsModalSelectContactModalButton = (props) => {
   const phonenumber = props.contact.phoneNumber;
 
   function handleContactClick() {
-    console.log('clicked');
+   
     props.setLocalPhoneNumber(phonenumber);
     props.setLocalName(name);
     props.handleCloseModal();
   }
 
   function handleDeleteClick() {
-    console.log('delete clicked');
+
     firestore.deleteUserContactPersons(userId, name, phonenumber);
     setRefreshUser(!refreshUser);
   }

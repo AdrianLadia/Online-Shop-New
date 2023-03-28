@@ -50,7 +50,6 @@ const AdminOrders = (props) => {
     if (referenceNumber !== '') {
       orders.map((order) => {
         if (order.reference === referenceNumber) {
-          console.log(order.orderDate.toDate().toLocaleDateString());
           setOrders([order]);
           return;
         }

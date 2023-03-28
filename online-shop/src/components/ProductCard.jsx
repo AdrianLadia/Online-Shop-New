@@ -90,20 +90,6 @@ const ProductCard = (props) => {
   },[quantity])
 
   React.useEffect(() => {
-    console.log(
-      "Real Stock of " + product.itemName + " is " + product.stocksAvailable
-    );
-    console.log("Safety Stock of " + product.itemName + " is " + safetyStock);
-    console.log(
-      "Low Stock of " + product.itemName + " is " + (50 + safetyStock)
-    );
-    console.log(
-      "Adjusted Inventory of " +
-        product.itemName +
-        " is " +
-        (product.stocksAvailable - safetyStock)
-    );
-
     if (product.stocksAvailable <= safetyStock) {
       setOutOfStock(true);
     }

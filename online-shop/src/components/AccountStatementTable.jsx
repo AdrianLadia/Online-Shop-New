@@ -29,7 +29,6 @@ const AccountStatementTable = (props) => {
 
   function openOrderInfoModal(reference) {
     const filter = datamanipulation.getOrderFromReference(reference,orders)
-    console.log(filter)
     setOrderInfoData(filter);
     setOpen(true);
   }

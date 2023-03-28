@@ -14,18 +14,11 @@ import businessCalculations from '../../utils/businessCalculations';
 const ProductList = () => {
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
-  const [products, setProducts] = useState([]);
+
   const [refresh, setRefresh] = useState(false);
   const [selected, wholesale, retail] = useContext(SelectedCategoryContext);
   const [productdataloading, setProductDataLoading] = useState(true);
-  // const [cart, setCart] = useState([])
-  const {
-    userdata,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
- } = React.useContext(AppContext);
+  const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts } = React.useContext(AppContext);
   const favorites = favoriteitems;
 
   useEffect(() => {
@@ -37,12 +30,18 @@ const ProductList = () => {
   }, [refresh]);
 
   function RenderSelectedProducts(product_category) {
-    const selected_products = datamanipulation.getAllProductsInCategory(products, product_category,wholesale,retail,favorites);
+    const selected_products = datamanipulation.getAllProductsInCategory(
+      products,
+      product_category,
+      wholesale,
+      retail,
+      favorites
+    );
     return selected_products;
   }
 
   function AddToCart(item, quantity) {
-    const newCart = businesscalculations.addToCartWithQuantity(item,quantity,cart)
+    const newCart = businesscalculations.addToCartWithQuantity(item, quantity, cart);
     setCart(newCart);
   }
 
@@ -85,9 +84,7 @@ const ProductList = () => {
           })
         )}
       </div>
-      <CartContext.Provider value={[cart, setCart, products]}>
-        <OpenCartButton />
-      </CartContext.Provider>
+      <OpenCartButton />
     </div>
   );
 };

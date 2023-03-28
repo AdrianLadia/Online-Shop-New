@@ -131,7 +131,6 @@ const AdminAddItemModal = (props) => {
 
   useEffect(() => {
     firestore.readAllParentProducts().then((data) => {
-      console.log(data);
       setParentProducts(data);
     });
 

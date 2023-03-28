@@ -37,9 +37,6 @@ const MyOrderCardModal = (props) => {
   const handleClose = props.handleClose;
   const order = props.order;
 
-  useEffect(() => {
-    console.log(order);
-  }, []);
 
   return (
     <div>

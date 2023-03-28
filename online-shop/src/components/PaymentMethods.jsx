@@ -15,9 +15,7 @@ function PaymentMethods() {
   const [solanaselected, setSolanaselected] = useState(false);
 
   useEffect(() => {
-    console.log('---------------------')
-    console.log("BDO", bdoselected);
-    console.log("Unionbank", unionbankselected);
+
     if (bdoselected === true) {
       setUnionbankselected(false);
       setGcashselected(false);

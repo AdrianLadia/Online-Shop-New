@@ -9,72 +9,11 @@ import { GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, getAuth, sig
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 import Logo from './Logo';
+import LoginButton from './LoginButton';
 
-function PositionedMenu() {
-  const {auth} = useContext(AppContext);
-
-  async function signIn(signInProvider) {
-    setAnchorEl(null);
-    const result = await signInWithPopup(auth, signInProvider);
-    const user = result.user;
-  }
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <div>
-      <Button
-        id="demo-positioned-button"
-        aria-controls={open ? 'demo-positioned-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-        sx={{ bgcolor: 'green' }}
-      >
-        Login
-      </Button>
-      <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-      >
-        <MenuItem
-          onClick={() => {
-            signIn(new GoogleAuthProvider());
-          }}
-        >
-          <FcGoogle className="mr-2" />
-          Login With Google
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            signIn(new FacebookAuthProvider());
-          }}
-        >
-          <FaFacebook className="mr-2" />
-          Login With Facebook
-        </MenuItem>
-      </Menu>
-    </div>
-  );
-}
+// function PositionedMenu() {
+//  
+// }
 
 const userMenu = ['My Account', 'Orders History', 'Logout'];
 
@@ -96,7 +35,7 @@ const NavBar = () => {
         <Logo />
 
         <div className="flex flex-row mr-5 ">
-          {userdata ? <AccountMenu userdata={userdata} signout={logOutClick} /> : <PositionedMenu />}
+          {userdata ? <AccountMenu userdata={userdata} signout={logOutClick} /> :<LoginButton position={'left'} />}
         </div>
       </div>
       <div></div>

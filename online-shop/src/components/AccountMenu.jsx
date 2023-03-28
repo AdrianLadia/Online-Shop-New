@@ -62,8 +62,6 @@ const AccountMenu = (props) => {
     navigateTo("/accountstatement");
   }
 
-  useEffect(() => {console.log(userdata)}, []);
-  
 
   return (
     <React.Fragment>

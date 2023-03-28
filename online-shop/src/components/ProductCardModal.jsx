@@ -97,7 +97,6 @@ const ProductCardModal = (props) => {
     }
   }
 
-    // console.log(props.product);
     const size = props.product.size;
     const color = props.product.color;
     const material = props.product.material;

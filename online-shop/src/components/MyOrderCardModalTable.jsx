@@ -33,8 +33,7 @@ const MyOrderCardModalTable = (props) => {
         products,
         cart
       );
-      console.log('rows_non_state', rows_non_state);
-      console.log(order);
+
       setRows(rows_non_state);
     }
 

@@ -14,7 +14,7 @@ const PersonalInfoForm = () => {
     favoriteitems,
     setFavoriteItems,
   ] = useContext(AppContext);
-  console.log(userdata);
+
   return (
     <div>
       {userdata ? (

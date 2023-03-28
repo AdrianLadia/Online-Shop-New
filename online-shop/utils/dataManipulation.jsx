@@ -3,6 +3,7 @@
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { parseISO } from 'date-fns';
 import Joi from 'joi';
+import businessCalculations from './businessCalculations';
 
 class dataManipulation {
   constructor() {}
@@ -488,7 +489,11 @@ class dataManipulation {
       });
     });
 
-    const toReturn = [rows_non_state, total_non_state, total_weight_non_state];
+    const businesscalculations = new businessCalculations();
+    const vat = businesscalculations.getValueAddedTax(total_non_state);
+    const items_total = total_non_state - vat;
+
+    const toReturn = [rows_non_state, items_total, total_weight_non_state, vat];
     
     const schema = Joi.array().ordered(
       Joi.array(),
@@ -531,7 +536,7 @@ class dataManipulation {
         }
       });
     });
-    console.log(cart_data);
+ 
 
     const cartDataSchema = Joi.array().items(
       Joi.object({

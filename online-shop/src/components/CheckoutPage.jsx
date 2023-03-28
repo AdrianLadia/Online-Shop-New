@@ -63,6 +63,10 @@ const CheckoutPage = () => {
   const paperboylongitude = paperboylocation.longitude;
 
   useEffect(() => {
+    setRefreshUser(!refreshUser);
+  }, []);
+
+  useEffect(() => {
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -74,10 +78,10 @@ const CheckoutPage = () => {
     setArea(areasInsideDeliveryLocation);
     const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
-      console.log(needAssistance);
+     
       const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
       const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
-      console.log(deliveryFee);
+      
       setDeliveryFee(deliveryFee);
       setDeliveryVehicle(vehicleObject);
     }
@@ -121,8 +125,6 @@ const CheckoutPage = () => {
       // Place Order
       // setLaunchPayMayaCheckout(true);
 
-      console.log(userdata)
-      
       try{
         const status = await cloudfirestoredb.transactionPlaceOrder(
           {        userid : userdata.uid,
@@ -187,8 +189,6 @@ const CheckoutPage = () => {
   }, [area]);
 
   useEffect(() => {
-    const vat = businesscalculations.getValueAddedTax(total);
-    setVat(vat);
     const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee);
     setGrandTotal(grandTotal);
   }, [total, vat, deliveryFee]);
@@ -459,6 +459,7 @@ const CheckoutPage = () => {
                   setTotalWeight={setTotalWeight}
                   deliveryVehicleObject={deliveryVehicle}
                   setDeliveryVehicle={setDeliveryVehicle}
+                  setVat={setVat}
                   area={area}
                 />
               )}

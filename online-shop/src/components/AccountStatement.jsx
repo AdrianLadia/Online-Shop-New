@@ -19,10 +19,8 @@ const AccountStatement = () => {
   useEffect(() => {
     const dataToUse = datamanipulation.accountStatementData(orders, payments);
 
-    console.log(dataToUse);
     setTableData(dataToUse);
 
-    // console.log(data)
   }, [orders]);
 
   return (

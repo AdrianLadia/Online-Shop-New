@@ -18,7 +18,7 @@ const ProductCardModalTable = (props) => {
     let rows = []
     Object.keys(props.specs).map((key) => {
         rows.push(createData(key,props.specs[key])) // key is the key of the object, props.specs[key] is the value of the key of the object
-        // console.log(key)
+     
     })
 
     function responsiveTableWidth() {

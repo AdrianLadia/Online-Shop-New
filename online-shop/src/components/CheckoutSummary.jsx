@@ -19,7 +19,7 @@ const CheckoutSummary = (props) => {
   const [loading, setLoading] = React.useState(true);
 
   const datamanipulation = new dataManipulation();
-
+  const setVat = props.setVat;
   const total = props.total;
   const setTotal = props.setTotal;
   const deliveryFee = props.deliveryFee;
@@ -34,11 +34,11 @@ const CheckoutSummary = (props) => {
   useEffect(() => {
     async function getTableData() {
       const products = await firestore.readAllProducts();
-      const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
+      const [rows_non_state, total_non_state, total_weight_non_state,vat] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart
       );
-
+      setVat(vat);
       setRows(rows_non_state);
       setLoading(false);
       setTotal(total_non_state);
