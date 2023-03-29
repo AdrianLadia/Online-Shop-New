@@ -125,10 +125,12 @@ function App() {
 
   useEffect(() => {
     // FLOW FOR GUEST LOGIN
-    const localStorageCart = JSON.parse(localStorage.getItem('cart'));
-
-    if (userId) {
-      cloudfirestore.readSelectedUserById(userId).then((data) => {
+    async function setAllUserData() {
+      const localStorageCart = JSON.parse(localStorage.getItem('cart'));
+      if (userId) {
+        console.log(userId)
+        const data = await cloudfirestore.readSelectedUserById(userId);
+        console.log(data)
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -147,8 +149,13 @@ function App() {
         }
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
-        if (data.userRole === 'admin' || data.userRole === 'superAdmin') {
+        const adminRoles = ['admin', 'superAdmin'];
+
+        const userRole = await cloudfirestore.readUserRole(data.uid);
+        if (adminRoles.includes(userRole)) {
           setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
         }
         // ADMIN CHECK
 
@@ -160,8 +167,9 @@ function App() {
         // LAST TO RUN
         setUserState('userloaded');
         setUserLoaded(true);
-      });
+      }
     }
+    setAllUserData();
   }, [userId, refreshUser]);
 
   useEffect(() => {

@@ -88,11 +88,15 @@ class dataManipulation {
       });
     }
 
+    console.log(data)
     data.sort((a, b) => {
+      
       if (forTesting) {
         return b.date - a.date;
       } else {
-        return b.date.toDate() - a.date.toDate();
+        const dateA = new Date(a.date)
+        const dateB = new Date(b.date)
+        return dateB - dateA
       }
     });
 
@@ -147,7 +151,7 @@ class dataManipulation {
         const parsed = parseISO(item[0]);
         date = format(parsed, 'M/d/yyyy');
       } else {
-        date = item[0].toDate().toLocaleDateString();
+        date = new Date(item[0]).toLocaleDateString()
       }
 
       rowsdata.push(createData(date, item[1], item[2], item[3], item[4], item[5]));
@@ -428,7 +432,7 @@ class dataManipulation {
   }
 
   getCategoryList(categories) {
-    const c = ['Favorites'];
+    const c = [];
     categories.map((category) => {
       c.push(category.category);
     });
@@ -439,7 +443,9 @@ class dataManipulation {
       throw new Error(error);
     }
 
-    return c;
+    const categoryWithFavorites = ['Favorites', ...c.sort()];
+
+    return categoryWithFavorites;
   }
 
   getCheckoutPageTableDate(product_list, cart) {
@@ -494,12 +500,8 @@ class dataManipulation {
     const items_total = total_non_state - vat;
 
     const toReturn = [rows_non_state, items_total, total_weight_non_state, vat];
-    
-    const schema = Joi.array().ordered(
-      Joi.array(),
-      Joi.number(),
-      Joi.number()
-    )
+
+    const schema = Joi.array().ordered(Joi.array(), Joi.number(), Joi.number());
 
     const { error3 } = schema.validate(toReturn);
 
@@ -507,7 +509,7 @@ class dataManipulation {
       throw new Error(error3);
     }
 
-    return toReturn 
+    return toReturn;
   }
 
   manipulateCartData(cart) {
@@ -536,17 +538,16 @@ class dataManipulation {
         }
       });
     });
- 
 
     const cartDataSchema = Joi.array().items(
       Joi.object({
         itemId: Joi.string().required(),
         quantity: Joi.number().required(),
       }).unknown(false)
-    )
+    );
 
     const { error2 } = cartDataSchema.validate(cart_data);
-      
+
     if (error2) {
       throw new Error(error2);
     }

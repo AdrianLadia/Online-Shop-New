@@ -1,11 +1,16 @@
 import serviceAreas from '../src/data/serviceAreas';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
 import Joi from 'joi';
+import cloudFirestoreDb from '../src/cloudFirestoreDb';
+
+
+
 
 class businessCalculations {
   constructor() {
     this.serviceareas = new serviceAreas();
     this.lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
+    this.cloudfirestore = new cloudFirestoreDb();
   }
 
   getSafetyStock(averageSalesPerDay) {
@@ -392,14 +397,12 @@ class businessCalculations {
     return finalDelFee;
   }
 
-  async checkStocksIfAvailableInFirestore(products, cart) {
-    const productsSchema = Joi.array().required();
+  async checkStocksIfAvailableInFirestore(cart) {
     const cartSchema = Joi.array().required();
 
-    const { error1 } = productsSchema.validate(products);
     const { error2 } = cartSchema.validate(cart);
 
-    if (error1 || error2) {
+    if (error2) {
       throw new Error('Data Validation Error');
     }
 
@@ -415,18 +418,28 @@ class businessCalculations {
     let outOfStockDetected = false;
     const count = countStrings(cart);
     const countEntries = Object.entries(count);
-
+    console.log(countEntries)
+    const products = await this.cloudfirestore.readAllProductsForOnlineStore()
+    console.log(products);
     countEntries.map(([itemId, quantity]) => {
-  
       products.map((dataitem) => {
         if (dataitem.itemId === itemId) {
           const stocksAvailableLessSafetyStock = this.getStocksAvailableLessSafetyStock(
             dataitem.stocksAvailable,
             dataitem.averageSalesPerDay
           );
+          console.log(stocksAvailableLessSafetyStock);
           if (stocksAvailableLessSafetyStock < quantity) {
-            message = message + `${dataitem.itemName} - ${stocksAvailableLessSafetyStock} stocks left \n`;
+            let stocksLeft
+            if  (stocksAvailableLessSafetyStock < 0 ) {
+              stocksLeft = 0;
+            }
+            else {
+              stocksLeft = stocksAvailableLessSafetyStock;
+            }
+            message = message + `${dataitem.itemName} - ${stocksLeft} stocks left \n`;
             outOfStockDetected = true;
+            console.log(outOfStockDetected);
           }
         }
       });
@@ -445,6 +458,7 @@ class businessCalculations {
         throw new Error('Data Validation Error');
       }
       
+      console.log(toReturn);
       return toReturn
 
 
@@ -455,6 +469,7 @@ class businessCalculations {
       if (error4) {
         throw new Error('Data Validation Error');
       }
+      console.log(toReturn);
       return toReturn 
     }
   }

@@ -56,7 +56,7 @@ const AdminOrdersTable = (props) => {
       localrows.push(
         createData(
           order.reference,
-          order.orderDate.toDate().toLocaleDateString(),
+          new Date(order.orderDate).toLocaleDateString(),
           order.userName,
           order.paid ? "YES" : "NO",
           order.delivered ? "YES" : "NO",

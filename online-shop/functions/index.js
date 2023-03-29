@@ -61,7 +61,6 @@ function getValueAddedTax(totalPrice) {
 
 exports.readUserRole = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-   
     try {
       const userid = req.query.data
       console.log(userid)
@@ -233,6 +232,33 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
         const userData = user.data();
         const deliveryAddress = userData.deliveryAddress;
         const contactPerson = userData.contactPerson;
+        const cartUniqueItems = Array.from(new Set(data.cart))
+        const ordersOnHold = {}
+        const currentInventory = {}
+
+        await Promise.all(cartUniqueItems.map(async(c) => {
+          const productRef = db.collection('Products').doc(c)
+          const productdoc = await transaction.get(productRef);
+          // currentInventory.push(productdoc.data().stocksAvailable)
+          ordersOnHold[c] = productdoc.data().stocksOnHold
+          currentInventory[c] = productdoc.data().stocksAvailable
+        }))
+
+        
+        // WRITE
+        // WRITE TO PRODUCTS ON HOLD
+        await Promise.all(cartUniqueItems.map(async (itemId) => {
+          const prodref = db.collection('Products').doc(itemId)
+          const orderQuantity = data.cart.filter((c) => c == itemId).length
+          const newStocksAvailable = currentInventory[itemId] - orderQuantity
+          console.log(ordersOnHold)
+          console.log(itemId)
+          const oldOrdersOnHold = ordersOnHold[itemId]
+          const newOrderOnHold = {reference:reference,quantity:orderQuantity,userId:userid}
+          const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold]
+          transaction.update(prodref, {['stocksOnHold']: oldAndNewOrdersOnHold});
+          transaction.update(prodref, {['stocksAvailable']: newStocksAvailable});
+        }))
 
         // WRITE TO DELIVER ADDRESS LIST
         let addressexists = false;
@@ -320,7 +346,6 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
         const updatedOrders = [newOrder, ...oldOrders];
 
         transaction.update(userRef, { orders: updatedOrders });
-
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
         transaction.update(userRef, { cart: [] });
         res.end();

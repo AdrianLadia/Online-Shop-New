@@ -17,6 +17,8 @@ const AccountStatement = () => {
   const handleClose = () => setOpen(false);
 
   useEffect(() => {
+    console.log('orders', orders);
+    console.log('payments', payments);
     const dataToUse = datamanipulation.accountStatementData(orders, payments);
 
     setTableData(dataToUse);

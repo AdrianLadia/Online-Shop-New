@@ -13,14 +13,14 @@ import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';
 
 const AdminMenu = () => {
-  const { firestore } = React.useContext(AppContext);
+  const {products,firestore } = React.useContext(AppContext);
 
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
   const [selectedMenu, setSelectedMenu] = React.useState('Dashboard');
-  let [products, setProducts] = useState([]);
+ 
   let [categories, setCategories] = useState([]);
   let [users, setUsers] = useState([]);
 
@@ -51,9 +51,7 @@ const AdminMenu = () => {
   };
 
   useEffect(() => {
-    firestore.readAllProducts().then((products) => {
-      setProducts(products);
-    });
+
     firestore.readAllCategories().then((c) => {
       setCategories(c);
     });

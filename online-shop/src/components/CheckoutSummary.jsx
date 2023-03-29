@@ -13,7 +13,7 @@ import { Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
 
 const CheckoutSummary = (props) => {
-  const { firestore, cart } = useContext(AppContext);
+  const { firestore, cart,products } = useContext(AppContext);
 
   let [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -33,7 +33,6 @@ const CheckoutSummary = (props) => {
 
   useEffect(() => {
     async function getTableData() {
-      const products = await firestore.readAllProducts();
       const [rows_non_state, total_non_state, total_weight_non_state,vat] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart

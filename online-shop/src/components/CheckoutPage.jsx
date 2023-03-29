@@ -22,7 +22,7 @@ import cloudFirestoreDb from '../cloudFirestoreDb';
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
-  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate } = React.useContext(AppContext);
+  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate,products } = React.useContext(AppContext);
 
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -58,6 +58,7 @@ const CheckoutPage = () => {
   const [useShippingLine, setUseShippingLine] = useState(false);
   const paperboylocation = new paperBoyLocation();
   const businesscalculations = new businessCalculations();
+  const cloudfirestore = new cloudFirestoreDb();
 
   const paperboylatitude = paperboylocation.latitude;
   const paperboylongitude = paperboylocation.longitude;
@@ -110,10 +111,8 @@ const CheckoutPage = () => {
 
   async function onPlaceOrder() {
     // Check if order has enough stocks
-    const readproducts = await firestore.readAllProducts();
-    const [outOfStockDetected, message] = await businesscalculations.checkStocksIfAvailableInFirestore(
-      readproducts,
-      cart
+    const readproducts = products
+    const [outOfStockDetected, message] = await businesscalculations.checkStocksIfAvailableInFirestore(cart
     );
     if (outOfStockDetected) {
       alert(message);

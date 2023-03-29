@@ -12,13 +12,15 @@ import dataManipulation from '../../utils/dataManipulation';
 import businessCalculations from '../../utils/businessCalculations';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 
-const ProductList = () => {
+const ProductList = (props) => {
+  const wholesale = props.wholesale
+  const retail = props.retail;
+  const selectedCategory = props.selectedCategory;
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
   const cloudfirestoredb = new cloudFirestoreDb();
 
   const [refresh, setRefresh] = useState(false);
-  const [selected, wholesale, retail] = useContext(SelectedCategoryContext);
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts } = React.useContext(AppContext);
   const favorites = favoriteitems;
@@ -68,7 +70,7 @@ const ProductList = () => {
           <div className="flex w-full justify-center items-center mt-40">
             <CircularProgress size={150} className="" />
           </div>
-        ) : RenderSelectedProducts(selected).length === 0 && selected === 'Favorites' ? (
+        ) : RenderSelectedProducts(selectedCategory).length === 0 && selectedCategory === 'Favorites' ? (
           <div>
             <h1 className="text-3xl font-bold text-center mt-10">No Favorites</h1>
             <h3 className="text-1xl font-bold text-center mt-10 mx-10">
@@ -76,7 +78,7 @@ const ProductList = () => {
             </h3>
           </div>
         ) : (
-          RenderSelectedProducts(selected).map((product, index) => {
+          RenderSelectedProducts(selectedCategory).map((product, index) => {
             return (
               <div>
                 <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} />

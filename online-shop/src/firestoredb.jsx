@@ -31,8 +31,8 @@ class firestoredb extends firestorefunctions {
       stocksOnHoldCompleted: Joi.array().required(),
       forOnlineStore: Joi.boolean().required(),
       isCustomized: Joi.boolean().required(),
-      salesPerMonth: Joi.array().required(),
-      stocksIns: Joi.array().required(),
+      salesPerMonth: Joi.array(),
+      stocksIns: Joi.array(),
     }).unknown(false);
 
     try {
@@ -70,8 +70,8 @@ class firestoredb extends firestorefunctions {
         stocksOnHoldCompleted: Joi.array().required(),
         unit: Joi.string().required(),
         weight: Joi.number().required(),
-        salesPerMonth: Joi.array().required(),
-        stocksIns: Joi.array().required(),
+        salesPerMonth: Joi.array(),
+        stocksIns: Joi.array(),
       }).unknown(false)
     );
 
@@ -109,8 +109,8 @@ class firestoredb extends firestorefunctions {
       stocksOnHoldCompleted: Joi.array().required(),
       unit: Joi.string().required(),
       weight: Joi.number().required(),
-      salesPerMonth: Joi.array().required(),
-      stocksIns: Joi.array().required(),
+      salesPerMonth: Joi.array(),
+      stocksIns: Joi.array(),
     }).unknown(false);
 
     try {

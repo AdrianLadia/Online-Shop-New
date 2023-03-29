@@ -13,7 +13,7 @@ import { ContentCutOutlined } from '@mui/icons-material';
 import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
-  const { firestore } = React.useContext(AppContext);
+  const { products } = React.useContext(AppContext);
 
   const { width, height } = useWindowDimensions();
   function getMaxHeightTable() {
@@ -28,7 +28,7 @@ const MyOrderCardModalTable = (props) => {
 
   useEffect(() => {
     async function getTableData() {
-      const products = await firestore.readAllProducts();
+    
       const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart
