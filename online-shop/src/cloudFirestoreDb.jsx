@@ -138,11 +138,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   async readUserRole(userId) {
     const userIdSchema = Joi.string();
 
-    const { error } = userIdSchema.validate(userId);
+    const { error1 } = userIdSchema.validate(userId);
 
-    if (error) {
-      alert(error.message);
-      throw new Error(error.message);
+    if (error1) {
+      alert(error1.message);
+      throw new Error(error1.message);
     }
 
     try {
@@ -150,18 +150,16 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         `http://127.0.0.1:5001/online-store-paperboy/us-central1/readUserRole?data=${userId}`
       );
 
-      const toReturn = response.data
-      
-      const userRoleSchema = Joi.string().required()
+      const toReturn = response.data;
+      const userRoleSchema = Joi.string().required();
+      const { error2 } = userRoleSchema.validate(toReturn);
 
-      const {error} = userRoleSchema.validate(toReturn)
-
-      if ( error) {
-        alert(error.message)
-        throw new Error(error.message)
+      if (error2) {
+        alert(error2.message);
+        throw new Error(error.message);
       }
-      
-      return toReturn
+
+      return toReturn;
     } catch (error) {
       // Handle the 400 error messages
       const errorMessage = error.response.data;

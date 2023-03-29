@@ -64,12 +64,15 @@ exports.readUserRole = functions.https.onRequest(async (req, res) => {
    
     try {
       const userid = req.query.data
+      console.log(userid)
       const db = admin.firestore();
       const user = await db.collection('Users').doc(userid).get();
       const userRole = user.data().userRole;
+      console.log(userRole)
       res.send(userRole);
     }
     catch (error) {
+      console.log(error)
       res.status(400).send('Error reading user role. Please try again later');
     }
 
