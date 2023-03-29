@@ -19,6 +19,8 @@ const userMenu = ['My Account', 'Orders History', 'Logout'];
 
 const NavBar = () => {
   const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart } = useContext(AppContext);
+  
+  console.log(userdata,auth)
   async function logOutClick() {
     await signOut(auth);
     setUserId(null);
@@ -31,6 +33,7 @@ const NavBar = () => {
 
   return (
     <div>
+      a
       <div className="flex items-center justify-between flex-wrap bg-teal-500 w-full h-16 ">
         <Logo />
 
