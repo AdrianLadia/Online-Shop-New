@@ -1,6 +1,6 @@
-import firestorefunctions from '../firestorefunctions';
+import firestorefunctions from './firestorefunctions';
 import Joi from 'joi';
-import schemas from '../schemas/schemas';
+import schemas from './schemas/schemas';
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {

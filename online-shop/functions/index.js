@@ -59,6 +59,24 @@ function getValueAddedTax(totalPrice) {
   return roundedVat;
 }
 
+exports.readUserRole = functions.https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+   
+    try {
+      const userid = req.query.data
+      const db = admin.firestore();
+      const user = await db.collection('Users').doc(userid).get();
+      const userRole = user.data().userRole;
+      res.send(userRole);
+    }
+    catch (error) {
+      res.status(400).send('Error reading user role. Please try again later');
+    }
+
+    
+  });
+});
+
 exports.readAllProductsForOnlineStore = functions.https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {

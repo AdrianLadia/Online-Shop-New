@@ -56,7 +56,6 @@ function App() {
   const [guestLoginClicked, setGuestLoginClicked] = useState(false);
   const [products, setProducts] = useState([]);
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
-  
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -71,10 +70,6 @@ function App() {
         console.log('FOUND USER', user.uid);
         setUserState('userloading');
 
-        if (user.uid === 'PN4JqXrjsGfTsCUEEmaR5NO6rNF3') {
-          setIsAdmin(true);
-        }
-
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           console.log(userExists);
           if (userExists) {
@@ -82,7 +77,6 @@ function App() {
             setUserId(user.uid);
           } else {
             console.log('user does not exist');
-            
 
             async function createNewUser() {
               // "member": Represents a registered user with standard privileges, such as creating and editing their own content.
@@ -103,7 +97,7 @@ function App() {
                   cart: [],
                   favoriteItems: [],
                   payments: [],
-                  userRole: 'member'
+                  userRole: 'member',
                 },
                 user.uid
               );
@@ -130,6 +124,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    // FLOW FOR GUEST LOGIN
     const localStorageCart = JSON.parse(localStorage.getItem('cart'));
 
     if (userId) {
@@ -150,6 +145,12 @@ function App() {
           console.log('guestLoginClicked is false');
           setCart(data.cart);
         }
+        // FLOW FOR GUEST LOGIN
+        // ADMIN CHECK
+        if (data.userRole === 'admin' || data.userRole === 'superAdmin') {
+          setIsAdmin(true);
+        }
+        // ADMIN CHECK
 
         setDeliveryAddress(data.deliveryAddress);
         setPhoneNumber(data.phoneNumber);
@@ -162,8 +163,6 @@ function App() {
       });
     }
   }, [userId, refreshUser]);
-
-
 
   useEffect(() => {
     if (goToCheckoutPage) {

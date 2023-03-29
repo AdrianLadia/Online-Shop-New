@@ -1,7 +1,7 @@
 import cloudFirestoreFunctions from './cloudFirestoreFunctions';
 import axios from 'axios';
 import Joi from 'joi';
-import schemas from './schemas/schemas'
+import schemas from './schemas/schemas';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor() {
@@ -46,7 +46,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async createNewUser(data, userId) {
-    const schema = schemas.userSchema()
+    const schema = schemas.userSchema();
 
     const { error } = schema.validate(data);
     if (error) {
@@ -135,6 +135,41 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
+  async readUserRole(userId) {
+    const userIdSchema = Joi.string();
+
+    const { error } = userIdSchema.validate(userId);
+
+    if (error) {
+      alert(error.message);
+      throw new Error(error.message);
+    }
+
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readUserRole?data=${userId}`
+      );
+
+      const toReturn = response.data
+      
+      const userRoleSchema = Joi.string().required()
+
+      const {error} = userRoleSchema.validate(toReturn)
+
+      if ( error) {
+        alert(error.message)
+        throw new Error(error.message)
+      }
+      
+      return toReturn
+    } catch (error) {
+      // Handle the 400 error messages
+      const errorMessage = error.response.data;
+      console.error('Error:', errorMessage);
+      alert(errorMessage);
+    }
+  }
+
   async readAllProductsForOnlineStore() {
     try {
       const response = await axios.get(
@@ -161,21 +196,18 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           stocksAvailable: Joi.number().required(),
           unit: Joi.string().required(),
           weight: Joi.number().required(),
-        }).unknown(false))
+        }).unknown(false)
+      );
 
-        const {error} = toReturnSchema.validate(toReturn);
+      const { error } = toReturnSchema.validate(toReturn);
 
-        if(error) {
-          alert(error.message);
-          throw new Error(error.message);
-        }
+      if (error) {
+        alert(error.message);
+        throw new Error(error.message);
+      }
 
-        return toReturn;
-    }
-
-
-
-    catch(error) {
+      return toReturn;
+    } catch (error) {
       if (error.response && error.response.status === 400) {
         // Handle the 400 error messages
         const errorMessage = error.response.data;
@@ -188,7 +220,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       }
     }
   }
-
 }
 
 export default cloudFirestoreDb;
