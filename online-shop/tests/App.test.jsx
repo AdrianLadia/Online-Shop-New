@@ -19,13 +19,31 @@ const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
 const cloudfirestorefunctions = new cloudFirestoreFunctions();
 const cloudfirestore = new cloudFirestoreDb();
-const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', 'PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', 'NSrPrIoJoaDVSSRCVX2Lct2wiBhm');
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 describe('Business Calcualtions', () => {
+  test('readAllParentProductsFromOnlineStoreProducts', async () => {
+    const products = await cloudfirestore.readAllProductsForOnlineStore();
+    await delay(100);
+    const parentProducts = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products);
+    expect(parentProducts.length).toBeGreaterThan(0);
+    const promises = []
+    parentProducts.map((parentProduct) => {
+      const data = firestore.readSelectedDataFromCollection('Products',parentProduct);
+      promises.push(data);
+    });
+
+    const results = await Promise.all(promises);
+
+    results.map((result) => {
+      expect(result.parentProductID).toBe('');
+    });
+
+  });
   test('getSafetyStock', () => {
     const averageSalesPerDay = 20;
     expect(businesscalculations.getSafetyStock(averageSalesPerDay)).toBe(40);
@@ -36,7 +54,24 @@ describe('Business Calcualtions', () => {
     expect(businesscalculations.getStocksAvailableLessSafetyStock(stocksAvailable, safetyStock)).toBe(20);
   });
   test('getCartCount', async () => {
-    const cart = ['PPB#1','PPB#1','PPB#1','PPB#1','PPB#1','PPB#10','PPB#10','PPB#10','PPB#10','PPB#10','PPB#12','PPB#12','PPB#12','PPB#16','PPB#16','PPB#16']
+    const cart = [
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#1',
+      'PPB#10',
+      'PPB#10',
+      'PPB#10',
+      'PPB#10',
+      'PPB#10',
+      'PPB#12',
+      'PPB#12',
+      'PPB#12',
+      'PPB#16',
+      'PPB#16',
+      'PPB#16',
+    ];
     expect(businesscalculations.getCartCount(cart)).toEqual({
       'PPB#1': 5,
       'PPB#10': 5,
@@ -153,17 +188,16 @@ describe('Business Calcualtions', () => {
     const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5, cart);
     expect(newCart).toEqual([...cart, 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1']);
   });
-  test('checkIfAreasHasLalamoveServiceArea' , () => {
+  test('checkIfAreasHasLalamoveServiceArea', () => {
     const areas = ['generalSantosArea', 'lalamoveServiceArea'];
     const result = businesscalculations.checkIfAreasHasLalamoveServiceArea(areas);
     expect(result).toBe(true);
-  })
+  });
 });
 
 describe('Data Manipulation', () => {
   test('AccountStatement', () => {
     const orders = user.orders;
-
     const payments = user.payments;
 
     orders.forEach((order) => {
@@ -175,7 +209,7 @@ describe('Data Manipulation', () => {
       payment.date = new Date(payment.date.seconds * 1000 + payment.date.nanoseconds / 1000000);
     });
 
-    const data = datamanipulation.accountStatementData(orders, payments, true)
+    const data = datamanipulation.accountStatementData(orders, payments);
   });
   test('AccountStatementTable', () => {
     const tableData = [
@@ -225,31 +259,30 @@ describe('Data Manipulation', () => {
     const datamanipulation = new dataManipulation();
     const orders = user.orders;
     const reference = '13542212023-444266';
-    datamanipulation.getOrderFromReference(reference, orders, true)
+    datamanipulation.getOrderFromReference(reference, orders);
   });
   test('getAllCustomerNamesFromUsers', async () => {
     const users = await firestore.readAllUsers();
-    await delay(100)
+    await delay(100);
     // const expected = ['Adrian Anton Ladia', 'Adrian Ladia'];
     const data = datamanipulation.getAllCustomerNamesFromUsers(users);
     // expect(data).toEqual(expected);
     expect(data).not.toBe([]);
-
   });
   test('getUserUidFromUsers', async () => {
     const users = await firestore.readAllUsers();
-    await delay(100)
+    await delay(100);
     const uid = datamanipulation.getUserUidFromUsers(users, 'Adrian Ladia');
     expect(uid).toEqual('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
   });
   test('filterOrders', async () => {
     const orders = await firestore.readAllOrders();
-    await delay(100)
+    await delay(100);
     let filtered = datamanipulation.filterOrders(orders, '', '', null, true, '');
   });
   test('getCategoryList', async () => {
     const categories = await firestore.readAllCategories();
-    await delay(100)
+    await delay(100);
     const allCategories = datamanipulation.getCategoryList(categories);
     const expected = ['Favorites'];
     categories.map((category) => {
@@ -259,7 +292,7 @@ describe('Data Manipulation', () => {
   });
   test('getCheckoutPageTableDate', async () => {
     const products = await firestore.readAllProducts();
-    await delay(100)
+    await delay(100);
 
     const cart = user.cart;
     const data = datamanipulation.getCheckoutPageTableDate(products, cart);
@@ -281,7 +314,7 @@ describe('Data Manipulation', () => {
   });
   test('getAllProductsInCategory', async () => {
     const products = await firestore.readAllProducts();
-    await delay(100)
+    await delay(100);
     const favorites = user.favoriteItems;
     const selected_products = datamanipulation.getAllProductsInCategory(products, 'Favorites', true, false, favorites);
   });
@@ -290,20 +323,20 @@ describe('Data Manipulation', () => {
 describe('Emulator', () => {
   test('Emulator Connected to Firestore', async () => {
     await firestore.createTestCollection();
-    await delay(100)
+    await delay(100);
   });
 
   test('read test collection', async () => {
     const data = await firestore.readTestCollection();
-    await delay(100)
+    await delay(100);
     expect(data).toEqual([{ name: 'test' }]);
   });
 
   test('delete test collection', async () => {
     await firestore.deleteTestCollection();
-    await delay(100)
+    await delay(100);
     const data = await firestore.readTestCollection();
-    await delay(100)
+    await delay(100);
     expect(data).toEqual([]);
     // tet
   });
@@ -312,87 +345,82 @@ describe('Emulator', () => {
 describe('firestorefunctions', async () => {
   test('createDocument', async () => {
     await firestore.createDocument({ test: 'test' }, 'test', 'Products');
-    await delay(100)
+    await delay(100);
     const data = await firestore.readSelectedDataFromCollection('Products', 'test');
     expect(data).toEqual({ test: 'test' });
   });
 
   test('readAllDataFromCollection', async () => {
     const data = await firestore.readAllDataFromCollection('Products');
-    await delay(100)
+    await delay(100);
     expect(data).not.toBe([]);
   });
   test('readAllIdsFromCollection', async () => {
     const data = await firestore.readAllIdsFromCollection('Products');
-    await delay(100)
+    await delay(100);
     expect(data).not.toBe([]);
   });
   test('readSelectedDataFromCollection', async () => {
-    const data = await firestore.readSelectedDataFromCollection('Products','test');
-    await delay(100)
+    const data = await firestore.readSelectedDataFromCollection('Products', 'test');
+    await delay(100);
     expect(data).not.toBe([]);
   });
   test('updateDocumentFromCollection', async () => {
     const olddata = await firestore.readSelectedDataFromCollection('Products', 'test');
-    await delay(100)
+    await delay(100);
     await firestore.updateDocumentFromCollection('Products', 'test', { test: 'test2' });
-    await delay(100)
+    await delay(100);
     const newdata = await firestore.readSelectedDataFromCollection('Products', 'test');
-    await delay(100)
+    await delay(100);
     expect(newdata).not.toBe(olddata);
   });
   test('deleteDocumentFromCollection', async () => {
     const olddata = await firestore.readAllIdsFromCollection('Products');
-    await delay(100)
+    await delay(100);
     const newdata = firestore.deleteDocumentFromCollection('Products', 'test');
     expect(newdata).not.toBe(olddata);
   });
   test('addDocumentArrayFromCollection', async () => {
     await firestore.createDocument({ testarray: [] }, 'test', 'Products');
-    await delay(100)
+    await delay(100);
     await firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray' }, 'testarray');
-    await delay(100)
+    await delay(100);
     await firestore.addDocumentArrayFromCollection('Products', 'test', { test: 'testarray2' }, 'testarray');
-    await delay(100)
+    await delay(100);
     const selected = await firestore.readSelectedDataFromCollection('Products', 'test');
     const testfield = selected.testarray;
 
     expect(testfield).toEqual([{ test: 'testarray' }, { test: 'testarray2' }]);
   });
   test('deleteDocumentArrayFromCollection', async () => {
-    await firestore.deleteDocumentFromCollectionArray(
-      'Products',
-      'test',
-      { test: 'testarray2' },
-      'testarray'
-    );
-    await delay(100)
+    await firestore.deleteDocumentFromCollectionArray('Products', 'test', { test: 'testarray2' }, 'testarray');
+    await delay(100);
     const selected = await firestore.readSelectedDataFromCollection('Products', 'test');
-    await delay(100)
+    await delay(100);
     const testfield = selected.testarray;
     expect(testfield).toEqual([{ test: 'testarray' }]);
     await firestore.deleteDocumentFromCollection('Products', 'test');
-    await delay(100)
+    await delay(100);
   });
 });
 
 describe('Database', async () => {
   test('readAllParentProducts', async () => {
     const data = await firestore.readAllParentProducts();
-    await delay(100)
+    await delay(100);
     expect(data).not.toBe([]);
   });
   // a
 
   test('transactionCreatePayment', async () => {
     await firestore.transactionCreatePayment('LP6ARIs14qZm4qjj1YOLCSNjxsj1', 1999, '124532-1235', 'GCASH');
-    await delay(100)
+    await delay(100);
   });
   test('updatedoc', async () => {
     await firestore.updatePhoneNumber('LP6ARIs14qZm4qjj1YOLCSNjxsj1', '09178927206');
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('LP6ARIs14qZm4qjj1YOLCSNjxsj1');
-    await delay(100)
+    await delay(100);
     const phone = user.phonenumber;
     expect(phone).toEqual('09178927206');
   });
@@ -403,7 +431,7 @@ describe('Transaction Place Order', async () => {
   let initialProductCount = {};
 
   beforeEach(async () => {
-    await delay(100)
+    await delay(100);
   });
 
   test('readIfTransactionSuccessful', async () => {
@@ -434,7 +462,7 @@ describe('Transaction Place Order', async () => {
       const stocksAvailable = product.stocksAvailable;
       initialProductCount[item] = stocksAvailable;
     });
-    await delay(100)
+    await delay(100);
 
     await firestore.createNewUser(
       {
@@ -450,37 +478,37 @@ describe('Transaction Place Order', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
-        userRole: 'member'
+        userRole: 'member',
       },
       'testuser'
     );
-    await delay(100)
+    await delay(100);
     const date = new Date();
 
-    await firestore.transactionPlaceOrder(
-      {userid: 'testuser',
+    await firestore.transactionPlaceOrder({
+      userid: 'testuser',
       username: 'Adrian Ladia',
-        localDeliveryAddress: 'Paper Boy',
-        locallatitude: 1.1,
-        locallongitude: 14.1,
-        localphonenumber: '09178238421',
-        localname: 'Adrian Ladia',
-        orderDate: new Date(),
-        cart: cart,
-        itemstotal: 20000,
-        vat: 1200,
-        shippingtotal: 1000,
-        grandTotal: 22200,
-        reference: 'testref-124124521',
-        userphonenumber: '09178927206',
-        deliveryNotes: 'None',
-        totalWeight: 320,
-        deliveryVehicle: 'Sedan',
-        needAssistance: true}
-    )
+      localDeliveryAddress: 'Paper Boy',
+      locallatitude: 1.1,
+      locallongitude: 14.1,
+      localphonenumber: '09178238421',
+      localname: 'Adrian Ladia',
+      orderDate: new Date(),
+      cart: cart,
+      itemstotal: 20000,
+      vat: 1200,
+      shippingtotal: 1000,
+      grandTotal: 22200,
+      reference: 'testref-124124521',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'None',
+      totalWeight: 320,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
     await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const orders = user.orders;
     let foundorder = false;
     orders.map((order) => {
@@ -493,7 +521,7 @@ describe('Transaction Place Order', async () => {
 
   test('check if deliveryaddress added', async () => {
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const deliveryaddress = user.deliveryAddress;
     const expected = [
       {
@@ -508,7 +536,7 @@ describe('Transaction Place Order', async () => {
 
   test('check if cart is empty', async () => {
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const cart = user.cart;
     expect(cart).toEqual([]);
   });
@@ -517,7 +545,7 @@ describe('Transaction Place Order', async () => {
     await Promise.all(
       Object.entries(cartCount).map(async ([item, count]) => {
         const product = await firestore.readSelectedProduct(item);
-        await delay(100)
+        await delay(100);
         const stocksAvailable = product.stocksAvailable;
         const initialCount = initialProductCount[item];
         const expected = initialCount - count;
@@ -532,13 +560,10 @@ describe('Transaction Place Order', async () => {
       const resetStockCount = stocksAvailable + count;
       await firestore.updateProductStocksAvailable(itemId, resetStockCount);
     });
-
   });
-
 });
 
 describe('Transaction Create Payment', async () => {
-
   test('Check if payment is added to payment field', async () => {
     await firestore.createNewUser(
       {
@@ -554,17 +579,17 @@ describe('Transaction Create Payment', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
-        userRole: 'member'
+        userRole: 'member',
       },
       'testuser'
     );
 
-    await delay(100)
+    await delay(100);
 
     await firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const payments = user.payments;
     const amount = payments[0].amount;
     const reference = payments[0].reference;
@@ -574,28 +599,31 @@ describe('Transaction Create Payment', async () => {
     expect(paymentprovider).toEqual('GCASH');
 
     await firestore.deleteUserByUserId('testuser');
-    await delay(100)
+    await delay(100);
   });
 });
 
 describe('firestoredb', async () => {
   beforeEach(async () => {
-    await firestore.createNewUser({
-      uid: 'test',
-      name: 'test',
-      email: 'test@gmail.com',
-      emailVerified: true,
-      phoneNumber: '09178927206',
-      deliveryAddress: [{ address: 'Paper Boy', latitude: 1, longitude: 0 }],
-      contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
-      isAnonymous: false,
-      orders: [],
-      cart: [],
-      favoriteItems: [],
-      payments: [],
-      userRole: 'member'
-    }, 'test');
-    await delay(100)
+    await firestore.createNewUser(
+      {
+        uid: 'test',
+        name: 'test',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [{ address: 'Paper Boy', latitude: 1, longitude: 0 }],
+        contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
+        isAnonymous: false,
+        orders: [],
+        cart: [],
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+      },
+      'test'
+    );
+    await delay(100);
     await firestore.createNewUser(
       {
         uid: 'testuser',
@@ -610,47 +638,50 @@ describe('firestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
-        userRole: 'member'
+        userRole: 'member',
       },
       'testuser'
     );
-    await delay(100)
+    await delay(100);
   });
   afterEach(async () => {
     await firestore.deleteUserByUserId('test');
-    await delay(100)
+    await delay(100);
     await firestore.deleteUserByUserId('testuser');
-    await delay(100)
+    await delay(100);
   });
   test('createProduct and readAll Products', async () => {
-    await firestore.createProduct({
-      itemId: 'test',
-      itemName: 'testname',
-      unit: 'bale',
-      price: 1000,
-      description: 'none',
-      weight: 15,
-      dimensions: '10x12',
-      category: 'Paper Bag',
-      imageLinks: ['testlink'],
-      brand: 'testbrand',
-      pieces: 1999,
-      color: 'red',
-      material: 'material',
-      size: '10',
-      stocksAvailable: 23,
-      stocksOnHold: [],
-      averageSalesPerDay: 0,
-      parentProductID: 'test',
-      stocksOnHoldCompleted: [],
-      forOnlineStore: true,
-      isCustomized : false,
-      salesPerMonth : [],
-      stocksIns: []
-    }, 'test');
-    await delay(100)
+    await firestore.createProduct(
+      {
+        itemId: 'test',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 1000,
+        description: 'none',
+        weight: 15,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+      },
+      'test'
+    );
+    await delay(100);
     const products = await firestore.readAllProducts();
-    await delay(100)
+    await delay(100);
     let found = false;
     products.map((product) => {
       if (product.itemId === 'test') {
@@ -661,7 +692,7 @@ describe('firestoredb', async () => {
   });
   test('readSelectedProduct', async () => {
     const product = await firestore.readSelectedProduct('test');
-    await delay(100)
+    await delay(100);
     expect(product.itemName).toEqual('testname');
   });
   test('updateProduct', async () => {
@@ -678,27 +709,27 @@ describe('firestoredb', async () => {
       pieces: 1999,
       color: 'red',
       material: 'material',
-      size: '10'
+      size: '10',
     });
-    await delay(100)
+    await delay(100);
     const product = await firestore.readSelectedProduct('test');
-    await delay(100)
+    await delay(100);
     expect(product.itemName).toEqual('testname2');
   });
 
   test('deleteProduct', async () => {
     await firestore.deleteProduct('test');
-    await delay(100)
+    await delay(100);
     const product = await firestore.readSelectedProduct('test');
-    await delay(100)
+    await delay(100);
     expect(product).toEqual(undefined);
   });
 
   test('createCategory amd readAllCategories', async () => {
     await firestore.createCategory('testtest');
-    await delay(100)
+    await delay(100);
     const categories = await firestore.readAllCategories();
-    await delay(100)
+    await delay(100);
     let found = false;
     categories.map((category) => {
       if (category.category === 'Testtest') {
@@ -710,7 +741,7 @@ describe('firestoredb', async () => {
 
   test('readAllUserIds', async () => {
     const usersId = await firestore.readAllUserIds();
-    await delay(100)
+    await delay(100);
     let found = false;
     usersId.map((user) => {
       if (user === 'test') {
@@ -722,7 +753,7 @@ describe('firestoredb', async () => {
 
   test('readAllUsers', async () => {
     const users = await firestore.readAllUsers();
-    await delay(100)
+    await delay(100);
     let found = false;
     users.map((user) => {
       if (user.uid === 'testuser') {
@@ -734,15 +765,15 @@ describe('firestoredb', async () => {
 
   test('readUserById', async () => {
     const user = await firestore.readUserById('test');
-    await delay(100)
+    await delay(100);
     expect(user.uid).toEqual('test');
   });
 
   test('addItemToFavorites and removeItemFromFavorites', async () => {
     await firestore.addItemToFavorites('testuser', 'test');
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
 
     const favorites = user.favoriteItems;
     let found = false;
@@ -754,9 +785,9 @@ describe('firestoredb', async () => {
     expect(found).toEqual(true);
 
     await firestore.removeItemFromFavorites('testuser', 'test');
-    await delay(100)
+    await delay(100);
     const user2 = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const favorites2 = user2.favoriteItems;
     let found2 = false;
     favorites2.map((favorite) => {
@@ -769,26 +800,26 @@ describe('firestoredb', async () => {
 
   test('createUserCart and deleteUserCart', async () => {
     await firestore.createUserCart(['testitem', 'testitem'], 'testuser');
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
 
     const cart = user.cart;
     expect(cart).toEqual(['testitem', 'testitem']);
 
     await firestore.deleteAllUserCart('testuser');
-    await delay(100)
+    await delay(100);
     const user2 = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const cart2 = user2.cart;
     expect(cart2).toEqual([]);
   });
 
   test('deleteAddress', async () => {
     await firestore.deleteAddress('testuser', 1, 0, 'Paper Boy');
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
 
     const address = user.deliveryAddress;
     expect(address).toEqual([]);
@@ -796,18 +827,18 @@ describe('firestoredb', async () => {
 
   test('deleteUserContactPerson', async () => {
     await firestore.deleteUserContactPersons('testuser', 'testname', '09178927206');
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const contactPerson = user.contactPerson;
     expect(contactPerson).toEqual([]);
   });
 
   test('updateLatitudeLongitude', async () => {
     await firestore.updateLatitudeLongitude('testuser', 1, 0);
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const latitude = user.latitude;
     const longitude = user.longitude;
     expect(latitude).toEqual(1);
@@ -816,64 +847,60 @@ describe('firestoredb', async () => {
 
   test('updatePhoneNumber', async () => {
     await firestore.updatePhoneNumber('testuser', '09178927206');
-    await delay(100)
+    await delay(100);
     const user = await firestore.readUserById('testuser');
-    await delay(100)
+    await delay(100);
     const phonenumber = user.phonenumber;
     expect(phonenumber).toEqual('09178927206');
   });
-
 });
 
 describe('cloudfirestorefunctions', async () => {
   test('createDocument', async () => {
     await cloudfirestorefunctions.createDocument({ test: 'test' }, 'test', 'Products');
-    await delay(100)
+    await delay(100);
     const data = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
     // console.log(data);
     expect(data).toEqual({ test: 'test' });
-
   });
 
   test('readAllDataFromCollection', async () => {
     const data = await cloudfirestorefunctions.readAllDataFromCollection('Products');
-    await delay(100)
+    await delay(100);
     expect(data).toBeInstanceOf(Array);
   });
   test('readAllIdsFromCollection', async () => {
     const data = await cloudfirestorefunctions.readAllIdsFromCollection('Products');
-    await delay(100)
+    await delay(100);
     console.log(data);
     expect(data).toBeInstanceOf(Array);
   });
   test('readSelectedDataFromCollection', async () => {
     const data = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test', 'test');
-    await delay(100)
+    await delay(100);
     expect(data).not.toBe([]);
   });
   test('updateDocumentFromCollection', async () => {
     const olddata = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
-    await delay(100)
+    await delay(100);
     await cloudfirestorefunctions.updateDocumentFromCollection('Products', 'test', { test: 'test222' });
-    await delay(100)
+    await delay(100);
     const newdata = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
-    await delay(100)
+    await delay(100);
     expect(newdata).not.toEqual(olddata);
   });
   test('deleteDocumentFromCollection', async () => {
     await cloudfirestorefunctions.deleteDocumentFromCollection('Products', 'test');
-    await delay(100)
+    await delay(100);
     const ids = await cloudfirestorefunctions.readAllIdsFromCollection('Products');
-    await delay(100)
+    await delay(100);
 
     if (ids.includes('test')) {
       expect(true).toEqual(false);
     }
   });
-  test('')
-
+  test('');
 });
-
 
 describe('getCartCount', () => {
   test('getCartCount', () => {
@@ -900,10 +927,10 @@ describe('cloudfirestoredb', async () => {
   test('readAllProductsForOnlineStore', async () => {
     const products = await cloudfirestore.readAllProductsForOnlineStore();
     await delay(300);
-    
+
     expect(products).toBeInstanceOf(Array);
     expect(products.length).toBeGreaterThan(0);
-  })
+  });
 
   test('checkifuseridexist', async () => {
     const user = await cloudfirestore.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
@@ -984,7 +1011,7 @@ describe('cloudfirestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
-        userRole: 'member'
+        userRole: 'member',
       },
       'testuser'
     );
@@ -1110,7 +1137,7 @@ describe('cloudfirestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
-        userRole: 'member'
+        userRole: 'member',
       },
       'testuser'
     );
@@ -1137,13 +1164,13 @@ describe('cloudfirestoredb', async () => {
         cart: [],
         favoriteItems: [],
         payments: [],
-        userRole: 'member'
+        userRole: 'member',
       },
       'testuser2'
     );
 
     await delay(100);
-    const user = await cloudfirestore.readSelectedUserById('testuser2')
+    const user = await cloudfirestore.readSelectedUserById('testuser2');
     const email = user.email;
     await delay(100);
     expect(email).toEqual('test@gmail.com');
@@ -1151,13 +1178,15 @@ describe('cloudfirestoredb', async () => {
   });
 
   test('readUserRole', async () => {
-    const userIds = await firestore.readAllIdsFromCollection('Users')
-    const userRolesPromises = userIds.map(async (userId) => {return await cloudfirestore.readUserRole(userId)})
-    const userRoles = await Promise.all(userRolesPromises)
-    const roles = ['member', 'admin', 'superAdmin']
+    const userIds = await firestore.readAllIdsFromCollection('Users');
+    const userRolesPromises = userIds.map(async (userId) => {
+      return await cloudfirestore.readUserRole(userId);
+    });
+    const userRoles = await Promise.all(userRolesPromises);
+    const roles = ['member', 'admin', 'superAdmin'];
     userRoles.map((userRole) => {
-      console.log(userRole)
-      expect(roles.includes(userRole)).toEqual(true)
-    })
+      console.log(userRole);
+      expect(roles.includes(userRole)).toEqual(true);
+    });
   });
 });

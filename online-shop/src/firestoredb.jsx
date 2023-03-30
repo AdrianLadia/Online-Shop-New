@@ -9,31 +9,8 @@ class firestoredb extends firestorefunctions {
 
   // USED FOR ADMIN INVENTORY
   async createProduct(data, id) {
-    const schema = Joi.object({
-      itemId: Joi.string().required(),
-      itemName: Joi.string().required(),
-      unit: Joi.string().required(),
-      price: Joi.number().required(),
-      description: Joi.string().required(),
-      weight: Joi.number().required(),
-      dimensions: Joi.string(),
-      category: Joi.string().required(),
-      imageLinks: Joi.array(),
-      brand: Joi.string(),
-      pieces: Joi.number().required(),
-      color: Joi.string(),
-      material: Joi.string(),
-      size: Joi.string(),
-      stocksAvailable: Joi.number().required(),
-      stocksOnHold: Joi.array().required(),
-      averageSalesPerDay: Joi.number().required(),
-      parentProductID: Joi.string(),
-      stocksOnHoldCompleted: Joi.array().required(),
-      forOnlineStore: Joi.boolean().required(),
-      isCustomized: Joi.boolean().required(),
-      salesPerMonth: Joi.array(),
-      stocksIns: Joi.array(),
-    }).unknown(false);
+    console.log(data)
+    const schema = schemas.productSchema()
 
     try {
       await schema.validateAsync(data);
@@ -47,33 +24,7 @@ class firestoredb extends firestorefunctions {
   async readAllProducts() {
     const products = await super.readAllDataFromCollection('Products');
 
-    const productsSchema = Joi.array().items(
-      Joi.object({
-        averageSalesPerDay: Joi.number().required(),
-        brand: Joi.string().allow(''),
-        category: Joi.string().required(),
-        color: Joi.string().allow(''),
-        description: Joi.string().required().allow(''),
-        dimensions: Joi.string().allow(''),
-        forOnlineStore: Joi.boolean().required(),
-        imageLinks: Joi.array(),
-        itemId: Joi.string().required(),
-        itemName: Joi.string().required(),
-        isCustomized: Joi.boolean().required(),
-        material: Joi.string().allow(''),
-        parentProductID: Joi.string().allow(''),
-        pieces: Joi.number().required(),
-        price: Joi.number().required(),
-        size: Joi.string().allow(''),
-        stocksAvailable: Joi.number().required(),
-        stocksOnHold: Joi.array().required(),
-        stocksOnHoldCompleted: Joi.array().required(),
-        unit: Joi.string().required(),
-        weight: Joi.number().required(),
-        salesPerMonth: Joi.array(),
-        stocksIns: Joi.array(),
-      }).unknown(false)
-    );
+    const productsSchema = Joi.array().items(schemas.productSchema())  
 
     try {
       await productsSchema.validateAsync(products);
@@ -87,31 +38,7 @@ class firestoredb extends firestorefunctions {
   async readSelectedProduct(id) {
     const product = await super.readSelectedDataFromCollection('Products', id);
 
-    const productsSchema = Joi.object({
-      averageSalesPerDay: Joi.number().required(),
-      brand: Joi.string().allow(''),
-      category: Joi.string().required(),
-      color: Joi.string().allow(''),
-      description: Joi.string().required().allow(''),
-      dimensions: Joi.string().allow(''),
-      forOnlineStore: Joi.boolean().required(),
-      imageLinks: Joi.array(),
-      itemId: Joi.string().required(),
-      itemName: Joi.string().required(),
-      isCustomized: Joi.boolean().required(),
-      material: Joi.string().allow(''),
-      parentProductID: Joi.string().allow(''),
-      pieces: Joi.number().required(),
-      price: Joi.number().required(),
-      size: Joi.string().allow(''),
-      stocksAvailable: Joi.number().required(),
-      stocksOnHold: Joi.array().required(),
-      stocksOnHoldCompleted: Joi.array().required(),
-      unit: Joi.string().required(),
-      weight: Joi.number().required(),
-      salesPerMonth: Joi.array(),
-      stocksIns: Joi.array(),
-    }).unknown(false);
+    const productsSchema = schemas.productSchema()
 
     try {
       await productsSchema.validateAsync(product);

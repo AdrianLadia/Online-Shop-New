@@ -168,6 +168,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
+
   async readAllProductsForOnlineStore() {
     try {
       const response = await axios.get(

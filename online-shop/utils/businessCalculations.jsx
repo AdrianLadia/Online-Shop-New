@@ -13,6 +13,20 @@ class businessCalculations {
     this.cloudfirestore = new cloudFirestoreDb();
   }
 
+  readAllParentProductsFromOnlineStoreProducts(products) {
+    console.log(products)
+    const parentProducts = [];
+    products.map((product) => {
+      console.log(product.parentProductId)
+      if (product.parentProductID === '') {
+        
+        parentProducts.push(product.itemId);
+      }
+    });
+    console.log(parentProducts)
+    return parentProducts;
+  }
+
   getSafetyStock(averageSalesPerDay) {
     const averageSalesPerDaySchema = Joi.number().required();
 
