@@ -18,6 +18,8 @@ import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
 
+const devEnvironment = true
+
 function App() {
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
@@ -28,14 +30,16 @@ function App() {
   const navigateTo = useNavigate();
 
   useEffect(() => {
-    if (!authEmulatorConnected) {
-      connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-      setAuthEmulatorConnected(true);
+    if (devEnvironment == true) {
+      if (!authEmulatorConnected) {
+        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+        setAuthEmulatorConnected(true);
+      }
     }
   }, [authEmulatorConnected]);
 
   // Initialize firestore class
-  const firestore = new firestoredb(app, true);
+  const firestore = new firestoredb(app, devEnvironment);
   const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);

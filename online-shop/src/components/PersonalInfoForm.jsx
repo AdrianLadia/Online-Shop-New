@@ -4,16 +4,9 @@ import { useContext } from "react";
 import { Typography } from "@mui/material";
 
 const PersonalInfoForm = () => {
-  const [
-    userdata,
-    setUserData,
-    isadmin,
-    firestore,
-    cart,
-    setCart,
-    favoriteitems,
-    setFavoriteItems,
-  ] = useContext(AppContext);
+  const {
+    userdata
+   } = useContext(AppContext);
 
   return (
     <div>

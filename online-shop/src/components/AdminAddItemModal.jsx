@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import firestoredb from '../firestoredb';
 import useWindowDimensions from './UseWindowDimensions';
 import AddCategoryModal from './AddCategoryModal';
 import InputLabel from '@mui/material/InputLabel';
@@ -13,6 +12,8 @@ import Select from '@mui/material/Select';
 import { Checkbox, Typography } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import AppContext from '../AppContext';
+import cloudFirestoreDb from '../cloudFirestoreDb';
+import businessCalculations from '../../utils/businessCalculations';
 
 // Style for Modal
 const style = {
@@ -34,7 +35,7 @@ const style = {
 };
 
 const AdminAddItemModal = (props) => {
-  const { firestore } = React.useContext(AppContext);
+  const { firestore,products } = React.useContext(AppContext);
   const { width, height } = useWindowDimensions();
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
@@ -64,8 +65,12 @@ const AdminAddItemModal = (props) => {
   const [parentProductID, setParentProductID] = React.useState('');
   const [openAddCategoryModal, setOpenAddCategoryModal] = React.useState(false);
   const [parentProducts, setParentProducts] = React.useState([]);
+  const [isCustomized, setIsCustomized] = React.useState(false);
+  const cloudfirestore = new cloudFirestoreDb();
   const categories = props.categories;
+  const businesscalculations = new businessCalculations();
 
+  console.log(parentProductID)
   async function addItem() {
     // FORM CHECKER
     if (itemID === '') {
@@ -117,7 +122,9 @@ const AdminAddItemModal = (props) => {
         stocksOnHold: [],
         averageSalesPerDay: 0,
         parentProductID: parentProductID,
-        stocksOnHoldCompleted: []
+        stocksOnHoldCompleted: [],
+        forOnlineStore : true,
+        isCustomized: isCustomized,
       },
       itemID
     );
@@ -130,12 +137,9 @@ const AdminAddItemModal = (props) => {
   }
 
   useEffect(() => {
-    firestore.readAllParentProducts().then((data) => {
-      setParentProducts(data);
-    });
-
-    // setParentProducts(parentProducts);
-  }, []);
+    const parentProductsList = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products)
+    setParentProducts(parentProductsList)  
+  }, [])
 
   return (
     <div>
@@ -287,6 +291,16 @@ const AdminAddItemModal = (props) => {
               <Typography sx={{ marginTop: 1 }}> Is this for retail?</Typography>
             </div>
 
+            <div className="flex flex-row">
+              <Checkbox
+                onClick={() => {
+                  setIsCustomized(!isCustomized);
+                }}
+              />
+              <Typography sx={{ marginTop: 1 }}> Is this Customized?</Typography>
+            </div>
+
+
             {isThisRetail ? (
               // <TextField
               //   id="outlined-basic"
@@ -301,6 +315,7 @@ const AdminAddItemModal = (props) => {
                 options={parentProducts}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="Parent ID" />}
+                onChange={(event) => setParentProductID(event.target.value)}
               />
             ) : null}
 

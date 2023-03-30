@@ -8,6 +8,8 @@ import businessCalculations from './businessCalculations';
 class dataManipulation {
   constructor() {}
 
+  
+
   convertDateToNanoSecondsAndSeconds(dateObject) {
     const date = new Date(dateObject);
     const nanoseconds = (date.getTime() % 1000) * 1000000;
@@ -134,6 +136,7 @@ class dataManipulation {
 
     const { error } = dataToUseSchema.validate(dataToUse);
     if (error) {
+      console.log(dataToUse)
       throw new Error(error);
     }
 

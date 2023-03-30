@@ -55,6 +55,7 @@ const AdminOrders = (props) => {
         }
       });
     } else {
+      
       firestore.readAllOrders().then((ordersFirestore) => {
         const filteredOrders = datamanipulation.filterOrders(
           ordersFirestore,
