@@ -70,6 +70,7 @@ const AccountMenu = (props) => {
           <Typography sx={{ minWidth: 100 }}>Profile</Typography> */}
         <Tooltip title="Account settings">
           <IconButton
+            id = "accountMenu"
             onClick={handleClick}
             size="small"
             sx={{ ml: 2 }}
@@ -116,36 +117,36 @@ const AccountMenu = (props) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={storeClick}>
+        <MenuItem id='storeMenu' onClick={storeClick}>
           <FaStore size={17} />
           <span className="ml-5">Store</span>
         </MenuItem>
         <Divider />
         {/* PROFILE MENU */}
-        <MenuItem onClick={profileClick}>
+        <MenuItem id='profileMenu' onClick={profileClick}>
           <CgProfile size={17} />
           <span className="ml-5">Profile</span>
         </MenuItem>
         {/* Order History  */}
-        <MenuItem onClick={myOrdersClick}>
+        <MenuItem id='myOrdersMenu' onClick={myOrdersClick}>
           <AiOutlineHistory size={17} />
           <span className="ml-5">My Orders</span>
         </MenuItem>
         {/* Account Statement */}
-        <MenuItem onClick={accountStatementCLick}>
+        <MenuItem id='accountStatementMenu' onClick={accountStatementCLick}>
           <BsBook size={17} />
           <span className="ml-5">Account Statement</span>
         </MenuItem>
         <Divider />
         {/* ADMIN MENU */}
 
-        <MenuItem>
+        <MenuItem id='settingsMenu'>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           <span>Settings</span>
         </MenuItem>
-        <MenuItem onClick={props.signout}>
+        <MenuItem id='logoutMenu' onClick={props.signout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

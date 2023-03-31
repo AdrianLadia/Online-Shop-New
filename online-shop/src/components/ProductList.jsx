@@ -65,7 +65,7 @@ const ProductList = (props) => {
 
   return (
     <div>
-      <div className={'flex flex-col justify-center items-center  ' + divCssIfProductNoteLoaded()}>
+      <div id='productList' className={'flex flex-col justify-center items-center  ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
             <CircularProgress size={150} className="" />

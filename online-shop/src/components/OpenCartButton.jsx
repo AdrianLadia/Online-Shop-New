@@ -116,7 +116,9 @@ const OpenCartButton = () => {
                 <AiOutlineShoppingCart size={30} />
               </div>
               <div className="mt-1.5">
-                <Typography variant="h6"> Php {totalPrice.toLocaleString()} </Typography>
+                <Typography variant="h6"> Php </Typography>
+                <Typography id='totalPrice' variant="h6"> {totalPrice.toLocaleString()} </Typography>
+                
               </div>
             </div>
           ) : (

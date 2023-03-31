@@ -226,7 +226,7 @@ function App() {
   };
 
   return (
-    <div data-testid="app">
+    <div id="app">
       <Routes>
         <Route
           path="/"

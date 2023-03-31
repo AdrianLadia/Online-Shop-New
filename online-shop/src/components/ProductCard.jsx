@@ -161,6 +161,7 @@ const ProductCard = (props) => {
               Add
             </button>
             <TextField
+              
               id="entryquantity"
               label="Qty"
               type="number"

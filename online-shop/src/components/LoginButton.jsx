@@ -40,7 +40,7 @@ const LoginButton = (props) => {
       return (
         <div>
           <Button
-            id="demo-positioned-button"
+            id="loginButton"
             aria-controls={open ? 'demo-positioned-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
@@ -65,6 +65,7 @@ const LoginButton = (props) => {
             }}
           >
             <MenuItem
+              id = 'loginWithGoogle'
               onClick={() => {
                 signIn(new GoogleAuthProvider());
               }}
