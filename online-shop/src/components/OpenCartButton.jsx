@@ -46,6 +46,7 @@ const OpenCartButton = () => {
             total: product.price * item.quantity,
             addbutton: (
               <button
+                id = 'addToCartIncrement'
                 onClick={() => onAddToCartClick(item.itemId)}
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
@@ -54,6 +55,7 @@ const OpenCartButton = () => {
             ),
             removebutton: (
               <button
+                id = 'addToCartDecrement'
                 onClick={() => RemoveFromCart(item.itemId)}
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
               >
@@ -115,9 +117,9 @@ const OpenCartButton = () => {
                 </span>
                 <AiOutlineShoppingCart size={30} />
               </div>
-              <div className="mt-1.5">
+              <div className="mt-1.5 flex flex-row">
                 <Typography variant="h6"> Php </Typography>
-                <Typography id='totalPrice' variant="h6"> {totalPrice.toLocaleString()} </Typography>
+                <Typography sx={{marginLeft:1}} id='totalPrice' variant="h6"> {totalPrice.toLocaleString()} </Typography>
                 
               </div>
             </div>

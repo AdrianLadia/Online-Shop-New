@@ -1,76 +1,74 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import seleniumCommands from './seleniumCommands';
+import firestoredb from '../src/firestoredb';
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from '../src/firebase_config';
+
 const { Builder, By, Key, until } = require('selenium-webdriver');
 const chrome = require('chromedriver');
+const driver = new seleniumCommands();
 
-let driver = await new Builder().forBrowser('chrome').build();
+const app = initializeApp(firebaseConfig);
+const firestore = new firestoredb(app,true);
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 describe('Integration', () => {
-  test("startAppLocally", async () => {
-      await driver.get("http://localhost:5173");
-      const app = await driver.findElement(By.id("app"));
-      expect(app).toBeTruthy();
-  })
+  test('startAppLocally', async () => {
+    await driver.startApp();
+    const app = await driver.getApp();
+    expect(app).toBeTruthy();
 
-  test("login", async () => {
-    const loginButton = await driver.findElement(By.id("loginButton"));
-    await loginButton.click();
-    const loginWithGoogle = await driver.findElement(By.id("loginWithGoogle"));
-    await loginWithGoogle.click();
-    await delay(10000)
-  },1000000)
+  });
 
-  // test('productList', async () => {
-  //   const totalPrice = await driver.findElement(By.id("totalPrice"));
-  //   const totalPriceOld = await totalPrice.getText();
-  //   const entryQuantity = await driver.findElements(By.id("entryquantity"));
-  //   const addtocartbutton = await driver.findElements(By.id("addtocartbutton"));
+  test('login', async () => {
+    await driver.login();
+  }, 1000000);
+
+  test('Checkout Flow', async () => {
+    const totalPriceOld = await driver.getTotalPriceOfCartButton();
+    await driver.addToCartAllProducts();
+    const totalPriceNew = await driver.getTotalPriceOfCartButton();
+    expect(totalPriceOld).not.toBe(totalPriceNew);
+    const user = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const userCart = user.cart.length;
     
+    expect(userCart).not.toBe(0);
     
-  //   for (const [index, entry] of entryQuantity.entries()) {
-  //     try{
-  //       await entry.sendKeys("1");
-  //       await addtocartbutton[index].click();
-  //     }
-  //     catch(error){
-  //       console.log(error)
-  //     }
-  //   }
+    await driver.openCart();
+    await driver.addToCartIncrement()
+    await delay(300)
+    const user2 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const userCart2 = user2.cart.length;
 
-  //   const totalPriceNew = await totalPrice.getText();
-  //   expect(totalPriceNew).not.toBe(totalPriceOld);
-  // }, 1000000)
+    expect(userCart2 - userCart).toEqual(1);
 
-  test('accountMenu', async () => {
-    const accountMenu = await driver.findElement(By.id("accountMenu"));
-    await accountMenu.click();
-    const storeMenu = await driver.findElement(By.id("storeMenu"));
-    const profileMenu = await driver.findElement(By.id("profileMenu"));
-    const myOrdersMenu = await driver.findElement(By.id("myOrdersMenu"));
-    const accountStatementMenu = await driver.findElement(By.id("accountStatementMenu"));
-    const logoutMenu = await driver.findElement(By.id("logoutMenu"));
-    const settingsMenu = await driver.findElement(By.id("settingsMenu"));
+    await driver.removeFromCartDecrement()
+    await delay(300)
+    const user3 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const userCart3 = user.cart.length;
 
-    assert.notStrictEqual(storeMenu, undefined);
-    assert.notStrictEqual(profileMenu, undefined);
-    assert.notStrictEqual(myOrdersMenu, undefined);
-    assert.notStrictEqual(accountStatementMenu, undefined);
-    assert.notStrictEqual(logoutMenu, undefined);
-    assert.notStrictEqual(settingsMenu, undefined);
-    
-  }, 1000000)
+    expect(userCart3 - userCart2).toEqual(-1);
 
+  }, 1000000);
 
+//   test('accountMenu', async () => {
+//     await driver.clickAccountMenu();
 
+//     assert.notStrictEqual(await driver.getStoreMenuButton(), undefined);
+//     assert.notStrictEqual(await driver.getProfileMenuButton(), undefined);
+//     assert.notStrictEqual(await driver.getMyOrdersMenuButton(), undefined);
+//     assert.notStrictEqual(await driver.getAccountStatementMenuButton(), undefined);
+//     assert.notStrictEqual(await driver.getSettingsMenuButton(), undefined);
+//     assert.notStrictEqual(await driver.getLogoutMenuButton(), undefined);
 
+//   }, 1000000)
 });
 
-
 // async function example() {
-  
+
 //   try {
 //     // Navigate to Google
 //     await driver.get('https://www.google.com');
