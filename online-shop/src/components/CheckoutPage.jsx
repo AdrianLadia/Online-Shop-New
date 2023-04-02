@@ -240,7 +240,7 @@ const CheckoutPage = () => {
         />
 
         <TextField
-          id="filled-basic"
+          id="addressEntry"
           label="Address"
           variant="filled"
           className="w-full"
@@ -263,7 +263,7 @@ const CheckoutPage = () => {
         </div>
 
         <TextField
-          id="filled-basic"
+          id="contactNumberEntry"
           label="Contact #"
           variant="filled"
           className="w-full"
@@ -272,7 +272,7 @@ const CheckoutPage = () => {
           sx={{ marginTop: 1 }}
         />
         <TextField
-          id="filled-basic"
+          id="contactNameEntry"
           label="Name"
           variant="filled"
           className="w-full"

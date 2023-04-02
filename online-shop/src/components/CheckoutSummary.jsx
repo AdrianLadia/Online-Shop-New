@@ -92,7 +92,11 @@ const CheckoutSummary = (props) => {
               <Typography variant="h5">Weight of Items: {totalWeight} Kg</Typography>
             </div>
             <div className="flex w-full flex-col ml-5 items-start lg:mt-5 md:mt-5 md:mr-3 lg:mr-3 lg:items-end md:items-end">
-              <Typography variant="h5">Items Total: ₱ {total.toLocaleString()}</Typography>
+
+              <div className='flex flex-row'>
+                <Typography variant="h5">Items Total: ₱</Typography>
+                <Typography id = 'checkoutItemsTotal' variant="h5"> {total.toLocaleString()}</Typography>
+              </div>
               <Typography variant="h5" className="ml-5">
                 Tax: ₱ {vat.toLocaleString()}
               </Typography>

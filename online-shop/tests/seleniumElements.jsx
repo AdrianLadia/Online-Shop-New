@@ -5,6 +5,39 @@ const chrome = require('chromedriver');
 class seleniumElements {
     constructor() {
         this.driver = new Builder().forBrowser('chrome').build();    
+        
+    }
+
+    async getCheckoutItemsTotal() {
+        return await this.driver.findElement(By.id("checkoutItemsTotal"));
+    }
+
+    async getAutoGenerateUserButton() {
+        return await this.driver.findElement(By.id("autogen-button"));
+    }
+
+    async getSignInWithGoogleButton() {
+        return await this.driver.findElement(By.id("sign-in"));
+    }
+
+    async getEmailInputGoogleNewUser() {
+        return await this.driver.findElement(By.id("email-input"));
+    }
+
+    async getDisplayNameInputGoogleNewUser() {
+        return await this.driver.findElement(By.id("display-name-input"));
+    }
+
+    async getAddAccountButton() {
+        return await this.driver.findElement(By.id("add-account-button"));
+    }
+
+    async getLoginGuestButton() {
+        return await this.driver.findElement(By.id("loginGuest"));
+    }
+
+    async getLoginButtonUserAccount() {
+        return await this.driver.findElement(By.id("reuse-email"));
     }
 
   
@@ -71,6 +104,35 @@ class seleniumElements {
     async getRemoveFromCartDecrementButton() {
         return await this.driver.findElements(By.id("addToCartDecrement"));
     }
+
+    async getClearCartButton() {
+        return await this.driver.findElement(By.id("clearCartButton"));
+    }
+
+    async getCloseCartButton() {
+        return await this.driver.findElement(By.id("closeCartButton"));
+    }
+
+    async getCartCheckoutButton() {
+        return await this.driver.findElement(By.id("cartcheckoutbutton"));
+    }
+
+    async getAddressEntry() {
+        return await this.driver.findElement(By.id("addressEntry"));
+    }
+
+    async getContactNumberEntry() {
+        return await this.driver.findElement(By.id("contactNumberEntry"));
+    }
+
+    async getContactNameEntry() {
+        return await this.driver.findElement(By.id("contactNameEntry"));
+    }
+
+    async getPlaceOrderButton() {
+        return await this.driver.findElement(By.id("placeorderbutton"));
+    }
+
 }
 
 export default seleniumElements;

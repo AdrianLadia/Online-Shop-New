@@ -81,6 +81,7 @@ const CartModal = (props) => {
               Cart Total: {totalPrice.toLocaleString()}
             </Typography>
             <button
+              id = 'closeCartButton'
               onClick={CloseCart}
               className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
             >
@@ -98,6 +99,7 @@ const CartModal = (props) => {
               <div className="flex flex-row justify-between w-full ">
                 <div>
                   <button
+                  id='clearCartButton'
                     onClick={clearCart}
                     className="bg-red-500 h-10 mt-5 hover:bg-red-800 p-2 rounded-lg  text-white ml-5"
                   >
