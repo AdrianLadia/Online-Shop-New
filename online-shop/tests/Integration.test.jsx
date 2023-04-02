@@ -28,9 +28,10 @@ describe('Integration', () => {
   }, 1000000);
 
   test('Checkout Flow', async () => {
-    const totalPriceOld = await driver.getTotalPriceOfCartButton();
+    const totalPriceOld = await (await driver.getTotalPriceOfCartButton()).getText();
     await driver.addToCartAllProducts();
-    const totalPriceNew = await driver.getTotalPriceOfCartButton();
+    
+    const totalPriceNew = await (await driver.getTotalPriceOfCartButton()).getText();
     expect(totalPriceOld).not.toBe(totalPriceNew);
     const user = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
     const userCart = user.cart.length;
@@ -39,16 +40,16 @@ describe('Integration', () => {
     
     await driver.openCart();
     await driver.addToCartIncrement()
-    await delay(300)
+    await delay(5000)
     const user2 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
     const userCart2 = user2.cart.length;
 
     expect(userCart2 - userCart).toEqual(1);
 
     await driver.removeFromCartDecrement()
-    await delay(300)
+    await delay(1000)
     const user3 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
-    const userCart3 = user.cart.length;
+    const userCart3 = user3.cart.length;
 
     expect(userCart3 - userCart2).toEqual(-1);
 

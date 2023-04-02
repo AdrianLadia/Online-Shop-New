@@ -11,6 +11,7 @@ class seleniumCommands extends seleniumElements {
 
     async startApp() {
         await this.driver.get("http://localhost:5173");
+        await delay(300)
     }    
     
     async login() {
@@ -24,24 +25,26 @@ class seleniumCommands extends seleniumElements {
     async clickAccountMenu() {
         const accountMenu = await this.getAccountMenuButton()
         await accountMenu.click()
+        await delay(300)
     }
 
     async openCart() {
         const cartButton = await this.getCartOpenButton();
         await cartButton.click();
+        await delay(300)
     }
 
     async addToCartIncrement(){
         const add = await this.getAddToCartIncrementButton();
         await add[0].click();
+        await delay(300)
     }
 
     async removeFromCartDecrement(){
         const remove = await this.getRemoveFromCartDecrementButton();
         await remove[0].click();
+        await delay(300)
     }
-
-    async
 
     async addToCartAllProducts() {
         const totalPrice = await this.getTotalPriceOfCartButton();
