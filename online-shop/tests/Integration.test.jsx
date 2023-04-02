@@ -26,66 +26,67 @@ describe('Integration', () => {
 
   }, 1000000);
 
-  // test('guestCheckout', async () => {
-  //   await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
-  //   const users = await firestore.readAllUsers();
-  //   const usersLength = users.length;
-  //   await driver.checkoutAsGuest()
-  //   const itemsTotal = await (await driver.getCheckoutItemsTotal()).getText();
-  //   expect(parseFloat(itemsTotal)).toBeGreaterThan(0);
-  //   const users2 = await firestore.readAllUsers();
-  //   const usersLength2 = users2.length;
-  //   expect(usersLength2 - usersLength).toEqual(1);
-  //   await driver.clickAccountMenu()
-  //   await driver.clickStore()
-  //   await driver.clickAccountMenu()
-  //   await driver.clickLogoutButton()
+  test('guestCheckout', async () => {
+    await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
+    const users = await firestore.readAllUsers();
+    const usersLength = users.length;
+    await driver.checkoutAsGuest()
+    const itemsTotal = await (await driver.getCheckoutItemsTotal()).getText();
+    expect(parseFloat(itemsTotal)).toBeGreaterThan(0);
+    const users2 = await firestore.readAllUsers();
+    const usersLength2 = users2.length;
+    expect(usersLength2 - usersLength).toEqual(1);
+    await driver.clickAccountMenu()
+    await driver.clickStore()
+    await driver.clickAccountMenu()
+    await driver.clickLogoutButton()
 
-  //   console.log('logged out')
+    console.log('logged out')
 
-  // }, 1000000);
+  }, 1000000);
 
   test('login', async () => {
     await driver.login();
   }, 1000000);
 
-  // test('clearCart', async () => {
-  //   await driver.addToCartAllProducts()
-  //   await driver.openCart();
-  //   await driver.clickClearCartButton();
-  //   await(delay(600))
-  //   const user = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
-  //   await(delay(300))
-  //   const userCart = user.cart
-  //   const userCartLength = userCart.length;
-  //   expect(userCartLength).toEqual(0);
-  //   await driver.clickCloseCartButton()
-  // }, 1000000);
+
+  test('clearCart', async () => {
+    await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
+    await driver.addToCartAllProducts()
+    await driver.openCart();
+    await driver.clickClearCartButton();
+    await(delay(600))
+    const user = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    await(delay(300))
+    const userCart = user.cart
+    const userCartLength = userCart.length;
+    expect(userCartLength).toEqual(0);
+    await driver.clickCloseCartButton()
+  }, 1000000);
 
   test('Checkout Flow', async () => {
-
+    await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
     const totalPriceOld = await (await driver.getTotalPriceOfCartButton()).getText();
     await driver.addToCartAllProducts();
+    await delay(1000)
     const totalPriceNew = await (await driver.getTotalPriceOfCartButton()).getText();
     expect(totalPriceOld).not.toBe(totalPriceNew);
     const user = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
-    await(delay(300))
     const userCart = user.cart.length;
     
     expect(userCart).not.toBe(0);
     
     await driver.openCart();
     await driver.addToCartIncrement()
-
+    await(delay(1000))
     const user2 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
-    await(delay(300))
     const userCart2 = user2.cart.length;
 
     expect(userCart2 - userCart).toEqual(1);
 
     await driver.removeFromCartDecrement()
+    await(delay(1000))
     const user3 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
-    await(delay(300))
     const userCart3 = user3.cart.length;
 
     expect(userCart3 - userCart2).toEqual(-1);
@@ -102,6 +103,25 @@ describe('Integration', () => {
     await driver.driver.switchTo().window(driver.mainWindowHandle);
     await driver.clickAccountMenu()
     await driver.clickStore()
+
+    const user4 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const userOrders4 = user4.orders
+
+    let found = false
+    userOrders4.map(order => {
+      const contactName = order.contactName;
+      const contactPhoneNumber = order.contactPhoneNumber;
+      const deliveryAddress = order.deliveryAddress;
+
+      if (contactName === 'Test Name' &&
+      contactPhoneNumber === '1234567890' &&
+      deliveryAddress === 'Test Address') {
+        found = true
+      }
+    })
+
+    expect(found).toBe(true)
+    
 
   }, 1000000);
 

@@ -6,6 +6,12 @@ function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function backspace(element) {
+    for (let i = 0; i < 100; i++) {
+      await element.sendKeys(Key.BACK_SPACE);
+      }
+}
+
 class seleniumCommands extends seleniumElements {
     constructor() {
         super();
@@ -15,7 +21,7 @@ class seleniumCommands extends seleniumElements {
     async clickLoginGuestButton() {
         const loginGuestButton = await this.getLoginGuestButton();
         await loginGuestButton.click();
-        await delay(600)
+
     }
 
 
@@ -23,31 +29,31 @@ class seleniumCommands extends seleniumElements {
     async clickAccountForLogin() {
         const account = await this.getLoginButtonUserAccount();
         await account.click();
-        await delay(600)
+
     }
 
     async startApp() {
         await this.driver.get("http://localhost:5173");
         this.mainWindowHandle = await this.driver.getWindowHandle();
-        await delay(2000)
+
     }    
 
     async clickLoginWithGoogle() {
         const loginWithGoogle = await this.getLoginWithGoogle();
         await loginWithGoogle.click();
-        await delay(600)
+
     }
 
     async clickAutoGenerateUserButton() {
         const autoGenerateUserButton = await this.getAutoGenerateUserButton();
         await autoGenerateUserButton.click();
-        await delay(600)
+
     }
 
     async clickAddAccountButton() {
         const addAccountButton = await this.getAddAccountButton();
         await addAccountButton.click();
-        await delay(600)
+
     }
 
     async inputTestEmailInGoogleNewUser() {
@@ -63,31 +69,36 @@ class seleniumCommands extends seleniumElements {
     async clickSignInWithGoogleButton() {
         const signInWithGoogleButton = await this.getSignInWithGoogleButton();
         await signInWithGoogleButton.click();
-        await delay(600)
+
     }
 
     async clickStore() {
         const storeMenu = await this.getStoreMenuButton()
         await storeMenu.click()
-        await delay(600)
+
     }
 
     async enterAddress() {
         const addressInput = await this.getAddressEntry()
+        await addressInput.click()
+        await backspace(addressInput)
         await addressInput.sendKeys("Test Address")
-        await delay(600)
+
     }
 
     async enterContactNumber() {
-        const contactNumberInput = await this.getContactNumberEntry()
-        await contactNumberInput.sendKeys("1234567890")
-        await delay(600)
+        const contactNameInput = await this.getContactNumberEntry()
+        await contactNameInput.click()
+        await backspace(contactNameInput)
+        await contactNameInput.sendKeys("1234567890")
+
     }
 
     async enterContactName() {
         const contactNumberInput = await this.getContactNameEntry()
+        await contactNumberInput.click()
+        await backspace(contactNumberInput)
         await contactNumberInput.sendKeys("Test Name")
-        await delay(600)
     }
 
     async writeTestUserDetails() {
@@ -119,8 +130,6 @@ class seleniumCommands extends seleniumElements {
         await this.clickSignInWithGoogleButton();
         await this.driver.switchTo().window(this.mainWindowHandle);
         await this.driver.wait(until.elementLocated(By.id('checkoutItemsTotal')), 10000);
-        await delay(600)
-        
     }
     
     async login() {
@@ -135,32 +144,32 @@ class seleniumCommands extends seleniumElements {
         await this.driver.switchTo().window(popupWindowHandle);
         await this.clickAccountForLogin();
         await this.driver.switchTo().window(this.mainWindowHandle);
-        await delay(600)
+
 
     }
 
     async clickAccountMenu() {
         const accountMenu = await this.getAccountMenuButton()
         await accountMenu.click()
-        await delay(600)
+
     }
 
     async openCart() {
         const cartButton = await this.getCartOpenButton();
         await cartButton.click();
-        await delay(600)
+
     }
 
     async addToCartIncrement(){
         const add = await this.getAddToCartIncrementButton();
         await add[0].click();
-        await delay(600)
+
     }
 
     async removeFromCartDecrement(){
         const remove = await this.getRemoveFromCartDecrementButton();
         await remove[0].click();
-        await delay(600)
+
     }
 
     async addToCartAllProducts() {
@@ -178,25 +187,25 @@ class seleniumCommands extends seleniumElements {
             }
           }
 
-        await(delay(600))
+
     }
 
     async clickLogoutButton() {
         const logoutButton = await this.getLogoutMenuButton();
         await logoutButton.click();
-        await delay(600)
+
     }
 
     async clickClearCartButton() {
         const clearCartButton = await this.getClearCartButton();
         await clearCartButton.click();
-        await delay(600)
+
     }
 
     async clickCloseCartButton() {
         const closeCartButton = await this.getCloseCartButton();
         await closeCartButton.click();
-        await delay(600)
+
     }
 
     async clickCartCheckoutButton() {
