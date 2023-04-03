@@ -217,7 +217,7 @@ const CheckoutPage = () => {
         </div>
         <div className="flex justify-center w-full">
           <button
-            data-testid="selectFromSavedAddressButton"
+            testid="selectFromSavedAddressButton"
             className="bg-blue-300 p-3 rounded-lg mx-5 "
             onClick={handleOpenModalSavedAddress}
           >
@@ -256,7 +256,7 @@ const CheckoutPage = () => {
             </Typography>
           </div>
           <div className="flex justify-center w-full">
-            <button className="bg-blue-300 p-3 rounded-lg mt-2 mx-5" onClick={handleOpenContactModal}>
+            <button id='selectFromSavedContactsButton' className="bg-blue-300 p-3 rounded-lg mt-2 mx-5" onClick={handleOpenContactModal}>
               Select From Saved Contacts
             </button>
           </div>

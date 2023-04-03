@@ -67,7 +67,7 @@ const AdminMenu = () => {
     <div className="flex flex-col">
       <div className="flex flex-row w-full justify-between bg-green-300 py-3">
         {/* Back Button */}
-        <IoArrowBackSharp size={30} className="mt-1 ml-2 cursor-pointer" onClick={handleBack} />
+        <IoArrowBackSharp id='backToStoreButton' size={30} className="mt-1 ml-2 cursor-pointer" onClick={handleBack} />
         <div>
           {/* Menu Button */}
           <Button
@@ -78,7 +78,7 @@ const AdminMenu = () => {
             onClick={handleClick}
             sx={{ color: 'white' }}
           >
-            <GiHamburgerMenu size={25} />
+            <GiHamburgerMenu id='hamburgerAdmin' size={25} />
           </Button>
           <Menu
             id="basic-menu"
@@ -89,10 +89,10 @@ const AdminMenu = () => {
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem onClick={handleClickInventory}>Inventory</MenuItem>
+            <MenuItem id='inventoryMenu' onClick={handleClickInventory}>Inventory</MenuItem>
             {/* <Divider>Cust</Divider> */}
-            <MenuItem onClick={handleClickCreatePayment}>Create Payment</MenuItem>
-            <MenuItem onClick={handleClickCustomerOrders}>Customer Orders</MenuItem>
+            <MenuItem id='createPaymentMenu' onClick={handleClickCreatePayment}>Create Payment</MenuItem>
+            <MenuItem id='customerOrdersMenu' onClick={handleClickCustomerOrders}>Customer Orders</MenuItem>
           </Menu>
         </div>
       </div>

@@ -77,6 +77,34 @@ class seleniumElements {
         return await this.driver.findElement(By.id("profileMenu"));
     }
 
+    async getInventoryMenuButton() {
+        return await this.driver.findElement(By.id("inventoryMenu"));
+    }
+
+    async getOrdersTable() {
+        return await this.driver.findElements(By.css('tr.MuiTableRow-root.css-34nofg-MuiTableRow-root'));
+    }
+
+    async getBackToStoreButton() {
+        return await this.driver.findElement(By.id("backToStoreButton"));
+    }
+
+    async getCreatePaymentMenuButton() {
+        return await this.driver.findElement(By.id("createPaymentMenu"));
+    }
+
+    async getCustomerOrdersMenuButton() {
+        return await this.driver.findElement(By.id("customerOrdersMenu"));
+    }
+
+    async getHamburgerAdminButton() {
+        return await this.driver.findElement(By.id("hamburgerAdmin"));
+    }
+
+    async getAdminMenuButton() {
+        return await this.driver.findElement(By.id("adminMenu"));
+    }
+
     async getMyOrdersMenuButton() {
         return await this.driver.findElement(By.id("myOrdersMenu"));
     }
@@ -133,6 +161,42 @@ class seleniumElements {
         return await this.driver.findElement(By.id("placeorderbutton"));
     }
 
+    async getCustomerNamePaymentEntry() {
+        return await this.driver.findElement(By.id("customerNamePayment"));
+    }
+
+    async getAmountPaymentEntry() {
+        return await this.driver.findElement(By.id("amountPayment"));
+    }
+
+    async getReferencePaymentEntry() {
+        return await this.driver.findElement(By.id("referencePayment"));
+    }
+
+    async getPaymentProviderPaymentEntry() {
+        return await this.driver.findElement(By.id("paymentProviderPayment"));
+    }
+
+    async getCreatePaymentButton() {
+        return await this.driver.findElement(By.id("createPaymentButton"));
+    }
+
+    async getSelectSavedAddressButton() {
+        return await this.driver.findElement(By.id("selectFromSavedAddressButton"));
+    }
+
+    async getSelectFromSavedContactsButton() {
+        return await this.driver.findElement(By.id("selectFromSavedContactsButton"));
+    }
+
+    async getSavedAddressButton() {
+        return await this.driver.findElements(By.id("savedAddressButton"));
+    }
+
+    async getSavedContactButton() {
+        return await this.driver.findElements(By.id("savedContactButton"));
+    }
+    
 }
 
 export default seleniumElements;

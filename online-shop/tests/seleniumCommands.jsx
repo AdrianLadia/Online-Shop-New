@@ -86,6 +86,37 @@ class seleniumCommands extends seleniumElements {
 
     }
 
+    async clickAdminMenu() {
+        const adminMenu = await this.getAdminMenuButton()
+        await adminMenu.click()
+
+    }
+
+    async clickInventoryMenu() {
+        const inventoryMenu = await this.getInventoryMenuButton()
+        await inventoryMenu.click()
+    }
+
+    async clickCreatePaymentMenu() {
+        const createPaymentMenu = await this.getCreatePaymentMenuButton()
+        await createPaymentMenu.click()
+    }
+
+    async clickBackToStoreButton() {
+        const backToStoreButton = await this.getBackToStoreButton()
+        await backToStoreButton.click()
+    }
+
+    async clickCustomerOrdersMenu() {
+        const customerOrdersMenu = await this.getCustomerOrdersMenuButton()
+        await customerOrdersMenu.click()
+    }
+
+    async clickHamburgerAdmin() {
+        const hamburgerAdmin = await this.getHamburgerAdminButton()
+        await hamburgerAdmin.click()
+    }
+
     async enterContactNumber() {
         const contactNameInput = await this.getContactNumberEntry()
         await contactNameInput.click()
@@ -144,6 +175,7 @@ class seleniumCommands extends seleniumElements {
         await this.driver.switchTo().window(popupWindowHandle);
         await this.clickAccountForLogin();
         await this.driver.switchTo().window(this.mainWindowHandle);
+        await this.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
 
 
     }
@@ -213,6 +245,59 @@ class seleniumCommands extends seleniumElements {
         await checkoutButton.click();
     }
 
+    async clickCustomerNamePaymentEntry() {
+        const customerNamePaymentEntry = await this.getCustomerNamePaymentEntry();
+        await customerNamePaymentEntry.click();
+    }
+
+    async clickAmountPaymentEntry() {
+        const amountPaymentEntry = await this.getAmountPaymentEntry();
+        await amountPaymentEntry.click();
+    }
+
+    async clickReferencePaymentEntry() {
+        const referencePaymentEntry = await this.getReferencePaymentEntry();
+        await referencePaymentEntry.click();
+    }
+
+    async clickPaymentProviderPaymentEntry() {
+        const paymentProviderPaymentEntry = await this.getPaymentProviderPaymentEntry();
+        await paymentProviderPaymentEntry.click();
+    }
+
+    async clickCreatePaymentButton() {
+        const createPaymentButton = await this.getCreatePaymentButton();
+        await createPaymentButton.click();
+    }
+
+    async createTestPayment() {
+        const customerNamePaymentEntry = await this.getCustomerNamePaymentEntry();
+        const amountPaymentEntry = await this.getAmountPaymentEntry();
+        const referencePaymentEntry = await this.getReferencePaymentEntry();
+        const paymentProviderPaymentEntry = await this.getPaymentProviderPaymentEntry();
+
+        await this.clickCustomerNamePaymentEntry()
+        const suggestionsList = await this.driver.wait(until.elementLocated(By.css('.MuiAutocomplete-listbox')), 5000);
+        await customerNamePaymentEntry.sendKeys("ladia.adrian@gmail.com")
+        const suggestion = await suggestionsList.findElement(By.css('.MuiAutocomplete-option'));
+        await suggestion.click();
+        await amountPaymentEntry.sendKeys("10000")
+        await referencePaymentEntry.sendKeys("Test Payment")
+        await paymentProviderPaymentEntry.sendKeys("Test Payment Provider")
+        await this.clickCreatePaymentButton()
+    }
+
+    async clickSelectFromSavedContactsButton () {
+        const selectFromSavedContactsButton = await this.getSelectFromSavedContactsButton();
+        await selectFromSavedContactsButton.click();
+    }
+
+    async clickSelectFromSavedAddressButton () {
+        const selectFromSavedAddressButton = await this.getSelectSavedAddressButton();
+        await selectFromSavedAddressButton.click();
+    }
+
+    
 }
 
 export default seleniumCommands;
