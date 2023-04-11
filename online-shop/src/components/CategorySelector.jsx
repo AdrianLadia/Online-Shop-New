@@ -43,8 +43,6 @@ const CategorySelector = (props) => {
 
   const featured_category = 'Paper Bag';
 
-
-
   useEffect(() => {
     setSelectedCategory(categories[value]);
   }, [value, categories]);
@@ -53,10 +51,10 @@ const CategorySelector = (props) => {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col items-center bg-green-300">
+      <div className="flex flex-col items-center bg-color60">
         <div className="mt-5">
           {/* <typ className='text-2xl font-bold mt-5'>Categories</h1> */}
-          <Typography>Select A Category</Typography>
+          <Typography sx={{fontWeight:"bold", fontSize:"20px"}}>Select A Category</Typography>
         </div>
         {/* <div className="flex flex-row overflow-scroll">
           {categories.map((category, index) => {
@@ -64,7 +62,7 @@ const CategorySelector = (props) => {
           })}
         </div> */}
         <Box sx={{ width: '100%' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>
             <Tabs
               value={value}
               onChange={handleChange}
@@ -75,7 +73,7 @@ const CategorySelector = (props) => {
               scrollButtons="auto"
             >
               {categories.map((category, index) => {
-                return <Tab label={category} {...a11yProps(index)} />;
+                return <Tab sx={{fontWeight:"bold"}} label={category} {...a11yProps(index)} />;
               })}
               {/* <Tab label="Item One" {...a11yProps(0)} />
               <Tab label="Item Two" {...a11yProps(1)} />
