@@ -21,6 +21,11 @@ class seleniumCommands extends seleniumElements {
         await delay(6000)
     }
 
+    async clickStoreMenu() {
+        const storeMenu = await this.getStoreMenuButton()
+        await storeMenu.click()
+    }
+
     async clickAccountMenu() {
         const accountMenu = await this.getAccountMenuButton()
         await accountMenu.click()

@@ -20,14 +20,29 @@ describe('Integration', () => {
     await driver.startApp();
     const app = await driver.getApp();
     expect(app).toBeTruthy();
-
+    
   });
-
+  
   test('login', async () => {
     await driver.login();
+    await delay(500)
   }, 1000000);
+  
+  test('clickAccountMenu', async () => {
+    await driver.clickAccountMenu();
 
-  test('Checkout Flow', async () => {
+    assert.notStrictEqual(await driver.getStoreMenuButton(), undefined);
+    assert.notStrictEqual(await driver.getProfileMenuButton(), undefined);
+    assert.notStrictEqual(await driver.getMyOrdersMenuButton(), undefined);
+    assert.notStrictEqual(await driver.getAccountStatementMenuButton(), undefined);
+    assert.notStrictEqual(await driver.getSettingsMenuButton(), undefined);
+    assert.notStrictEqual(await driver.getLogoutMenuButton(), undefined);
+    await driver.clickStoreMenu();
+
+    await delay(500)
+  }, 1000000)
+});
+  test('checkoutFlow', async () => {
     const totalPriceOld = await driver.getTotalPriceOfCartButton();
     await driver.addToCartAllProducts();
     const totalPriceNew = await driver.getTotalPriceOfCartButton();
@@ -42,7 +57,6 @@ describe('Integration', () => {
     await delay(300)
     const user2 = await firestore.readUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
     const userCart2 = user2.cart.length;
-
     expect(userCart2 - userCart).toEqual(1);
 
     await driver.removeFromCartDecrement()
@@ -51,21 +65,9 @@ describe('Integration', () => {
     const userCart3 = user.cart.length;
 
     expect(userCart3 - userCart2).toEqual(-1);
-
+    await delay(500)
   }, 1000000);
 
-//   test('accountMenu', async () => {
-//     await driver.clickAccountMenu();
-
-//     assert.notStrictEqual(await driver.getStoreMenuButton(), undefined);
-//     assert.notStrictEqual(await driver.getProfileMenuButton(), undefined);
-//     assert.notStrictEqual(await driver.getMyOrdersMenuButton(), undefined);
-//     assert.notStrictEqual(await driver.getAccountStatementMenuButton(), undefined);
-//     assert.notStrictEqual(await driver.getSettingsMenuButton(), undefined);
-//     assert.notStrictEqual(await driver.getLogoutMenuButton(), undefined);
-
-//   }, 1000000)
-});
 
 // async function example() {
 
