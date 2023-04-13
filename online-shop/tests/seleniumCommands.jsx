@@ -87,6 +87,7 @@ class seleniumCommands extends seleniumElements {
     }
 
     async clickAdminMenu() {
+        await this.driver.wait(until.elementLocated(By.id('adminMenu')), 10000);
         const adminMenu = await this.getAdminMenuButton()
         await adminMenu.click()
 
@@ -300,6 +301,11 @@ class seleniumCommands extends seleniumElements {
     async clickSelectFromSavedAddressButton () {
         const selectFromSavedAddressButton = await this.getSelectSavedAddressButton();
         await selectFromSavedAddressButton.click();
+    }
+
+    async clickCloseModalButton () {
+        const closeModalButton = await this.getCloseModalButton();
+        await closeModalButton.click();
     }
 
     

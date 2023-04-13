@@ -5,7 +5,7 @@ import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../src/firebase_config';
 import cloudFirestoreDb from '../src/cloudFirestoreDb';
 
-const { Builder, By, Key, until } = require('selenium-webdriver');
+const { Builder, By, Key, until, WebDriver } = require('selenium-webdriver');
 const chrome = require('chromedriver');
 const driver = new seleniumCommands();
 
@@ -28,24 +28,25 @@ describe('Integration', () => {
 
   }, 1000000);
 
-  // test('guestCheckout', async () => {
-  //   await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
-  //   const users = await cloudfirestore.readAllDataFromCollection('Users')
-  //   const usersLength = users.length;
-  //   await driver.checkoutAsGuest()
-  //   const itemsTotal = await (await driver.getCheckoutItemsTotal()).getText();
-  //   expect(parseFloat(itemsTotal)).toBeGreaterThan(0);
-  //   const users2 = await cloudfirestore.readAllDataFromCollection('Users')
-  //   const usersLength2 = users2.length;
-  //   expect(usersLength2 - usersLength).toEqual(1);
-  //   await driver.clickAccountMenu()
-  //   await driver.clickStore()
-  //   await driver.clickAccountMenu()
-  //   await driver.clickLogoutButton()
+  test('guestCheckout', async () => {
+    await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
+    const users = await cloudfirestore.readAllDataFromCollection('Users')
+    const usersLength = users.length;
+    await driver.checkoutAsGuest()
+    const itemsTotal = await (await driver.getCheckoutItemsTotal()).getText();
+    expect(parseFloat(itemsTotal)).toBeGreaterThan(0);
+    const users2 = await cloudfirestore.readAllDataFromCollection('Users')
+    const usersLength2 = users2.length;
+    expect(usersLength2 - usersLength).toEqual(1);
+    await driver.clickAccountMenu()
+    await driver.clickStore()
+    await delay(1000)
+    await driver.clickAccountMenu()
+    await driver.clickLogoutButton()
 
-  //   console.log('logged out')
+    console.log('logged out')
 
-  // }, 1000000);
+  }, 1000000);
 
   test('login', async () => {
     await driver.login();
@@ -53,19 +54,19 @@ describe('Integration', () => {
   }, 1000000);
 
 
-  // test('clearCart', async () => {
-  //   await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
-  //   await driver.addToCartAllProducts()
-  //   await driver.openCart();
-  //   await driver.clickClearCartButton();
-  //   await(delay(600))
-  //   const user = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
-  //   await(delay(300))
-  //   const userCart = user.cart
-  //   const userCartLength = userCart.length;
-  //   expect(userCartLength).toEqual(0);
-  //   await driver.clickCloseCartButton()
-  // }, 1000000);
+  test('clearCart', async () => {
+    await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
+    await driver.addToCartAllProducts()
+    await driver.openCart();
+    await driver.clickClearCartButton();
+    await(delay(600))
+    const user = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    await(delay(300))
+    const userCart = user.cart
+    const userCartLength = userCart.length;
+    expect(userCartLength).toEqual(0);
+    await driver.clickCloseCartButton()
+  }, 1000000);
 
   test('Checkout Flow', async () => {
     await cloudfirestore.updateDocumentFromCollection('Users', 'NSrPrIoJoaDVSSRCVX2Lct2wiBhm', {orders: [],contactPerson: [], deliveryAddress: []})
@@ -129,29 +130,31 @@ describe('Integration', () => {
 
     expect(found).toBe(true)
 
+    await delay(1000)
     await driver.clickSelectFromSavedContactsButton()
-    const savedAddress = await driver.getSavedContactButton()
-    savedAddress.sendKeys(Key.ESCAPE);
-
-    await driver.clickSelectFromSavedAddressesButton()
-    const savedContact = await driver.getSavedAddressButton()
-    savedContact.sendKeys(Key.ESCAPE);
-
-    let foundAddress = false
-    savedAddress.map(async (address) => {
-      const addressText = address.getText()
-      if (addressText === 'Test Address') {
-        foundAddress = true
-      }
-    })
-
+    const savedContact = await driver.getSavedContactButton()
     let foundContact = false
-    savedContact.map(async (contact) => {
-      const contactText = contact.getText()
+    savedContact.map(async (address) => {
+      const contactText = await address.getText()
       if (contactText === 'Test Name, 1234567890') {
         foundContact = true
       }
     })
+    await driver.clickCloseModalButton()
+
+    await delay(1000)
+    await driver.clickSelectFromSavedAddressButton()
+    const savedAddress = await driver.getSavedAddressButton()
+    let foundAddress = false
+    savedAddress.map(async (contact) => {
+      const addressText = await contact.getText()
+      if (addressText === 'Test Address') {
+        foundAddress = true
+      }
+    })
+    await driver.clickCloseModalButton()
+
+
 
     expect(foundAddress).toBe(true)
     expect(foundContact).toBe(true)
@@ -176,6 +179,7 @@ describe('Integration', () => {
     assert.notStrictEqual(await driver.getLogoutMenuButton(), undefined);
   
     await driver.clickStore()
+    await delay(1000)
   }, 1000000)
 
 
@@ -201,6 +205,7 @@ describe('Integration', () => {
     const orders = await driver.getOrdersTable()
     expect(orders.length).toBeGreaterThan(0)
     await driver.clickBackToStoreButton()
+    await delay(1000)
   }, 1000000)
 
   test('createPaymentMenu', async () => {
@@ -209,6 +214,7 @@ describe('Integration', () => {
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
     await driver.clickAdminMenu()
+    await delay(1000)
     await driver.clickHamburgerAdmin()
     await driver.clickCreatePaymentMenu()
     await driver.createTestPayment()

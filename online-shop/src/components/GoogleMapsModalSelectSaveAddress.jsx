@@ -43,24 +43,37 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          {userdata ? (
-            userdata.deliveryAddress.map((address, index) => {
-              return (
-                <GoogleMapsModalSelectSaveAddressButton
-                  handleClose={props.handleClose}
-                  address={address.address}
-                  savedlongitude={address.longitude}
-                  savedlatitude={address.latitude}
-                  setLocalLatitude={setLocalLatitude}
-                  setLocalLongitude={setLocalLongitude}
-                  setLocalDeliveryAddress={setLocalDeliveryAddress}
-                  setZoom={setZoom}
-                ></GoogleMapsModalSelectSaveAddressButton>
-              );
-            })
-          ) : (
-            <>Create an account to save</>
-          )}
+          <div className="flex flex-col">
+            <div className="flex flex-row justify-end">
+              <button
+                id="closeModalButton"
+                onClick={props.handleClose}
+                className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
+              >
+                X
+              </button>
+            </div>
+            <div className="flex">
+              {userdata ? (
+                userdata.deliveryAddress.map((address, index) => {
+                  return (
+                    <GoogleMapsModalSelectSaveAddressButton
+                      handleClose={props.handleClose}
+                      address={address.address}
+                      savedlongitude={address.longitude}
+                      savedlatitude={address.latitude}
+                      setLocalLatitude={setLocalLatitude}
+                      setLocalLongitude={setLocalLongitude}
+                      setLocalDeliveryAddress={setLocalDeliveryAddress}
+                      setZoom={setZoom}
+                    ></GoogleMapsModalSelectSaveAddressButton>
+                  );
+                })
+              ) : (
+                <>Create an account to save</>
+              )}
+            </div>
+          </div>
         </Box>
       </Modal>
     </div>

@@ -37,16 +37,30 @@ const GoogleMapsModalSelectContactModal = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          {contactPerson.map((contact) => {
-            return (
-              <GoogleMapsModalSelectContactModalButton
-                contact={contact}
-                setLocalPhoneNumber={props.setLocalPhoneNumber}
-                setLocalName={props.setLocalName}
-                handleCloseModal={props.handleClose}
-              />
-            );
-          })}
+          <div className='flex flex-col'>
+            <div className='flex flex-row justify-end'>
+            <button
+                id="closeModalButton"
+                onClick={props.handleClose}
+                className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
+              >
+                X
+              </button>
+            </div>
+            <div>
+              {contactPerson.map((contact) => {
+                return (
+                  <GoogleMapsModalSelectContactModalButton
+                    contact={contact}
+                    setLocalPhoneNumber={props.setLocalPhoneNumber}
+                    setLocalName={props.setLocalName}
+                    handleCloseModal={props.handleClose}
+                  />
+                );
+              })}
+            </div>
+
+          </div>
         </Box>
       </Modal>
     </div>
