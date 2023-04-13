@@ -101,11 +101,12 @@ const OpenCartButton = () => {
 
   return (
     <div>
-      <div className="flex position fixed bottom-5 w-full justify-center ">
+      <div className="flex position fixed bottom-20 w-full justify-center ">
         <button
           id="opencartbutton"
           onClick={ViewCart}
-          className="bg-color10b text-white font-bold py-2 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 position fixed bottom-2 content-center hover:animate-bounce"
+          className="bg-color10b text-white font-bold py-2 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 
+                      position fixed bottom-2 content-center hover:animate-bounce delay-1000"
         >
           {userstate !== 'userloading' ? (
             <div className="flex flex-row justify-around">
@@ -115,9 +116,9 @@ const OpenCartButton = () => {
                     {GetQuantity()}
                   </span>
                 </span>
-                <AiOutlineShoppingCart size={30} />
+                <AiOutlineShoppingCart size={25} />
               </div>
-              <div className="mt-1.5 flex flex-row">
+              <div className="mt-1.5 flex flex-row ">
                 <Typography variant="h6"> Php </Typography>
                 <Typography sx={{marginLeft:1}} id='totalPrice' variant="h6"> {totalPrice.toLocaleString()} </Typography>
                 

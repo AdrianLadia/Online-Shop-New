@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import theme from '../colorPalette/MaterialUITheme';
 
 function a11yProps(index) {
   return {
@@ -49,8 +51,17 @@ const CategorySelector = (props) => {
 
   // const sample = ['test','test2','test3', 'test4', 'test5']
 
+  // const theme = createTheme({
+  //   palette: {
+  //     primary: {
+  //       main: '#9bfab5',
+  //     }
+  //   },
+  // });
+
   return (
-    <div className="w-full">
+    <ThemeProvider theme={theme}>
+    <div className="w-full ">
       <div className="flex flex-col items-center bg-color60">
         <div className="mt-5">
           {/* <typ className='text-2xl font-bold mt-5'>Categories</h1> */}
@@ -83,6 +94,7 @@ const CategorySelector = (props) => {
         </Box>
       </div>
     </div>
+    </ThemeProvider>
   );
 };
 

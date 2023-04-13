@@ -51,12 +51,12 @@ const CheckoutSummary = (props) => {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <div className='flex flex-col align-center items-center'>
+          <TableContainer component={Paper} className='bg-red-100 flex align-center w-11/12'>
+            <Table sx={{ minWidth: 650}} className=' bg-color30 font-bold' aria-label="simple table" >
               <TableHead>
-                <TableRow>
-                  <TableCell>Image</TableCell>
+                <TableRow >
+                  <TableCell >Image</TableCell>
                   <TableCell> Item</TableCell>
                   <TableCell align="right">Quantity</TableCell>
                   <TableCell align="right">Price</TableCell>

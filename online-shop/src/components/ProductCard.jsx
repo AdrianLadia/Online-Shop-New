@@ -8,14 +8,11 @@ import TextField from "@mui/material/TextField";
 import ProductCardModal from "./ProductCardModal";
 import businessCalculations from "../../utils/businessCalculations"
 import AppContext from "../AppContext";
-import storeColor from "../colorPalette/storeColor"
 import { FaImage } from "react-icons/fa";
+import {ThemeProvider } from '@mui/material/styles';
+import theme from "../colorPalette/MaterialUITheme";
 
 const ProductCard = (props) => {
-
-  // COLOR
-  const color = new storeColor
-
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(false);
@@ -140,29 +137,36 @@ const ProductCard = (props) => {
     }
   }
 
+  // const theme = createTheme({
+  //   palette: {
+  //     secondary: {
+  //       main: '#bdffcf',
+  //     },
+  //   },
+  // });
 
-  console.log(color)
   return (
+    <ThemeProvider theme={theme}>
     <div className="flex justify-center h-full w-full ">
       <Paper
         elevation={9}
-        sx={{ borderRadius:"20px"}}
-        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30"
+        sx={{borderRadius:"20px"}}
+        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30 "
       >
         {/* IMAGE */}
         <div className="w-3/5">
-          <div className="bg-slate-200 h-full w-full object-cover rounded-lg flex justify-center items-center">
+          <div className="bg-slate-800 text-white h-full w-full object-cover rounded-lg flex justify-center items-center">
             <FaImage></FaImage>
           </div>
-          {/* <img
-            src={props.product.imageLinks[0]}
-            alt={props.product.itemName}
-            className="h-full w-full object-cover rounded-lg"
-            onClick={() => setModal(true)}
-          ></img> */}
-        </div>
-        {/* IMAGE */}
-        {/* DETAILS */}
+              {/* <img
+                src={props.product.imageLinks[0]}
+                alt={props.product.itemName}
+                className="h-full w-full object-cover rounded-lg"
+                onClick={() => setModal(true)}
+              ></img> */}
+            </div>
+            {/* IMAGE */}
+            {/* DETAILS */}
         <div className="flex flex-col ml-4 w-2/5 m-1 ">
           
           {outofstock === true ? (
@@ -188,14 +192,15 @@ const ProductCard = (props) => {
               ) : <div className="h-1/12"> </div>} 
             </>
           )}
-          <div className="h-2/5 " onClick={() => setModal(true)}>
-            <Typography sx={{fontSize: responsiveStyle(), mr: 1, fontFamily: 'Trebuchet MS' , fontWeight: "bold", color:"darkslategray"}}>
+          <div className="h-2/5 ">
+            <Typography sx={{fontSize: responsiveStyle(), mr: 1, fontFamily: 'Trebuchet MS' , fontWeight: "bold", color:"darkslategray", cursor:"pointer"}}
+                            onClick={() => setModal(true)}>
               {props.product.itemName}
             </Typography>
           </div>
 
-          <div className="h-1/6  flex items-center " onClick={() => setModal(true)}>
-            <Typography sx={{fontSize: responsivePrice(), letterSpacing: "0.1em", mt: 1 }}>
+          <div className="h-1/6  flex items-center ">
+            <Typography sx={{fontSize: responsivePrice(), mt: 1, mb:1}}>
               {"₱ " + props.product.price}
             </Typography>
           </div>
@@ -203,7 +208,7 @@ const ProductCard = (props) => {
           <div className="flex flex-row h-1/6 w-full " >
               <button
                 id="addtocartbutton"
-                className= "mt-5 h-full text-center w-fit text-black bg-color10a hover:bg-orange-50  text-xs py-1 px-2 rounded"
+                className= "mt-5 h-full text-black bg-color10a hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
                 type="button"
                 onClick={AddToCart}
               >
@@ -213,19 +218,13 @@ const ProductCard = (props) => {
                 id="entryquantity"
                 label="Qty"
                 type="number"
+                color="primary"
                 InputLabelProps={{
                   shrink: true,
                 }}
                 value={quantity}
                 onChange={(event) => {setQuantity(event.target.value)}}
-                sx={{fontSize: "13px" , mr:1, ml: 1, mt: 1,
-                      "& .MuiInputLabel-root:focus": {
-                        color: "#CEE5D0"
-                      },
-                      "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#FCF8E8"
-                      }
-                    }}
+                className="m-2"
               />
           </div>
         </div>
@@ -254,6 +253,7 @@ const ProductCard = (props) => {
         />
       </div>
     </div>
+    </ThemeProvider>
   );
 };
 

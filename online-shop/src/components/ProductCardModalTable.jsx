@@ -23,7 +23,7 @@ const ProductCardModalTable = (props) => {
 
     function responsiveTableWidth() {
         if (width >= 1024) {
-          return '50%';   
+          return '90%';   
         } 
         if (width >= 600 && width < 1024) {
           return '80%';}
@@ -33,10 +33,10 @@ const ProductCardModalTable = (props) => {
       }
 
   return (
-    <TableContainer component={Paper} sx={{marginTop:2,display:'flex',justifyContent:'center'}}>
-      <Table sx={{ width:responsiveTableWidth()}} aria-label="simple table">
+    <TableContainer component={Paper} sx={{marginTop:2, display:'flex', justifyContent:'center'}} className='bg-color30'>
+      <Table sx={{ width:responsiveTableWidth()}} aria-label="simple table" className='bg-color10a border-2 border-color10b'>
         <TableHead>
-          <TableRow>
+          <TableRow >
             <TableCell>Key</TableCell>
             <TableCell align="right">Value</TableCell>
           </TableRow>
@@ -46,6 +46,7 @@ const ProductCardModalTable = (props) => {
             <TableRow
               key={row.key}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              className='bg-color60'
             >
               <TableCell component="th" scope="row">
                 {row.key}

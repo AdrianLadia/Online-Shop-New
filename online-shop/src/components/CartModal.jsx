@@ -31,7 +31,7 @@ const CartModal = (props) => {
     height: "80%",
     transform: "translate(-50%, -50%)",
     width: "95%",
-    overflow: 'scroll',
+    // overflow: 'scroll',
 
     "@media (min-width: 1024px)": {
       width: "50%",
@@ -68,49 +68,50 @@ const CartModal = (props) => {
 
   return (
     <Modal open={openCart} onClose={CloseCart}>
-      <Fade in={openCart}>
-        <Box sx={style}>
-          <div className="flex flex-row justify-between pb-5">
-            <FaShoppingCart size={35} />
+      <Fade in={openCart} >
+        <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-hidden bg-color30 border-color10b">
+            <div className="flex flex-row-reverse mb-4">   
+              <button
+                id = 'closeCartButton'
+                onClick={CloseCart}
+                className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
+              >
+                X
+              </button>
+            </div>
+          <div className="flex flex-row justify-between p-2">
+            <FaShoppingCart size={35}/>
             <Typography
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              className="ml-auto"
+              className="ml-auto font-bold"
             >
               Cart Total: {totalPrice.toLocaleString()}
             </Typography>
-            <button
-              id = 'closeCartButton'
-              onClick={CloseCart}
-              className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
-            >
-              X
-            </button>
           </div>
 
           {/* TABLE  */}
           {cartisempty ? <> Cart is empty</> : <CartTable rows={rows} />}
 
-          <div className="flex justify-center">
+          <div className="flex ">
             {cartisempty ? (
               <> </>
             ) : (
-              <div className="flex flex-row justify-between w-full ">
+              <div className="flex flex-row justify-between w-full p-4">
                 <div>
                   <button
                   id='clearCartButton'
                     onClick={clearCart}
-                    className="bg-red-500 h-10 mt-5 hover:bg-red-800 p-2 rounded-lg  text-white ml-5"
+                    className="bg-red-500 h-10 mt-5 hover:bg-red-800 p-2 rounded-lg  text-white "
                   >
                     Clear Cart
                   </button>
                 </div>
 
                 <div>
-                  <CheckoutButton className="items-center" />
+                  <CheckoutButton />
                 </div>
-                <div className="flex w-20"></div>
               </div>
             )}
           </div>

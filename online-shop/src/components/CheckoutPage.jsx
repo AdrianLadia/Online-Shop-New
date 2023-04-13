@@ -195,7 +195,7 @@ const CheckoutPage = () => {
   }, [total, vat, deliveryFee]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-color60">
       <CheckoutPageContext.Provider value={[payMayaCardSelected, setPayMayaCardSelected]}>
         {/* <PaymentMethods /> */}
         {launchPayMayaCheckout ? (
@@ -210,15 +210,15 @@ const CheckoutPage = () => {
       </CheckoutPageContext.Provider>
 
       <div className="flex flex-row my-5 ">
-        <div className="flex justify-center w-full mt-5 ml-5 ">
-          <Typography variant="h5" className="bold" sx={{ fontWeight: 'bold' }}>
+        <div className="flex justify-center w-full p-3">
+          <Typography variant="h4" className="font-bold">
             Delivery Address
           </Typography>
         </div>
         <div className="flex justify-center w-full">
           <button
             testid="selectFromSavedAddressButton"
-            className="bg-blue-300 p-3 rounded-lg mx-5 "
+            className="bg-color10b p-3 rounded-lg mx-5 font-semibold"
             onClick={handleOpenModalSavedAddress}
           >
             Select From Saved Address
@@ -243,20 +243,19 @@ const CheckoutPage = () => {
           id="addressEntry"
           label="Address"
           variant="filled"
-          className="w-full"
+          className="w-full mt-1 bg-color30"
           onChange={(event) => setLocalDeliveryAddress(event.target.value)}
           value={localDeliveryAddress}
-          sx={{ marginTop: 1 }}
         />
 
         <div className="flex flex-row my-5 ">
-          <div className="flex justify-center w-full mt-7 ml-5 ">
-            <Typography variant="h5" className="bold" sx={{ fontWeight: 'bold' }}>
+          <div className="flex justify-center w-full p-3">
+            <Typography variant="h4" className="font-bold" >
               Contact Details
             </Typography>
           </div>
           <div className="flex justify-center w-full">
-            <button id='selectFromSavedContactsButton' className="bg-blue-300 p-3 rounded-lg mt-2 mx-5" onClick={handleOpenContactModal}>
+            <button id='selectFromSavedContactsButton' className="bg-color10b p-3 rounded-lg mt-2 mx-5 font-semibold" onClick={handleOpenContactModal}>
               Select From Saved Contacts
             </button>
           </div>
@@ -266,19 +265,17 @@ const CheckoutPage = () => {
           id="contactNumberEntry"
           label="Contact #"
           variant="filled"
-          className="w-full"
+          className="w-full mt-1 bg-color30"
           onChange={(event) => setLocalPhoneNumber(event.target.value)}
           value={localphonenumber || ''}
-          sx={{ marginTop: 1 }}
         />
         <TextField
           id="contactNameEntry"
           label="Name"
           variant="filled"
-          className="w-full"
+          className="w-full mt-1 bg-color30"
           onChange={(event) => setLocalName(event.target.value)}
           value={localname || ''}
-          sx={{ marginTop: 1 }}
         />
       </div>
 
@@ -301,12 +298,12 @@ const CheckoutPage = () => {
               {area.includes('lalamoveServiceArea') ? (
                 <div>
                   <div className="flex justify-center mt-5">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="h4" className='font-bold'>
                       Assistance
                     </Typography>
                   </div>
                   <div className="flex justify-center mt-5">
-                    <Typography variant="h6">
+                    <Typography variant="h6" >
                       Driver helps unload items?
                       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
                     </Typography>
@@ -444,13 +441,14 @@ const CheckoutPage = () => {
               )} */}
 
               <div className="flex justify-center my-5">
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="h4" className='font-bold'>
                   Checkout Summary
                 </Typography>
               </div>
 
               {area.length == 0 ? null : (
                 <CheckoutSummary
+                  
                   total={total}
                   setTotal={setTotal}
                   vat={vat}
@@ -462,6 +460,7 @@ const CheckoutPage = () => {
                   setDeliveryVehicle={setDeliveryVehicle}
                   setVat={setVat}
                   area={area}
+                  
                 />
               )}
               <Divider sx={{ marginTop: 3 }} />
