@@ -190,6 +190,7 @@ describe('Integration', () => {
     await driver.clickAccountMenu();
     await driver.clickAdminMenu()
     await driver.clickBackToStoreButton()
+    await delay(1000)
     
   }, 1000000)
 

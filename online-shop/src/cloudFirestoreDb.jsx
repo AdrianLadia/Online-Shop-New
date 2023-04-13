@@ -23,7 +23,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       await this.updateDocumentFromCollection('Users', userId, {userRole: role})
     }
     catch (error) {
-
+      throw new Error(error)
     }
   }
 

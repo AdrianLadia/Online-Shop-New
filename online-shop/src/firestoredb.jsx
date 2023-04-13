@@ -1,6 +1,7 @@
 import firestorefunctions from './firestorefunctions';
 import Joi from 'joi';
 import schemas from './schemas/schemas';
+import retryApi from '../utils/retryApi';
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
@@ -18,12 +19,12 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    super.createDocument(data, id, 'Products');
+    await retryApi(async () => await super.createDocument(data, id, 'Products'));
+    
   }
 
   async readAllProducts() {
-    const products = await super.readAllDataFromCollection('Products');
-
+    const products = await retryApi(async () => await super.readAllDataFromCollection('Products'));
     const productsSchema = Joi.array().items(schemas.productSchema())  
 
     try {
@@ -36,8 +37,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async readSelectedProduct(id) {
-    const product = await super.readSelectedDataFromCollection('Products', id);
-
+    const product = await retryApi(async () => await super.readSelectedDataFromCollection('Products', id)); 
     const productsSchema = schemas.productSchema()
 
     try {
@@ -50,7 +50,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteProduct(id) {
-    super.deleteDocumentFromCollection('Products', id);
+    await retryApi(async () => await super.deleteDocumentFromCollection('Products', id));
   }
 
   async updateProduct(id, data) {
@@ -76,7 +76,8 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    await super.updateDocumentFromCollection('Products', id, data);
+    await retryApi(async () => await super.updateDocumentFromCollection('Products', id, data));
+    // await super.updateDocumentFromCollection('Products', id, data);
   }
 
   // USED FOR STOREFRONT
@@ -90,23 +91,26 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    super.createDocument(
-      {
-        category: categoryId
+    await retryApi(async () => {
+      super.createDocument(
+        {
+          category: categoryId
+            .split(' ')
+            .map((word) => word[0].toUpperCase() + word.slice(1))
+            .join(' '),
+        },
+        categoryId
           .split(' ')
           .map((word) => word[0].toUpperCase() + word.slice(1))
           .join(' '),
-      },
-      categoryId
-        .split(' ')
-        .map((word) => word[0].toUpperCase() + word.slice(1))
-        .join(' '),
-      'Categories'
-    );
+        'Categories'
+      );
+    })
+
   }
 
   async readAllCategories() {
-    const categories = await super.readAllDataFromCollection('Categories');
+    const categories = await retryApi(async () => await super.readAllDataFromCollection('Categories')); 
 
     const categoriesSchema = Joi.array();
 
@@ -120,7 +124,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllUserIds() {
-    const ids = await super.readAllIdsFromCollection('Users');
+    const ids = await retryApi(async () => await super.readAllIdsFromCollection('Users')); 
 
     const idsSchema = Joi.array().items(Joi.string().required());
 
@@ -134,7 +138,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllUsers() {
-    const users = await super.readAllDataFromCollection('Users');
+    const users = await retryApi(async () => await super.readAllDataFromCollection('Users'));
     return users;
   }
 
@@ -145,85 +149,106 @@ class firestoredb extends firestorefunctions {
     if (error) {
       throw new Error(error);
     }
-
-    super.createDocument(data, id, 'Users');
+    retryApi(async () => await super.createDocument(data, id, 'Users'));
   }
 
   async readUserById(id) {
-    const user = await super.readSelectedDataFromCollection('Users', id);
+    const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', id)); 
+    
     return user;
   }
 
   async addItemToFavorites(userid, data) {
-    
-    super.addDocumentArrayFromCollection('Users', userid, data, 'favoriteItems');
+    await retryApi(async () => await super.addDocumentArrayFromCollection('Users', userid, data, 'favoriteItems'));
   }
 
   async removeItemFromFavorites(userid, data) {
-    super.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteItems');
+    await retryApi(async () => await super.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteItems'));
+    
   }
 
   async createUserCart(data, userid) {
-    super.updateDocumentFromCollection('Users', userid, {
-      cart: data,
+    await retryApi(async () => {
+      super.updateDocumentFromCollection('Users', userid, {
+        cart: data,
+      });
     });
+    
   }
 
   async deleteAllUserCart(userid) {
-    super.updateDocumentFromCollection('Users', userid, {
-      cart: [],
-    });
+    await retryApi(async () => {
+      super.updateDocumentFromCollection('Users', userid, {
+        cart: [],
+      });
+    })
   }
 
   async readUserAddress(userid) {
-    const user = await super.readSelectedDataFromCollection('Users', userid);
+    const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', userid));
+    
     return user.deliveryaddress;
   }
 
   async deleteAddress(userid, latitude, longitude, address) {
   
-
-    super.deleteDocumentFromCollectionArray(
-      'Users',
-      userid,
-      { latitude: latitude, longitude: longitude, address: address },
-      'deliveryAddress'
-    );
+    await retryApi(async () => {
+      super.deleteDocumentFromCollectionArray(
+        'Users',
+        userid,
+        { latitude: latitude, longitude: longitude, address: address },
+        'deliveryAddress'
+      );
+    })
   }
 
   async readUserContactPersons(userid) {
-    const user = await super.readSelectedDataFromCollection('Users', userid);
+    const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', userid));
+  
     return user.contactPerson;
   }
 
   async deleteUserContactPersons(userid, name, phonenumber) {
-    super.deleteDocumentFromCollectionArray('Users', userid, { name: name, phonenumber: phonenumber }, 'contactPerson');
+    await retryApi(async () => {
+      await super.deleteDocumentFromCollectionArray('Users', userid, { name: name, phonenumber: phonenumber }, 'contactPerson');
+    })
   }
 
   async updateLatitudeLongitude(userid, latitude, longitude) {
-    super.updateDocumentFromCollection('Users', userid, {
-      latitude: latitude,
-      longitude: longitude,
-    });
+    await retryApi(async () => {
+      await super.updateDocumentFromCollection('Users', userid, {
+        latitude: latitude,
+        longitude: longitude,
+      });
+    })
   }
 
   async updatePhoneNumber(userid, phonenumber) {
-    super.updateDocumentFromCollection('Users', userid, {
-      phonenumber: phonenumber,
+    await retryApi(async () => {
+      await super.updateDocumentFromCollection('Users', userid, {
+        phonenumber: phonenumber,
+      });
     });
+    
   }
 
   async createTestCollection() {
-    super.createDocument({ name: 'test' }, 'test', 'test');
+    await retryApi(async () => {
+      super.createDocument({ name: 'test' }, 'test', 'test');
+    });
   }
 
   async readTestCollection() {
-    const data = await super.readAllDataFromCollection('test');
+    
+    const data = await retryApi(async () => await super.readAllDataFromCollection('test', 'test'));
+    //  const data2 = await super.readAllDataFromCollection('test');
     return data;
   }
 
   async deleteTestCollection() {
-    super.deleteDocumentFromCollection('test', 'test');
+    await retryApi(async () => {
+      super.deleteDocumentFromCollection('test', 'test');
+    });
   }
 
   // async transactionPlaceOrder(

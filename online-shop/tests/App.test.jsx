@@ -10,6 +10,7 @@ import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
 // import { getAuth, connectAuthEmulator } from "firebase/auth";
 import cloudFirestoreFunctions from '../src/cloudFirestoreFunctions';
 import cloudFirestoreDb from '../src/cloudFirestoreDb';
+import retryApi from '../utils/retryApi';
 //
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
@@ -1220,4 +1221,25 @@ describe('cloudfirestoredb', async () => {
       expect(roles.includes(userRole)).toEqual(true);
     });
   });
+});
+
+
+describe('retryApiCall', () => {
+  test('retryApiCall', async () => {
+    function testApiCallTrue() {
+      return true
+    }
+
+    function testApiCallFalse() {
+      throw new Error('test error')
+    }
+
+    const result = await retryApi( () => testApiCallTrue());
+    expect(result).toEqual(true);
+
+    await expect(async () => {
+      await retryApi(() => testApiCallFalse(),2);
+    }).rejects.toThrowError(Error);
+
+  }, 10000000);
 });

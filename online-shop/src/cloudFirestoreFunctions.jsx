@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Joi from 'joi';
+import retryApi from '../utils/retryApi';
 
 class cloudFirestoreFunctions {
   constructor(emulator = false) {
@@ -26,9 +27,12 @@ class cloudFirestoreFunctions {
 
     const encodedData = encodeURIComponent(JSON.stringify({ collection, id, firestoreData }));
     try {
-      const response = await axios.post(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/createDocument?data=${encodedData}`
-      );
+
+      await retryApi(async () => {
+        const response = await axios.post(
+          `http://127.0.0.1:5001/online-store-paperboy/us-central1/createDocument?data=${encodedData}`
+        );
+      })
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -47,9 +51,13 @@ class cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllDataFromCollection?collectionName=${collectionName}`
-      );
+
+      let response
+      await retryApi(async () => {
+        response = await axios.get(
+          `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllDataFromCollection?collectionName=${collectionName}`
+        );  
+      })
       const toReturn = response.data;
       const toReturnSchema = Joi.array()
       const { error2} = toReturnSchema.validate(toReturn)
@@ -75,9 +83,12 @@ class cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllIdsFromCollection?collectionName=${collectionName}`
-      );
+      let response
+      await retryApi(async () => {
+        response = await axios.get(
+          `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllIdsFromCollection?collectionName=${collectionName}`
+        );
+      })
 
       const toReturn = response.data;
       const toReturnSchema = Joi.array()
@@ -108,9 +119,12 @@ class cloudFirestoreFunctions {
 
     const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id }));
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readSelectedDataFromCollection?data=${encodedData}`
-      );
+      let response
+      await retryApi(async () => {
+        response = await axios.get(
+          `http://127.0.0.1:5001/online-store-paperboy/us-central1/readSelectedDataFromCollection?data=${encodedData}`
+        );
+      })
 
       const toReturn = response.data;
       const toReturnSchema = Joi.object()
@@ -141,9 +155,12 @@ class cloudFirestoreFunctions {
 
     const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id }));
     try {
-      const response = await axios.delete(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/deleteDocumentFromCollection?data=${encodedData}`
-      );
+      let response
+      await retryApi(async () => {
+        response = await axios.delete(
+          `http://127.0.0.1:5001/online-store-paperboy/us-central1/deleteDocumentFromCollection?data=${encodedData}`
+        );
+      })
       console.log(response.data);
     } catch (error) {
       console.error('Error deleting document:', error);
@@ -166,9 +183,12 @@ class cloudFirestoreFunctions {
 
     const encodedData = encodeURIComponent(JSON.stringify({ collectionName, id, firestoreData }));
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/updateDocumentFromCollection?data=${encodedData}`
-      );
+      let response
+      await retryApi(async () => {
+        response = await axios.put(
+          `http://127.0.0.1:5001/online-store-paperboy/us-central1/updateDocumentFromCollection?data=${encodedData}`
+        );
+      })
       console.log(response.data);
     } catch (error) {
       console.error('Error updating document:', error);
