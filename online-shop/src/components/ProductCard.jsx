@@ -151,11 +151,12 @@ const ProductCard = (props) => {
       <Paper
         elevation={9}
         sx={{borderRadius:"20px"}}
-        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30 "
+        // className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30 "
+        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-gradient-to-t from-color30 to-color10a"
       >
         {/* IMAGE */}
         <div className="w-3/5">
-          <div className="bg-slate-800 text-white h-full w-full object-cover rounded-lg flex justify-center items-center">
+          <div className="bg-slate-800 text-2xl text-white h-full w-full object-cover rounded-lg flex justify-center items-center">
             <FaImage></FaImage>
           </div>
               {/* <img
@@ -183,8 +184,8 @@ const ProductCard = (props) => {
                   <Typography fontSize={responsiveFont()} color="red" fontWeight={600}>
                     Stocks left
                   </Typography>
-                  <span className="flex h-3 w-3 mt-1 ml-2 flex-grow-0">
-                    <span className="inline-flex items-center justify-center py-1 px-1 text-xs font-semibold leading-none text-red-100 bg-red-600 rounded-full">
+                  <span className="flex h-3 w-3 ml-1 flex-grow-0">
+                    <span className="inline-flex items-center justify-center mt-1 py-2 px-1 text-xs font-semibold leading-none text-red-100 bg-red-600 rounded-full">
                       {props.product.stocksAvailable - safetyStock}
                     </span>
                   </span>
@@ -208,7 +209,8 @@ const ProductCard = (props) => {
           <div className="flex flex-row h-1/6 w-full " >
               <button
                 id="addtocartbutton"
-                className= "mt-5 h-full text-black bg-color10a hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
+                // className= "mt-5 h-full text-black bg-color10a hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
+                className= "mt-5 h-full text-black bg-color10a ease-out delay-150 hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
                 type="button"
                 onClick={AddToCart}
               >

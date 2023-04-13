@@ -17,16 +17,18 @@ const WholesaleOrRetail = (props) => {
       }
 
   return (
-    <div className="bg-color60  flex justify-center">
+    <div className="bg-color60 flex justify-center">
         <button
           onClick={onWholesaleClick}
-          className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
+          // className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
+          className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-gradient-to-r from-color30 to-color10a lg:w-40 hover:animate-pulse"
         >
           Wholesale
         </button>
         <button
           onClick={onRetailClick}
-          className="ml-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
+          // className="ml-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
+          className="ml-1 mt-5 flex-none font-semibold p-3 rounded-full bg-gradient-to-l from-color30 to-color10a lg:w-40 hover:animate-pulse"
         >
           Retail
         </button>
