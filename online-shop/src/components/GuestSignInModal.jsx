@@ -36,7 +36,7 @@ const GuestSignInModal = (props) => {
                 <div className='flex justify-center mt-5'>
                     <h2 id="child-modal-title">You must be signed in to place an order</h2>
                 </div>
-                <div className='flex justify-center items-center mt-5'>
+                <div id='loginGuest' className='flex justify-center items-center mt-5'>
                     <LoginButton position={'center'} handleCloseGuestSignInModal={handleCloseGuestSignInModal} />
                 </div>
             </div>

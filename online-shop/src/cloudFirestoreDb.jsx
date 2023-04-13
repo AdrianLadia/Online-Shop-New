@@ -8,6 +8,25 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     super();
   }
 
+  async changeUserRole(userId, role) {
+    const userIdSchema = Joi.string();
+    const roleSchema = Joi.string();
+
+    const { error: userIdError } = userIdSchema.validate(userId);
+    const { error: roleError } = roleSchema.validate(role);
+
+    if (userIdError || roleError) {
+      throw new Error(userIdError || roleError);
+    }
+
+    try {
+      await this.updateDocumentFromCollection('Users', userId, {userRole: role})
+    }
+    catch (error) {
+
+    }
+  }
+
   async checkIfUserIdAlreadyExist(userId) {
     const userIdSchema = Joi.string();
 

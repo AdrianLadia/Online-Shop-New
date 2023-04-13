@@ -217,7 +217,7 @@ const CheckoutPage = () => {
         </div>
         <div className="flex justify-center w-full">
           <button
-            data-testid="selectFromSavedAddressButton"
+            testid="selectFromSavedAddressButton"
             className="bg-blue-300 p-3 rounded-lg mx-5 "
             onClick={handleOpenModalSavedAddress}
           >
@@ -240,7 +240,7 @@ const CheckoutPage = () => {
         />
 
         <TextField
-          id="filled-basic"
+          id="addressEntry"
           label="Address"
           variant="filled"
           className="w-full"
@@ -256,14 +256,14 @@ const CheckoutPage = () => {
             </Typography>
           </div>
           <div className="flex justify-center w-full">
-            <button className="bg-blue-300 p-3 rounded-lg mt-2 mx-5" onClick={handleOpenContactModal}>
+            <button id='selectFromSavedContactsButton' className="bg-blue-300 p-3 rounded-lg mt-2 mx-5" onClick={handleOpenContactModal}>
               Select From Saved Contacts
             </button>
           </div>
         </div>
 
         <TextField
-          id="filled-basic"
+          id="contactNumberEntry"
           label="Contact #"
           variant="filled"
           className="w-full"
@@ -272,7 +272,7 @@ const CheckoutPage = () => {
           sx={{ marginTop: 1 }}
         />
         <TextField
-          id="filled-basic"
+          id="contactNameEntry"
           label="Name"
           variant="filled"
           className="w-full"

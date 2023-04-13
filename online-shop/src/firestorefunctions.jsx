@@ -347,6 +347,31 @@ class firestorefunctions {
   }
 
   async transactionCreatePayment(userid, amount, reference, paymentprovider) {
+
+    const userIdSchema = Joi.string().required();
+    const amountSchema = Joi.number().required();
+    const referenceSchema = Joi.string().required();
+    const paymentproviderSchema = Joi.string().required();
+
+    console.log(typeof(amount))
+    console.log(amount)
+
+    const {error1} = userIdSchema.validate(userid);
+
+
+    const {error2} = amountSchema.validate(amount);
+
+
+    const {error3} = referenceSchema.validate(reference);
+
+
+    const {error4} = paymentproviderSchema.validate(paymentprovider);
+
+    if(error1 || error2 || error3 || error4){
+      console.log(error1, error2, error3, error4)
+      throw new Error("Data Validation Error")
+    }
+    
     const docRef = doc(this.db, "Users" + "/", userid);
     try {
       await runTransaction(this.db, async (transaction) => {

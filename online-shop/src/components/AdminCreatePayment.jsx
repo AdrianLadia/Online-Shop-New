@@ -33,6 +33,10 @@ const AdminCreatePayment = (props) => {
     firestore.transactionCreatePayment(userid, amount, reference, paymentProvider);
   }
 
+  useEffect(() => {
+    console.log(amount)
+  }, [amount]);
+
   return (
     <div className="flex flex-col">
       <Typography variant="h2" className="flex justify-center">
@@ -42,7 +46,7 @@ const AdminCreatePayment = (props) => {
       <Autocomplete
         onChange={(event, value) => setSelectedName(value)}
         disablePortal
-        id="combo-box-demo"
+        id="customerNamePayment"
         options={allUserNames}
         sx={{ width: 'full' }}
         renderInput={(params) => <TextField {...params} label="Customer Name" />}
@@ -63,14 +67,15 @@ const AdminCreatePayment = (props) => {
         </Select>
       </FormControl>
     </Box> */}
-      <TextField onChange={(event) => setAmount(event.target.value)} required label="Amount" />
-      <TextField onChange={(event) => setReference(event.target.value)} required label="Reference" />
+      <TextField id='amountPayment' onChange={(event) => setAmount(parseFloat(event.target.value) )} required label="Amount" />
+      <TextField id='referencePayment' onChange={(event) => setReference(event.target.value)} required label="Reference" />
       <TextField
+        id='paymentProviderPayment'
         onChange={(event) => setPaymentProvider(event.target.value)}
         required
         label="Payment Provider ex... GCash / Paymaya"
       />
-      <button onClick={onCreatePayment} className="p-3 bg-blue-300 rounded-lg">
+      <button id='createPaymentButton' onClick={onCreatePayment} className="p-3 bg-blue-300 rounded-lg">
         {' '}
         Create Payment{' '}
       </button>

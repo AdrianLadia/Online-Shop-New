@@ -924,6 +924,37 @@ describe('getCartCount', () => {
 });
 
 describe('cloudfirestoredb', async () => {
+
+  test('changeUserRole', async () => {
+    await cloudfirestore.createNewUser({
+      uid: 'testuser',
+      name: 'test',
+      email: 'test@gmail.com',
+      emailVerified: true,
+      phoneNumber: '09178927206',
+      deliveryAddress: [],
+      contactPerson: [],
+      isAnonymous: false,
+      orders: [],
+      cart: [],
+      favoriteItems: [],
+      payments: [],
+      userRole: 'member',
+    },'testuser')
+    await delay(300);
+    await cloudfirestore.changeUserRole('testuser', 'admin');
+    await delay(300);
+    const user = await cloudfirestore.readSelectedUserById('testuser')
+    await delay(300);
+    expect(user.userRole).toEqual('admin');
+    await cloudfirestore.changeUserRole('testuser', 'member');
+    await delay(300);
+    const user2 = await cloudfirestore.readSelectedUserById('testuser')
+    await delay(300);
+    expect(user2.userRole).toEqual('member');
+    await cloudfirestore.deleteDocumentFromCollection('Users','testuser')
+  });
+
   test('readAllProductsForOnlineStore', async () => {
     const products = await cloudfirestore.readAllProductsForOnlineStore();
     await delay(300);
@@ -1142,11 +1173,11 @@ describe('cloudfirestoredb', async () => {
       'testuser'
     );
     await delay(100);
-    const user = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+    const user = await cloudfirestore.readSelectedDataFromCollection('Users', 'testuser');
     const email = user.email;
     await delay(100);
     expect(email).toEqual('test@gmail.com');
-    await firestore.deleteUserByUserId('testuser');
+    await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser');
   });
 
   test('readSelectedUserById', async () => {
@@ -1174,11 +1205,11 @@ describe('cloudfirestoredb', async () => {
     const email = user.email;
     await delay(100);
     expect(email).toEqual('test@gmail.com');
-    await firestore.deleteUserByUserId('testuser2');
+    await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser2');
   });
 
   test('readUserRole', async () => {
-    const userIds = await firestore.readAllIdsFromCollection('Users');
+    const userIds = await cloudfirestore.readAllIdsFromCollection('Users');
     const userRolesPromises = userIds.map(async (userId) => {
       return await cloudfirestore.readUserRole(userId);
     });

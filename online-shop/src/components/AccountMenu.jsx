@@ -155,7 +155,7 @@ const AccountMenu = (props) => {
         {isadmin ? (
           <div>
             <Divider />
-            <MenuItem onClick={adminClick}>
+            <MenuItem id='adminMenu' onClick={adminClick}>
               <GrUserAdmin size={17} className="ml-0.5" />
               <span className="ml-5 mt-1">Admin</span>
             </MenuItem>

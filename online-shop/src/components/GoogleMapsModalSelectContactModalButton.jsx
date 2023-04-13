@@ -26,7 +26,7 @@ const GoogleMapsModalSelectContactModalButton = (props) => {
   return (
     <React.Fragment>
       <div className="flex flex-row w-full mt-5">
-        <button onClick={handleContactClick} className="bg-blue-300 p-3 rounded-lg w-4/5 mr-5">
+        <button id='savedContactButton'onClick={handleContactClick} className="bg-blue-300 p-3 rounded-lg w-4/5 mr-5">
           {' '}
           {name + ', ' + phonenumber}{' '}
         </button>
