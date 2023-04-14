@@ -44,7 +44,7 @@ const CartTable = (props) => {
       ];
 
   return (
-    <Paper elevation={10} className="mt-4 border-2 border-color10b" >
+    <Paper elevation={10} className="mt-4 border-2 border-color60" >
       <TableContainer sx={{ maxHeight: 430}} >
         <Table stickyHeader aria-label="sticky table">
           <TableHead >

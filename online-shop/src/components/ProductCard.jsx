@@ -137,14 +137,6 @@ const ProductCard = (props) => {
     }
   }
 
-  // const theme = createTheme({
-  //   palette: {
-  //     secondary: {
-  //       main: '#bdffcf',
-  //     },
-  //   },
-  // });
-
   return (
     <ThemeProvider theme={theme}>
     <div className="flex justify-center h-full w-full">
@@ -152,11 +144,11 @@ const ProductCard = (props) => {
         elevation={12}
         sx={{borderRadius:"20px"}}
         // className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30 "
-        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-gradient-to-t from-color60 to-color10c"
+        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-gradient-to-r from-color60 to-color10c"
       >
         {/* IMAGE */}
         <div className="w-3/5">
-          <div className="bg-slate-800 text-2xl text-white h-full w-full object-cover rounded-lg flex justify-center items-center">
+          <div className="bg-slate-800 text-3xl text-white h-full w-full rounded-lg flex justify-center items-center">
             <FaImage></FaImage>
           </div>
               {/* <img
@@ -201,7 +193,7 @@ const ProductCard = (props) => {
           </div>
 
           <div className="h-1/6  flex items-center ">
-            <Typography sx={{fontSize: responsivePrice(), mt: 1, mb:1}}>
+            <Typography sx={{fontSize: responsivePrice(), mt: 3, mb:1}}>
               {"₱ " + props.product.price}
             </Typography>
           </div>
@@ -209,7 +201,7 @@ const ProductCard = (props) => {
           <div className="flex flex-row h-1/6 w-full " >
               <button
                 id="addtocartbutton"
-                className= "mt-4  h-full text-black bg-color10a hover:bg-color30 hover:border-color10a text-xs py-1 px-2 rounded"
+                className= "mt-4  h-full text-black border-2 border-color30 bg-color10a hover:bg-color30 text-xs py-1 px-2 rounded"
                 // className= "mt-5 h-full text-black bg-gradient-to-t from-color30 to-color10a ease-out delay-75 hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
                 type="button"
                 onClick={AddToCart}
@@ -219,26 +211,26 @@ const ProductCard = (props) => {
               <TextField
                 id="entryquantity"
                 type="number"
-                color="secondary"
+                color="enter"
                 value={quantity}
                 onChange={(event) => {setQuantity(event.target.value)}}
                 className="m-2 h-max rounded-xl"
-                label="Qty"
+                label="Qty."
                 InputLabelProps={{
                   style: { 
                     color: '#F49C5C',
                   } 
                 }}
                 sx={{
-                    backgroundColor:"white",
+                    backgroundColor:"#fff4d1",
                       '& .MuiOutlinedInput-notchedOutline': {
-                        border: 3 ,
+                        border: 2 ,
                         color:"#F49C5C",
                         borderRadius:2,
                       },
                       '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
                         color: '#FEC868',
-                        border:3
+                        border:2
                       }
                 }}
               />

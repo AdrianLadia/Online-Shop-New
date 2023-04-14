@@ -33,8 +33,8 @@ const ProductCardModalTable = (props) => {
       }
 
   return (
-    <TableContainer component={Paper} sx={{marginTop:2, display:'flex', justifyContent:'center'}} className='bg-color30'>
-      <Table sx={{ width:responsiveTableWidth()}} aria-label="simple table" className='bg-color10a border-2 border-color10b'>
+    <TableContainer component={Paper} sx={{marginTop:2, display:'flex', justifyContent:'center'}} className='bg-colorbackground'>
+      <Table sx={{ width:responsiveTableWidth()}} aria-label="simple table" className='bg-color10c border-2 border-color60'>
         <TableHead>
           <TableRow >
             <TableCell>Key</TableCell>
@@ -46,7 +46,7 @@ const ProductCardModalTable = (props) => {
             <TableRow
               key={row.key}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              className='bg-color60'
+              className='bg-white'
             >
               <TableCell component="th" scope="row">
                 {row.key}

@@ -197,7 +197,7 @@ const CheckoutPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-    <div className="flex flex-col bg-gradient-to-r from-colorbackground via-color2 to-color1 ">
+    <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
       <CheckoutPageContext.Provider value={[payMayaCardSelected, setPayMayaCardSelected]}>
         {/* <PaymentMethods /> */}
         {launchPayMayaCheckout ? (
@@ -211,26 +211,47 @@ const CheckoutPage = () => {
         ) : null}
       </CheckoutPageContext.Provider>
 
-      <div className="flex flex-row my-5 ">
-        <div className="flex justify-center w-full p-3">
-          <Typography variant="h4" className="font-bold">
-            Delivery Address
-          </Typography>
+      <Divider sx={{ marginTop: .1, marginBottom: 3  }} />
+
+      <div className="flex flex-col self-center items-center gap-6 w-full">
+        
+        <div className="flex flex-row w-full justify-between ml-4 my-5">
+          <div className="flex justify-center w-full p-3">
+            <Typography variant="h4" className="font-bold">
+              Delivery Address
+            </Typography>
+          </div>
+          <div className="flex justify-center w-full">
+            <button
+              testid="selectFromSavedAddressButton"
+              className="bg-color10b hover:bg-blue-400 rounded-lg w-3/6 font-bold "
+              onClick={handleOpenModalSavedAddress}
+            >
+              Select From Saved Address
+            </button>
+          </div>
         </div>
-        <div className="flex justify-center w-full">
-          <button
-            testid="selectFromSavedAddressButton"
-            className="bg-color10b p-3 rounded-lg mx-5 font-semibold"
-            onClick={handleOpenModalSavedAddress}
-          >
-            Select From Saved Address
-          </button>
-        </div>
+        <TextField
+          id="addressEntry"
+          label="Address"
+          InputLabelProps={{
+            style: { 
+              marginLeft:10,
+              color: '#429eff',
+              fontWeight: "bold",
+            } 
+          }}
+          variant="filled"
+          className=" w-11/12 self-center mb-5 bg-white"
+          onChange={(event) => setLocalDeliveryAddress(event.target.value)}
+          value={localDeliveryAddress}
+        />
       </div>
 
-      <div className="flex flex-col items-center gap-3 w-full">
-        <GoogleMaps
-          selectedAddress={selectedAddress}
+      <Divider sx={{ marginTop: 5, marginBottom: 3  }} />
+        
+      <GoogleMaps
+        selectedAddress={selectedAddress}
           setSelectedAddress={setSelectedAddress}
           locallatitude={locallatitude}
           setLocalLatitude={setLocalLatitude}
@@ -238,26 +259,25 @@ const CheckoutPage = () => {
           setLocalLongitude={setLocalLongitude}
           setLocalDeliveryAddress={setLocalDeliveryAddress}
           zoom={zoom}
-          setZoom={setZoom}
-        />
+        setZoom={setZoom}
+      />
 
-        <TextField
-          id="addressEntry"
-          label="Address"
-          variant="filled"
-          className=" w-11/12 mt-1 bg-white"
-          onChange={(event) => setLocalDeliveryAddress(event.target.value)}
-          value={localDeliveryAddress}
-        />
+      <Divider sx={{ marginTop: 5 , marginBottom:3}} />
 
-        <div className="flex flex-row w-full justify-between my-5">
+      <div className="flex flex-col self-center items-center gap-6 w-full">
+
+        <div className="flex flex-row w-full justify-between ml-4 my-5">
           <div className="flex justify-center w-full p-3">
             <Typography variant="h4" className="font-bold" >
               Contact Details
             </Typography>
           </div>
-          <div className="flex justify-center w-full">
-            <button id='selectFromSavedContactsButton' className="bg-color10b p-3 rounded-lg mx-5 font-semibold" onClick={handleOpenContactModal}>
+          <div className="flex justify-center w-full ">
+            <button 
+              id='selectFromSavedContactsButton' 
+              className="bg-color10b hover:bg-blue-400 rounded-lg w-3/6 font-bold " 
+              onClick={handleOpenContactModal}
+              >
               Select From Saved Contacts
             </button>
           </div>
@@ -266,6 +286,13 @@ const CheckoutPage = () => {
         <TextField
           id="contactNumberEntry"
           label="Contact #"
+          InputLabelProps={{
+            style: { 
+              marginLeft:10,
+              color: '#429eff',
+              fontWeight: "bold"
+            } 
+          }}
           variant="filled"
           className=" w-11/12 mt-1 bg-white"
           onChange={(event) => setLocalPhoneNumber(event.target.value)}
@@ -274,6 +301,13 @@ const CheckoutPage = () => {
         <TextField
           id="contactNameEntry"
           label="Name"
+          InputLabelProps={{
+            style: { 
+              marginLeft:10,
+              color: '#429eff',
+              fontWeight: "bold "
+            } 
+          }}
           variant="filled"
           className=" w-11/12 mt-1 bg-white"
           onChange={(event) => setLocalName(event.target.value)}
@@ -281,10 +315,12 @@ const CheckoutPage = () => {
         />
       </div>
 
+      <Divider sx={{ marginTop: 5 , marginBottom:3}} />
+
       {allowShipping == false ? (
         <div className="flex justify-center my-5">
           <Typography variant="h7" color="red">
-            Minimum orderoutside Cebu is 10000 pesos
+            Minimum order outside Cebu is 10000 pesos
           </Typography>
         </div>
       ) : (
@@ -296,20 +332,20 @@ const CheckoutPage = () => {
               </Typography>
             </div>
           ) : (
-            <>
+            <>  
               {area.includes('lalamoveServiceArea') ? (
                 <div>
-                  <div className="flex justify-center mt-5">
+                  <div className="flex justify-center mt-7">
                     <Typography variant="h4" className='font-bold'>
                       Assistance
                     </Typography>
                   </div>
-                  <div className="flex justify-center mt-5">
+                  <div className="flex justify-center items-center mt-5">
                     <Typography variant="h6" >
                       Driver helps unload items?
                       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
                     </Typography>
-                    <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
+                    <Switch {...label} color="secondary"  onClick={() => setNeedAssistance(!needAssistance)} />
                   </div>
                 </div>
               ) : null}
@@ -437,12 +473,14 @@ const CheckoutPage = () => {
                 </div>
               ) : null}
 
+            <Divider sx={{ marginTop: 5 , marginBottom:3}} />
+
               {/* {area.includes("lalamoveServiceArea") ||
               area.length == 0 ? null : (
                
               )} */}
 
-              <div className="flex justify-center my-5">
+              <div className="flex justify-center mt-7 my-5">
                 <Typography variant="h4" className='font-bold'>
                   Checkout Summary
                 </Typography>
@@ -450,7 +488,6 @@ const CheckoutPage = () => {
 
               {area.length == 0 ? null : (
                 <CheckoutSummary
-                  
                   total={total}
                   setTotal={setTotal}
                   vat={vat}
@@ -464,42 +501,68 @@ const CheckoutPage = () => {
                   area={area}
                   
                 />
-              )}
-              <Divider sx={{ marginTop: 3 }} />
 
-              <div className="flex justify-center mt-5">
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                
+
+              )}
+              <Divider sx={{ marginTop: 5 , marginBottom:3}} />
+
+              <div className="flex justify-center m-5">
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                   Payment
                 </Typography>
               </div>
 
-              <PaymentMethods />
-              <Divider sx={{ marginTop: 3 }} />
+              <PaymentMethods/>
+
+              <Divider sx={{ marginTop: 5 , marginBottom:3}} />
+
               <div className="flex w-full justify-center my-5 items ">
                 <TextField
                   id="outlined-multiline-static"
+                  multiline
+                  rows={5}
+                  onChange={(e) => setDeliveryNotes(e.target.value)}
                   label="Delivery Notes"
                   color='secondary'
-                  multiline
-                  rows={4}
-                  onChange={(e) => setDeliveryNotes(e.target.value)}
+                  
+                  InputLabelProps={{
+                    style: { 
+                      color: '#72b5fc',
+                      fontSize: 18,
+                      fontWeight:"bold"
+                    } 
+                  }}
+                  className='rounded-md w-9/12 2xl:w-2/6 xl:w-3/6  '
+                  sx={{
+                    backgroundColor:"white",
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        border: 2,
+                        color:"#429eff",
+                      },
+                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                        color: '#6bd0ff',
+                        border:2
+                      }
+                    }}
                 />
               </div>
 
-              <div className="flex justify-center mt-5">
+              <div className="flex justify-center mt-2">
                 <button
                   id="placeorderbutton"
                   onClick={onPlaceOrder}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-5"
+                  className="bg-color10b hover:bg-blue-600 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5"
                 >
-                  {' '}
-                  Place Order{' '}
+                  {' '}Place Order{' '}
                 </button>
               </div>
             </>
+            
           )}
         </>
       )}
+      
       <GoogleMapsModalSelectSaveAddress
         open={openModalSavedAddress}
         handleClose={handleCloseModalSavedAddress}

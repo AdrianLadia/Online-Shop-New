@@ -129,7 +129,7 @@ const ProductCardModal = (props) => {
   return (
     <Modal open={props.modal} onClose={props.closeModal}>
       <Fade in={props.modal}>
-        <Box sx={style} className="bg-color30 border-color10b overflow-hidden">
+        <Box sx={style} className="bg-colorbackground border-color60 overflow-hidden">
           <div className="flex flex-col overflow-y-hidden">
             {/* HEART AND X BUTTON*/}
             <div className="flex flex-row justify-between mb-5">
@@ -157,7 +157,7 @@ const ProductCardModal = (props) => {
             </div>
             <div className="flex flex-col">
               {/* TITLE */}
-              <Typography variant="h3" className="mb-5 text-color10b font-bold" align="center">
+              <Typography variant="h3" className="mb-5 text-color60 font-bold" align="center">
                 {props.product.itemName}
               </Typography>
               {/* IMAGE */}

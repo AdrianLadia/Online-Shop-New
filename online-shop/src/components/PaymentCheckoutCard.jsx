@@ -2,19 +2,12 @@ import React, { useEffect } from "react";
 import { Paper } from '@material-ui/core'
 import { useState } from 'react';
 
-
-
 const PaymentCheckoutCard = (props) => {
 
     // const [cardSelected, setCardSelected] = useState(false);
     const cardSelected = props.cardSelected;
     const setCardSelected = props.setCardSelected;
     const [elevation, setElevation] = useState(5);
-
-    function onClick() {
-        setCardSelected(!cardSelected);
-        // setElevation(20);
-    }
 
     const paymentOption = props.paymentOption;
     let logoLink = null
@@ -56,22 +49,25 @@ const PaymentCheckoutCard = (props) => {
       cardStyle = 'mt-10 '
     }
 
-    
+    function onClick() {
+      setCardSelected(false)
+      setCardSelected(!cardSelected);
+    }
 
+  // console.log(cardSelected)
 
     useEffect(() => {
-        if (cardSelected === true) {
+        if (cardSelected === true ) {
             setElevation(20);
         }
         else {
             setElevation(5);
         }
-
     }, [cardSelected]);
 
     function style() {
         if (cardSelected === true) {
-            return "h-40 w-40 p-5 border-4 hover:cursor-pointer border-green-300 -mt-3 "
+            return "h-40 w-40 p-5 border-4 hover:cursor-pointer border-color10b -mt-3 "
         }
         else {
             return "h-40 w-40 p-5 border-4 hover:cursor-pointer mt-5 "
@@ -84,12 +80,10 @@ const PaymentCheckoutCard = (props) => {
         className={style()}
         elevation={elevation}
         onClick={onClick}
-      
       >
         <img className={cardStyle}
           src={logoLink}
         /> 
-        
         {/* <p className="text-lg font-bold text-green-300">Card</p> */}
       </Paper>
     </React.Fragment>

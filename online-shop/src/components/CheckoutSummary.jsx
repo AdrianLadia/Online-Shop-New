@@ -11,6 +11,7 @@ import { useContext } from 'react';
 import firestoredb from '../firestoredb';
 import { Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
+import Divider from '@mui/material/Divider';
 
 const CheckoutSummary = (props) => {
   const { firestore, cart,products } = useContext(AppContext);
@@ -51,9 +52,9 @@ const CheckoutSummary = (props) => {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className='flex flex-col align-center items-center'>
-          <TableContainer component={Paper} className='flex align-center w-11/12 m-2'>
-            <Table sx={{ minWidth: 650}} className=' font-bold' aria-label="simple table" >
+        <div className='flex flex-col align-center items-center gap-4 '>
+          <TableContainer component={Paper} elevation={10} className='flex align-center w-11/12 m-2'>
+            <Table sx={{ minWidth: 650}} className=' font-bold border-2 border-color60' aria-label="simple table" >
               <TableHead>
                 <TableRow className='bg-color10c' >
                   <TableCell >Image</TableCell>
@@ -81,39 +82,35 @@ const CheckoutSummary = (props) => {
             </Table>
           </TableContainer>
 
-          <div className="flex flex-col lg:flex-row w-full">
-            <div className="flex w-full flex-col mt-5 ml-5 items-start">
-              {area.includes('lalamoveServiceArea') ? (
-                <div>
+          <div className="flex flex-col justify-between lg:flex-row w-8/12 ">
+            <div className="flex xl:w-2/6 lg:w-2/6 md:w-full sm:w-full flex-col m-5 gap-3">
+                {area.includes('lalamoveServiceArea') ? (
+                <div className='flex flex-col gap-3'>
                   <Typography variant="h5">Delivery Vehicle : {deliveryVehicle}</Typography>
                   <Typography variant="h5"> Max Weight : {maxWeight} Kg</Typography>
                 </div>
-              ) : null}
-              <Typography variant="h5">Weight of Items: {totalWeight} Kg</Typography>
+                ) : null}
+                  <Typography variant="h5">Weight of Items: {totalWeight} Kg</Typography>
             </div>
-            <div className="flex w-full flex-col ml-5 items-start lg:mt-5 md:mt-5 md:mr-3 lg:mr-3 lg:items-end md:items-end">
 
-              <div className='flex flex-row'>
-                <Typography variant="h5">Items Total: ₱</Typography>
-                <Typography id = 'checkoutItemsTotal' variant="h5"> {total.toLocaleString()}</Typography>
-              </div>
-              <Typography variant="h5" className="ml-5">
-                Tax: ₱ {vat.toLocaleString()}
-              </Typography>
-              {area.includes('lalamoveServiceArea') ? (
+            <div className="flex flex-col xl:w-2/6 lg:w-2/6 md:w-full sm:w-full gap-3 m-5 ">
+                  <Typography variant="h5">Items Total: ₱ {total.toLocaleString()}</Typography>
+                  <Typography variant="h5" >Tax: ₱ {vat.toLocaleString()} </Typography>
+                {area.includes('lalamoveServiceArea') ? (
                 <Typography variant="h5">Delivery Fee: ₱ {deliveryFee.toLocaleString()}</Typography>
-              ) : (
-                <div className="flex flex-col text-right">
+                ) : (
+                <>
                   <Typography variant="h5">Cebu Port Fees: ₱ {deliveryFee.toLocaleString()}</Typography>
                   <Typography variant="h5">Shipping Fee: Freight Collect</Typography>
-                </div>
-              )}
-
-              <Typography variant="h5">Grand Total: ₱ {grandTotal.toLocaleString()}</Typography>
+                </>
+                )}
             </div>
+          
           </div>
+          <Typography className='underline underline-offset-8' variant="h4">Grand Total: ₱ {grandTotal.toLocaleString()}</Typography>
+        
         </div>
-      )}
+        )}
     </div>
   );
 };
