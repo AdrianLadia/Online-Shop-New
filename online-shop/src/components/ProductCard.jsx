@@ -147,12 +147,12 @@ const ProductCard = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-    <div className="flex justify-center h-full w-full ">
+    <div className="flex justify-center h-full w-full">
       <Paper
-        elevation={9}
+        elevation={12}
         sx={{borderRadius:"20px"}}
         // className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30 "
-        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-gradient-to-t from-color30 to-color10a"
+        className="flex flex-row w-11/12 justify-center my-5 h-60 bg-gradient-to-t from-color60 to-color10c"
       >
         {/* IMAGE */}
         <div className="w-3/5">
@@ -172,7 +172,7 @@ const ProductCard = (props) => {
           
           {outofstock === true ? (
             <div className="flex flex-row h-1/12">
-              <Typography fontSize={responsiveFont()} color="red" fontWeight={600}>
+              <Typography fontSize={responsiveFont()} color="red">
                 Out of Stock
               </Typography>
               <span className="flex h-3 w-3 mt-1 ml-2 flex-grow-0"></span>
@@ -181,7 +181,7 @@ const ProductCard = (props) => {
             <>
               {lowstock === true && product.unit != "Pack" ? (
                 <div className="flex flex-row h-1/12">
-                  <Typography fontSize={responsiveFont()} color="red" fontWeight={600}>
+                  <Typography fontSize={responsiveFont()} color="red" >
                     Stocks left
                   </Typography>
                   <span className="flex h-3 w-3 ml-1 flex-grow-0">
@@ -194,7 +194,7 @@ const ProductCard = (props) => {
             </>
           )}
           <div className="h-2/5 ">
-            <Typography sx={{fontSize: responsiveStyle(), mr: 1, fontFamily: 'Trebuchet MS' , fontWeight: "bold", color:"darkslategray", cursor:"pointer"}}
+            <Typography sx={{fontSize: responsiveStyle(), mr: 1, color:"darkslategray", cursor:"pointer"}}
                             onClick={() => setModal(true)}>
               {props.product.itemName}
             </Typography>
@@ -209,8 +209,8 @@ const ProductCard = (props) => {
           <div className="flex flex-row h-1/6 w-full " >
               <button
                 id="addtocartbutton"
-                // className= "mt-5 h-full text-black bg-color10a hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
-                className= "mt-5 h-full text-black bg-color10a ease-out delay-150 hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
+                className= "mt-4  h-full text-black bg-color10a hover:bg-color30 hover:border-color10a text-xs py-1 px-2 rounded"
+                // className= "mt-5 h-full text-black bg-gradient-to-t from-color30 to-color10a ease-out delay-75 hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
                 type="button"
                 onClick={AddToCart}
               >
@@ -218,15 +218,29 @@ const ProductCard = (props) => {
               </button>
               <TextField
                 id="entryquantity"
-                label="Qty"
                 type="number"
-                color="primary"
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                color="secondary"
                 value={quantity}
                 onChange={(event) => {setQuantity(event.target.value)}}
-                className="m-2"
+                className="m-2 h-max rounded-xl"
+                label="Qty"
+                InputLabelProps={{
+                  style: { 
+                    color: '#F49C5C',
+                  } 
+                }}
+                sx={{
+                    backgroundColor:"white",
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        border: 3 ,
+                        color:"#F49C5C",
+                        borderRadius:2,
+                      },
+                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                        color: '#FEC868',
+                        border:3
+                      }
+                }}
               />
           </div>
         </div>

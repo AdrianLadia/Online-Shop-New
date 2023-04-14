@@ -15,9 +15,10 @@ import GoogleMapsModalSelectContactModal from './GoogleMapsModalSelectContactMod
 import Switch from '@mui/material/Switch';
 import Divider from '@mui/material/Divider';
 import businessCalculations from '../../utils/businessCalculations';
-
 import paperBoyLocation from '../data/paperBoyLocation';
 import cloudFirestoreDb from '../cloudFirestoreDb';
+import {ThemeProvider } from '@mui/material/styles';
+import theme from "../colorPalette/MaterialUITheme";
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
@@ -195,7 +196,8 @@ const CheckoutPage = () => {
   }, [total, vat, deliveryFee]);
 
   return (
-    <div className="flex flex-col bg-color60">
+    <ThemeProvider theme={theme}>
+    <div className="flex flex-col bg-gradient-to-r from-colorbackground via-color2 to-color1 ">
       <CheckoutPageContext.Provider value={[payMayaCardSelected, setPayMayaCardSelected]}>
         {/* <PaymentMethods /> */}
         {launchPayMayaCheckout ? (
@@ -226,7 +228,7 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      <div className="justify-center w-full">
+      <div className="flex flex-col items-center gap-3 w-full">
         <GoogleMaps
           selectedAddress={selectedAddress}
           setSelectedAddress={setSelectedAddress}
@@ -243,19 +245,19 @@ const CheckoutPage = () => {
           id="addressEntry"
           label="Address"
           variant="filled"
-          className="w-full mt-1 bg-color30"
+          className=" w-11/12 mt-1 bg-white"
           onChange={(event) => setLocalDeliveryAddress(event.target.value)}
           value={localDeliveryAddress}
         />
 
-        <div className="flex flex-row my-5 ">
+        <div className="flex flex-row w-full justify-between my-5">
           <div className="flex justify-center w-full p-3">
             <Typography variant="h4" className="font-bold" >
               Contact Details
             </Typography>
           </div>
           <div className="flex justify-center w-full">
-            <button id='selectFromSavedContactsButton' className="bg-color10b p-3 rounded-lg mt-2 mx-5 font-semibold" onClick={handleOpenContactModal}>
+            <button id='selectFromSavedContactsButton' className="bg-color10b p-3 rounded-lg mx-5 font-semibold" onClick={handleOpenContactModal}>
               Select From Saved Contacts
             </button>
           </div>
@@ -265,7 +267,7 @@ const CheckoutPage = () => {
           id="contactNumberEntry"
           label="Contact #"
           variant="filled"
-          className="w-full mt-1 bg-color30"
+          className=" w-11/12 mt-1 bg-white"
           onChange={(event) => setLocalPhoneNumber(event.target.value)}
           value={localphonenumber || ''}
         />
@@ -273,7 +275,7 @@ const CheckoutPage = () => {
           id="contactNameEntry"
           label="Name"
           variant="filled"
-          className="w-full mt-1 bg-color30"
+          className=" w-11/12 mt-1 bg-white"
           onChange={(event) => setLocalName(event.target.value)}
           value={localname || ''}
         />
@@ -307,7 +309,7 @@ const CheckoutPage = () => {
                       Driver helps unload items?
                       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
                     </Typography>
-                    <Switch {...label} color="success" onClick={() => setNeedAssistance(!needAssistance)} />
+                    <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
                   </div>
                 </div>
               ) : null}
@@ -473,10 +475,11 @@ const CheckoutPage = () => {
 
               <PaymentMethods />
               <Divider sx={{ marginTop: 3 }} />
-              <div className="flex w-full justify-center my-5 items">
+              <div className="flex w-full justify-center my-5 items ">
                 <TextField
                   id="outlined-multiline-static"
                   label="Delivery Notes"
+                  color='secondary'
                   multiline
                   rows={4}
                   onChange={(e) => setDeliveryNotes(e.target.value)}
@@ -518,6 +521,7 @@ const CheckoutPage = () => {
       {/* // A button or link to submit the order */}
       {/* MODAL // Option for creating an account or signing in, if the customer has an account with the website */}
     </div>
+    </ThemeProvider>
   );
 };
 

@@ -31,7 +31,7 @@ const CheckoutButton = () => {
       <button
         id="cartcheckoutbutton"
         onClick={onCheckoutButtonClick}
-        className="bg-blue-500 w-24 hover:bg-blue-700 hover:animate-bounce text-white p-2 rounded-md mt-5"
+        className="bg-color10b w-24 hover:bg-blue-700 hover:animate-bounce text-white p-2 rounded-md mt-5"
       >
         {goToCheckoutPage ? 
          <CircularProgress size="2vh" />

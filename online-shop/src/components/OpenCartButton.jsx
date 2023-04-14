@@ -105,7 +105,7 @@ const OpenCartButton = () => {
         <button
           id="opencartbutton"
           onClick={ViewCart}
-          className="bg-gradient-to-b from-color10b to-slate-300 text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 
+          className=" bg-color10b  text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 
                       position fixed bottom-2  content-center hover:animate-bounce "
         >
           {userstate !== 'userloading' ? (

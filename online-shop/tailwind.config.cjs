@@ -11,10 +11,17 @@ module.exports = {
       colors: {
 
         //f // COLOR 1
-        color60: '#ABC270', // ABC270
-        color30: '#F49C5C', // F49C5C
+        color60: '#69b05c', // ABC270
+        color30: '#bb9541', // F49C5C
         color10a: '#FEC868', // FEC868
-        color10b: '#7C96AB', // 473C33
+        color10b: '#6bd0ff', // 473C33
+        color10c: '#B6E388',
+        colorbackground: '#e1fadd',
+        color1:"#beddb8",
+        color2:"#cceac7"
+
+        // beddb8
+        // ecd7a8
 
         //f COLOR 1
         // color60: '#94B49F', // 94B49F

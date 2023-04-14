@@ -31,7 +31,7 @@ const NavBar = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between flex-wrap bg-color30 w-full h-16 ">
+      <div className="flex items-center justify-between flex-wrap bg-gradient-to-r from-color10c via-color10c to-color60 w-full h-16 ">
         <Logo />
 
         <div className="flex flex-row mr-5 ">

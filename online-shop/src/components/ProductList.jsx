@@ -64,7 +64,7 @@ const ProductList = (props) => {
   }
 
   return (
-    <div className='mb-12'>
+    <div className='mb-16'>
       <div id='productList' className={'flex flex-col justify-center items-center  ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">

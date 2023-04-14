@@ -62,10 +62,10 @@ const CategorySelector = (props) => {
   return (
     <ThemeProvider theme={theme}>
     <div className="w-full ">
-      <div className="flex flex-col items-center bg-color60">
+      <div className="flex flex-col items-center from-colorbackground via-color2 to-color1">
         <div className="mt-5">
           {/* <typ className='text-2xl font-bold mt-5'>Categories</h1> */}
-          <Typography sx={{fontWeight:"bold", fontSize:"20px"}}>Select A Category</Typography>
+          <Typography sx={{ fontSize:"20px"}}>Select A Category</Typography>
         </div>
         {/* <div className="flex flex-row overflow-scroll">
           {categories.map((category, index) => {

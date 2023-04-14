@@ -69,7 +69,7 @@ const CartModal = (props) => {
   return (
     <Modal open={openCart} onClose={CloseCart}>
       <Fade in={openCart} >
-        <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-hidden bg-color30 border-color10b">
+        <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-hidden bg-colorbackground border-color10b">
             <div className="flex flex-row-reverse mb-4">   
               <button
                 id = 'closeCartButton'
