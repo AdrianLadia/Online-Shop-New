@@ -33,7 +33,6 @@ const ProductList = (props) => {
   }, [refresh]);
 
   function RenderSelectedProducts(product_category) {
-    console.log(products)
     const selected_products = datamanipulation.getAllProductsInCategory(
       products,
       product_category,

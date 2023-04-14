@@ -560,7 +560,7 @@ class dataManipulation {
 
   getAllProductsInCategory(products, categorySelected, wholesale, retail, favorites) {
     // const productsSchema = Joi.array()
-    console.log(products)
+
     const productsSchema = Joi.array();
     const { error } = productsSchema.validate(products);
     if (error) {
