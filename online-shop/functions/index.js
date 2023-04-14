@@ -123,6 +123,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
     catch (error) {
       res.status(400).send('Error reading products. Please try again later');
     }
+    // return res.json({status: 'ok'})
   });
 });
 

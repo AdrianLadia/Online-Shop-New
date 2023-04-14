@@ -20,17 +20,18 @@ const ProductList = (props) => {
   const businesscalculations = new businessCalculations();
   const cloudfirestoredb = new cloudFirestoreDb();
 
-  const [refresh, setRefresh] = useState(false);
+  
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts } = React.useContext(AppContext);
   const favorites = favoriteitems;
 
   useEffect(() => {
+    console.log('LOOKING FOR PRODUCT')
     cloudfirestoredb.readAllProductsForOnlineStore().then((products) => {
       setProducts(products);
       setProductDataLoading(false);
     });
-  }, [refresh]);
+  }, [userdata]);
 
   function RenderSelectedProducts(product_category) {
     const selected_products = datamanipulation.getAllProductsInCategory(
