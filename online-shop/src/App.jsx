@@ -17,10 +17,12 @@ import MyOrders from './components/MyOrders';
 import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
+import AppConfig from './AppConfig';
 
 const devEnvironment = true
 
 function App() {
+  const appConfig = new AppConfig();
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
@@ -30,7 +32,7 @@ function App() {
   const navigateTo = useNavigate();
 
   useEffect(() => {
-    if (devEnvironment == true) {
+    if (appConfig.getIsDevEnvironment() == true) {
       if (!authEmulatorConnected) {
         connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
         setAuthEmulatorConnected(true);
@@ -39,7 +41,7 @@ function App() {
   }, [authEmulatorConnected]);
 
   // Initialize firestore class
-  const firestore = new firestoredb(app, devEnvironment);
+  const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);

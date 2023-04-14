@@ -198,7 +198,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async readAllProductsForOnlineStore() {
     try {
-      const response = await axios.get(
+      const response = await axios.request(
         `${this.url}readAllProductsForOnlineStore`
       );
       const toReturn = response.data;
