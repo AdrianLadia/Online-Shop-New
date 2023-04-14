@@ -17,10 +17,15 @@ import MyOrders from './components/MyOrders';
 import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
+import AppConfig from './AppConfig';
 
-const devEnvironment = true
+
 
 function App() {
+  // loadConfig();
+  const appConfig = new AppConfig();
+  console.log(appConfig.getEnvironment());
+
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
@@ -30,7 +35,7 @@ function App() {
   const navigateTo = useNavigate();
 
   useEffect(() => {
-    if (devEnvironment == true) {
+    if (appConfig.getEnvironment() == true) {
       if (!authEmulatorConnected) {
         connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
         setAuthEmulatorConnected(true);
@@ -39,7 +44,7 @@ function App() {
   }, [authEmulatorConnected]);
 
   // Initialize firestore class
-  const firestore = new firestoredb(app, devEnvironment);
+  const firestore = new firestoredb(app, appConfig.getEnvironment());
   const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);
@@ -60,6 +65,7 @@ function App() {
   const [guestLoginClicked, setGuestLoginClicked] = useState(false);
   const [products, setProducts] = useState([]);
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
+  
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
