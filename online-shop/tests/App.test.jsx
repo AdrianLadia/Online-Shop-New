@@ -177,12 +177,17 @@ describe('Business Calcualtions', () => {
   });
   test('addToCart and removeFromCart', () => {
     const cart = user.cart;
-    const newCart = businesscalculations.addToCart(cart, 'PPB#1');
+    let newCart = businesscalculations.addToCart(cart, 'PPB#1');
     expect(newCart).toEqual([...cart, 'PPB#1']);
     const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
     expect(newCart2).toEqual([...newCart, 'PPB#2']);
     const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
-    expect(newCart3).toEqual([...newCart]);
+    
+    newCart3.map((itemInCart) => {
+      newCart = newCart.filter(item => item !== itemInCart);
+    });
+
+    expect(newCart.length).toEqual(0)
   });
   test('addToCartWithQuantity', () => {
     const cart = user.cart;

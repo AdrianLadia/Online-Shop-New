@@ -2,10 +2,18 @@ import cloudFirestoreFunctions from './cloudFirestoreFunctions';
 import axios from 'axios';
 import Joi from 'joi';
 import schemas from './schemas/schemas';
+import AppConfig from './AppConfig';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor() {
     super();
+    const appConfig = new AppConfig();
+    if (appConfig.getIsDevEnvironment()) {
+      this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
+    }
+    else {
+      this.url = 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/'
+    }
   }
 
   async changeUserRole(userId, role) {
@@ -39,7 +47,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     try {
       console.log('RAN');
       const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/checkIfUserIdAlreadyExist?userId=${userId}`
+        `${this.url}checkIfUserIdAlreadyExist?userId=${userId}`
       );
 
       const toReturn = response.data;
@@ -137,7 +145,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/transactionPlaceOrder?data=${encodedData}`
+        `${this.url}transactionPlaceOrder?data=${encodedData}`
       );
       alert('Order placed successfully');
     } catch (error) {
@@ -166,7 +174,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readUserRole?data=${userId}`
+        `${this.url}readUserRole?data=${userId}`
       );
 
       const toReturn = response.data;
@@ -191,7 +199,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   async readAllProductsForOnlineStore() {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllProductsForOnlineStore`
+        `${this.url}readAllProductsForOnlineStore`
       );
       const toReturn = response.data;
       const toReturnSchema = Joi.array().items(

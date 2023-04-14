@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors');
 admin.initializeApp();
-const corsHandler = cors({ origin: true });
+const corsHandler = cors({ origin: '*' });
 const Joi = require('joi');
 
 function parseData(data) {
@@ -59,7 +59,7 @@ function getValueAddedTax(totalPrice) {
   return roundedVat;
 }
 
-exports.readUserRole = functions.https.onRequest(async (req, res) => {
+exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const userid = req.query.data
@@ -79,7 +79,7 @@ exports.readUserRole = functions.https.onRequest(async (req, res) => {
   });
 });
 
-exports.readAllProductsForOnlineStore = functions.https.onRequest(async (req, res) => {
+exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       // Create a query for products where forOnlineStore is true
@@ -126,7 +126,7 @@ exports.readAllProductsForOnlineStore = functions.https.onRequest(async (req, re
   });
 });
 
-exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
+exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     console.log('running transactionPlaceOrder');
     const data = parseData(req.query.data);
@@ -356,7 +356,7 @@ exports.transactionPlaceOrder = functions.https.onRequest(async (req, res) => {
   });
 });
 
-exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) => {
+exports.checkIfUserIdAlreadyExist = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const userId = req.query.userId;
     const db = admin.firestore();
@@ -369,7 +369,7 @@ exports.checkIfUserIdAlreadyExist = functions.https.onRequest(async (req, res) =
   });
 });
 
-exports.deleteDocumentFromCollection = functions.https.onRequest(async (req, res) => {
+exports.deleteDocumentFromCollection = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collectionName = data.collectionName;
@@ -386,7 +386,7 @@ exports.deleteDocumentFromCollection = functions.https.onRequest(async (req, res
   });
 });
 
-exports.updateDocumentFromCollection = functions.https.onRequest(async (req, res) => {
+exports.updateDocumentFromCollection = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collectionName = data.collectionName;
@@ -404,7 +404,7 @@ exports.updateDocumentFromCollection = functions.https.onRequest(async (req, res
   });
 });
 
-exports.readAllIdsFromCollection = functions.https.onRequest(async (req, res) => {
+exports.readAllIdsFromCollection = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
@@ -426,7 +426,7 @@ exports.readAllIdsFromCollection = functions.https.onRequest(async (req, res) =>
   });
 });
 
-exports.readAllDataFromCollection = functions.https.onRequest(async (req, res) => {
+exports.readAllDataFromCollection = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
@@ -448,7 +448,7 @@ exports.readAllDataFromCollection = functions.https.onRequest(async (req, res) =
   });
 });
 
-exports.createDocument = functions.https.onRequest(async (req, res) => {
+exports.createDocument = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collection = data.collection;
@@ -466,7 +466,7 @@ exports.createDocument = functions.https.onRequest(async (req, res) => {
   });
 });
 
-exports.readSelectedDataFromCollection = functions.https.onRequest(async (req, res) => {
+exports.readSelectedDataFromCollection = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     // Your function logic here
     const data = parseData(req.query.data);
@@ -493,7 +493,7 @@ exports.readSelectedDataFromCollection = functions.https.onRequest(async (req, r
   });
 });
 
-exports.login = functions.https.onRequest(async (req, res) => {
+exports.login = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   try {
     const allUsersSnapshot = await admin.firestore().collection('Users').get();
     const usersData = [];

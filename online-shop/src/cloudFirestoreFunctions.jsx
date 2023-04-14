@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Joi from 'joi';
 import retryApi from '../utils/retryApi';
+import AppConfig from './AppConfig';
 
 class cloudFirestoreFunctions {
   constructor(emulator = false) {
@@ -8,6 +9,16 @@ class cloudFirestoreFunctions {
     }
     if (emulator === true) {
     }
+
+    const appConfig = new AppConfig();
+
+    if (appConfig.getIsDevEnvironment()) {
+      this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
+    }
+    else {
+      this.url = 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/'
+    }
+
   }
 
 
@@ -30,7 +41,7 @@ class cloudFirestoreFunctions {
 
       await retryApi(async () => {
         const response = await axios.post(
-          `http://127.0.0.1:5001/online-store-paperboy/us-central1/createDocument?data=${encodedData}`
+          `${this.url}createDocument?data=${encodedData}`
         );
       })
       console.log(response.data);
@@ -55,7 +66,7 @@ class cloudFirestoreFunctions {
       let response
       await retryApi(async () => {
         response = await axios.get(
-          `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllDataFromCollection?collectionName=${collectionName}`
+          `${this.url}readAllDataFromCollection?collectionName=${collectionName}`
         );  
       })
       const toReturn = response.data;
@@ -86,7 +97,7 @@ class cloudFirestoreFunctions {
       let response
       await retryApi(async () => {
         response = await axios.get(
-          `http://127.0.0.1:5001/online-store-paperboy/us-central1/readAllIdsFromCollection?collectionName=${collectionName}`
+          `${this.url}readAllIdsFromCollection?collectionName=${collectionName}`
         );
       })
 
@@ -122,7 +133,7 @@ class cloudFirestoreFunctions {
       let response
       await retryApi(async () => {
         response = await axios.get(
-          `http://127.0.0.1:5001/online-store-paperboy/us-central1/readSelectedDataFromCollection?data=${encodedData}`
+          `${this.url}readSelectedDataFromCollection?data=${encodedData}`
         );
       })
 
@@ -158,7 +169,7 @@ class cloudFirestoreFunctions {
       let response
       await retryApi(async () => {
         response = await axios.delete(
-          `http://127.0.0.1:5001/online-store-paperboy/us-central1/deleteDocumentFromCollection?data=${encodedData}`
+          `${this.url}deleteDocumentFromCollection?data=${encodedData}`
         );
       })
       console.log(response.data);
@@ -186,7 +197,7 @@ class cloudFirestoreFunctions {
       let response
       await retryApi(async () => {
         response = await axios.put(
-          `http://127.0.0.1:5001/online-store-paperboy/us-central1/updateDocumentFromCollection?data=${encodedData}`
+          `${this.url}updateDocumentFromCollection?data=${encodedData}`
         );
       })
       console.log(response.data);
