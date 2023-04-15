@@ -33,8 +33,6 @@ function MyOrderCard(props) {
     handleOpenModal()
   }
 
-
-
   return (
     <div
       className={"overflow-y-scroll " + responsiveCssPaperColorIfDelivered() }

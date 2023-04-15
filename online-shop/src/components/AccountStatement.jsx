@@ -26,11 +26,11 @@ const AccountStatement = () => {
   }, [orders]);
 
   return (
-    <div className="flex flex-col">
-      <Typography variant="h4" className="flex justify-center">
+    <div className="flex flex-col bg-gradient-to-r from-colorbackground via-color2 to-color1">
+      <Typography variant="h2" className="flex justify-center mt-4">
         Account Statement
       </Typography>
-      <div>
+      <div className='flex justify-center mb-8'>
         <AccountStatementTable
           tableData={tableData}
           orders={orders}

@@ -49,7 +49,6 @@ function createData(
   };
 }
 
-
 const AdminInventory = (props) => {
   const { width, height } = useWindowDimensions();
   const [openAddItem, setOpenAddItem] = React.useState(false);
@@ -111,16 +110,16 @@ const AdminInventory = (props) => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
       {/* TABLE */}
-      <div className="mt-5">
-        <TableContainer component={Paper} sx={{ maxHeight: height - 200 }}>
+      <div className="flex mt-16 mb-4 w-11/12 md:w-9/12 border-2 border-color60 rounded-lg">
+        <TableContainer component={Paper} sx={{ maxHeight: height - 250 }}>
           <Table
-            style={{ tableLayout: "auto" }}
+            style={{ tableLayout: "auto"}}
             fixedHeader={false}
             aria-label="simple table"
           >
-            <TableHead>
+            <TableHead className="bg-color10c border-b-2 border-color60 h-16">
               <TableRow>
                 {/* unit,pieces,price,category,brand,weight,dimensions,description,images */}
                 <TableCell sx={{ minWidth: 200 }} align="center">
@@ -151,7 +150,7 @@ const AdminInventory = (props) => {
                 <TableCell align="center">Description</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody className="bg-gradient-to-l from-colorbackground to-color1">
               {rows.map((row) => (
                 <TableRow
                   key={row.itemID}
@@ -191,22 +190,22 @@ const AdminInventory = (props) => {
         </TableContainer>
       </div>
       {/* BUTTONS */}
-      <div className="flex flex-row justify-evenly mt-5">
+      <div className="flex flex-row w-11/12 md:w-2/4 justify-evenly m-5 ">
         <button
           onClick={handleOpenAddItem}
-          className="bg-green-300 hover:bg-green-500 rounded-lg p-3 font-bold"
+          className="bg-green-400 hover:bg-green-300 rounded-lg p-3 font-bold "
         >
           Add Item
         </button>
         <button
           onClick={handleOpenDeleteItem}
-          className="bg-red-300 hover:bg-red-500 rounded-lg p-3 font-bold"
+          className="bg-red-400 hover:bg-red-300 rounded-lg p-3 font-bold"
         >
           Delete Item
         </button>
         <button
           onClick={handleOpenEditItem}
-          className="bg-yellow-300 hover:bg-yellow-500 rounded-lg p-3 font-bold"
+          className="bg-yellow-400 hover:bg-yellow-300 rounded-lg p-3 font-bold"
         >
           Edit Item
         </button>

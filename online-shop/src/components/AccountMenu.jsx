@@ -77,8 +77,9 @@ const AccountMenu = (props) => {
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
+            className='hover:bg-blue1'
           >
-            <Avatar sx={{ width: 32, height: 32 }}>{userdata.name[0]}</Avatar>
+            <Avatar className='hover:bg-color10b' sx={{ width: 40, height: 40 }}>{userdata.name[0]}</Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -89,11 +90,11 @@ const AccountMenu = (props) => {
         onClose={handleClose}
         onClick={handleClose}
         PaperProps={{
-          elevation: 0,
+          elevation: 1,
           sx: {
             overflow: "visible",
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
+            mt: 1,
             "& .MuiAvatar-root": {
               width: 32,
               height: 32,
@@ -105,7 +106,7 @@ const AccountMenu = (props) => {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 14,
+              right: 19,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -117,36 +118,36 @@ const AccountMenu = (props) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem id='storeMenu' onClick={storeClick}>
+        <MenuItem id='storeMenu' onClick={storeClick} className='hover:bg-color10b'>
           <FaStore size={17} />
           <span className="ml-5">Store</span>
         </MenuItem>
         <Divider />
         {/* PROFILE MENU */}
-        <MenuItem id='profileMenu' onClick={profileClick}>
+        <MenuItem id='profileMenu' onClick={profileClick} className='hover:bg-color10b'>
           <CgProfile size={17} />
           <span className="ml-5">Profile</span>
         </MenuItem>
         {/* Order History  */}
-        <MenuItem id='myOrdersMenu' onClick={myOrdersClick}>
+        <MenuItem id='myOrdersMenu' onClick={myOrdersClick} className='hover:bg-color10b'>
           <AiOutlineHistory size={17} />
           <span className="ml-5">My Orders</span>
         </MenuItem>
         {/* Account Statement */}
-        <MenuItem id='accountStatementMenu' onClick={accountStatementCLick}>
+        <MenuItem id='accountStatementMenu' onClick={accountStatementCLick} className='hover:bg-color10b'>
           <BsBook size={17} />
           <span className="ml-5">Account Statement</span>
         </MenuItem>
         <Divider />
         {/* ADMIN MENU */}
 
-        <MenuItem id='settingsMenu'>
+        <MenuItem id='settingsMenu' className='hover:bg-color10b'>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           <span>Settings</span>
         </MenuItem>
-        <MenuItem id='logoutMenu' onClick={props.signout}>
+        <MenuItem id='logoutMenu' onClick={props.signout} className='hover:bg-color10b'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -155,7 +156,7 @@ const AccountMenu = (props) => {
         {isadmin ? (
           <div>
             <Divider />
-            <MenuItem id='adminMenu' onClick={adminClick}>
+            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-color10b'>
               <GrUserAdmin size={17} className="ml-0.5" />
               <span className="ml-5 mt-1">Admin</span>
             </MenuItem>

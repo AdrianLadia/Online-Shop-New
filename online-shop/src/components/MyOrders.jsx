@@ -15,7 +15,7 @@ function MyOrders() {
 
   return (
     <React.Fragment>
-      <div className="flex justify-center">
+      <div className="flex justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
         <Typography variant="h2">My Orders</Typography>
       </div>
       {reversedOrders.map((order) => {

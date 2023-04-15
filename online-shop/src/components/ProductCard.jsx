@@ -219,19 +219,20 @@ const ProductCard = (props) => {
                 InputLabelProps={{
                   style: { 
                     color: '#F49C5C',
+                    fontSize:15
                   } 
                 }}
                 sx={{
-                    backgroundColor:"#fff4d1",
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        border: 2 ,
-                        color:"#F49C5C",
-                        borderRadius:2,
-                      },
-                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                        color: '#FEC868',
-                        border:2
-                      }
+                  backgroundColor:"#fff4d1",
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 2 ,
+                      color:"#F49C5C",
+                      borderRadius:2,
+                    },
+                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                      color: '#FEC868',
+                      border:2
+                    }
                 }}
               />
           </div>
@@ -253,10 +254,7 @@ const ProductCard = (props) => {
           onClose={handleClose}
           message={DisplayItem()}
           action={
-            <Button color="success" size="small" onClick={handleClose}>
-              {" "}
-              Close{" "}
-            </Button>
+            <Button color="success" size="small" onClick={handleClose}> {" "} Close {" "} </Button>
           }
         />
       </div>
