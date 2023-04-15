@@ -118,7 +118,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
       });
   
       // Send the products array as a JSON response
-      res.send(products);
+      res.status(200).send(products);
     }
     catch (error) {
       res.status(400).send('Error reading products. Please try again later');
