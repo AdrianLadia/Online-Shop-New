@@ -22,21 +22,21 @@ const CartTable = (props) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const columns = [
-        { id: 'itemimage', label: 'image', minWidth: 100},
-        { id: 'itemName', label: 'item', minWidth:1 },
-        { id: 'quantity', label: 'qty', minWidth: 1 },
-        { id: 'addbutton', label: 'add', minWidth: 1 },
-        { id: 'removebutton', label: 'remove', minWidth: 1 },
+        { id: 'itemimage', label: 'Image', minWidth: 100},
+        { id: 'itemName', label: 'Item', minWidth:1 },
+        { id: 'quantity', label: 'Qty', minWidth: 1 },
+        { id: 'addbutton', label: 'Add', minWidth: 1 },
+        { id: 'removebutton', label: 'Remove', minWidth: 1 },
         {
           id: 'price',
-          label: 'price',
+          label: 'Price',
           minWidth: 1,
           align: 'right',
           format: (value) => value.toLocaleString('en-US'),
         },
         {
           id: 'total',
-          label: 'total',
+          label: 'Total',
           minWidth: 1,
           align: 'right',
           format: (value) => value.toLocaleString('en-US'),
@@ -44,16 +44,17 @@ const CartTable = (props) => {
       ];
 
   return (
-    <Paper >
-      <TableContainer sx={{ maxHeight: getMaxHeightTable() }}>
+    <Paper elevation={10} className="mt-4 border-2 border-color60" >
+      <TableContainer sx={{ maxHeight: 430}} >
         <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
+          <TableHead >
+            <TableRow >
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  sx={{ minWidth: column.minWidth }}
+                  sx={{ minWidth: column.minWidth}}
+                  className="bg-color10c font-bold"
                 >
                   {column.label}
                 </TableCell>

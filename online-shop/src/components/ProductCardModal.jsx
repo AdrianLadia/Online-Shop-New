@@ -55,7 +55,8 @@ const style = {
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
-  p: 4,
+  p: 6,
+  borderRadius:"20px"
 };
 
 
@@ -128,7 +129,7 @@ const ProductCardModal = (props) => {
   return (
     <Modal open={props.modal} onClose={props.closeModal}>
       <Fade in={props.modal}>
-        <Box sx={style} >
+        <Box sx={style} className="bg-colorbackground border-color60 overflow-hidden">
           <div className="flex flex-col overflow-y-hidden">
             {/* HEART AND X BUTTON*/}
             <div className="flex flex-row justify-between mb-5">
@@ -156,7 +157,7 @@ const ProductCardModal = (props) => {
             </div>
             <div className="flex flex-col">
               {/* TITLE */}
-              <Typography variant="h4" className="mb-5" align="center">
+              <Typography variant="h3" className="mb-5 text-color60 font-bold" align="center">
                 {props.product.itemName}
               </Typography>
               {/* IMAGE */}
@@ -174,7 +175,7 @@ const ProductCardModal = (props) => {
                   ))}
                 </ImageList>
                 {/* Description */}
-                <Typography variant="h6" align="center" sx={{ mt: 3 }}>
+                <Typography variant="h6" className="mt-5">
                   {props.product.description}
                 </Typography>
                 {/* SPECIFICATION TABLE */}

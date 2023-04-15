@@ -11,7 +11,7 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState('Paper Bag');
 
   return (
-    <div className='flex flex-col w-full justify-center'>
+    <div className='flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 '>
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/>
       {/* CATEGORY */}

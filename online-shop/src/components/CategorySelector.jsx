@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import theme from '../colorPalette/MaterialUITheme';
 
 function a11yProps(index) {
   return {
@@ -43,20 +45,27 @@ const CategorySelector = (props) => {
 
   const featured_category = 'Paper Bag';
 
-
-
   useEffect(() => {
     setSelectedCategory(categories[value]);
   }, [value, categories]);
 
   // const sample = ['test','test2','test3', 'test4', 'test5']
 
+  // const theme = createTheme({
+  //   palette: {
+  //     primary: {
+  //       main: '#9bfab5',
+  //     }
+  //   },
+  // });
+
   return (
-    <div className="w-full">
-      <div className="flex flex-col items-center bg-green-300">
+    <ThemeProvider theme={theme}>
+    <div className="w-full ">
+      <div className="flex flex-col items-center from-colorbackground via-color2 to-color1">
         <div className="mt-5">
           {/* <typ className='text-2xl font-bold mt-5'>Categories</h1> */}
-          <Typography>Select A Category</Typography>
+          <Typography sx={{ fontSize:"20px"}}>Select A Category</Typography>
         </div>
         {/* <div className="flex flex-row overflow-scroll">
           {categories.map((category, index) => {
@@ -64,7 +73,7 @@ const CategorySelector = (props) => {
           })}
         </div> */}
         <Box sx={{ width: '100%' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>
             <Tabs
               value={value}
               onChange={handleChange}
@@ -75,7 +84,7 @@ const CategorySelector = (props) => {
               scrollButtons="auto"
             >
               {categories.map((category, index) => {
-                return <Tab label={category} {...a11yProps(index)} />;
+                return <Tab sx={{fontWeight:"bold"}} label={category} {...a11yProps(index)} />;
               })}
               {/* <Tab label="Item One" {...a11yProps(0)} />
               <Tab label="Item Two" {...a11yProps(1)} />
@@ -85,6 +94,7 @@ const CategorySelector = (props) => {
         </Box>
       </div>
     </div>
+    </ThemeProvider>
   );
 };
 

@@ -116,7 +116,7 @@ function PaymentMethods() {
   }, [bdoselected, unionbankselected, gcashselected, mayaselected, visaselected, mastercardselected, bitcoinselected, ethereumselected, solanaselected]);
 
   return (
-    <div className="h-full grid grid-cols-2 lg:grid-cols-9 md:grid-cols-5 place-items-center">
+    <div className="h-full grid grid-cols-2 2xl:grid-cols-9 xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 place-items-center">
       <PaymentCheckoutCard paymentOption={"bdo"} cardSelected={bdoselected} setCardSelected={setBdoselected} />
       <PaymentCheckoutCard paymentOption={"unionbank"} cardSelected={unionbankselected} setCardSelected={setUnionbankselected} />
 
