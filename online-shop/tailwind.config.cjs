@@ -8,6 +8,16 @@ module.exports = {
   plugins: [],
   theme: {
     extend: {
+      keyframes: {
+        'bounce-fade': {
+          '0%': { transform: 'translateY(0)', opacity: 1 },
+          '50%': { transform: 'translateY(-20px)', opacity: 1 },
+          '100%': { transform: 'translateY(0)', opacity: 1 },
+        },
+      },
+      animation: {
+        'bounce-fade-5': 'bounce-fade 1.25s ease-in-out 5',
+      },
       colors: {
 
         //f // COLOR 1

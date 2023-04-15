@@ -129,8 +129,8 @@ const ProductCardModal = (props) => {
   return (
     <Modal open={props.modal} onClose={props.closeModal}>
       <Fade in={props.modal}>
-        <Box sx={style} className="bg-colorbackground border-color60 overflow-hidden">
-          <div className="flex flex-col overflow-y-hidden">
+        <Box sx={style} className="bg-colorbackground border-color60 overflow-y-auto">
+          <div className="flex flex-col">
             {/* HEART AND X BUTTON*/}
             <div className="flex flex-row justify-between mb-5">
               {/* HEART */}
@@ -168,7 +168,7 @@ const ProductCardModal = (props) => {
                 >
                   { props.product.imageLinks.map((imagelink) => (
                     <ImageListItem key={imagelink}>
-                      <Paper elevation={10}>
+                      <Paper >
                         <img src={imagelink} alt={"title"} />
                       </Paper>
                     </ImageListItem>
