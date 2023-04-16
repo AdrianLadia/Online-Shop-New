@@ -2,8 +2,12 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors');
 admin.initializeApp();
-const corsHandler = cors({ origin: '*' });
+
 const Joi = require('joi');
+
+
+// Use CORS middleware to enable Cross-Origin Resource Sharing
+const corsHandler = cors({ origin: true });
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string

@@ -41,6 +41,7 @@ const ProductList = (props) => {
       retail,
       favorites
     );
+    console.log('selected_products', selected_products);
     return selected_products;
   }
 
@@ -65,7 +66,7 @@ const ProductList = (props) => {
   }
 
   return (
-    <div className='mb-16'>
+    <div className='mb-16 mt-5'>
       <div id='productList' className={'flex flex-col justify-center items-center  ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
@@ -82,7 +83,7 @@ const ProductList = (props) => {
           RenderSelectedProducts(selectedCategory).map((product, index) => {
             return (
               <div>
-                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} />
+                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} />
               </div>
             );
           })

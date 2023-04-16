@@ -20,7 +20,7 @@ const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
 const cloudfirestorefunctions = new cloudFirestoreFunctions();
 const cloudfirestore = new cloudFirestoreDb();
-const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', 'NSrPrIoJoaDVSSRCVX2Lct2wiBhm');
+const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', '6CO7Rda0Ngtoi41Gp6Zge3VlB5C5');
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -201,7 +201,7 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe('Data Manipulation', () => {
+describe.only('Data Manipulation', () => {
   test('AccountStatement', () => {
     const orders = user.orders;
     const payments = user.payments;
@@ -322,7 +322,15 @@ describe('Data Manipulation', () => {
     const products = await firestore.readAllProducts();
     await delay(100);
     const favorites = user.favoriteItems;
-    const selected_products = datamanipulation.getAllProductsInCategory(products, 'Favorites', true, false, favorites);
+    datamanipulation.getAllProductsInCategory(products, 'Favorites', true, false, favorites);
+    const selected_products =  datamanipulation.getAllProductsInCategory(products, 'Paper Bag', true, false, favorites);
+    expect(selected_products).not.toBe([]);
+    expect(selected_products.length).toBeGreaterThan(0);
+    expect(selected_products[0].forTutorial).toBe(true);
+
+    if (selected_products.length > 1) {
+      expect(selected_products[1].forTutorial).toBe(false);
+    }
   });
 });
 

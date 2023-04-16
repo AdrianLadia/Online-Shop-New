@@ -2,7 +2,7 @@ import * as React from 'react';
 import Paper from '@mui/material/Paper';
 import { Button, Typography } from '@mui/material';
 import { Snackbar } from '@material-ui/core';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect,useRef } from 'react';
 import UseWindowDimensions from './UseWindowDimensions';
 import TextField from '@mui/material/TextField';
 import ProductCardModal from './ProductCardModal';
@@ -11,8 +11,8 @@ import AppContext from '../AppContext';
 import { FaImage } from 'react-icons/fa';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
-import {BsFillInfoCircleFill} from 'react-icons/bs';
-import {FaHandPointDown} from 'react-icons/fa';
+import { BsFillInfoCircleFill } from 'react-icons/bs';
+import { FaHandPointDown } from 'react-icons/fa';
 
 const ProductCard = (props) => {
   const [quantity, setQuantity] = useState('');
@@ -27,6 +27,8 @@ const ProductCard = (props) => {
   const safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
   const { cart } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(true);
+  const ref = useRef(null);
+  const showTutorial = props.showTutorial
 
   function ClearForm() {
     document.getElementById('inputquantity' + props.product.itemName).value = '';
@@ -137,11 +139,15 @@ const ProductCard = (props) => {
     }
   }
 
+  // TURORIAL TAP IMAGE FOR MORE INFO
   useEffect(() => {
+    if (!showTutorial) {
+      return;
+    }
     const timer = setTimeout(() => {
       setIconVisible(false);
     }, 6250);
-  
+
     // Clean up the timer when the component unmounts
     return () => clearTimeout(timer);
   }, []);
@@ -156,11 +162,24 @@ const ProductCard = (props) => {
           className="flex flex-row w-11/12 justify-center my-5 h-60 bg-gradient-to-r from-color60 to-color10c"
         >
           {/* IMAGE */}
-          <div className=" w-3/5 relative" >
+          <div className=" w-3/5 relative">
             <div className="absolute inset-0 flex  justify-center p-2" onClick={() => setModal(true)}>
-              {iconVisible ? 
-              <FaHandPointDown onClick={() => setModal(true)} color='#6bd0ff' size={40} className='animate-bounce-fade-5' />
-              : null}
+              {(iconVisible && showTutorial) ? (
+                <div>
+                  <FaHandPointDown
+                    onClick={() => setModal(true)}
+                    color="#6bd0ff"
+                    size={40}
+                    className="animate-bounce-fade-5 mt-5"
+
+                  />
+                  <h1 className="absolute text-lg font-bold -top-7 left-6 whitespace-nowrap">
+                    <span className="text-transparent bg-clip-text bg-color10b">
+                    TAP THE IMAGE FOR MORE INFO
+                    </span>
+                  </h1>
+                </div>
+              ) : null}
             </div>
             <img
               src={props.product.imageLinks[0]}

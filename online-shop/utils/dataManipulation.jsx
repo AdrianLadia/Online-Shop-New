@@ -602,9 +602,17 @@ class dataManipulation {
     }
 
     let selected_products_by_category = [];
+    let count = 0
     for (let i = 0; i < products.length; i++) {
       if (products[i].category === categorySelected) {
-        selected_products_by_category.push(products[i]);
+          count += 1
+          if (count == 1) {
+            products[i]['forTutorial'] = true
+          }
+          else {
+            products[i]['forTutorial'] = false
+          }
+          selected_products_by_category.push(products[i]);
       }
     }
 
