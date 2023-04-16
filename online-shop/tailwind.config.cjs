@@ -22,7 +22,7 @@ module.exports = {
         },
         'bounce-fade': {
           '0%': { transform: 'translateY(0)', opacity: 1 },
-          '50%': { transform: 'translateY(-20px)', opacity: 1 },
+          '50%': { transform: 'translateY(-70px)', opacity: 1 },
           '100%': { transform: 'translateY(0)', opacity: 1 },
         },
       },
@@ -35,11 +35,11 @@ module.exports = {
         //f // COLOR 1
         color60: '#69b05c', // ABC270
         color30: '#bb9541', // F49C5C
-        color10a: '#FEC868', // FEC868
+        color10a: '#6ab15d', // FEC868
         color10b: '#6bd0ff', // 473C33
         color10c: '#B6E388',
         colorbackground: '#e1fadd',
-        color1:"#beddb8",
+        color1:"#d3eecf",
         color2:"#cceac7"
 
         // beddb8

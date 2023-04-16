@@ -159,7 +159,7 @@ const ProductCardModal = (props) => {
             </div>
             <div className="flex flex-col">
               {/* TITLE */}
-              <Typography variant="h3" className="mb-5 text-color60 font-bold" align="center">
+              <Typography variant="h3" className="mb-5 text-black" align="center">
                 {props.product.itemName}
               </Typography>
               {/* IMAGE */}

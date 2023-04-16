@@ -62,11 +62,8 @@ const CategorySelector = (props) => {
   return (
     <ThemeProvider theme={theme}>
     <div className="w-full ">
-      <div className="flex flex-col items-center from-colorbackground via-color2 to-color1">
-        <div className="mt-5">
-          {/* <typ className='text-2xl font-bold mt-5'>Categories</h1> */}
-          <Typography sx={{ fontSize:"20px"}}>Select A Category</Typography>
-        </div>
+      <div className="flex flex-col items-center mt-5 from-colorbackground via-color2 to-color1">
+
         {/* <div className="flex flex-row overflow-scroll">
           {categories.map((category, index) => {
             return <CategoryButton onCategoryClick={OnCategoryClick} category={category} key={index} />;
@@ -86,9 +83,6 @@ const CategorySelector = (props) => {
               {categories.map((category, index) => {
                 return <Tab sx={{fontWeight:"bold"}} label={category} {...a11yProps(index)} />;
               })}
-              {/* <Tab label="Item One" {...a11yProps(0)} />
-              <Tab label="Item Two" {...a11yProps(1)} />
-              <Tab label="Item Three" {...a11yProps(2)} /> */}
             </Tabs>
           </Box>
         </Box>

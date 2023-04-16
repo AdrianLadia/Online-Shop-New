@@ -149,11 +149,12 @@ const ProductCard = (props) => {
     }
     const timer = setTimeout(() => {
       setIconVisible(false);
-    }, 6250);
+    }, 3750);
 
     // Clean up the timer when the component unmounts
     return () => clearTimeout(timer);
   }, []);
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -166,7 +167,7 @@ const ProductCard = (props) => {
         >
           {/* IMAGE */}
           <div className=" w-3/5 relative">
-            <div className="absolute inset-0 flex  justify-center p-2" onClick={() => setModal(true)}>
+            <div className="absolute inset-0 flex  justify-center mt-12 p-2" onClick={() => setModal(true)}>
               {(iconVisible && showTutorial) ? (
                 <div>
                   <FaHandPointDown
@@ -176,9 +177,10 @@ const ProductCard = (props) => {
                     className="animate-bounce-fade-5 mt-5"
 
                   />
-                  <h1 className="absolute text-lg font-bold -top-9 left-6 whitespace-nowrap">
-                    <span className="text-transparent bg-clip-text bg-color10b">
-                    Tap the card for more info
+                  <h1 className="absolute text-sm -top-20  left-7 whitespace-nowrap">
+                    <span className="text-transparent font-bold bg-clip-text bg-color10b">
+                      
+                    TAP FOR MORE INFO
                     </span>
                   </h1>
                 </div>
@@ -221,7 +223,7 @@ const ProductCard = (props) => {
             )}
             <div className="h-2/5 ">
               <Typography
-                sx={{ fontSize: responsiveStyle(), mr: 1, color: 'darkslategray', cursor: 'pointer' }}
+                sx={{ fontSize: responsiveStyle(), mr: 1, color: 'black', cursor: 'pointer' }}
                 onClick={() => setModal(true)}
               >
                 {props.product.itemName}
@@ -235,7 +237,7 @@ const ProductCard = (props) => {
             <div className="flex flex-row h-1/6 w-full ">
               <button
                 id="addtocartbutton"
-                className="mt-4  h-full text-black border-2 border-color30 bg-color10a hover:bg-color30 text-xs py-1 px-2 rounded"
+                className="mt-4  h-full text-black border-2 border-color10a bg-color10a text-xs py-1 px-2 rounded"
                 // className= "mt-5 h-full text-black bg-gradient-to-t from-color30 to-color10a ease-out delay-75 hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
                 type="button"
                 onClick={AddToCart}
@@ -254,18 +256,18 @@ const ProductCard = (props) => {
                 label="Qty."
                 InputLabelProps={{
                   style: {
-                    color: '#F49C5C',
+                    color: '#6ab15d',
                   },
                 }}
                 sx={{
-                  backgroundColor: '#fff4d1',
+                  backgroundColor: '#ffffff',
                   '& .MuiOutlinedInput-notchedOutline': {
                     border: 2,
-                    color: '#F49C5C',
+                    color: '#6ab15d',
                     borderRadius: 2,
                   },
                   '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                    color: '#FEC868',
+                    color: '#6ab15d',
                     border: 2,
                   },
                 }}

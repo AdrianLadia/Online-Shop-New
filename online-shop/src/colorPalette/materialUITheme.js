@@ -10,7 +10,7 @@ const theme = createTheme({
         main: '#6bd0ff',
       },
       enter: {
-        main: '#F49C5C',
+        main: '#6ab15d',
       },
     },
   });

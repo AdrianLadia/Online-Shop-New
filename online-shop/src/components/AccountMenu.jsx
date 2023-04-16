@@ -16,6 +16,7 @@ import { CgProfile } from "react-icons/cg";
 import { AiOutlineHistory } from "react-icons/ai";
 import { BsBook } from "react-icons/bs";
 import { GrUserAdmin } from "react-icons/gr";
+import { Typography } from "@mui/material";
 
 const AccountMenu = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -68,7 +69,7 @@ const AccountMenu = (props) => {
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         {/* <Typography sx={{ minWidth: 100 }}>Contact</Typography>
           <Typography sx={{ minWidth: 100 }}>Profile</Typography> */}
-        <Tooltip title="Account settings">
+        <Tooltip title="My Profile">
           <IconButton
             id = "accountMenu"
             onClick={handleClick}
@@ -78,7 +79,11 @@ const AccountMenu = (props) => {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>{userdata.name[0]}</Avatar>
+            <Avatar sx={{ width: 32, height: 32, bgcolor:'#6bd0ff',}}>
+              <Typography color='white' >
+                {userdata.name[0]}
+              </Typography>
+              </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
