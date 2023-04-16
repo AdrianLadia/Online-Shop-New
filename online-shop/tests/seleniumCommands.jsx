@@ -284,8 +284,9 @@ class seleniumCommands extends seleniumElements {
 
         await this.clickCustomerNamePaymentEntry()
         const suggestionsList = await this.driver.wait(until.elementLocated(By.css('.MuiAutocomplete-listbox')), 5000);
-        await customerNamePaymentEntry.sendKeys("ladia.adrian@gmail.com")
-        const suggestion = await suggestionsList.findElement(By.css('.MuiAutocomplete-option'));
+        await customerNamePaymentEntry.sendKeys("Adrian")
+        await this.driver.wait(until.elementLocated(By.css('.MuiAutocomplete-listbox li:first-child')), 5000);
+        const suggestion = await suggestionsList.findElement(By.css('.MuiAutocomplete-listbox li:first-child'));
         await suggestion.click();
         await amountPaymentEntry.sendKeys("10000")
         await referencePaymentEntry.sendKeys("Test Payment")

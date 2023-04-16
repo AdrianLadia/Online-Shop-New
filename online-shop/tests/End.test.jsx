@@ -60,7 +60,7 @@ describe('Integration', () => {
     await driver.openCart();
     await driver.clickClearCartButton();
     await(delay(600))
-    const user = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const user = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
     await(delay(300))
     const userCart = user.cart
     const userCartLength = userCart.length;
@@ -69,7 +69,7 @@ describe('Integration', () => {
   }, 1000000);
 
   test('Checkout Flow', async () => {
-    await cloudfirestore.updateDocumentFromCollection('Users', 'NSrPrIoJoaDVSSRCVX2Lct2wiBhm', {orders: [],contactPerson: [], deliveryAddress: []})
+    await cloudfirestore.updateDocumentFromCollection('Users', '6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', {orders: [],contactPerson: [], deliveryAddress: []})
     
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
@@ -78,7 +78,7 @@ describe('Integration', () => {
     await delay(1000)
     const totalPriceNew = await (await driver.getTotalPriceOfCartButton()).getText();
     expect(totalPriceOld).not.toBe(totalPriceNew);
-    const user = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const user = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
     const userCart = user.cart.length;
     
     expect(userCart).not.toBe(0);
@@ -86,14 +86,14 @@ describe('Integration', () => {
     await driver.openCart();
     await driver.addToCartIncrement()
     await(delay(1000))
-    const user2 = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const user2 = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
     const userCart2 = user2.cart.length;
 
     expect(userCart2 - userCart).toEqual(1);
 
     await driver.removeFromCartDecrement()
     await(delay(1000))
-    const user3 = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const user3 = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
     const userCart3 = user3.cart.length;
 
     expect(userCart3 - userCart2).toEqual(-1);
@@ -112,7 +112,7 @@ describe('Integration', () => {
 
     await driver.driver.navigate().refresh();
 
-    const user4 = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const user4 = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
     const userOrders4 = user4.orders
 
     let found = false
@@ -184,7 +184,7 @@ describe('Integration', () => {
 
 
   test('superAdminPrevilages', async () => {
-    await cloudfirestore.changeUserRole('NSrPrIoJoaDVSSRCVX2Lct2wiBhm', 'superAdmin')
+    await cloudfirestore.changeUserRole('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', 'superAdmin')
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
@@ -195,7 +195,7 @@ describe('Integration', () => {
   }, 1000000)
 
   test('ordersMenu', async () => {
-    await cloudfirestore.changeUserRole('NSrPrIoJoaDVSSRCVX2Lct2wiBhm', 'superAdmin')
+    await cloudfirestore.changeUserRole('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', 'superAdmin')
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
@@ -210,7 +210,7 @@ describe('Integration', () => {
   }, 1000000)
 
   test('createPaymentMenu', async () => {
-    await cloudfirestore.changeUserRole('NSrPrIoJoaDVSSRCVX2Lct2wiBhm', 'superAdmin')
+    await cloudfirestore.changeUserRole('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', 'superAdmin')
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
@@ -220,7 +220,7 @@ describe('Integration', () => {
     await driver.clickCreatePaymentMenu()
     await driver.createTestPayment()
     await delay(1000)
-    const user = await cloudfirestore.readSelectedUserById('NSrPrIoJoaDVSSRCVX2Lct2wiBhm')
+    const user = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
     const payments = user.payments
     let found = false
     payments.map(payment => {
@@ -234,31 +234,10 @@ describe('Integration', () => {
 
     expect(found).toBe(true) 
 
-    await cloudfirestore.updateDocumentFromCollection('Users','NSrPrIoJoaDVSSRCVX2Lct2wiBhm', {payments:[]})
+    await cloudfirestore.updateDocumentFromCollection('Users','6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', {payments:[]})
 
     await driver.clickBackToStoreButton()
   }, 1000000)
 });
 
-// async function example() {
 
-//   try {
-//     // Navigate to Google
-//     await driver.get('https://www.google.com');
-
-//     // Find the search box and enter a query
-//     let searchBox = await driver.findElement(By.name('q'));
-//     await searchBox.sendKeys('Selenium', Key.RETURN);
-
-//     // Wait for the results to load
-//     await driver.wait(until.titleContains('Selenium'), 5000);
-
-//     // Print the page title
-//     console.log(await driver.getTitle());
-//   } finally {
-//     // Quit the browser
-//     await driver.quit();
-//   }
-// }
-
-// example();

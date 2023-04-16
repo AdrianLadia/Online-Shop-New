@@ -106,6 +106,8 @@ const ProductCardModal = (props) => {
     const dimensions = props.product.dimensions;
     const weight = props.product.weight;
     const unit = props.product.unit;
+    const lengthOfImageList = props.product.imageLinks.length;
+    const centerImage = lengthOfImageList === 1;
 
     const specs = {
       size: size,
@@ -167,7 +169,7 @@ const ProductCardModal = (props) => {
                   rowHeight="auto"
                 >
                   { props.product.imageLinks.map((imagelink) => (
-                    <ImageListItem key={imagelink}>
+                    <ImageListItem key={imagelink} cols={centerImage ? responsiveimagemodal() : 1} className={centerImage ? 'flex justify-center' : ''} >
                       <Paper >
                         <img src={imagelink} alt={"title"} />
                       </Paper>

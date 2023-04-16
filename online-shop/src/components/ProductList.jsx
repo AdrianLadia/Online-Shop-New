@@ -24,6 +24,7 @@ const ProductList = (props) => {
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts } = React.useContext(AppContext);
   const favorites = favoriteitems;
+  const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
 
   useEffect(() => {
     console.log('LOOKING FOR PRODUCT')
@@ -83,13 +84,13 @@ const ProductList = (props) => {
           RenderSelectedProducts(selectedCategory).map((product, index) => {
             return (
               <div>
-                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} />
+                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} />
               </div>
             );
           })
         )}
       </div>
-      <OpenCartButton />
+      <OpenCartButton shakeCartAnimation={shakeCartAnimation} setShakeCartAnimation={setShakeCartAnimation} />
     </div>
   );
 };

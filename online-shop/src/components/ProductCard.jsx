@@ -29,6 +29,7 @@ const ProductCard = (props) => {
   const [iconVisible, setIconVisible] = useState(true);
   const ref = useRef(null);
   const showTutorial = props.showTutorial
+  const setShakeCartAnimation = props.setShakeCartAnimation
 
   function ClearForm() {
     document.getElementById('inputquantity' + props.product.itemName).value = '';
@@ -69,6 +70,8 @@ const ProductCard = (props) => {
       props.addtocart(props.product.itemId, quantity);
       //back to 0
       setQuantity('');
+      //shake cart
+      setShakeCartAnimation(true)
     }
   }
 
@@ -173,9 +176,9 @@ const ProductCard = (props) => {
                     className="animate-bounce-fade-5 mt-5"
 
                   />
-                  <h1 className="absolute text-lg font-bold -top-7 left-6 whitespace-nowrap">
+                  <h1 className="absolute text-lg font-bold -top-9 left-6 whitespace-nowrap">
                     <span className="text-transparent bg-clip-text bg-color10b">
-                    TAP THE IMAGE FOR MORE INFO
+                    Tap the card for more info
                     </span>
                   </h1>
                 </div>
@@ -287,6 +290,7 @@ const ProductCard = (props) => {
                 Close{' '}
               </Button>
             }
+            autoHideDuration={3000}
           />
         </div>
       </div>

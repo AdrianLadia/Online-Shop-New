@@ -2,7 +2,7 @@ import { FaLaptopHouse } from "react-icons/fa"
 
 class AppConfig {
     constructor() {
-        this.isDevEnvironment = true
+        this.isDevEnvironment = false
     }
 
     getIsDevEnvironment() {

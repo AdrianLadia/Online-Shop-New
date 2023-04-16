@@ -10,12 +10,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import businessCalculations from '../../utils/businessCalculations';
 import dataManipulation from '../../utils/dataManipulation';
 
-const OpenCartButton = () => {
+const OpenCartButton = (props) => {
   const businesscalculations = new businessCalculations();
   const datamanipulation = new dataManipulation();
   let [totalPrice, setTotalPrice] = useState(0);
   let [openCart, setOpenCart] = useState(false);
   let [finalCartData, setFinalCartData] = useState([]);
+  const shakeCartAnimation = props.shakeCartAnimation
+  const setShakeCartAnimation = props.setShakeCartAnimation
 
   const location = useLocation();
   const { refreshUser, setRefreshUser, userstate, cart, setCart, products } = useContext(AppContext);
@@ -99,14 +101,31 @@ const OpenCartButton = () => {
     setOpenCart(false);
   }
 
+  useEffect(() => {
+    console.log('shakeCartAnimation', shakeCartAnimation)
+    if (shakeCartAnimation) {
+      setTimeout(() => {
+        setShakeCartAnimation(false)
+      }, 500);
+      
+    }
+
+  }, [shakeCartAnimation]);
+
+  function responsiveShakeCartAnimation() {
+    if (shakeCartAnimation) {
+      console.log('shakeCartAnimation')
+      return 'animate-shake'
+    }
+  }
+
   return (
     <div>
       <div className="flex fixed bottom-20 w-full justify-center ">
         <button
           id="opencartbutton"
           onClick={ViewCart}
-          className=" bg-color10b  text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 
-                      position fixed bottom-2  content-center hover:animate-bounce "
+          className={" bg-color10b  text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 position fixed bottom-2  content-center " + responsiveShakeCartAnimation() }
         >
           {userstate !== 'userloading' ? (
             <div className="flex flex-row justify-around">

@@ -9,6 +9,17 @@ module.exports = {
   theme: {
     extend: {
       keyframes: {
+        'shake': {
+          '0%, 100%': {
+            transform: 'translateX(0)',
+          },
+          '10%, 30%, 50%, 70%, 90%': {
+            transform: 'translateX(-10px)',
+          },
+          '20%, 40%, 60%, 80%': {
+            transform: 'translateX(10px)',
+          },
+        },
         'bounce-fade': {
           '0%': { transform: 'translateY(0)', opacity: 1 },
           '50%': { transform: 'translateY(-20px)', opacity: 1 },
@@ -17,6 +28,7 @@ module.exports = {
       },
       animation: {
         'bounce-fade-5': 'bounce-fade 1.25s ease-in-out 5',
+        'shake': 'shake 1s ease-in-out infinite'
       },
       colors: {
 

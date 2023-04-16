@@ -223,7 +223,7 @@ const CheckoutPage = () => {
           </div>
           <div className="flex justify-center w-full">
             <button
-              testid="selectFromSavedAddressButton"
+              id="selectFromSavedAddressButton"
               className="bg-color10b hover:bg-blue-400 rounded-lg w-3/6 font-bold "
               onClick={handleOpenModalSavedAddress}
             >

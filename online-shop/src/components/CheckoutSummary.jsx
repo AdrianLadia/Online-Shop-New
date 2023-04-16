@@ -107,7 +107,10 @@ const CheckoutSummary = (props) => {
             </div>
           
           </div>
-          <Typography className='underline underline-offset-8' variant="h4">Grand Total: ₱ {grandTotal.toLocaleString()}</Typography>
+          <div className='flex flex-row'> 
+          <Typography className='underline underline-offset-8' variant="h4">Grand Total: ₱ </Typography>
+          <Typography id='checkoutItemsTotal' className='underline underline-offset-8' variant="h4">{grandTotal.toLocaleString()}</Typography>
+          </div>
         
         </div>
         )}
