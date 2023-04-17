@@ -261,14 +261,14 @@ const ProductCard = (props) => {
                   },
                 }}
                 sx={{
-                    backgroundColor:"#fff4d1",
+                    backgroundColor:"#ffffff",
                       '& .MuiOutlinedInput-notchedOutline': {
                         border: 2 ,
-                        color:"#F49C5C",
+                        color:'#6ab15d',
                         borderRadius:2,
                       },
                       '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                        color: '#FEC868',
+                        color: '#6ab15d',
                         border:2
                       }
                 }}
