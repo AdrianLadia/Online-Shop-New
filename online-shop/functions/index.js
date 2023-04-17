@@ -1,13 +1,17 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors');
-admin.initializeApp();
-
-const Joi = require('joi');
-
-
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({ origin: true });
+const express = require("express");
+const app = express();
+const Joi = require('joi');
+
+admin.initializeApp();
+
+app.use(corsHandler)
+app.use(express.json())
+
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
@@ -517,5 +521,46 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
   }
 });
 
-exports.getCartCount = getCartCount;
-exports.getValueAddedTax = getValueAddedTax;
+
+// Expose the Express app as a Cloud Function
+exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  // TODO: You will have to implement the logic of this method.
+  console.log(req.body);
+
+  res.send({
+    success: true
+  });
+});
+
+exports.payMayaWebHookFailed = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  // TODO: You will have to implement the logic of this method.
+  console.log(req.body);
+
+  res.send({
+    success: true
+  });
+});
+
+exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  // TODO: You will have to implement the logic of this method.
+  console.log(req.body);
+
+  res.send({
+    success: true
+  });
+});

@@ -1,21 +1,15 @@
 import React, { useEffect } from "react";
 import { useState, useContext } from "react";
 import PaymentCheckoutCard from "./PaymentCheckoutCard";
+import PaymentMethodContext from "../context/PaymentMethodContext";
 
 function PaymentMethods() {
 
-  const [bdoselected, setBdoselected] = useState(false);
-  const [unionbankselected, setUnionbankselected] = useState(false);
-  const [gcashselected, setGcashselected] = useState(false);
-  const [mayaselected, setMayaselected] = useState(false);
-  const [visaselected, setVisaselected] = useState(false);
-  const [mastercardselected, setMastercardselected] = useState(false);
-  const [bitcoinselected, setBitcoinselected] = useState(false);
-  const [ethereumselected, setEthereumselected] = useState(false);
-  const [solanaselected, setSolanaselected] = useState(false);
+
+  const { bdoselected, setBdoselected, unionbankselected, setUnionbankselected, gcashselected, setGcashselected, mayaselected, setMayaselected, visaselected, setVisaselected, mastercardselected, setMastercardselected, bitcoinselected, setBitcoinselected, ethereumselected, setEthereumselected, solanaselected, setSolanaselected } = useContext(PaymentMethodContext);
+  
 
   useEffect(() => {
-
     if (bdoselected === true) {
       setUnionbankselected(false);
       setGcashselected(false);

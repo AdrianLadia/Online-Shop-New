@@ -21,6 +21,7 @@ import {ThemeProvider } from '@mui/material/styles';
 import theme from "../colorPalette/MaterialUITheme";
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
+import PaymentMethodContext from '../context/PaymentMethodContext';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -32,7 +33,6 @@ const CheckoutPage = () => {
 
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
-  const [launchPayMayaCheckout, setLaunchPayMayaCheckout] = useState(false);
   const [total, setTotal] = React.useState(0);
   const [localname, setLocalName] = React.useState('');
   const [localemail, setLocalEmail] = React.useState('');
@@ -68,6 +68,43 @@ const CheckoutPage = () => {
 
   const paperboylatitude = paperboylocation.latitude;
   const paperboylongitude = paperboylocation.longitude;
+
+  const [placedOrder,setPlacedOrder] = useState(false);
+
+
+  // PAYMENT METHODS
+  const [bdoselected, setBdoselected] = useState(false);
+  const [unionbankselected, setUnionbankselected] = useState(false);
+  const [gcashselected, setGcashselected] = useState(false);
+  const [mayaselected, setMayaselected] = useState(false);
+  const [visaselected, setVisaselected] = useState(false);
+  const [mastercardselected, setMastercardselected] = useState(false);
+  const [bitcoinselected, setBitcoinselected] = useState(false);
+  const [ethereumselected, setEthereumselected] = useState(false);
+  const [solanaselected, setSolanaselected] = useState(false);
+
+  const paymentMethodValues = {
+    bdoselected,
+    setBdoselected,
+    unionbankselected,
+    setUnionbankselected,
+    gcashselected,
+    setGcashselected,
+    mayaselected,
+    setMayaselected,
+    visaselected,
+    setVisaselected,
+    mastercardselected,
+    setMastercardselected,
+    bitcoinselected,
+    setBitcoinselected,
+    ethereumselected,
+    setEthereumselected,
+    solanaselected,
+    setSolanaselected,
+  }
+  // PAYMENT METHODS
+
 
   useEffect(() => {
     setRefreshUser(!refreshUser);
@@ -127,9 +164,6 @@ const CheckoutPage = () => {
 
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
-      // Place Order
-      // setLaunchPayMayaCheckout(true);
-
       try{
         console.log(total)
         const status = await cloudfirestoredb.transactionPlaceOrder(
@@ -154,6 +188,7 @@ const CheckoutPage = () => {
             needAssistance:needAssistance}
             
         )
+        setPlacedOrder(true)
       }
       catch(err){
         console.log(err)
@@ -200,12 +235,12 @@ const CheckoutPage = () => {
     setGrandTotal(grandTotal);
   }, [total, vat, deliveryFee]);
 
+
+
   return (
     <ThemeProvider theme={theme}>
     <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
-      <CheckoutPageContext.Provider value={[payMayaCardSelected, setPayMayaCardSelected]}>
-        {/* <PaymentMethods /> */}
-        {launchPayMayaCheckout ? (
+        {mayaselected && placedOrder ? (
           <PaymentMenuCard
             firstname={localname.split(' ')[0]}
             lastname={localname.split(' ')[1]}
@@ -214,7 +249,6 @@ const CheckoutPage = () => {
             totalprice={grandTotal}
           />
         ) : null}
-      </CheckoutPageContext.Provider>
 
       <Divider sx={{ marginTop: .1, marginBottom: 3  }} />
 
@@ -497,7 +531,9 @@ const CheckoutPage = () => {
                 </Typography>
               </div>
 
-              <PaymentMethods/>
+              <PaymentMethodContext.Provider value={paymentMethodValues}>
+                <PaymentMethods/>
+              </PaymentMethodContext.Provider>
 
               <Divider sx={{ marginTop: 5 , marginBottom:3}} />
 

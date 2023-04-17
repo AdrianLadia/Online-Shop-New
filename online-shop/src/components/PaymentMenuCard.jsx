@@ -1,11 +1,14 @@
 import React from 'react'
 import paymaya from 'paymaya-js-sdk';
 import { useEffect, useState } from 'react';
+import AppConfig from '../AppConfig';
+
 
 // https://github.com/PayMaya/PayMaya-JS-SDK-v2
 
 function PaymentMenuCard(props) {
   
+  const appConfig = new AppConfig()
   const firstname = props.firstname
   const lastname = props.lastname
   const email = props.email
@@ -36,9 +39,9 @@ function PaymentMenuCard(props) {
         "email": email
       },
       "shippingAddress": {
-        "firstName": "John",
-        "middleName": "Paul",
-        "lastName": "Doe",
+        "firstName": "Adrian Anton",
+        "middleName": "Domingo",
+        "lastName": "Ladia",
         "phone": "+639181008888",
         "email": "merchant@merchantsite.com",
         "line1": "6F Launchpad",
@@ -96,8 +99,22 @@ function PaymentMenuCard(props) {
   }
   
     useEffect(() => {
-      paymaya.init('pk-eo4sL393CWU5KmveJUaW8V730TTei2zY8zE4dHJDxkF', true, 'SANDBOX');
-      paymaya.createCheckout(exampleCheckoutObject); 
+      console.log('PaymentMenuCard useEffect')
+      if (appConfig.getIsPaymentSandBox()) {
+        paymaya.init('pk-eo4sL393CWU5KmveJUaW8V730TTei2zY8zE4dHJDxkF', true, 'SANDBOX');
+      }
+      else {
+        paymaya.init('pk-1ddpORjAjpC4dbmgFJ0ffZi1fTekKnqza1QBUSBumr8', true)
+      }
+
+      async function createCheckout(exampleCheckoutObject) {
+        const paymentDetails = await paymaya.createCheckout(exampleCheckoutObject); 
+        console.log(paymentDetails)
+        return paymentDetails
+      }
+
+      const paymentDetails = createCheckout(exampleCheckoutObject)
+       
     }, []);
 
   return (
