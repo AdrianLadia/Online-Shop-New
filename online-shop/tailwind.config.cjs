@@ -40,7 +40,7 @@ module.exports = {
         color10c: '#B6E388', //light green
         colorbackground: '#e1fadd', //bright green
         color1:"#d3eecf",
-        color2:"#cceac7" //pale green
+        color2:"#cceac7", //pale green
         blue1:"#429eff" //dark blue
 
         // beddb8
