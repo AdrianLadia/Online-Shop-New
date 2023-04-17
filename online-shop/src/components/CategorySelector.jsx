@@ -28,10 +28,10 @@ const CategorySelector = (props) => {
 
   const setSelectedCategory = props.setSelectedCategory;
 
-  const { firestore } = useContext(AppContext);
+  const { firestore,categories,setCategories } = useContext(AppContext);
 
   const datamanipulation = new dataManipulation();
-  const [categories, setCategories] = useState([]);
+  
 
   useEffect(() => {
     async function fetchCategories() {
@@ -46,7 +46,9 @@ const CategorySelector = (props) => {
   const featured_category = 'Paper Bag';
 
   useEffect(() => {
-    setSelectedCategory(categories[value]);
+    if (categories != null) {
+      setSelectedCategory(categories[value]);
+    }
   }, [value, categories]);
 
   // const sample = ['test','test2','test3', 'test4', 'test5']
@@ -80,7 +82,7 @@ const CategorySelector = (props) => {
               variant="scrollable"
               scrollButtons="auto"
             >
-              {categories.map((category, index) => {
+              {categories && categories.map((category, index) => {
                 return <Tab sx={{fontWeight:"bold"}} label={category} {...a11yProps(index)} />;
               })}
             </Tabs>

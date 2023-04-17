@@ -45,6 +45,7 @@ function App() {
   const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);
+  const [user, setUser] = useState(null)
   const [userdata, setUserData] = useState(null);
   const [isadmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
@@ -62,6 +63,7 @@ function App() {
   const [guestLoginClicked, setGuestLoginClicked] = useState(false);
   const [products, setProducts] = useState([]);
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
+  const [categories,setCategories] = useState(null)
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -75,7 +77,7 @@ function App() {
         // https://firebase.google.com/docs/reference/js/firebase.User
         console.log('FOUND USER', user.uid);
         setUserState('userloading');
-
+        setUser(user)
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           console.log(userExists);
           if (userExists) {
@@ -188,6 +190,10 @@ function App() {
   }, [goToCheckoutPage]);
 
   const appContextValue = {
+    categories : categories,
+    setCategories : setCategories,
+    firebaseApp : app,
+    user: user,
     userdata: userdata,
     setUserData: setUserData,
     isadmin: isadmin,
