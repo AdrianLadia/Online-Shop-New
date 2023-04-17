@@ -33,14 +33,15 @@ module.exports = {
       colors: {
 
         //f // COLOR 1
-        color60: '#69b05c', // ABC270
-        color30: '#bb9541', // F49C5C
+        color60: '#69b05c', //logo green
+        color30: '#bb9541', //logo brown
         color10a: '#6ab15d', // FEC868
-        color10b: '#6bd0ff', // 473C33
-        color10c: '#B6E388',
-        colorbackground: '#e1fadd',
+        color10b: '#6bd0ff', //light blue
+        color10c: '#B6E388', //light green
+        colorbackground: '#e1fadd', //bright green
         color1:"#d3eecf",
-        color2:"#cceac7"
+        color2:"#cceac7" //pale green
+        blue1:"#429eff" //dark blue
 
         // beddb8
         // ecd7a8

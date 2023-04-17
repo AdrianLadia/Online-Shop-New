@@ -257,45 +257,49 @@ const ProductCard = (props) => {
                 InputLabelProps={{
                   style: {
                     color: '#6ab15d',
+                    fontSize:15
                   },
                 }}
                 sx={{
-                  backgroundColor: '#ffffff',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    border: 2,
-                    color: '#6ab15d',
-                    borderRadius: 2,
-                  },
-                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                    color: '#6ab15d',
-                    border: 2,
-                  },
+                    backgroundColor:"#fff4d1",
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        border: 2 ,
+                        color:"#F49C5C",
+                        borderRadius:2,
+                      },
+                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                        color: '#FEC868',
+                        border:2
+                      }
                 }}
               />
-            </div>
           </div>
-        </Paper>
-        <div>
-          <ProductCardModal modal={modal} closeModal={closeModal} product={product} />
         </div>
-        <div>
-          <Snackbar
-            className="mb-5 lg:mb-5"
-            variant="success"
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            open={open}
-            onClose={handleClose}
-            message={DisplayItem()}
-            action={
-              <Button color="success" size="small" onClick={handleClose}>
-                {' '}
-                Close{' '}
-              </Button>
-            }
-            autoHideDuration={3000}
-          />
-        </div>
+      </Paper>
+      <div>
+        <ProductCardModal
+          modal={modal}
+          closeModal={closeModal}
+          product={product}
+        />
       </div>
+      <div>
+        <Snackbar
+          className="mb-5 lg:mb-5"
+          variant="success"
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={open}
+          onClose={handleClose}
+          message={DisplayItem()}
+          action={
+            <Button color="success" size="small" onClick={handleClose}>
+              {" "}
+              Close{" "}
+            </Button>
+          }
+        />
+      </div>
+    </div>
     </ThemeProvider>
   );
 };

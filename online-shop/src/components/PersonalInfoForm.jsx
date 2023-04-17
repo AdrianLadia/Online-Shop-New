@@ -11,8 +11,8 @@ const PersonalInfoForm = () => {
   return (
     <div>
       {userdata ? (
-        <div className="flex flex-col bg-red-300 ">
-          <Typography variant="h1" className="text-center">
+        <div className="flex flex-col bg-gradient-to-r from-colorbackground via-color2 to-color1">
+          <Typography variant="h1" className="text-center my-8">
             Hello {userdata.name}
           </Typography>
         </div>

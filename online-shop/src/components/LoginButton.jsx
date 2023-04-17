@@ -42,7 +42,7 @@ const LoginButton = (props) => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        className="bg-color10b text-slate-800 font-bold hover:bg-color60 rounded-lg"
+        className="bg-color10b text-slate-800 font-bold hover:bg-color10c rounded-lg"
       >
         Login
       </Button>
@@ -95,7 +95,7 @@ const LoginButton = (props) => {
           onClick={() => {
             signIn(new GoogleAuthProvider());
           }}
-          className="hover:bg-color30"
+          className="hover:bg-color10c"
         >
           <FcGoogle className="mr-2" />
           Login With Google
@@ -104,7 +104,7 @@ const LoginButton = (props) => {
           onClick={() => {
             signIn(new FacebookAuthProvider());
           }}
-          className="hover:bg-color30"
+          className="hover:bg-color10c"
         >
           <FaFacebook className="mr-2" />
           Login With Facebook

@@ -19,6 +19,11 @@ import paperBoyLocation from '../data/paperBoyLocation';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import {ThemeProvider } from '@mui/material/styles';
 import theme from "../colorPalette/MaterialUITheme";
+import textFieldStyle from '../colorPalette/textFieldStyle';
+import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
+
+const style = textFieldStyle();
+const labelStyle = textFieldLabelStyle();
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
@@ -234,13 +239,7 @@ const CheckoutPage = () => {
         <TextField
           id="addressEntry"
           label="Address"
-          InputLabelProps={{
-            style: { 
-              marginLeft:10,
-              color: '#429eff',
-              fontWeight: "bold",
-            } 
-          }}
+          InputLabelProps={labelStyle}
           variant="filled"
           className=" w-11/12 self-center mb-5 bg-white"
           onChange={(event) => setLocalDeliveryAddress(event.target.value)}
@@ -249,7 +248,7 @@ const CheckoutPage = () => {
       </div>
 
       <Divider sx={{ marginTop: 5, marginBottom: 3  }} />
-        
+
       <GoogleMaps
         selectedAddress={selectedAddress}
           setSelectedAddress={setSelectedAddress}
@@ -259,7 +258,7 @@ const CheckoutPage = () => {
           setLocalLongitude={setLocalLongitude}
           setLocalDeliveryAddress={setLocalDeliveryAddress}
           zoom={zoom}
-        setZoom={setZoom}
+          setZoom={setZoom}
       />
 
       <Divider sx={{ marginTop: 5 , marginBottom:3}} />
@@ -286,13 +285,7 @@ const CheckoutPage = () => {
         <TextField
           id="contactNumberEntry"
           label="Contact #"
-          InputLabelProps={{
-            style: { 
-              marginLeft:10,
-              color: '#429eff',
-              fontWeight: "bold"
-            } 
-          }}
+          InputLabelProps={labelStyle}
           variant="filled"
           className=" w-11/12 mt-1 bg-white"
           onChange={(event) => setLocalPhoneNumber(event.target.value)}
@@ -301,13 +294,7 @@ const CheckoutPage = () => {
         <TextField
           id="contactNameEntry"
           label="Name"
-          InputLabelProps={{
-            style: { 
-              marginLeft:10,
-              color: '#429eff',
-              fontWeight: "bold "
-            } 
-          }}
+          InputLabelProps={labelStyle}
           variant="filled"
           className=" w-11/12 mt-1 bg-white"
           onChange={(event) => setLocalName(event.target.value)}
@@ -498,11 +485,8 @@ const CheckoutPage = () => {
                   deliveryVehicleObject={deliveryVehicle}
                   setDeliveryVehicle={setDeliveryVehicle}
                   setVat={setVat}
-                  area={area}
-                  
+                  area={area}   
                 />
-
-                
 
               )}
               <Divider sx={{ marginTop: 5 , marginBottom:3}} />
@@ -524,27 +508,10 @@ const CheckoutPage = () => {
                   rows={5}
                   onChange={(e) => setDeliveryNotes(e.target.value)}
                   label="Delivery Notes"
-                  color='secondary'
-                  
-                  InputLabelProps={{
-                    style: { 
-                      color: '#72b5fc',
-                      fontSize: 18,
-                      fontWeight:"bold"
-                    } 
-                  }}
+                  color='secondary'      
+                  InputLabelProps={labelStyle}
                   className='rounded-md w-9/12 2xl:w-2/6 xl:w-3/6  '
-                  sx={{
-                    backgroundColor:"white",
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        border: 2,
-                        color:"#429eff",
-                      },
-                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                        color: '#6bd0ff',
-                        border:2
-                      }
-                    }}
+                  sx={style}
                 />
               </div>
 

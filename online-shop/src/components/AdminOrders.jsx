@@ -13,10 +13,18 @@ import AdminOrdersTable from './AdminOrdersTable';
 import MyOrderCardModal from './MyOrderCardModal';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
+import {ThemeProvider } from '@mui/material/styles';
+import theme from "../colorPalette/MaterialUITheme";
+import Divider from '@mui/material/Divider';
+import textFieldStyle from '../colorPalette/textFieldStyle';
+import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
+import {BsFillBagCheckFill } from "react-icons/bs";
 
 const AdminOrders = (props) => {
   const { firestore } = React.useContext(AppContext);
 
+  const styles = textFieldStyle();
+  const labelStyle = textFieldLabelStyle();
   const datamanipulation = new dataManipulation();
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const [orders, setOrders] = React.useState([]);
@@ -79,62 +87,70 @@ const AdminOrders = (props) => {
   }, [selectedOrderReference]);
 
   return (
-    <div className=" w-full">
-      <div className="flex justify-center">
-        <Typography variant="h2">Orders</Typography>
+    
+    <div className="flex flex-col w-full items-center bg-gradient-to-r from-colorbackground via-color2 to-color1 ">
+      <div className="flex md:flex-row flex-row-reverse justify-center mt-6 md:-ml-14">
+        <Typography variant="h2">Orders </Typography>
+        <BsFillBagCheckFill/> 
       </div>
-      <div className="flex flex-col mt-5 w-full lg:flex-row lg:h-28 lg:mt-20">
-        <div className="flex flex-row justify-center lg:h-14 lg:w-1/4">
-          <div className="flex">
+
+      <Divider/>
+
+      <div className="flex flex-col gap-2 justify-evenly items-center mt-20 w-full lg:w-10/12 lg:flex-row h-28 lg:mt-2 border-t-2">
+        <div className="flex flex-row justify-center h-14 lg:w-1/4">
+          <div className="flex w-44 sm:w-56">
             <TextField
               id="outlined-basic"
               label="Reference #"
               variant="outlined"
-              sx={{ width: '100%' }}
+              InputLabelProps={labelStyle}
+              sx={styles}
               onChange={(e) => {
                 setReferenceNumber(e.target.value);
               }}
             />
           </div>
-          <div className="flex">
-            <button className="p-3 rounded-lg bg-red-300">Clear</button>
+          <div className="ml-1 flex">
+            <button className="p-3 rounded-lg bg-red-400 hover:bg-red-300 border-2 border-red-600">Clear</button>
           </div>
         </div>
-        <div className="flex flex-row justify-center mt-5  lg:h-14 lg:-mt-0 lg:w-1/4 ">
-          <div className="flex w-72  ">
+
+        <div className="flex flex-row justify-center mt-5 h-14 lg:-mt-0 lg:w-1/4 ">
+          <div className="flex w-44 sm:w-56">
             <Autocomplete
               onChange={(event, value) => setSelectedName(value)}
               disablePortal
               id="combo-box-demo"
               options={allUserNames}
-              sx={{ width: '100%' }}
-              renderInput={(params) => <TextField {...params} label="Customer Name" />}
+              sx={styles}
+              renderInput={(params) => <TextField {...params} 
+              label="Customer Name" 
+              InputLabelProps={labelStyle}
+              />}
             />
           </div>
-          <div className="flex">
-            <button className="p-3 rounded-lg bg-red-300">Clear</button>
+          <div className="ml-1 flex">
+            <button className="p-3 rounded-lg bg-red-400 hover:bg-red-300 border-2 border-red-600">Clear</button>
           </div>
         </div>
-        <div className="flex flex-row w-full justify-center mt-5 lg:mt-3 lg:w-1/4 lg:h-7 ">
-          <div className="flex">
-            <Typography variant="h6">Date</Typography>
-          </div>
-          <div className="flex ml-5">
+
+        <div className="flex flex-row justify-center mt-5 lg:-mt-0 lg:w-1/4 h-14">
+          <div className="flex w-44 sm:w-56">
             <OrdersCalendar startDate={startDate} setStartDate={setStartDate} />
           </div>
-          <div>
+          <div className='flex ml-1'>
             <button
-              onClick={() => {
-                setStartDate('');
-              }}
-              className="px-2 rounded-lg bg-red-300 h-7"
+              onClick={() => {setStartDate('')}}
+              className=" p-3 rounded-lg bg-red-400 hover:bg-red-300 border-2 border-red-600"
             >
               Clear
             </button>
           </div>
         </div>
-        <div className="flex flex-row justify-center mt-5 lg:-mt-5 lg:w-1/4">
-          <div>
+      </div>
+
+      <div className="flex flex-row mt-28 lg:mt-1 w-11/12 md:w-5/12 justify-evenly">
+          <div className="">
             <FormControl>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
@@ -169,7 +185,7 @@ const AdminOrders = (props) => {
             </FormControl>
           </div>
 
-          <div>
+          <div className="">
             <FormControl>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
@@ -204,8 +220,10 @@ const AdminOrders = (props) => {
             </FormControl>
           </div>
         </div>
-      </div>
-      <div className="lg:mx-20 mt-5">
+
+      <Divider sx={{ marginTop: 3 , marginBottom:3}} />
+
+      <div className="w-11/12">
         <AdminOrdersTable
           orders={orders}
           setSelectedOrderReference={setSelectedOrderReference}
@@ -222,7 +240,10 @@ const AdminOrders = (props) => {
       {/* Account Name */}
       {/* Paid */}
       {/* Delivered */}
+      <Divider sx={{ marginTop: 10 , marginBottom:10}} />
+      
     </div>
+   
   );
 };
 
