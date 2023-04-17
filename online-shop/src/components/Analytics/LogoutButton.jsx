@@ -18,7 +18,7 @@ const LogoutButton = () => {
   return (
     <div className='flex'>
        {/* {loading === true ? <div  style={{ display: 'flex', justifyContent: 'left', alignItems: 'left' }}><PulseLoader color={"#36d7b7"} loading={loading} size={12}/> </div>: */}
-        <button className='flex self-center items-center w-full p-2 lg:p-4 lg:uppercase gap-1 border-2 border-red-700  bg-red-400  rounded-3xl transition duration-200
+        <button className='flex self-center items-center w-full p-2 2xl:p-3 lg:uppercase gap-1 border-2 border-red-700  bg-red-400  rounded-3xl transition duration-200
                            hover:bg-red-300 font-semibold hover:border-orange-400' onClick={() => signOut(getAuth())}><FaSignOutAlt/> LOGOUT </button>
       
     </div>

@@ -13,7 +13,7 @@ import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';
 import {ThemeProvider } from '@mui/material/styles';
 import theme from "../colorPalette/MaterialUITheme";
-import { BsBoxes, BsBagCheck } from "react-icons/bs";
+import { BsBoxes, BsBagCheck, BsGraphUp } from "react-icons/bs";
 import { HiOutlineCash } from "react-icons/hi";
 import App from './Analytics/App';
 
@@ -125,10 +125,10 @@ const AdminMenu = () => {
               'aria-labelledby': 'basic-button',
             }}
           >
+            <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
             <MenuItem className='hover:bg-color10b' id='inventoryMenu' onClick={handleClickInventory}> <BsBoxes size={19}/>     <span>Inventory</span></MenuItem>
             <MenuItem className='hover:bg-color10b' id='createPaymentMenu' onClick={handleClickCreatePayment}> <HiOutlineCash size={19}/>     <span>Create Payment</span></MenuItem>
             <MenuItem className='hover:bg-color10b' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
-            <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAnalytics}> <BsBagCheck size={19}/>     <span>Analytics</span></MenuItem>
           </Menu>
         </div>
       </div>

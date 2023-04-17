@@ -96,7 +96,7 @@ const AdminOrders = (props) => {
 
       <Divider/>
 
-      <div className="flex flex-col gap-2 justify-evenly items-center mt-20 w-full lg:w-10/12 lg:flex-row h-28 lg:mt-2 border-t-2">
+      <div className="flex flex-col gap-2 justify-evenly items-center mt-20 w-full lg:w-10/12 lg:flex-row h-28 lg:mt-2 border-t-2 border-black">
         <div className="flex flex-row justify-center h-14 lg:w-1/4">
           <div className="flex w-44 sm:w-56">
             <TextField
@@ -221,7 +221,7 @@ const AdminOrders = (props) => {
           </div>
         </div>
 
-      <Divider sx={{ marginTop: 3 , marginBottom:3}} />
+      <Divider sx={{marginTop: 3, marginBottom:3}} />
 
       <div className="w-11/12">
         <AdminOrdersTable

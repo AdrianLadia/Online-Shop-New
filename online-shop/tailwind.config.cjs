@@ -30,6 +30,12 @@ module.exports = {
         'bounce-fade-5': 'bounce-fade 1.25s ease-in-out 5',
         'shake': 'shake 1s ease-in-out infinite'
       },
+      screens: {
+        '2xs' : '366px',
+        'xs' : '480px',
+        '2lg' : '1145px'
+      },
+      
       colors: {
 
         //f // COLOR 1

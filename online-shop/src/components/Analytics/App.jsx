@@ -43,7 +43,7 @@ const App = () => {
   };
   
   useEffect(()=>{
-    if (width < 1030) {
+    if (width < 1146) {
       return setScreenSizeMobile(true);
      }else {
       if(showMenu === true){
@@ -73,15 +73,16 @@ const App = () => {
 
   return (
     <div>
-      <div className=" overflow- bg-gradient-to-r from-green-200 via-cyan-200 to-emerald-200">
+      <div className=" overflow-x-hidden bg-gradient-to-r from-green-200 via-cyan-200 to-emerald-200">
+
                         {screenSizeMobile === true ?(
-                          <div className="flex justify-start sticky top-0 ">
-                              <button className=" mt-2 mr-2 p-3 text-3xl rounded-lg text-green-700 hover:text-emerald-500 " onClick={handleToggle}><FaRegListAlt/></button>
+                          <div className="flex justify-start absolute top-13 left-1 ml-0 xs:ml-4 ">
+                              <button className=" mt-2 mr-2 p-3 text-3xl 2xs:text-4xl rounded-lg text-green-700 hover:text-emerald-500 " onClick={handleToggle}><FaRegListAlt/></button>
                           </div>)
                         :
                          (null)} 
 
-              <div className="h-screen w-screen flex lg:items-center md:items-center justify-center">           
+              <div className="h-screen w-screen flex items-center justify-center">           
                   <>
                    
                         <>  

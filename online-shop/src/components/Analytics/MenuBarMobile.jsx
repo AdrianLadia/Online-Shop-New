@@ -23,10 +23,10 @@ export const MenuBarMobile = ({callback, products}) => {
     
     return (
   
-      <div className="flex flex-col justify-between  w-10/12 h-full p-4 rounded-lg border-2 bg-gradient-to-b from-green-100 to-emerald-100 border-green-700">   
-          <div className=" font-semibold self-center p-1 h-30"> <SearchBarMobile callback={handleSelectedName} name={selectedName} products={products}/> </div>
-          <div className=" font-semibold self-start w-full h-4/6"> <CheckBoxesMobile name={selectedName} callback={handleSelectedOption}/> </div>
-          <div className=" font-semibold self-center"> <LogoutButton setAuthorized={false}/></div> 
+      <div className="flex flex-col justify-between w-11/12 h-full p-4 mt-32 rounded-lg border-2 bg-gradient-to-b from-green-100 to-emerald-100 border-green-700 ">   
+          <div className="flex font-semibold justify-center w-full p-1 h-2/6 "> <SearchBarMobile callback={handleSelectedName} name={selectedName} products={products}/> </div>
+          <div className="flex justify-center w-full h-4/6 "> <CheckBoxesMobile name={selectedName} callback={handleSelectedOption}/> </div>
+          {/* <div className='self-center'> <LogoutButton setAuthorized={false}/></div>  */}
       </div>
       
     )

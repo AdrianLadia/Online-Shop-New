@@ -871,7 +871,7 @@ export function InventoryTable({name, category, customized, callback}) {
   const ROW_HEIGHT = 230;
 
   return (
-    <div className="resize h-5/6 w-10/12 lg:h-5/6 lg:w-4/5 ml-1 mr-3 bg-gradient-to-t from-stone-100 to-green-100">
+    <div className="h-5/6 w-11/12 2lg:w-9/12 ml-1 mr-3 mt-10 2lg:mt-0 bg-gradient-to-t from-stone-100 to-green-100">
       {/* {loading === true ? ( */}
         <div
           style={{
@@ -886,7 +886,7 @@ export function InventoryTable({name, category, customized, callback}) {
         <Box
           sx={{
             height: "100%",
-            width: "99.9%",
+            width: "100%",
             border: "2px solid green",
             borderRadius: "8px",
             "& .super-app-theme--header": {

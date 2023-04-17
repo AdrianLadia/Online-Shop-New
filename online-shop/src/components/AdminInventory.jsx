@@ -95,9 +95,9 @@ const AdminInventory = (props) => {
 
   function responsiveimage() {
     if (width < 1024) {
-      return "100px";
+      return 100;
     } else {
-      return "200px";
+      return 200;
     }
   }
 
@@ -161,13 +161,13 @@ const AdminInventory = (props) => {
                   </TableCell>
                   <TableCell align="center">
                     <img
-                      style={{
+                      sx={{
                         height: responsiveimage(),
                         width: responsiveimage(),
                       }}
                       src={row.images[0]}
                       alt="sort"
-                      className="w-5 h-5"
+                      // className="w-5 h-5"
                     />
                   </TableCell>
                   <TableCell align="center">{row.itemName}</TableCell>
