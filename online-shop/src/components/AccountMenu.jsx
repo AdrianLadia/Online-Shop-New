@@ -28,6 +28,7 @@ const AccountMenu = (props) => {
     setUserState,
    } = useContext(AppContext);
   const open = Boolean(anchorEl);
+
   const navigateTo = useNavigate();
 
   const handleClick = (event) => {
@@ -63,7 +64,6 @@ const AccountMenu = (props) => {
     navigateTo("/accountstatement");
   }
 
-
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -74,17 +74,17 @@ const AccountMenu = (props) => {
             id = "accountMenu"
             onClick={handleClick}
             size="small"
-            sx={{ ml: 2 }}
+            sx={{ ml: 0 }}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             className='hover:bg-blue1'
           >
-            <Avatar sx={{ width: 32, height: 32, bgcolor:'#6bd0ff',}}>
-              <Typography color='white' >
-                {userdata.name[0]}
+            <Avatar sx={{ width: 36, height: 36, bgcolor:'#6bd0ff',justifyItems:"center"}}>
+              <Typography color='white' sx={{ mt:.2, fontWeight:600}}>
+                {userdata.name[0].toUpperCase()}
               </Typography>
-              </Avatar>
+            </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -111,7 +111,7 @@ const AccountMenu = (props) => {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 19,
+              right: 16,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -125,7 +125,7 @@ const AccountMenu = (props) => {
       >
         <MenuItem id='storeMenu' onClick={storeClick} className='hover:bg-color10b'>
           <FaStore size={17} />
-          <span className="ml-5">Store</span>
+          <span className="ml-5 mt-1">Store</span>
         </MenuItem>
         <Divider />
         {/* PROFILE MENU */}
@@ -160,7 +160,7 @@ const AccountMenu = (props) => {
         </MenuItem>
         {isadmin ? (
           <div>
-            <Divider />
+            <Divider className="mt-2 mb-2"/>
             <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-color10b'>
               <GrUserAdmin size={17} className="ml-0.5" />
               <span className="ml-5 mt-1">Admin</span>

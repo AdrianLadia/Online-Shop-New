@@ -5,9 +5,6 @@ import { useState } from 'react';
 const PaymentCheckoutCard = (props) => {
 
     // const [cardSelected, setCardSelected] = useState(false);
-    const cardSelected = props.cardSelected;
-    const setCardSelected = props.setCardSelected;
-    const [elevation, setElevation] = useState(5);
 
     const paymentOption = props.paymentOption;
     let logoLink = null
@@ -49,20 +46,20 @@ const PaymentCheckoutCard = (props) => {
       cardStyle = 'mt-10 '
     }
 
+    const cardSelected = props.cardSelected;
+    const setCardSelected = props.setCardSelected;
+    const [elevation, setElevation] = useState(5);
+
     function onClick() {
-      setCardSelected(false)
       setCardSelected(!cardSelected);
     }
 
-  // console.log(cardSelected)
-
     useEffect(() => {
-        if (cardSelected === true ) {
-            setElevation(20);
-        }
-        else {
-            setElevation(5);
-        }
+      if(cardSelected) {
+        setElevation(20);
+      }else{
+        setElevation(5);
+      }
     }, [cardSelected]);
 
     function style() {

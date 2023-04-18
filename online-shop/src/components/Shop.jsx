@@ -12,6 +12,7 @@ const Shop = () => {
 
   return (
     <div className='flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 '>
+      {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/>
       {/* CATEGORY */}
@@ -19,7 +20,6 @@ const Shop = () => {
       <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory}/>
       <ProductList wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
       {/* CART BUTTON */}
-
     </div>
   )
 }

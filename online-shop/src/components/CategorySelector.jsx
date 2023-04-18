@@ -63,7 +63,7 @@ const CategorySelector = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-    <div className="w-full ">
+    <div className="w-full">
       <div className="flex flex-col items-center mt-5 from-colorbackground via-color2 to-color1">
 
         {/* <div className="flex flex-row overflow-scroll">
@@ -83,7 +83,7 @@ const CategorySelector = (props) => {
               scrollButtons="auto"
             >
               {categories && categories.map((category, index) => {
-                return <Tab sx={{fontWeight:"bold"}} label={category} {...a11yProps(index)} />;
+                return <Tab sx={{fontWeight:"bold"}} className='hover:bg-cyan-50' label={category} {...a11yProps(index)} />;
               })}
             </Tabs>
           </Box>

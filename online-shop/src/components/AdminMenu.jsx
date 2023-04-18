@@ -61,7 +61,6 @@ const AdminMenu = () => {
   };
 
   useEffect(() => {
-
     firestore.readAllCategories().then((c) => {
       setCategories(c);
     });
@@ -112,7 +111,7 @@ const AdminMenu = () => {
                   display: "block",
                   position: "absolute",
                   top: 0,
-                  right: 28,
+                  right: 42,
                   width: 10,
                   height: 10,
                   bgcolor: "background.paper",

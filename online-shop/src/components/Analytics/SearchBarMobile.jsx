@@ -46,10 +46,11 @@ export const SearchBarMobile = ({name, products, callback}) => {
                 <input type="text" placeholder='Enter item name... ' value={selectedOption} onChange={handleBoth} 
                         className=' 2xs:h-12 outline-none w-full mb-2 rounded-lg p-1 -mr-8
                                     border-2 border-emerald-600 bg-emerald-200 focus:bg-emerald-100
-                                    border-r-4 '/>
+                                    border-r-2 '/>
 
                 <button className="px-1 mb-2 2xs:h-12 text:sm 2xs:text-lg text-red-500 hover:text-red-300 
-                                   border-emerald-600 border-l-4  border-r-4 ml-1 rounded-lg" 
+                                   border-emerald-600 border-l-2 border-r-0 rounded-md " 
+
                         onClick={handleClear}><FaEraser/></button>    
         </div>
         {inputText.length != 0 && (

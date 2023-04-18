@@ -94,9 +94,9 @@ const AdminOrders = (props) => {
         <BsFillBagCheckFill/> 
       </div>
 
-      <Divider/>
+      <Divider sx={{border:1}} className='w-11/12 my-5 border-black'/>
 
-      <div className="flex flex-col gap-2 justify-evenly items-center mt-20 w-full lg:w-10/12 lg:flex-row h-28 lg:mt-2 border-t-2 border-black">
+      <div className="flex flex-col gap-2 justify-evenly items-center mt-20 w-full lg:w-10/12 lg:flex-row h-28 lg:mt-2">
         <div className="flex flex-row justify-center h-14 lg:w-1/4">
           <div className="flex w-44 sm:w-56">
             <TextField
@@ -223,7 +223,7 @@ const AdminOrders = (props) => {
 
       <Divider sx={{marginTop: 3, marginBottom:3}} />
 
-      <div className="w-11/12">
+      <div className="w-11/12 border-2 border-color60 rounded-lg">
         <AdminOrdersTable
           orders={orders}
           setSelectedOrderReference={setSelectedOrderReference}

@@ -190,7 +190,7 @@ const AdminInventory = (props) => {
         </TableContainer>
       </div>
       {/* BUTTONS */}
-      <div className="flex flex-row w-11/12 md:w-2/4 justify-evenly m-5 ">
+      <div className="flex flex-col gap-2 2xs:flex-row w-6/12 md:w-2/4 justify-evenly 2xs:mt-16 m-5 ">
         <button
           onClick={handleOpenAddItem}
           className="bg-green-400 hover:bg-green-300 rounded-lg p-3 font-bold "

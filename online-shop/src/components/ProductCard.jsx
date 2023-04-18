@@ -110,13 +110,13 @@ const ProductCard = (props) => {
     if (width < 300) {
       return '12px';
     }else if (width < 768) {
-      return '14px';
+      return '12px';
     } else if (width < 1024) {
-      return '15px';
+      return '12px';
     } else if (width < 1536) {
-      return '17px';
+      return '14px';
     } else {
-      return '19px';
+      return '15px';
     }
   }
 
@@ -169,7 +169,7 @@ const ProductCard = (props) => {
           className="flex flex-row w-11/12 justify-center my-5 bg-gradient-to-r from-color60 to-color10c"
         >
           {/* IMAGE */}
-          <div className=" w-8/12 relative ">
+          <div className=" w-8/12 relative">
             <div className="absolute inset-0 flex justify-center mt-12 p-2" onClick={() => setModal(true)}>
               {(iconVisible && showTutorial) ? (
                 <div>
@@ -193,7 +193,7 @@ const ProductCard = (props) => {
               src={props.product.imageLinks[0]}
               alt={props.product.itemName}
               // className="h-full rounded-lg"
-              className={"h-full w-max object-cover rounded-lg"+ responsiveImgWidth()}
+              className={"h-full w-max object-cover"+ responsiveImgWidth()}
               onClick={() => setModal(true)}
             ></img>
           </div>
@@ -236,9 +236,10 @@ const ProductCard = (props) => {
               </Typography>
             </div>
 
-            <div className="h-1/9 mt-2 2xs:mt-0">
+            <div className="h-1/9 mt-2 2xs:mt-0 ">
               <Typography
                 sx={{ fontSize: responsivePrice(),mt: 2 , cursor: 'pointer' }}
+                className='tracking-tight'
                 onClick={() => setModal(true)}
               >
                 Pieces: {props.product.pieces}
@@ -246,7 +247,9 @@ const ProductCard = (props) => {
             </div>
 
             <div className="h-1/6 flex items-center">
-              <Typography sx={{ fontSize: responsivePrice(), mb: 1 }}
+              <Typography 
+                sx={{ fontSize: responsivePrice(), mb: 1 }}
+                className='tracking-tight'
               >
                 Price: {'₱ ' + props.product.price}
               </Typography>

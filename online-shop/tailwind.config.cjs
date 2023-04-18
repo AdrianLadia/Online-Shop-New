@@ -33,7 +33,9 @@ module.exports = {
       screens: {
         '2xs' : '366px',
         'xs' : '480px',
-        '2lg' : '1145px'
+        '2md' : '800px',
+        '2lg' : '1145px',
+        '3xl' : '1751px'
       },
       
       colors: {
@@ -47,7 +49,8 @@ module.exports = {
         colorbackground: '#e1fadd', //bright green
         color1:"#d3eecf",
         color2:"#cceac7", //pale green
-        blue1:"#429eff" //dark blue
+        blue1:"#429eff", //dark blue
+        green1:"#f0fff0"
 
         // beddb8
         // ecd7a8
