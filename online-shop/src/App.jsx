@@ -18,6 +18,9 @@ import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
 import AppConfig from './AppConfig';
+import CheckoutSuccess from './components/CheckoutSuccess';
+import CheckoutFailed from './components/CheckoutFailed';
+import CheckoutCancelled from './components/CheckoutCancelled';
 
 const devEnvironment = true
 
@@ -335,6 +338,30 @@ function App() {
                   <AccountStatement />
                 </div>
               )}
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/checkoutSuccess"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <CheckoutSuccess />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/checkoutFailed"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <CheckoutFailed />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/checkoutCancelled"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <CheckoutCancelled />
             </AppContext.Provider>
           }
         />

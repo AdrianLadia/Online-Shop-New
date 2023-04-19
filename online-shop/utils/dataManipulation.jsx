@@ -672,12 +672,47 @@ class dataManipulation {
       }
       return newString
     }
+  }
 
-  
+    createPayMayaCheckoutItems(itemRows) {
+
+      const itemRowsSchema = Joi.array().items(
+        Joi.object({
+          itemId : Joi.string().required(),
+          itemName : Joi.string().required(),
+          itemimage : Joi.any(),
+          itemprice : Joi.string().required(),
+          itemquantity : Joi.string().required(),
+          itemtotal : Joi.string().required(),
+          weighttotal : Joi.number().required()
+        }).unknown(false)
+      )
+
+      const { error } = itemRowsSchema.validate(itemRows);
+
+      if (error) {
+        throw new Error(error);
+      }
+    
+
+      const toReturn = []
+
+      itemRows.map((item) => {
+        const itemId = item.itemId
+        const itemName = item.itemName
+        const itemPrice = parseFloat(item.itemprice)
+        const itemQuantity = parseInt(item.itemquantity)
+        const itemTotal = parseFloat(item.itemtotal)
+
+
+
+      });
+
+    }
 
  
 
-  }
+  
 
 
   // convertTimestampToFirebaseTimestamp(timestamp) {

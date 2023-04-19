@@ -13,13 +13,10 @@ import axios from 'axios';
 
 // https://github.com/PayMaya/PayMaya-JS-SDK-v2
 
-async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,customerAddress,geocodeAddress,items) {
+async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,customerAddress,geocodeAddress,referenceNumber) {
   const appConfig = new AppConfig();  
-  const firstname = firstName;
-  const lastname = lastName;
-  const email = eMail;
-  const phonenumber = phoneNumber;
-  const totalprice = totalPrice;
+
+
 
   if (appConfig.getIsPaymentSandBox()) {
     const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
@@ -32,89 +29,39 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
     const secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
   }
 
+  
+
 
   const req = {
-    totalAmount: {
-      value: totalprice,
-      currency: 'PHP',
-      details: {
-        discount: 0,
-        serviceCharge: 0,
-        shippingFee: 0,
-        tax: 0,
-        subtotal: totalprice,
-      },
+    "totalAmount": {
+         "value": totalPrice,
+         "currency": "PHP"
     },
-    buyer: {
-      firstName: firstname,
-      middleName: '',
-      lastName: lastname,
-      birthday: '',
-      customerSince: '',
-      sex: '',
-      contact: {
-        phone: phonenumber,
-        email: email,
-      },
-      shippingAddress: {
-        firstName: 'Adrian Anton',
-        middleName: 'Domingo',
-        lastName: 'Ladia',
-        phone: '+639178927206',
-        email: 'ladiaadrian@gmail.com',
-        line1: 'P. Sanchez St.',
-        line2: '',
-        city: 'Camnduman,Mandaue City',
-        state: 'Cebu',
-        zipCode: '6014',
-        countryCode: 'PH',
-        shippingType: 'ST', // ST - for standard, SD - for same day
-      },
-      billingAddress: {
-        line1: customerAddress,
-        line2: geocodeAddress,
-        city: '',
-        state: '',
-        zipCode: '',
-        countryCode: 'PH',
-      },
+    "buyer": {
+         "contact": {
+              "email": eMail,
+              "phone" : phoneNumber
+         },
+         "billingAddress": {
+              "line1": customerAddress,
+              "line2": geocodeAddress,
+              "countryCode": "PH"
+         },
+         "shippingAddress": {
+              "line1": customerAddress,
+              "line2": geocodeAddress,
+              "countryCode": "PH"
+         },
+         "firstName": firstName,
+         "lastName": lastName
     },
-    items: [
-      {
-        name: 'Canvas Slip Ons',
-        quantity: 1,
-        code: 'CVG-096732',
-        description: 'Shoes',
-        amount: {
-          value: 100,
-          details: {
-            discount: 0,
-            serviceCharge: 0,
-            shippingFee: 0,
-            tax: 0,
-            subtotal: 100,
-          },
-        },
-        totalAmount: {
-          value: 100,
-          details: {
-            discount: 0,
-            serviceCharge: 0,
-            shippingFee: 0,
-            tax: 0,
-            subtotal: 100,
-          },
-        },
-      },
-    ],
-    redirectUrl: {
-      success: 'http://localhost:5173/checkout',
-      failure: 'http://localhost:5173/checkout',
-      cancel: 'http://localhost:5173/checkout',
+    "redirectUrl": {
+         "success": "http://localhost:5173/checkoutSuccess",
+         "failure": "http://localhost:5173/checkoutFailed",
+         "cancel": "http://localhost:5173/checkoutCancelled"
     },
-    requestReferenceNumber: '1551191039',
-    metadata: {},
-  };
+    "requestReferenceNumber": referenceNumber
+}
 
   function convertToBase64(key) {
     return btoa(key + ':');

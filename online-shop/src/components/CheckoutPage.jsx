@@ -75,12 +75,12 @@ const CheckoutPage = () => {
 
   const [placedOrder, setPlacedOrder] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState('SUCCESS');
-  const [paymayaResponse, setPaymayaResponse] = useState(null);
   const navigateTo = useNavigate();
   const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
   const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
   const [mayaCheckoutItemDetails,setMayaCheckoutItemDetails] = useState(null);
   const [addressText, setAddressText] = useState('');
+  const [referenceNumber, setReferenceNumber] = useState('');
 
   // PAYMENT METHODS
   const [bdoselected, setBdoselected] = useState(false);
@@ -119,12 +119,12 @@ const CheckoutPage = () => {
     if (mayaselected) {
       if (transactionStatus === 'SUCCESS') {
         console.log('ran sdk');
-        // firstname={localname.split(' ')[0]}
-        //       lastname={localname.split(' ')[1]}
-        //       email={localemail}
-        //       phonenumber={localphonenumber}
-        //       totalprice={grandTotal}
-        PaymayaSdk(setMayaRedirectUrl, setMayaCheckoutId);
+        const firstName={localname.split(' ')[0]}
+        const lastName={localname.split(' ')[1]}
+        const eMail={localemail}
+        const phoneNumber={localphonenumber}
+        const totalPrice={grandTotal}
+        PaymayaSdk(setMayaRedirectUrl, setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,localDeliveryAddress,addressText,referenceNumber);
       }
     }
   }, [placedOrder]);
@@ -193,6 +193,10 @@ const CheckoutPage = () => {
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
       try {
+
+        const orderReferenceNumber = generateOrderReference();
+        setReferenceNumber(orderReferenceNumber);
+
         console.log(total);
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
@@ -209,7 +213,7 @@ const CheckoutPage = () => {
           vat: vat,
           shippingtotal: deliveryFee,
           grandTotal: grandTotal,
-          reference: generateOrderReference(),
+          reference: orderReferenceNumber,
           deliveryNotes: deliveryNotes,
           totalWeight: totalWeight,
           deliveryVehicle: deliveryVehicle.name,

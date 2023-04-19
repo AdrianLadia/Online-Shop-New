@@ -308,13 +308,15 @@ describe('Data Manipulation', () => {
     });
     expect(allCategories).toEqual(expected);
   });
-  test.only('getCheckoutPageTableDate', async () => {
+  test.only('getCheckoutPageTableDate & createPayMayaCheckoutItems', async () => {
     const products = await firestore.readAllProducts();
     await delay(100);
 
     const cart = user.cart;
     const data = datamanipulation.getCheckoutPageTableDate(products, cart);
     const rows = data[0]
+
+    const 
   });
   test('manipulateCartData', () => {
     const cart = ['PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#2', 'PPB#2'];
