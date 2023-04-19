@@ -13,28 +13,35 @@ import axios from 'axios';
 
 // https://github.com/PayMaya/PayMaya-JS-SDK-v2
 
-async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,customerAddress,geocodeAddress,referenceNumber) {
+async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,customerAddress,geocodeAddress,referenceNumber,userId) {
   const appConfig = new AppConfig();  
+  let url 
+  let publicKey 
+  let secretKey;
 
-
+  console.log('firstName', firstName)
+  console.log('lastName', lastName)
+  console.log('eMail', eMail)
+  console.log('phoneNumber', phoneNumber)
+  console.log('totalPrice', totalPrice)
+  console.log('customerAddress', customerAddress)
+  console.log('geocodeAddress', geocodeAddress)
+  console.log('referenceNumber', referenceNumber)
 
   if (appConfig.getIsPaymentSandBox()) {
-    const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
-    const publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
-    const secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
+    url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+    publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
+    secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
   }
   else {
-    const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
-    const publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
-    const secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
+    url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+    publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
+    secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
   }
-
-  
-
 
   const req = {
     "totalAmount": {
-         "value": totalPrice,
+         "value": parseFloat(totalPrice),
          "currency": "PHP"
     },
     "buyer": {
@@ -60,7 +67,10 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
          "failure": "http://localhost:5173/checkoutFailed",
          "cancel": "http://localhost:5173/checkoutCancelled"
     },
-    "requestReferenceNumber": referenceNumber
+    "requestReferenceNumber": referenceNumber,
+    "metadata": {
+      "userId" : userId
+    }
 }
 
   function convertToBase64(key) {

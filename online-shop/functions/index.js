@@ -532,6 +532,39 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
 
   // TODO: You will have to implement the logic of this method.
   console.log(req.body);
+  const totalAmount = req.body.totalAmount.value
+  const userId = req.body.metadata.userId
+  const referenceNumber = req.body.requestReferenceNumber
+
+  const db = admin.firestore();
+
+    try {
+      db.runTransaction(async (t) => {
+        // READ
+        const userRef = db.collection('Users').doc(userId)
+        const user = transaction.get(userRef)
+        const userData = user.data()
+        const oldPayments = userData.payments
+        const payment = {
+          date: new Date(),
+          amount: totalAmount,
+          reference : referenceNumber,
+          paymentprovider : 'Maya'
+        }
+        const newPayments = [...oldPayments, payment]
+        // WRITE
+        transaction.update(userRef, {['payments']: newPayments})
+
+        // UPDATE ORDER IF PAID OR NOT
+
+      })
+      res.json({ result: `Document with ID: ${id} added.` });
+    } catch (error) {
+      console.error('Error adding document:', error);
+      res.status(500).send('Error adding document.');
+    }
+
+
 
   res.send({
     success: true
@@ -546,6 +579,8 @@ exports.payMayaWebHookFailed = functions.region('asia-southeast1').https.onReque
 
   // TODO: You will have to implement the logic of this method.
   console.log(req.body);
+  
+
 
   res.send({
     success: true

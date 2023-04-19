@@ -24,6 +24,7 @@ import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import PaymentMethodContext from '../context/PaymentMethodContext';
 import { useNavigate } from 'react-router-dom';
 import dataManipulation from '../../utils/dataManipulation';
+import { CircularProgress } from '@mui/material';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -55,6 +56,8 @@ const CheckoutPage = () => {
   const handleOpenContactModal = () => setOpenContactModal(true);
   const handleCloseContactModal = () => setOpenContactModal(false);
 
+  console.log(userdata)
+
   const [locallatitude, setLocalLatitude] = useState(10.373536960704778);
   const [locallongitude, setLocalLongitude] = useState(123.89504097627021);
   const [zoom, setZoom] = useState(18);
@@ -78,10 +81,13 @@ const CheckoutPage = () => {
   const navigateTo = useNavigate();
   const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
   const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
-  const [mayaCheckoutItemDetails,setMayaCheckoutItemDetails] = useState(null);
+  const [mayaCheckoutItemDetails, setMayaCheckoutItemDetails] = useState(null);
   const [addressText, setAddressText] = useState('');
   const [referenceNumber, setReferenceNumber] = useState('');
+  const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
 
+  //Payment checker
+  const [paymentMethodSelected, setPaymentMethodSelected] = useState(false);
   // PAYMENT METHODS
   const [bdoselected, setBdoselected] = useState(false);
   const [unionbankselected, setUnionbankselected] = useState(false);
@@ -114,19 +120,60 @@ const CheckoutPage = () => {
     setSolanaselected,
   };
 
+  useEffect(() => {
+    if (
+      bdoselected == false &&
+      unionbankselected == false &&
+      gcashselected == false &&
+      mayaselected == false &&
+      visaselected == false &&
+      mastercardselected == false &&
+      bitcoinselected == false &&
+      ethereumselected == false &&
+      solanaselected == false
+    ) {
+      setPaymentMethodSelected(false);
+    } else {
+      setPaymentMethodSelected(true);
+    }
+  }, [
+    bdoselected,
+    unionbankselected,
+    gcashselected,
+    mayaselected,
+    visaselected,
+    mastercardselected,
+    bitcoinselected,
+    ethereumselected,
+    solanaselected,
+  ]);
+
   // PAYMENT METHODS
   useEffect(() => {
     if (mayaselected) {
       if (transactionStatus === 'SUCCESS') {
         console.log('ran sdk');
-        const firstName={localname.split(' ')[0]}
-        const lastName={localname.split(' ')[1]}
-        const eMail={localemail}
-        const phoneNumber={localphonenumber}
-        const totalPrice={grandTotal}
-        PaymayaSdk(setMayaRedirectUrl, setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,localDeliveryAddress,addressText,referenceNumber);
+        const firstName = localname.split(' ')[0];
+        const lastName = localname.split(' ')[1];
+        const eMail = localemail;
+        const phoneNumber = localphonenumber;
+        const totalPrice = grandTotal;
+        PaymayaSdk(
+          setMayaRedirectUrl,
+          setMayaCheckoutId,
+          firstName,
+          lastName,
+          eMail,
+          phoneNumber,
+          totalPrice,
+          localDeliveryAddress,
+          addressText,
+          referenceNumber,
+          userdata.uid
+        );
       }
     }
+    setPlaceOrderLoading(false);
   }, [placedOrder]);
 
   useEffect(() => {
@@ -183,6 +230,7 @@ const CheckoutPage = () => {
 
   async function onPlaceOrder() {
     // Check if order has enough stocks
+    setPlaceOrderLoading(true);
     const readproducts = products;
     const [outOfStockDetected, message] = await businesscalculations.checkStocksIfAvailableInFirestore(cart);
     if (outOfStockDetected) {
@@ -190,10 +238,15 @@ const CheckoutPage = () => {
       return;
     }
 
+    if (paymentMethodSelected != true) {
+      alert('Please select a payment method');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
       try {
-
         const orderReferenceNumber = generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
 
@@ -224,6 +277,8 @@ const CheckoutPage = () => {
         setPlacedOrder(!placedOrder);
       } catch (err) {
         console.log(err);
+        setPlaceOrderLoading(false);
+        alert('You must be logged in');
       }
 
       setCart([]);
@@ -298,14 +353,14 @@ const CheckoutPage = () => {
             onChange={(event) => setLocalDeliveryAddress(event.target.value)}
             value={localDeliveryAddress}
           />
-          
+
           <TextField
             disabled
             id="googleAddress"
             label="Google Pipoint Address"
             InputLabelProps={labelStyle}
             variant="filled"
-            className=" w-11/12 self-center mb-5 bg-white"     
+            className=" w-11/12 self-center mb-5 bg-white"
             value={addressText}
           />
         </div>
@@ -549,7 +604,7 @@ const CheckoutPage = () => {
                     setDeliveryVehicle={setDeliveryVehicle}
                     setVat={setVat}
                     area={area}
-                    setMayaCheckoutItemDetails = {setMayaCheckoutItemDetails}
+                    setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
                   />
                 )}
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
@@ -584,10 +639,9 @@ const CheckoutPage = () => {
                   <button
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
-                    className="bg-color10b hover:bg-blue-600 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5"
+                    className="bg-color10b hover:bg-blue-600 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
                   >
-                    {' '}
-                    Place Order{' '}
+                    {placeOrderLoading ? <CircularProgress /> : 'Place Order'}
                   </button>
                 </div>
               </>
