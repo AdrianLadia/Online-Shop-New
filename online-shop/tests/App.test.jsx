@@ -112,8 +112,22 @@ describe('Business Calcualtions', () => {
       expect(locations).toEqual(longLat[2]);
     });
   });
-  test('getVehicleForDelivery', () => {
+
+  test.only('cleanGeocode', () => {
+    const data = datamanipulation.cleanGeocode('8VRV+26C, Nivel Hills, Lungsod ng Cebu, 6000 Lalawigan ng Cebu, Philippines')
+    for (let i = 0; i < data.length; i++) {
+      const string = data[i];
+      expect(string).not.toContain('+');
+    }
+
+    console.log('test')
+
+
+  });
+
+  test.only('getVehicleForDelivery', () => {
     const test = [
+      [0,'motorcycle'],
       [20, 'motorcycle'],
       [200, 'sedan'],
       [300, 'mpv'],

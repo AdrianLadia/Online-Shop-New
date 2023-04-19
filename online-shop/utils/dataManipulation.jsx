@@ -643,6 +643,36 @@ class dataManipulation {
     return selected_products;
   }
 
+  cleanGeocode(address) {
+    const addressSchema = Joi.string().required();
+    const { error } = addressSchema.validate(address);
+    if (error) {
+      throw new Error(error);
+    }
+
+    let foundComma = false;
+    let newString = ''
+
+    for (let i = 0; i < address.length; i++) {
+      console.log(address[i]);
+
+      const string = address[i]
+      if (string == ',') {
+        foundComma = true;
+        continue
+      }
+
+      if (foundComma) { 
+        newString += string
+      }
+    }
+
+ 
+
+    return newString
+  }
+
+
   // convertTimestampToFirebaseTimestamp(timestamp) {
   //   const date = new Date(timestamp.seconds * 1000);
   //   date.setMilliseconds(timestamp.nanoseconds / 1000000);

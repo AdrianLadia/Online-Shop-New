@@ -28,7 +28,8 @@ const CheckoutSummary = (props) => {
   const vat = props.vat;
   const setTotalWeight = props.setTotalWeight;
   const totalWeight = props.totalWeight;
-  const deliveryVehicle = props.deliveryVehicleObject.name;
+  console.log(props.deliveryVehicleObject);
+  const deliveryVehicle = props.deliveryVehicleObject.name 
   const maxWeight = props.deliveryVehicleObject.maxWeight;
   const area = props.area;
 

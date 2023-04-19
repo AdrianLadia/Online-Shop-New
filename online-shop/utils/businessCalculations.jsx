@@ -292,6 +292,7 @@ class businessCalculations {
   }
 
   getVehicleForDelivery(weightOfItems) {
+    console.log(weightOfItems)
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -301,7 +302,7 @@ class businessCalculations {
     const vehicleSchema = Joi.object().required();
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
-
+      console.log('MOTORCYCLE SELECTED')
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
       
       if (error2) {

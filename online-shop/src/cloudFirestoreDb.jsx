@@ -147,6 +147,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const response = await axios.get(
         `${this.url}transactionPlaceOrder?data=${encodedData}`
       );
+      return response
       alert('Order placed successfully');
     } catch (error) {
       if (error.response && error.response.status === 400) {

@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
-import { GoogleMap, useLoadScript, MarkerF, InfoWindow } from '@react-google-maps/api';
+import { useState } from 'react';
+import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
 import React from 'react';
 import { useEffect } from 'react';
 import AppContext from '../AppContext';
 import firestoredb from '../firestoredb';
 import { CircularProgress } from '@mui/material';
-
+import Geocode from 'react-geocode';
 import UpdateMapMarkerModal from './UpdateMapMarkerModal';
 
 //NOTES
@@ -14,12 +14,12 @@ import UpdateMapMarkerModal from './UpdateMapMarkerModal';
 
 const GoogleMaps = (props) => {
   let { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
+    // googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
+    googleMapsApiKey: 'AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I',
   });
 
   const [noAddressHistory, setNoAddressHistory] = useState(undefined);
   const setSelectedAddress = props.setSelectedAddress;
-
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -32,6 +32,7 @@ const GoogleMaps = (props) => {
   const zoom = props.zoom;
   const setZoom = props.setZoom;
   const setLocalDeliveryAddress = props.setLocalDeliveryAddress;
+  const setAddressText = props.setAddressText;
 
   const { firestore, userId, deliveryaddress, latitude, setLatitude, longitude, setLongitude } =
     React.useContext(AppContext);
@@ -56,7 +57,6 @@ const GoogleMaps = (props) => {
 
     setLatitude(e.latLng.lat());
     setLongitude(e.latLng.lng());
-    setInfoVisible(false);
     setLocalDeliveryAddress('');
 
     let address = undefined;
@@ -86,6 +86,22 @@ const GoogleMaps = (props) => {
       // setZoom(18)
     }
   }, [latitude, longitude]);
+
+  useEffect(() => {
+    Geocode.setApiKey('AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I');
+    Geocode.setLanguage('en');
+    Geocode.setLocationType('ROOFTOP');
+    Geocode.fromLatLng(locallatitude, locallongitude).then(
+      (response) => {
+        const address = response.results[0].formatted_address;
+        console.log(address);
+        setAddressText(address);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }, [locallatitude, locallongitude]);
 
   return (
     <React.Fragment>

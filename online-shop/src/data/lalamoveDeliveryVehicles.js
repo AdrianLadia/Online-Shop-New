@@ -7,12 +7,17 @@ import closedvan from "./lalamoveDeliveryVehicles/closedvan";
 
 class lalamoveDeliveryVehicles {
     constructor() {
-        this.motorcycle = new motorcycle()
-        this.sedan = new sedan()
-        this.mpv = new mpv()
-        this.pickup = new pickup()
-        this.van = new van()
-        this.closedvan = new closedvan()
+        try{
+            this.motorcycle = new motorcycle()
+            this.sedan = new sedan()
+            this.mpv = new mpv()
+            this.pickup = new pickup()
+            this.van = new van()
+            this.closedvan = new closedvan()
+        }
+        catch{
+            return 'No Vehicl'
+        }
     }
 }
 

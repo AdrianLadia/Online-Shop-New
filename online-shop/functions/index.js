@@ -357,9 +357,10 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         transaction.update(userRef, { orders: updatedOrders });
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
         transaction.update(userRef, { cart: [] });
-        res.end();
+        res.send('SUCCESS');
       } catch (e) {
         console.log(e);
+        res.status(400).send('FAILED');
       }
     });
   });

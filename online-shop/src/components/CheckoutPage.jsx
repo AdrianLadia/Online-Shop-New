@@ -6,10 +6,10 @@ import GoogleMaps from './GoogleMaps';
 import AppContext from '../AppContext';
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
-// import PaymentMenuCard from "./PaymentMenuCard";
+
 import PaymentMethods from './PaymentMethods';
 import CheckoutPageContext from './CheckoutPageContext';
-import PaymentMenuCard from './PaymentMenuCard';
+import PaymayaSdk from './PaymayaSdk';
 import GoogleMapsModalSelectSaveAddress from './GoogleMapsModalSelectSaveAddress';
 import GoogleMapsModalSelectContactModal from './GoogleMapsModalSelectContactModal';
 import Switch from '@mui/material/Switch';
@@ -22,6 +22,9 @@ import theme from "../colorPalette/MaterialUITheme";
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import PaymentMethodContext from '../context/PaymentMethodContext';
+import { useNavigate } from 'react-router-dom';
+import dataManipulation from '../../utils/dataManipulation';
+
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -29,6 +32,7 @@ const labelStyle = textFieldLabelStyle();
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
+  const datamanipulation = new dataManipulation();
   const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate,products } = React.useContext(AppContext);
 
   const [selectedAddress, setSelectedAddress] = useState(false);
@@ -70,6 +74,12 @@ const CheckoutPage = () => {
   const paperboylongitude = paperboylocation.longitude;
 
   const [placedOrder,setPlacedOrder] = useState(false);
+  const [transactionStatus,setTransactionStatus] = useState('SUCCESS');
+  const [paymayaResponse,setPaymayaResponse] = useState(null);
+  const navigateTo = useNavigate();
+  const [mayaRedirectUrl,setMayaRedirectUrl] = useState(null);
+  const [mayaCheckoutId,setMayaCheckoutId] = useState(null);
+  const [addressText,setAddressText] = useState('');
 
 
   // PAYMENT METHODS
@@ -103,14 +113,39 @@ const CheckoutPage = () => {
     solanaselected,
     setSolanaselected,
   }
-  // PAYMENT METHODS
 
+  
+
+  // PAYMENT METHODS
+  useEffect(() => {
+    if (mayaselected) {
+      if (transactionStatus === 'SUCCESS') {
+        console.log('ran sdk')
+        // firstname={localname.split(' ')[0]}
+        //       lastname={localname.split(' ')[1]}
+        //       email={localemail}
+        //       phonenumber={localphonenumber}
+        //       totalprice={grandTotal}
+        PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId)
+        
+      }
+    }
+  }, [placedOrder]);
+
+  useEffect(() => {
+    console.log('ran maya redirect')
+    if (mayaRedirectUrl != null) {
+
+      window.location.href = mayaRedirectUrl
+    }
+  }, [mayaRedirectUrl]);
 
   useEffect(() => {
     setRefreshUser(!refreshUser);
   }, []);
 
   useEffect(() => {
+    console.log('ran asdasdasd')
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -119,20 +154,18 @@ const CheckoutPage = () => {
     );
     const kilometers = businesscalculations.convertTotalDifferenceToKilometers(totaldifference);
     const areasInsideDeliveryLocation = businesscalculations.getLocationsInPoint(locallatitude, locallongitude);
+    const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
+    const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
     setArea(areasInsideDeliveryLocation);
     const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
-     
-      const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
-      const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
-      
       setDeliveryFee(deliveryFee);
       setDeliveryVehicle(vehicleObject);
     }
 
     if (!areasInsideDeliveryLocation.includes('lalamoveServiceArea') && area.length > 0) {
       setDeliveryFee(500);
-      setDeliveryVehicle(null);
+      setDeliveryVehicle(vehicleObject);
       setUseShippingLine(true);
     }
     let orderdata = null;
@@ -166,7 +199,7 @@ const CheckoutPage = () => {
     if (userstate === 'userloaded') {
       try{
         console.log(total)
-        const status = await cloudfirestoredb.transactionPlaceOrder(
+        const res = await cloudfirestoredb.transactionPlaceOrder(
           {        userid : userdata.uid,
             localDeliveryAddress : localDeliveryAddress,
             locallatitude:locallatitude,
@@ -186,9 +219,10 @@ const CheckoutPage = () => {
             totalWeight:totalWeight,
             deliveryVehicle:deliveryVehicle.name,
             needAssistance:needAssistance}
-            
         )
-        setPlacedOrder(true)
+        console.log(res.data)
+        setTransactionStatus(res.data)
+        setPlacedOrder(!placedOrder)
       }
       catch(err){
         console.log(err)
@@ -221,7 +255,8 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (!area.includes('lalamoveServiceArea') && area.length > 0) {
-      if (total < 10000) setAllowShipping(false);
+      
+      if ((total + vat) < 10000) setAllowShipping(false);
       else {
         setAllowShipping(true);
       }
@@ -240,15 +275,6 @@ const CheckoutPage = () => {
   return (
     <ThemeProvider theme={theme}>
     <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
-        {mayaselected && placedOrder ? (
-          <PaymentMenuCard
-            firstname={localname.split(' ')[0]}
-            lastname={localname.split(' ')[1]}
-            email={localemail}
-            phonenumber={localphonenumber}
-            totalprice={grandTotal}
-          />
-        ) : null}
 
       <Divider sx={{ marginTop: .1, marginBottom: 3  }} />
 
@@ -279,7 +305,10 @@ const CheckoutPage = () => {
           onChange={(event) => setLocalDeliveryAddress(event.target.value)}
           value={localDeliveryAddress}
         />
+        {datamanipulation.cleanGeocode(addressText)}
       </div>
+
+
 
       <Divider sx={{ marginTop: 5, marginBottom: 3  }} />
 
@@ -293,6 +322,7 @@ const CheckoutPage = () => {
           setLocalDeliveryAddress={setLocalDeliveryAddress}
           zoom={zoom}
           setZoom={setZoom}
+          setAddressText={setAddressText}
       />
 
       <Divider sx={{ marginTop: 5 , marginBottom:3}} />
