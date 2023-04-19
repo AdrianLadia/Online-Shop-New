@@ -1,6 +1,3 @@
-import React from 'react';
-import paymaya from 'paymaya-js-sdk';
-import { useEffect, useState } from 'react';
 import AppConfig from '../AppConfig';
 import axios from 'axios';
 
@@ -16,15 +13,25 @@ import axios from 'axios';
 
 // https://github.com/PayMaya/PayMaya-JS-SDK-v2
 
-async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,pubKey) {
+async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,customerAddress,geocodeAddress,items) {
   const appConfig = new AppConfig();  
   const firstname = firstName;
   const lastname = lastName;
   const email = eMail;
   const phonenumber = phoneNumber;
   const totalprice = totalPrice;
-  const key = pubKey
-  const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+
+  if (appConfig.getIsPaymentSandBox()) {
+    const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+    const publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
+    const secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
+  }
+  else {
+    const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+    const publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
+    const secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
+  }
+
 
   const req = {
     totalAmount: {
@@ -54,7 +61,7 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
         middleName: 'Domingo',
         lastName: 'Ladia',
         phone: '+639178927206',
-        email: 'merchant@merchantsite.com',
+        email: 'ladiaadrian@gmail.com',
         line1: 'P. Sanchez St.',
         line2: '',
         city: 'Camnduman,Mandaue City',
@@ -64,11 +71,11 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
         shippingType: 'ST', // ST - for standard, SD - for same day
       },
       billingAddress: {
-        line1: address,
-        line2: 'Reliance Street',
-        city: 'Mandaluyong City',
-        state: 'Metro Manila',
-        zipCode: '1552',
+        line1: customerAddress,
+        line2: geocodeAddress,
+        city: '',
+        state: '',
+        zipCode: '',
         countryCode: 'PH',
       },
     },
@@ -115,7 +122,7 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
 
   const headers = {
     accept: 'application/json',
-    authorization: `Basic ${convertToBase64(key)}`,
+    authorization: `Basic ${convertToBase64(publicKey)}`,
     'content-type': 'application/json',
   };
   console.log(headers);

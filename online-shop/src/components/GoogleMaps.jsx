@@ -6,6 +6,7 @@ import AppContext from '../AppContext';
 import firestoredb from '../firestoredb';
 import { CircularProgress } from '@mui/material';
 import Geocode from 'react-geocode';
+import dataManipulation from '../../utils/dataManipulation';
 import UpdateMapMarkerModal from './UpdateMapMarkerModal';
 
 //NOTES
@@ -13,6 +14,8 @@ import UpdateMapMarkerModal from './UpdateMapMarkerModal';
 // https://react-google-maps-api-docs.netlify.app/
 
 const GoogleMaps = (props) => {
+
+
   let { isLoaded } = useLoadScript({
     // googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
     googleMapsApiKey: 'AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I',
@@ -24,7 +27,7 @@ const GoogleMaps = (props) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [rerendercount, setRerenderCount] = useState(0);
-
+  const datamanipulation = new dataManipulation();
   const locallatitude = props.locallatitude;
   const locallongitude = props.locallongitude;
   const setLocalLatitude = props.setLocalLatitude;
@@ -93,6 +96,7 @@ const GoogleMaps = (props) => {
     Geocode.setLocationType('ROOFTOP');
     Geocode.fromLatLng(locallatitude, locallongitude).then(
       (response) => {
+        // const address = datamanipulation.cleanGeocode(response.results[0].formatted_address)
         const address = response.results[0].formatted_address;
         console.log(address);
         setAddressText(address);

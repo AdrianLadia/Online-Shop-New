@@ -32,6 +32,7 @@ const CheckoutSummary = (props) => {
   const deliveryVehicle = props.deliveryVehicleObject.name 
   const maxWeight = props.deliveryVehicleObject.maxWeight;
   const area = props.area;
+  const setMayaCheckoutItemDetails = props.setMayaCheckoutItemDetails;
 
   useEffect(() => {
     async function getTableData() {
@@ -39,7 +40,12 @@ const CheckoutSummary = (props) => {
         products,
         cart
       );
+      console.log(rows_non_state);
+      console.log(total_non_state);
+      console.log(total_weight_non_state);
+      console.log(vat);
       setVat(vat);
+      setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
       setLoading(false);
       setTotal(total_non_state);

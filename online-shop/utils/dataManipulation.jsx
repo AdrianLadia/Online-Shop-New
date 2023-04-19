@@ -462,8 +462,8 @@ class dataManipulation {
       throw new Error(error1);
     }
 
-    function createData(itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal) {
-      return { itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal };
+    function createData(itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal,itemId) {
+      return { itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal,itemId };
     }
 
     let rows_non_state = [];
@@ -484,15 +484,17 @@ class dataManipulation {
         if (product.itemId === key) {
           total_weight_non_state += product.weight * quantity;
           total_non_state += product.price * quantity;
-
+          
           let row = createData(
             product.imageLinks[0],
             product.itemName,
             quantity.toLocaleString(),
             parseInt(product.price).toLocaleString(),
             (product.price * quantity).toLocaleString(),
-            total_weight_non_state
+            total_weight_non_state,
+            product.itemId
           );
+        
           rows_non_state.push(row);
         }
       });
@@ -644,32 +646,37 @@ class dataManipulation {
   }
 
   cleanGeocode(address) {
-    const addressSchema = Joi.string().required();
-    const { error } = addressSchema.validate(address);
-    if (error) {
-      throw new Error(error);
+    console.log(address)
+    if (address != '') {
+      const addressSchema = Joi.string().required();
+      const { error } = addressSchema.validate(address);
+      if (error) {
+        throw new Error(error);
+      }
+  
+      let foundComma = false;
+      let newString = ''
+  
+      for (let i = 0; i < address.length; i++) {
+        console.log(address[i]);
+  
+        const string = address[i]
+        if (string == ',') {
+          foundComma = true;
+          continue
+        }
+  
+        if (foundComma) { 
+          newString += string
+        }
+      }
+      return newString
     }
 
-    let foundComma = false;
-    let newString = ''
-
-    for (let i = 0; i < address.length; i++) {
-      console.log(address[i]);
-
-      const string = address[i]
-      if (string == ',') {
-        foundComma = true;
-        continue
-      }
-
-      if (foundComma) { 
-        newString += string
-      }
-    }
+  
 
  
 
-    return newString
   }
 
 

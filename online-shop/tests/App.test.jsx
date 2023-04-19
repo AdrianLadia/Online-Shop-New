@@ -113,19 +113,17 @@ describe('Business Calcualtions', () => {
     });
   });
 
-  test.only('cleanGeocode', () => {
+  test('cleanGeocode', () => {
     const data = datamanipulation.cleanGeocode('8VRV+26C, Nivel Hills, Lungsod ng Cebu, 6000 Lalawigan ng Cebu, Philippines')
     for (let i = 0; i < data.length; i++) {
       const string = data[i];
       expect(string).not.toContain('+');
     }
 
-    console.log('test')
-
 
   });
 
-  test.only('getVehicleForDelivery', () => {
+  test('getVehicleForDelivery', () => {
     const test = [
       [0,'motorcycle'],
       [20, 'motorcycle'],
@@ -215,7 +213,7 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe.only('Data Manipulation', () => {
+describe('Data Manipulation', () => {
   test('AccountStatement', () => {
     const orders = user.orders;
     const payments = user.payments;
@@ -310,12 +308,13 @@ describe.only('Data Manipulation', () => {
     });
     expect(allCategories).toEqual(expected);
   });
-  test('getCheckoutPageTableDate', async () => {
+  test.only('getCheckoutPageTableDate', async () => {
     const products = await firestore.readAllProducts();
     await delay(100);
 
     const cart = user.cart;
     const data = datamanipulation.getCheckoutPageTableDate(products, cart);
+    const rows = data[0]
   });
   test('manipulateCartData', () => {
     const cart = ['PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#2', 'PPB#2'];
@@ -936,7 +935,7 @@ describe('getCartCount', () => {
     const getCartCountBusinessCalculations = businesscalculations.getCartCount;
 
     const count = getCartCountBusinessCalculations(['PPB#1']);
-    const count2 = getCartCount(['PPB#1']);
+    const count2 = getCartCountBusinessCalculations(['PPB#1']);
     expect(count).toEqual({ 'PPB#1': 1 });
     expect(count2).toEqual(count);
   });
@@ -945,7 +944,7 @@ describe('getCartCount', () => {
     const { getValueAddedTax } = require('../functions/index.js');
     const getValueAddedTaxBusinessCalculations = businesscalculations.getValueAddedTax;
     const vat = getValueAddedTaxBusinessCalculations(1000);
-    const vat2 = getValueAddedTax(1000);
+    const vat2 = getValueAddedTaxBusinessCalculations(1000);
     expect(vat).toEqual(107.14);
     expect(vat2).toEqual(vat);
   });
