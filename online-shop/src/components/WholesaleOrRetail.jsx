@@ -18,12 +18,12 @@ const WholesaleOrRetail = (props) => {
       }
 
   return (
-    <div className="from-colorbackground via-color2 to-color1 flex justify-center">
+    <div className="from-colorbackground via-color2 to-color1 flex justify-center drop-shadow-xl">
         <button
           onClick={onWholesaleClick}
           // className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
           // className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-gradient-to-r from-color30 to-color10a lg:w-40 hover:animate-pulse"
-          className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a w-32 lg:w-40 hover:animate-pulse"
+          className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a w-2/5 2xs:w-32 lg:w-40 hover:animate-pulse"
         >
           <Typography>
           Wholesale
@@ -33,7 +33,7 @@ const WholesaleOrRetail = (props) => {
           onClick={onRetailClick}
           // className="ml-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
           // className="ml-1 mt-5 flex-none font-semibold p-3 rounded-full bg-gradient-to-l from-color30 to-color10a lg:w-40 hover:animate-pulse"
-          className="ml-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a w-32 lg:w-40 hover:animate-pulse"
+          className="ml-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a w-2/5 2xs:w-32 lg:w-40 hover:animate-pulse"
         >
           <Typography>
             Retail

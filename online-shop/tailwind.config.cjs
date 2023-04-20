@@ -37,7 +37,9 @@ module.exports = {
         '2lg' : '1145px',
         '3xl' : '1751px'
       },
-      
+      borderRadius: {
+        '4xl': '2rem'
+      },
       colors: {
 
         //f // COLOR 1

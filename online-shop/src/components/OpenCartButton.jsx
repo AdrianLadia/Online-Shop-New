@@ -125,15 +125,15 @@ const OpenCartButton = (props) => {
         <button
           id="opencartbutton"
           onClick={ViewCart}
-          className={" bg-color10b  text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 position fixed bottom-2  content-center " + responsiveShakeCartAnimation() }
+          className={" bg-color10b text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 position fixed bottom-2  content-center " + responsiveShakeCartAnimation() }
         >
           {userstate !== 'userloading' ? (
             <div className="flex flex-row justify-around">
               <div>
-                <span className="flex h-3 w-3">
-                  <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none bg-color10a rounded-full">
-                    {GetQuantity()}
-                  </span>
+                <span className="flex h-3 w-3 ">
+                    <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none bg-color10a rounded-full">
+                      {GetQuantity()}
+                    </span>
                 </span>
                 <AiOutlineShoppingCart size={25} />
               </div>

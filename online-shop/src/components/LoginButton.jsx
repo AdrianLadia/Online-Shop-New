@@ -80,7 +80,7 @@ const LoginButton = (props) => {
               display: 'block',
               position: 'absolute',
               top: 0,
-              right: 14,
+              right: 24,
               width: 10,
               height: 10,
               bgcolor: 'background.paper',

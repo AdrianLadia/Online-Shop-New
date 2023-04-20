@@ -16,8 +16,8 @@ const Shop = () => {
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/>
       {/* CATEGORY */}
-      {/* PRODUCTS */}
       <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory}/>
+      {/* PRODUCTS */}
       <ProductList wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
       {/* CART BUTTON */}
     </div>

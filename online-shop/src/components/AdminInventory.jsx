@@ -112,7 +112,7 @@ const AdminInventory = (props) => {
   return (
     <div className="flex flex-col items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
       {/* TABLE */}
-      <div className="flex mt-16 mb-4 w-11/12 md:w-9/12 border-2 border-color60 rounded-lg">
+      <div className="flex mt-8 mb-4 w-11/12 md:w-9/12 border-2 border-color60 rounded-lg">
         <TableContainer component={Paper} sx={{ maxHeight: height - 250 }}>
           <Table
             style={{ tableLayout: "auto"}}
@@ -190,10 +190,10 @@ const AdminInventory = (props) => {
         </TableContainer>
       </div>
       {/* BUTTONS */}
-      <div className="flex flex-col gap-2 2xs:flex-row w-6/12 md:w-2/4 justify-evenly 2xs:mt-16 m-5 ">
+      <div className="flex flex-col gap-2 2xs:flex-row w-6/12 md:w-2/4 justify-evenly 2xs:mt-8 m-5 ">
         <button
           onClick={handleOpenAddItem}
-          className="bg-green-400 hover:bg-green-300 rounded-lg p-3 font-bold "
+          className="bg-green-400 hover:bg-green-300 rounded-lg p-3 font-bold cursor-copy"
         >
           Add Item
         </button>

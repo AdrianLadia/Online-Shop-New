@@ -23,7 +23,7 @@ export const MenuBar = ({callback, products}) => {
   
   return (
 
-    <div className="flex flex-col justify-between h-5/6 w-2/12 p-4 mr-1 ml-3 rounded-lg border-2 bg-gradient-to-b from-green-100 to-emerald-100 border-green-700">   
+    <div className="flex flex-col justify-between  w-2/12 p-4 mr-1 ml-3 rounded-lg border-2 bg-gradient-to-b from-green-100 to-emerald-100 border-green-700">   
         <div className=" font-semibold self-start w-full h-1/6 justify-center relative"> <CheckBoxes name={selectedName} callback={handleSelectedOption}/></div>
         <div className=" font-semibold self-center w-4/5 h-5/6 ml-2"> <SearchBar callback={handleSelectedName} name={selectedName} products={products}/></div>
         {/* <div className=" font-semibold self-center"> <LogoutButton setAuthorized={false}/></div>  */}

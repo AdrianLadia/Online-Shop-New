@@ -12,6 +12,9 @@ const theme = createTheme({
       enter: {
         main: '#6ab15d',
       },
+      // enter: {
+      //   main: '#B6E388',
+      // },
     },
   });
 

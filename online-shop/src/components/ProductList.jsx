@@ -65,17 +65,15 @@ const ProductList = (props) => {
       ('w-full');
     }
     if (productdataloading === false) {
-      if (width < 768) {
+      if (width < 640) {
         return 'grid ';
-      } else if (width < 1100) {
+      }else if(width < 1070) {
         return 'grid grid-cols-2 ';
-      } else if (width < 1500) {
+      }else if(width < 1500) {
         return 'grid grid-cols-3 ';
-      } else if (width < 1800) {
+      }else if(width < 1921) {
         return 'grid grid-cols-4';
-      }else if (width < 1921) {
-          return 'grid grid-cols-4';
-      } else {
+      }else{
         return 'grid grid-cols-5';
       }
     }
@@ -83,22 +81,22 @@ const ProductList = (props) => {
 
   return (
     <div className='mb-16 mt-5'>
-      <div id='productList' className={'grid justify-items-center ' + divCssIfProductNoteLoaded()}>
+      <div id='productList' className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
             <CircularProgress size={150} className="" />
           </div>
         ) : RenderSelectedProducts(selectedCategory).length === 0 && selectedCategory === 'Favorites' ? (
-          <div>
-            <h1 className="text-3xl font-bold text-center mt-10">No Favorites</h1>
-            <h3 className="text-1xl font-bold text-center mt-10 mx-10">
+          <div className='flex flex-col align-center w-screen tracking-widest'>
+              <h1 className="text-3xl font-bold text-center mt-10">No Favorites</h1>
+              <h3 className="text-1xl font-bold text-center mt-10 mx-10">
               Add items to your favorites by clicking on the product card then clicking the heart icon
             </h3>
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
             return (
-              <div>
+              <div className='flex justify-evenly'>
                 <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} />
               </div>
             );

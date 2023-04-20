@@ -73,7 +73,7 @@ const App = () => {
 
   return (
     <div>
-      <div className=" overflow-x-hidden bg-gradient-to-r from-green-200 via-cyan-200 to-emerald-200">
+      <div className=" overflow-hidden bg-gradient-to-r h-screen from-green-200 via-cyan-200 to-emerald-200">
 
                         {screenSizeMobile === true ?(
                           <div className="flex justify-start absolute top-13 left-1 ml-0 xs:ml-4 ">
@@ -82,7 +82,7 @@ const App = () => {
                         :
                          (null)} 
 
-              <div className="h-screen w-screen flex items-center justify-center">           
+              <div className="h-5/6 w-screen flex mt-16 justify-center">           
                   <>
                    
                         <>  
@@ -111,9 +111,7 @@ const App = () => {
                             )
                           }
                         </>
-                  
-              
-           </div>
+                </div>
       </div>
     </div>
   );

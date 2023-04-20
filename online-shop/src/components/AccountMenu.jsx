@@ -15,7 +15,7 @@ import { FaStore } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { AiOutlineHistory } from "react-icons/ai";
 import { BsBook } from "react-icons/bs";
-import { GrUserAdmin } from "react-icons/gr";
+import { RiAdminLine } from "react-icons/ri";
 import { Typography } from "@mui/material";
 
 const AccountMenu = (props) => {
@@ -111,7 +111,7 @@ const AccountMenu = (props) => {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 16,
+              right: 17,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -160,10 +160,10 @@ const AccountMenu = (props) => {
         </MenuItem>
         {isadmin ? (
           <div>
-            <Divider className="mt-2 mb-2"/>
-            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-color10b'>
-              <GrUserAdmin size={17} className="ml-0.5" />
-              <span className="ml-5 mt-1">Admin</span>
+            <Divider className="mt-1 mb-1"/>
+            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-slate-300'>
+              <RiAdminLine size={21} className="-ml-.5 font-bold text-blue1" />
+              <span className="ml-5 mt-1 text-blue1">Admin</span>
             </MenuItem>
           </div>
         ) : null}

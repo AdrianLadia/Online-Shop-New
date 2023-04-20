@@ -126,7 +126,6 @@ const AdminCreatePayment = (props) => {
         </div>
 
       </div>
-      <Divider sx={{ marginTop: 10 , marginBottom:10}} />
     </div>
     </ThemeProvider>
   );

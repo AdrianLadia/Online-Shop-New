@@ -15,6 +15,7 @@ import AppContext from '../AppContext'
 import firestoredb from "../firestoredb";
 import { useEffect } from "react";
 import Divider from '@mui/material/Divider';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -136,8 +137,9 @@ const ProductCardModal = (props) => {
 
   return (
     <Modal open={props.modal} onClose={props.closeModal}>
+      <Scrollbars sx={{ width: 500, height: 300}}>
       <Fade in={props.modal}>
-        <Box sx={style} className="bg-colorbackground border-color60 overflow-y-auto">
+        <Box sx={style} className="bg-colorbackground border-color60 overflow-x-hidden overflow-y-auto">
           <div className="flex flex-col">
             {/* HEART AND X BUTTON*/}
             <div className="flex flex-row justify-between mb-5">
@@ -201,9 +203,9 @@ const ProductCardModal = (props) => {
                       (
                         <>
                           <div className="lg:w-2/4 flex self-start ">
-                            <Typography className="w-11/12 ml-2 font-light text-green-800
+                            <Typography className="w-11/12 ml-2 font-light text-green-800 hyphens-auto
                                                   text-sm lg:text-md xl:text-lg 2xl:text-xl 3xl:text-2xl 
-                                                  indent:2 lg:indent-4 2xl:indent-7 
+                                                  indent:2 lg:indent-4 2xl:indent-7 text-left
                                                   tracking-widest xl:tracking-tighter 2xl:tracking-tightest 
                                                   first-letter:text-xl xl:first-letter:text-2xl 2xl:first-letter:text-3xl first-letter:font-semibold">
                               {props.product.description}
@@ -229,6 +231,7 @@ const ProductCardModal = (props) => {
           </div>
         </Box>
       </Fade>
+    </Scrollbars> 
     </Modal>
   );
 };
