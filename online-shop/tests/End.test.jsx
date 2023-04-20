@@ -4,8 +4,11 @@ import firestoredb from '../src/firestoredb';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../src/firebase_config';
 import cloudFirestoreDb from '../src/cloudFirestoreDb';
+import testConfig from './testConfig';
 
 const { Builder, By, Key, until, WebDriver } = require('selenium-webdriver');
+const testconfig = new testConfig()
+const testUserId = testconfig.getTestUserId()
 const chrome = require('chromedriver');
 const driver = new seleniumCommands();
 
@@ -60,7 +63,7 @@ describe('Integration', () => {
     await driver.openCart();
     await driver.clickClearCartButton();
     await(delay(600))
-    const user = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
+    const user = await cloudfirestore.readSelectedUserById(testUserId)
     await(delay(300))
     const userCart = user.cart
     const userCartLength = userCart.length;
@@ -69,7 +72,7 @@ describe('Integration', () => {
   }, 1000000);
 
   test('Checkout Flow', async () => {
-    await cloudfirestore.updateDocumentFromCollection('Users', '6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', {orders: [],contactPerson: [], deliveryAddress: []})
+    await cloudfirestore.updateDocumentFromCollection('Users', testUserId, {orders: [],contactPerson: [], deliveryAddress: []})
     
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('entryquantity')), 10000);
@@ -78,7 +81,7 @@ describe('Integration', () => {
     await delay(1000)
     const totalPriceNew = await (await driver.getTotalPriceOfCartButton()).getText();
     expect(totalPriceOld).not.toBe(totalPriceNew);
-    const user = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
+    const user = await cloudfirestore.readSelectedUserById(testUserId)
     const userCart = user.cart.length;
     
     expect(userCart).not.toBe(0);
@@ -86,14 +89,14 @@ describe('Integration', () => {
     await driver.openCart();
     await driver.addToCartIncrement()
     await(delay(1000))
-    const user2 = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
+    const user2 = await cloudfirestore.readSelectedUserById(testUserId)
     const userCart2 = user2.cart.length;
 
     expect(userCart2 - userCart).toEqual(1);
 
     await driver.removeFromCartDecrement()
     await(delay(1000))
-    const user3 = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
+    const user3 = await cloudfirestore.readSelectedUserById(testUserId)
     const userCart3 = user3.cart.length;
 
     expect(userCart3 - userCart2).toEqual(-1);
@@ -112,7 +115,7 @@ describe('Integration', () => {
 
     await driver.driver.navigate().refresh();
 
-    const user4 = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
+    const user4 = await cloudfirestore.readSelectedUserById(testUserId)
     const userOrders4 = user4.orders
 
     let found = false
@@ -184,7 +187,7 @@ describe('Integration', () => {
 
 
   test('superAdminPrevilages', async () => {
-    await cloudfirestore.changeUserRole('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', 'superAdmin')
+    await cloudfirestore.changeUserRole(testUserId, 'superAdmin')
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
@@ -195,7 +198,7 @@ describe('Integration', () => {
   }, 1000000)
 
   test('ordersMenu', async () => {
-    await cloudfirestore.changeUserRole('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', 'superAdmin')
+    await cloudfirestore.changeUserRole(testUserId, 'superAdmin')
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
@@ -210,7 +213,7 @@ describe('Integration', () => {
   }, 1000000)
 
   test('createPaymentMenu', async () => {
-    await cloudfirestore.changeUserRole('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', 'superAdmin')
+    await cloudfirestore.changeUserRole(testUserId, 'superAdmin')
     await driver.driver.navigate().refresh();
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
@@ -220,7 +223,7 @@ describe('Integration', () => {
     await driver.clickCreatePaymentMenu()
     await driver.createTestPayment()
     await delay(1000)
-    const user = await cloudfirestore.readSelectedUserById('6CO7Rda0Ngtoi41Gp6Zge3VlB5C5')
+    const user = await cloudfirestore.readSelectedUserById(testUserId)
     const payments = user.payments
     let found = false
     payments.map(payment => {
@@ -234,7 +237,7 @@ describe('Integration', () => {
 
     expect(found).toBe(true) 
 
-    await cloudfirestore.updateDocumentFromCollection('Users','6CO7Rda0Ngtoi41Gp6Zge3VlB5C5', {payments:[]})
+    await cloudfirestore.updateDocumentFromCollection('Users',testUserId, {payments:[]})
 
     await driver.clickBackToStoreButton()
   }, 1000000)

@@ -21,6 +21,9 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
 
   console.log('firstName', firstName)
   console.log('lastName', lastName)
+
+  
+
   console.log('eMail', eMail)
   console.log('phoneNumber', phoneNumber)
   console.log('totalPrice', totalPrice)
@@ -49,18 +52,13 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
               "email": eMail,
               "phone" : phoneNumber
          },
-         "billingAddress": {
-              "line1": customerAddress,
-              "line2": geocodeAddress,
-              "countryCode": "PH"
-         },
          "shippingAddress": {
               "line1": customerAddress,
               "line2": geocodeAddress,
               "countryCode": "PH"
          },
          "firstName": firstName,
-         "lastName": lastName
+         "lastName": lastName ? lastName : '',
     },
     "redirectUrl": {
          "success": "http://localhost:5173/checkoutSuccess",

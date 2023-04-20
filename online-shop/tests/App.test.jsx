@@ -11,6 +11,9 @@ import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
 import cloudFirestoreFunctions from '../src/cloudFirestoreFunctions';
 import cloudFirestoreDb from '../src/cloudFirestoreDb';
 import retryApi from '../utils/retryApi';
+import testConfig from './testConfig';
+import firestorefunctions from '../src/firestorefunctions';
+
 //
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
@@ -20,7 +23,10 @@ const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
 const cloudfirestorefunctions = new cloudFirestoreFunctions();
 const cloudfirestore = new cloudFirestoreDb();
-const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', '6CO7Rda0Ngtoi41Gp6Zge3VlB5C5');
+const userTestId = '6CO7Rda0Ngtoi41Gp6Zge3VlB5C5';
+const testconfig = new testConfig();
+const testid = testconfig.getTestUserId();
+const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', testid);
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -32,9 +38,9 @@ describe('Business Calcualtions', () => {
     await delay(100);
     const parentProducts = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products);
     expect(parentProducts.length).toBeGreaterThan(0);
-    const promises = []
+    const promises = [];
     parentProducts.map((parentProduct) => {
-      const data = firestore.readSelectedDataFromCollection('Products',parentProduct);
+      const data = firestore.readSelectedDataFromCollection('Products', parentProduct);
       promises.push(data);
     });
 
@@ -43,7 +49,6 @@ describe('Business Calcualtions', () => {
     results.map((result) => {
       expect(result.parentProductID).toBe('');
     });
-
   });
   test('getSafetyStock', () => {
     const averageSalesPerDay = 20;
@@ -114,18 +119,18 @@ describe('Business Calcualtions', () => {
   });
 
   test('cleanGeocode', () => {
-    const data = datamanipulation.cleanGeocode('8VRV+26C, Nivel Hills, Lungsod ng Cebu, 6000 Lalawigan ng Cebu, Philippines')
+    const data = datamanipulation.cleanGeocode(
+      '8VRV+26C, Nivel Hills, Lungsod ng Cebu, 6000 Lalawigan ng Cebu, Philippines'
+    );
     for (let i = 0; i < data.length; i++) {
       const string = data[i];
       expect(string).not.toContain('+');
     }
-
-
   });
 
   test('getVehicleForDelivery', () => {
     const test = [
-      [0,'motorcycle'],
+      [0, 'motorcycle'],
       [20, 'motorcycle'],
       [200, 'sedan'],
       [300, 'mpv'],
@@ -194,12 +199,12 @@ describe('Business Calcualtions', () => {
     const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
     expect(newCart2).toEqual([...newCart, 'PPB#2']);
     const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
-    
+
     newCart3.map((itemInCart) => {
-      newCart = newCart.filter(item => item !== itemInCart);
+      newCart = newCart.filter((item) => item !== itemInCart);
     });
 
-    expect(newCart.length).toEqual(0)
+    expect(newCart.length).toEqual(0);
   });
   test('addToCartWithQuantity', () => {
     const cart = user.cart;
@@ -308,15 +313,13 @@ describe('Data Manipulation', () => {
     });
     expect(allCategories).toEqual(expected);
   });
-  test.only('getCheckoutPageTableDate & createPayMayaCheckoutItems', async () => {
+  test('getCheckoutPageTableDate & createPayMayaCheckoutItems', async () => {
     const products = await firestore.readAllProducts();
     await delay(100);
 
     const cart = user.cart;
     const data = datamanipulation.getCheckoutPageTableDate(products, cart);
-    const rows = data[0]
-
-    const 
+    const rows = data[0];
   });
   test('manipulateCartData', () => {
     const cart = ['PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#2', 'PPB#2'];
@@ -338,7 +341,7 @@ describe('Data Manipulation', () => {
     await delay(100);
     const favorites = user.favoriteItems;
     datamanipulation.getAllProductsInCategory(products, 'Favorites', true, false, favorites);
-    const selected_products =  datamanipulation.getAllProductsInCategory(products, 'Paper Bag', true, false, favorites);
+    const selected_products = datamanipulation.getAllProductsInCategory(products, 'Paper Bag', true, false, favorites);
     expect(selected_products).not.toBe([]);
     expect(selected_products.length).toBeGreaterThan(0);
     expect(selected_products[0].forTutorial).toBe(true);
@@ -952,322 +955,692 @@ describe('getCartCount', () => {
   });
 });
 
-describe('cloudfirestoredb', async () => {
+describe.only('cloudfirestoredb', async () => {
+  test('transactionCreatePayment', async () => {
+    const data = {
+      userId: userTestId,
+      amount: 8888,
+      reference: 'testref123456789',
+      paymentprovider: 'Maya',
+    }
+    await cloudfirestore.transactionCreatePayment(data)
+  })
+  // test('testPayMayaWebHookSuccess', async () => {
+  //   await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+  //   await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+  //   const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+  //   const ppb16Price = ppb16.price;
+  //   const itemsTotal = (ppb16Price * 12) / 1.12;
+  //   const vat = ppb16Price * 12 - itemsTotal;
 
-  test('changeUserRole', async () => {
-    await cloudfirestore.createNewUser({
-      uid: 'testuser',
-      name: 'test',
-      email: 'test@gmail.com',
-      emailVerified: true,
-      phoneNumber: '09178927206',
-      deliveryAddress: [],
-      contactPerson: [],
-      isAnonymous: false,
-      orders: [],
-      cart: [],
-      favoriteItems: [],
-      payments: [],
-      userRole: 'member',
-    },'testuser')
-    await delay(300);
-    await cloudfirestore.changeUserRole('testuser', 'admin');
-    await delay(300);
-    const user = await cloudfirestore.readSelectedUserById('testuser')
-    await delay(300);
-    expect(user.userRole).toEqual('admin');
-    await cloudfirestore.changeUserRole('testuser', 'member');
-    await delay(300);
-    const user2 = await cloudfirestore.readSelectedUserById('testuser')
-    await delay(300);
-    expect(user2.userRole).toEqual('member');
-    await cloudfirestore.deleteDocumentFromCollection('Users','testuser')
-  });
+  //   const result = await cloudfirestore.transactionPlaceOrder({
+  //     userid: userTestId,
+  //     username: 'Adrian',
+  //     localDeliveryAddress: 'Test City',
+  //     locallatitude: 1.24,
+  //     locallongitude: 2.112,
+  //     localphonenumber: '09178927206',
+  //     localname: 'Adrian Ladia',
+  //     orderDate: new Date(),
+  //     cart: [
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //     ],
+  //     itemstotal: itemsTotal,
+  //     vat: vat,
+  //     shippingtotal: 2002,
+  //     grandTotal: 62002,
+  //     reference: 'testref1234',
+  //     userphonenumber: '09178927206',
+  //     deliveryNotes: 'Test',
+  //     totalWeight: 122,
+  //     deliveryVehicle: 'Sedan',
+  //     needAssistance: true,
+  //   });
 
-  test('readAllProductsForOnlineStore', async () => {
-    const products = await cloudfirestore.readAllProductsForOnlineStore();
-    await delay(300);
+  //   await delay(300)
 
-    expect(products).toBeInstanceOf(Array);
-    expect(products.length).toBeGreaterThan(0);
-  });
+  //   const req = {
+  //     totalAmount: {
+  //       value: 25110,
+  //       currency: 'PHP',
+  //     },
+  //     buyer: {
+  //       contact: {
+  //         email: 'ladia.adrian@gmail.com',
+  //         phone: '09178927206',
+  //       },
+  //       shippingAddress: {
+  //         line1: 'Cebu',
+  //         line2: 'Cebu City',
+  //         countryCode: 'PH',
+  //       },
+  //       firstName: 'Adrian',
+  //       lastName: 'Ladia',
+  //     },
+  //     redirectUrl: {
+  //       success: 'http://localhost:5173/checkoutSuccess',
+  //       failure: 'http://localhost:5173/checkoutFailed',
+  //       cancel: 'http://localhost:5173/checkoutCancelled',
+  //     },
+  //     requestReferenceNumber: 'testref1234',
+  //     metadata: {
+  //       userId: userTestId,
+  //     },
+  //   };
+  //   const res = await cloudfirestore.testPayMayaWebHookSuccess(req);
+  //   await delay(300)
+  //   const data = res.data;
+  //   expect(data).toEqual('success');
 
-  test('checkifuseridexist', async () => {
-    const user = await cloudfirestore.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
-    await delay(300);
-    expect(user).toEqual(true);
-    const falseUser = await cloudfirestore.checkIfUserIdAlreadyExist('testfalseuser12432456436');
-    await delay(300);
-    expect(falseUser).toEqual(false);
-  });
-  test('transactionPlaceOrder', async () => {
-    await firestore.createProduct(
-      {
-        itemId: 'test',
-        itemName: 'testname',
-        unit: 'bale',
-        price: 1000,
-        description: 'none',
-        weight: 10,
-        dimensions: '10x12',
-        category: 'Paper Bag',
-        imageLinks: ['testlink'],
-        brand: 'testbrand',
-        pieces: 1999,
-        color: 'red',
-        material: 'material',
-        size: '10',
-        stocksAvailable: 23,
-        stocksOnHold: [],
-        averageSalesPerDay: 0,
-        parentProductID: 'test',
-        stocksOnHoldCompleted: [],
-        forOnlineStore: true,
-        isCustomized: false,
-        salesPerMonth: [],
-        stocksIns: [],
-      },
-      'test'
-    );
-    await firestore.createProduct(
-      {
-        itemId: 'test2',
-        itemName: 'testname',
-        unit: 'bale',
-        price: 500,
-        description: 'none',
-        weight: 10,
-        dimensions: '10x12',
-        category: 'Paper Bag',
-        imageLinks: ['testlink'],
-        brand: 'testbrand',
-        pieces: 1999,
-        color: 'red',
-        material: 'material',
-        size: '10',
-        stocksAvailable: 23,
-        stocksOnHold: [],
-        averageSalesPerDay: 0,
-        parentProductID: 'test',
-        stocksOnHoldCompleted: [],
-        forOnlineStore: true,
-        isCustomized: false,
-        salesPerMonth: [],
-        stocksIns: [],
-      },
-      'test2'
-    );
-    await firestore.createNewUser(
-      {
-        uid: 'testuser',
-        name: 'test',
-        email: 'test@gmail.com',
-        emailVerified: true,
-        phoneNumber: '09178927206',
-        deliveryAddress: [],
-        contactPerson: [],
-        isAnonymous: false,
-        orders: [],
-        cart: [],
-        favoriteItems: [],
-        payments: [],
-        userRole: 'member',
-      },
-      'testuser'
-    );
+  //   const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
+  //   const orders = user.orders;
+  //   const payments = user.payments;
 
-    await delay(500);
+ 
+  //   orders.map((order) => {
+  //     if (order.reference == 'testref1234') {
+  //       expect(order.paid).toEqual(true);
+  //     }
+  //   });
 
-    let data = {
-      userid: 'testuser',
-      username: 'testname',
-      localDeliveryAddress: 'PPB',
-      locallatitude: 1.12,
-      locallongitude: 1.3,
-      localphonenumber: '09138927206',
-      localname: 'Contact Person',
-      orderDate: new Date(),
-      cart: ['test', 'test', 'test', 'test2'],
-      itemstotal: 3125,
-      vat: 375,
-      shippingtotal: 200,
-      grandTotal: 3700,
-      reference: 'testref1234567',
-      userphonenumber: '',
-      deliveryNotes: 'none',
-      totalWeight: 50,
-      deliveryVehicle: 'motorcycle',
-      needAssistance: true,
-    };
-    await cloudfirestore.transactionPlaceOrder(data);
-    await delay(500);
+  //   let found1 = false;
+  //   payments.map((payment) => {
+  //     if (payment.reference == 'testref1234') {
+  //       found1 = true
+  //     }
+  //   })
 
-    const testUser = await firestore.readSelectedDataFromCollection('Users', 'testuser');
-    const deliveryAddress = testUser.deliveryAddress;
-    const contactPerson = testUser.contactPerson;
-    const orders = testUser.orders;
+  //   expect(found1).toEqual(true);
 
-    expect(deliveryAddress).length(1);
-    expect(contactPerson).length(1);
-    expect(orders).length(1);
+  //   await cloudfirestore.transactionPlaceOrder({
+  //     userid: userTestId,
+  //     username: 'Adrian',
+  //     localDeliveryAddress: 'Test City',
+  //     locallatitude: 1.24,
+  //     locallongitude: 2.112,
+  //     localphonenumber: '09178927206',
+  //     localname: 'Adrian Ladia',
+  //     orderDate: new Date(),
+  //     cart: [
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //     ],
+  //     itemstotal: itemsTotal,
+  //     vat: vat,
+  //     shippingtotal: 2002,
+  //     grandTotal: 62002,
+  //     reference: 'testref12345',
+  //     userphonenumber: '09178927206',
+  //     deliveryNotes: 'Test',
+  //     totalWeight: 122,
+  //     deliveryVehicle: 'Sedan',
+  //     needAssistance: true,
+  //   });
+  //   await delay(300)
 
-    data = {
-      userid: 'testuser',
-      username: 'testname',
-      localDeliveryAddress: 'PPB',
-      locallatitude: 1.12,
-      locallongitude: 1.3,
-      localphonenumber: '09138927206',
-      localname: 'Contact Person 2',
-      orderDate: new Date(),
-      cart: ['test', 'test', 'test', 'test2'],
-      itemstotal: 3125,
-      vat: 375,
-      shippingtotal: 200,
-      grandTotal: 3700,
-      reference: 'testref1234567',
-      userphonenumber: '',
-      deliveryNotes: 'none',
-      totalWeight: 50,
-      deliveryVehicle: 'motorcycle',
-      needAssistance: true,
-    };
-    await cloudfirestore.transactionPlaceOrder(data);
-    await delay(500);
+  //   const user2 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+  //   const user2orders = user2.orders;
 
-    const testUser2 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
-    const deliveryAddress2 = testUser2.deliveryAddress;
-    const contactPerson2 = testUser2.contactPerson;
-    const orders2 = testUser2.orders;
+  //   user2orders.map((order) => {
+  //     if (order.reference == 'testref12345') {
+  //       expect(order.paid).toEqual(false);
+  //     }
+  //   });
 
-    expect(deliveryAddress2).length(1);
-    expect(contactPerson2).length(2);
-    expect(orders2).length(2);
+  //   const req2 = {
+  //     totalAmount: {
+  //       value: 25110,
+  //       currency: 'PHP',
+  //     },
+  //     buyer: {
+  //       contact: {
+  //         email: 'ladia.adrian@gmail.com',
+  //         phone: '09178927206',
+  //       },
+  //       shippingAddress: {
+  //         line1: 'Cebu',
+  //         line2: 'Cebu City',
+  //         countryCode: 'PH',
+  //       },
+  //       firstName: 'Adrian',
+  //       lastName: 'Ladia',
+  //     },
+  //     redirectUrl: {
+  //       success: 'http://localhost:5173/checkoutSuccess',
+  //       failure: 'http://localhost:5173/checkoutFailed',
+  //       cancel: 'http://localhost:5173/checkoutCancelled',
+  //     },
+  //     requestReferenceNumber: 'testref12345',
+  //     metadata: {
+  //       userId: userTestId,
+  //     },
+  //   };
 
-    data = {
-      userid: 'testuser',
-      username: 'testname',
-      localDeliveryAddress: 'PPB2',
-      locallatitude: 1.12,
-      locallongitude: 1.3,
-      localphonenumber: '09138927206',
-      localname: 'Contact Person 2',
-      orderDate: new Date(),
-      cart: ['test', 'test', 'test', 'test2'],
-      itemstotal: 3125,
-      vat: 375,
-      shippingtotal: 200,
-      grandTotal: 3700,
-      reference: 'testref1234567',
-      userphonenumber: '',
-      deliveryNotes: 'none',
-      totalWeight: 50,
-      deliveryVehicle: 'motorcycle',
-      needAssistance: true,
-    };
-    await cloudfirestore.transactionPlaceOrder(data);
-    await delay(300);
+  //   const res2 = await cloudfirestore.testPayMayaWebHookSuccess(req2);
+  //   await delay(300)
+  //   const data2 = res2.data;
+  //   expect(data2).toEqual('success');
 
-    const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
-    const deliveryAddress3 = testUser3.deliveryAddress;
-    const contactPerson3 = testUser3.contactPerson;
-    const orders3 = testUser3.orders;
+  //   const user3 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+  //   const user3orders = user3.orders;
+  //   const user3payments = user3.payments;
 
-    expect(deliveryAddress3).length(2);
-    expect(contactPerson3).length(2);
-    expect(orders3).length(3);
+  //   found1 = false
+  //   user3payments.map((payment) => {
+  //     if (payment.reference == 'testref12345') {
+  //       found1 = true
+  //     }
+  //   });
 
-    await firestore.deleteUserByUserId('testuser');
-    await firestore.deleteProduct('test');
-    await firestore.deleteProduct('test2');
-  }, 100000);
+  //   expect(found1).toEqual(true);
 
-  test('createNewUser', async () => {
-    await cloudfirestore.createNewUser(
-      {
-        uid: 'testuser',
-        name: 'Test User',
-        email: 'test@gmail.com',
-        emailVerified: true,
-        phoneNumber: '',
-        deliveryAddress: [],
-        contactPerson: [],
-        isAnonymous: false,
-        orders: [],
-        cart: [],
-        favoriteItems: [],
-        payments: [],
-        userRole: 'member',
-      },
-      'testuser'
-    );
-    await delay(100);
-    const user = await cloudfirestore.readSelectedDataFromCollection('Users', 'testuser');
-    const email = user.email;
-    await delay(100);
-    expect(email).toEqual('test@gmail.com');
-    await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser');
-  });
+  //   user3orders.map((order) => {
+  //     if (order.reference == 'testref12345') {
+  //       expect(order.paid).toEqual(true);
+  //     }
+  //   });
 
-  test('readSelectedUserById', async () => {
-    await cloudfirestore.createNewUser(
-      {
-        uid: 'testuser2',
-        name: 'Test User',
-        email: 'test@gmail.com',
-        emailVerified: true,
-        phoneNumber: '',
-        deliveryAddress: [],
-        contactPerson: [],
-        isAnonymous: false,
-        orders: [],
-        cart: [],
-        favoriteItems: [],
-        payments: [],
-        userRole: 'member',
-      },
-      'testuser2'
-    );
+  //   expect(user3orders.length).toEqual(2);
 
-    await delay(100);
-    const user = await cloudfirestore.readSelectedUserById('testuser2');
-    const email = user.email;
-    await delay(100);
-    expect(email).toEqual('test@gmail.com');
-    await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser2');
-  });
+  //   await cloudfirestore.transactionPlaceOrder({
+  //     userid: userTestId,
+  //     username: 'Adrian',
+  //     localDeliveryAddress: 'Test City',
+  //     locallatitude: 1.24,
+  //     locallongitude: 2.112,
+  //     localphonenumber: '09178927206',
+  //     localname: 'Adrian Ladia',
+  //     orderDate: new Date(),
+  //     cart: [
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //     ],
+  //     itemstotal: itemsTotal,
+  //     vat: vat,
+  //     shippingtotal: 2002,
+  //     grandTotal: 62002,
+  //     reference: 'testref123456',
+  //     userphonenumber: '09178927206',
+  //     deliveryNotes: 'Test',
+  //     totalWeight: 122,
+  //     deliveryVehicle: 'Sedan',
+  //     needAssistance: true,
+  //   });
 
-  test('readUserRole', async () => {
-    const userIds = await cloudfirestore.readAllIdsFromCollection('Users');
-    const userRolesPromises = userIds.map(async (userId) => {
-      return await cloudfirestore.readUserRole(userId);
-    });
-    const userRoles = await Promise.all(userRolesPromises);
-    const roles = ['member', 'admin', 'superAdmin'];
-    userRoles.map((userRole) => {
-      console.log(userRole);
-      expect(roles.includes(userRole)).toEqual(true);
-    });
-  });
+  //   await cloudfirestore.transactionPlaceOrder({
+  //     userid: userTestId,
+  //     username: 'Adrian',
+  //     localDeliveryAddress: 'Test City',
+  //     locallatitude: 1.24,
+  //     locallongitude: 2.112,
+  //     localphonenumber: '09178927206',
+  //     localname: 'Adrian Ladia',
+  //     orderDate: new Date(),
+  //     cart: [
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //     ],
+  //     itemstotal: itemsTotal,
+  //     vat: vat,
+  //     shippingtotal: 2002,
+  //     grandTotal: 62002,
+  //     reference: 'testref1234567',
+  //     userphonenumber: '09178927206',
+  //     deliveryNotes: 'Test',
+  //     totalWeight: 122,
+  //     deliveryVehicle: 'Sedan',
+  //     needAssistance: true,
+  //   });
+
+  //   await cloudfirestore.transactionPlaceOrder({
+  //     userid: userTestId,
+  //     username: 'Adrian',
+  //     localDeliveryAddress: 'Test City',
+  //     locallatitude: 1.24,
+  //     locallongitude: 2.112,
+  //     localphonenumber: '09178927206',
+  //     localname: 'Adrian Ladia',
+  //     orderDate: new Date(),
+  //     cart: [
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //       'PPB#16',
+  //     ],
+  //     itemstotal: itemsTotal,
+  //     vat: vat,
+  //     shippingtotal: 2002,
+  //     grandTotal: 62002,
+  //     reference: 'testref12345678',
+  //     userphonenumber: '09178927206',
+  //     deliveryNotes: 'Test',
+  //     totalWeight: 122,
+  //     deliveryVehicle: 'Sedan',
+  //     needAssistance: true,
+  //   });
+
+  //   const req3 = {
+  //     totalAmount: {
+  //       value: 25110,
+  //       currency: 'PHP',
+  //     },
+  //     buyer: {
+  //       contact: {
+  //         email: 'ladia.adrian@gmail.com',
+  //         phone: '09178927206',
+  //       },
+  //       shippingAddress: {
+  //         line1: 'Cebu',
+  //         line2: 'Cebu City',
+  //         countryCode: 'PH',
+  //       },
+  //       firstName: 'Adrian',
+  //       lastName: 'Ladia',
+  //     },
+  //     redirectUrl: {
+  //       success: 'http://localhost:5173/checkoutSuccess',
+  //       failure: 'http://localhost:5173/checkoutFailed',
+  //       cancel: 'http://localhost:5173/checkoutCancelled',
+  //     },
+  //     requestReferenceNumber: 'testref12345678',
+  //     metadata: {
+  //       userId: userTestId,
+  //     },
+  //   };
+
+  //   const res3 = await cloudfirestore.testPayMayaWebHookSuccess(req3);
+  //   await delay(300)
+  //   const data3 = res3.data;
+  //   expect(data3).toEqual('success');
+
+  //   const user4 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+  //   const user4orders = user4.orders;
+  //   const user4payments = user4.payments;
+
+  //   user4orders.map((order) => {
+  //     if (order.reference == 'testref1234') {
+  //       expect(order.paid).toEqual(true);
+  //     }
+  //     if (order.reference == 'testref12345') {
+  //       expect(order.paid).toEqual(true);
+  //     }
+  //     if (order.reference == 'testref123456') {
+  //       expect(order.paid).toEqual(false);
+  //     }
+  //     if (order.reference == 'testref1234567') {
+  //       expect(order.paid).toEqual(false);
+  //     }
+  //     if (order.reference == 'testref12345678') {
+  //       expect(order.paid).toEqual(true);
+  //     }
+  //   })
+
+  //   expect(user4payments.length).toEqual(3);
+
+  //   await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+  //   await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+  // },1000000000);
+  // test('changeUserRole', async () => {
+  //   await cloudfirestore.createNewUser({
+  //     uid: 'testuser',
+  //     name: 'test',
+  //     email: 'test@gmail.com',
+  //     emailVerified: true,
+  //     phoneNumber: '09178927206',
+  //     deliveryAddress: [],
+  //     contactPerson: [],
+  //     isAnonymous: false,
+  //     orders: [],
+  //     cart: [],
+  //     favoriteItems: [],
+  //     payments: [],
+  //     userRole: 'member',
+  //   },'testuser')
+  //   await delay(300);
+  //   await cloudfirestore.changeUserRole('testuser', 'admin');
+  //   await delay(300);
+  //   const user = await cloudfirestore.readSelectedUserById('testuser')
+  //   await delay(300);
+  //   expect(user.userRole).toEqual('admin');
+  //   await cloudfirestore.changeUserRole('testuser', 'member');
+  //   await delay(300);
+  //   const user2 = await cloudfirestore.readSelectedUserById('testuser')
+  //   await delay(300);
+  //   expect(user2.userRole).toEqual('member');
+  //   await cloudfirestore.deleteDocumentFromCollection('Users','testuser')
+  // });
+
+  // test('readAllProductsForOnlineStore', async () => {
+  //   const products = await cloudfirestore.readAllProductsForOnlineStore();
+  //   await delay(300);
+
+  //   expect(products).toBeInstanceOf(Array);
+  //   expect(products.length).toBeGreaterThan(0);
+  // });
+
+  // test('checkifuseridexist', async () => {
+  //   const user = await cloudfirestore.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+  //   await delay(300);
+  //   expect(user).toEqual(true);
+  //   const falseUser = await cloudfirestore.checkIfUserIdAlreadyExist('testfalseuser12432456436');
+  //   await delay(300);
+  //   expect(falseUser).toEqual(false);
+  // });
+  // test('transactionPlaceOrder', async () => {
+  //   await firestore.createProduct(
+  //     {
+  //       itemId: 'test',
+  //       itemName: 'testname',
+  //       unit: 'bale',
+  //       price: 1000,
+  //       description: 'none',
+  //       weight: 10,
+  //       dimensions: '10x12',
+  //       category: 'Paper Bag',
+  //       imageLinks: ['testlink'],
+  //       brand: 'testbrand',
+  //       pieces: 1999,
+  //       color: 'red',
+  //       material: 'material',
+  //       size: '10',
+  //       stocksAvailable: 23,
+  //       stocksOnHold: [],
+  //       averageSalesPerDay: 0,
+  //       parentProductID: 'test',
+  //       stocksOnHoldCompleted: [],
+  //       forOnlineStore: true,
+  //       isCustomized: false,
+  //       salesPerMonth: [],
+  //       stocksIns: [],
+  //     },
+  //     'test'
+  //   );
+  //   await firestore.createProduct(
+  //     {
+  //       itemId: 'test2',
+  //       itemName: 'testname',
+  //       unit: 'bale',
+  //       price: 500,
+  //       description: 'none',
+  //       weight: 10,
+  //       dimensions: '10x12',
+  //       category: 'Paper Bag',
+  //       imageLinks: ['testlink'],
+  //       brand: 'testbrand',
+  //       pieces: 1999,
+  //       color: 'red',
+  //       material: 'material',
+  //       size: '10',
+  //       stocksAvailable: 23,
+  //       stocksOnHold: [],
+  //       averageSalesPerDay: 0,
+  //       parentProductID: 'test',
+  //       stocksOnHoldCompleted: [],
+  //       forOnlineStore: true,
+  //       isCustomized: false,
+  //       salesPerMonth: [],
+  //       stocksIns: [],
+  //     },
+  //     'test2'
+  //   );
+  //   await firestore.createNewUser(
+  //     {
+  //       uid: 'testuser',
+  //       name: 'test',
+  //       email: 'test@gmail.com',
+  //       emailVerified: true,
+  //       phoneNumber: '09178927206',
+  //       deliveryAddress: [],
+  //       contactPerson: [],
+  //       isAnonymous: false,
+  //       orders: [],
+  //       cart: [],
+  //       favoriteItems: [],
+  //       payments: [],
+  //       userRole: 'member',
+  //     },
+  //     'testuser'
+  //   );
+
+  //   await delay(500);
+
+  //   let data = {
+  //     userid: 'testuser',
+  //     username: 'testname',
+  //     localDeliveryAddress: 'PPB',
+  //     locallatitude: 1.12,
+  //     locallongitude: 1.3,
+  //     localphonenumber: '09138927206',
+  //     localname: 'Contact Person',
+  //     orderDate: new Date(),
+  //     cart: ['test', 'test', 'test', 'test2'],
+  //     itemstotal: 3125,
+  //     vat: 375,
+  //     shippingtotal: 200,
+  //     grandTotal: 3700,
+  //     reference: 'testref1234567',
+  //     userphonenumber: '',
+  //     deliveryNotes: 'none',
+  //     totalWeight: 50,
+  //     deliveryVehicle: 'motorcycle',
+  //     needAssistance: true,
+  //   };
+  //   await cloudfirestore.transactionPlaceOrder(data);
+  //   await delay(500);
+
+  //   const testUser = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+  //   const deliveryAddress = testUser.deliveryAddress;
+  //   const contactPerson = testUser.contactPerson;
+  //   const orders = testUser.orders;
+
+  //   expect(deliveryAddress).length(1);
+  //   expect(contactPerson).length(1);
+  //   expect(orders).length(1);
+
+  //   data = {
+  //     userid: 'testuser',
+  //     username: 'testname',
+  //     localDeliveryAddress: 'PPB',
+  //     locallatitude: 1.12,
+  //     locallongitude: 1.3,
+  //     localphonenumber: '09138927206',
+  //     localname: 'Contact Person 2',
+  //     orderDate: new Date(),
+  //     cart: ['test', 'test', 'test', 'test2'],
+  //     itemstotal: 3125,
+  //     vat: 375,
+  //     shippingtotal: 200,
+  //     grandTotal: 3700,
+  //     reference: 'testref1234567',
+  //     userphonenumber: '',
+  //     deliveryNotes: 'none',
+  //     totalWeight: 50,
+  //     deliveryVehicle: 'motorcycle',
+  //     needAssistance: true,
+  //   };
+  //   await cloudfirestore.transactionPlaceOrder(data);
+  //   await delay(500);
+
+  //   const testUser2 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+  //   const deliveryAddress2 = testUser2.deliveryAddress;
+  //   const contactPerson2 = testUser2.contactPerson;
+  //   const orders2 = testUser2.orders;
+
+  //   expect(deliveryAddress2).length(1);
+  //   expect(contactPerson2).length(2);
+  //   expect(orders2).length(2);
+
+  //   data = {
+  //     userid: 'testuser',
+  //     username: 'testname',
+  //     localDeliveryAddress: 'PPB2',
+  //     locallatitude: 1.12,
+  //     locallongitude: 1.3,
+  //     localphonenumber: '09138927206',
+  //     localname: 'Contact Person 2',
+  //     orderDate: new Date(),
+  //     cart: ['test', 'test', 'test', 'test2'],
+  //     itemstotal: 3125,
+  //     vat: 375,
+  //     shippingtotal: 200,
+  //     grandTotal: 3700,
+  //     reference: 'testref1234567',
+  //     userphonenumber: '',
+  //     deliveryNotes: 'none',
+  //     totalWeight: 50,
+  //     deliveryVehicle: 'motorcycle',
+  //     needAssistance: true,
+  //   };
+  //   await cloudfirestore.transactionPlaceOrder(data);
+  //   await delay(300);
+
+  //   const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+  //   const deliveryAddress3 = testUser3.deliveryAddress;
+  //   const contactPerson3 = testUser3.contactPerson;
+  //   const orders3 = testUser3.orders;
+
+  //   expect(deliveryAddress3).length(2);
+  //   expect(contactPerson3).length(2);
+  //   expect(orders3).length(3);
+
+  //   await firestore.deleteUserByUserId('testuser');
+  //   await firestore.deleteProduct('test');
+  //   await firestore.deleteProduct('test2');
+  // }, 100000);
+
+  // test('createNewUser', async () => {
+  //   await cloudfirestore.createNewUser(
+  //     {
+  //       uid: 'testuser',
+  //       name: 'Test User',
+  //       email: 'test@gmail.com',
+  //       emailVerified: true,
+  //       phoneNumber: '',
+  //       deliveryAddress: [],
+  //       contactPerson: [],
+  //       isAnonymous: false,
+  //       orders: [],
+  //       cart: [],
+  //       favoriteItems: [],
+  //       payments: [],
+  //       userRole: 'member',
+  //     },
+  //     'testuser'
+  //   );
+  //   await delay(100);
+  //   const user = await cloudfirestore.readSelectedDataFromCollection('Users', 'testuser');
+  //   const email = user.email;
+  //   await delay(100);
+  //   expect(email).toEqual('test@gmail.com');
+  //   await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser');
+  // });
+
+  // test('readSelectedUserById', async () => {
+  //   await cloudfirestore.createNewUser(
+  //     {
+  //       uid: 'testuser2',
+  //       name: 'Test User',
+  //       email: 'test@gmail.com',
+  //       emailVerified: true,
+  //       phoneNumber: '',
+  //       deliveryAddress: [],
+  //       contactPerson: [],
+  //       isAnonymous: false,
+  //       orders: [],
+  //       cart: [],
+  //       favoriteItems: [],
+  //       payments: [],
+  //       userRole: 'member',
+  //     },
+  //     'testuser2'
+  //   );
+
+  //   await delay(100);
+  //   const user = await cloudfirestore.readSelectedUserById('testuser2');
+  //   const email = user.email;
+  //   await delay(100);
+  //   expect(email).toEqual('test@gmail.com');
+  //   await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser2');
+  // });
+
+  // test('readUserRole', async () => {
+  //   const userIds = await cloudfirestore.readAllIdsFromCollection('Users');
+  //   const userRolesPromises = userIds.map(async (userId) => {
+  //     return await cloudfirestore.readUserRole(userId);
+  //   });
+  //   const userRoles = await Promise.all(userRolesPromises);
+  //   const roles = ['member', 'admin', 'superAdmin'];
+  //   userRoles.map((userRole) => {
+  //     console.log(userRole);
+  //     expect(roles.includes(userRole)).toEqual(true);
+  //   });
+  // });
 });
-
 
 describe('retryApiCall', () => {
   test('retryApiCall', async () => {
     function testApiCallTrue() {
-      return true
+      return true;
     }
 
     function testApiCallFalse() {
-      throw new Error('test error')
+      throw new Error('test error');
     }
 
-    const result = await retryApi( () => testApiCallTrue());
+    const result = await retryApi(() => testApiCallTrue());
     expect(result).toEqual(true);
 
     await expect(async () => {
-      await retryApi(() => testApiCallFalse(),2);
+      await retryApi(() => testApiCallFalse(), 2);
     }).rejects.toThrowError(Error);
-
   }, 10000000);
 });

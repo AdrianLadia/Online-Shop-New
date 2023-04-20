@@ -3,15 +3,14 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({ origin: true });
-const express = require("express");
+const express = require('express');
 const app = express();
 const Joi = require('joi');
 
 admin.initializeApp();
 
-app.use(corsHandler)
-app.use(express.json())
-
+app.use(corsHandler);
+app.use(express.json());
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
@@ -70,20 +69,17 @@ function getValueAddedTax(totalPrice) {
 exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
-      const userid = req.query.data
-      console.log(userid)
+      const userid = req.query.data;
+      console.log(userid);
       const db = admin.firestore();
       const user = await db.collection('Users').doc(userid).get();
       const userRole = user.data().userRole;
-      console.log(userRole)
+      console.log(userRole);
       res.send(userRole);
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
       res.status(400).send('Error reading user role. Please try again later');
     }
-
-    
   });
 });
 
@@ -94,19 +90,19 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
       const db = admin.firestore();
       const productsRef = db.collection('Products');
       const forOnlineStoreQuery = productsRef.where('forOnlineStore', '==', true);
-  
+
       // Fetch and process the documents
       const querySnapshot = await forOnlineStoreQuery.get();
       console.log('querySnapshot', querySnapshot);
       const products = [];
       querySnapshot.forEach((doc) => {
         // Add each product to the products array along with its document ID
-        const data = doc.data()
+        const data = doc.data();
         const productObject = {
           averageSalesPerDay: data.averageSalesPerDay,
-          brand: data.brand, 
+          brand: data.brand,
           category: data.category,
-          color: data.color, 
+          color: data.color,
           description: data.description,
           dimensions: data.dimensions,
           imageLinks: data.imageLinks,
@@ -120,20 +116,162 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
           size: data.size,
           stocksAvailable: data.stocksAvailable,
           unit: data.unit,
-          weight: data.weight
-        }
+          weight: data.weight,
+        };
         products.push(productObject);
       });
-  
+
       // Send the products array as a JSON response
       res.status(200).send(products);
-    }
-    catch (error) {
+    } catch (error) {
       res.status(400).send('Error reading products. Please try again later');
     }
     // return res.json({status: 'ok'})
   });
 });
+
+// #########
+// async transactionCreatePayment(userid, amount, reference, paymentprovider) {
+
+//   const userIdSchema = Joi.string().required();
+//   const amountSchema = Joi.number().required();
+//   const referenceSchema = Joi.string().required();
+//   const paymentproviderSchema = Joi.string().required();
+
+//   console.log(typeof(amount))
+//   console.log(amount)
+
+//   const {error1} = userIdSchema.validate(userid);
+
+//   const {error2} = amountSchema.validate(amount);
+
+//   const {error3} = referenceSchema.validate(reference);
+
+//   const {error4} = paymentproviderSchema.validate(paymentprovider);
+
+//   if(error1 || error2 || error3 || error4){
+//     console.log(error1, error2, error3, error4)
+//     throw new Error("Data Validation Error")
+//   }
+
+//   const docRef = doc(this.db, "Users" + "/", userid);
+//   try {
+//     await runTransaction(this.db, async (transaction) => {
+//       // READ
+//       const doc = await transaction.get(docRef);
+//       const orders = doc.data().orders;
+//       const payments = doc.data().payments;
+
+//       const data = [];
+//       let totalpayments = parseFloat(amount);
+
+//       payments.map((payment) => {
+//         data.push(payment);
+//         console.log(parseFloat(payment.amount));
+//         totalpayments += parseFloat(payment.amount);
+//       });
+
+//       orders.sort((a, b) => {
+//         return (
+//           new Date(a.orderDate.seconds * 1000).getTime() -
+//           new Date(b.orderDate.seconds * 1000).getTime()
+//         );
+//       });
+
+//       console.log("Total Payments: ", totalpayments);
+//       orders.map((order) => {
+//         totalpayments -= parseFloat(order.grandTotal);
+//         totalpayments = Math.round(totalpayments);
+//         if (totalpayments >= 0) {
+//           console.log("Order Paid");
+//           console.log(order.reference);
+//           if (order.paid == false) {
+//             console.log(
+//               "Updating Order to Paid with reference ",
+//               order.reference
+//             );
+//             // WRITE
+//             transaction.update(docRef, {
+//               ["orders"]: arrayRemove(order),
+//             });
+//             order.paid = true;
+//             // WRITE
+//             transaction.update(docRef, {
+//               ["orders"]: arrayUnion(order),
+//             });
+//             console.log(order);
+//           }
+//         }
+//         if (order.paid == true && totalpayments < 0) {
+//           console.log("Order Was Paid but now unpaid");
+//           console.log(order.reference);
+//           // WRITE
+//           transaction.update(docRef, {
+//             ["orders"]: arrayRemove(order),
+//           });
+//           order.paid = false;
+//           // WRITE
+//           transaction.update(docRef, {
+//             ["orders"]: arrayUnion(order),
+//           });
+//           console.log(order);
+//         }
+//       });
+
+//       // WRITE
+//       transaction.update(docRef, {
+//         ['payments']: arrayUnion({
+//           date: new Date(),
+//           amount: amount,
+//           reference: reference,
+//           paymentprovider: paymentprovider,
+//         }),
+//       });
+//     });
+//     console.log("Transaction successfully committed!");
+//   } catch (e) {
+//     console.log("Transaction failed: ", e);
+//   }
+// }
+
+exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      console.log('running transactionCreatePayment');
+  
+      const db = admin.firestore();
+      const userRef = await db.collection('Users').doc(userid).get();
+      const userData = userRef.data();
+      const oldPayments = userData.payments;
+
+      
+      const data = parseData(req.query.data);
+      console.log(data)
+      const userid = data.userid;
+      const amount = data.amount;
+      const reference = data.reference;
+      const paymentprovider = data.paymentprovider;
+
+
+      const newPayments = [...oldPayments, data];
+
+      console.log('new Payments', newPayments)
+
+      await db
+        .collection('Users')
+        .doc(userid)
+        .update({
+          ['payments']: newPayments,
+        });
+
+      res.status(200).send('success');
+    } catch (error) {
+      res.status(400).send('Error creating payment. Please try again later');
+    }
+  });
+});
+
+// ##############
 
 exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -174,8 +312,10 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
       itemsTotalBackEnd += total;
     }
 
-    if (itemsTotalBackEnd != itemstotal+vat) {
-      
+    console.log(itemsTotalBackEnd);
+    console.log(itemstotal + vat);
+
+    if (itemsTotalBackEnd != itemstotal + vat) {
       console.log('itemsTotalBackEnd != itemstotal');
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
@@ -188,7 +328,6 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
     }
 
     if (shippingtotal < 0) {
-
       res.status(400).send('Invalid data submitted. Please try again later');
       return;
     }
@@ -241,33 +380,36 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         const userData = user.data();
         const deliveryAddress = userData.deliveryAddress;
         const contactPerson = userData.contactPerson;
-        const cartUniqueItems = Array.from(new Set(data.cart))
-        const ordersOnHold = {}
-        const currentInventory = {}
+        const cartUniqueItems = Array.from(new Set(data.cart));
+        const ordersOnHold = {};
+        const currentInventory = {};
 
-        await Promise.all(cartUniqueItems.map(async(c) => {
-          const productRef = db.collection('Products').doc(c)
-          const productdoc = await transaction.get(productRef);
-          // currentInventory.push(productdoc.data().stocksAvailable)
-          ordersOnHold[c] = productdoc.data().stocksOnHold
-          currentInventory[c] = productdoc.data().stocksAvailable
-        }))
+        await Promise.all(
+          cartUniqueItems.map(async (c) => {
+            const productRef = db.collection('Products').doc(c);
+            const productdoc = await transaction.get(productRef);
+            // currentInventory.push(productdoc.data().stocksAvailable)
+            ordersOnHold[c] = productdoc.data().stocksOnHold;
+            currentInventory[c] = productdoc.data().stocksAvailable;
+          })
+        );
 
-        
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
-        await Promise.all(cartUniqueItems.map(async (itemId) => {
-          const prodref = db.collection('Products').doc(itemId)
-          const orderQuantity = data.cart.filter((c) => c == itemId).length
-          const newStocksAvailable = currentInventory[itemId] - orderQuantity
-          console.log(ordersOnHold)
-          console.log(itemId)
-          const oldOrdersOnHold = ordersOnHold[itemId]
-          const newOrderOnHold = {reference:reference,quantity:orderQuantity,userId:userid}
-          const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold]
-          transaction.update(prodref, {['stocksOnHold']: oldAndNewOrdersOnHold});
-          transaction.update(prodref, {['stocksAvailable']: newStocksAvailable});
-        }))
+        await Promise.all(
+          cartUniqueItems.map(async (itemId) => {
+            const prodref = db.collection('Products').doc(itemId);
+            const orderQuantity = data.cart.filter((c) => c == itemId).length;
+            const newStocksAvailable = currentInventory[itemId] - orderQuantity;
+            console.log(ordersOnHold);
+            console.log(itemId);
+            const oldOrdersOnHold = ordersOnHold[itemId];
+            const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
+            const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
+            transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
+            transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
+          })
+        );
 
         // WRITE TO DELIVER ADDRESS LIST
         let addressexists = false;
@@ -522,52 +664,65 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
   }
 });
 
-
 // Expose the Express app as a Cloud Function
 exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
-  if (req.method !== 'POST') {
-    res.status(405).send('Method Not Allowed');
-    return;
-  }
+  corsHandler(req, res, async () => {
+    if (req.method !== 'POST') {
+      res.status(405).send('Method Not Allowed');
+      return;
+    }
 
-  // TODO: You will have to implement the logic of this method.
-  console.log(req.body);
-  const totalAmount = req.body.totalAmount.value
-  const userId = req.body.metadata.userId
-  const referenceNumber = req.body.requestReferenceNumber
+    // TODO: You will have to implement the logic of this method.
+    // console.log(req.body);
+    const totalAmount = req.body.totalAmount.value;
+    const userId = req.body.metadata.userId;
+    const referenceNumber = req.body.requestReferenceNumber;
 
-  const db = admin.firestore();
+    const db = admin.firestore();
 
     try {
-      db.runTransaction(async (t) => {
+      db.runTransaction(async (transaction) => {
         // READ
-        const userRef = db.collection('Users').doc(userId)
-        const user = transaction.get(userRef)
-        const userData = user.data()
-        const oldPayments = userData.payments
+        const userRef = db.collection('Users').doc(userId);
+        const user = await transaction.get(userRef);
+        const userData = user.data();
+        // console.log(userData);
+        const oldOrders = userData.orders;
+        const oldPayments = userData.payments;
         const payment = {
           date: new Date(),
           amount: totalAmount,
-          reference : referenceNumber,
-          paymentprovider : 'Maya'
-        }
-        const newPayments = [...oldPayments, payment]
+          reference: referenceNumber,
+          paymentprovider: 'Maya',
+        };
+
         // WRITE
-        transaction.update(userRef, {['payments']: newPayments})
+        // Add new payment
+        const newPayments = [...oldPayments, payment];
+        transaction.update(userRef, { ['payments']: newPayments });
 
-        // UPDATE ORDER IF PAID OR NOT
+        // Find the order and mark as paid
 
-      })
-      res.json({ result: `Document with ID: ${id} added.` });
+        let orderToUpdate = oldOrders.find((order) => order.reference === referenceNumber);
+        orderToUpdate.paid = true;
+
+        if (orderToUpdate == null) {
+          res.status(500).send('Unable to find order ReferenceNumber : ' + referenceNumber + ' in user orders');
+        }
+
+        // orderToUpdate.paid = true;
+
+        // Update the order
+        transaction.update(userRef, { ['orders']: oldOrders });
+
+        console.log('success');
+        res.status(200).send('success');
+      });
+      // res.json({ paymentToReference: referenceNumber });
     } catch (error) {
       console.error('Error adding document:', error);
       res.status(500).send('Error adding document.');
     }
-
-
-
-  res.send({
-    success: true
   });
 });
 
@@ -579,11 +734,9 @@ exports.payMayaWebHookFailed = functions.region('asia-southeast1').https.onReque
 
   // TODO: You will have to implement the logic of this method.
   console.log(req.body);
-  
-
 
   res.send({
-    success: true
+    success: true,
   });
 });
 
@@ -597,6 +750,6 @@ exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequ
   console.log(req.body);
 
   res.send({
-    success: true
+    success: true,
   });
 });

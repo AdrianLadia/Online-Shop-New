@@ -9,10 +9,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     super();
     const appConfig = new AppConfig();
     if (appConfig.getIsDevEnvironment()) {
-      this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
-    }
-    else {
-      this.url = 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/'
+      this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/';
+    } else {
+      this.url = 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/';
     }
   }
 
@@ -28,10 +27,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      await this.updateDocumentFromCollection('Users', userId, {userRole: role})
-    }
-    catch (error) {
-      throw new Error(error)
+      await this.updateDocumentFromCollection('Users', userId, { userRole: role });
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
@@ -46,9 +44,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       console.log('RAN');
-      const response = await axios.get(
-        `${this.url}checkIfUserIdAlreadyExist?userId=${userId}`
-      );
+      const response = await axios.get(`${this.url}checkIfUserIdAlreadyExist?userId=${userId}`);
 
       const toReturn = response.data;
 
@@ -144,10 +140,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(
-        `${this.url}transactionPlaceOrder?data=${encodedData}`
-      );
-      return response
+      const response = await axios.get(`${this.url}transactionPlaceOrder?data=${encodedData}`);
+      return response;
       alert('Order placed successfully');
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -174,9 +168,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(
-        `${this.url}readUserRole?data=${userId}`
-      );
+      const response = await axios.get(`${this.url}readUserRole?data=${userId}`);
 
       const toReturn = response.data;
       const userRoleSchema = Joi.string().required();
@@ -196,12 +188,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-
   async readAllProductsForOnlineStore() {
     try {
-      const response = await axios.request(
-        `${this.url}readAllProductsForOnlineStore`
-      );
+      const response = await axios.request(`${this.url}readAllProductsForOnlineStore`);
       const toReturn = response.data;
       const toReturnSchema = Joi.array().items(
         Joi.object({
@@ -234,6 +223,60 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       }
 
       return toReturn;
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        // Handle the 400 error messages
+        const errorMessage = error.response.data;
+        console.error('Error:', errorMessage);
+        alert(errorMessage);
+      } else {
+        // Handle other errors
+        console.error('An error occurred:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    }
+  }
+
+  async transactionCreatePayment(data) {
+    const paymentSchema = Joi.object({
+      userId: Joi.string().required(),
+      amount: Joi.number().required(),
+      reference: Joi.string().required(),
+      paymentprovider: Joi.string().required(),
+    });
+
+    const { error } = paymentSchema.validate(data);
+
+    if (error) {
+      console.log(error);
+      return res.json({ status: 'error invlid data submitted' });
+    }
+
+    try {
+      const encodedData = encodeURIComponent(JSON.stringify(data));
+      const response = await axios.post(`${this.url}transactionCreatePayment?data=${encodedData}`);
+      return response;
+    }
+    catch{
+      console.log(error);
+      alert('An error occurred. Please try again later.');
+    }
+
+  }
+
+  async testPayMayaWebHookSuccess(data) {
+    const dataSchema = schemas.mayaSuccessRequestSchema();
+
+    const { error } = dataSchema.validate(data);
+
+    if (error) {
+      alert(error.message);
+      throw new Error(error.message);
+    }
+
+    try {
+      const response = await axios.post(`${this.url}payMayaWebHookSuccess`, data);
+      return response;
     } catch (error) {
       if (error.response && error.response.status === 400) {
         // Handle the 400 error messages
