@@ -237,21 +237,18 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
-      console.log('running transactionCreatePayment');
+      const data = parseData(req.query.data);
+      const userId = data.userId;
+      console.log(data)
+      console.log(userId)
+
   
       const db = admin.firestore();
-      const userRef = await db.collection('Users').doc(userid).get();
-      const userData = userRef.data();
+      const user = await db.collection('Users').doc(userId).get();
+      const userData = user.data() 
+      // const userData = userRef.data();
       const oldPayments = userData.payments;
-
-      
-      const data = parseData(req.query.data);
-      console.log(data)
-      const userid = data.userid;
-      const amount = data.amount;
-      const reference = data.reference;
-      const paymentprovider = data.paymentprovider;
-
+      console.log('old Payments', oldPayments)
 
       const newPayments = [...oldPayments, data];
 
@@ -259,7 +256,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
 
       await db
         .collection('Users')
-        .doc(userid)
+        .doc(userId)
         .update({
           ['payments']: newPayments,
         });

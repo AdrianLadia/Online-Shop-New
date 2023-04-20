@@ -107,7 +107,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async transactionPlaceOrder(data) {
+  async placeOrder(data) {
     const schema = Joi.object({
       userid: Joi.string().required(),
       username: Joi.string().required(),
@@ -140,9 +140,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(`${this.url}transactionPlaceOrder?data=${encodedData}`);
-      return response;
+      const response = await axios.get(`${this.url}placeOrder?data=${encodedData}`);
       alert('Order placed successfully');
+      return response;
     } catch (error) {
       if (error.response && error.response.status === 400) {
         // Handle the 400 error messages
