@@ -101,7 +101,8 @@ const CheckoutSummary = (props) => {
             </div>
 
             <div className="flex flex-col xl:w-2/6 lg:w-2/6 md:w-full sm:w-full gap-3 m-5 ">
-                  <Typography variant="h5">Items Total: ₱ {total.toLocaleString()}</Typography>
+                  
+                  <Typography  variant="h5">Items Total: ₱ {total.toLocaleString()}</Typography>
                   <Typography variant="h5" >Tax: ₱ {vat.toLocaleString()} </Typography>
                 {area.includes('lalamoveServiceArea') ? (
                 <Typography variant="h5">Delivery Fee: ₱ {deliveryFee.toLocaleString()}</Typography>
@@ -115,7 +116,7 @@ const CheckoutSummary = (props) => {
           
           </div>
           <div className='flex flex-row'> 
-          <Typography className='underline underline-offset-8' variant="h4">Grand Total: ₱ </Typography>
+          <Typography  className='underline underline-offset-8' variant="h4">Grand Total: ₱ </Typography>
           <Typography id='checkoutItemsTotal' className='underline underline-offset-8' variant="h4">{grandTotal.toLocaleString()}</Typography>
           </div>
         

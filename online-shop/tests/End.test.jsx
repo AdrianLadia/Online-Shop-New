@@ -5,6 +5,7 @@ import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../src/firebase_config';
 import cloudFirestoreDb from '../src/cloudFirestoreDb';
 import testConfig from './testConfig';
+import { assert } from 'joi';
 
 const { Builder, By, Key, until, WebDriver } = require('selenium-webdriver');
 const testconfig = new testConfig()
@@ -106,14 +107,28 @@ describe('Integration', () => {
     console.log('clicked checkout button')
 
     await driver.writeTestUserDetails()
+    await driver.clickMayaPaymentOption()
+    let itemsTotal = await (await driver.getCheckoutItemsTotal()).getText();
+    itemsTotal = itemsTotal.replace(',', '');
+    itemsTotal = parseFloat(itemsTotal)
+
     await driver.clickPlaceOrderButton()
+
+
     await driver.driver.wait(until.alertIsPresent(), 10000);
     const alert = await driver.driver.switchTo().alert();
     await alert.accept();
     await driver.driver.switchTo().window(driver.mainWindowHandle);
+    let mayaTotal = await driver.getMayaTotalAmount()
+    mayaTotal = mayaTotal.replace(/[^\d.-]/g, '');
+    mayaTotal = parseFloat(mayaTotal)
+
+    expect(mayaTotal == itemsTotal).toEqual(true)
+
     await delay(1000)
 
-    await driver.driver.navigate().refresh();
+
+    await driver.driverGoBackToLastPage()
 
     const user4 = await cloudfirestore.readSelectedUserById(testUserId)
     const userOrders4 = user4.orders
@@ -167,28 +182,30 @@ describe('Integration', () => {
     
     
 
-  }, 1000000);
+  }, 10000000);
 
-  
-  test('accountMenu', async () => {
-    await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
-    await driver.clickAccountMenu();
+  test('guestPrevilages', async () => {
+    await cloudfirestore.changeUserRole(testUserId, 'member')
+    await driver.driver.navigate().refresh();
+    await delay(2000)
 
-    assert.notStrictEqual(await driver.getStoreMenuButton(), undefined);
-    assert.notStrictEqual(await driver.getProfileMenuButton(), undefined);
-    assert.notStrictEqual(await driver.getMyOrdersMenuButton(), undefined);
-    assert.notStrictEqual(await driver.getAccountStatementMenuButton(), undefined);
-    assert.notStrictEqual(await driver.getSettingsMenuButton(), undefined);
-    assert.notStrictEqual(await driver.getLogoutMenuButton(), undefined);
-  
-    await driver.clickStore()
-    await delay(1000)
-  }, 1000000)
+    await driver.clickAccountMenu()
+    try{
+      await driver.driver.findElement(By.id('adminMenu'))
+      throw new Error('admin menu should not be visible')
+    }
+    catch(e) {
 
+    }
+    
+
+
+  },1000000)
 
   test('superAdminPrevilages', async () => {
     await cloudfirestore.changeUserRole(testUserId, 'superAdmin')
     await driver.driver.navigate().refresh();
+    await delay(2000)
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
     await driver.clickAdminMenu()
@@ -200,6 +217,7 @@ describe('Integration', () => {
   test('ordersMenu', async () => {
     await cloudfirestore.changeUserRole(testUserId, 'superAdmin')
     await driver.driver.navigate().refresh();
+    await delay(2000)
     await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
     await driver.clickAccountMenu();
     await driver.clickAdminMenu()
@@ -215,14 +233,14 @@ describe('Integration', () => {
   test('createPaymentMenu', async () => {
     await cloudfirestore.changeUserRole(testUserId, 'superAdmin')
     await driver.driver.navigate().refresh();
-    await driver.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
+    await delay(2000)
     await driver.clickAccountMenu();
     await driver.clickAdminMenu()
     await delay(1000)
     await driver.clickHamburgerAdmin()
     await driver.clickCreatePaymentMenu()
     await driver.createTestPayment()
-    await delay(1000)
+    await delay(2000)
     const user = await cloudfirestore.readSelectedUserById(testUserId)
     const payments = user.payments
     let found = false

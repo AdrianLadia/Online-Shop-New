@@ -12,6 +12,7 @@ const PaymentCheckoutCard = (props) => {
     const paymentOption = props.paymentOption;
     let logoLink = null
     let cardStyle = null
+    let id = null
     if (paymentOption === 'bdo') {
       logoLink = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fbdo.png?alt=media&token=a2714b8c-954d-42c3-bbe3-457ae5f36003'
       cardStyle = 'mt-9'
@@ -33,6 +34,7 @@ const PaymentCheckoutCard = (props) => {
       cardStyle = 'mt-6'
     }
     else if (paymentOption === 'maya') {
+      id = 'mayaPaymentOption'
       logoLink = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fmaya.png?alt=media&token=a940cb2d-4b2a-44d4-88e7-6798621a019a'
       cardStyle = 'mt-11'
     }
@@ -83,6 +85,7 @@ const PaymentCheckoutCard = (props) => {
       >
         <img className={cardStyle}
           src={logoLink}
+          id = {id}
         /> 
         {/* <p className="text-lg font-bold text-green-300">Card</p> */}
       </Paper>

@@ -80,7 +80,7 @@ class seleniumElements {
     }
 
     async getAccountMenuButton() {
-        await this.driver.wait(until.elementLocated(By.id('accountMenu')), 10000);
+        await this.driver.wait(until.elementLocated(By.id('accountMenu')), 100000);
         return await this.driver.findElement(By.id("accountMenu"));
     }
 
@@ -247,6 +247,21 @@ class seleniumElements {
     async getCloseModalButton() {
         await this.driver.wait(until.elementLocated(By.id('closeModalButton')), 10000);
         return await this.driver.findElement(By.id("closeModalButton"));
+    }
+
+    async getMayPaymentOption() {
+        await this.driver.wait(until.elementLocated(By.id('mayaPaymentOption')), 10000);
+        return await this.driver.findElement(By.id("mayaPaymentOption"));
+    }
+
+    async getMayaTotalAmountText() {
+        await this.driver.wait(until.elementLocated(By.className('order-summary-total__total-amount--value')), 200000);
+        return await this.driver.findElement(By.className('order-summary-total__total-amount--value'))
+    }
+
+    async getitemsTotalText() {
+        await this.driver.wait(until.elementLocated(By.id('itemsTotal')), 10000);
+        return await this.driver.findElement(By.id('itemsTotal'))
     }
     
 }

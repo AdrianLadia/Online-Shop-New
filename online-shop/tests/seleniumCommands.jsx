@@ -140,6 +140,11 @@ class seleniumCommands extends seleniumElements {
         await this.enterContactName()
     }
 
+    async clickMayaPaymentOption() {
+        const mayaPaymentOption = await this.getMayPaymentOption()
+        await mayaPaymentOption.click()
+    }
+
     async clickPlaceOrderButton() {
         const placeOrderButton = await this.getPlaceOrderButton()
         await placeOrderButton.click()
@@ -309,6 +314,19 @@ class seleniumCommands extends seleniumElements {
         await closeModalButton.click();
     }
 
+    async getMayaTotalAmount () {
+        const mayaTotalAmount = await this.getMayaTotalAmountText();
+        return mayaTotalAmount.getText();
+    }
+
+    async getItemsTotalTextValue () {
+        const itemsTotalText = await this.getitemsTotalText();
+        return itemsTotalText.getText();
+    }   
+
+    async driverGoBackToLastPage() {
+        await this.driver.navigate().back();
+    }
     
 }
 
