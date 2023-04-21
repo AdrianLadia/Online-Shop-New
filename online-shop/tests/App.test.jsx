@@ -218,8 +218,11 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe('Data Manipulation', () => {
+describe.only('Data Manipulation', () => {
   test('AccountStatement', () => {
+
+    cloudfirestore.transactionPlaceOrder
+
     const orders = user.orders;
     const payments = user.payments;
 
@@ -955,7 +958,87 @@ describe('getCartCount', () => {
   });
 });
 
-describe.only('cloudfirestoredb', async () => {
+describe('cloudfirestoredb', async () => {
+  test('transactionCreatePayment', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+   await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('01/01/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+    await delay(200);
+
+    const data = {
+      userId: userTestId,
+      amount: 62002,
+      reference: 'testref1234',
+      paymentprovider: 'Maya',
+    };
+
+    await cloudfirestore.transactionCreatePayment(data);
+
+    await delay(100);
+
+    const user = await firestore.readUserById(userTestId);
+    const payments = user.payments;
+    const orders = user.orders;
+
+    let found = true;
+    payments.forEach((payment) => {
+      if (payment.reference === 'testref1234') {
+        found = true;
+      }
+    });
+
+    expect(found).toEqual(true);
+
+    expect(orders.length > 0).toEqual(true);
+    expect(payments.length > 0).toEqual(true);
+
+    orders.map((order) => {
+      if (order.reference === 'testref1234') {
+        expect(order.paid).toEqual(true);
+      }
+    });
+
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+  });
   test('updateOrdersAsPaidOrNotPaid', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -998,7 +1081,7 @@ describe.only('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
     });
-    await delay(200)
+    await delay(200);
 
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
@@ -1035,7 +1118,7 @@ describe.only('cloudfirestoredb', async () => {
       needAssistance: true,
     });
 
-    await delay(200)
+    await delay(200);
 
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
@@ -1072,7 +1155,7 @@ describe.only('cloudfirestoredb', async () => {
       needAssistance: true,
     });
 
-    await delay(200)
+    await delay(200);
 
     await cloudfirestore.createPayment({
       userId: userTestId,
@@ -1081,10 +1164,10 @@ describe.only('cloudfirestoredb', async () => {
       paymentprovider: 'Maya',
     });
 
-    await delay(200)
+    await delay(200);
     await cloudfirestore.updateOrdersAsPaidOrNotPaid(userTestId);
-    await delay(200)
-    const userData =  await firestore.readSelectedDataFromCollection('Users', userTestId)
+    await delay(200);
+    const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
 
     orders.forEach((order) => {
@@ -1097,691 +1180,690 @@ describe.only('cloudfirestoredb', async () => {
       if (order.reference === 'testref123456') {
         expect(order.paid).toEqual(false);
       }
-    } );
-
+    });
   }, 100000);
-  // test('transactionCreatePayment', async () => {
+  test('transactionCreatePayment', async () => {
 
-  //   // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-  //   await delay(100)
-  //   const data = {
-  //     userId: userTestId,
-  //     amount: 8888,
-  //     reference: 'testref123456789',
-  //     paymentprovider: 'Maya',
-  //   }
-  //   await cloudfirestore.createPayment(data)
+    // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await delay(100)
+    const data = {
+      userId: userTestId,
+      amount: 8888,
+      reference: 'testref123456789',
+      paymentprovider: 'Maya',
+    }
+    await cloudfirestore.createPayment(data)
 
-  //   const user = await firestore.readUserById(userTestId);
-  //   const payments = user.payments;
+    const user = await firestore.readUserById(userTestId);
+    const payments = user.payments;
 
-  //   payments.forEach((payment) => {
-  //     if (payment.reference === 'testref123456789') {
-  //       expect(payment.amount).toEqual(8888);
-  //     }
-  //   });
+    payments.forEach((payment) => {
+      if (payment.reference === 'testref123456789') {
+        expect(payment.amount).toEqual(8888);
+      }
+    });
 
-  //   // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-  //   await delay(100)
-  // })
-  // test('testPayMayaWebHookSuccess', async () => {
-  //   await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-  //   await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-  //   const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
-  //   const ppb16Price = ppb16.price;
-  //   const itemsTotal = (ppb16Price * 12) / 1.12;
-  //   const vat = ppb16Price * 12 - itemsTotal;
+    // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await delay(100)
+  })
+  test('testPayMayaWebHookSuccess', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
 
-  //   const result = await cloudfirestore.transactionPlaceOrder({
-  //     userid: userTestId,
-  //     username: 'Adrian',
-  //     localDeliveryAddress: 'Test City',
-  //     locallatitude: 1.24,
-  //     locallongitude: 2.112,
-  //     localphonenumber: '09178927206',
-  //     localname: 'Adrian Ladia',
-  //     orderDate: new Date(),
-  //     cart: [
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //     ],
-  //     itemstotal: itemsTotal,
-  //     vat: vat,
-  //     shippingtotal: 2002,
-  //     grandTotal: 62002,
-  //     reference: 'testref1234',
-  //     userphonenumber: '09178927206',
-  //     deliveryNotes: 'Test',
-  //     totalWeight: 122,
-  //     deliveryVehicle: 'Sedan',
-  //     needAssistance: true,
-  //   });
+    const result = await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('01/02/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
 
-  //   await delay(300)
+    await delay(300)
 
-  //   const req = {
-  //     totalAmount: {
-  //       value: 25110,
-  //       currency: 'PHP',
-  //     },
-  //     buyer: {
-  //       contact: {
-  //         email: 'ladia.adrian@gmail.com',
-  //         phone: '09178927206',
-  //       },
-  //       shippingAddress: {
-  //         line1: 'Cebu',
-  //         line2: 'Cebu City',
-  //         countryCode: 'PH',
-  //       },
-  //       firstName: 'Adrian',
-  //       lastName: 'Ladia',
-  //     },
-  //     redirectUrl: {
-  //       success: 'http://localhost:5173/checkoutSuccess',
-  //       failure: 'http://localhost:5173/checkoutFailed',
-  //       cancel: 'http://localhost:5173/checkoutCancelled',
-  //     },
-  //     requestReferenceNumber: 'testref1234',
-  //     metadata: {
-  //       userId: userTestId,
-  //     },
-  //   };
-  //   const res = await cloudfirestore.testPayMayaWebHookSuccess(req);
-  //   await delay(300)
-  //   const data = res.data;
-  //   expect(data).toEqual('success');
+    const req = {
+      totalAmount: {
+        value: 62002,
+        currency: 'PHP',
+      },
+      buyer: {
+        contact: {
+          email: 'ladia.adrian@gmail.com',
+          phone: '09178927206',
+        },
+        shippingAddress: {
+          line1: 'Cebu',
+          line2: 'Cebu City',
+          countryCode: 'PH',
+        },
+        firstName: 'Adrian',
+        lastName: 'Ladia',
+      },
+      redirectUrl: {
+        success: 'http://localhost:5173/checkoutSuccess',
+        failure: 'http://localhost:5173/checkoutFailed',
+        cancel: 'http://localhost:5173/checkoutCancelled',
+      },
+      requestReferenceNumber: 'testref1234',
+      metadata: {
+        userId: userTestId,
+      },
+    };
+    const res = await cloudfirestore.testPayMayaWebHookSuccess(req);
+    await delay(300)
+    const data = res.data;
+    expect(data).toEqual('success');
 
-  //   const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
-  //   const orders = user.orders;
-  //   const payments = user.payments;
+    const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = user.orders;
+    const payments = user.payments;
 
-  //   orders.map((order) => {
-  //     if (order.reference == 'testref1234') {
-  //       expect(order.paid).toEqual(true);
-  //     }
-  //   });
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        expect(order.paid).toEqual(true);
+      }
+    });
 
-  //   let found1 = false;
-  //   payments.map((payment) => {
-  //     if (payment.reference == 'testref1234') {
-  //       found1 = true
-  //     }
-  //   })
+    let found1 = false;
+    payments.map((payment) => {
+      if (payment.reference == 'testref1234') {
+        found1 = true
+      }
+    })
 
-  //   expect(found1).toEqual(true);
+    expect(found1).toEqual(true);
 
-  //   await cloudfirestore.transactionPlaceOrder({
-  //     userid: userTestId,
-  //     username: 'Adrian',
-  //     localDeliveryAddress: 'Test City',
-  //     locallatitude: 1.24,
-  //     locallongitude: 2.112,
-  //     localphonenumber: '09178927206',
-  //     localname: 'Adrian Ladia',
-  //     orderDate: new Date(),
-  //     cart: [
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //     ],
-  //     itemstotal: itemsTotal,
-  //     vat: vat,
-  //     shippingtotal: 2002,
-  //     grandTotal: 62002,
-  //     reference: 'testref12345',
-  //     userphonenumber: '09178927206',
-  //     deliveryNotes: 'Test',
-  //     totalWeight: 122,
-  //     deliveryVehicle: 'Sedan',
-  //     needAssistance: true,
-  //   });
-  //   await delay(300)
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('02/02/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+    await delay(300)
 
-  //   const user2 = await firestore.readSelectedDataFromCollection('Users', userTestId);
-  //   const user2orders = user2.orders;
+    const user2 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const user2orders = user2.orders;
 
-  //   user2orders.map((order) => {
-  //     if (order.reference == 'testref12345') {
-  //       expect(order.paid).toEqual(false);
-  //     }
-  //   });
+    user2orders.map((order) => {
+      if (order.reference == 'testref12345') {
+        expect(order.paid).toEqual(false);
+      }
+    });
 
-  //   const req2 = {
-  //     totalAmount: {
-  //       value: 25110,
-  //       currency: 'PHP',
-  //     },
-  //     buyer: {
-  //       contact: {
-  //         email: 'ladia.adrian@gmail.com',
-  //         phone: '09178927206',
-  //       },
-  //       shippingAddress: {
-  //         line1: 'Cebu',
-  //         line2: 'Cebu City',
-  //         countryCode: 'PH',
-  //       },
-  //       firstName: 'Adrian',
-  //       lastName: 'Ladia',
-  //     },
-  //     redirectUrl: {
-  //       success: 'http://localhost:5173/checkoutSuccess',
-  //       failure: 'http://localhost:5173/checkoutFailed',
-  //       cancel: 'http://localhost:5173/checkoutCancelled',
-  //     },
-  //     requestReferenceNumber: 'testref12345',
-  //     metadata: {
-  //       userId: userTestId,
-  //     },
-  //   };
+    const req2 = {
+      totalAmount: {
+        value: 62002,
+        currency: 'PHP',
+      },
+      buyer: {
+        contact: {
+          email: 'ladia.adrian@gmail.com',
+          phone: '09178927206',
+        },
+        shippingAddress: {
+          line1: 'Cebu',
+          line2: 'Cebu City',
+          countryCode: 'PH',
+        },
+        firstName: 'Adrian',
+        lastName: 'Ladia',
+      },
+      redirectUrl: {
+        success: 'http://localhost:5173/checkoutSuccess',
+        failure: 'http://localhost:5173/checkoutFailed',
+        cancel: 'http://localhost:5173/checkoutCancelled',
+      },
+      requestReferenceNumber: 'testref12345',
+      metadata: {
+        userId: userTestId,
+      },
+    };
 
-  //   const res2 = await cloudfirestore.testPayMayaWebHookSuccess(req2);
-  //   await delay(300)
-  //   const data2 = res2.data;
-  //   expect(data2).toEqual('success');
+    const res2 = await cloudfirestore.testPayMayaWebHookSuccess(req2);
+    await delay(300)
+    const data2 = res2.data;
+    expect(data2).toEqual('success');
 
-  //   const user3 = await firestore.readSelectedDataFromCollection('Users', userTestId);
-  //   const user3orders = user3.orders;
-  //   const user3payments = user3.payments;
+    const user3 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const user3orders = user3.orders;
+    const user3payments = user3.payments;
 
-  //   found1 = false
-  //   user3payments.map((payment) => {
-  //     if (payment.reference == 'testref12345') {
-  //       found1 = true
-  //     }
-  //   });
+    found1 = false
+    user3payments.map((payment) => {
+      if (payment.reference == 'testref12345') {
+        found1 = true
+      }
+    });
 
-  //   expect(found1).toEqual(true);
+    expect(found1).toEqual(true);
 
-  //   user3orders.map((order) => {
-  //     if (order.reference == 'testref12345') {
-  //       expect(order.paid).toEqual(true);
-  //     }
-  //   });
+    user3orders.map((order) => {
+      if (order.reference == 'testref12345') {
+        expect(order.paid).toEqual(true);
+      }
+    });
 
-  //   expect(user3orders.length).toEqual(2);
+    expect(user3orders.length).toEqual(2);
 
-  //   await cloudfirestore.transactionPlaceOrder({
-  //     userid: userTestId,
-  //     username: 'Adrian',
-  //     localDeliveryAddress: 'Test City',
-  //     locallatitude: 1.24,
-  //     locallongitude: 2.112,
-  //     localphonenumber: '09178927206',
-  //     localname: 'Adrian Ladia',
-  //     orderDate: new Date(),
-  //     cart: [
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //     ],
-  //     itemstotal: itemsTotal,
-  //     vat: vat,
-  //     shippingtotal: 2002,
-  //     grandTotal: 62002,
-  //     reference: 'testref123456',
-  //     userphonenumber: '09178927206',
-  //     deliveryNotes: 'Test',
-  //     totalWeight: 122,
-  //     deliveryVehicle: 'Sedan',
-  //     needAssistance: true,
-  //   });
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('03/02/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref123456',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
 
-  //   await cloudfirestore.transactionPlaceOrder({
-  //     userid: userTestId,
-  //     username: 'Adrian',
-  //     localDeliveryAddress: 'Test City',
-  //     locallatitude: 1.24,
-  //     locallongitude: 2.112,
-  //     localphonenumber: '09178927206',
-  //     localname: 'Adrian Ladia',
-  //     orderDate: new Date(),
-  //     cart: [
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //     ],
-  //     itemstotal: itemsTotal,
-  //     vat: vat,
-  //     shippingtotal: 2002,
-  //     grandTotal: 62002,
-  //     reference: 'testref1234567',
-  //     userphonenumber: '09178927206',
-  //     deliveryNotes: 'Test',
-  //     totalWeight: 122,
-  //     deliveryVehicle: 'Sedan',
-  //     needAssistance: true,
-  //   });
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('04/02/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref1234567',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
 
-  //   await cloudfirestore.transactionPlaceOrder({
-  //     userid: userTestId,
-  //     username: 'Adrian',
-  //     localDeliveryAddress: 'Test City',
-  //     locallatitude: 1.24,
-  //     locallongitude: 2.112,
-  //     localphonenumber: '09178927206',
-  //     localname: 'Adrian Ladia',
-  //     orderDate: new Date(),
-  //     cart: [
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //       'PPB#16',
-  //     ],
-  //     itemstotal: itemsTotal,
-  //     vat: vat,
-  //     shippingtotal: 2002,
-  //     grandTotal: 62002,
-  //     reference: 'testref12345678',
-  //     userphonenumber: '09178927206',
-  //     deliveryNotes: 'Test',
-  //     totalWeight: 122,
-  //     deliveryVehicle: 'Sedan',
-  //     needAssistance: true,
-  //   });
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('05/02/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref12345678',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
 
-  //   const req3 = {
-  //     totalAmount: {
-  //       value: 25110,
-  //       currency: 'PHP',
-  //     },
-  //     buyer: {
-  //       contact: {
-  //         email: 'ladia.adrian@gmail.com',
-  //         phone: '09178927206',
-  //       },
-  //       shippingAddress: {
-  //         line1: 'Cebu',
-  //         line2: 'Cebu City',
-  //         countryCode: 'PH',
-  //       },
-  //       firstName: 'Adrian',
-  //       lastName: 'Ladia',
-  //     },
-  //     redirectUrl: {
-  //       success: 'http://localhost:5173/checkoutSuccess',
-  //       failure: 'http://localhost:5173/checkoutFailed',
-  //       cancel: 'http://localhost:5173/checkoutCancelled',
-  //     },
-  //     requestReferenceNumber: 'testref12345678',
-  //     metadata: {
-  //       userId: userTestId,
-  //     },
-  //   };
+    const req3 = {
+      totalAmount: {
+        value: 62002,
+        currency: 'PHP',
+      },
+      buyer: {
+        contact: {
+          email: 'ladia.adrian@gmail.com',
+          phone: '09178927206',
+        },
+        shippingAddress: {
+          line1: 'Cebu',
+          line2: 'Cebu City',
+          countryCode: 'PH',
+        },
+        firstName: 'Adrian',
+        lastName: 'Ladia',
+      },
+      redirectUrl: {
+        success: 'http://localhost:5173/checkoutSuccess',
+        failure: 'http://localhost:5173/checkoutFailed',
+        cancel: 'http://localhost:5173/checkoutCancelled',
+      },
+      requestReferenceNumber: 'testref12345678',
+      metadata: {
+        userId: userTestId,
+      },
+    };
 
-  //   const res3 = await cloudfirestore.testPayMayaWebHookSuccess(req3);
-  //   await delay(300)
-  //   const data3 = res3.data;
-  //   expect(data3).toEqual('success');
+    const res3 = await cloudfirestore.testPayMayaWebHookSuccess(req3);
+    await delay(300)
+    const data3 = res3.data;
+    expect(data3).toEqual('success');
 
-  //   const user4 = await firestore.readSelectedDataFromCollection('Users', userTestId);
-  //   const user4orders = user4.orders;
-  //   const user4payments = user4.payments;
+    const user4 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const user4orders = user4.orders;
+    const user4payments = user4.payments;
 
-  //   user4orders.map((order) => {
-  //     if (order.reference == 'testref1234') {
-  //       expect(order.paid).toEqual(true);
-  //     }
-  //     if (order.reference == 'testref12345') {
-  //       expect(order.paid).toEqual(true);
-  //     }
-  //     if (order.reference == 'testref123456') {
-  //       expect(order.paid).toEqual(false);
-  //     }
-  //     if (order.reference == 'testref1234567') {
-  //       expect(order.paid).toEqual(false);
-  //     }
-  //     if (order.reference == 'testref12345678') {
-  //       expect(order.paid).toEqual(true);
-  //     }
-  //   })
+    user4orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        expect(order.paid).toEqual(true);
+      }
+      if (order.reference == 'testref12345') {
+        expect(order.paid).toEqual(true);
+      }
+      if (order.reference == 'testref123456') {
+        expect(order.paid).toEqual(true);
+      }
+      if (order.reference == 'testref1234567') {
+        expect(order.paid).toEqual(false);
+      }
+      if (order.reference == 'testref12345678') {
+        expect(order.paid).toEqual(false);
+      }
+    })
 
-  //   expect(user4payments.length).toEqual(3);
+    expect(user4payments.length).toEqual(3);
 
-  //   await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-  //   await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-  // },1000000000);
-  // test('changeUserRole', async () => {
-  //   await cloudfirestore.createNewUser({
-  //     uid: 'testuser',
-  //     name: 'test',
-  //     email: 'test@gmail.com',
-  //     emailVerified: true,
-  //     phoneNumber: '09178927206',
-  //     deliveryAddress: [],
-  //     contactPerson: [],
-  //     isAnonymous: false,
-  //     orders: [],
-  //     cart: [],
-  //     favoriteItems: [],
-  //     payments: [],
-  //     userRole: 'member',
-  //   },'testuser')
-  //   await delay(300);
-  //   await cloudfirestore.changeUserRole('testuser', 'admin');
-  //   await delay(300);
-  //   const user = await cloudfirestore.readSelectedUserById('testuser')
-  //   await delay(300);
-  //   expect(user.userRole).toEqual('admin');
-  //   await cloudfirestore.changeUserRole('testuser', 'member');
-  //   await delay(300);
-  //   const user2 = await cloudfirestore.readSelectedUserById('testuser')
-  //   await delay(300);
-  //   expect(user2.userRole).toEqual('member');
-  //   await cloudfirestore.deleteDocumentFromCollection('Users','testuser')
-  // });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+  },1000000000);
+  test('changeUserRole', async () => {
+    await cloudfirestore.createNewUser({
+      uid: 'testuser',
+      name: 'test',
+      email: 'test@gmail.com',
+      emailVerified: true,
+      phoneNumber: '09178927206',
+      deliveryAddress: [],
+      contactPerson: [],
+      isAnonymous: false,
+      orders: [],
+      cart: [],
+      favoriteItems: [],
+      payments: [],
+      userRole: 'member',
+    },'testuser')
+    await delay(300);
+    await cloudfirestore.changeUserRole('testuser', 'admin');
+    await delay(300);
+    const user = await cloudfirestore.readSelectedUserById('testuser')
+    await delay(300);
+    expect(user.userRole).toEqual('admin');
+    await cloudfirestore.changeUserRole('testuser', 'member');
+    await delay(300);
+    const user2 = await cloudfirestore.readSelectedUserById('testuser')
+    await delay(300);
+    expect(user2.userRole).toEqual('member');
+    await cloudfirestore.deleteDocumentFromCollection('Users','testuser')
+  });
 
-  // test('readAllProductsForOnlineStore', async () => {
-  //   const products = await cloudfirestore.readAllProductsForOnlineStore();
-  //   await delay(300);
+  test('readAllProductsForOnlineStore', async () => {
+    const products = await cloudfirestore.readAllProductsForOnlineStore();
+    await delay(300);
 
-  //   expect(products).toBeInstanceOf(Array);
-  //   expect(products.length).toBeGreaterThan(0);
-  // });
+    expect(products).toBeInstanceOf(Array);
+    expect(products.length).toBeGreaterThan(0);
+  });
 
-  // test('checkifuseridexist', async () => {
-  //   const user = await cloudfirestore.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
-  //   await delay(300);
-  //   expect(user).toEqual(true);
-  //   const falseUser = await cloudfirestore.checkIfUserIdAlreadyExist('testfalseuser12432456436');
-  //   await delay(300);
-  //   expect(falseUser).toEqual(false);
-  // });
-  // test('transactionPlaceOrder', async () => {
-  //   await firestore.createProduct(
-  //     {
-  //       itemId: 'test',
-  //       itemName: 'testname',
-  //       unit: 'bale',
-  //       price: 1000,
-  //       description: 'none',
-  //       weight: 10,
-  //       dimensions: '10x12',
-  //       category: 'Paper Bag',
-  //       imageLinks: ['testlink'],
-  //       brand: 'testbrand',
-  //       pieces: 1999,
-  //       color: 'red',
-  //       material: 'material',
-  //       size: '10',
-  //       stocksAvailable: 23,
-  //       stocksOnHold: [],
-  //       averageSalesPerDay: 0,
-  //       parentProductID: 'test',
-  //       stocksOnHoldCompleted: [],
-  //       forOnlineStore: true,
-  //       isCustomized: false,
-  //       salesPerMonth: [],
-  //       stocksIns: [],
-  //     },
-  //     'test'
-  //   );
-  //   await firestore.createProduct(
-  //     {
-  //       itemId: 'test2',
-  //       itemName: 'testname',
-  //       unit: 'bale',
-  //       price: 500,
-  //       description: 'none',
-  //       weight: 10,
-  //       dimensions: '10x12',
-  //       category: 'Paper Bag',
-  //       imageLinks: ['testlink'],
-  //       brand: 'testbrand',
-  //       pieces: 1999,
-  //       color: 'red',
-  //       material: 'material',
-  //       size: '10',
-  //       stocksAvailable: 23,
-  //       stocksOnHold: [],
-  //       averageSalesPerDay: 0,
-  //       parentProductID: 'test',
-  //       stocksOnHoldCompleted: [],
-  //       forOnlineStore: true,
-  //       isCustomized: false,
-  //       salesPerMonth: [],
-  //       stocksIns: [],
-  //     },
-  //     'test2'
-  //   );
-  //   await firestore.createNewUser(
-  //     {
-  //       uid: 'testuser',
-  //       name: 'test',
-  //       email: 'test@gmail.com',
-  //       emailVerified: true,
-  //       phoneNumber: '09178927206',
-  //       deliveryAddress: [],
-  //       contactPerson: [],
-  //       isAnonymous: false,
-  //       orders: [],
-  //       cart: [],
-  //       favoriteItems: [],
-  //       payments: [],
-  //       userRole: 'member',
-  //     },
-  //     'testuser'
-  //   );
+  test('checkifuseridexist', async () => {
+    const user = await cloudfirestore.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+    await delay(300);
+    expect(user).toEqual(true);
+    const falseUser = await cloudfirestore.checkIfUserIdAlreadyExist('testfalseuser12432456436');
+    await delay(300);
+    expect(falseUser).toEqual(false);
+  });
+  test('transactionPlaceOrder', async () => {
+    await firestore.createProduct(
+      {
+        itemId: 'test',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 1000,
+        description: 'none',
+        weight: 10,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+      },
+      'test'
+    );
+    await firestore.createProduct(
+      {
+        itemId: 'test2',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 500,
+        description: 'none',
+        weight: 10,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+      },
+      'test2'
+    );
+    await firestore.createNewUser(
+      {
+        uid: 'testuser',
+        name: 'test',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: [],
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+      },
+      'testuser'
+    );
 
-  //   await delay(500);
+    await delay(500);
 
-  //   let data = {
-  //     userid: 'testuser',
-  //     username: 'testname',
-  //     localDeliveryAddress: 'PPB',
-  //     locallatitude: 1.12,
-  //     locallongitude: 1.3,
-  //     localphonenumber: '09138927206',
-  //     localname: 'Contact Person',
-  //     orderDate: new Date(),
-  //     cart: ['test', 'test', 'test', 'test2'],
-  //     itemstotal: 3125,
-  //     vat: 375,
-  //     shippingtotal: 200,
-  //     grandTotal: 3700,
-  //     reference: 'testref1234567',
-  //     userphonenumber: '',
-  //     deliveryNotes: 'none',
-  //     totalWeight: 50,
-  //     deliveryVehicle: 'motorcycle',
-  //     needAssistance: true,
-  //   };
-  //   await cloudfirestore.transactionPlaceOrder(data);
-  //   await delay(500);
+    let data = {
+      userid: 'testuser',
+      username: 'testname',
+      localDeliveryAddress: 'PPB',
+      locallatitude: 1.12,
+      locallongitude: 1.3,
+      localphonenumber: '09138927206',
+      localname: 'Contact Person',
+      orderDate: new Date(),
+      cart: ['test', 'test', 'test', 'test2'],
+      itemstotal: 3125,
+      vat: 375,
+      shippingtotal: 200,
+      grandTotal: 3700,
+      reference: 'testref1234567',
+      userphonenumber: '',
+      deliveryNotes: 'none',
+      totalWeight: 50,
+      deliveryVehicle: 'motorcycle',
+      needAssistance: true,
+    };
+    await cloudfirestore.transactionPlaceOrder(data);
+    await delay(500);
 
-  //   const testUser = await firestore.readSelectedDataFromCollection('Users', 'testuser');
-  //   const deliveryAddress = testUser.deliveryAddress;
-  //   const contactPerson = testUser.contactPerson;
-  //   const orders = testUser.orders;
+    const testUser = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+    const deliveryAddress = testUser.deliveryAddress;
+    const contactPerson = testUser.contactPerson;
+    const orders = testUser.orders;
 
-  //   expect(deliveryAddress).length(1);
-  //   expect(contactPerson).length(1);
-  //   expect(orders).length(1);
+    expect(deliveryAddress).length(1);
+    expect(contactPerson).length(1);
+    expect(orders).length(1);
 
-  //   data = {
-  //     userid: 'testuser',
-  //     username: 'testname',
-  //     localDeliveryAddress: 'PPB',
-  //     locallatitude: 1.12,
-  //     locallongitude: 1.3,
-  //     localphonenumber: '09138927206',
-  //     localname: 'Contact Person 2',
-  //     orderDate: new Date(),
-  //     cart: ['test', 'test', 'test', 'test2'],
-  //     itemstotal: 3125,
-  //     vat: 375,
-  //     shippingtotal: 200,
-  //     grandTotal: 3700,
-  //     reference: 'testref1234567',
-  //     userphonenumber: '',
-  //     deliveryNotes: 'none',
-  //     totalWeight: 50,
-  //     deliveryVehicle: 'motorcycle',
-  //     needAssistance: true,
-  //   };
-  //   await cloudfirestore.transactionPlaceOrder(data);
-  //   await delay(500);
+    data = {
+      userid: 'testuser',
+      username: 'testname',
+      localDeliveryAddress: 'PPB',
+      locallatitude: 1.12,
+      locallongitude: 1.3,
+      localphonenumber: '09138927206',
+      localname: 'Contact Person 2',
+      orderDate: new Date(),
+      cart: ['test', 'test', 'test', 'test2'],
+      itemstotal: 3125,
+      vat: 375,
+      shippingtotal: 200,
+      grandTotal: 3700,
+      reference: 'testref1234567',
+      userphonenumber: '',
+      deliveryNotes: 'none',
+      totalWeight: 50,
+      deliveryVehicle: 'motorcycle',
+      needAssistance: true,
+    };
+    await cloudfirestore.transactionPlaceOrder(data);
+    await delay(500);
 
-  //   const testUser2 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
-  //   const deliveryAddress2 = testUser2.deliveryAddress;
-  //   const contactPerson2 = testUser2.contactPerson;
-  //   const orders2 = testUser2.orders;
+    const testUser2 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+    const deliveryAddress2 = testUser2.deliveryAddress;
+    const contactPerson2 = testUser2.contactPerson;
+    const orders2 = testUser2.orders;
 
-  //   expect(deliveryAddress2).length(1);
-  //   expect(contactPerson2).length(2);
-  //   expect(orders2).length(2);
+    expect(deliveryAddress2).length(1);
+    expect(contactPerson2).length(2);
+    expect(orders2).length(2);
 
-  //   data = {
-  //     userid: 'testuser',
-  //     username: 'testname',
-  //     localDeliveryAddress: 'PPB2',
-  //     locallatitude: 1.12,
-  //     locallongitude: 1.3,
-  //     localphonenumber: '09138927206',
-  //     localname: 'Contact Person 2',
-  //     orderDate: new Date(),
-  //     cart: ['test', 'test', 'test', 'test2'],
-  //     itemstotal: 3125,
-  //     vat: 375,
-  //     shippingtotal: 200,
-  //     grandTotal: 3700,
-  //     reference: 'testref1234567',
-  //     userphonenumber: '',
-  //     deliveryNotes: 'none',
-  //     totalWeight: 50,
-  //     deliveryVehicle: 'motorcycle',
-  //     needAssistance: true,
-  //   };
-  //   await cloudfirestore.transactionPlaceOrder(data);
-  //   await delay(300);
+    data = {
+      userid: 'testuser',
+      username: 'testname',
+      localDeliveryAddress: 'PPB2',
+      locallatitude: 1.12,
+      locallongitude: 1.3,
+      localphonenumber: '09138927206',
+      localname: 'Contact Person 2',
+      orderDate: new Date(),
+      cart: ['test', 'test', 'test', 'test2'],
+      itemstotal: 3125,
+      vat: 375,
+      shippingtotal: 200,
+      grandTotal: 3700,
+      reference: 'testref1234567',
+      userphonenumber: '',
+      deliveryNotes: 'none',
+      totalWeight: 50,
+      deliveryVehicle: 'motorcycle',
+      needAssistance: true,
+    };
+    await cloudfirestore.transactionPlaceOrder(data);
+    await delay(300);
 
-  //   const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
-  //   const deliveryAddress3 = testUser3.deliveryAddress;
-  //   const contactPerson3 = testUser3.contactPerson;
-  //   const orders3 = testUser3.orders;
+    const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
+    const deliveryAddress3 = testUser3.deliveryAddress;
+    const contactPerson3 = testUser3.contactPerson;
+    const orders3 = testUser3.orders;
 
-  //   expect(deliveryAddress3).length(2);
-  //   expect(contactPerson3).length(2);
-  //   expect(orders3).length(3);
+    expect(deliveryAddress3).length(2);
+    expect(contactPerson3).length(2);
+    expect(orders3).length(3);
 
-  //   await firestore.deleteUserByUserId('testuser');
-  //   await firestore.deleteProduct('test');
-  //   await firestore.deleteProduct('test2');
-  // }, 100000);
+    await firestore.deleteUserByUserId('testuser');
+    await firestore.deleteProduct('test');
+    await firestore.deleteProduct('test2');
+  }, 100000);
 
-  // test('createNewUser', async () => {
-  //   await cloudfirestore.createNewUser(
-  //     {
-  //       uid: 'testuser',
-  //       name: 'Test User',
-  //       email: 'test@gmail.com',
-  //       emailVerified: true,
-  //       phoneNumber: '',
-  //       deliveryAddress: [],
-  //       contactPerson: [],
-  //       isAnonymous: false,
-  //       orders: [],
-  //       cart: [],
-  //       favoriteItems: [],
-  //       payments: [],
-  //       userRole: 'member',
-  //     },
-  //     'testuser'
-  //   );
-  //   await delay(100);
-  //   const user = await cloudfirestore.readSelectedDataFromCollection('Users', 'testuser');
-  //   const email = user.email;
-  //   await delay(100);
-  //   expect(email).toEqual('test@gmail.com');
-  //   await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser');
-  // });
+  test('createNewUser', async () => {
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'testuser',
+        name: 'Test User',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: [],
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+      },
+      'testuser'
+    );
+    await delay(100);
+    const user = await cloudfirestore.readSelectedDataFromCollection('Users', 'testuser');
+    const email = user.email;
+    await delay(100);
+    expect(email).toEqual('test@gmail.com');
+    await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser');
+  });
 
-  // test('readSelectedUserById', async () => {
-  //   await cloudfirestore.createNewUser(
-  //     {
-  //       uid: 'testuser2',
-  //       name: 'Test User',
-  //       email: 'test@gmail.com',
-  //       emailVerified: true,
-  //       phoneNumber: '',
-  //       deliveryAddress: [],
-  //       contactPerson: [],
-  //       isAnonymous: false,
-  //       orders: [],
-  //       cart: [],
-  //       favoriteItems: [],
-  //       payments: [],
-  //       userRole: 'member',
-  //     },
-  //     'testuser2'
-  //   );
+  test('readSelectedUserById', async () => {
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'testuser2',
+        name: 'Test User',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: [],
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+      },
+      'testuser2'
+    );
 
-  //   await delay(100);
-  //   const user = await cloudfirestore.readSelectedUserById('testuser2');
-  //   const email = user.email;
-  //   await delay(100);
-  //   expect(email).toEqual('test@gmail.com');
-  //   await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser2');
-  // });
+    await delay(100);
+    const user = await cloudfirestore.readSelectedUserById('testuser2');
+    const email = user.email;
+    await delay(100);
+    expect(email).toEqual('test@gmail.com');
+    await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser2');
+  });
 
-  // test('readUserRole', async () => {
-  //   const userIds = await cloudfirestore.readAllIdsFromCollection('Users');
-  //   const userRolesPromises = userIds.map(async (userId) => {
-  //     return await cloudfirestore.readUserRole(userId);
-  //   });
-  //   const userRoles = await Promise.all(userRolesPromises);
-  //   const roles = ['member', 'admin', 'superAdmin'];
-  //   userRoles.map((userRole) => {
-  //     console.log(userRole);
-  //     expect(roles.includes(userRole)).toEqual(true);
-  //   });
-  // });
+  test('readUserRole', async () => {
+    const userIds = await cloudfirestore.readAllIdsFromCollection('Users');
+    const userRolesPromises = userIds.map(async (userId) => {
+      return await cloudfirestore.readUserRole(userId);
+    });
+    const userRoles = await Promise.all(userRolesPromises);
+    const roles = ['member', 'admin', 'superAdmin'];
+    userRoles.map((userRole) => {
+      console.log(userRole);
+      expect(roles.includes(userRole)).toEqual(true);
+    });
+  });
 });
 
 describe('retryApiCall', () => {

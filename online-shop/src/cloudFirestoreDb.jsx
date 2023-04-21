@@ -3,6 +3,7 @@ import axios from 'axios';
 import Joi from 'joi';
 import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
+import { th } from 'date-fns/locale';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor() {
@@ -317,6 +318,32 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         console.error('An error occurred:', error);
         alert('An error occurred. Please try again later.');
       }
+    }
+  }
+
+  async transactionCreatePayment(data) {
+    const dataSchema = Joi.object({
+      userId: Joi.string().required(),
+      amount: Joi.number().required(),
+      reference: Joi.string().required(),
+      paymentprovider: Joi.string().required(),
+    }).unknown(false)
+
+    const { error } = dataSchema.validate(data);
+
+    if (error) {
+      console.log(error);
+      throw new Error(error.message); 
+    }
+
+    try {
+      const encodedData = encodeURIComponent(JSON.stringify(data));
+      const response = await axios.post(`${this.url}transactionCreatePayment?data=${encodedData}`);
+      return response;
+    }
+    catch{
+      console.log(error);
+      alert('An error occurred. Please try again later.');
     }
   }
 

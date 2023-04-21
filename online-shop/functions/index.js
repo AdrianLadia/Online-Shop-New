@@ -66,6 +66,76 @@ function getValueAddedTax(totalPrice) {
   return roundedVat;
 }
 
+async function createPayment(data, db) {
+  const paymentSchema = Joi.object({
+    userId: Joi.string().required(),
+    amount: Joi.number().required(),
+    reference: Joi.string().required(),
+    paymentprovider: Joi.string().required(),
+  })
+    .required()
+    .unknown(false);
+
+  const { error } = paymentSchema.validate(data);
+
+  if (error) {
+    throw new Error('Data Validation Error');
+  }
+
+  const userId = data.userId;
+
+  const user = await db.collection('Users').doc(userId).get();
+  const userData = user.data();
+  // const userData = userRef.data();
+  const oldPayments = userData.payments;
+  console.log('old Payments', oldPayments);
+
+  const newPayments = [...oldPayments, data];
+
+  console.log('new Payments', newPayments);
+
+  await db
+    .collection('Users')
+    .doc(userId)
+    .update({
+      ['payments']: newPayments,
+    });
+}
+
+async function updateOrdersAsPaidOrNotPaid(userId, db) {
+  const user = await db.collection('Users').doc(userId).get();
+  const userData = user.data();
+  const payments = userData.payments;
+  let orders = userData.orders;
+  // manipulate data
+  // get total of payments
+  let totalPayments = 0;
+  payments.map((payment) => {
+    totalPayments += payment.amount;
+  });
+  // sort orders to target the oldest order first
+  orders.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate));
+
+  // edit orders
+  orders.forEach((order) => {
+    totalPayments -= order.grandTotal;
+    if (totalPayments >= 0) {
+      order.paid = true;
+      console.log(order.reference + ' is PAID');
+    }
+    if (totalPayments < 0) {
+      order.paid = false;
+      console.log(order.reference + ' is NOT PAID');
+    }
+  });
+
+  console.log('Credit left is : ' + totalPayments);
+  await db
+    .collection('Users')
+    .doc(userId)
+    .update({ ['orders']: orders });
+}
+
 exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
@@ -238,28 +308,8 @@ exports.createPayment = functions.region('asia-southeast1').https.onRequest(asyn
   corsHandler(req, res, async () => {
     try {
       const data = parseData(req.query.data);
-      const userId = data.userId;
-      console.log(data);
-      console.log(userId);
-
       const db = admin.firestore();
-      const user = await db.collection('Users').doc(userId).get();
-      const userData = user.data();
-      // const userData = userRef.data();
-      const oldPayments = userData.payments;
-      console.log('old Payments', oldPayments);
-
-      const newPayments = [...oldPayments, data];
-
-      console.log('new Payments', newPayments);
-
-      await db
-        .collection('Users')
-        .doc(userId)
-        .update({
-          ['payments']: newPayments,
-        });
-
+      await createPayment(data, db);
       res.status(200).send('success');
     } catch (error) {
       res.status(400).send('Error creating payment. Please try again later');
@@ -270,56 +320,10 @@ exports.createPayment = functions.region('asia-southeast1').https.onRequest(asyn
 exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
-      const id = req.query.data;
-      console.log('Id selected is ', id);
-      console.log('Validating Data');
-      const userIdSchema = Joi.string().required();
-
-      const { error1 } = userIdSchema.validate(id);
-
-      if (error1) {
-        console.log(error1);
-        throw new Error('Data Validation Error');
-      }
-
-      console.log('Getting User Data');
-      // Launch db
       const db = admin.firestore();
-      // Get userdata
-      const user = await db.collection('Users').doc(id).get();
-      const userData = user.data();
-      const payments = userData.payments;
-      let orders = userData.orders;
+      const userId = req.query.data;
 
-      // console.log('Payments', payments)
-
-      // manipulate data
-      // get total of payments
-      let totalPayments = 0;
-      payments.map((payment) => {
-        totalPayments += payment.amount;
-      });
-      // sort orders to target the oldest order first
-      orders.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate));
-
-      // edit orders
-      orders.forEach((order) => {
-        totalPayments -= order.grandTotal;
-        if (totalPayments >= 0) {
-          order.paid = true;
-          console.log(order.reference + ' is PAID');
-        }
-        if (totalPayments < 0) {
-          order.paid = false;
-          console.log(order.reference + ' is NOT PAID');
-        }
-      });
-
-      console.log('Credit left is : ' + totalPayments);
-      await db
-        .collection('Users')
-        .doc(id)
-        .update({ ['orders']: orders });
+      await updateOrdersAsPaidOrNotPaid(userId, db);
 
       res.status(200).send('success');
     } catch (error) {
@@ -721,6 +725,27 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
   }
 });
 
+exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const data = parseData(req.query.data);
+    const db = admin.firestore();
+    const userId = data.userId;
+    try{
+      await createPayment(data, db);
+      try {
+        await updateOrdersAsPaidOrNotPaid(userId, db);
+      } catch (error) {
+        console.log('FAILED TO UPDATE ORDER AS PAID OR UNPAID : ' + error);
+        res.status(200).send('success');
+      }
+      res.status(200).send('success');
+    }
+    catch{
+      res.status(400).send('Error adding document.');
+    }
+  });
+});
+
 // Expose the Express app as a Cloud Function
 exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -731,54 +756,32 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
 
     // TODO: You will have to implement the logic of this method.
     // console.log(req.body);
-    const totalAmount = req.body.totalAmount.value;
-    const userId = req.body.metadata.userId;
-    const referenceNumber = req.body.requestReferenceNumber;
-
-    const db = admin.firestore();
 
     try {
-      db.runTransaction(async (transaction) => {
-        // READ
-        const userRef = db.collection('Users').doc(userId);
-        const user = await transaction.get(userRef);
-        const userData = user.data();
-        // console.log(userData);
-        const oldOrders = userData.orders;
-        const oldPayments = userData.payments;
-        const payment = {
-          date: new Date(),
-          amount: totalAmount,
-          reference: referenceNumber,
-          paymentprovider: 'Maya',
-        };
+      const totalAmount = req.body.totalAmount.value;
+      const userId = req.body.metadata.userId;
+      const referenceNumber = req.body.requestReferenceNumber;
+      const paymentprovider = 'Maya';
 
-        // WRITE
-        // Add new payment
-        const newPayments = [...oldPayments, payment];
-        transaction.update(userRef, { ['payments']: newPayments });
+      const data = {
+        userId: userId,
+        amount: totalAmount,
+        reference: referenceNumber,
+        paymentprovider: paymentprovider,
+      };
 
-        // Find the order and mark as paid
-
-        let orderToUpdate = oldOrders.find((order) => order.reference === referenceNumber);
-        orderToUpdate.paid = true;
-
-        if (orderToUpdate == null) {
-          res.status(500).send('Unable to find order ReferenceNumber : ' + referenceNumber + ' in user orders');
-        }
-
-        // orderToUpdate.paid = true;
-
-        // Update the order
-        transaction.update(userRef, { ['orders']: oldOrders });
-
-        console.log('success');
+      const db = admin.firestore();
+      await createPayment(data, db);
+      try {
+        await updateOrdersAsPaidOrNotPaid(userId, db);
+      } catch (error) {
+        console.log('FAILED TO UPDATE ORDER AS PAID OR UNPAID : ' + error);
         res.status(200).send('success');
-      });
-      // res.json({ paymentToReference: referenceNumber });
+      }
+      res.status(200).send('success');
     } catch (error) {
-      console.error('Error adding document:', error);
-      res.status(500).send('Error adding document.');
+      console.error('Error updating document:', error);
+      res.status(500).send('Error updating document.');
     }
   });
 });

@@ -20,7 +20,7 @@ import { IoCashOutline } from "react-icons/io5";
 import { HiCash } from "react-icons/hi";
 
 const AdminCreatePayment = (props) => {
-  const { firestore } = useContext(AppContext);
+  const { firestore,cloudfirestore } = useContext(AppContext);
 
   const style = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
@@ -39,7 +39,13 @@ const AdminCreatePayment = (props) => {
 
   function onCreatePayment() {
     const userid = datamanipulation.getUserUidFromUsers(users, selectedName);
-    firestore.transactionCreatePayment(userid, amount, reference, paymentProvider);
+    const data = {
+      userId: userid,
+      amount: amount,
+      reference: reference,
+      paymentprovider: paymentProvider,
+    }
+    cloudfirestore.transactionCreatePayment(data);
   }
 
   useEffect(() => {

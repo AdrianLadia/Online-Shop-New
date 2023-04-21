@@ -201,6 +201,7 @@ function App() {
     setUserData: setUserData,
     isadmin: isadmin,
     firestore: firestore,
+    cloudfirestore : cloudfirestore,
     cart: cart,
     setCart: setCart,
     favoriteitems: favoriteitems,
