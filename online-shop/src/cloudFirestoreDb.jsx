@@ -107,7 +107,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async placeOrder(data) {
+  async transactionPlaceOrder(data) {
     const schema = Joi.object({
       userid: Joi.string().required(),
       username: Joi.string().required(),
@@ -140,7 +140,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(`${this.url}placeOrder?data=${encodedData}`);
+      const response = await axios.get(`${this.url}transactionPlaceOrder?data=${encodedData}`);
       alert('Order placed successfully');
       return response;
     } catch (error) {
@@ -237,7 +237,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async transactionCreatePayment(data) {
+  async createPayment(data) {
     const paymentSchema = Joi.object({
       userId: Joi.string().required(),
       amount: Joi.number().required(),
@@ -254,15 +254,16 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       const encodedData = encodeURIComponent(JSON.stringify(data));
-      const response = await axios.post(`${this.url}transactionCreatePayment?data=${encodedData}`);
+      const response = await axios.post(`${this.url}createPayment?data=${encodedData}`);
       return response;
     }
     catch{
       console.log(error);
       alert('An error occurred. Please try again later.');
     }
-
   }
+
+
 
   async testPayMayaWebHookSuccess(data) {
     const dataSchema = schemas.mayaSuccessRequestSchema();
@@ -290,6 +291,35 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       }
     }
   }
+
+  async updateOrdersAsPaidOrNotPaid(userId) {
+    const userIdSchema = Joi.string().required()
+
+    const { error } = userIdSchema.validate(userId);
+
+    if (error) {
+      alert(error.message);
+      throw new Error(error.message);
+    }
+
+
+    try {
+      const response = await axios.post(`${this.url}updateOrdersAsPaidOrNotPaid?data=${userId}`);
+      return response;
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        // Handle the 400 error messages
+        const errorMessage = error.response.data;
+        console.error('Error:', errorMessage);
+        alert(errorMessage);
+      } else {
+        // Handle other errors
+        console.error('An error occurred:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    }
+  }
+
 }
 
 export default cloudFirestoreDb;

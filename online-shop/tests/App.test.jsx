@@ -956,15 +956,174 @@ describe('getCartCount', () => {
 });
 
 describe.only('cloudfirestoredb', async () => {
-  test('transactionCreatePayment', async () => {
-    const data = {
+  test('updateOrdersAsPaidOrNotPaid', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('01/01/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+    await delay(200)
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('02/01/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+
+    await delay(200)
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      orderDate: new Date('03/01/2023'),
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: 62002,
+      reference: 'testref123456',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+
+    await delay(200)
+
+    await cloudfirestore.createPayment({
       userId: userTestId,
-      amount: 8888,
-      reference: 'testref123456789',
+      amount: 150000,
+      reference: 'testref1234',
       paymentprovider: 'Maya',
-    }
-    await cloudfirestore.transactionCreatePayment(data)
-  })
+    });
+
+    await delay(200)
+    await cloudfirestore.updateOrdersAsPaidOrNotPaid(userTestId);
+    await delay(200)
+    const userData =  await firestore.readSelectedDataFromCollection('Users', userTestId)
+    const orders = userData.orders;
+
+    orders.forEach((order) => {
+      if (order.reference === 'testref1234') {
+        expect(order.paid).toEqual(true);
+      }
+      if (order.reference === 'testref12345') {
+        expect(order.paid).toEqual(true);
+      }
+      if (order.reference === 'testref123456') {
+        expect(order.paid).toEqual(false);
+      }
+    } );
+
+  }, 100000);
+  // test('transactionCreatePayment', async () => {
+
+  //   // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+  //   await delay(100)
+  //   const data = {
+  //     userId: userTestId,
+  //     amount: 8888,
+  //     reference: 'testref123456789',
+  //     paymentprovider: 'Maya',
+  //   }
+  //   await cloudfirestore.createPayment(data)
+
+  //   const user = await firestore.readUserById(userTestId);
+  //   const payments = user.payments;
+
+  //   payments.forEach((payment) => {
+  //     if (payment.reference === 'testref123456789') {
+  //       expect(payment.amount).toEqual(8888);
+  //     }
+  //   });
+
+  //   // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+  //   await delay(100)
+  // })
   // test('testPayMayaWebHookSuccess', async () => {
   //   await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
   //   await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1047,7 +1206,6 @@ describe.only('cloudfirestoredb', async () => {
   //   const orders = user.orders;
   //   const payments = user.payments;
 
- 
   //   orders.map((order) => {
   //     if (order.reference == 'testref1234') {
   //       expect(order.paid).toEqual(true);

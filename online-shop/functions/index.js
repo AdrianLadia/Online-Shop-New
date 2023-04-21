@@ -234,25 +234,24 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
 //   }
 // }
 
-exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+exports.createPayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const data = parseData(req.query.data);
       const userId = data.userId;
-      console.log(data)
-      console.log(userId)
+      console.log(data);
+      console.log(userId);
 
-  
       const db = admin.firestore();
       const user = await db.collection('Users').doc(userId).get();
-      const userData = user.data() 
+      const userData = user.data();
       // const userData = userRef.data();
       const oldPayments = userData.payments;
-      console.log('old Payments', oldPayments)
+      console.log('old Payments', oldPayments);
 
       const newPayments = [...oldPayments, data];
 
-      console.log('new Payments', newPayments)
+      console.log('new Payments', newPayments);
 
       await db
         .collection('Users')
@@ -264,6 +263,67 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
       res.status(200).send('success');
     } catch (error) {
       res.status(400).send('Error creating payment. Please try again later');
+    }
+  });
+});
+
+exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      const id = req.query.data;
+      console.log('Id selected is ', id);
+      console.log('Validating Data');
+      const userIdSchema = Joi.string().required();
+
+      const { error1 } = userIdSchema.validate(id);
+
+      if (error1) {
+        console.log(error1);
+        throw new Error('Data Validation Error');
+      }
+
+      console.log('Getting User Data');
+      // Launch db
+      const db = admin.firestore();
+      // Get userdata
+      const user = await db.collection('Users').doc(id).get();
+      const userData = user.data();
+      const payments = userData.payments;
+      let orders = userData.orders;
+
+      // console.log('Payments', payments)
+
+      // manipulate data
+      // get total of payments
+      let totalPayments = 0;
+      payments.map((payment) => {
+        totalPayments += payment.amount;
+      });
+      // sort orders to target the oldest order first
+      orders.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate));
+
+      // edit orders
+      orders.forEach((order) => {
+        totalPayments -= order.grandTotal;
+        if (totalPayments >= 0) {
+          order.paid = true;
+          console.log(order.reference + ' is PAID');
+        }
+        if (totalPayments < 0) {
+          order.paid = false;
+          console.log(order.reference + ' is NOT PAID');
+        }
+      });
+
+      console.log('Credit left is : ' + totalPayments);
+      await db
+        .collection('Users')
+        .doc(id)
+        .update({ ['orders']: orders });
+
+      res.status(200).send('success');
+    } catch (error) {
+      res.status(400).send(error);
     }
   });
 });
