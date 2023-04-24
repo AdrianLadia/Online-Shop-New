@@ -95,10 +95,19 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
-            if (product)
+            let stocksAvailable = null
+            let averageSalesPerDay = null
+            if (product.unit == 'Pack') {
+              products.map((p, index) => {
+                if (p.itemId == product.parentProductID) {
+                  stocksAvailable = p.stocksAvailable;
+                  averageSalesPerDay = p.averageSalesPerDay;
+                }
+              });
+            }
             return (
               <div className='flex justify-evenly'>
-                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} />
+                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
               </div>
             );
           })

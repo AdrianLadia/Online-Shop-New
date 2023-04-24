@@ -26,13 +26,24 @@ const ProductCard = (props) => {
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
   const calculations = new businessCalculations();
-  const safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
   const { cart } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(true);
   const ref = useRef(null);
   const showTutorial = props.showTutorial
   const setShakeCartAnimation = props.setShakeCartAnimation
+  const retailStocksAvailable = props.stocksAvailable
+  const retailAverageSalesPerDay = props.averageSalesPerDay
+  
+  let safetyStock 
+  if (product.averageSalesPerDay != undefined) {
+    safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
+  }
+  if (product.averageSalesPerDay == undefined) {
+    safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
+  }
 
+  
+  
   function ClearForm() {
     document.getElementById('inputquantity' + props.product.itemName).value = '';
   }
@@ -92,11 +103,15 @@ const ProductCard = (props) => {
   }, [quantity]);
 
   React.useEffect(() => {
-    if (product.unit == 'pack') {
-      
+    if (product.unit == 'Pack') {
+      if (retailStocksAvailable <= safetyStock) {
+        setOutOfStock(true);
+      }
     }
-    if (product.stocksAvailable <= safetyStock) {
-      setOutOfStock(true);
+    if (product.unit != 'Pack') {
+      if (product.stocksAvailable <= safetyStock) {
+        setOutOfStock(true);
+      }
     }
     if (product.stocksAvailable <= 50 + safetyStock && product.unit != 'pack') {
       setLowStock(true);
