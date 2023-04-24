@@ -30,6 +30,16 @@ module.exports = {
         'bounce-fade-5': 'bounce-fade 1.25s ease-in-out 5',
         'shake': 'shake 1s ease-in-out infinite'
       },
+      screens: {
+        '2xs' : '366px',
+        'xs' : '480px',
+        '2md' : '800px',
+        '2lg' : '1145px',
+        '3xl' : '1751px'
+      },
+      borderRadius: {
+        '4xl': '2rem'
+      },
       colors: {
 
         //f // COLOR 1
@@ -41,7 +51,8 @@ module.exports = {
         colorbackground: '#e1fadd', //bright green
         color1:"#d3eecf",
         color2:"#cceac7", //pale green
-        blue1:"#429eff" //dark blue
+        blue1:"#429eff", //dark blue
+        green1:"#f0fff0"
 
         // beddb8
         // ecd7a8

@@ -7,6 +7,7 @@ import MyOrderCardModal from './MyOrderCardModal';
 import dataManipulation from '../../utils/dataManipulation';
 
 const AccountStatement = () => {
+
   const { orders, payments } = useContext(AppContext);
 
   const datamanipulation = new dataManipulation();
@@ -17,17 +18,19 @@ const AccountStatement = () => {
   const handleClose = () => setOpen(false);
 
   useEffect(() => {
-    console.log('orders', orders);
-    console.log('payments', payments);
+    // console.log('orders', orders);
+    // console.log('payments', payments);
+    try{
     const dataToUse = datamanipulation.accountStatementData(orders, payments);
-
     setTableData(dataToUse);
-
+    }catch(e){
+      console.log(e)
+    }
   }, [orders]);
 
   return (
-    <div className="flex flex-col bg-gradient-to-r from-colorbackground via-color2 to-color1">
-      <Typography variant="h2" className="flex justify-center mt-4">
+    <div className="flex flex-col justify-center items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
+      <Typography variant="h2" className="flex justify-center mt-4 w-10/12">
         Account Statement
       </Typography>
       <div className='flex justify-center mb-8'>

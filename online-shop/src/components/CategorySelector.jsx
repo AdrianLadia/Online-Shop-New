@@ -63,7 +63,7 @@ const CategorySelector = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-    <div className="w-full ">
+    <div className="w-full">
       <div className="flex flex-col items-center mt-5 from-colorbackground via-color2 to-color1">
 
         {/* <div className="flex flex-row overflow-scroll">

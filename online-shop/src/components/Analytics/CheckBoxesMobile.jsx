@@ -51,13 +51,13 @@ export const CheckBoxesMobile = ({name, callback}) => {
   
   return (
     
-    <div className="grid w-full h-4/6 justify-items-center gap-2 rounded-lg">
+    <div className="grid grid-cols-2 justify-center gap-2 w-full rounded-lg ">
      
         {categories && categories.map((type)=>{
             if(type){
               return(
-                <div className="ease-in duration-100 rounded-lg flex flex-col-reverse justify-center gap-1 w-full border-2 border-emerald-200 bg-emerald-100 hover:bg-green-200">
-                  <input className="accent-pink-400 flex place-self-center cursor-pointer "
+                <div className=" rounded-lg flex flex-col-reverse justify-center gap-1 w-full border-2 border-emerald-200 bg-emerald-100 hover:bg-green-200">
+                  <input className="accent-red-500 flex place-self-center cursor-pointer "
                         type="checkbox"
                         name= {type}
                         checked={selectedOption.includes(type)}

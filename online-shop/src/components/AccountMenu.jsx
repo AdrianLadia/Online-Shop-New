@@ -15,7 +15,7 @@ import { FaStore } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { AiOutlineHistory } from "react-icons/ai";
 import { BsBook } from "react-icons/bs";
-import { GrUserAdmin } from "react-icons/gr";
+import { RiAdminLine } from "react-icons/ri";
 import { Typography } from "@mui/material";
 
 const AccountMenu = (props) => {
@@ -28,6 +28,7 @@ const AccountMenu = (props) => {
     setUserState,
    } = useContext(AppContext);
   const open = Boolean(anchorEl);
+
   const navigateTo = useNavigate();
 
   const handleClick = (event) => {
@@ -63,7 +64,6 @@ const AccountMenu = (props) => {
     navigateTo("/accountstatement");
   }
 
-
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -74,17 +74,17 @@ const AccountMenu = (props) => {
             id = "accountMenu"
             onClick={handleClick}
             size="small"
-            sx={{ ml: 2 }}
+            sx={{ ml: 0 }}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             className='hover:bg-blue1'
           >
-            <Avatar sx={{ width: 32, height: 32, bgcolor:'#6bd0ff',}}>
-              <Typography color='white' >
-                {userdata.name[0]}
+            <Avatar sx={{ width: 36, height: 36, bgcolor:'#6bd0ff',justifyItems:"center"}}>
+              <Typography color='white' sx={{ mt:.2, fontWeight:600}}>
+                {userdata.name[0].toUpperCase()}
               </Typography>
-              </Avatar>
+            </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -111,7 +111,7 @@ const AccountMenu = (props) => {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 19,
+              right: 17,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -125,7 +125,7 @@ const AccountMenu = (props) => {
       >
         <MenuItem id='storeMenu' onClick={storeClick} className='hover:bg-color10b'>
           <FaStore size={17} />
-          <span className="ml-5">Store</span>
+          <span className="ml-5 mt-1">Store</span>
         </MenuItem>
         <Divider />
         {/* PROFILE MENU */}
@@ -160,10 +160,10 @@ const AccountMenu = (props) => {
         </MenuItem>
         {isadmin ? (
           <div>
-            <Divider />
-            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-color10b'>
-              <GrUserAdmin size={17} className="ml-0.5" />
-              <span className="ml-5 mt-1">Admin</span>
+            <Divider className="mt-1 mb-1"/>
+            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-slate-300'>
+              <RiAdminLine size={21} className="-ml-.5 font-bold text-blue1" />
+              <span className="ml-5 mt-1 text-blue1">Admin</span>
             </MenuItem>
           </div>
         ) : null}

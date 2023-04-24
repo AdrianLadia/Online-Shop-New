@@ -35,10 +35,10 @@ const AccountStatementTable = (props) => {
     
 
   return (
-    <div className="w-11/12 my-5">
+    <div className="w-11/12 my-5 border-2 border-color60">
       <TableContainer component={Paper} >
         <Table aria-label="simple table">
-          <TableHead className="bg-color10c">
+          <TableHead className="bg-color10c border-b-2 border-color60">
             <TableRow>
               <TableCell>Date</TableCell>
               <TableCell align="right">Reference</TableCell>

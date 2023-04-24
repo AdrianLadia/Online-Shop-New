@@ -62,7 +62,7 @@ const AdminCreatePayment = (props) => {
           <HiCash size={25}/>
         </div>
 
-        <Divider/>
+        <Divider sx={{border:1}}/>
 
         <Autocomplete
           onChange={(event, value) => setSelectedName(value)}
@@ -126,13 +126,12 @@ const AdminCreatePayment = (props) => {
           <button 
             id='createPaymentButton' 
             onClick={onCreatePayment}  
-            className="w-5/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 rounded-lg sm:text-2xl text-xl"
+            className="w-5/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg sm:text-2xl text-xl"
             >{' '}Create Payment{' '}
           </button>
         </div>
 
       </div>
-      <Divider sx={{ marginTop: 10 , marginBottom:10}} />
     </div>
     </ThemeProvider>
   );

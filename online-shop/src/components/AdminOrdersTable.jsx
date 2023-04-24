@@ -81,8 +81,8 @@ const AdminOrdersTable = (props) => {
   }
 
   return (
-    <TableContainer component={Paper} >
-      <Table className="border-2 border-color60" aria-label="simple table">
+    <TableContainer component={Paper}>
+      <Table aria-label="simple table">
         <TableHead>
           <TableRow className="bg-color10c">
             <TableCell>Reference #</TableCell>

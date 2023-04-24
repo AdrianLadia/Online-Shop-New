@@ -66,31 +66,31 @@ export const CheckBoxes = ({name, callback}) => {
   
   return (
     
-    <div className="w-1/2 align-center justify-center ">
+    <div className=" justify-center ">
 
-      <button onClick={toggleDiv} className=" lg:text-4xl md:text-2xl mt-2 mb-3 ml-2 text-green-700 hover:text-emerald-500"><FaList/></button>
+      <button onClick={toggleDiv} className="lg:text-4xl md:text-lg mt-2 mb-3 ml-2 text-green-700 hover:text-emerald-500"><FaList/></button>
   
-    {showDiv && <div className="absolute w-2/12 h-1/2 grid justify-center border-2 border-indigo-800 bg-gradient-to-b from-violet-100 to-indigo-100 rounded-lg overflow-auto">
+    {showDiv && <div className="absolute grid h-max w-full border-2 border-indigo-800 bg-gradient-to-b from-violet-100 to-indigo-100 rounded-lg overflow-auto">
      
-      <div className="grid w-full gap-1 justify-items-center p-1">
+      <div className="grid w-full gap-1 justify-items-center p-3">
       
           {categories && categories.map((type)=>{
               if(type){
                 return(
-                  <div className="ease-in duration-100 rounded-lg flex flex-col-reverse justify-center gap-1 w-full border-2 border-indigo-300 bg-slate-50 hover:bg-purple-100">
-                    <input className="accent-indigo-500 flex place-self-center cursor-pointer w-full"
+                  <div className="rounded-lg flex flex-col-reverse justify-center gap-1 w-full border-2 border-indigo-300 bg-slate-50 hover:bg-purple-100">
+                    <input className="accent-indigo-500 flex cursor-pointer w-full "
                         type="checkbox"
                         name= {type}
                         checked={selectedOption.includes(type)}
                         onChange={handleCheckboxChange}
                     />
-                      <label className="text-base text-center flex place-self-center text-green-700 font-semibold" htmlFor={type}> {type} </label>
+                      <label className="text-xs text-center flex place-self-center text-green-700 font-semibold" htmlFor={type}> {type} </label>
                   </div>    
                     )
                 }
             })}     
           
-                <div className="rounded-lg col-span-2 ease-in duration-100 grid gap-1 justify-items-center mt-1 mb-2 border-2 border-indigo-300 w-full bg-slate-50 hover:bg-indigo-100 ">
+                <div className="rounded-lg col-span-2 grid gap-1 justify-items-center mt-1 mb-2 border-2 border-indigo-300 w-full bg-slate-50 hover:bg-indigo-100 ">
                     <input 
                         type="checkbox"
                         name="true"
@@ -102,7 +102,7 @@ export const CheckBoxes = ({name, callback}) => {
                 </div>
 
                 <div className="col-span-2 grid gap-1 justify-items-center mt-2 ">
-                  {customized === ""  && selectedOption === "" ?  null  : 
+                  {customized === ""  && selectedOption === "" ?  <div> </div>  : 
                     <div className="flex"> 
                         <button className="p-1  bg-red-400 border-2 text-xs border-red-600 rounded-lg hover:bg-red-300 " 
                         onClick={handleClear}>Clear All</button>    

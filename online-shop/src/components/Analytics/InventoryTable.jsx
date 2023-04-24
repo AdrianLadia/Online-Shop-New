@@ -226,7 +226,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
       width: responsiveTableWidthItemName(),
-      headerClassName: "super-app-theme--header1",
+      headerClassName: "super-app-theme--header",
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -404,7 +404,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
       width: responsiveTableWidthItemName(),
-      headerClassName: "super-app-theme--header1",
+      headerClassName: "super-app-theme--header",
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -609,7 +609,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
       width: responsiveTableWidthItemName(),
-      headerClassName: "super-app-theme--header1",
+      headerClassName: "super-app-theme--header",
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -871,14 +871,10 @@ export function InventoryTable({name, category, customized, callback}) {
   const ROW_HEIGHT = 230;
 
   return (
-    <div className="resize h-5/6 w-10/12 lg:h-5/6 lg:w-4/5 ml-1 mr-3 bg-gradient-to-t from-stone-100 to-green-100">
+    <div className=" w-11/12 2lg:w-9/12 ml-1 mr-3 mt-10 2lg:mt-0 bg-gradient-to-t from-stone-100 to-green-100 border-2 border-green-700 rounded-md">
       {/* {loading === true ? ( */}
         <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={{display: "flex", justifyContent: "center", alignItems: "center"}}
         >
           {/* <RingLoader color={"#36d7b7"} loading={loading} size={290} />{" "} */}
         </div>
@@ -886,30 +882,20 @@ export function InventoryTable({name, category, customized, callback}) {
         <Box
           sx={{
             height: "100%",
-            width: "99.9%",
-            border: "2px solid green",
-            borderRadius: "8px",
             "& .super-app-theme--header": {
               backgroundImage: "linear-gradient(to bottom, #95E8D7, #ADF7D1)",
-              display: "flex",
-              flexDirection: "row"
-            },
-            "& .super-app-theme--header1": {
-              backgroundImage: "linear-gradient(to bottom, #95E8D7, #ADF7D1)",
-              position: "sticky",
             },
             "@media only screen and (max-width: 900px)": {
               height: "100%",
               width: "97%",
             },
           }}
+          className='w-full'
         >
           <DataGrid
             rows={filtered}
             columns={columns}
-            initialState={{ pinnedColumns: { left: ['actions']} }}
             rowHeight={ROW_HEIGHT}
-            
           />
         </Box>
       {/* )} */}

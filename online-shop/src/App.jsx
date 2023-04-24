@@ -18,6 +18,7 @@ import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
 import AppConfig from './AppConfig';
+import './App.css'
 import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';

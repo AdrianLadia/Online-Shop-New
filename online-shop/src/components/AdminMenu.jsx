@@ -13,9 +13,11 @@ import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';
 import {ThemeProvider } from '@mui/material/styles';
 import theme from "../colorPalette/MaterialUITheme";
-import { BsBoxes, BsBagCheck } from "react-icons/bs";
+import { BsBoxes, BsBagCheck, BsGraphUp } from "react-icons/bs";
 import { HiOutlineCash } from "react-icons/hi";
 import App from './Analytics/App';
+import { RiAdminFill } from "react-icons/ri";
+import Divider from "@mui/material/Divider";
 
 const AdminMenu = () => {
   const {products,firestore } = React.useContext(AppContext);
@@ -61,7 +63,6 @@ const AdminMenu = () => {
   };
 
   useEffect(() => {
-
     firestore.readAllCategories().then((c) => {
       setCategories(c);
     });
@@ -79,15 +80,21 @@ const AdminMenu = () => {
       <div className="flex flex-row w-full justify-between bg-gradient-to-r from-color60 via-color10c to-color60 py-3">
         {/* Back Button */}
         <IoArrowBackCircle id='backToStoreButton' size={40} className=" mt-1 ml-6 text-white hover:text-color10b cursor-pointer" onClick={handleBack} />
-        <div>
+          
+        <div className='flex mr-14'>
+            <RiAdminFill size={35} className='mt-2 mr-1 text-blue1'/>
+          {/* <span className='mt-2 text-blue1 text-2xl font-semibold first-letter:text-3xl t'>Admin</span> */}
+        </div>
+
           {/* Menu Button */}
+        <div>
           <Button
             id="basic-button"
             aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
-          >
+          >          
             <GiHamburgerMenu id='hamburgerAdmin' size={36} className='mr-6 text-white hover:text-color10b'/>
           </Button>
           <Menu
@@ -128,7 +135,8 @@ const AdminMenu = () => {
             <MenuItem className='hover:bg-color10b' id='inventoryMenu' onClick={handleClickInventory}> <BsBoxes size={19}/>     <span>Inventory</span></MenuItem>
             <MenuItem className='hover:bg-color10b' id='createPaymentMenu' onClick={handleClickCreatePayment}> <HiOutlineCash size={19}/>     <span>Create Payment</span></MenuItem>
             <MenuItem className='hover:bg-color10b' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
-            <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAnalytics}> <BsBagCheck size={19}/>     <span>Analytics</span></MenuItem>
+            {/* <Divider className="mt-1 mb-1"/>   */}
+            <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
           </Menu>
         </div>
       </div>

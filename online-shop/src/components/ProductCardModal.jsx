@@ -14,6 +14,9 @@ import ProductCardModalTable from "./ProductCardModalTable";
 import AppContext from '../AppContext'
 import firestoredb from "../firestoredb";
 import { useEffect } from "react";
+import Divider from '@mui/material/Divider';
+import { Scrollbars } from 'react-custom-scrollbars';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,6 +69,8 @@ const ProductCardModal = (props) => {
   const [heart, setHeart] = useState(false);
   const {userdata,firestore,favoriteitems,setFavoriteItems} = React.useContext(AppContext);
   const [onInitialize, setOninitialize] = useState(true);
+  const [screenMobile, setScreenSizeMobile] = useState(null);
+
 
   function onHeartClick() {
     if (heart) {
@@ -81,14 +86,10 @@ const ProductCardModal = (props) => {
   }
 
   useEffect (() => {
-
     if (favoriteitems.includes(props.product.itemId)) {
       setHeart(true);
     }
-
   },[favoriteitems])
-
-  
 
   function responsiveimagemodal() {
     if (width >= 1024) {
@@ -97,6 +98,14 @@ const ProductCardModal = (props) => {
       return 1.1;
     }
   }
+
+  useEffect(()=>{
+    if (width < 1024) {
+      return setScreenSizeMobile(true);
+     }else {
+      return setScreenSizeMobile(false);
+     }
+  },[width])
 
     const size = props.product.size;
     const color = props.product.color;
@@ -126,12 +135,11 @@ const ProductCardModal = (props) => {
       }
     });
 
-
-
   return (
     <Modal open={props.modal} onClose={props.closeModal}>
+      <Scrollbars sx={{ width: 500, height: 300}}>
       <Fade in={props.modal}>
-        <Box sx={style} className="bg-colorbackground border-color60 overflow-y-auto">
+        <Box sx={style} className="bg-colorbackground border-color60 overflow-x-hidden overflow-y-auto">
           <div className="flex flex-col">
             {/* HEART AND X BUTTON*/}
             <div className="flex flex-row justify-between mb-5">
@@ -152,40 +160,78 @@ const ProductCardModal = (props) => {
               {/* X BUTTON */}
               <button
                 onClick={props.closeModal}
-                className="bg-red-500 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
+                className=" bg-red-500 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
               >
                 X
               </button>
             </div>
             <div className="flex flex-col">
               {/* TITLE */}
-              <Typography variant="h3" className="mb-5 text-black" align="center">
+              <Typography variant="h3" className="mb-10 text-black" align="center">
                 {props.product.itemName}
               </Typography>
-              {/* IMAGE */}
-                <ImageList
-                  className={classes.imageList}
-                  cols={responsiveimagemodal()}
-                  rowHeight="auto"
-                >
-                  { props.product.imageLinks.map((imagelink) => (
-                    <ImageListItem key={imagelink} cols={centerImage ? responsiveimagemodal() : 1} className={centerImage ? 'flex justify-center' : ''} >
-                      <Paper >
-                        <img src={imagelink} alt={"title"} />
-                      </Paper>
-                    </ImageListItem>
-                  ))}
-                </ImageList>
+
+              <Divider sx={{border:"1px solid black"}}/>
                 {/* Description */}
-                <Typography variant="h6" className="mt-5">
-                  {props.product.description}
-                </Typography>
-                {/* SPECIFICATION TABLE */}
-                <ProductCardModalTable specs={specs}/>
+                <div className="flex flex-col-reverse items-center">
+                 {	screenMobile ? (
+                  <Typography className="mt-8 ml-1 w-full 2xs:w-11/12 text-sm 2xs:text-lg indent-5 tracking-wide first-letter:text-xl first-letter:font-semibold">
+                      {props.product.description}
+                  </Typography>):null} 
+
+                {/* IMAGE */}
+                  <ImageList
+                    className={classes.imageList}
+                    cols={responsiveimagemodal()}
+                    rowHeight="auto"
+                  >
+                    {props.product.imageLinks.map((imagelink) => (
+                      <ImageListItem key={imagelink} cols={centerImage ? responsiveimagemodal() : 1} className={centerImage ? 'flex justify-center' : ''} >
+                        
+                        <Paper>  
+                          <img src={imagelink} alt={"title"} className=" mt-5"/>
+                        </Paper>
+                      </ImageListItem>
+                    ))}
+                  </ImageList>
+
+                  <Divider sx={{border:"1px solid lightgray"}} className="w-full mb-8 "/> 
+
+                  <div className="flex flex-col lg:flex-row-reverse my-10 mx-3 gap-3 items-center lg:items-start w-full">
+                    {/* Description */}
+                    {	screenMobile === false && props.product.description ?
+                      (
+                        <>
+                          <div className="lg:w-2/4 flex self-start ">
+                            <Typography className="w-11/12 ml-2 font-light text-green-800 hyphens-auto
+                                                  text-sm lg:text-md xl:text-lg 2xl:text-xl 3xl:text-2xl 
+                                                  indent:2 lg:indent-4 2xl:indent-7 text-left
+                                                  tracking-widest xl:tracking-tighter 2xl:tracking-tightest 
+                                                  first-letter:text-xl xl:first-letter:text-2xl 2xl:first-letter:text-3xl first-letter:font-semibold">
+                              {props.product.description}
+                            </Typography>
+                          </div>
+                          <div className="w-full 2md:w-11/12 lg:w-7/12 ml-0 lg:ml-4 border-2 border-color60 rounded-sm">
+                            {/* SPECIFICATION TABLE */}
+                            <ProductCardModalTable specs={specs}/>
+                          </div>
+                        </>
+                      )
+                      :
+                      (
+                        <div className="w-full ml-0 lg:ml-4 border-2 border-color60 rounded-sm">
+                          {/* SPECIFICATION TABLE */}
+                          <ProductCardModalTable specs={specs}/>
+                        </div>
+                      )
+                    }
+                  </div>
+                </div>
             </div>
           </div>
         </Box>
       </Fade>
+    </Scrollbars> 
     </Modal>
   );
 };

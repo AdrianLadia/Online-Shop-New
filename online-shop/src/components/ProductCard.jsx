@@ -15,6 +15,8 @@ import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { FaHandPointDown } from 'react-icons/fa';
 
 const ProductCard = (props) => {
+
+  // console.log(props)
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(false);
@@ -99,37 +101,31 @@ const ProductCard = (props) => {
   }, [product.stocksAvailable]);
 
   function responsiveStyle() {
-    if (width < 640) {
-      return '18px';
-    } else if (width < 768) {
-      return '18px';
-    } else if (width < 1024) {
-      return '19px';
-    } else if (width < 1736) {
-      return '19px';
-    } else if (width < 1836) {
-      return '21px';
+    if (width < 385) {
+      return '20px';
     } else {
       return '23px';
     }
   }
 
   function responsivePrice() {
-    if (width < 640) {
-      return '14px';
-    } else if (width < 768) {
-      return '14px';
+    if (width < 300) {
+      return '13px';
+    }else if (width < 768) {
+      return '13px';
     } else if (width < 1024) {
-      return '15px';
+      return '13px';
     } else if (width < 1536) {
-      return '17px';
+      return '14px';
     } else {
-      return '19px';
+      return '15px';
     }
   }
 
   function responsiveFont() {
-    if (width < 640) {
+    if (width < 250) {
+      return '10px';
+    } else if (width < 640) {
       return '12px';
     } else if (width < 768) {
       return '12px';
@@ -156,46 +152,58 @@ const ProductCard = (props) => {
   }, []);
 
 
+  function responsiveImgWidth() {
+    return 'max-w-xl';
+} 
+
+function responsiveWidth() {
+  return 'max-w-lg';
+} 
+
   return (
     <ThemeProvider theme={theme}>
-      <div className="flex justify-center h-full w-96">
+      <div className={" flex justify-center h-80 w-11/12 2xs:w-96"+ responsiveWidth()}>
+
+      {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
-          elevation={12}
-          sx={{ borderRadius: '20px' }}
+          elevation={10}
           // className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30 "
-          className="flex flex-row w-11/12 justify-center my-5 h-60 bg-gradient-to-r from-color60 to-color10c"
+          className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
+                      bg-gradient-to-r from-color60 via-color60 to-color10c shadow-lg shadow-slate-500"
+          // className="flex flex-row rounded-4xl w-11/12 justify-center my-5 bg-gradient-to-r from-color60 to-color10c drop-shadow-2xl"
         >
           {/* IMAGE */}
-          <div className=" w-3/5 relative">
-            <div className="absolute inset-0 flex  justify-center mt-12 p-2" onClick={() => setModal(true)}>
+          <div className=" w-8/12 relative rounded-4xl cursor-pointer" >
+            <div className="absolute inset-0 flex justify-center mt-12 p-2" onClick={() => setModal(true)}>
               {(iconVisible && showTutorial) ? (
-                <div>
+                <div className=''>
                   <FaHandPointDown
                     onClick={() => setModal(true)}
                     color="#6bd0ff"
                     size={40}
-                    className="animate-bounce-fade-5 mt-5"
-
+                    className="animate-bounce-fade-5 mt-4"
                   />
-                  <h1 className="absolute text-sm -top-20  left-7 whitespace-nowrap">
-                    <span className="text-transparent font-bold bg-clip-text bg-color10b">
-                      
+                  <h1 className="absolute text-sm -top-20 left-14 whitespace-nowrap">
+                    <span className="text-transparent font-bold bg-clip-text bg-color10b"> 
                     TAP FOR MORE INFO
                     </span>
                   </h1>
                 </div>
               ) : null}
             </div>
-            <img
-              src={props.product.imageLinks[0]}
-              alt={props.product.itemName}
-              className="h-full w-full object-cover rounded-lg"
-              onClick={() => setModal(true)}
-            ></img>
+              <img
+                  src={props.product.imageLinks[0]}
+                  alt={props.product.itemName}
+                  // className={"h-full object-cover saturate-150" + responsiveImgWidth()}
+                  // className={"h-full object-cover rounded-r-4xl border-t-2 border-b-2"}
+                  className={"h-full object-cover rounded-4xl border-l-4 border-color60 "}
+                  onClick={() => setModal(true)}
+              >
+              </img>
           </div>
           {/* IMAGE */}
           {/* DETAILS */}
-          <div className="flex flex-col ml-4 w-2/5 m-1 ">
+          <div className="flex flex-col ml-3 w-5/12 m-1 ">
             {outofstock === true ? (
               <div className="flex flex-row h-1/12">
                 <Typography fontSize={responsiveFont()} color="red">
@@ -210,8 +218,8 @@ const ProductCard = (props) => {
                     <Typography fontSize={responsiveFont()} color="red">
                       Stocks left
                     </Typography>
-                    <span className="flex h-3 w-3 ml-1 flex-grow-0">
-                      <span className="inline-flex items-center justify-center mt-1 py-2 px-1 text-xs font-semibold leading-none text-red-100 bg-red-600 rounded-full">
+                    <span className="flex h-3 w-3 ml-1 ">
+                      <span className="inline-flex items-center justify-center mt-0 2xl:mt-1 py-2 px-1 text-xs font-semibold text-white bg-red-600 rounded-full">
                         {props.product.stocksAvailable - safetyStock}
                       </span>
                     </span>
@@ -221,24 +229,41 @@ const ProductCard = (props) => {
                 )}
               </>
             )}
-            <div className="h-2/5 ">
+
+            {/* {console.log(props.product)} */}
+            <div className="h-2/6 ">
               <Typography
-                sx={{ fontSize: responsiveStyle(), mr: 1, color: 'black', cursor: 'pointer' }}
+                sx={{ fontSize: responsiveStyle(), mr: 1, cursor: 'help' }}
                 onClick={() => setModal(true)}
               >
                 {props.product.itemName}
               </Typography>
             </div>
 
-            <div className="h-1/6  flex items-center ">
-              <Typography sx={{ fontSize: responsivePrice(), mt: 3, mb: 1 }}>{'₱ ' + props.product.price}</Typography>
+            <div className="h-1/9 w-max mt-2 2xs:mt-0 ">
+              <Typography
+                sx={{ fontSize: responsivePrice(),mt: 2 , cursor: 'help' }}
+                className='tracking-tight'
+                onClick={() => setModal(true)}
+              >
+                Pieces: {props.product.pieces}
+              </Typography>
             </div>
 
-            <div className="flex flex-row h-1/6 w-full ">
+            <div className="h-1/6 flex items-center">
+              <Typography 
+                sx={{ fontSize: responsivePrice(), mb: 1, cursor: 'text' }}
+                className='tracking-tight'
+              >
+                Price: {'₱ ' + props.product.price}
+              </Typography>
+            </div>
+
+            <div className="flex flex-row items-center">
               <button
                 id="addtocartbutton"
-                className="mt-4  h-full text-black border-2 border-color10a bg-color10a text-xs py-1 px-2 rounded"
-                // className= "mt-5 h-full text-black bg-gradient-to-t from-color30 to-color10a ease-out delay-75 hover:bg-color60 hover:border-color10a text-xs py-1 px-2 rounded"
+                className=" h-max w-5/12 2xs:w-5/12 py-3 2xs:px-2 rounded-lg text-xs text-black border-2 border-color60 bg-color10c hover:bg-color1"
+                // className=" h-max w-5/12 2xs:w-1/3 py-3 2xs:px-2 rounded text-xs text-black border-2 border-color10a bg-color10a hover:bg-color10c hover:border-4 hover:border-double"
                 type="button"
                 onClick={AddToCart}
               >
@@ -249,29 +274,25 @@ const ProductCard = (props) => {
                 type="number"
                 color="enter"
                 value={quantity}
-                onChange={(event) => {
-                  setQuantity(event.target.value);
-                }}
-                className="m-2 h-max rounded-xl"
+                onChange={(event) => {setQuantity(event.target.value);}}
+                className="m-2 h-max w-7/12 rounded-xl "
                 label="Qty."
                 InputLabelProps={{
                   style: {
                     color: '#6ab15d',
                     fontSize:15
-                  },
-                }}
-                sx={{
-                    backgroundColor:"#ffffff",
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        border: 2 ,
-                        color:'#6ab15d',
-                        borderRadius:2,
-                      },
-                      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                        color: '#6ab15d',
-                        border:2
-                      }
-                }}
+                  },}}
+                sx={{backgroundColor:"#ffffff",
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 2 ,
+                      color:'#6ab15d',
+                      borderRadius:2,
+                    },
+                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                      color: '#6ab15d',
+                      border:2
+                    }
+                  }}
               />
           </div>
         </div>
