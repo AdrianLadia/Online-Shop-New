@@ -16,7 +16,7 @@ import { FaHandPointDown } from 'react-icons/fa';
 
 const ProductCard = (props) => {
 
-  console.log(props)
+  // console.log(props)
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(false);
@@ -176,7 +176,7 @@ function responsiveWidth() {
           <div className=" w-8/12 relative rounded-4xl cursor-pointer" >
             <div className="absolute inset-0 flex justify-center mt-12 p-2" onClick={() => setModal(true)}>
               {(iconVisible && showTutorial) ? (
-                <div className='bg-red-100 '>
+                <div className=''>
                   <FaHandPointDown
                     onClick={() => setModal(true)}
                     color="#6bd0ff"
