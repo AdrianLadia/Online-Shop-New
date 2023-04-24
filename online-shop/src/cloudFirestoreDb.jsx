@@ -194,7 +194,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const toReturn = response.data;
       const toReturnSchema = Joi.array().items(
         Joi.object({
-          averageSalesPerDay: Joi.number().required(),
+          averageSalesPerDay: Joi.number().required().allow(null),
           brand: Joi.string().allow('').required(),
           category: Joi.string().required(),
           color: Joi.string().required().allow(''),
@@ -209,7 +209,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           pieces: Joi.number().required(),
           price: Joi.number().required(),
           size: Joi.string().required().allow(''),
-          stocksAvailable: Joi.number().required(),
+          stocksAvailable: Joi.number().required().allow(null),
           unit: Joi.string().required(),
           weight: Joi.number().required(),
         }).unknown(false)

@@ -28,7 +28,7 @@ class businessCalculations {
   }
 
   getSafetyStock(averageSalesPerDay) {
-    const averageSalesPerDaySchema = Joi.number().required();
+    const averageSalesPerDaySchema = Joi.number().required().allow(null);
 
     const { error } = averageSalesPerDaySchema.validate(averageSalesPerDay);
     if (error) {

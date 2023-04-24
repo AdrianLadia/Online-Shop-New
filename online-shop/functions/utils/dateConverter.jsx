@@ -20,6 +20,16 @@ class dateConverter {
         const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         return formattedDate
     }
+
+    static sortTimeStampArrayByDate(array) {
+        array.sort((a, b) => {
+            const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
+            const timeB = b.orderDate.seconds * 1e9 + b.orderDate.nanoseconds;
+            return timeA - timeB;
+          });
+
+        return array
+    }
 }
 
 export default dateConverter

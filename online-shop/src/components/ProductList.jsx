@@ -95,6 +95,7 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
+            if (product)
             return (
               <div className='flex justify-evenly'>
                 <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} />

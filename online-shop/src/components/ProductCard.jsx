@@ -92,6 +92,9 @@ const ProductCard = (props) => {
   }, [quantity]);
 
   React.useEffect(() => {
+    if (product.unit == 'pack') {
+      
+    }
     if (product.stocksAvailable <= safetyStock) {
       setOutOfStock(true);
     }
