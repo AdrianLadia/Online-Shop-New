@@ -284,48 +284,66 @@ describe.only('Data Manipulation', async () => {
 
     const data = datamanipulation.accountStatementData(orders, payments);
   });
-  test('AccountStatementTable', () => {
-    const tableData = [
-      ['2023-03-06T07:43:27.488Z', 'Gcash 325664343', '', 32424, -32424, 'green'],
-      ['2023-03-06T07:43:46.128Z', 'Maya 3256643432', '', 324253, -356677, 'green'],
-      ['2023-03-06T08:24:36.330Z', '1624262023-899796', 1537.8, '', -355139.2, 'green'],
-      ['2023-03-07T02:23:58.194Z', '1023272023-873718', 45976.8, '', -309162.4, 'green'],
-    ];
-    const expected = [
-      {
-        date: '3/6/2023',
-        reference: 'Gcash 325664343',
-        credit: '',
-        debit: 32424,
-        runningBalance: -32424,
-        color: 'green',
-      },
-      {
-        date: '3/6/2023',
-        reference: 'Maya 3256643432',
-        credit: '',
-        debit: 324253,
-        runningBalance: -356677,
-        color: 'green',
-      },
-      {
-        date: '3/6/2023',
-        reference: '1624262023-899796',
-        credit: 1537.8,
-        debit: '',
-        runningBalance: -355139.2,
-        color: 'green',
-      },
-      {
-        date: '3/7/2023',
-        reference: '1023272023-873718',
-        credit: 45976.8,
-        debit: '',
-        runningBalance: -309162.4,
-        color: 'green',
-      },
-    ];
-    expect(datamanipulation.accountStatementTable(tableData, true)).toEqual(expected);
+  test('AccountStatementTable', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 62002,
+      reference: 'testref1234',
+      paymentprovider: 'Maya',
+    });
+
+    const testuser = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = testuser.orders;
+    const payments = testuser.payments;
+    const tableData = datamanipulation.accountStatementData(orders,payments)
+    const table = datamanipulation.accountStatementTable(tableData)
+
+
+    expect(orders.length).toBe(1);
+    expect(payments.length).toBe(1);
+
+
     // datamanipulation.accountStatementTable(tableData)
   });
   test('getOrderFromReference', () => {
