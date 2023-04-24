@@ -269,28 +269,7 @@ describe.only('Data Manipulation', async () => {
       paymentprovider: 'Maya',
     });
 
-    const testUser = await firestore.readSelectedDataFromCollection('Users', userTestId);
-    const orders = testUser.orders;
-    const payments = testUser.payments;
 
-    orders.forEach((order) => {
-      const newdate = new Date(order.orderDate.seconds * 1000 + order.orderDate.nanoseconds / 1000000);
-      order.orderDate = newdate;
-    });
-
-    payments.forEach((payment) => {
-      payment.date = new Date(payment.date.seconds * 1000 + payment.date.nanoseconds / 1000000);
-    });
-
-    const data = datamanipulation.accountStatementData(orders, payments);
-  });
-  test('AccountStatementTable', async () => {
-    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
-    const ppb16Price = ppb16.price;
-    const itemsTotal = (ppb16Price * 12) / 1.12;
-    const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
@@ -333,7 +312,10 @@ describe.only('Data Manipulation', async () => {
       paymentprovider: 'Maya',
     });
 
+    await(delay(1000))
+    
     const testuser = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    
     const orders = testuser.orders;
     const payments = testuser.payments;
     const tableData = datamanipulation.accountStatementData(orders,payments)
