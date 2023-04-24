@@ -84,6 +84,8 @@ async function createPayment(data, db) {
 
   const userId = data.userId;
 
+  data['date'] = new Date()
+
   const user = await db.collection('Users').doc(userId).get();
   const userData = user.data();
   // const userData = userRef.data();
@@ -91,7 +93,6 @@ async function createPayment(data, db) {
   console.log('old Payments', oldPayments);
 
   const newPayments = [...oldPayments, data];
-
   console.log('new Payments', newPayments);
 
   await db
@@ -345,7 +346,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
     const locallongitude = data.locallongitude;
     const localphonenumber = data.localphonenumber;
     const localname = data.localname;
-    const orderDate = data.orderDate;
+    const orderDate = new Date();
     const cart = data.cart;
     const itemstotal = data.itemstotal;
     const vat = data.vat;

@@ -258,7 +258,6 @@ const CheckoutPage = () => {
           locallongitude: locallongitude,
           userphonenumber: userdata.phoneNumber,
           username: userdata.name,
-          orderDate: new Date(),
           localname: localname,
           localphonenumber: localphonenumber,
           cart: cart,

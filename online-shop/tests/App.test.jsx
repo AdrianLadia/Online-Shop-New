@@ -218,13 +218,60 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe.only('Data Manipulation', () => {
-  test('AccountStatement', () => {
+describe.only('Data Manipulation', async () => {
+  test('AccountStatement', async () => {
 
-    cloudfirestore.transactionPlaceOrder
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
 
-    const orders = user.orders;
-    const payments = user.payments;
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 62002,
+      reference: 'testref1234',
+      paymentprovider: 'Maya',
+    });
+
+    const testUser = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = testUser.orders;
+    const payments = testUser.payments;
 
     orders.forEach((order) => {
       const newdate = new Date(order.orderDate.seconds * 1000 + order.orderDate.nanoseconds / 1000000);
@@ -528,7 +575,6 @@ describe('Transaction Place Order', async () => {
       locallongitude: 14.1,
       localphonenumber: '09178238421',
       localname: 'Adrian Ladia',
-      orderDate: new Date(),
       cart: cart,
       itemstotal: 20000,
       vat: 1200,
@@ -967,7 +1013,7 @@ describe('cloudfirestoredb', async () => {
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
 
-   await cloudfirestore.transactionPlaceOrder({
+    await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -975,7 +1021,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('01/01/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -993,7 +1038,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1055,7 +1100,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('01/01/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1073,7 +1117,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1091,7 +1135,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('02/01/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1109,7 +1152,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref12345',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1128,7 +1171,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('03/01/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1146,7 +1188,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref123456',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1183,16 +1225,15 @@ describe('cloudfirestoredb', async () => {
     });
   }, 100000);
   test('transactionCreatePayment', async () => {
-
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-    await delay(100)
+    await delay(100);
     const data = {
       userId: userTestId,
       amount: 8888,
       reference: 'testref123456789',
       paymentprovider: 'Maya',
-    }
-    await cloudfirestore.createPayment(data)
+    };
+    await cloudfirestore.createPayment(data);
 
     const user = await firestore.readUserById(userTestId);
     const payments = user.payments;
@@ -1204,8 +1245,8 @@ describe('cloudfirestoredb', async () => {
     });
 
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-    await delay(100)
-  })
+    await delay(100);
+  });
   test('testPayMayaWebHookSuccess', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1222,7 +1263,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('01/02/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1240,7 +1280,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1249,7 +1289,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
     });
 
-    await delay(300)
+    await delay(300);
 
     const req = {
       totalAmount: {
@@ -1280,7 +1320,7 @@ describe('cloudfirestoredb', async () => {
       },
     };
     const res = await cloudfirestore.testPayMayaWebHookSuccess(req);
-    await delay(300)
+    await delay(300);
     const data = res.data;
     expect(data).toEqual('success');
 
@@ -1297,9 +1337,9 @@ describe('cloudfirestoredb', async () => {
     let found1 = false;
     payments.map((payment) => {
       if (payment.reference == 'testref1234') {
-        found1 = true
+        found1 = true;
       }
-    })
+    });
 
     expect(found1).toEqual(true);
 
@@ -1311,7 +1351,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('02/02/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1329,7 +1368,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref12345',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1337,7 +1376,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
     });
-    await delay(300)
+    await delay(300);
 
     const user2 = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const user2orders = user2.orders;
@@ -1378,7 +1417,7 @@ describe('cloudfirestoredb', async () => {
     };
 
     const res2 = await cloudfirestore.testPayMayaWebHookSuccess(req2);
-    await delay(300)
+    await delay(300);
     const data2 = res2.data;
     expect(data2).toEqual('success');
 
@@ -1386,10 +1425,10 @@ describe('cloudfirestoredb', async () => {
     const user3orders = user3.orders;
     const user3payments = user3.payments;
 
-    found1 = false
+    found1 = false;
     user3payments.map((payment) => {
       if (payment.reference == 'testref12345') {
-        found1 = true
+        found1 = true;
       }
     });
 
@@ -1411,7 +1450,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('03/02/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1429,7 +1467,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref123456',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1446,7 +1484,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('04/02/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1464,7 +1501,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref1234567',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1481,7 +1518,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      orderDate: new Date('05/02/2023'),
       cart: [
         'PPB#16',
         'PPB#16',
@@ -1499,7 +1535,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: 62002,
+      grandTotal: itemsTotal,
       reference: 'testref12345678',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1538,7 +1574,7 @@ describe('cloudfirestoredb', async () => {
     };
 
     const res3 = await cloudfirestore.testPayMayaWebHookSuccess(req3);
-    await delay(300)
+    await delay(300);
     const data3 = res3.data;
     expect(data3).toEqual('success');
 
@@ -1562,41 +1598,44 @@ describe('cloudfirestoredb', async () => {
       if (order.reference == 'testref12345678') {
         expect(order.paid).toEqual(false);
       }
-    })
+    });
 
     expect(user4payments.length).toEqual(3);
 
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-  },1000000000);
+  }, 1000000000);
   test('changeUserRole', async () => {
-    await cloudfirestore.createNewUser({
-      uid: 'testuser',
-      name: 'test',
-      email: 'test@gmail.com',
-      emailVerified: true,
-      phoneNumber: '09178927206',
-      deliveryAddress: [],
-      contactPerson: [],
-      isAnonymous: false,
-      orders: [],
-      cart: [],
-      favoriteItems: [],
-      payments: [],
-      userRole: 'member',
-    },'testuser')
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'testuser',
+        name: 'test',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: [],
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+      },
+      'testuser'
+    );
     await delay(300);
     await cloudfirestore.changeUserRole('testuser', 'admin');
     await delay(300);
-    const user = await cloudfirestore.readSelectedUserById('testuser')
+    const user = await cloudfirestore.readSelectedUserById('testuser');
     await delay(300);
     expect(user.userRole).toEqual('admin');
     await cloudfirestore.changeUserRole('testuser', 'member');
     await delay(300);
-    const user2 = await cloudfirestore.readSelectedUserById('testuser')
+    const user2 = await cloudfirestore.readSelectedUserById('testuser');
     await delay(300);
     expect(user2.userRole).toEqual('member');
-    await cloudfirestore.deleteDocumentFromCollection('Users','testuser')
+    await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser');
   });
 
   test('readAllProductsForOnlineStore', async () => {
@@ -1701,7 +1740,6 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 1.3,
       localphonenumber: '09138927206',
       localname: 'Contact Person',
-      orderDate: new Date(),
       cart: ['test', 'test', 'test', 'test2'],
       itemstotal: 3125,
       vat: 375,
@@ -1734,8 +1772,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 1.3,
       localphonenumber: '09138927206',
       localname: 'Contact Person 2',
-      orderDate: new Date(),
-      cart: ['test', 'test', 'test', 'test2'],
+      cart: ['test', 'test', 'test', 'test'],
       itemstotal: 3125,
       vat: 375,
       shippingtotal: 200,
@@ -1767,8 +1804,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 1.3,
       localphonenumber: '09138927206',
       localname: 'Contact Person 2',
-      orderDate: new Date(),
-      cart: ['test', 'test', 'test', 'test2'],
+      cart: ['test', 'test', 'test', 'test'],
       itemstotal: 3125,
       vat: 375,
       shippingtotal: 200,

@@ -117,7 +117,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       locallongitude: Joi.number().required(),
       localphonenumber: Joi.string().required(),
       localname: Joi.string().required(),
-      orderDate: Joi.date().required(),
       cart: Joi.array().required(),
       itemstotal: Joi.number().required(),
       vat: Joi.number().required(),
