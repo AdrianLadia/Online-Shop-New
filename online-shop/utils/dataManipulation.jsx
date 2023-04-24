@@ -97,8 +97,8 @@ class dataManipulation {
       if (forTesting) {
         return b.date - a.date;
       } else {
-        const dateA = new Date(a.date)
-        const dateB = new Date(b.date)
+        const dateA = new Date(a.date._seconds)
+        const dateB = new Date(b.date._seconds)
         return dateB - dateA
       }
     });

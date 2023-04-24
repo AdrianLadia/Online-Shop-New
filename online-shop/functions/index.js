@@ -115,7 +115,17 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     totalPayments += payment.amount;
   });
   // sort orders to target the oldest order first
-  orders.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate));
+  // orders.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate));
+
+  orders.sort((a, b) => {
+    const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
+    const timeB = b.orderDate.seconds * 1e9 + b.orderDate.nanoseconds;
+    return timeA - timeB;
+  });
+
+  orders.map((order) => {
+    console.log(order.orderDate)
+  });
 
   // edit orders
   orders.forEach((order) => {

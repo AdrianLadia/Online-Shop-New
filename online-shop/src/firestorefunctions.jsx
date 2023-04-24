@@ -178,7 +178,6 @@ class firestorefunctions {
       locallongitude: Joi.number().required(),
       localphonenumber: Joi.string().required(),
       localname: Joi.string().required(),
-      orderDate: Joi.date().required(),
       cart: Joi.array().required(),
       itemstotal: Joi.number().required(),
       vat: Joi.number().required(),
@@ -197,6 +196,8 @@ class firestorefunctions {
     if (error) {
       throw new Error(error)
     }
+
+    data['orderDate'] = new Date()
 
 
 

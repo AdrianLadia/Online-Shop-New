@@ -218,7 +218,7 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe.only('Data Manipulation', async () => {
+describe('Data Manipulation', async () => {
   test('AccountStatement', async () => {
 
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
@@ -320,10 +320,11 @@ describe.only('Data Manipulation', async () => {
     const payments = testuser.payments;
     const tableData = datamanipulation.accountStatementData(orders,payments)
     const table = datamanipulation.accountStatementTable(tableData)
+    const endingBalance = table[3].runningBalance
 
-
-    expect(orders.length).toBe(1);
-    expect(payments.length).toBe(1);
+    expect(orders.length).toBe(2);
+    expect(payments.length).toBe(2);
+    expect(endingBalance).toBe(0);
 
 
     // datamanipulation.accountStatementTable(tableData)
@@ -1004,7 +1005,7 @@ describe('getCartCount', () => {
   });
 });
 
-describe('cloudfirestoredb', async () => {
+describe.only('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1038,7 +1039,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1084,7 +1085,7 @@ describe('cloudfirestoredb', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
   });
-  test('updateOrdersAsPaidOrNotPaid', async () => {
+  test.only('updateOrdersAsPaidOrNotPaid', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -1117,7 +1118,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1152,7 +1153,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref12345',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1188,7 +1189,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref123456',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1280,7 +1281,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1368,7 +1369,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref12345',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1467,7 +1468,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref123456',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1501,7 +1502,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref1234567',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1535,7 +1536,7 @@ describe('cloudfirestoredb', async () => {
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
-      grandTotal: itemsTotal,
+      grandTotal: itemsTotal + vat + 2002,
       reference: 'testref12345678',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -1711,6 +1712,8 @@ describe('cloudfirestoredb', async () => {
       },
       'test2'
     );
+
+    
     await firestore.createNewUser(
       {
         uid: 'testuser',
@@ -1732,27 +1735,46 @@ describe('cloudfirestoredb', async () => {
 
     await delay(500);
 
-    let data = {
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    
+
+    await cloudfirestore.transactionPlaceOrder({
       userid: 'testuser',
       username: 'testname',
-      localDeliveryAddress: 'PPB',
-      locallatitude: 1.12,
-      locallongitude: 1.3,
-      localphonenumber: '09138927206',
-      localname: 'Contact Person',
-      cart: ['test', 'test', 'test', 'test2'],
-      itemstotal: 3125,
-      vat: 375,
-      shippingtotal: 200,
-      grandTotal: 3700,
-      reference: 'testref1234567',
-      userphonenumber: '',
-      deliveryNotes: 'none',
-      totalWeight: 50,
-      deliveryVehicle: 'motorcycle',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345678',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
       needAssistance: true,
-    };
-    await cloudfirestore.transactionPlaceOrder(data);
+    });
     await delay(500);
 
     const testUser = await firestore.readSelectedDataFromCollection('Users', 'testuser');
@@ -1764,27 +1786,39 @@ describe('cloudfirestoredb', async () => {
     expect(contactPerson).length(1);
     expect(orders).length(1);
 
-    data = {
+    await cloudfirestore.transactionPlaceOrder({
       userid: 'testuser',
       username: 'testname',
-      localDeliveryAddress: 'PPB',
-      locallatitude: 1.12,
-      locallongitude: 1.3,
-      localphonenumber: '09138927206',
-      localname: 'Contact Person 2',
-      cart: ['test', 'test', 'test', 'test'],
-      itemstotal: 3125,
-      vat: 375,
-      shippingtotal: 200,
-      grandTotal: 3700,
-      reference: 'testref1234567',
-      userphonenumber: '',
-      deliveryNotes: 'none',
-      totalWeight: 50,
-      deliveryVehicle: 'motorcycle',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927205',
+      localname: 'Andrei Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345678',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
       needAssistance: true,
-    };
-    await cloudfirestore.transactionPlaceOrder(data);
+    });
     await delay(500);
 
     const testUser2 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
@@ -1796,27 +1830,41 @@ describe('cloudfirestoredb', async () => {
     expect(contactPerson2).length(2);
     expect(orders2).length(2);
 
-    data = {
+    
+
+    await cloudfirestore.transactionPlaceOrder({
       userid: 'testuser',
       username: 'testname',
-      localDeliveryAddress: 'PPB2',
-      locallatitude: 1.12,
-      locallongitude: 1.3,
-      localphonenumber: '09138927206',
-      localname: 'Contact Person 2',
-      cart: ['test', 'test', 'test', 'test'],
-      itemstotal: 3125,
-      vat: 375,
-      shippingtotal: 200,
-      grandTotal: 3700,
-      reference: 'testref1234567',
-      userphonenumber: '',
-      deliveryNotes: 'none',
-      totalWeight: 50,
-      deliveryVehicle: 'motorcycle',
+      localDeliveryAddress: 'Test City 2',
+      locallatitude: 1.242,
+      locallongitude: 2.1122,
+      localphonenumber: '09178927205',
+      localname: 'Andrei Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345678',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
       needAssistance: true,
-    };
-    await cloudfirestore.transactionPlaceOrder(data);
+    });
     await delay(300);
 
     const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
