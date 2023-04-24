@@ -4,6 +4,7 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 import { parseISO } from 'date-fns';
 import Joi from 'joi';
 import businessCalculations from './businessCalculations';
+import dateConverter from '../functions/utils/dateConverter';
 
 class dataManipulation {
   constructor() {}
@@ -154,7 +155,7 @@ class dataManipulation {
         const parsed = parseISO(item[0]);
         date = format(parsed, 'M/d/yyyy');
       } else {
-        date = new Date(item[0]).toLocaleDateString()
+        date =  dateConverter.convertDateTimeStampToDateString(item[0]);
       }
 
       rowsdata.push(createData(date, item[1], item[2], item[3], item[4], item[5]));
