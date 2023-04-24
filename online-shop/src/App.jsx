@@ -22,6 +22,7 @@ import './App.css'
 import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
+import AccountStatementPayment from './components/AccountStatementPayment';
 
 const devEnvironment = true
 
@@ -75,20 +76,20 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log('onAuthStateChanged ran');
+      // console.log('onAuthStateChanged ran');
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        console.log('FOUND USER', user.uid);
+        // console.log('FOUND USER', user.uid);
         setUserState('userloading');
         setUser(user)
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
-          console.log(userExists);
+          // console.log(userExists);
           if (userExists) {
-            console.log('user exists');
+            // console.log('user exists');
             setUserId(user.uid);
           } else {
-            console.log('user does not exist');
+            // console.log('user does not exist');
 
             async function createNewUser() {
               // "member": Represents a registered user with standard privileges, such as creating and editing their own content.
@@ -114,7 +115,7 @@ function App() {
                 user.uid
               );
             }
-            console.log('creating new user');
+            // console.log('creating new user');
             createNewUser();
             delay(1000).then(() => {
               setUserId(user.uid);
@@ -140,9 +141,9 @@ function App() {
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
-        console.log(userId)
+        // console.log(userId)
         const data = await cloudfirestore.readSelectedUserById(userId);
-        console.log(data)
+        // console.log(data)
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -150,13 +151,13 @@ function App() {
           setCart(localStorageCart);
           firestore.createUserCart(localStorageCart, userId).then(() => {
             localStorage.removeItem('cart');
-            console.log('cart removed from local storage');
+            // console.log('cart removed from local storage');
             setGuestLoginClicked(false);
             setGoToCheckoutPage(true);
           });
         }
         if (guestLoginClicked === false) {
-          console.log('guestLoginClicked is false');
+          // console.log('guestLoginClicked is false');
           setCart(data.cart);
         }
         // FLOW FOR GUEST LOGIN
@@ -340,6 +341,15 @@ function App() {
                   <AccountStatement />
                 </div>
               )}
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/AccountStatementPayment"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <NavBar />
+              <AccountStatementPayment />
             </AppContext.Provider>
           }
         />

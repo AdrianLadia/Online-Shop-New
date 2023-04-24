@@ -56,10 +56,19 @@ const MyOrderCardModal = (props) => {
                   color={order.paid ? "green" : "red"}
                   fontFamily="roboto"
                 >
-                  {order.paid ? "Paid" : "Not Paid"}
+                  {order.paid ? "Paid" 
+                  : 
+                  <div className="flex flex-col gap-1 md:flex-row justify-start"> 
+                      <a className="mt-1">Unpaid</a> 
+                    <div className="flex flex-col gap-2 md:gap-0 xs:flex-row ">
+                      <button className="w-max rounded-lg mt-1 xs:mt-0 md:ml-5 px-2 py-1 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
+                      <button className="w-max rounded-lg mt-1 xs:mt-0 md:ml-3 px-2 py-1 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
+                    </div>
+                  </div>
+                  }
                 </Typography>
               </div>
-              <div className="w-full">
+              <div className="w-1/2 text-end ">
                 <Typography
                   variant="h5"
                   color={order.delivered ? "green" : "red"}

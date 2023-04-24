@@ -91,7 +91,7 @@ class dataManipulation {
       });
     }
 
-    console.log(data)
+    // console.log(data)
     data.sort((a, b) => {
       
       if (forTesting) {
@@ -137,7 +137,7 @@ class dataManipulation {
 
     const { error } = dataToUseSchema.validate(dataToUse);
     if (error) {
-      console.log(dataToUse)
+      // console.log(dataToUse)
       throw new Error(error);
     }
 
@@ -648,7 +648,7 @@ class dataManipulation {
   }
 
   cleanGeocode(address) {
-    console.log(address)
+    // console.log(address)
     if (address != '') {
       const addressSchema = Joi.string().required();
       const { error } = addressSchema.validate(address);
@@ -660,7 +660,7 @@ class dataManipulation {
       let newString = ''
   
       for (let i = 0; i < address.length; i++) {
-        console.log(address[i]);
+        // console.log(address[i]);
   
         const string = address[i]
         if (string == ',') {
