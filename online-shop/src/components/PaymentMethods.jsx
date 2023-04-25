@@ -2,12 +2,13 @@ import React, { useEffect } from "react";
 import { useState, useContext } from "react";
 import PaymentCheckoutCard from "./PaymentCheckoutCard";
 import PaymentMethodContext from "../context/PaymentMethodContext";
+import useWindowDimensions from "./useWindowDimensions";
 
 function PaymentMethods() {
 
-
   const { bdoselected, setBdoselected, unionbankselected, setUnionbankselected, gcashselected, setGcashselected, mayaselected, setMayaselected, visaselected, setVisaselected, mastercardselected, setMastercardselected, bitcoinselected, setBitcoinselected, ethereumselected, setEthereumselected, solanaselected, setSolanaselected } = useContext(PaymentMethodContext);
-  
+  const { width } = useWindowDimensions();
+  const [screen, setScreen] = useState(false)
 
   useEffect(() => {
     if (bdoselected === true) {
@@ -109,8 +110,25 @@ function PaymentMethods() {
 
   }, [bdoselected, unionbankselected, gcashselected, mayaselected, visaselected, mastercardselected, bitcoinselected, ethereumselected, solanaselected]);
 
+  useEffect(()=>{
+    if(width < 366){
+      setScreen(true)
+    }else{
+      setScreen(false)
+    }
+  },[width])
+
+  function overFlow(){
+    if (screen === true) {
+      return " grid-flow-col overflow-x-auto bg-color2 rounded-2xl "
+    }else{
+      return " 3xl:grid-cols-9 2xl:grid-cols-8 xl:grid-cols-7 lg:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 2xs:grid-cols-2"
+    }
+  }
+
+
   return (
-    <div className=" h-full grid grid-cols-2 2xl:grid-cols-9 xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 place-items-center " >
+    <div className={"self-center w-11/12 gap-2 grid " + overFlow()} >
       <PaymentCheckoutCard paymentOption={"bdo"} cardSelected={bdoselected} setCardSelected={setBdoselected} />
       <PaymentCheckoutCard paymentOption={"unionbank"} cardSelected={unionbankselected} setCardSelected={setUnionbankselected} />
 

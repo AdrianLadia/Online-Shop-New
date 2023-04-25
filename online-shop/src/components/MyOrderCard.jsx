@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import {AiFillQuestionCircle} from "react-icons/ai"
 import MyOrderCardModal from "./MyOrderCardModal";
-import UseWindowDimensions from "./UseWindowDimensions";
+import UseWindowDimensions from "./useWindowDimensions";
+import {BsFileImage } from "react-icons/bs";
 
 function MyOrderCard(props) {
   const order = props.order;
@@ -41,33 +42,24 @@ function MyOrderCard(props) {
      }
   },[width])
 
-{/* <div className="flex justify-end ">
-              <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
-  </div> */}
-
-  //flex-col md:flex-row 
-
   return (
-    <div
-      className={" self-center w-full lg:w-11/12 mb-2 rounded-xl overflow-y-scroll " + responsiveCssPaperColorIfDelivered() }
-    >
+    <div className={"self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl " + responsiveCssPaperColorIfDelivered()}>
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
 
         <div className="flex justify-end mb-4">
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
         </div> 
 
-        <div className="flex flex-row">
+        <div className="flex flex-row ">
           <div className="flex w-full justify-between ">
-            <div className="flex">
-              <Typography variant="h5" component="p" className=" md:ml-2">
+            <div className="flex h-22  sm:h-full mb-4 sx:mb-0 ">
+              <Typography variant="h5" component="p" className=" md:ml-2 tracking-tighter xs:tracking-normal">
                  Order # : { order.reference}
               </Typography>
             </div>
-
-            <div className="flex w-1/4 justify-end text-end ">
-              <Typography variant="h5" component="span">
-                {orderDate}
+            <div className="flex w-3/4 sm:w-4/12 justify-end text-end lg:justify-center lg:text-start ">
+              <Typography variant="h5" component="span" className="tracking-tighter xs:tracking-normal lg:ml-8">
+                 Date : {orderDate}
               </Typography>
             </div>
 
@@ -80,48 +72,48 @@ function MyOrderCard(props) {
               variant="h5"
               component="div"
               color={order.delivered ? "green" : "red"}
+              className="tracking-tighter xs:tracking-normal"
             >
               {order.delivered ? "Delivered" : "Not Delivered"}
             </Typography>
             <Typography
               variant="h5"
               component="div"
-              className="mt-2"
+              className="md:mt-2 tracking-tighter xs:tracking-normal"
               color={order.paid ? "green" : "red"}
             >
               {order.paid ? "Paid" 
               : 
               <div className="flex flex-col gap-1 md:flex-row justify-start"> 
-                  <a className="mt-1">Unpaid</a> 
+                  <a className="md:mt-1">Unpaid</a> 
                 {screenMobile ?(
                   <div className="flex flex-col gap-2 md:gap-0 xs:flex-row ">
-                    <button className="w-max rounded-lg mt-1 xs:mt-0 md:ml-7 px-2 py-1 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
+                    <button className="w-max rounded-lg mt-1 xs:mt-0 md:ml-7 px-2 py-1 text-blue1 border border-blue1 hover:border-color10b hover:text-color10b">Cancel Order</button>
                     <button className="w-max rounded-lg mt-1 xs:mt-0 md:ml-3 px-2 py-1 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
+                    <button className=" rounded-full p-1 xs:mt-0 md:ml-3 text-blue1 border-2 border-blue1 1 hover:border-color10b hover:text-color10b">
+                      <BsFileImage className="text-3xl "/>
+                    </button> 
                   </div>):null
                 }
               </div>}
             </Typography>
           </div>
-          <div className="flex flex-col w-1/2 ">
-            <div className="flex text-center justify-end">
-              <Typography variant="h5" component="div">
-                Total :
+            <div className="flex w-full sm:w-6/12 justify-end text-end lg:justify-center lg:text-start ">
+              <Typography variant="h5" component="div" className="tracking-tighter xs:tracking-normal">
+                Total : ₱{order.grandTotal}
               </Typography>
             </div>
-            <div className="flex justify-end text-end">
-              <Typography variant="h5" className="mt-4">
-                ₱{order.grandTotal}
-              </Typography>
-            </div>
-          </div>
         </div>
 
-        {screenMobile === false ? (<div className="w-full border-t-4 mt-4 mb-2"></div>):null}
+        {screenMobile === false ? (<div className="w-full border-t-2 mt-4 mb-1"></div>):null}
 
         {screenMobile === false ? (
-          <div className="w-full 2xs:w-11/12 flex self-center justify-center gap-5 mt-5 font-bold text-lg ">
-           <button className=" w-max rounded-lg xs:mt-0 md:ml-7 px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
-           <button className="w-max rounded-lg xs:mt-0 md:ml-3 px-3 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
+          <div className="w-full 2xs:w-11/12 flex self-center justify-center xs:justify-evenly gap-5 mt-5 font-bold text-lg ">
+            <button className=" rounded-lg xs:mt-0 md:ml-7 px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
+            <button className=" rounded-lg xs:mt-0 md:ml-3 px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
+            <button className=" rounded-full p-1 xs:mt-0 md:ml-3 text-blue1 border-2 border-blue1 1 hover:border-color10b hover:text-color10b">
+              <BsFileImage className="text-3xl"/>
+            </button> 
           </div>):null
         }
 

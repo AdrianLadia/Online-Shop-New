@@ -12,7 +12,7 @@ const style = {
   height: '80%',
   transform: 'translate(-50%, -50%)',
   width: '95%',
-  height: 'auto',
+  height: '50vh',
   maxHeight: '80%',
   overflow: 'auto',
 
@@ -21,7 +21,8 @@ const style = {
   },
 
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  border: '2px solid #69b05c',
+  borderRadius: 3,
   boxShadow: 24,
   p: 4,
 };
@@ -35,25 +36,28 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
   const setZoom = props.setZoom;
 
   return (
-    <div>
+    <div className='flex flex-col '>
       <Modal
         open={props.open}
         onClose={props.handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        className=''
       >
-        <Box sx={style}>
-          <div className="flex flex-col">
-            <div className="flex flex-row justify-end">
+        <Box sx={style} className="bg-colorbackground">
+          <div className="flex flex-col ">
+            <div className="flex items-center justify-between my-3">
+              <div className='xs:ml-2 text-2xl xs:text-3xl font-semibold tracking-wider xs:tracking-widest'>
+                Saved Addresses
+              </div>
               <button
                 id="closeModalButton"
                 onClick={props.handleClose}
                 className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
-              >
-                X
+              > X
               </button>
             </div>
-            <div className="flex">
+            <div className="flex flex-col justify-center mt-6">
               {userdata ? (
                 userdata.deliveryAddress.map((address, index) => {
                   return (

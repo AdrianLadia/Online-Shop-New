@@ -3,7 +3,7 @@ import Paper from '@mui/material/Paper';
 import { Button, Typography } from '@mui/material';
 import { Snackbar } from '@material-ui/core';
 import { useState, useContext, useEffect,useRef } from 'react';
-import UseWindowDimensions from './UseWindowDimensions';
+import UseWindowDimensions from './useWindowDimensions';
 import TextField from '@mui/material/TextField';
 import ProductCardModal from './ProductCardModal';
 import businessCalculations from '../../utils/businessCalculations';
@@ -196,7 +196,7 @@ function responsiveWidth() {
                   alt={props.product.itemName}
                   // className={"h-full object-cover saturate-150" + responsiveImgWidth()}
                   // className={"h-full object-cover rounded-r-4xl border-t-2 border-b-2"}
-                  className={"h-full object-cover rounded-4xl border-l-4 border-color60 "}
+                  className={"h-full object-cover rounded-4xl  border-color60 "}
                   onClick={() => setModal(true)}
               >
               </img>

@@ -5,6 +5,7 @@ import { Typography, Button } from '@mui/material';
 import businessCalculations from '../../utils/businessCalculations';
 import { HiCash } from "react-icons/hi";
 
+
 const AccountStatementPayment = () => {
 
     // const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } = useContext(AppContext);
@@ -77,8 +78,8 @@ const paymentMethodValues = {
   return (
     <div>
       <div className='flex flex-col justify-center gap-16 mb-8'>
-        <div className='flex md:flex-row flex-row-reverse justify-center mt-7'>
-          <Typography variant="h2" className="mt-1  flex justify-center"><span>Payment Method</span></Typography>
+        <div className='flex ml-5 md:flex-row flex-row-reverse justify-center mt-7'>
+          <Typography variant="h2" className="mt-1 flex justify-center"><span>Payment Method</span></Typography>
           <HiCash size={25}/>
         </div>
 
@@ -86,7 +87,7 @@ const paymentMethodValues = {
             <PaymentMethods />
         </PaymentMethodContext.Provider>
 
-        <Button className='self-center mt-10 w-1/5 p-3 bg-blue1 hover:bg-color10b rounded-lg text-white font-semibold text-xl'>Pay</Button>
+        <Button className='self-center mt-10 w-2/5 p-5 bg-blue1 hover:bg-color10b rounded-lg text-white font-semibold text-xl'>Pay</Button>
       </div>
     </div>
   )

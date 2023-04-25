@@ -16,8 +16,8 @@ function MyOrders() {
 
   return (
     <React.Fragment>
-      <div className="flex flex-col justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
-        <div className="flex md:flex-row flex-row-reverse justify-center my-10 md:-ml-14">
+      <div className="flex flex-col justify-center bg-gradient-to-r mb-8 from-colorbackground via-color2 to-color1">
+        <div className="flex md:flex-row flex-row-reverse justify-center ml-3 xs:ml-0 my-10 md:-ml-14">
          <Typography className='self-center' variant="h2">My Orders </Typography>
          <BsFillBagCheckFill/>
         </div>

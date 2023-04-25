@@ -50,16 +50,25 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: "95%",
   overflowX: "scroll",
-
-  "@media (min-width: 1024px)": {
-    width: "60%",
-  },
-
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
-  p: 6,
-  borderRadius:"20px"
+  p: 1,
+  borderRadius:"20px",
+
+  "@media (min-width: 366px)": {
+    p:3
+  },
+
+  "@media (min-width: 700px)": {
+    width: "80%",
+    p:4
+  },
+
+  "@media (min-width: 1024px)": {
+    width: "60%",
+    p:5
+  },
 };
 
 
@@ -135,6 +144,14 @@ const ProductCardModal = (props) => {
       }
     });
 
+  function responsiveVariant(){
+    if(width < 366){
+      return "h4"
+    }else{
+      return "h3"
+    }
+  }
+
   return (
     <Modal open={props.modal} onClose={props.closeModal}>
       <Scrollbars sx={{ width: 500, height: 300}}>
@@ -167,7 +184,7 @@ const ProductCardModal = (props) => {
             </div>
             <div className="flex flex-col">
               {/* TITLE */}
-              <Typography variant="h3" className="mb-10 text-black" align="center">
+              <Typography variant={responsiveVariant()} className="mb-10 text-black" align="center">
                 {props.product.itemName}
               </Typography>
 

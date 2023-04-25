@@ -89,8 +89,8 @@ const CheckoutSummary = (props) => {
             </Table>
           </TableContainer>
 
-          <div className="flex flex-col justify-between lg:flex-row w-8/12 ">
-            <div className="flex xl:w-2/6 lg:w-2/6 md:w-full sm:w-full flex-col m-5 gap-3">
+          <div className="flex flex-col justify-center md:justify-between md:flex-row 2xs:w-8/12 ">
+            <div className="flex lg:w-2/6 w-full flex-col 2xs:m-5 gap-3 text-center md:text-start">
                 {area.includes('lalamoveServiceArea') ? (
                 <div className='flex flex-col gap-3'>
                   <Typography variant="h5">Delivery Vehicle : {deliveryVehicle}</Typography>
@@ -100,7 +100,7 @@ const CheckoutSummary = (props) => {
                   <Typography variant="h5">Weight of Items: {totalWeight} Kg</Typography>
             </div>
 
-            <div className="flex flex-col xl:w-2/6 lg:w-2/6 md:w-full sm:w-full gap-3 m-5 ">
+            <div className="flex flex-col lg:w-2/6 w-full gap-3 2xs:m-5 text-center md:text-start">
                   
                   <Typography  variant="h5">Items Total: ₱ {total.toLocaleString()}</Typography>
                   <Typography variant="h5" >Tax: ₱ {vat.toLocaleString()} </Typography>
@@ -115,9 +115,9 @@ const CheckoutSummary = (props) => {
             </div>
           
           </div>
-          <div className='flex flex-row'> 
-          <Typography  className='underline underline-offset-8' variant="h4">Grand Total: ₱ </Typography>
-          <Typography id='checkoutItemsTotal' className='underline underline-offset-8' variant="h4">{grandTotal.toLocaleString()}</Typography>
+          <div className='flex flex-row justify-center mt-4 2xs:mt-0'> 
+          <Typography  className='underline underline-offset-8 text-center' variant="h4">Grand Total:  </Typography>
+          <Typography id='checkoutItemsTotal' className='underline underline-offset-8 text-start' variant="h4"> ₱ {grandTotal.toLocaleString()}</Typography>
           </div>
         
         </div>

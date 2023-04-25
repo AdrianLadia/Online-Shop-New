@@ -149,7 +149,7 @@ const AdminOrders = (props) => {
         </div>
       </div>
 
-      <div className="flex flex-row mt-28 lg:mt-1 w-11/12 md:w-5/12 justify-evenly">
+      <div className="flex flex-row mt-20 xs:mt-28 lg:mt-1 w-11/12 md:w-5/12 justify-evenly">
           <div className="">
             <FormControl>
               <RadioGroup

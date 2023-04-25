@@ -38,11 +38,10 @@ const NavBar = () => {
       <div className="flex items-center justify-between flex-wrap bg-gradient-to-r from-color10c via-color10c to-color60 w-full h-16 ">
         <Logo onClick={storeClick}/>
         
-        <div className="flex flex-row mr-5 ">
+        <div className="flex flex-row 2xs:mr-5 ">
           {userdata ? <AccountMenu userdata={userdata} signout={logOutClick} /> :<LoginButton position={'left'} />}
         </div>
       </div>
-      <div></div>
     </div>
   );
 };
