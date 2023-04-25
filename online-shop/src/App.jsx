@@ -68,6 +68,7 @@ function App() {
   const [products, setProducts] = useState([]);
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
   const [categories,setCategories] = useState(null)
+  const [initialStartup,setInitialStartup] = useState(true)
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -132,7 +133,10 @@ function App() {
         setUserData(null);
         setUserLoaded(true);
         setUserState('guest');
-        alert('You are signed out');
+        setInitialStartup(false)
+        if (initialStartup == false) {
+          alert('You are signed out');
+        }
       }
     });
   }, []);
@@ -158,7 +162,8 @@ function App() {
           });
         }
         if (guestLoginClicked === false) {
-          console.log('guestLoginClicked is false');
+          // console.log('guestLoginClicked is false');
+          console.log('setting Cart');
           setCart(data.cart);
         }
         // FLOW FOR GUEST LOGIN

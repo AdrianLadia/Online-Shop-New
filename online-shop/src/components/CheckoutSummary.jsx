@@ -27,8 +27,7 @@ const CheckoutSummary = (props) => {
   const grandTotal = props.grandTotal;
   const vat = props.vat;
   const setTotalWeight = props.setTotalWeight;
-  const totalWeight = props.totalWeight;
-  console.log(props.deliveryVehicleObject);
+  const totalWeight = props.totalWeight;;
   const deliveryVehicle = props.deliveryVehicleObject.name 
   const maxWeight = props.deliveryVehicleObject.maxWeight;
   const area = props.area;
@@ -40,10 +39,6 @@ const CheckoutSummary = (props) => {
         products,
         cart
       );
-      console.log(rows_non_state);
-      console.log(total_non_state);
-      console.log(total_weight_non_state);
-      console.log(vat);
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);

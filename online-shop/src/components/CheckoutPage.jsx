@@ -56,8 +56,6 @@ const CheckoutPage = () => {
   const handleOpenContactModal = () => setOpenContactModal(true);
   const handleCloseContactModal = () => setOpenContactModal(false);
 
-  console.log(userdata)
-
   const [locallatitude, setLocalLatitude] = useState(10.373536960704778);
   const [locallongitude, setLocalLongitude] = useState(123.89504097627021);
   const [zoom, setZoom] = useState(18);

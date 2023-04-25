@@ -66,15 +66,15 @@ class schemas {
       color: Joi.string().allow(''),
       material: Joi.string().allow(''),
       size: Joi.string().allow(''),
-      stocksAvailable: Joi.number().required().invalid('', null),
-      stocksOnHold: Joi.array().required(),
-      averageSalesPerDay: Joi.number().required(),
+      stocksAvailable: Joi.number().required().invalid('').allow(null),
+      stocksOnHold: Joi.array().required().allow(null),
+      averageSalesPerDay: Joi.number().required().allow(null),
       parentProductID: Joi.string().allow(''),
-      stocksOnHoldCompleted: Joi.array().required(),
+      stocksOnHoldCompleted: Joi.array().required().allow(null),
       forOnlineStore: Joi.boolean().required().invalid('', null),
       isCustomized: Joi.boolean().required().invalid('', null),
       salesPerMonth: Joi.array(),
-      stocksIns: Joi.array(),
+      stocksIns: Joi.array().allow(null),
     }).unknown(false);
   }
 }

@@ -25,6 +25,8 @@ const App = () => {
   const { width } = useWindowDimensions();
   const [screenSizeMobile, setScreenSizeMobile] = useState()
   const [showMenu, setShowMenu] =useState(false)
+
+  
   
   // console.log(screenSizeMobile)
   

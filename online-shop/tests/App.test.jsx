@@ -13,6 +13,7 @@ import cloudFirestoreDb from '../src/cloudFirestoreDb';
 import retryApi from '../utils/retryApi';
 import testConfig from './testConfig';
 import firestorefunctions from '../src/firestorefunctions';
+import { fi } from 'date-fns/locale';
 
 //
 const datamanipulation = new dataManipulation();
@@ -23,7 +24,7 @@ const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
 const cloudfirestorefunctions = new cloudFirestoreFunctions();
 const cloudfirestore = new cloudFirestoreDb();
-const userTestId = '6CO7Rda0Ngtoi41Gp6Zge3VlB5C5';
+const userTestId = 'xB80hL1fGRGWnO1yCK7vYL2hHQCP';
 const testconfig = new testConfig();
 const testid = testconfig.getTestUserId();
 const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', testid);
@@ -371,7 +372,7 @@ describe('Data Manipulation', async () => {
     const cart = user.cart;
     const data = datamanipulation.getCheckoutPageTableDate(products, cart);
     const rows = data[0];
-  });
+  }, 10000);
   test('manipulateCartData', () => {
     const cart = ['PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#2', 'PPB#2'];
     const cart_data = datamanipulation.manipulateCartData(cart);
@@ -1005,7 +1006,7 @@ describe('getCartCount', () => {
   });
 });
 
-describe.only('cloudfirestoredb', async () => {
+describe('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1085,7 +1086,7 @@ describe.only('cloudfirestoredb', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
   });
-  test.only('updateOrdersAsPaidOrNotPaid', async () => {
+  test('updateOrdersAsPaidOrNotPaid', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -1967,4 +1968,156 @@ describe('retryApiCall', () => {
       await retryApi(() => testApiCallFalse(), 2);
     }).rejects.toThrowError(Error);
   }, 10000000);
+});
+
+describe('deleteOrderFromUserFirestore', () => {
+
+  test('clean Orders first', async () => {
+    await firestore.updateDocumentFromCollection('Users', 'testuser', { orders: [] });
+  });
+
+  test('creating three orders from testUser', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref123456',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+
+  });
+
+  test ('deleteOrderFromCollectionArray', async () => {
+
+
+
+    await firestore.deleteOrderFromCollectionArray(userTestId,'testref12345')
+
+    const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = user.orders;
+
+    expect(orders.length).toEqual(2);
+
+    orders.map((order) => {
+      if (order.reference == 'testref12345') {
+        throw new Error('Order not deleted');
+      } 
+    });
+
+    await firestore.deleteOrderFromCollectionArray(userTestId,'testref1234')
+
+    const user2 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders2 = user2.orders;
+
+    expect(orders2.length).toEqual(1);
+
+    await firestore.deleteOrderFromCollectionArray(userTestId,'testref123456')
+
+    const user3 = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders3 = user3.orders;
+
+    expect(orders3.length).toEqual(0);
+
+  })
 });

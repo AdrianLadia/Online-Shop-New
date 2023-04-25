@@ -251,60 +251,6 @@ class firestoredb extends firestorefunctions {
     });
   }
 
-  // async transactionPlaceOrder(
-  //   userId,
-  //   deliveryAddress,
-  //   locallatitude,
-  //   locallongitude,
-  //   localphonenumber,
-  //   localname,
-  //   orderdate,
-  //   name,
-  //   address,
-  //   phonenumber,
-  //   cart,
-  //   itemstotal,
-  //   vat,
-  //   shippingtotal,
-  //   grandtotal,
-  //   reference,
-  //   username,
-  //   userphonenumber,
-  //   deliveryNotes,
-  //   totalWeight,
-  //   deliveryVehicle,
-  //   needAssistance
-  // ) {
-  //   super.transactionPlaceOrder(
-  //     userId,
-  //     deliveryAddress,
-  //     locallatitude,
-  //     locallongitude,
-  //     localphonenumber,
-  //     localname,
-  //     orderdate,
-  //     name,
-  //     address,
-  //     phonenumber,
-  //     cart,
-  //     itemstotal,
-  //     vat,
-  //     shippingtotal,
-  //     grandtotal,
-  //     reference,
-  //     username,
-  //     userphonenumber,
-  //     deliveryNotes,
-  //     totalWeight,
-  //     deliveryVehicle,
-  //     needAssistance
-  //   );
-  // }
-
-  // async transactionCreatePayment(userid, amount, reference, paymentprovider) {
-  //   super.transactionCreatePayment(userid, amount, reference, paymentprovider);
-  // }
-
   async readAllOrders() {
     const orders = [];
     const userdata = await super.readAllDataFromCollection('Users').then((data) => {
@@ -355,7 +301,47 @@ class firestoredb extends firestorefunctions {
   async addOrderDataToTests(orderData) {
     super.updateDocumentFromCollection('Tests', 'orderData', { data: orderData });
   }
+
+  async deleteOrderFromCollectionArray(userId,orderReference) {
+    try {
+      // Get the user document
+      const userData = await this.readUserById(userId);
+      const userDoc = userData;
+  
+      if (userDoc === undefined) {
+        console.log('User document not found');
+        return;
+      }
+  
+      // Get the orders array from the user document
+      const orders = userDoc.orders;
+  
+      // Find the index of the order with the specified reference number
+      const orderIndex = orders.findIndex((order) => order.reference === orderReference);
+  
+      // If order is found, remove it from the orders array
+      if (orderIndex !== -1) {
+        orders.splice(orderIndex, 1);
+  
+        // Update the user document with the new orders array
+        // await userDocRef.update({
+        //   orders: orders,
+        // });
+  
+        await super.updateDocumentFromCollection('Users', userId, {orders : orders})
+
+        console.log('Order deleted successfully');
+      } else {
+        console.log('Order not found');
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error);
+    }
+    
+  }
 }
+
+
 
 export default firestoredb;
 

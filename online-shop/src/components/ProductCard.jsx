@@ -33,6 +33,8 @@ const ProductCard = (props) => {
   const setShakeCartAnimation = props.setShakeCartAnimation
   const retailStocksAvailable = props.stocksAvailable
   const retailAverageSalesPerDay = props.averageSalesPerDay
+
+  console.log(width)
   
   let safetyStock 
   if (product.averageSalesPerDay != undefined) {
