@@ -30,12 +30,9 @@ const ProductList = (props) => {
   const {width } = UseWindowDimensions();
 
   useEffect(() => {
-    console.log('LOOKING FOR PRODUCT')
-    cloudfirestoredb.readAllProductsForOnlineStore().then((products) => {
-      setProducts(products);
-      setProductDataLoading(false);
-    });
-  }, [userdata]);
+    if (products != []) {
+      setProductDataLoading(false);}
+  }, [products]);
 
   function RenderSelectedProducts(product_category) {
     const selected_products = datamanipulation.getAllProductsInCategory(

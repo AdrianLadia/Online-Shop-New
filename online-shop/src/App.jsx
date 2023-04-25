@@ -18,12 +18,12 @@ import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
 import AppConfig from './AppConfig';
-import './App.css'
+import './App.css';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
 
-const devEnvironment = true
+const devEnvironment = true;
 
 function App() {
   const appConfig = new AppConfig();
@@ -49,7 +49,7 @@ function App() {
   const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
   const [userdata, setUserData] = useState(null);
   const [isadmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
@@ -67,8 +67,8 @@ function App() {
   const [guestLoginClicked, setGuestLoginClicked] = useState(false);
   const [products, setProducts] = useState([]);
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
-  const [categories,setCategories] = useState(null)
-  const [initialStartup,setInitialStartup] = useState(true)
+  const [categories, setCategories] = useState(null);
+  const [initialStartup, setInitialStartup] = useState(true);
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -82,7 +82,7 @@ function App() {
         // https://firebase.google.com/docs/reference/js/firebase.User
         console.log('FOUND USER', user.uid);
         setUserState('userloading');
-        setUser(user)
+        setUser(user);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           console.log(userExists);
           if (userExists) {
@@ -133,12 +133,18 @@ function App() {
         setUserData(null);
         setUserLoaded(true);
         setUserState('guest');
-        setInitialStartup(false)
-        if (initialStartup == false) {
-          alert('You are signed out');
-        }
       }
     });
+  }, []);
+
+  useEffect(() => {
+    // GET ALL PRODUCTS
+    async function readAllProductsForOnlineStore() {
+      await cloudfirestore.readAllProductsForOnlineStore().then((products) => {
+        setProducts(products);
+      });
+    }
+    readAllProductsForOnlineStore();
   }, []);
 
   useEffect(() => {
@@ -146,9 +152,9 @@ function App() {
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
-        console.log(userId)
+        console.log(userId);
         const data = await cloudfirestore.readSelectedUserById(userId);
-        console.log(data)
+        console.log(data);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -201,15 +207,15 @@ function App() {
   }, [goToCheckoutPage]);
 
   const appContextValue = {
-    categories : categories,
-    setCategories : setCategories,
-    firebaseApp : app,
+    categories: categories,
+    setCategories: setCategories,
+    firebaseApp: app,
     user: user,
     userdata: userdata,
     setUserData: setUserData,
     isadmin: isadmin,
     firestore: firestore,
-    cloudfirestore : cloudfirestore,
+    cloudfirestore: cloudfirestore,
     cart: cart,
     setCart: setCart,
     favoriteitems: favoriteitems,

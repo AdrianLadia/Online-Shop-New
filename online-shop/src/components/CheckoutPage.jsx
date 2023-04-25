@@ -69,6 +69,7 @@ const CheckoutPage = () => {
   const [deliveryNotes, setDeliveryNotes] = useState('');
   const [allowShipping, setAllowShipping] = useState(true);
   const [useShippingLine, setUseShippingLine] = useState(false);
+  const [rows, setRows] = React.useState(null);
   const paperboylocation = new paperBoyLocation();
   const businesscalculations = new businessCalculations();
   const cloudfirestore = new cloudFirestoreDb();
@@ -119,6 +120,24 @@ const CheckoutPage = () => {
     solanaselected,
     setSolanaselected,
   };
+
+  useEffect(() => {
+    async function getTableData() {
+      const [rows_non_state, total_non_state, total_weight_non_state,vat] = datamanipulation.getCheckoutPageTableDate(
+        products,
+        cart
+      );
+      
+      console.log(rows_non_state)
+      setVat(vat);
+      setMayaCheckoutItemDetails(rows_non_state);
+      setRows(rows_non_state);
+      setLoading(false);
+      setTotal(total_non_state);
+      setTotalWeight(total_weight_non_state);
+    }
+    getTableData();
+  }, []);
 
   useEffect(() => {
     if (
@@ -604,6 +623,7 @@ const CheckoutPage = () => {
                     setVat={setVat}
                     area={area}
                     setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
+                    rows = {rows}
                   />
                 )}
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />

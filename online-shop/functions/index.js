@@ -202,6 +202,8 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
         products.push(productObject);
       });
 
+      console.log('products', products);
+
       // Send the products array as a JSON response
       res.status(200).send(products);
     } catch (error) {
