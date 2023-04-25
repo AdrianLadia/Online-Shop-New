@@ -36,6 +36,8 @@ const CheckoutPage = () => {
   const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } =
     React.useContext(AppContext);
 
+  console.log(cart)
+  console.log(userdata)
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
   const [total, setTotal] = React.useState(0);
