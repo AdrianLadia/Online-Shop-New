@@ -127,10 +127,12 @@ function App() {
       } else {
         // User is signed out
         // ...
+        setUser(null);
         setUserId(null);
         setUserData(null);
         setUserLoaded(true);
         setUserState('guest');
+        alert('You are signed out');
       }
     });
   }, []);
