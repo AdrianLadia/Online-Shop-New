@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 // import { storage } from './firebaseConfig';
-import firebaseConfig from '../firebase_config';
+import firebaseConfig from '../../firebase_config';
 import { initializeApp } from "firebase/app";
 import { getStorage,ref , uploadBytes } from "firebase/storage";
 
@@ -35,6 +35,8 @@ const ImageUploadButton = (props) => {
   const folderName = props.folderName
   const fileName = props.fileName
   const buttonTitle = props.buttonTitle
+  const userId = props.userId
+  const orderReferenceNumber = props.orderReferenceNumber
   
   const handleClose = () => setIsFullScreen(false);
 
