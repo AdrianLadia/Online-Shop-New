@@ -337,8 +337,10 @@ class firestoredb extends firestorefunctions {
     } catch (error) {
       console.error('Error deleting order:', error);
     }
-    
   }
+
+  
+
 }
 
 

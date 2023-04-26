@@ -2,9 +2,12 @@ import React, { useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import {AiFillQuestionCircle} from "react-icons/ai"
 import MyOrderCardModal from "./MyOrderCardModal";
-
+import ImageUploadButton from "./ImageComponents/ImageUploadButton";
+import AppContext from "../AppContext";
 
 function MyOrderCard(props) {
+
+  const {storage,userId,cloudfirestore} = React.useContext(AppContext)
   const order = props.order;
   const orderDate = new Date(order.orderDate).toLocaleDateString();
 
@@ -31,6 +34,10 @@ function MyOrderCard(props) {
 
   function onQuestionMarkClick() {
     handleOpenModal()
+  }
+
+  function onUpload(proofOfPaymentLink) {
+    cloudfirestore.updateOrderProofOfPaymentLink(order.reference,userId,proofOfPaymentLink)
   }
 
   return (
@@ -84,6 +91,7 @@ function MyOrderCard(props) {
             <div className="flex justify-end align-text-bottom">
               <Typography variant="h5">₱ {order.grandTotal}</Typography>
             </div>
+            <ImageUploadButton onUploadFunction={onUpload} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
           </div>
         </div>
       </div>

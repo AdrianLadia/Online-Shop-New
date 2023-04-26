@@ -6,7 +6,7 @@ import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
 import firestoredb from './firestoredb';
@@ -31,6 +31,8 @@ function App() {
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
+  // Get Storage
+  const storage = getStorage(app);
 
   const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
   const navigateTo = useNavigate();
@@ -249,6 +251,7 @@ function App() {
     setProducts: setProducts,
     goToCheckoutPage: goToCheckoutPage,
     setGoToCheckoutPage: setGoToCheckoutPage,
+    storage:storage
   };
 
   return (

@@ -206,6 +206,7 @@ class cloudFirestoreFunctions {
     }
   }
 
+
   // async addDocumentArrayFromCollection(collectionName, id, arrayName, firestoreData) {
 
   //   const collectionNameSchema = Joi.string()

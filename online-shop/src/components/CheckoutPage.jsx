@@ -35,9 +35,6 @@ const CheckoutPage = () => {
   const datamanipulation = new dataManipulation();
   const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } =
     React.useContext(AppContext);
-
-  console.log(cart)
-  console.log(userdata)
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
   const [total, setTotal] = React.useState(0);
@@ -122,6 +119,7 @@ const CheckoutPage = () => {
   };
 
   useEffect(() => {
+    
     async function getTableData() {
       const [rows_non_state, total_non_state, total_weight_non_state,vat] = datamanipulation.getCheckoutPageTableDate(
         products,
@@ -132,7 +130,7 @@ const CheckoutPage = () => {
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
-      setLoading(false);
+      console.log(total_non_state)
       setTotal(total_non_state);
       setTotalWeight(total_weight_non_state);
     }
@@ -171,7 +169,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (mayaselected) {
       if (transactionStatus === 'SUCCESS') {
-        console.log('ran sdk');
+       
         const firstName = localname.split(' ')[0];
         const lastName = localname.split(' ')[1];
         const eMail = localemail;
@@ -196,7 +194,7 @@ const CheckoutPage = () => {
   }, [placedOrder]);
 
   useEffect(() => {
-    console.log('ran maya redirect');
+ 
     if (mayaRedirectUrl != null) {
       window.location.href = mayaRedirectUrl;
     }
@@ -207,7 +205,7 @@ const CheckoutPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log('ran asdasdasd');
+
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -269,7 +267,7 @@ const CheckoutPage = () => {
         const orderReferenceNumber = generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
 
-        console.log(total);
+       
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
@@ -288,13 +286,13 @@ const CheckoutPage = () => {
           deliveryNotes: deliveryNotes,
           totalWeight: totalWeight,
           deliveryVehicle: deliveryVehicle.name,
-          needAssistance: needAssistance,
+          needAssistance: needAssistance
         });
-        console.log(res.data);
+      
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
       } catch (err) {
-        console.log(err);
+  
         setPlaceOrderLoading(false);
         alert('You must be logged in');
       }

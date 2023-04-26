@@ -2121,3 +2121,76 @@ describe('deleteOrderFromUserFirestore', () => {
 
   })
 });
+
+describe.only('updateOrderProofOfPaymentLink', () => {
+  test('Create Test Order', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+    });
+  });
+
+  test('updateOrderProofOfPaymentLink', async () => {
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId ,'https://testlink.com')
+    const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = userData.orders;
+    let orderFound = false;
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        orderFound = true;
+        expect(order.proofOfPaymentLink).toEqual(['https://testlink.com']);
+      }
+    });
+    expect(orderFound).toEqual(true);
+  });
+
+  test('add another proofOfPaymentLink', async () => {
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId ,'https://testlink2.com')
+    const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = userData.orders;
+    let orderFound = false;
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        orderFound = true;
+        expect(order.proofOfPaymentLink).toEqual(['https://testlink.com','https://testlink2.com']);
+      }
+    });
+    expect(orderFound).toEqual(true);
+  });
+
+},10000)

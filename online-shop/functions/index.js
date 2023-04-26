@@ -12,6 +12,9 @@ admin.initializeApp();
 app.use(corsHandler);
 app.use(express.json());
 
+
+
+
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
   let parsedData;
@@ -23,6 +26,7 @@ function parseData(data) {
   }
   return parsedData;
 }
+
 
 function getCartCount(cart) {
   // VALIDATION
@@ -370,6 +374,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
     const totalWeight = data.totalWeight;
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
+  
 
     const db = admin.firestore();
     const cartCount = getCartCount(cart);
@@ -566,6 +571,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
           deliveryVehicle: deliveryVehicle,
           needAssistance: needAssistance,
           userId: userid,
+          proofOfPaymentLink : [],
         };
 
         const updatedOrders = [newOrder, ...oldOrders];
@@ -826,3 +832,63 @@ exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequ
     success: true,
   });
 });
+
+exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      // Get the user document
+      const data = req.body
+      const orderReference = data.orderReference
+      const userId = data.userId
+      const proofOfPaymentLink = data.proofOfPaymentLink
+
+
+      console.log(proofOfPaymentLink)
+
+      // VALIDATE DATA
+      const dataSchema = Joi.object({
+        orderReference: Joi.string().required(),
+        userId: Joi.string().required(),
+        proofOfPaymentLink: Joi.string().required(),
+      }).unknown(false);
+
+      const { error } = dataSchema.validate(data);
+
+      if (error) {
+        console.error('Error validating data:', error);
+        res.status(400).send('Error validating data.');
+        return;
+      }
+
+      try {
+        const db = admin.firestore();
+        const userRef = db.collection('Users').doc(userId);
+        const userDoc = await userRef.get();
+        const userData = userDoc.data();
+        const orders = userData.orders;
+        const orderIndex = orders.findIndex((order) => order.reference === orderReference);
+        const proofOfPayments = orders[orderIndex].proofOfPaymentLink
+        const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink] 
+        orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
+        await userRef.update({
+          orders: orders,
+        });
+
+        res.status(200).send('success');
+      }
+      catch (error) {
+        console.error('Error updating proof of payment link:', error);
+        res.status(400).send('Error updating proof of payment link.');
+      }
+
+
+     } catch (error) {
+      res.status(400).send('Error updating proof of payment link.');
+      console.error('Error updating proof of payment link:', error);
+    }
+  });
+  
+});
+
+
+

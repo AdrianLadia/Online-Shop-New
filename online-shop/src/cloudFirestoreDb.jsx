@@ -127,7 +127,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryNotes: Joi.string().allow(''),
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
-      needAssistance: Joi.boolean().required(),
+      needAssistance: Joi.boolean().required()
     }).unknown(false);
 
     const { error } = schema.validate(data);
@@ -343,6 +343,19 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     catch{
       console.log(error);
       alert('An error occurred. Please try again later.');
+    }
+  }
+
+  async updateOrderProofOfPaymentLink(orderReference,userId,proofOfPaymentLink) {
+    try{
+      const json = {"orderReference":orderReference,"userId":userId,"proofOfPaymentLink":proofOfPaymentLink}
+      // const encodedData = encodeURIComponent(JSON.stringify({ orderReference,userId}));
+      const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`,json)
+      // const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}&proofOfPaymentLink=${proofOfPaymentLink}`)
+      const data = res.data
+    }
+    catch(error){
+      throw new Error(error)
     }
   }
 
