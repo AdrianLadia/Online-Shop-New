@@ -33,10 +33,12 @@ const ImageUploadButton = (props) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   
   const folderName = props.folderName
-  const fileName = props.fileName
+  let fileName = props.fileName
   const buttonTitle = props.buttonTitle
   const userId = props.userId
   const orderReferenceNumber = props.orderReferenceNumber
+
+  
   
   const handleClose = () => setIsFullScreen(false);
 
@@ -50,6 +52,11 @@ const ImageUploadButton = (props) => {
       reader.readAsDataURL(file);
       // Perform image upload operations here
 
+      if (fileName === undefined) {
+        fileName = file.name
+      }
+
+    
       const ordersRefStorage = ref(storage, + folderName + '/' + fileName);
       
       uploadBytes(ordersRefStorage, file).then((snapshot) => {
