@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useContext } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -8,6 +8,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
+import ImageUploadButton from "./ImageComponents/ImageUploadButton";
+import AppContext from "../AppContext";
 
 const MyOrderCardModal = (props) => {
   const style = {
@@ -33,11 +35,15 @@ const MyOrderCardModal = (props) => {
     googleMapsApiKey: "AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro",
   });
 
+  const {storage,userId} = useContext(AppContext)
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
   const orderDate = new Date(order.orderDate).toLocaleDateString();
 
+  function onUpload(proofOfPaymentLink) {
+    cloudfirestore.updateOrderProofOfPaymentLink(order.reference,userId,proofOfPaymentLink)
+  }
 
   return (
     <div>
@@ -58,6 +64,8 @@ const MyOrderCardModal = (props) => {
                 >
                   {order.paid ? "Paid" : "Not Paid"}
                 </Typography>
+
+                <ImageUploadButton onUploadFunction={onUpload} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
               </div>
               <div className="w-full">
                 <Typography
