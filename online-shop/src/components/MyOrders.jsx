@@ -19,6 +19,7 @@ function MyOrders() {
         <Typography variant="h2">My Orders</Typography>
       </div>
       {reversedOrders.map((order) => {
+        console.log(order);
         return <MyOrderCard key={order.reference} order={order} />;
       })}
     </React.Fragment>

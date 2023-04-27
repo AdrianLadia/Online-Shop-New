@@ -1,21 +1,38 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import {AiFillQuestionCircle} from "react-icons/ai"
 import MyOrderCardModal from "./MyOrderCardModal";
 import ImageUploadButton from "./ImageComponents/ImageUploadButton";
 import AppContext from "../AppContext";
+import dataManipulation from "../../utils/dataManipulation";
 
 function MyOrderCard(props) {
 
+  const datamanipulation = new dataManipulation()
   const {storage,userId,cloudfirestore} = React.useContext(AppContext)
   const order = props.order;
-  const orderDate = new Date(order.orderDate).toLocaleDateString();
+  const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate) 
+  const [proofOfPaymentLinkCount,setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length)
 
   console.log(order)
 
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
+
+  function getPaymentStatus(x,y,z) {
+    if (order.paid) {
+      return x;
+    }
+    else {
+      if (linkCount > 0) {
+        return y
+      }
+      if (linkCount === 0) {
+        return z
+      }
+    }
+  }
 
   function responsiveCssPaperColorIfDelivered() {
     if (order.delivered && order.paid) {
@@ -38,6 +55,7 @@ function MyOrderCard(props) {
 
   function onUpload(proofOfPaymentLink) {
     cloudfirestore.updateOrderProofOfPaymentLink(order.reference,userId,proofOfPaymentLink)
+    setProofOfPaymentLinkCount(1)
   }
 
   return (
@@ -77,9 +95,10 @@ function MyOrderCard(props) {
             <Typography
               variant="h5"
               component="div"
-              color={order.paid ? "green" : "red"}
+              color={getPaymentStatus("green", "blue", "red")}
             >
-              {order.paid ? "Paid" : "Unpaid"}
+              {getPaymentStatus("Paid", "Reviewing Payment", "Not Paid")}
+            
             </Typography>
           </div>
           <div className="flex flex-col w-full ">

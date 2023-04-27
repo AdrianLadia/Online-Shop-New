@@ -1,4 +1,4 @@
-import React, { useEffect,useContext } from "react";
+import React, { useEffect,useContext,useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -10,6 +10,7 @@ import Divider from "@mui/material/Divider";
 import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 import ImageUploadButton from "./ImageComponents/ImageUploadButton";
 import AppContext from "../AppContext";
+import dataManipulation from "../../utils/dataManipulation";
 
 const MyOrderCardModal = (props) => {
   const style = {
@@ -35,14 +36,33 @@ const MyOrderCardModal = (props) => {
     googleMapsApiKey: "AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro",
   });
 
-  const {storage,userId} = useContext(AppContext)
+  const datamanipulation = new dataManipulation()
+  const {storage,userId,cloudfirestore} = useContext(AppContext)
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
-  const orderDate = new Date(order.orderDate).toLocaleDateString();
+  const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate)
+  const [linkCount,setLinkCount] = useState(order.proofOfPaymentLink.length)
 
-  function onUpload(proofOfPaymentLink) {
+
+  function getPaymentStatus(x,y,z) {
+    if (order.paid) {
+      return x;
+    }
+    else {
+      if (linkCount > 0) {
+        return y
+      }
+      if (linkCount === 0) {
+        return z
+      }
+    }
+  }
+
+
+  function onUpload2(proofOfPaymentLink) {
     cloudfirestore.updateOrderProofOfPaymentLink(order.reference,userId,proofOfPaymentLink)
+    setLinkCount(1)
   }
 
   return (
@@ -59,13 +79,13 @@ const MyOrderCardModal = (props) => {
               <div className="w-full">
                 <Typography
                   variant="h5"
-                  color={order.paid ? "green" : "red"}
+                  color= {getPaymentStatus('green','blue','red')}
                   fontFamily="roboto"
                 >
-                  {order.paid ? "Paid" : "Not Paid"}
+                   {getPaymentStatus('Paid','Reviewing Payment','Not Paid')}
                 </Typography>
 
-                <ImageUploadButton onUploadFunction={onUpload} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
+                <ImageUploadButton onUploadFunction={onUpload2} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
               </div>
               <div className="w-full">
                 <Typography

@@ -2193,4 +2193,13 @@ describe.only('updateOrderProofOfPaymentLink', () => {
     expect(orderFound).toEqual(true);
   });
 
+  
 },10000)
+
+describe.only('convert date timestamp to date string', () => {
+  test('convert date timestamp to date string', () => {
+    const timestamp = {seconds: 1600000000, nanoseconds: 0}
+    const time = datamanipulation.convertDateTimeStampToDateString(timestamp)
+    expect(time).toEqual("2020-09-13 20:26:40")
+  })
+})
