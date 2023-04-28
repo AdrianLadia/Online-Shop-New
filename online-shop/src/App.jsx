@@ -25,6 +25,7 @@ import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
 
+
 const devEnvironment = true;
 
 function App() {
