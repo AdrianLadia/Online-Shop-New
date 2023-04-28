@@ -4,6 +4,7 @@ import Joi from 'joi';
 import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { th } from 'date-fns/locale';
+import retryApi from '../utils/retryApi';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor() {
