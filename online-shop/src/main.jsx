@@ -8,8 +8,8 @@ import CheckoutProofOfPayment from './components/CheckoutProofOfPayment';
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
   <BrowserRouter>
-    {/* <App /> */}
-    <CheckoutProofOfPayment />
+    <App />
+    {/* <CheckoutProofOfPayment /> */}
     {/* <ImageUpload /> */}
   </BrowserRouter>
   // </React.StrictMode>

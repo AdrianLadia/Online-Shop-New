@@ -25,10 +25,10 @@ function MyOrderCard(props) {
       return x;
     }
     else {
-      if (linkCount > 0) {
+      if (proofOfPaymentLinkCount > 0) {
         return y
       }
-      if (linkCount === 0) {
+      if (proofOfPaymentLinkCount === 0) {
         return z
       }
     }

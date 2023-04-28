@@ -1,0 +1,6 @@
+import React from "react"
+import { createContext } from "react"
+
+const CheckoutContext = createContext()
+
+export default CheckoutContext

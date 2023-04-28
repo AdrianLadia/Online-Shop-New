@@ -12,27 +12,35 @@ import firestoredb from '../firestoredb';
 import { Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
 import Divider from '@mui/material/Divider';
+import useWindowDimensions from './UseWindowDimensions';
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 
 const CheckoutSummary = (props) => {
   const { firestore, cart, products } = useContext(AppContext);
 
   const [loading, setLoading] = React.useState(true);
+  const { width } = useWindowDimensions();
 
-  const datamanipulation = new dataManipulation();
-  const setVat = props.setVat;
   const total = props.total;
-  const setTotal = props.setTotal;
   const deliveryFee = props.deliveryFee;
   const grandTotal = props.grandTotal;
   const vat = props.vat;
-  const setTotalWeight = props.setTotalWeight;
   const totalWeight = props.totalWeight;
-  const deliveryVehicle = props.deliveryVehicleObject.name;
-  const maxWeight = props.deliveryVehicleObject.maxWeight;
+
+  let deliveryVehicle;
+  let maxWeight;
+  if (props.deliveryVehicleObject == null) {
+    deliveryVehicle = null;
+    maxWeight = null;
+  } else {
+    deliveryVehicle = props.deliveryVehicleObject.name;
+    maxWeight = props.deliveryVehicleObject.maxWeight;
+  }
+
   const area = props.area;
-  const setMayaCheckoutItemDetails = props.setMayaCheckoutItemDetails;
   const rows = props.rows;
-  console.log('rows', rows);
 
   // useEffect(() => {
   //   async function getTableData() {
@@ -53,8 +61,8 @@ const CheckoutSummary = (props) => {
   return (
     <div>
       {rows == null ? (
-        <div className='flex justify-center mt-7'>
-          <Typography variant="h6" gutterBottom component="div" color='red' className="font-bold">
+        <div className="flex justify-center mt-7">
+          <Typography variant="h6" gutterBottom component="div" color="red" className="font-bold">
             YOU NEED ITEMS IN YOUR CART
           </Typography>
         </div>
@@ -88,16 +96,54 @@ const CheckoutSummary = (props) => {
               </TableBody>
             </Table>
           </TableContainer>
+          <List
+            sx={{
+              width: '100%',
+              bgcolor: 'background.paper',
+              marginLeft: -2,
+            }}>
+            {deliveryVehicle ? 
+              <ListItem>
+                <ListItemText primary="Delivery Vehicle" secondary={deliveryVehicle}/>
+              </ListItem>
+            : null}
+            {maxWeight ? 
+            
+            <ListItem>
+              <ListItemText primary="Max Weight" secondary={maxWeight + ' Kg'}/>
+            </ListItem>
+            : null}
 
-          <div className="flex flex-col justify-between lg:flex-row w-8/12 ">
+            {totalWeight ? 
+            <ListItem>
+              <ListItemText primary="Weight of Items" secondary={totalWeight + ' Kg'}/>
+            </ListItem>
+            : null}
+            <ListItem>
+              <ListItemText primary="Items Total" secondary={'₱ ' + total.toLocaleString()}/>
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Tax" secondary={'₱ ' + vat.toLocaleString()}/>
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Delivery Fee" secondary={'₱ ' + deliveryFee.toLocaleString()}/>
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Grand Total" secondary={'₱ ' + grandTotal.toLocaleString()}/>
+            </ListItem>
+
+          </List>
+          {/* <div className="flex flex-col justify-between lg:flex-row w-8/12 ">
             <div className="flex xl:w-2/6 lg:w-2/6 md:w-full sm:w-full flex-col m-5 gap-3">
               {area.includes('lalamoveServiceArea') ? (
                 <div className="flex flex-col gap-3">
-                  <Typography variant="h5">Delivery Vehicle : {deliveryVehicle}</Typography>
-                  <Typography variant="h5"> Max Weight : {maxWeight} Kg</Typography>
+                  {deliveryVehicle == null ? null : (
+                    <Typography variant="h5">Delivery Vehicle : {deliveryVehicle}</Typography>
+                  )}
+                  {maxWeight == null ? null : <Typography variant="h5"> Max Weight : {maxWeight} Kg</Typography>}
                 </div>
               ) : null}
-              <Typography variant="h5">Weight of Items: {totalWeight} Kg</Typography>
+              {totalWeight ? <Typography variant="h5">Weight of Items: {totalWeight} Kg</Typography> : null}
             </div>
 
             <div className="flex flex-col xl:w-2/6 lg:w-2/6 md:w-full sm:w-full gap-3 m-5 ">
@@ -113,14 +159,16 @@ const CheckoutSummary = (props) => {
               )}
             </div>
           </div>
-          <div className="flex flex-row">
+          <div className="flex flex-col lg:flex-row   ">
             <Typography className="underline underline-offset-8" variant="h4">
               Grand Total: ₱{' '}
             </Typography>
-            <Typography id="checkoutItemsTotal" className="underline underline-offset-8" variant="h4">
-              {grandTotal.toLocaleString()}
-            </Typography>
-          </div>
+            <div className="flex justify-center">
+              <Typography id="checkoutItemsTotal" className="underline underline-offset-8" variant="h4">
+                {grandTotal.toLocaleString()}
+              </Typography>
+            </div>
+          </div> */}
         </div>
       )}
     </div>

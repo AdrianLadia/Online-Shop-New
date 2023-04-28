@@ -2,29 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import CircularProgress from '@mui/material/CircularProgress';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 // import { storage } from './firebaseConfig';
 
-
-
-
-
-
 const ImageUploadButton = (props) => {
-  
-  const folderName = props.folderName
-  let fileName = props.fileName
-  const buttonTitle = props.buttonTitle
-  const storage = props.storage
-  const setPreviewImage = props.setPreviewImage
-  const onUploadFunction = props.onUploadFunction
+  const folderName = props.folderName;
+  let fileName = props.fileName;
+  const buttonTitle = props.buttonTitle;
+  const storage = props.storage;
+  const setPreviewImage = props.setPreviewImage;
+  const onUploadFunction = props.onUploadFunction;
 
-  const [buttonColor, setButtonColor] = useState('primary')
-  const [buttonText, setButtonText] = useState(buttonTitle)
-  const [loading, setLoading] = useState(false)
+  const [buttonColor, setButtonColor] = useState('primary');
+  const [buttonText, setButtonText] = useState(buttonTitle);
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (event) => {
-    setLoading(true)
+    setLoading(true);
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -37,39 +32,36 @@ const ImageUploadButton = (props) => {
       // Perform image upload operations here
 
       if (fileName === undefined) {
-        fileName = file.name
+        fileName = file.name;
       }
 
-    
       const ordersRefStorage = ref(storage, folderName + '/' + fileName);
-      
+
       uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
-        console.log(snapshot)
+        console.log(snapshot);
         console.log('Uploaded a blob or file!');
-        setButtonColor('success')
-        setButtonText('Uploaded Successful')
-        setLoading(false)
-        
+        setButtonColor('success');
+        setButtonText('Uploaded Successful');
+        setLoading(false);
+
         // GET IMAGE URL
-        const downloadURL = await getDownloadURL(ordersRefStorage)
-        console.log(downloadURL)
-        
+        const downloadURL = await getDownloadURL(ordersRefStorage);
+        console.log(downloadURL);
+
         if (onUploadFunction !== undefined) {
-          onUploadFunction(downloadURL)
+          onUploadFunction(downloadURL);
         }
-      
       });
-    }
-    else {
-      setLoading(false)
+    } else {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (buttonText === 'Uploaded Successful') {
       setTimeout(() => {
-        setButtonColor('primary')
-        setButtonText(buttonTitle)
+        setButtonColor('primary');
+        setButtonText(buttonTitle);
       }, 3000);
     }
   }, [buttonText]);
@@ -80,13 +72,18 @@ const ImageUploadButton = (props) => {
     <div>
       <input type="file" id="imageUpload" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
       <label htmlFor="imageUpload">
-        <Button variant="contained" component="span" color={buttonColor} sx={{width:250, height:45}}>
-          {loading ? <CircularProgress size={30} color='inherit'/> : buttonText } 
+        <Button
+          startIcon={<CloudUploadIcon />}
+          className="shadow-md hover:bg-blue-500 focus:outline-none"
+          variant="contained"
+          component="span"
+          color={buttonColor}
+          sx={{ width: 280, height: 45 }}
+        >
+          {loading ? <CircularProgress size={30} color="inherit" /> : buttonText}
         </Button>
         {/* <button type="button">Upload Image</button> */}
       </label>
-      
-    
     </div>
   );
 };

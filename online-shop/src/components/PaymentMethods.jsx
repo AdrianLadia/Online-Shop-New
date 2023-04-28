@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { useState, useContext } from "react";
 import PaymentCheckoutCard from "./PaymentCheckoutCard";
-import PaymentMethodContext from "../context/PaymentMethodContext";
+import CheckoutContext from "../context/CheckoutContext";
 
 function PaymentMethods() {
 
 
-  const { bdoselected, setBdoselected, unionbankselected, setUnionbankselected, gcashselected, setGcashselected, mayaselected, setMayaselected, visaselected, setVisaselected, mastercardselected, setMastercardselected, bitcoinselected, setBitcoinselected, ethereumselected, setEthereumselected, solanaselected, setSolanaselected } = useContext(PaymentMethodContext);
+  const { bdoselected, setBdoselected, unionbankselected, setUnionbankselected, gcashselected, setGcashselected, mayaselected, setMayaselected, visaselected, setVisaselected, mastercardselected, setMastercardselected, bitcoinselected, setBitcoinselected, ethereumselected, setEthereumselected, solanaselected, setSolanaselected } = useContext(CheckoutContext);
   
 
   useEffect(() => {

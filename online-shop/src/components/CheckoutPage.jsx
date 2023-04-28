@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 import CheckoutSummary from './CheckoutSummary';
 import GoogleMaps from './GoogleMaps';
 import AppContext from '../AppContext';
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import TextField from '@mui/material/TextField';
 
 import PaymentMethods from './PaymentMethods';
-import CheckoutPageContext from './CheckoutPageContext';
+
 import PaymayaSdk from './PaymayaSdk';
 import GoogleMapsModalSelectSaveAddress from './GoogleMapsModalSelectSaveAddress';
 import GoogleMapsModalSelectContactModal from './GoogleMapsModalSelectContactModal';
@@ -21,7 +21,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
-import PaymentMethodContext from '../context/PaymentMethodContext';
+import CheckoutContext from '../context/CheckoutContext';
 import { useNavigate } from 'react-router-dom';
 import dataManipulation from '../../utils/dataManipulation';
 import { CircularProgress } from '@mui/material';
@@ -32,72 +32,9 @@ const labelStyle = textFieldLabelStyle();
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
-  const datamanipulation = new dataManipulation();
-  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } =
-    React.useContext(AppContext);
-  const [selectedAddress, setSelectedAddress] = useState(false);
-  const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
-  const [total, setTotal] = React.useState(0);
-  const [localname, setLocalName] = React.useState('');
-  const [localemail, setLocalEmail] = React.useState('');
-  const [localphonenumber, setLocalPhoneNumber] = React.useState('');
-  const [vat, setVat] = React.useState(0);
-  const [deliveryFee, setDeliveryFee] = React.useState(0);
-  const [grandTotal, setGrandTotal] = React.useState(0);
-  const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
-  const cloudfirestoredb = new cloudFirestoreDb();
 
-  const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
-  const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
-  const handleCloseModalSavedAddress = () => setOpenModalSavedAddress(false);
 
-  const [openContactModal, setOpenContactModal] = React.useState(false);
-  const handleOpenContactModal = () => setOpenContactModal(true);
-  const handleCloseContactModal = () => setOpenContactModal(false);
-
-  const [locallatitude, setLocalLatitude] = useState(10.373536960704778);
-  const [locallongitude, setLocalLongitude] = useState(123.89504097627021);
-  const [zoom, setZoom] = useState(18);
-
-  const [totalWeight, setTotalWeight] = useState(0);
-  const [deliveryVehicle, setDeliveryVehicle] = useState(null);
-  const [needAssistance, setNeedAssistance] = useState(false);
-  const [area, setArea] = useState([]);
-  const [deliveryNotes, setDeliveryNotes] = useState('');
-  const [allowShipping, setAllowShipping] = useState(true);
-  const [useShippingLine, setUseShippingLine] = useState(false);
-  const [rows, setRows] = React.useState(null);
-  const paperboylocation = new paperBoyLocation();
-  const businesscalculations = new businessCalculations();
-  const cloudfirestore = new cloudFirestoreDb();
-
-  const paperboylatitude = paperboylocation.latitude;
-  const paperboylongitude = paperboylocation.longitude;
-
-  const [placedOrder, setPlacedOrder] = useState(false);
-  const [transactionStatus, setTransactionStatus] = useState('SUCCESS');
-  const navigateTo = useNavigate();
-  const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
-  const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
-  const [mayaCheckoutItemDetails, setMayaCheckoutItemDetails] = useState(null);
-  const [addressText, setAddressText] = useState('');
-  const [referenceNumber, setReferenceNumber] = useState('');
-  const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
-
-  //Payment checker
-  const [paymentMethodSelected, setPaymentMethodSelected] = useState(false);
-  // PAYMENT METHODS
-  const [bdoselected, setBdoselected] = useState(false);
-  const [unionbankselected, setUnionbankselected] = useState(false);
-  const [gcashselected, setGcashselected] = useState(false);
-  const [mayaselected, setMayaselected] = useState(false);
-  const [visaselected, setVisaselected] = useState(false);
-  const [mastercardselected, setMastercardselected] = useState(false);
-  const [bitcoinselected, setBitcoinselected] = useState(false);
-  const [ethereumselected, setEthereumselected] = useState(false);
-  const [solanaselected, setSolanaselected] = useState(false);
-
-  const paymentMethodValues = {
+  const {
     bdoselected,
     setBdoselected,
     unionbankselected,
@@ -116,21 +53,94 @@ const CheckoutPage = () => {
     setEthereumselected,
     solanaselected,
     setSolanaselected,
-  };
+    rows,
+    setRows,
+    total,
+    setTotal,
+    totalWeight,
+    setTotalWeight,
+    vat,
+    setVat,
+    deliveryFee,
+    setDeliveryFee,
+    grandTotal,
+    setGrandTotal,
+    area,
+    setArea,
+    referenceNumber,
+    setReferenceNumber
+  } = useContext(CheckoutContext);
+
+  const datamanipulation = new dataManipulation();
+  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } =
+    React.useContext(AppContext);
+  const [selectedAddress, setSelectedAddress] = useState(false);
+  const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
+ 
+  const [localname, setLocalName] = React.useState('');
+  const [localemail, setLocalEmail] = React.useState('');
+  const [localphonenumber, setLocalPhoneNumber] = React.useState('');
+ 
+
+  const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
+  const cloudfirestoredb = new cloudFirestoreDb();
+
+  const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
+  const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
+  const handleCloseModalSavedAddress = () => setOpenModalSavedAddress(false);
+
+  const [openContactModal, setOpenContactModal] = React.useState(false);
+  const handleOpenContactModal = () => setOpenContactModal(true);
+  const handleCloseContactModal = () => setOpenContactModal(false);
+
+  const [locallatitude, setLocalLatitude] = useState(10.373536960704778);
+  const [locallongitude, setLocalLongitude] = useState(123.89504097627021);
+  const [zoom, setZoom] = useState(18);
+
+
+  const [deliveryVehicle, setDeliveryVehicle] = useState(null);
+  const [needAssistance, setNeedAssistance] = useState(false);
+
+  const [deliveryNotes, setDeliveryNotes] = useState('');
+  const [allowShipping, setAllowShipping] = useState(true);
+  const [useShippingLine, setUseShippingLine] = useState(false);
+  
+  const paperboylocation = new paperBoyLocation();
+  const businesscalculations = new businessCalculations();
+
+
+  const paperboylatitude = paperboylocation.latitude;
+  const paperboylongitude = paperboylocation.longitude;
+
+  const [placedOrder, setPlacedOrder] = useState(false);
+  const [transactionStatus, setTransactionStatus] = useState('SUCCESS');
+  const navigateTo = useNavigate();
+  const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
+  const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
+  const [mayaCheckoutItemDetails, setMayaCheckoutItemDetails] = useState(null);
+  const [addressText, setAddressText] = useState('');
+ 
+  const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
+
+  //Payment checker
+  const [paymentMethodSelected, setPaymentMethodSelected] = useState(false);
+  // PAYMENT METHODS
+
+
+
 
   useEffect(() => {
-    
     async function getTableData() {
-      const [rows_non_state, total_non_state, total_weight_non_state,vat] = datamanipulation.getCheckoutPageTableDate(
+      const [rows_non_state, total_non_state, total_weight_non_state, vat] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart
       );
-      
-      console.log(rows_non_state)
+
+      console.log(rows_non_state);
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
-      console.log(total_non_state)
+      console.log(total_non_state);
       setTotal(total_non_state);
       setTotalWeight(total_weight_non_state);
     }
@@ -163,13 +173,16 @@ const CheckoutPage = () => {
     bitcoinselected,
     ethereumselected,
     solanaselected,
+    rows,
+    total,
+    grandTotal,
+    deliveryFee
   ]);
 
   // PAYMENT METHODS
   useEffect(() => {
-    if (mayaselected) {
-      if (transactionStatus === 'SUCCESS') {
-       
+    if (transactionStatus === 'SUCCESS') {
+      if (mayaselected) {
         const firstName = localname.split(' ')[0];
         const lastName = localname.split(' ')[1];
         const eMail = localemail;
@@ -189,12 +202,15 @@ const CheckoutPage = () => {
           userdata.uid
         );
       }
+      if (bdoselected) {
+      navigateTo('/checkout/proofOfPayment')
+      }
     }
+    
     setPlaceOrderLoading(false);
   }, [placedOrder]);
 
   useEffect(() => {
- 
     if (mayaRedirectUrl != null) {
       window.location.href = mayaRedirectUrl;
     }
@@ -205,7 +221,6 @@ const CheckoutPage = () => {
   }, []);
 
   useEffect(() => {
-
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -266,8 +281,6 @@ const CheckoutPage = () => {
       try {
         const orderReferenceNumber = generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
-
-       
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
@@ -286,13 +299,12 @@ const CheckoutPage = () => {
           deliveryNotes: deliveryNotes,
           totalWeight: totalWeight,
           deliveryVehicle: deliveryVehicle.name,
-          needAssistance: needAssistance
+          needAssistance: needAssistance,
         });
-      
+
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
       } catch (err) {
-  
         setPlaceOrderLoading(false);
         alert('You must be logged in');
       }
@@ -621,7 +633,7 @@ const CheckoutPage = () => {
                     setVat={setVat}
                     area={area}
                     setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
-                    rows = {rows}
+                    rows={rows}
                   />
                 )}
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
@@ -632,9 +644,8 @@ const CheckoutPage = () => {
                   </Typography>
                 </div>
 
-                <PaymentMethodContext.Provider value={paymentMethodValues}>
-                  <PaymentMethods />
-                </PaymentMethodContext.Provider>
+                <PaymentMethods />
+              
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 
@@ -680,12 +691,6 @@ const CheckoutPage = () => {
           setLocalName={setLocalName}
           setLocalPhoneNumber={setLocalPhoneNumber}
         />
-
-        {/* // A summary of the items in the customer's shopping cart */}
-
-        {/* // Order total, including tax and shipping */}
-        {/* // A button or link to submit the order */}
-        {/* MODAL // Option for creating an account or signing in, if the customer has an account with the website */}
       </div>
     </ThemeProvider>
   );

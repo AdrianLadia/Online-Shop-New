@@ -22,6 +22,7 @@ import './App.css';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
+import Checkout from './components/Checkout';
 
 const devEnvironment = true;
 
@@ -202,7 +203,7 @@ function App() {
   useEffect(() => {
     if (goToCheckoutPage) {
       delay(2000).then(() => {
-        navigateTo('/checkout');
+        navigateTo('/checkout/checkoutPage');
         setGoToCheckoutPage(false);
       });
     }
@@ -284,7 +285,7 @@ function App() {
           }
         />
         <Route
-          path="/checkout"
+          path="/checkout/*"
           element={
             <AppContext.Provider value={appContextValue}>
               <NavBar />
@@ -302,7 +303,7 @@ function App() {
                   </div>
                 </div>
               ) : (
-                <CheckoutPage />
+                <Checkout />
               )}
             </AppContext.Provider>
           }
@@ -377,6 +378,14 @@ function App() {
         />
         <Route
           path="/checkoutCancelled"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <CheckoutCancelled />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/checkoutProofOfPayment"
           element={
             <AppContext.Provider value={appContextValue}>
               <CheckoutCancelled />
