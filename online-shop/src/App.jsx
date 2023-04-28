@@ -118,10 +118,11 @@ function App() {
                 },
                 user.uid
               );
+              
             }
             // console.log('creating new user');
             createNewUser();
-            delay(1000).then(() => {
+            delay(5000).then(() => {
               setUserId(user.uid);
             });
           }
