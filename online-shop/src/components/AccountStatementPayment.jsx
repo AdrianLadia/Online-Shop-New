@@ -1,6 +1,6 @@
 import React, {useState, useEffect, AppContext, useContext} from 'react'
 import PaymentMethods from './PaymentMethods';
-import PaymentMethodContext from '../context/PaymentMethodContext';
+import CheckoutContext from '../context/CheckoutContext';
 import { Typography, Button } from '@mui/material';
 import businessCalculations from '../../utils/businessCalculations';
 import { HiCash } from "react-icons/hi";

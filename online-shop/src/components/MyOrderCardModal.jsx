@@ -11,7 +11,7 @@ import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 import ImageUploadButton from "./ImageComponents/ImageUploadButton";
 import AppContext from "../AppContext";
 import dataManipulation from "../../utils/dataManipulation";
-import UseWindowDimensions from "./useWindowDimensions";
+import UseWindowDimensions from "./UseWindowDimensions";
 
 const MyOrderCardModal = (props) => {
   const style = {

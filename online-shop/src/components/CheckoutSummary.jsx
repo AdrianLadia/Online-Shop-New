@@ -58,6 +58,34 @@ const CheckoutSummary = (props) => {
   //   getTableData();
   // }, [cart]);
 
+  function responsiveWidth() {
+    if (width < 550) {
+      return '90%';
+    }
+    if (width < 750) {
+      return '80%';
+    }
+    if (width < 1000) {
+      return '70%';
+    }
+    if (width < 1200) {
+      return '60%';
+    }
+    if (width < 1400) {
+      return '50%';
+    }
+    if (width < 1600) {
+      return '40%';
+    }
+    if (width < 1800) {
+      return '30%';
+    }
+    else {
+      return '20%'
+    }
+
+  }
+
   return (
     <div>
       {rows == null ? (
@@ -98,7 +126,7 @@ const CheckoutSummary = (props) => {
           </TableContainer>
           <List
             sx={{
-              width: '100%',
+              width: responsiveWidth(),
               bgcolor: 'background.paper',
               marginLeft: -2,
             }}>
