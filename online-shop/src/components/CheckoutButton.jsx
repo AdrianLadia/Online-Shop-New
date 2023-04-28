@@ -6,8 +6,8 @@ import GuestSignInModal from './GuestSignInModal';
 import { CircularProgress, Typography } from '@mui/material';
 
 const CheckoutButton = () => {
-  const navigateTo = useNavigate();
-  const { userId, cart,setGuestLoginClicked,goToCheckoutPage,setGoToCheckoutPage } = useContext(AppContext);
+  // const navigateTo = useNavigate();
+  const { userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage } = useContext(AppContext);
   const [openGuestSignInModal,setOpenGuestSignInModal] = useState(false);
 
   function handleCloseGuestSignInModal(){
@@ -24,7 +24,6 @@ const CheckoutButton = () => {
       setGoToCheckoutPage(true)
     }
   }
-
 
   return (
     <div>

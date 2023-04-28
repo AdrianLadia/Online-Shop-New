@@ -54,7 +54,7 @@ const AdminCreatePayment = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-    <div className="flex flex-col items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
+    <div className="flex flex-col mb-8 items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
       <div className='flex flex-col gap-10 w-11/12 md:w-9/12 '>
 
         <div className='flex md:flex-row flex-row-reverse justify-center mt-7'>

@@ -81,10 +81,10 @@ const AdminOrdersTable = (props) => {
   }
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="simple table">
+    <TableContainer component={Paper} sx={{height:"80vh"}}>
+      <Table aria-label="simple table" >
         <TableHead>
-          <TableRow className="bg-color10c">
+          <TableRow className="bg-color10c border-b-2 border-color60">
             <TableCell>Reference #</TableCell>
             <TableCell align="right">Order Date</TableCell>
             <TableCell align="right">Customer Name</TableCell>

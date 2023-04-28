@@ -23,6 +23,7 @@ import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
+import AccountStatementPayment from './components/AccountStatementPayment';
 
 const devEnvironment = true;
 
@@ -79,20 +80,20 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log('onAuthStateChanged ran');
+      // console.log('onAuthStateChanged ran');
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        console.log('FOUND USER', user.uid);
+        // console.log('FOUND USER', user.uid);
         setUserState('userloading');
         setUser(user);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
-          console.log(userExists);
+          // console.log(userExists);
           if (userExists) {
-            console.log('user exists');
+            // console.log('user exists');
             setUserId(user.uid);
           } else {
-            console.log('user does not exist');
+            // console.log('user does not exist');
 
             async function createNewUser() {
               // "member": Represents a registered user with standard privileges, such as creating and editing their own content.
@@ -118,7 +119,7 @@ function App() {
                 user.uid
               );
             }
-            console.log('creating new user');
+            // console.log('creating new user');
             createNewUser();
             delay(1000).then(() => {
               setUserId(user.uid);
@@ -165,7 +166,7 @@ function App() {
           setCart(localStorageCart);
           firestore.createUserCart(localStorageCart, userId).then(() => {
             localStorage.removeItem('cart');
-            console.log('cart removed from local storage');
+            // console.log('cart removed from local storage');
             setGuestLoginClicked(false);
             setGoToCheckoutPage(true);
           });
@@ -357,6 +358,15 @@ function App() {
                   <AccountStatement />
                 </div>
               )}
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/AccountStatementPayment"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <NavBar />
+              <AccountStatementPayment />
             </AppContext.Provider>
           }
         />

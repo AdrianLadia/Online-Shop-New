@@ -11,6 +11,7 @@ import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 import ImageUploadButton from "./ImageComponents/ImageUploadButton";
 import AppContext from "../AppContext";
 import dataManipulation from "../../utils/dataManipulation";
+import UseWindowDimensions from "./useWindowDimensions";
 
 const MyOrderCardModal = (props) => {
   const style = {
@@ -23,11 +24,12 @@ const MyOrderCardModal = (props) => {
     overflow: "scroll",
 
     "@media (min-width: 1024px)": {
-      width: "50%",
+      width: "60%",
     },
 
     bgcolor: "background.paper",
-    border: "2px solid #000",
+    border: "2px solid #69b05c",
+    borderRadius: 3,
     boxShadow: 24,
     p: 4,
   };
@@ -44,6 +46,16 @@ const MyOrderCardModal = (props) => {
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate)
   const [linkCount,setLinkCount] = useState(order.proofOfPaymentLink.length)
 
+  const {width } = UseWindowDimensions();
+  const [screenMobile, setScreenSizeMobile] = useState(null);
+
+  useEffect(()=>{
+    if (width < 550) {
+      return setScreenSizeMobile(false);
+     }else {
+      return setScreenSizeMobile(true);
+     }
+  },[width])
 
   function getPaymentStatus(x,y,z) {
     if (order.paid) {
@@ -66,37 +78,63 @@ const MyOrderCardModal = (props) => {
   }
 
   return (
-    <div>
+    <div >
       <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <div className="flex flex-col">
+        <Box sx={style} className="overflow-x-hidden">
+          <div className="flex flex-col justify-center p-0 md:p-6">
             <div className="flex flex-row w-full justify-between">
               <div className="w-full">
                 <Typography
-                  variant="h5"
-                  color= {getPaymentStatus('green','blue','red')}
+                  color={order.paid ? "green" : "red"}
                   fontFamily="roboto"
+                  // variant="h5"
+                  className="text-lg xs:text-2xl"
                 >
-                   {getPaymentStatus('Paid','Reviewing Payment','Not Paid')}
+                  {order.paid ? "Paid" 
+                  : 
+                  <div className="flex flex-col gap-1 md:flex-row justify-start"> 
+                      <a className="">Unpaid</a> 
+                  {screenMobile ?(
+                    <div className="flex flex-col gap-2 md:gap-0 xs:flex-row ">
+                      <button className="w-max rounded-lg mt-1 xs:mt-0 text-base md:ml-5 px-2 py-1 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
+                      <button className="w-max rounded-lg mt-1 xs:mt-0 text-base md:ml-3 px-2 py-1 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
+                    </div>):null
+                  }
+                  </div>
+                  }
                 </Typography>
 
                 <ImageUploadButton onUploadFunction={onUpload2} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
               </div>
-              <div className="w-full">
+              
+              <div className="w-3/4 text-end ">
                 <Typography
-                  variant="h5"
                   color={order.delivered ? "green" : "red"}
                   fontFamily="roboto"
+                  // variant="h5"
+                  className="text-lg xs:text-2xl"
                 >
                   {order.delivered ? "Delivered" : "Not Delivered"}
                 </Typography>
               </div>
             </div>
+
+            {screenMobile === false ? (<div className="w-full border-t-2 mt-4"></div>):null}
+
+            {screenMobile === false ? (
+              <div className="w-full 2xs:w-11/12 flex self-center justify-between gap-5 mt-5 ">
+              <button className=" w-max rounded-lg xs:mt-0 md:ml-7 px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
+              <button className="w-max rounded-lg xs:mt-0 md:ml-3 px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
+              </div>):null
+            }
+
+            {screenMobile === false ? (<div className="w-full border-t-2 mt-4"></div>):null}
+
             <List
               sx={{
                 width: "100%",

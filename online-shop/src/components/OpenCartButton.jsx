@@ -128,7 +128,7 @@ const OpenCartButton = (props) => {
           className={" bg-color10b text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 position fixed bottom-2  content-center " + responsiveShakeCartAnimation() }
         >
           {userstate !== 'userloading' ? (
-            <div className="flex flex-row justify-around">
+            <div className="flex flex-row justify-center">
               <div>
                 <span className="flex h-3 w-3 ">
                     <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none bg-color10a rounded-full">
@@ -137,7 +137,7 @@ const OpenCartButton = (props) => {
                 </span>
                 <AiOutlineShoppingCart size={25} />
               </div>
-              <div className="mt-0.5 flex flex-row ">
+              <div className="mt-0.5 flex flex-row ml-3">
                 <Typography variant="h6"> Php </Typography>
                 <Typography sx={{marginLeft:1}} id='totalPrice' variant="h6"> {totalPrice.toLocaleString()} </Typography>
                 

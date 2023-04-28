@@ -365,7 +365,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full">
               <button
                 id="selectFromSavedAddressButton"
-                className="bg-color10b hover:bg-blue-400 rounded-lg w-3/6 font-bold "
+                className="bg-color10b hover:bg-blue-400 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenModalSavedAddress}
               >
                 Select From Saved Address
@@ -420,7 +420,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full ">
               <button
                 id="selectFromSavedContactsButton"
-                className="bg-color10b hover:bg-blue-400 rounded-lg w-3/6 font-bold "
+                className="bg-color10b hover:bg-blue-400 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenContactModal}
               >
                 Select From Saved Contacts
@@ -473,7 +473,7 @@ const CheckoutPage = () => {
                         Assistance
                       </Typography>
                     </div>
-                    <div className="flex justify-center items-center mt-5">
+                    <div className="flex justify-center items-center mt-5 px-3">
                       <Typography variant="h6">
                         Driver helps unload items?
                         {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
@@ -613,7 +613,7 @@ const CheckoutPage = () => {
                
               )} */}
 
-                <div className="flex justify-center mt-7 my-5">
+                <div className="flex justify-center mt-7 m-5">
                   <Typography variant="h4" className="font-bold">
                     Checkout Summary
                   </Typography>
@@ -663,11 +663,11 @@ const CheckoutPage = () => {
                   />
                 </div>
 
-                <div className="flex justify-center mt-2">
+                <div className="flex justify-center mt-2 mb-6">
                   <button
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
-                    className="bg-color10b hover:bg-blue-600 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
+                    className="hover:bg-color10b bg-blue1 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
                   >
                     {placeOrderLoading ? <CircularProgress /> : 'Place Order'}
                   </button>

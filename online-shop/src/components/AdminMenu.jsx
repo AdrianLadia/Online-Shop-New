@@ -18,10 +18,13 @@ import { HiOutlineCash } from "react-icons/hi";
 import App from './Analytics/App';
 import { RiAdminFill } from "react-icons/ri";
 import Divider from "@mui/material/Divider";
+import UseWindowDimensions from "./useWindowDimensions";
+
 
 const AdminMenu = () => {
   const {products,firestore } = React.useContext(AppContext);
 
+  const {width } = UseWindowDimensions();
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -71,7 +74,21 @@ const AdminMenu = () => {
     });
   }, [refresh]);
 
-  useEffect(() => {}, []);
+  function responsiveSize(){
+    if(width < 650){
+      return 25
+    }else{
+      return 35
+    }
+  }
+
+  function responsiveIcon(){
+    if(width < 650){
+      return "mt-3 text-blue1"
+    }else{
+      return "mt-2 text-blue1"
+    }
+  }
 
   return (
     // NAV BAR
@@ -79,10 +96,10 @@ const AdminMenu = () => {
     <div className="flex flex-col">
       <div className="flex flex-row w-full justify-between bg-gradient-to-r from-color60 via-color10c to-color60 py-3">
         {/* Back Button */}
-        <IoArrowBackCircle id='backToStoreButton' size={40} className=" mt-1 ml-6 text-white hover:text-color10b cursor-pointer" onClick={handleBack} />
+        <IoArrowBackCircle id='backToStoreButton' size={40} className=" mt-1 2xs:ml-6 text-white hover:text-color10b cursor-pointer" onClick={handleBack} />
           
-        <div className='flex mr-14'>
-            <RiAdminFill size={35} className='mt-2 mr-1 text-blue1'/>
+        <div className='flex sm:mr-14'>
+            <RiAdminFill size={responsiveSize()} className={responsiveIcon()}/>
           {/* <span className='mt-2 text-blue1 text-2xl font-semibold first-letter:text-3xl t'>Admin</span> */}
         </div>
 
@@ -95,7 +112,7 @@ const AdminMenu = () => {
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
           >          
-            <GiHamburgerMenu id='hamburgerAdmin' size={36} className='mr-6 text-white hover:text-color10b'/>
+            <GiHamburgerMenu id='hamburgerAdmin' size={36} className='-mr-4 2xs:mr-6 text-white hover:text-color10b'/>
           </Button>
           <Menu
             id="basic-menu"

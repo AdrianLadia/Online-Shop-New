@@ -11,16 +11,14 @@ const style = {
   height: '80%',
   transform: 'translate(-50%, -50%)',
   width: '95%',
-  height: 'auto',
+  height: '50vh',
   maxHeight: '80%',
   overflow: 'auto',
-
   '@media (min-width: 1024px)': {
     width: '50%',
   },
-
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  border: '2px solid #69b05c',
+  borderRadius: 3,
   boxShadow: 24,
   p: 4,
 };
@@ -29,25 +27,27 @@ const GoogleMapsModalSelectContactModal = (props) => {
   const { contactPerson } = React.useContext(AppContext);
 
   return (
-    <div>
+    <div class>
       <Modal
         open={props.open}
         onClose={props.handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <div className='flex flex-col'>
-            <div className='flex flex-row justify-end'>
-            <button
-                id="closeModalButton"
-                onClick={props.handleClose}
-                className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
-              >
-                X
+        <Box sx={style} className="bg-colorbackground ">
+          <div className='flex flex-col '>
+            <div className='flex flex-row items-center justify-between my-3'>
+              <div className='xs:ml-2 text-2xl xs:text-3xl font-semibold tracking-wider xs:tracking-widest'>
+                Saved Contacts
+              </div>
+              <button
+                  id="closeModalButton"
+                  onClick={props.handleClose}
+                  className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
+                  >X
               </button>
             </div>
-            <div>
+            <div className='mt-6'>
               {contactPerson.map((contact) => {
                 return (
                   <GoogleMapsModalSelectContactModalButton

@@ -3,6 +3,7 @@ import AppContext from '../AppContext';
 import { useEffect, useContext, useState } from 'react';
 import { Typography } from '@mui/material';
 import MyOrderCard from './MyOrderCard';
+import {BsFillBagCheckFill } from "react-icons/bs";
 
 function MyOrders() {
   const { orders } = useContext(AppContext);
@@ -15,13 +16,16 @@ function MyOrders() {
 
   return (
     <React.Fragment>
-      <div className="flex justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
-        <Typography variant="h2">My Orders</Typography>
-      </div>
+      <div className="flex flex-col justify-center bg-gradient-to-r mb-8 from-colorbackground via-color2 to-color1">
+        <div className="flex md:flex-row flex-row-reverse justify-center ml-3 xs:ml-0 my-10 md:-ml-14">
+         <Typography className='self-center' variant="h2">My Orders </Typography>
+         <BsFillBagCheckFill/>
+        </div>
       {reversedOrders.map((order) => {
         console.log(order);
         return <MyOrderCard key={order.reference} order={order} />;
-      })}
+      })} 
+      </div>
     </React.Fragment>
   );
 }

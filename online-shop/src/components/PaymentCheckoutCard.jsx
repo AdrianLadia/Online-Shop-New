@@ -66,17 +66,17 @@ const PaymentCheckoutCard = (props) => {
 
     function style() {
         if (cardSelected === true) {
-            return "h-40 w-40 p-5 border-4 hover:cursor-pointer border-color10b -mt-3 "
+            return " h-40 w-40 p-5 border-4 hover:cursor-pointer border-color10b -mt-3 "
         }
         else {
-            return "h-40 w-40 p-5 border-4 hover:cursor-pointer mt-5 "
+            return " h-40 w-40 p-5 border-4 hover:cursor-pointer mt-5 "
         }
     }
 
   return (
     <React.Fragment>
       <Paper
-        className={style()}
+        className={"mb-6 2xs:mb-0 mx-1" + style()}
         elevation={elevation}
         onClick={onClick}
       >
