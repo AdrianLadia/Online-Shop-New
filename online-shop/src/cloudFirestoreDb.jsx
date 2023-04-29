@@ -387,9 +387,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       console.log(data);
       console.log(this.functions);
       const sendEmailFunction = httpsCallable(this.functions, 'sendEmail');
-      
-      sendEmailFunction(data).then((result) => {
-        return result
+ 
+      return sendEmailFunction(data).then((result) => {
+        return result.data
       });
     }
     catch (error){
