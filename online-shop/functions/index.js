@@ -6,6 +6,7 @@ const corsHandler = cors({ origin: true });
 const express = require('express');
 const app = express();
 const Joi = require('joi');
+const nodemailer = require('nodemailer');
 
 admin.initializeApp();
 
@@ -13,7 +14,25 @@ app.use(corsHandler);
 app.use(express.json());
 
 
-
+async function sendEmail(to,subject,text) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'starpackph@gmail.com',
+      pass: 'ucyiyamqzjubekif'
+    }
+  });
+ 
+    // send the email using the transporter object
+    console.log('ran')
+    await transporter.sendMail({
+      from: 'starpackph@gmail.com',
+      to : to,
+      subject : subject,
+      text : text
+    });
+    console.log('ran2')
+}
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
@@ -888,6 +907,22 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
     }
   });
   
+});
+
+exports.sendEmail = functions.region('asia-southeast1').https.onCall(async (data, context) => {
+  // get the recipient email address and message content from the client-side
+  console.log(data)
+  const {to,subject,text} =  data
+  try {
+    await sendEmail(to,subject,text)
+    return { success: true }
+  }
+  catch (error) {
+    console.error('Error sending email:', error);
+    return { success: false}
+  }
+
+
 });
 
 

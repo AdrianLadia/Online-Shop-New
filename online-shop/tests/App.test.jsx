@@ -4,6 +4,7 @@ import businessCalculations from '../utils/businessCalculations';
 import dataManipulation from '../utils/dataManipulation';
 import firestoredb from '../src/firestoredb';
 import { initializeApp } from 'firebase/app';
+import { getFunctions, httpsCallable } from "firebase/functions";
 import firebaseConfig from '../src/firebase_config';
 import paperBoyLocation from '../src/data/paperBoyLocation';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
@@ -22,8 +23,8 @@ const firestore = new firestoredb(app, true);
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
-const cloudfirestorefunctions = new cloudFirestoreFunctions();
-const cloudfirestore = new cloudFirestoreDb();
+const cloudfirestorefunctions = new cloudFirestoreFunctions(app);
+const cloudfirestore = new cloudFirestoreDb(app);
 const userTestId = 'xB80hL1fGRGWnO1yCK7vYL2hHQCP';
 const testconfig = new testConfig();
 const testid = testconfig.getTestUserId();
@@ -2122,7 +2123,7 @@ describe('deleteOrderFromUserFirestore', () => {
   })
 });
 
-describe.only('updateOrderProofOfPaymentLink', () => {
+describe('updateOrderProofOfPaymentLink', () => {
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2196,10 +2197,24 @@ describe.only('updateOrderProofOfPaymentLink', () => {
   
 },10000)
 
-describe.only('convert date timestamp to date string', () => {
+describe('convert date timestamp to date string', () => {
   test('convert date timestamp to date string', () => {
     const timestamp = {seconds: 1600000000, nanoseconds: 0}
     const time = datamanipulation.convertDateTimeStampToDateString(timestamp)
     expect(time).toEqual("2020-09-13 20:26:40")
   })
 })
+
+describe.only('sendEmail', async () => {
+  test('should send email', async () => {
+    const data = {
+      to:'ladiaadrian@gmail.com',
+      subject:'test',
+      text:'test'
+    }
+    const res = await cloudfirestore.sendEmail(data)
+
+    expect(res['success']).toEqual(true)
+  })
+  
+},100000)

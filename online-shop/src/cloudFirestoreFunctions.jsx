@@ -2,13 +2,10 @@ import axios from 'axios';
 import Joi from 'joi';
 import retryApi from '../utils/retryApi';
 import AppConfig from './AppConfig';
+import { getFunctions } from "firebase/functions";
 
 class cloudFirestoreFunctions {
-  constructor(emulator = false) {
-    if (emulator === false) {
-    }
-    if (emulator === true) {
-    }
+  constructor(app) {
 
     const appConfig = new AppConfig();
 
@@ -18,8 +15,11 @@ class cloudFirestoreFunctions {
     else {
       this.url = 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/'
     }
-
+    this.functions = getFunctions(app);
   }
+
+  
+
 
 
   async createDocument(firestoreData, id, collection) {
