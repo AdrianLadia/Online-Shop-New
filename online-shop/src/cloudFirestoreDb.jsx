@@ -137,7 +137,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryNotes: Joi.string().allow(''),
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
-      needAssistance: Joi.boolean().required()
+      needAssistance: Joi.boolean().required(),
+      eMail : Joi.string().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);

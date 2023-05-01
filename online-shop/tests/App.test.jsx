@@ -262,6 +262,8 @@ describe('Data Manipulation', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
+
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -305,6 +307,7 @@ describe('Data Manipulation', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -589,6 +592,7 @@ describe('Transaction Place Order', async () => {
       totalWeight: 320,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'ladiaadrian@gmail.com'
     });
     await delay(100);
     const user = await firestore.readUserById('testuser');
@@ -1048,6 +1052,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(200);
 
@@ -1127,6 +1132,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(200);
 
@@ -1162,6 +1168,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await delay(200);
@@ -1198,6 +1205,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await delay(200);
@@ -1290,6 +1298,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await delay(300);
@@ -1378,6 +1387,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(300);
 
@@ -1477,6 +1487,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1511,6 +1522,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1545,6 +1557,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     const req3 = {
@@ -1776,6 +1789,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(500);
 
@@ -1820,6 +1834,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(500);
 
@@ -1866,6 +1881,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(300);
 
@@ -2017,6 +2033,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2051,6 +2068,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2085,6 +2103,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
   });
@@ -2163,6 +2182,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
   });
 

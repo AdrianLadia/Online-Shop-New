@@ -301,6 +301,7 @@ const CheckoutPage = () => {
           totalWeight: totalWeight,
           deliveryVehicle: deliveryVehicle.name,
           needAssistance: needAssistance,
+          eMail: localemail,
         });
 
         setTransactionStatus(res.data);
