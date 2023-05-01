@@ -21,6 +21,7 @@ function MyOrderCard(props) {
   const handleClose = () => setOpenModal(false);
   const {width } = UseWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
+  console.log(order)
 
   function getPaymentStatus(x,y,z) {
     if (order.paid) {
@@ -118,7 +119,7 @@ function MyOrderCard(props) {
             <div className="flex justify-end align-text-bottom">
               <Typography variant="h5">₱ {order.grandTotal}</Typography>
             </div>
-            <ImageUploadButton onUploadFunction={onUpload} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
+            <ImageUploadButton key={order.reference} onUploadFunction={onUpload} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
           </div>
         </div>
 
