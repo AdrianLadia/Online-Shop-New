@@ -600,6 +600,17 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         transaction.update(userRef, { orders: updatedOrders });
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
         transaction.update(userRef, { cart: [] });
+
+
+        // CREATE ORDERMESSAGES CHAT
+        const orderMessagesRef = db.collection('ordersMessages').doc(reference)
+        transaction.set(orderMessagesRef,{messages:[],
+                                          ownerUserId : userid,
+                                          ownerName : username
+        })
+        orderMessagesRef.collection('messages')
+
+
         console.log(newOrder.eMail)
         await sendEmail(
           newOrder.eMail,

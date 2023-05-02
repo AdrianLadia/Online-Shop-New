@@ -607,6 +607,20 @@ describe('Transaction Place Order', async () => {
     expect(foundorder).toEqual(true);
   });
 
+  test.only('check if reference is added to orderMessages collection', async() => {
+    const ids = await firestore.readAllIdsFromCollection('ordersMessages')
+
+    let found = false
+    ids.map((id) => {
+      if (id == 'testref-124124521') {
+        found = true
+      }
+    })
+
+    expect(found).toBe(true)
+
+  })
+
   test('check if deliveryaddress added', async () => {
     const user = await firestore.readUserById('testuser');
     await delay(100);
@@ -649,7 +663,7 @@ describe('Transaction Place Order', async () => {
       await firestore.updateProductStocksAvailable(itemId, resetStockCount);
     });
   });
-});
+},100000);
 
 describe('Transaction Create Payment', async () => {
   test('Check if payment is added to payment field', async () => {

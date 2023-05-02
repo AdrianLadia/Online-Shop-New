@@ -8,6 +8,10 @@ module.exports = {
   plugins: [],
   theme: {
     extend: {
+      height: {
+        '1/10': "10%",
+        '2/15': "12%",
+      },
       keyframes: {
         'shake': {
           '0%, 100%': {
@@ -31,6 +35,7 @@ module.exports = {
         'shake': 'shake 1s ease-in-out infinite'
       },
       screens: {
+        '3xs' : '281px',
         '2xs' : '366px',
         'xs' : '480px',
         '2md' : '800px',

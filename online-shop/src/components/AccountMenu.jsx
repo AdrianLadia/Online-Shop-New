@@ -55,7 +55,7 @@ const AccountMenu = (props) => {
   function myOrdersClick() {
     setUserState("userloading");
     setRefreshUser(!refreshUser);
-    navigateTo("/myorders");
+    navigateTo("/myorders/orderList");
   }
 
   function accountStatementCLick() {
