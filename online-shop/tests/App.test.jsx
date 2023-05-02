@@ -4,6 +4,7 @@ import businessCalculations from '../utils/businessCalculations';
 import dataManipulation from '../utils/dataManipulation';
 import firestoredb from '../src/firestoredb';
 import { initializeApp } from 'firebase/app';
+import { getFunctions, httpsCallable } from "firebase/functions";
 import firebaseConfig from '../src/firebase_config';
 import paperBoyLocation from '../src/data/paperBoyLocation';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
@@ -22,8 +23,8 @@ const firestore = new firestoredb(app, true);
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
-const cloudfirestorefunctions = new cloudFirestoreFunctions();
-const cloudfirestore = new cloudFirestoreDb();
+const cloudfirestorefunctions = new cloudFirestoreFunctions(app);
+const cloudfirestore = new cloudFirestoreDb(app);
 const userTestId = 'xB80hL1fGRGWnO1yCK7vYL2hHQCP';
 const testconfig = new testConfig();
 const testid = testconfig.getTestUserId();
@@ -261,6 +262,8 @@ describe('Data Manipulation', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
+
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -304,6 +307,7 @@ describe('Data Manipulation', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -588,6 +592,7 @@ describe('Transaction Place Order', async () => {
       totalWeight: 320,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'ladiaadrian@gmail.com'
     });
     await delay(100);
     const user = await firestore.readUserById('testuser');
@@ -601,6 +606,20 @@ describe('Transaction Place Order', async () => {
     });
     expect(foundorder).toEqual(true);
   });
+
+  test.only('check if reference is added to orderMessages collection', async() => {
+    const ids = await firestore.readAllIdsFromCollection('ordersMessages')
+
+    let found = false
+    ids.map((id) => {
+      if (id == 'testref-124124521') {
+        found = true
+      }
+    })
+
+    expect(found).toBe(true)
+
+  })
 
   test('check if deliveryaddress added', async () => {
     const user = await firestore.readUserById('testuser');
@@ -644,7 +663,7 @@ describe('Transaction Place Order', async () => {
       await firestore.updateProductStocksAvailable(itemId, resetStockCount);
     });
   });
-});
+},100000);
 
 describe('Transaction Create Payment', async () => {
   test('Check if payment is added to payment field', async () => {
@@ -1047,6 +1066,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(200);
 
@@ -1126,6 +1146,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(200);
 
@@ -1161,6 +1182,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await delay(200);
@@ -1197,6 +1219,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await delay(200);
@@ -1289,6 +1312,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await delay(300);
@@ -1377,6 +1401,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(300);
 
@@ -1476,6 +1501,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1510,6 +1536,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1544,6 +1571,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     const req3 = {
@@ -1775,6 +1803,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(500);
 
@@ -1819,6 +1848,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(500);
 
@@ -1865,6 +1895,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
     await delay(300);
 
@@ -2016,6 +2047,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2050,6 +2082,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2084,6 +2117,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
 
   });
@@ -2122,7 +2156,7 @@ describe('deleteOrderFromUserFirestore', () => {
   })
 });
 
-describe.only('updateOrderProofOfPaymentLink', () => {
+describe('updateOrderProofOfPaymentLink', () => {
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2162,6 +2196,7 @@ describe.only('updateOrderProofOfPaymentLink', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
+      eMail : 'starpackph@gmail.com'
     });
   });
 
@@ -2196,10 +2231,24 @@ describe.only('updateOrderProofOfPaymentLink', () => {
   
 },10000)
 
-describe.only('convert date timestamp to date string', () => {
+describe('convert date timestamp to date string', () => {
   test('convert date timestamp to date string', () => {
     const timestamp = {seconds: 1600000000, nanoseconds: 0}
     const time = datamanipulation.convertDateTimeStampToDateString(timestamp)
     expect(time).toEqual("2020-09-13 20:26:40")
   })
 })
+
+describe.only('sendEmail', async () => {
+  test('should send email', async () => {
+    const data = {
+      to:'ladiaadrian@gmail.com',
+      subject:'test',
+      text:'test'
+    }
+    const res = await cloudfirestore.sendEmail(data)
+
+    expect(res['success']).toEqual(true)
+  })
+  
+},100000)

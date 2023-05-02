@@ -496,7 +496,7 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
   
-    const vat = totalPrice - (totalPrice /  1.12)
+    const vat = totalPrice - (totalPrice /  1.0)
     const roundedVat = Math.round(vat * 100) / 100;
     
     const vatSchema = Joi.number().required();

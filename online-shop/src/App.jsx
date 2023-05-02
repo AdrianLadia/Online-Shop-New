@@ -25,6 +25,7 @@ import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
 
+
 const devEnvironment = true;
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
 
   // Initialize firestore class
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
+  const db = firestore.db
   const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);
@@ -73,6 +75,7 @@ function App() {
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
   const [categories, setCategories] = useState(null);
   const [initialStartup, setInitialStartup] = useState(true);
+  const [selectedChatOrderId,setSelectedChatOrderId] = useState(null)
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -80,8 +83,10 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      
       // console.log('onAuthStateChanged ran');
       if (user) {
+        console.log('ran')
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
         // console.log('FOUND USER', user.uid);
@@ -100,6 +105,7 @@ function App() {
               // "moderator": Represents a user with additional privileges to manage and moderate content created by other users.
               // "admin": Represents an administrator with broad system access, including managing users, settings, and other high-level functions.
               // "superAdmin": Represents a super administrator with the highest level of access, able to manage all aspects of the system, including creating and managing other admin-level users.
+            
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -118,10 +124,11 @@ function App() {
                 },
                 user.uid
               );
+              
             }
             // console.log('creating new user');
             createNewUser();
-            delay(1000).then(() => {
+            delay(5000).then(() => {
               setUserId(user.uid);
             });
           }
@@ -214,6 +221,7 @@ function App() {
     categories: categories,
     setCategories: setCategories,
     firebaseApp: app,
+    db:db,
     user: user,
     userdata: userdata,
     setUserData: setUserData,
@@ -253,7 +261,9 @@ function App() {
     setProducts: setProducts,
     goToCheckoutPage: goToCheckoutPage,
     setGoToCheckoutPage: setGoToCheckoutPage,
-    storage:storage
+    storage:storage,
+    selectedChatOrderId : selectedChatOrderId,
+    setSelectedChatOrderId : setSelectedChatOrderId,
   };
 
   return (
@@ -310,10 +320,10 @@ function App() {
           }
         />
         <Route
-          path="/myorders"
+          path="/myorders/*"
           element={
             <AppContext.Provider value={appContextValue}>
-              <NavBar />
+              {/* <NavBar /> */}
               {userstate === 'userloading' ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">

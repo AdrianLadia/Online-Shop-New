@@ -6,6 +6,7 @@ const corsHandler = cors({ origin: true });
 const express = require('express');
 const app = express();
 const Joi = require('joi');
+const nodemailer = require('nodemailer');
 
 admin.initializeApp();
 
@@ -13,7 +14,25 @@ app.use(corsHandler);
 app.use(express.json());
 
 
-
+async function sendEmail(to,subject,htmlContent) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'starpackph@gmail.com',
+      pass: 'ucyiyamqzjubekif'
+    }
+  });
+ 
+    // send the email using the transporter object
+    console.log('ran')
+    await transporter.sendMail({
+      from: 'starpackph@gmail.com',
+      to : to,
+      subject : subject,
+      html: htmlContent
+    });
+    console.log('ran2')
+}
 
 function parseData(data) {
   // Decode and parse the URL-encoded JSON string
@@ -374,6 +393,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
     const totalWeight = data.totalWeight;
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
+    const eMail = data.eMail;
   
 
     const db = admin.firestore();
@@ -572,6 +592,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
           needAssistance: needAssistance,
           userId: userid,
           proofOfPaymentLink : [],
+          eMail: eMail,
         };
 
         const updatedOrders = [newOrder, ...oldOrders];
@@ -579,12 +600,44 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         transaction.update(userRef, { orders: updatedOrders });
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
         transaction.update(userRef, { cart: [] });
+
+
+        // CREATE ORDERMESSAGES CHAT
+        const orderMessagesRef = db.collection('ordersMessages').doc(reference)
+        transaction.set(orderMessagesRef,{messages:[],
+                                          ownerUserId : userid,
+                                          ownerName : username
+        })
+        orderMessagesRef.collection('messages')
+
+
+        console.log(newOrder.eMail)
+        await sendEmail(
+          newOrder.eMail,
+          'Order Confirmation',
+          `<p>Dear Customer,</p>
+        
+        <p>We are pleased to inform you that your order has been confirmed.</p>
+        
+        <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+        
+        <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
+        
+        <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
+        
+        <p>Thank you for choosing Star Pack!</p>
+        
+        <p>Best Regards,<br>
+        The Star Pack Team</p>`
+        );
+        
         res.send('SUCCESS');
       } catch (e) {
         console.log(e);
         res.status(400).send('FAILED');
       }
     });
+
   });
 });
 
@@ -889,6 +942,61 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
   });
   
 });
+
+exports.sendEmail = functions.region('asia-southeast1').https.onCall(async (data, context) => {
+  // get the recipient email address and message content from the client-side
+  console.log(data)
+  const {to,subject,text} =  data
+  try {
+    await sendEmail(to,subject,text)
+    return { success: true }
+  }
+  catch (error) {
+    console.error('Error sending email:', error);
+    return { success: false}
+  }
+
+});
+
+// exports.arrayUpdateTrigger = functions.firestore
+//   .document("Users/{userId}")
+//   .onUpdate(async (change, context) => {
+//     // Get the updated document's data
+//     const updatedDoc = change.after.data();
+//     console.log("Updated document data: ", updatedDoc);
+//     const orders = updatedDoc.orders
+//     const userId = updatedDoc.uid
+//     const email = updatedDoc.email
+
+//     function sortTimeStampArrayByDate(array) {
+//       array.sort((a, b) => {
+//           const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
+//           const timeB = b.orderDate.seconds * 1e9 + b.orderDate.nanoseconds;
+//           return timeA - timeB;
+//         });
+
+//       return array
+//    }
+
+//     const sortedOrders = sortTimeStampArrayByDate(orders)
+//     const recentOrder = sortedOrders[sortedOrders.length - 1]
+    
+//     try {
+//       await sendEmail('ladia.adrian@gmail.com','Order Confirmation',`Your order has been confirmed.\n\nYour order reference is ${recentOrder.reference}.\n\nPlease pay within 24 hours.\n\nYou can view and pay your order in your "My Orders" page in www.starpack.ph.\n\nThank You\nStar Pack Team`)
+//     }
+//     catch (error) {
+//       console.error('Error sending email:', error);
+//     }
+
+//     // Get the array you want to watch from the updated document's data
+//     const yourArray = updatedDoc.yourArray;
+
+//     // Perform your desired operations based on the updated array
+//     // ...
+
+//     // Log the updated array (or any other information you need)
+//     console.log("Updated array: ", yourArray);
+//   });
 
 
 

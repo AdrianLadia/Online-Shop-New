@@ -182,6 +182,7 @@ const CheckoutPage = () => {
   // PAYMENT METHODS
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
+      setCart([]);
       if (mayaselected) {
         const firstName = localname.split(' ')[0];
         const lastName = localname.split(' ')[1];
@@ -300,16 +301,18 @@ const CheckoutPage = () => {
           totalWeight: totalWeight,
           deliveryVehicle: deliveryVehicle.name,
           needAssistance: needAssistance,
+          eMail: localemail,
         });
 
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
       } catch (err) {
         setPlaceOrderLoading(false);
-        alert('You must be logged in');
       }
+    }
+    else {
 
-      setCart([]);
+      alert('You must be logged in');
     }
   }
 

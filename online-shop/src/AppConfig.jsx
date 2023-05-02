@@ -1,4 +1,4 @@
-import { FaLaptopHouse } from "react-icons/fa"
+
 
 class AppConfig {
     constructor() {

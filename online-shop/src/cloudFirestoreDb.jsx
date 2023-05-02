@@ -4,9 +4,12 @@ import Joi from 'joi';
 import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { th } from 'date-fns/locale';
+import retryApi from '../utils/retryApi';
+import { httpsCallable,getFunctions } from "firebase/functions";
+
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor() {
+  constructor(app) {
     super();
     const appConfig = new AppConfig();
     if (appConfig.getIsDevEnvironment()) {
@@ -14,6 +17,13 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     } else {
       this.url = 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/';
     }
+    this.functions = getFunctions(app);
+    this.functions.region = 'asia-southeast1';
+
+    if (appConfig.getIsDevEnvironment()) {
+      this.functions.emulatorOrigin = 'http://localhost:5001';
+    }
+
   }
 
   async changeUserRole(userId, role) {
@@ -127,7 +137,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryNotes: Joi.string().allow(''),
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
-      needAssistance: Joi.boolean().required()
+      needAssistance: Joi.boolean().required(),
+      eMail : Joi.string().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
@@ -356,6 +367,36 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
     catch(error){
       throw new Error(error)
+    }
+  }
+
+  async sendEmail(data) {
+    const dataSchema = Joi.object({
+      to: Joi.string().required(),
+      subject: Joi.string().required(),
+      text: Joi.string().required(),
+    }).unknown(false)
+
+    const { error } = dataSchema.validate(data);
+
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+
+    try {
+      console.log(data);
+      console.log(this.functions);
+      const sendEmailFunction = httpsCallable(this.functions, 'sendEmail');
+ 
+      return sendEmailFunction(data).then((result) => {
+        return result.data
+      });
+    }
+    catch (error){
+      console.log(error);
+      alert('Error sending email.');
+      return { status: 'error' };
     }
   }
 
