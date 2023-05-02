@@ -13,9 +13,9 @@ import { Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
 import Divider from '@mui/material/Divider';
 import useWindowDimensions from './UseWindowDimensions';
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 
 const CheckoutSummary = (props) => {
   const { firestore, cart, products } = useContext(AppContext);
@@ -79,11 +79,9 @@ const CheckoutSummary = (props) => {
     }
     if (width < 1800) {
       return '30%';
+    } else {
+      return '20%';
     }
-    else {
-      return '20%'
-    }
-
   }
 
   return (
@@ -129,37 +127,36 @@ const CheckoutSummary = (props) => {
               width: responsiveWidth(),
               bgcolor: 'background.paper',
               marginLeft: -2,
-            }}>
-            {deliveryVehicle ? 
+            }}
+          >
+            {deliveryVehicle ? (
               <ListItem>
-                <ListItemText primary="Delivery Vehicle" secondary={deliveryVehicle}/>
+                <ListItemText primary="Delivery Vehicle" secondary={deliveryVehicle} />
               </ListItem>
-            : null}
-            {maxWeight ? 
-            
-            <ListItem>
-              <ListItemText primary="Max Weight" secondary={maxWeight + ' Kg'}/>
-            </ListItem>
-            : null}
+            ) : null}
+            {maxWeight ? (
+              <ListItem>
+                <ListItemText primary="Max Weight" secondary={maxWeight + ' Kg'} />
+              </ListItem>
+            ) : null}
 
-            {totalWeight ? 
+            {totalWeight ? (
+              <ListItem>
+                <ListItemText primary="Weight of Items" secondary={totalWeight + ' Kg'} />
+              </ListItem>
+            ) : null}
             <ListItem>
-              <ListItemText primary="Weight of Items" secondary={totalWeight + ' Kg'}/>
-            </ListItem>
-            : null}
-            <ListItem>
-              <ListItemText primary="Items Total" secondary={'₱ ' + total.toLocaleString()}/>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Tax" secondary={'₱ ' + vat.toLocaleString()}/>
+              <ListItemText primary="Items Total" secondary={'₱ ' + total.toLocaleString()} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Delivery Fee" secondary={'₱ ' + deliveryFee.toLocaleString()}/>
+              <ListItemText primary="Tax" secondary={'₱ ' + vat.toLocaleString()} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Grand Total" secondary={'₱ ' + grandTotal.toLocaleString()}/>
+              <ListItemText primary="Delivery Fee" secondary={'₱ ' + deliveryFee.toLocaleString()} />
             </ListItem>
-
+            <ListItem>
+              <ListItemText primary="Grand Total" secondary={'₱ ' + grandTotal.toLocaleString()} />
+            </ListItem>
           </List>
           {/* <div className="flex flex-col justify-between lg:flex-row w-8/12 ">
             <div className="flex xl:w-2/6 lg:w-2/6 md:w-full sm:w-full flex-col m-5 gap-3">

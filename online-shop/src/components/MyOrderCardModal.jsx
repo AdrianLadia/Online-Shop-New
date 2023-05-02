@@ -109,7 +109,7 @@ const MyOrderCardModal = (props) => {
                   }
                 </Typography>
 
-                <ImageUploadButton onUploadFunction={onUpload2} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
+                <ImageUploadButton name={`orderModal-${order.reference}`} onUploadFunction={onUpload2} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
               </div>
               
               <div className="w-3/4 text-end ">

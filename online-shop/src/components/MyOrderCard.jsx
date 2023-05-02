@@ -122,6 +122,8 @@ function MyOrderCard(props) {
             <Typography variant="h5">₱ {order.grandTotal}</Typography>
           </div>
           <ImageUploadButton
+            id={`order-${order.reference}`}
+            name={`order-${order.reference}`}
             key={order.reference}
             onUploadFunction={onUpload}
             storage={storage}
