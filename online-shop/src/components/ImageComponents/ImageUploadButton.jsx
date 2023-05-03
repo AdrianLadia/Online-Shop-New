@@ -7,12 +7,14 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 // import { storage } from './firebaseConfig';
 
 const ImageUploadButton = (props) => {
+  const id = props.id;
   const folderName = props.folderName;
   let fileName = props.fileName;
   const buttonTitle = props.buttonTitle;
   const storage = props.storage;
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
+  console.log(id);
 
   const [buttonColor, setButtonColor] = useState('primary');
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -69,21 +71,22 @@ const ImageUploadButton = (props) => {
   // function
 
   return (
-    <div>
-      <input type="file" id="imageUpload" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-      <label htmlFor="imageUpload">
-        <Button
-          startIcon={<CloudUploadIcon />}
-          className="shadow-md hover:bg-blue-500 focus:outline-none"
-          variant="contained"
-          component="span"
-          color={buttonColor}
-          sx={{ width: 280, height: 45 }}
-        >
+    <div >
+      <Button
+        id={id}
+        startIcon={<CloudUploadIcon />}
+        className="shadow-md hover:bg-blue-500 focus:outline-none"
+        variant="contained"
+        component="span"
+        color={buttonColor}
+        sx={{ width: 280, height: 45 }}
+      >
+        <input type="file" id={`imageUpload-${id}`} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+        <label htmlFor={`imageUpload-${id}`}>
           {loading ? <CircularProgress size={30} color="inherit" /> : buttonText}
-        </Button>
-        {/* <button type="button">Upload Image</button> */}
-      </label>
+          {/* <button type="button">Upload Image</button> */}
+        </label>
+      </Button>
     </div>
   );
 };
