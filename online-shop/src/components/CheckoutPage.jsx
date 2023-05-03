@@ -4,12 +4,12 @@ import { useEffect } from 'react';
 import CheckoutSummary from './CheckoutSummary';
 import GoogleMaps from './GoogleMaps';
 import AppContext from '../AppContext';
-import { useState,useContext } from 'react';
+import { useState, useContext } from 'react';
 import TextField from '@mui/material/TextField';
 
 import PaymentMethods from './PaymentMethods';
 
-import PaymayaSdk from './PaymayaSdk';
+
 import GoogleMapsModalSelectSaveAddress from './GoogleMapsModalSelectSaveAddress';
 import GoogleMapsModalSelectContactModal from './GoogleMapsModalSelectContactModal';
 import Switch from '@mui/material/Switch';
@@ -32,8 +32,6 @@ const labelStyle = textFieldLabelStyle();
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
-
-
   const {
     bdoselected,
     setBdoselected,
@@ -68,19 +66,18 @@ const CheckoutPage = () => {
     area,
     setArea,
     referenceNumber,
-    setReferenceNumber
+    setReferenceNumber,
   } = useContext(CheckoutContext);
 
   const datamanipulation = new dataManipulation();
-  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } =
+  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products,mayaRedirectUrl,setMayaRedirectUrl,setMayaCheckoutId } =
     React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
- 
+
   const [localname, setLocalName] = React.useState('');
   const [localemail, setLocalEmail] = React.useState('');
   const [localphonenumber, setLocalPhoneNumber] = React.useState('');
- 
 
   const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
   const cloudfirestoredb = new cloudFirestoreDb();
@@ -97,37 +94,31 @@ const CheckoutPage = () => {
   const [locallongitude, setLocalLongitude] = useState(123.89504097627021);
   const [zoom, setZoom] = useState(18);
 
-
   const [deliveryVehicle, setDeliveryVehicle] = useState(null);
   const [needAssistance, setNeedAssistance] = useState(false);
 
   const [deliveryNotes, setDeliveryNotes] = useState('');
   const [allowShipping, setAllowShipping] = useState(true);
   const [useShippingLine, setUseShippingLine] = useState(false);
-  
+
   const paperboylocation = new paperBoyLocation();
   const businesscalculations = new businessCalculations();
-
 
   const paperboylatitude = paperboylocation.latitude;
   const paperboylongitude = paperboylocation.longitude;
 
   const [placedOrder, setPlacedOrder] = useState(false);
-  const [transactionStatus, setTransactionStatus] = useState('SUCCESS');
+  const [transactionStatus, setTransactionStatus] = useState(null);
   const navigateTo = useNavigate();
-  const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
-  const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
+
   const [mayaCheckoutItemDetails, setMayaCheckoutItemDetails] = useState(null);
   const [addressText, setAddressText] = useState('');
- 
+
   const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
 
   //Payment checker
   const [paymentMethodSelected, setPaymentMethodSelected] = useState(false);
   // PAYMENT METHODS
-
-
-
 
   useEffect(() => {
     async function getTableData() {
@@ -176,44 +167,52 @@ const CheckoutPage = () => {
     rows,
     total,
     grandTotal,
-    deliveryFee
+    deliveryFee,
   ]);
 
   // PAYMENT METHODS
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
       setCart([]);
-      if (mayaselected) {
-        const firstName = localname.split(' ')[0];
-        const lastName = localname.split(' ')[1];
-        const eMail = localemail;
-        const phoneNumber = localphonenumber;
-        const totalPrice = grandTotal;
-        PaymayaSdk(
-          setMayaRedirectUrl,
-          setMayaCheckoutId,
-          firstName,
-          lastName,
-          eMail,
-          phoneNumber,
-          totalPrice,
-          localDeliveryAddress,
-          addressText,
-          referenceNumber,
-          userdata.uid
-        );
-      }
-      if (bdoselected) {
-      navigateTo('/checkout/proofOfPayment')
-      }
+      console.log('success');
+      console.log(area)
+      businesscalculations.afterCheckoutRedirectLogic(
+        { bdoselected : bdoselected,
+          unionbankselected : unionbankselected,
+          gcashselected : gcashselected,
+          mayaselected : mayaselected,
+          visaselected : visaselected, 
+          mastercardselected : mastercardselected ,
+          bitcoinselected : bitcoinselected ,
+          ethereumselected : ethereumselected ,
+          solanaselected : solanaselected ,
+          referenceNumber : referenceNumber,
+          grandTotal : grandTotal,
+          deliveryFee : deliveryFee,
+          vat : vat,
+          rows : rows,
+          area : area,
+          fullName : userdata.name,
+          eMail : userdata.email,
+          phoneNumber : userdata.phoneNumber ,
+          setMayaRedirectUrl :setMayaRedirectUrl,
+          setMayaCheckoutId : setMayaCheckoutId,
+          localDeliveryAddress : localDeliveryAddress ,
+          addressText : addressText ,
+          userId : userdata.uid ,
+          navigateTo : navigateTo,
+          itemsTotal : total
+        }
+      )
     }
-    
+
     setPlaceOrderLoading(false);
   }, [placedOrder]);
 
   useEffect(() => {
     if (mayaRedirectUrl != null) {
       window.location.href = mayaRedirectUrl;
+      setMayaRedirectUrl(null);
     }
   }, [mayaRedirectUrl]);
 
@@ -247,19 +246,6 @@ const CheckoutPage = () => {
     let orderdata = null;
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
-  function generateOrderReference() {
-    const date = new Date();
-    const randomNumber = Math.floor(Math.random() * 1000000);
-    return (
-      date.getHours().toLocaleString() +
-      date.getMinutes().toLocaleString() +
-      date.getMonth().toString() +
-      date.getDate().toString() +
-      date.getFullYear().toString() +
-      '-' +
-      randomNumber
-    );
-  }
 
   async function onPlaceOrder() {
     // Check if order has enough stocks
@@ -280,7 +266,7 @@ const CheckoutPage = () => {
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
       try {
-        const orderReferenceNumber = generateOrderReference();
+        const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
@@ -309,9 +295,7 @@ const CheckoutPage = () => {
       } catch (err) {
         setPlaceOrderLoading(false);
       }
-    }
-    else {
-
+    } else {
       alert('You must be logged in');
     }
   }
@@ -648,7 +632,6 @@ const CheckoutPage = () => {
                 </div>
 
                 <PaymentMethods />
-              
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 

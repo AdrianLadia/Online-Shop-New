@@ -13,25 +13,32 @@ admin.initializeApp();
 app.use(corsHandler);
 app.use(express.json());
 
+async function sendEmail(to, subject, htmlContent) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      secure: true,
+      auth: {
+        user: 'starpackph@gmail.com',
+        pass: 'ucyiyamqzjubekif',
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
 
-async function sendEmail(to,subject,htmlContent) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'starpackph@gmail.com',
-      pass: 'ucyiyamqzjubekif'
-    }
-  });
- 
     // send the email using the transporter object
-    console.log('ran')
+    console.log('ran');
     await transporter.sendMail({
       from: 'starpackph@gmail.com',
-      to : to,
-      subject : subject,
-      html: htmlContent
+      to: to,
+      subject: subject,
+      html: htmlContent,
     });
-    console.log('ran2')
+    console.log('ran2');
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function parseData(data) {
@@ -45,7 +52,6 @@ function parseData(data) {
   }
   return parsedData;
 }
-
 
 function getCartCount(cart) {
   // VALIDATION
@@ -107,7 +113,7 @@ async function createPayment(data, db) {
 
   const userId = data.userId;
 
-  data['date'] = new Date()
+  data['date'] = new Date();
 
   const user = await db.collection('Users').doc(userId).get();
   const userData = user.data();
@@ -147,7 +153,7 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
   });
 
   orders.map((order) => {
-    console.log(order.orderDate)
+    console.log(order.orderDate);
   });
 
   // edit orders
@@ -394,7 +400,6 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
     const eMail = data.eMail;
-  
 
     const db = admin.firestore();
     const cartCount = getCartCount(cart);
@@ -591,7 +596,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
           deliveryVehicle: deliveryVehicle,
           needAssistance: needAssistance,
           userId: userid,
-          proofOfPaymentLink : [],
+          proofOfPaymentLink: [],
           eMail: eMail,
         };
 
@@ -601,17 +606,13 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
         transaction.update(userRef, { cart: [] });
 
-
         // CREATE ORDERMESSAGES CHAT
-        const orderMessagesRef = db.collection('ordersMessages').doc(reference)
-        transaction.set(orderMessagesRef,{messages:[],
-                                          ownerUserId : userid,
-                                          ownerName : username
-        })
-        orderMessagesRef.collection('messages')
+        const orderMessagesRef = db.collection('ordersMessages').doc(reference);
+        transaction.set(orderMessagesRef, { messages: [], ownerUserId: userid, ownerName: username });
+        orderMessagesRef.collection('messages');
 
+        console.log(newOrder.eMail);
 
-        console.log(newOrder.eMail)
         await sendEmail(
           newOrder.eMail,
           'Order Confirmation',
@@ -630,14 +631,13 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         <p>Best Regards,<br>
         The Star Pack Team</p>`
         );
-        
+
         res.send('SUCCESS');
       } catch (e) {
         console.log(e);
         res.status(400).send('FAILED');
       }
     });
-
   });
 });
 
@@ -802,7 +802,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const data = parseData(req.query.data);
     const db = admin.firestore();
     const userId = data.userId;
-    try{
+    try {
       await createPayment(data, db);
       try {
         await updateOrdersAsPaidOrNotPaid(userId, db);
@@ -811,8 +811,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         res.status(200).send('success');
       }
       res.status(200).send('success');
-    }
-    catch{
+    } catch {
       res.status(400).send('Error adding document.');
     }
   });
@@ -890,13 +889,12 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
   corsHandler(req, res, async () => {
     try {
       // Get the user document
-      const data = req.body
-      const orderReference = data.orderReference
-      const userId = data.userId
-      const proofOfPaymentLink = data.proofOfPaymentLink
+      const data = req.body;
+      const orderReference = data.orderReference;
+      const userId = data.userId;
+      const proofOfPaymentLink = data.proofOfPaymentLink;
 
-
-      console.log(proofOfPaymentLink)
+      console.log(proofOfPaymentLink);
 
       // VALIDATE DATA
       const dataSchema = Joi.object({
@@ -920,42 +918,36 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         const userData = userDoc.data();
         const orders = userData.orders;
         const orderIndex = orders.findIndex((order) => order.reference === orderReference);
-        const proofOfPayments = orders[orderIndex].proofOfPaymentLink
-        const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink] 
+        const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
+        const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
         orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
         await userRef.update({
           orders: orders,
         });
 
         res.status(200).send('success');
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Error updating proof of payment link:', error);
         res.status(400).send('Error updating proof of payment link.');
       }
-
-
-     } catch (error) {
+    } catch (error) {
       res.status(400).send('Error updating proof of payment link.');
       console.error('Error updating proof of payment link:', error);
     }
   });
-  
 });
 
 exports.sendEmail = functions.region('asia-southeast1').https.onCall(async (data, context) => {
   // get the recipient email address and message content from the client-side
-  console.log(data)
-  const {to,subject,text} =  data
+  console.log(data);
+  const { to, subject, text } = data;
   try {
-    await sendEmail(to,subject,text)
-    return { success: true }
-  }
-  catch (error) {
+    await sendEmail(to, subject, text);
+    return { success: true };
+  } catch (error) {
     console.error('Error sending email:', error);
-    return { success: false}
+    return { success: false };
   }
-
 });
 
 // exports.arrayUpdateTrigger = functions.firestore
@@ -980,7 +972,7 @@ exports.sendEmail = functions.region('asia-southeast1').https.onCall(async (data
 
 //     const sortedOrders = sortTimeStampArrayByDate(orders)
 //     const recentOrder = sortedOrders[sortedOrders.length - 1]
-    
+
 //     try {
 //       await sendEmail('ladia.adrian@gmail.com','Order Confirmation',`Your order has been confirmed.\n\nYour order reference is ${recentOrder.reference}.\n\nPlease pay within 24 hours.\n\nYou can view and pay your order in your "My Orders" page in www.starpack.ph.\n\nThank You\nStar Pack Team`)
 //     }
@@ -997,6 +989,3 @@ exports.sendEmail = functions.region('asia-southeast1').https.onCall(async (data
 //     // Log the updated array (or any other information you need)
 //     console.log("Updated array: ", yourArray);
 //   });
-
-
-

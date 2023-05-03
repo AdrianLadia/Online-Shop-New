@@ -134,7 +134,7 @@ function MyOrderCard(props) {
 
       {screenMobile === false ? <div className="w-full border-t-2 mt-4 mb-1"></div> : null}
 
-      {screenMobile === false ? (
+      
         <div className="w-full 2xs:w-11/12 flex self-center justify-center xs:justify-evenly gap-5 mt-5 font-bold text-lg ">
           <button className=" rounded-lg xs:mt-0 md:ml-7 px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">
             Cancel Order
@@ -146,7 +146,7 @@ function MyOrderCard(props) {
             <BsFileImage className="text-3xl" />
           </button>
         </div>
-      ) : null}
+      
       <div>
         <MyOrderCardModal open={openModal} handleClose={handleClose} order={order} />
       </div>

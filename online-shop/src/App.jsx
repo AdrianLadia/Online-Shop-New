@@ -76,6 +76,8 @@ function App() {
   const [categories, setCategories] = useState(null);
   const [initialStartup, setInitialStartup] = useState(true);
   const [selectedChatOrderId,setSelectedChatOrderId] = useState(null)
+  const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
+  const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -127,9 +129,10 @@ function App() {
               
             }
             // console.log('creating new user');
-            createNewUser();
-            delay(5000).then(() => {
-              setUserId(user.uid);
+            createNewUser().then(() => {
+              delay(1000).then(() => {
+                setUserId(user.uid);
+              });
             });
           }
         });
@@ -217,6 +220,8 @@ function App() {
     }
   }, [goToCheckoutPage]);
 
+  console.log(userdata)
+
   const appContextValue = {
     categories: categories,
     setCategories: setCategories,
@@ -264,6 +269,10 @@ function App() {
     storage:storage,
     selectedChatOrderId : selectedChatOrderId,
     setSelectedChatOrderId : setSelectedChatOrderId,
+    mayaRedirectUrl : mayaRedirectUrl,
+    setMayaRedirectUrl : setMayaRedirectUrl,
+    mayaCheckoutId : mayaCheckoutId,
+    setMayaCheckoutId : setMayaCheckoutId
   };
 
   return (

@@ -59,14 +59,14 @@ const ImageUploadButton = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (buttonText === 'Uploaded Successful') {
-      setTimeout(() => {
-        setButtonColor('primary');
-        setButtonText(buttonTitle);
-      }, 3000);
-    }
-  }, [buttonText]);
+  // useEffect(() => {
+  //   if (buttonText === 'Uploaded Successful') {
+  //     setTimeout(() => {
+  //       setButtonColor('primary');
+  //       setButtonText(buttonTitle);
+  //     }, 3000);
+  //   }
+  // }, [buttonText]);
 
   // function
 

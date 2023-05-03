@@ -8,47 +8,17 @@ import CheckoutContext from '../context/CheckoutContext';
 import { Link } from 'react-router-dom';
 import LoginButton from './LoginButton';
 import AppContext from '../AppContext';
+import { useLocation } from 'react-router-dom';
 
-const CheckoutProofOfPayment = () => {
+const CheckoutProofOfPayment = (props) => {
+
+  // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
 
   const {storage,cloudfirestore,userId} = useContext(AppContext)
-
-  const {
-    bdoselected,
-    setBdoselected,
-    unionbankselected,
-    setUnionbankselected,
-    gcashselected,
-    setGcashselected,
-    mayaselected,
-    setMayaselected,
-    visaselected,
-    setVisaselected,
-    mastercardselected,
-    setMastercardselected,
-    bitcoinselected,
-    setBitcoinselected,
-    ethereumselected,
-    setEthereumselected,
-    solanaselected,
-    setSolanaselected,
-    rows,
-    setRows,
-    total,
-    setTotal,
-    totalWeight,
-    setTotalWeight,
-    vat,
-    setVat,
-    deliveryFee,
-    setDeliveryFee,
-    grandTotal,
-    setGrandTotal,
-    area,
-    setArea,
-    referenceNumber,
-  } = useContext(CheckoutContext);
+  const location = useLocation();
+  const { referenceNumber,itemsTotal,deliveryFee,grandTotal,vat,rows,area } = location.state;
+  console.log('referenceNumber', referenceNumber);
 
   console.log('rows', rows);
 
@@ -60,9 +30,11 @@ const CheckoutProofOfPayment = () => {
     cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url);
   }
 
+  // console.log('referenceNumber', referenceNumber);
+// 
   return (
     <div>
-      {rows == null ? (
+      {referenceNumber == null ? (
         <div className="container mx-auto px-4 py-16">
           <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white shadow-lg p-10 rounded-lg">
@@ -81,7 +53,9 @@ const CheckoutProofOfPayment = () => {
         <div className="container mx-auto px-4 py-16">
           <div className="bg-white shadow-lg rounded-lg p-8">
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
+            {(referenceNumber != '') ? 
             <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3>
+            : null}
 
             <p>Please send your payment to the following bank account:</p>
             <div className="bg-gray-200 rounded p-4 my-4">
@@ -93,14 +67,20 @@ const CheckoutProofOfPayment = () => {
 
             <Divider className="mt-5"></Divider>
             {/* <CheckoutSummary/> */}
+            {(rows != null) ?
             <CheckoutSummary
-              total={total}
+              total={itemsTotal}
               deliveryFee={deliveryFee}
               grandTotal={grandTotal}
               vat={vat}
               rows={rows}
               area={area}
-            />
+            /> : 
+            <div className='flex justify-center mt-5'> 
+              <Typography>{`Total : ₱ ${grandTotal}`}</Typography>
+            </div>
+              
+            }
             <div className="flex justify-center mt-6">
               <ImageUploadButton onUploadFunction={onUpload} storage={storage} folderName={'Orders/' + userId + '/' + referenceNumber}  buttonTitle={'Upload Proof Of Payment'} />
             </div>

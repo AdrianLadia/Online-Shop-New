@@ -1,16 +1,20 @@
-import React, {useState, useEffect, AppContext, useContext} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import PaymentMethods from './PaymentMethods';
 import CheckoutContext from '../context/CheckoutContext';
 import { Typography, Button } from '@mui/material';
 import businessCalculations from '../../utils/businessCalculations';
 import { HiCash } from "react-icons/hi";
+import { useLocation } from 'react-router-dom';
+import PaymayaSdk from './PaymayaSdk';
+import {useNavigate} from 'react-router-dom';
+import AppContext from '../AppContext';
 
-
-const AccountStatementPayment = () => {
+const AccountStatementPayment = (props) => {
 
     // const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } = useContext(AppContext);
     // const { userdata, cart, setCart, userstate } = React.useContext(AppContext);
 
+    const {setMayaRedirectUrl,setMayaCheckoutId,mayaRedirectUrl} = useContext(AppContext);
     const [paymentMethodSelected, setPaymentMethodSelected] = useState(false);
     const [bdoselected, setBdoselected] = useState(false);
     const [unionbankselected, setUnionbankselected] = useState(false);
@@ -21,10 +25,11 @@ const AccountStatementPayment = () => {
     const [bitcoinselected, setBitcoinselected] = useState(false);
     const [ethereumselected, setEthereumselected] = useState(false);
     const [solanaselected, setSolanaselected] = useState(false);
-    const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
-    const [transactionStatus, setTransactionStatus] = useState('SUCCESS');
     const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
     const businesscalculations = new businessCalculations();
+    const location = useLocation();
+    const navigateTo = useNavigate();
+    const {firstName,lastName,eMail,phoneNumber,totalPrice,userId} = location.state;
 
 const paymentMethodValues = {
     bdoselected,
@@ -46,6 +51,13 @@ const paymentMethodValues = {
     solanaselected,
     setSolanaselected,
   };
+
+  useEffect(() => {
+    if (mayaRedirectUrl != null) {
+      window.location.href = mayaRedirectUrl;
+      setMayaRedirectUrl(null);
+    }
+  }, [mayaRedirectUrl]);
 
   useEffect(() => {
     if (
@@ -75,6 +87,42 @@ const paymentMethodValues = {
     solanaselected,
   ]);
 
+  function payTotal() {
+
+    businesscalculations.afterCheckoutRedirectLogic(
+      {
+        bdoselected : bdoselected,
+        unionbankselected : unionbankselected,
+        gcashselected : gcashselected,
+        mayaselected : mayaselected,
+        visaselected : visaselected,
+        mastercardselected : mastercardselected,
+        bitcoinselected : bitcoinselected,
+        ethereumselected : ethereumselected,
+        solanaselected : solanaselected,
+        referenceNumber : businesscalculations.generateOrderReference(),
+        grandTotal : totalPrice,
+        deliveryFee : null,
+        vat : null,
+        rows : null,
+        area : null,
+        fullName : firstName + ' ' + lastName,
+        eMail : eMail,
+        phoneNumber : phoneNumber,
+        setMayaRedirectUrl : setMayaRedirectUrl,
+        setMayaCheckoutId : setMayaCheckoutId,
+        localDeliveryAddress : null,
+        addressText : null,
+        userId : userId ,
+        navigateTo : navigateTo,
+        itemsTotal : null,
+      
+      }
+    )
+  }
+
+  console.log(bdoselected, unionbankselected, gcashselected, mayaselected, visaselected, mastercardselected, bitcoinselected, ethereumselected, solanaselected)
+  console.log(firstName,lastName,eMail,phoneNumber,totalPrice,userId)
   return (
     <div>
       <div className='flex flex-col justify-center gap-16 mb-8'>
@@ -83,11 +131,11 @@ const paymentMethodValues = {
           <HiCash size={25}/>
         </div>
 
-        <PaymentMethodContext.Provider value={paymentMethodValues}>
+        <CheckoutContext.Provider value={paymentMethodValues}>
             <PaymentMethods />
-        </PaymentMethodContext.Provider>
+        </CheckoutContext.Provider>
 
-        <Button className='self-center mt-10 w-2/5 p-5 bg-blue1 hover:bg-color10b rounded-lg text-white font-semibold text-xl'>Pay</Button>
+        <Button onClick={payTotal} className='self-center mt-10 w-2/5 p-5 bg-blue1 hover:bg-color10b rounded-lg text-white font-semibold text-xl'>Pay</Button>
       </div>
     </div>
   )

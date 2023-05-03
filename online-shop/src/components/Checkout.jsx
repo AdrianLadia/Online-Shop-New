@@ -75,7 +75,7 @@ const Checkout = () => {
           path="proofOfPayment"
           element={
             <CheckoutContext.Provider value={checkoutContextValues}>
-              <CheckoutProofOfPayment />
+              <CheckoutProofOfPayment referenceNumber={referenceNumber} />
             </CheckoutContext.Provider>
           }
         />

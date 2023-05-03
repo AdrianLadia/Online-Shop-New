@@ -2,9 +2,8 @@ import serviceAreas from '../src/data/serviceAreas';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
 import Joi from 'joi';
 import cloudFirestoreDb from '../src/cloudFirestoreDb';
-
-
-
+import PaymayaSdk from '../src/components/PaymayaSdk';
+import { useNavigate } from 'react-router-dom';
 
 class businessCalculations {
   constructor() {
@@ -14,16 +13,15 @@ class businessCalculations {
   }
 
   readAllParentProductsFromOnlineStoreProducts(products) {
-    console.log(products)
+    console.log(products);
     const parentProducts = [];
     products.map((product) => {
-      console.log(product.parentProductId)
+      console.log(product.parentProductId);
       if (product.parentProductID === '') {
-        
         parentProducts.push(product.itemId);
       }
     });
-    console.log(parentProducts)
+    console.log(parentProducts);
     return parentProducts;
   }
 
@@ -59,8 +57,7 @@ class businessCalculations {
     }
 
     // FUNCTION
-    const stocksAvailableLessSafetyStock= stocksAvailable - this.getSafetyStock(averageSalesPerDay);
-    
+    const stocksAvailableLessSafetyStock = stocksAvailable - this.getSafetyStock(averageSalesPerDay);
 
     // VALIDATION
     const stocksAvailableLessSafetyStockSchema = Joi.number().required();
@@ -68,7 +65,7 @@ class businessCalculations {
     if (error3) {
       throw new Error(error3.details[0].message);
     }
-    return stocksAvailableLessSafetyStock
+    return stocksAvailableLessSafetyStock;
   }
 
   //Counts the cart and returns an object for example { "itemID": 2, "itemID": 1 }
@@ -93,7 +90,6 @@ class businessCalculations {
       throw new Error(error2.details[0].message);
     }
 
-
     return counts;
   }
 
@@ -109,13 +105,13 @@ class businessCalculations {
     }
 
     const difference = Math.abs(paperboylatitude - selectedlatitudem);
-    
+
     const differenceSchema = Joi.number().required();
     const { error3 } = differenceSchema.validate(difference);
     if (error3) {
       throw new Error('Data Validation Error');
     }
-    
+
     return difference;
   }
 
@@ -131,15 +127,15 @@ class businessCalculations {
     }
 
     const difference = Math.abs(paperboylongitude - selectedlongitudem);
-    
+
     const differenceSchema = Joi.number().required();
     const { error3 } = differenceSchema.validate(difference);
-    
+
     if (error3) {
       throw new Error('Data Validation Error');
     }
-    
-    return difference
+
+    return difference;
   }
 
   getTotalDifferenceOfPaperboyAndSelectedLocation(
@@ -167,17 +163,16 @@ class businessCalculations {
       paperboylongitude,
       selectedlongitudem
     );
-    
-    
+
     const difference = latdifference + longdifference;
-    
+
     const differenceSchema = Joi.number().required();
     const { error5 } = differenceSchema.validate(difference);
     if (error5) {
       throw new Error('Data Validation Error');
     }
 
-    return difference 
+    return difference;
   }
 
   convertTotalDifferenceToKilometers(totaldifference) {
@@ -188,14 +183,14 @@ class businessCalculations {
     }
 
     const km = totaldifference * 111.1;
-    
+
     const kmSchema = Joi.number().required();
     const { error2 } = kmSchema.validate(km);
     if (error2) {
       throw new Error('Data Validation Error');
     }
-    
-    return km
+
+    return km;
   }
 
   getLocationsInPoint(latitude, longitude) {
@@ -223,7 +218,6 @@ class businessCalculations {
         let intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
         if (intersect) inside = !inside;
       }
-
 
       const insideSchema = Joi.boolean().required();
       const { error3 } = insideSchema.validate(inside);
@@ -267,8 +261,6 @@ class businessCalculations {
       }
     });
 
-
-
     const locationsInDeliveryPointSchema = Joi.array().required();
     const { error4 } = locationsInDeliveryPointSchema.validate(locationsInDeliveryPoint);
     if (error4) {
@@ -288,47 +280,44 @@ class businessCalculations {
     if (areas.includes('lalamoveServiceArea')) {
       return true;
     }
-
   }
 
   getVehicleForDelivery(weightOfItems) {
-    console.log(weightOfItems)
+    console.log(weightOfItems);
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
       throw new Error('Data Validation Error');
-    } 
+    }
 
     const vehicleSchema = Joi.object().required();
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
-      console.log('MOTORCYCLE SELECTED')
+      console.log('MOTORCYCLE SELECTED');
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
-      
+
       if (error2) {
         throw new Error('Data Validation Error');
       }
-      
+
       return this.lalamovedeliveryvehicles.motorcycle;
     }
     if (
       weightOfItems <= this.lalamovedeliveryvehicles.sedan.maxWeight &&
       weightOfItems > this.lalamovedeliveryvehicles.motorcycle.maxWeight
     ) {
-      
       const { error3 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.sedan);
 
       if (error3) {
         throw new Error('Data Validation Error');
       }
-      
+
       return this.lalamovedeliveryvehicles.sedan;
     }
     if (
       weightOfItems <= this.lalamovedeliveryvehicles.mpv.maxWeight &&
       weightOfItems > this.lalamovedeliveryvehicles.sedan.maxWeight
     ) {
-
       const { error4 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.mpv);
 
       if (error4) {
@@ -341,8 +330,6 @@ class businessCalculations {
       weightOfItems <= this.lalamovedeliveryvehicles.pickup.maxWeight &&
       weightOfItems > this.lalamovedeliveryvehicles.mpv.maxWeight
     ) {
-
-
       const { error5 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.pickup);
       if (error5) {
         throw new Error('Data Validation Error');
@@ -354,7 +341,6 @@ class businessCalculations {
       weightOfItems <= this.lalamovedeliveryvehicles.van.maxWeight &&
       weightOfItems > this.lalamovedeliveryvehicles.pickup.maxWeight
     ) {
-
       const { error6 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.van);
       if (error6) {
         throw new Error('Data Validation Error');
@@ -366,15 +352,13 @@ class businessCalculations {
       weightOfItems <= this.lalamovedeliveryvehicles.closedvan.maxWeight &&
       weightOfItems > this.lalamovedeliveryvehicles.van.maxWeight
     ) {
-
       const { error7 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.closedvan);
       if (error7) {
         throw new Error('Data Validation Error');
       }
 
       return this.lalamovedeliveryvehicles.closedvan;
-    }
-    else {
+    } else {
       throw new Error('No Vehicle Selected By Conditions');
     }
   }
@@ -433,8 +417,8 @@ class businessCalculations {
     let outOfStockDetected = false;
     const count = countStrings(cart);
     const countEntries = Object.entries(count);
-    console.log(countEntries)
-    const products = await this.cloudfirestore.readAllProductsForOnlineStore()
+    console.log(countEntries);
+    const products = await this.cloudfirestore.readAllProductsForOnlineStore();
     console.log(products);
     countEntries.map(([itemId, quantity]) => {
       products.map((dataitem) => {
@@ -445,11 +429,10 @@ class businessCalculations {
           );
           console.log(stocksAvailableLessSafetyStock);
           if (stocksAvailableLessSafetyStock < quantity) {
-            let stocksLeft
-            if  (stocksAvailableLessSafetyStock < 0 ) {
+            let stocksLeft;
+            if (stocksAvailableLessSafetyStock < 0) {
               stocksLeft = 0;
-            }
-            else {
+            } else {
               stocksLeft = stocksAvailableLessSafetyStock;
             }
             message = message + `${dataitem.itemName} - ${stocksLeft} stocks left \n`;
@@ -461,31 +444,25 @@ class businessCalculations {
       message += '\nPlease refresh the page to see the updated stocks.';
     });
 
-
     const toReturnSchema = Joi.array().required();
 
-
     if (outOfStockDetected) {
-      
       const toReturn = [true, message];
       const { error3 } = toReturnSchema.validate(toReturn);
-      if (error3) { 
+      if (error3) {
         throw new Error('Data Validation Error');
       }
-      
+
       console.log(toReturn);
-      return toReturn
-
-
-
+      return toReturn;
     } else {
-      const toReturn= [false, message];
+      const toReturn = [false, message];
       const { error4 } = toReturnSchema.validate(toReturn);
       if (error4) {
         throw new Error('Data Validation Error');
       }
       console.log(toReturn);
-      return toReturn 
+      return toReturn;
     }
   }
 
@@ -495,10 +472,10 @@ class businessCalculations {
     if (error) {
       throw new Error('Data Validation Error');
     }
-  
-    const vat = totalPrice - (totalPrice /  1.0)
+
+    const vat = totalPrice - totalPrice / 1.0;
     const roundedVat = Math.round(vat * 100) / 100;
-    
+
     const vatSchema = Joi.number().required();
     const { error2 } = vatSchema.validate(vat);
     if (error2) {
@@ -520,16 +497,15 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    
     const grandTotal = totalPrice + valueAddedTax + deliveryFee;
-    
+
     const grandTotalSchema = Joi.number().required();
     const { error4 } = grandTotalSchema.validate(grandTotal);
     if (error4) {
       throw new Error('Data Validation Error');
     }
-    
-    return grandTotal
+
+    return grandTotal;
   }
 
   addToCart(cart, product) {
@@ -542,7 +518,7 @@ class businessCalculations {
     if (error1 || error2) {
       throw new Error('Data Validation Error');
     }
-    
+
     const newCart = [...cart, product];
 
     const newCartSchema = Joi.array().required();
@@ -551,7 +527,7 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    return newCart
+    return newCart;
   }
 
   removeFromCart(cart, product) {
@@ -599,16 +575,134 @@ class businessCalculations {
       items.push(itemId);
     }
 
-
     const newCart = [...cart, ...items];
-    
+
     const newCartSchema = Joi.array().required();
     const { error4 } = newCartSchema.validate(newCart);
     if (error4) {
       throw new Error('Data Validation Error');
     }
 
-    return newCart
+    return newCart;
+  }
+
+  afterCheckoutRedirectLogic(data,testing=false) {
+    const dataSchema = Joi.object(
+      { bdoselected : Joi.boolean().required(),
+        unionbankselected : Joi.boolean().required(),
+        gcashselected : Joi.boolean().required(),
+        mayaselected : Joi.boolean().required(),
+        visaselected : Joi.boolean().required(),
+        mastercardselected : Joi.boolean().required(),
+        bitcoinselected : Joi.boolean().required(),
+        ethereumselected : Joi.boolean().required(),
+        solanaselected : Joi.boolean().required(),
+        referenceNumber : Joi.string().required().allow(''),
+        grandTotal : Joi.number().required(),
+        deliveryFee : Joi.number().required().allow(null),
+        vat : Joi.number().required().allow(null),
+        rows : Joi.array().required().allow(null),
+        area : Joi.array().required().allow(null),
+        fullName : Joi.string().required(),
+        eMail : Joi.string().required(),
+        phoneNumber : Joi.string().required().allow(''),
+        setMayaRedirectUrl : Joi.func().required(),
+        setMayaCheckoutId : Joi.func().required(),
+        localDeliveryAddress : Joi.string().required().allow(null),
+        addressText : Joi.string().required().allow(null),
+        userId : Joi.string().required(),
+        navigateTo : Joi.func().required(),
+        itemsTotal : Joi.number().required().allow(null),
+      }
+    ).required();
+
+    const { error } = dataSchema.validate(data);
+
+    if (error) {
+      throw new Error(error);
+    }
+
+
+    if (data.mayaselected) {
+      const fullName = data.fullName;
+      const firstName = fullName.split(' ')[0];
+      const lastName = fullName.split(' ')[1];
+      const eMail = data.eMail;
+      const phoneNumber = data.phoneNumber;
+      const totalPrice = data.grandTotal;
+
+      console.log('data', data);
+
+      if (testing === false) {
+        PaymayaSdk(
+          data.setMayaRedirectUrl,
+          data.setMayaCheckoutId,
+          firstName,
+          lastName,
+          eMail,
+          phoneNumber,
+          totalPrice,
+          data.localDeliveryAddress,
+          data.addressText,
+          data.referenceNumber,
+          data.userId
+        );
+      }
+      else {
+        return 'maya'
+      } 
+    }
+    if (data.bdoselected) {
+      if (testing === false) {
+        data.navigateTo('/checkout/proofOfPayment', {
+          state: {
+            referenceNumber: data.referenceNumber,
+            itemsTotal: data.itemsTotal,
+            deliveryFee: data.deliveryFee,
+            grandTotal: data.grandTotal,
+            vat: data.vat,
+            rows: data.rows,
+            area: data.area,
+          },
+        });
+      }
+      else {
+        return 'bdo'
+      }
+    }
+
+    if (data.unionbankselected) {
+      if (testing === false) {
+        navigateTo('/checkout/proofOfPayment', {
+          state: {
+            referenceNumber: data.referenceNumber,
+            total: data.total,
+            deliveryFee: data.deliveryFee,
+            grandTotal: data.grandTotal,
+            vat: data.vat,
+            rows: data.rows,
+            area: data.area,
+          },
+        });
+      }
+      else {
+        return 'unionbank'
+      }
+    }
+  }
+
+  generateOrderReference() {
+    const date = new Date();
+    const randomNumber = Math.floor(Math.random() * 1000000);
+    return (
+      date.getHours().toLocaleString() +
+      date.getMinutes().toLocaleString() +
+      date.getMonth().toString() +
+      date.getDate().toString() +
+      date.getFullYear().toString() +
+      '-' +
+      randomNumber
+    );
   }
 }
 

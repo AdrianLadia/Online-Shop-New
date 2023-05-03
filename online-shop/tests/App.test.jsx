@@ -4,7 +4,7 @@ import businessCalculations from '../utils/businessCalculations';
 import dataManipulation from '../utils/dataManipulation';
 import firestoredb from '../src/firestoredb';
 import { initializeApp } from 'firebase/app';
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import firebaseConfig from '../src/firebase_config';
 import paperBoyLocation from '../src/data/paperBoyLocation';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
@@ -222,7 +222,6 @@ describe('Business Calcualtions', () => {
 
 describe('Data Manipulation', async () => {
   test('AccountStatement', async () => {
-
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -262,8 +261,7 @@ describe('Data Manipulation', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
-
+      eMail: 'starpackph@gmail.com',
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -272,8 +270,6 @@ describe('Data Manipulation', async () => {
       reference: 'testref1234',
       paymentprovider: 'Maya',
     });
-
-
 
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
@@ -307,7 +303,7 @@ describe('Data Manipulation', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -317,20 +313,19 @@ describe('Data Manipulation', async () => {
       paymentprovider: 'Maya',
     });
 
-    await(delay(1000))
-    
+    await delay(1000);
+
     const testuser = await firestore.readSelectedDataFromCollection('Users', userTestId);
-    
+
     const orders = testuser.orders;
     const payments = testuser.payments;
-    const tableData = datamanipulation.accountStatementData(orders,payments)
-    const table = datamanipulation.accountStatementTable(tableData)
-    const endingBalance = table[3].runningBalance
+    const tableData = datamanipulation.accountStatementData(orders, payments);
+    const table = datamanipulation.accountStatementTable(tableData);
+    const endingBalance = table[3].runningBalance;
 
     expect(orders.length).toBe(2);
     expect(payments.length).toBe(2);
     expect(endingBalance).toBe(0);
-
 
     // datamanipulation.accountStatementTable(tableData)
   });
@@ -592,7 +587,7 @@ describe('Transaction Place Order', async () => {
       totalWeight: 320,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'ladiaadrian@gmail.com'
+      eMail: 'ladiaadrian@gmail.com',
     });
     await delay(100);
     const user = await firestore.readUserById('testuser');
@@ -607,19 +602,18 @@ describe('Transaction Place Order', async () => {
     expect(foundorder).toEqual(true);
   });
 
-  test.only('check if reference is added to orderMessages collection', async() => {
-    const ids = await firestore.readAllIdsFromCollection('ordersMessages')
+  test('check if reference is added to orderMessages collection', async () => {
+    const ids = await firestore.readAllIdsFromCollection('ordersMessages');
 
-    let found = false
+    let found = false;
     ids.map((id) => {
       if (id == 'testref-124124521') {
-        found = true
+        found = true;
       }
-    })
+    });
 
-    expect(found).toBe(true)
-
-  })
+    expect(found).toBe(true);
+  });
 
   test('check if deliveryaddress added', async () => {
     const user = await firestore.readUserById('testuser');
@@ -663,7 +657,7 @@ describe('Transaction Place Order', async () => {
       await firestore.updateProductStocksAvailable(itemId, resetStockCount);
     });
   });
-},100000);
+}, 100000);
 
 describe('Transaction Create Payment', async () => {
   test('Check if payment is added to payment field', async () => {
@@ -1066,7 +1060,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
     await delay(200);
 
@@ -1146,7 +1140,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
     await delay(200);
 
@@ -1182,7 +1176,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await delay(200);
@@ -1219,7 +1213,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await delay(200);
@@ -1312,7 +1306,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await delay(300);
@@ -1401,7 +1395,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
     await delay(300);
 
@@ -1501,7 +1495,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1536,7 +1530,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1571,7 +1565,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     const req3 = {
@@ -1742,7 +1736,6 @@ describe('cloudfirestoredb', async () => {
       'test2'
     );
 
-    
     await firestore.createNewUser(
       {
         uid: 'testuser',
@@ -1768,8 +1761,6 @@ describe('cloudfirestoredb', async () => {
     const ppb16Price = ppb16.price;
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
-
-    
 
     await cloudfirestore.transactionPlaceOrder({
       userid: 'testuser',
@@ -1803,7 +1794,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
     await delay(500);
 
@@ -1848,7 +1839,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
     await delay(500);
 
@@ -1860,8 +1851,6 @@ describe('cloudfirestoredb', async () => {
     expect(deliveryAddress2).length(1);
     expect(contactPerson2).length(2);
     expect(orders2).length(2);
-
-    
 
     await cloudfirestore.transactionPlaceOrder({
       userid: 'testuser',
@@ -1895,7 +1884,7 @@ describe('cloudfirestoredb', async () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
     await delay(300);
 
@@ -2002,7 +1991,6 @@ describe('retryApiCall', () => {
 });
 
 describe('deleteOrderFromUserFirestore', () => {
-
   test('clean Orders first', async () => {
     await firestore.updateDocumentFromCollection('Users', 'testuser', { orders: [] });
   });
@@ -2047,7 +2035,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2082,7 +2070,7 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2117,16 +2105,12 @@ describe('deleteOrderFromUserFirestore', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
-
   });
 
-  test ('deleteOrderFromCollectionArray', async () => {
-
-
-
-    await firestore.deleteOrderFromCollectionArray(userTestId,'testref12345')
+  test('deleteOrderFromCollectionArray', async () => {
+    await firestore.deleteOrderFromCollectionArray(userTestId, 'testref12345');
 
     const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = user.orders;
@@ -2136,24 +2120,23 @@ describe('deleteOrderFromUserFirestore', () => {
     orders.map((order) => {
       if (order.reference == 'testref12345') {
         throw new Error('Order not deleted');
-      } 
+      }
     });
 
-    await firestore.deleteOrderFromCollectionArray(userTestId,'testref1234')
+    await firestore.deleteOrderFromCollectionArray(userTestId, 'testref1234');
 
     const user2 = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders2 = user2.orders;
 
     expect(orders2.length).toEqual(1);
 
-    await firestore.deleteOrderFromCollectionArray(userTestId,'testref123456')
+    await firestore.deleteOrderFromCollectionArray(userTestId, 'testref123456');
 
     const user3 = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders3 = user3.orders;
 
     expect(orders3.length).toEqual(0);
-
-  })
+  });
 });
 
 describe('updateOrderProofOfPaymentLink', () => {
@@ -2196,12 +2179,12 @@ describe('updateOrderProofOfPaymentLink', () => {
       totalWeight: 122,
       deliveryVehicle: 'Sedan',
       needAssistance: true,
-      eMail : 'starpackph@gmail.com'
+      eMail: 'starpackph@gmail.com',
     });
   });
 
   test('updateOrderProofOfPaymentLink', async () => {
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId ,'https://testlink.com')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com');
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -2215,40 +2198,120 @@ describe('updateOrderProofOfPaymentLink', () => {
   });
 
   test('add another proofOfPaymentLink', async () => {
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId ,'https://testlink2.com')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com');
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
     orders.map((order) => {
       if (order.reference == 'testref1234') {
         orderFound = true;
-        expect(order.proofOfPaymentLink).toEqual(['https://testlink.com','https://testlink2.com']);
+        expect(order.proofOfPaymentLink).toEqual(['https://testlink.com', 'https://testlink2.com']);
       }
     });
     expect(orderFound).toEqual(true);
   });
-
-  
-},10000)
+}, 10000);
 
 describe('convert date timestamp to date string', () => {
   test('convert date timestamp to date string', () => {
-    const timestamp = {seconds: 1600000000, nanoseconds: 0}
-    const time = datamanipulation.convertDateTimeStampToDateString(timestamp)
-    expect(time).toEqual("2020-09-13 20:26:40")
-  })
-})
+    const timestamp = { seconds: 1600000000, nanoseconds: 0 };
+    const time = datamanipulation.convertDateTimeStampToDateString(timestamp);
+    expect(time).toEqual('2020-09-13 20:26:40');
+  });
+});
 
-describe.only('sendEmail', async () => {
+describe('sendEmail', async () => {
   test('should send email', async () => {
     const data = {
-      to:'ladiaadrian@gmail.com',
-      subject:'test',
-      text:'test'
-    }
-    const res = await cloudfirestore.sendEmail(data)
+      to: 'ladiaadrian@gmail.com',
+      subject: 'test',
+      text: 'test',
+    };
+    const res = await cloudfirestore.sendEmail(data);
 
-    expect(res['success']).toEqual(true)
-  })
-  
-},100000)
+    expect(res['success']).toEqual(true);
+  });
+}, 100000);
+
+describe.only('afterCheckoutRedirectLogic', () => {
+
+  class testCheckout {
+    constructor() {
+      this.bdoselected = false;
+      this.mayaselected = false;
+      this.unionbankselected = false;
+      this.gcashselected = false;
+      this.visaselected = false;
+      this.mastercardselected = false;
+      this.bitcoinselected = false;
+      this.ethereumselected = false;
+      this.solanaselected = false;
+      
+    }
+
+    mockFunction() {
+      console.log('mockFunction');
+    }
+
+    runFunction() {
+      const res = businesscalculations.afterCheckoutRedirectLogic({
+        bdoselected: this.bdoselected,
+        unionbankselected : this.unionbankselected,
+        gcashselected : this.gcashselected,
+        mayaselected : this.mayaselected,
+        visaselected : this.visaselected,
+        mastercardselected : this.mastercardselected,
+        bitcoinselected : this.bitcoinselected,
+        ethereumselected : this.ethereumselected,
+        solanaselected : this.solanaselected,
+        referenceNumber : 'testref1234',
+        grandTotal : 10000,
+        deliveryFee : 100,
+        vat : 200,
+        rows : [],
+        area : 'Cebu',
+        fullName : 'Test User',
+        eMail : 'test@gmail.com',
+        phoneNumber : '09178927206',
+        setMayaRedirectUrl : this.mockFunction,
+        setMayaCheckoutId : this.mockFunction,
+        localDeliveryAddress : 'localDeliveryAddress',
+        addressText : 'AddressText',
+        userId : 'userId',
+    },true);
+    return res;
+    }
+  }
+
+  const testRedirect = new testCheckout();
+
+  test('Test BDO', async () => {
+    let res
+    testRedirect.bdoselected = true;
+    res = testRedirect.runFunction();
+    expect(res).toEqual('bdo');
+    testRedirect.bdoselected = false;
+  });
+
+  test('Test Unionbank', async () => {
+    let res
+    testRedirect.unionbankselected = true;
+    res = testRedirect.runFunction();
+    expect(res).toEqual('unionbank');
+    testRedirect.unionbankselected = false;
+  });
+
+  test('Test Maya', async () => {
+    let res
+    testRedirect.mayaselected = true;
+    res = testRedirect.runFunction();
+    expect(res).toEqual('maya');
+    testRedirect.mayaselected = false;
+  });
+
+  // test('should return false if user has orders', async () => {
+  //   await firestore.updateDocumentFromCollection('Users', userTestId, { orders: ['test'] });
+  //   const res = await cloudfirestore.afterCheckoutRedirectLogic(userTestId);
+  //   expect(res).toEqual(false);
+  // });
+});
