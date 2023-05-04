@@ -1,7 +1,7 @@
 import React,{useState, useEffect} from 'react'
 import OrdersMessagesInfo from '../OrdersMessagesInfo'
+import DisplayMessagesUser from './DisplayMessagesUser';
 import DisplayMessagesAdmin from './DisplayMessagesAdmin';
-import DisplayMessagesClient from './DisplayMessagesClient';
 
 const DisplayMessages = (props) => {
 
@@ -29,12 +29,14 @@ const DisplayMessages = (props) => {
           <div className='flex flex-col w-full h-full overflow-auto scrollbar-thumb-gray-500 scrollbar-track-gray-200 scrollbar-thin'>
               { messages ?
               messages.map((m, index)=>{
+                console.log(m)
                 const message = m.message
                 const dateTime = m.dateTime
-                if(m.userId === loggedInUserId){
-                  return <DisplayMessagesAdmin message={message} dateTime={dateTime} key={index} userName={userName}/>
+                const userRole = m.userRole
+                if(m.userRole === "member"){
+                  return <DisplayMessagesUser message={message} dateTime={dateTime} key={index} userName={userName}/>
                 }else{
-                  return <DisplayMessagesClient message={message} dateTime={dateTime} key={index} userName={userName}/>
+                  return <DisplayMessagesAdmin message={message} dateTime={dateTime} key={index} userRole={userRole}/>
                 }
               }) : null}
           </div>

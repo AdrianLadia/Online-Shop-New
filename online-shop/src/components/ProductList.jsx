@@ -42,7 +42,7 @@ const ProductList = (props) => {
       retail,
       favorites
     );
-    console.log('selected_products', selected_products);
+    // console.log('selected_products', selected_products);
     return selected_products;
   }
 

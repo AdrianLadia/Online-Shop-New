@@ -347,7 +347,11 @@ class firestoredb extends firestorefunctions {
   async readOrderMessageByReference(reference) {
     return await this.readSelectedDataFromCollection('ordersMessages', reference);
   }
-  
+
+  async markMessageAsRead() {
+
+  }
+
 
 }
 

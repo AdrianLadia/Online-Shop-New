@@ -25,8 +25,7 @@ import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
-import useWindowDimensions from './components/useWindowDimensions';
-
+import useWindowDimensions from './components/UseWindowDimensions';
 
 const devEnvironment = true;
 
@@ -170,9 +169,9 @@ function App() {
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
-        console.log(userId);
+        // console.log(userId);
         const data = await cloudfirestore.readSelectedUserById(userId);
-        console.log(data);
+        // console.log(data);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -224,7 +223,7 @@ function App() {
     }
   }, [goToCheckoutPage]);
 
-  console.log(userdata)
+  // console.log(userdata)
 
   const appContextValue = {
     categories: categories,

@@ -46,7 +46,7 @@ const ChatApp = () => {
     getData();
   }, [selectedChatOrderId]);
 
-  console.log(messageDetails);
+  // console.log(messageDetails);
 
   return (
     <div className="flex justify-center w-screen h-screen ">
