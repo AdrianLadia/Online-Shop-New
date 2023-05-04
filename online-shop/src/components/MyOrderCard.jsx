@@ -8,6 +8,7 @@ import dataManipulation from '../../utils/dataManipulation';
 import UseWindowDimensions from './useWindowDimensions';
 import { BsFileImage } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
+import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
@@ -70,7 +71,7 @@ function MyOrderCard(props) {
 
   function onMessageClick() {
     setSelectedChatOrderId(order.reference)
-    navigateTo("/myorders/orderChat")
+    navigateTo("/orderChat")
   }
 
   return (
@@ -84,7 +85,7 @@ function MyOrderCard(props) {
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row">
           <div className="flex w-full justify-between ">
             <div className="flex h-22  sm:h-full mb-4 sx:mb-0 ">
               <Typography variant="h5" component="p" className=" md:ml-2 tracking-tighter xs:tracking-normal">
@@ -99,7 +100,7 @@ function MyOrderCard(props) {
           </div>
         </div>
 
-        <div className="flex flex-row mt-5">
+        <div className="flex flex-row mt-5 w-full justify-between">
           <div className="flex flex-col w-full">
             <Typography
               variant="h5"
@@ -109,32 +110,38 @@ function MyOrderCard(props) {
             >
               {order.delivered ? 'Delivered' : 'Not Delivered'}
             </Typography>
+
             <Typography variant="h5" component="div" color={getPaymentStatus('green', 'blue', 'red')}>
               {getPaymentStatus('Paid', 'Reviewing Payment', 'Not Paid')}
             </Typography>
           </div>
-          <div className="flex w-full sm:w-6/12 justify-end text-end lg:justify-center lg:text-start ">
-            <Typography variant="h5" component="div" className="tracking-tighter xs:tracking-normal">
-              Total : ₱{order.grandTotal}
-            </Typography>
-          </div>
-          <div className="flex justify-end align-text-bottom">
-            <Typography variant="h5">₱ {order.grandTotal}</Typography>
-          </div>
-          <ImageUploadButton
-            key={order.reference}
-            onUploadFunction={onUpload}
-            storage={storage}
-            folderName={'Orders/' + userId + '/' + order.reference}
-            buttonTitle={'Upload Proof of Payment'}
-          />
-          <button onClick={onMessageClick} className='p-3 rounded-lg bg-blue-300' >message</button>
+
+            <div className="flex w-full sm:w-6/12 justify-end text-end lg:justify-center lg:text-start sm:mr-7">
+              <Typography variant="h5" component="div" className="tracking-tighter xs:tracking-normal">
+                Total : ₱{order.grandTotal}
+              </Typography>
+            </div>
         </div>
+
+        <div className="w-full border-t-2 mt-4 mb-1"/>
+
+          <div className='flex flex-col md:flex-row mt-5 items-center justify-end gap-5'>
+            <ImageUploadButton
+              key={order.reference}
+              onUploadFunction={onUpload}
+              storage={storage}
+              folderName={'Orders/' + userId + '/' + order.reference}
+              buttonTitle={'Upload Proof of Payment'}
+              variant="outlined"
+            />
+            <button 
+                onClick={onMessageClick} className='p-3 w-3/4 xs:w-2/4 md:w-max rounded-lg bg-blue1 text-white font-semibold hover:bg-color10b' 
+                > <p className='flex gap-1 justify-center'><HiChatBubbleLeftEllipsis className='mt-1'/>Message</p>
+            </button>
+          </div>
       </div>
 
-      {screenMobile === false ? <div className="w-full border-t-2 mt-4 mb-1"></div> : null}
-
-      {screenMobile === false ? (
+      {/* {screenMobile === false ? (
         <div className="w-full 2xs:w-11/12 flex self-center justify-center xs:justify-evenly gap-5 mt-5 font-bold text-lg ">
           <button className=" rounded-lg xs:mt-0 md:ml-7 px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">
             Cancel Order
@@ -146,7 +153,8 @@ function MyOrderCard(props) {
             <BsFileImage className="text-3xl" />
           </button>
         </div>
-      ) : null}
+      ) : null} */} 
+
       <div>
         <MyOrderCardModal open={openModal} handleClose={handleClose} order={order} />
       </div>
