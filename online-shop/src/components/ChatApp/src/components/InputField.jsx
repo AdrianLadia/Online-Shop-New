@@ -10,13 +10,15 @@ const InputField = () => {
 
   const [message, setMessage] = useState(null);
   const [newMessage, setNewMessage] = useState(null);
-  const [send, setSend] = useState(false);
+  const [send, setSend] = useState(null);
   const date = new Date();
   const timestamp = Timestamp.fromDate(date);
   const timestampString = timestamp.toDate().toLocaleString();
   const {userId,selectedChatOrderId,userdata} = useContext(AppContext)
 
     async function sendMessages(){
+      // console.log(message)
+      // console.log(newMessage)
       const docRef = doc(db, "ordersMessages", selectedChatOrderId);
         // Add data to the array field
         if(newMessage){
@@ -41,23 +43,35 @@ const InputField = () => {
     }
 
     useEffect(()=>{
-      if(send===true){
-        setSend(false)
-        setMessage("")
-        setNewMessage("")
-        setNewMessage(message)
-        sendMessages()
+      if(send){
+        // setNewMessage(message)
+        // console.log(newMessage)
+        // setMessage("")
+        // setNewMessage("")
+        // sendMessages()
       }
     },[send])
 
-    function inputMessage(option1){
+    function inputMessage(option1, option2){
       setMessage(option1)
+      setSend(option2)
+      console.log(option2)
+      if(option2 === true){
+        setNewMessage(message)
+        sendMessages()
+      }
     }
   
     function sendMessage(option1){
       setSend(option1)
-      // console.log(send)
+      if(option1===true){
+        setNewMessage(message)
+        setMessage("")
+        sendMessages()
+      }
     }
+
+    // console.log(send)
 
   return (
     // <div className="flex flex-col justify-end w-full -mt-8 lg:-mt-9 h-1/6">
@@ -65,7 +79,7 @@ const InputField = () => {
       <div className='w-full h-full'>
         <div className='flex items-center w-full h-full rounded-lg'>
             <InputBox callback={inputMessage} sent={send}/>
-            <InputSendButton callback={sendMessage}/>
+            <InputSendButton callback={sendMessage} />
         </div>
       </div>
     </div>

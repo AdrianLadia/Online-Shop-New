@@ -24,6 +24,7 @@ import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
+import ChatApp from './components/ChatApp/src/ChatApp';
 
 
 const devEnvironment = true;
@@ -332,7 +333,7 @@ function App() {
           path="/myorders/*"
           element={
             <AppContext.Provider value={appContextValue}>
-              {/* <NavBar /> */}
+              <NavBar />
               {userstate === 'userloading' ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">
@@ -351,6 +352,14 @@ function App() {
                   <MyOrders />
                 </div>
               )}
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/orderChat"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <ChatApp />
             </AppContext.Provider>
           }
         />
