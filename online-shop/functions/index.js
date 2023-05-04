@@ -608,7 +608,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
 
         // CREATE ORDERMESSAGES CHAT
         const orderMessagesRef = db.collection('ordersMessages').doc(reference);
-        transaction.set(orderMessagesRef, { messages: [], ownerUserId: userid, ownerName: username });
+        transaction.set(orderMessagesRef, { messages: [], ownerUserId: userid, ownerName: username, referenceNumber: reference });
         orderMessagesRef.collection('messages');
 
         console.log(newOrder.eMail);

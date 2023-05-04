@@ -338,6 +338,15 @@ class firestoredb extends firestorefunctions {
       console.error('Error deleting order:', error);
     }
   }
+
+  async readAllOrderMessages() {
+    
+    return await this.readAllDataFromCollection('ordersMessages');
+  }
+
+  async readOrderMessageByReference(reference) {
+    return await this.readSelectedDataFromCollection('ordersMessages', reference);
+  }
   
 
 }

@@ -19,6 +19,7 @@ import App from './Analytics/App';
 import { RiAdminFill } from "react-icons/ri";
 import Divider from "@mui/material/Divider";
 import UseWindowDimensions from "./useWindowDimensions";
+import AdminChatMenu from "./AdminChatMenu";
 
 
 const AdminMenu = () => {
@@ -29,7 +30,7 @@ const AdminMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Dashboard');
+  const [selectedMenu, setSelectedMenu] = React.useState('Admin Chat');
  
   let [categories, setCategories] = useState([]);
   let [users, setUsers] = useState([]);
@@ -59,6 +60,11 @@ const AdminMenu = () => {
   const handleClickAnalytics = () => {
     setAnchorEl(null);
     setSelectedMenu('Analytics');
+  }
+
+  const handleClickAdminChat = () => {
+    setAnchorEl(null);
+    setSelectedMenu('Admin Chat');
   }
 
   const handleBack = () => {
@@ -154,6 +160,7 @@ const AdminMenu = () => {
             <MenuItem className='hover:bg-color10b' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
             {/* <Divider className="mt-1 mb-1"/>   */}
             <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
+            <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAdminChat}> <BsGraphUp size={18}/>     <span>Admin Chat</span></MenuItem>
           </Menu>
         </div>
       </div>
@@ -166,6 +173,7 @@ const AdminMenu = () => {
         {selectedMenu === 'Create Payment' && <AdminCreatePayment users={users} setUsers={setUsers} />}
         {selectedMenu === 'Customer Orders' && <AdminOrders users={users} />}
         {selectedMenu === 'Analytics' && <App />}
+        {selectedMenu === 'Admin Chat' && <AdminChatMenu />}
       </div>
     </div>
   );

@@ -1,50 +1,66 @@
-import React, { useEffect, useState,useContext} from 'react'
-import InputField from './components/InputField'
-import DisplayMessages from './components/DisplayMessages'
-import NavBar from './components/NavBar'
-import { doc, onSnapshot } from "firebase/firestore"; 
-import AppContext from '../../../AppContext'
-  // import db from"./firebase"
+import React, { useEffect, useState, useContext } from 'react';
+import InputField from './components/InputField';
+import DisplayMessages from './components/DisplayMessages';
+import NavBar from './components/NavBar';
+import { doc, onSnapshot } from 'firebase/firestore';
+import AppContext from '../../../AppContext';
+// import db from"./firebase"
 
 const ChatApp = () => {
-
-  const {db,selectedChatOrderId, setSelectedChatOrderId,userId} = useContext(AppContext)
-  const loggedInUserId = userId
+  const { db, selectedChatOrderId, setSelectedChatOrderId, userId,firestore,chatSwitch } = useContext(AppContext);
+  const loggedInUserId = userId;
   const [messageDetails, setMessageDetails] = useState({});
-  const [userName,setUserName] = useState('')
-  
-  async function getData(){
-    const docRef = doc(db, "ordersMessages", selectedChatOrderId);
-      onSnapshot(docRef, (doc) => {
-        if (doc.exists()) {
-          const username = doc.data().ownerName
-          setMessageDetails(doc.data())
-          setUserName(username)
-        } else {
-            console.log("No such document!");
-        }
-     }
-    );
+  const [userName, setUserName] = useState('');
+
+  async function getData() {
+    console.log(selectedChatOrderId)
+    const data = await firestore.readOrderMessageByReference(selectedChatOrderId);
+
+    if (data !== null) {
+      const username = data.ownerName;
+      setMessageDetails(data);
+      setUserName(username);
+    } else {
+      console.log('No such document!');
+    }
   }
-    
-  useEffect(()=>{
-    getData()
-  },[])
-  
+
+
+  useEffect(() => {
+    console.log('ran')
+    const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
+    onSnapshot(docRef, (doc) => {
+      if (doc.exists()) {
+        console.log(doc.data());
+        const username = doc.data().ownerName;
+        setMessageDetails(doc.data());
+        setUserName(username);
+      } else {
+        console.log('No such document!');
+      }
+    });
+  }, [chatSwitch]);
+
+  useEffect(() => {
+    console.log('getting data')
+    getData();
+  }, [selectedChatOrderId]);
+
+  console.log(messageDetails);
+
   return (
-    <div className='flex justify-center w-screen h-screen '>
-      
-      <div className='flex flex-col w-full h-full justify-evenly bg-color60'>
-        <NavBar messages={messageDetails}/>
+    <div className="flex justify-center w-screen h-screen ">
+      <div className="flex flex-col w-full h-full justify-evenly bg-color60">
+        <NavBar messages={messageDetails} />
 
-        {(messageDetails != {}) ? 
-        <DisplayMessages messages={messageDetails} userName={userName} loggedInUserId={loggedInUserId}/>
-        : null }
+        {messageDetails != {} ? (
+          <DisplayMessages messages={messageDetails} userName={userName} loggedInUserId={loggedInUserId} />
+        ) : null}
 
-        <InputField />  
+        <InputField />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChatApp
+export default ChatApp;

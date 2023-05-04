@@ -25,6 +25,7 @@ import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
+import useWindowDimensions from './components/useWindowDimensions';
 
 
 const devEnvironment = true;
@@ -79,6 +80,8 @@ function App() {
   const [selectedChatOrderId,setSelectedChatOrderId] = useState(null)
   const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
   const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
+  const {width,height} = useWindowDimensions
+  const [chatSwitch,setChatSwitch] = useState(false)
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -273,7 +276,11 @@ function App() {
     mayaRedirectUrl : mayaRedirectUrl,
     setMayaRedirectUrl : setMayaRedirectUrl,
     mayaCheckoutId : mayaCheckoutId,
-    setMayaCheckoutId : setMayaCheckoutId
+    setMayaCheckoutId : setMayaCheckoutId,
+    width: width,
+    height, height,
+    chatSwitch : chatSwitch,
+    setChatSwitch : setChatSwitch,
   };
 
   return (

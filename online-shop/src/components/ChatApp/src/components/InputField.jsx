@@ -28,7 +28,8 @@ const InputField = () => {
             message: newMessage,
             userId: userId,
             dateTime: timestampString,
-            userRole : userdata.userRole
+            userRole : userdata.userRole,
+            read : false
           }),
           }).then(() => {
             console.log("Message is sent Successfuly: ", newMessage);
