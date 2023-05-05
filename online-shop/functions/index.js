@@ -608,7 +608,12 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
 
         // CREATE ORDERMESSAGES CHAT
         const orderMessagesRef = db.collection('ordersMessages').doc(reference);
-        transaction.set(orderMessagesRef, { messages: [], ownerUserId: userid, ownerName: username, referenceNumber: reference });
+        transaction.set(orderMessagesRef, {
+          messages: [],
+          ownerUserId: userid,
+          ownerName: username,
+          referenceNumber: reference,
+        });
         orderMessagesRef.collection('messages');
 
         console.log(newOrder.eMail);
@@ -937,17 +942,20 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
   });
 });
 
-exports.sendEmail = functions.region('asia-southeast1').https.onCall(async (data, context) => {
-  // get the recipient email address and message content from the client-side
-  console.log(data);
-  const { to, subject, text } = data;
-  try {
-    await sendEmail(to, subject, text);
-    return { success: true };
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return { success: false };
-  }
+exports.sendEmail = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    // get the recipient email address and message content from the client-side
+    const data = req.body;
+    const { to, subject, text } = data;
+  
+    try {
+      sendEmail(to, subject, text)
+      res.status(200).send('success');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(400).send('failed');
+    }
+  });
 });
 
 // exports.arrayUpdateTrigger = functions.firestore

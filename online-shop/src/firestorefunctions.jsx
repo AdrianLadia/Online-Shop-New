@@ -191,6 +191,7 @@ class firestorefunctions {
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
+      eMail: Joi.string().required(),
     }).unknown(false);
 
 

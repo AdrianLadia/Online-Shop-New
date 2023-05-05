@@ -466,14 +466,24 @@ class businessCalculations {
     }
   }
 
-  getValueAddedTax(totalPrice) {
+  getValueAddedTax(totalPrice,noVat = false) {
     const totalPriceSchema = Joi.number().required();
     const { error } = totalPriceSchema.validate(totalPrice);
     if (error) {
       throw new Error('Data Validation Error');
     }
 
-    const vat = totalPrice - totalPrice / 1.0;
+
+    let vatPercentage
+
+    if (noVat) {
+      vatPercentage = 1.0
+    }
+    if (!noVat) {
+      vatPercentage = 1.12
+    }
+
+    const vat = totalPrice - totalPrice / vatPercentage;
     const roundedVat = Math.round(vat * 100) / 100;
 
     const vatSchema = Joi.number().required();
@@ -611,7 +621,7 @@ class businessCalculations {
         localDeliveryAddress : Joi.string().required().allow(null),
         addressText : Joi.string().required().allow(null),
         userId : Joi.string().required(),
-        navigateTo : Joi.func().required(),
+        navigateTo : Joi.func(),
         itemsTotal : Joi.number().required().allow(null),
       }
     ).required();

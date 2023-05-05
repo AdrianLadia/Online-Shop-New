@@ -20,15 +20,33 @@ import { fi } from 'date-fns/locale';
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
 const firestore = new firestoredb(app, true);
+await firestore.createNewUser(
+  {
+    uid: 'TESTUSER',
+    name: 'test user',
+    email: 'test@gmail.com',
+    emailVerified: true,
+    phoneNumber: '09178927206',
+    deliveryAddress: [],
+    contactPerson: [],
+    isAnonymous: false,
+    orders: [],
+    cart: [],
+    favoriteItems: [],
+    payments: [],
+    userRole: 'member',
+  },
+  'TESTUSER'
+);
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
-const cloudfirestorefunctions = new cloudFirestoreFunctions(app);
+const cloudfirestorefunctions = new cloudFirestoreFunctions(app,true);
 const cloudfirestore = new cloudFirestoreDb(app);
-const userTestId = 'xB80hL1fGRGWnO1yCK7vYL2hHQCP';
+const userTestId = 'TESTUSER';
 const testconfig = new testConfig();
 const testid = testconfig.getTestUserId();
-const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', testid);
+const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', userTestId);
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -186,6 +204,13 @@ describe('Business Calcualtions', () => {
     const vat = businesscalculations.getValueAddedTax(subtotal);
     expect(vat).toBe(expected);
   });
+  test('getValueAddedTaxNoVat', () => {
+    const subtotal = 100;
+    const expected = 0;
+    const vat = businesscalculations.getValueAddedTax(subtotal,true);
+    expect(vat).toBe(expected);
+  })
+
   test('getGrandTotalAmount', () => {
     const subtotal = 100;
     const vat = 12;
@@ -328,7 +353,7 @@ describe('Data Manipulation', async () => {
     expect(endingBalance).toBe(0);
 
     // datamanipulation.accountStatementTable(tableData)
-  });
+  },100000);
   test('getOrderFromReference', () => {
     const datamanipulation = new dataManipulation();
     const orders = user.orders;
@@ -600,19 +625,6 @@ describe('Transaction Place Order', async () => {
       }
     });
     expect(foundorder).toEqual(true);
-  });
-
-  test('check if reference is added to orderMessages collection', async () => {
-    const ids = await firestore.readAllIdsFromCollection('ordersMessages');
-
-    let found = false;
-    ids.map((id) => {
-      if (id == 'testref-124124521') {
-        found = true;
-      }
-    });
-
-    expect(found).toBe(true);
   });
 
   test('check if deliveryaddress added', async () => {
@@ -2038,6 +2050,8 @@ describe('deleteOrderFromUserFirestore', () => {
       eMail: 'starpackph@gmail.com',
     });
 
+    
+
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
       username: 'Adrian',
@@ -2107,11 +2121,47 @@ describe('deleteOrderFromUserFirestore', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
     });
-  });
+
+    test('check if reference is added to orderMessages collection', async () => {
+      const ids = await firestore.readAllIdsFromCollection('ordersMessages');
+  
+      let found = false;
+      ids.map((id) => {
+        if (id == 'testref1234') {
+          found = true;
+        }
+      });
+
+      let found2 = false;
+      ids.map((id) => {
+        if (id == 'testref12345') {
+          found2 = true;
+        }
+      });
+
+      let found3 = false;
+      ids.map((id) => {
+        if (id == 'testref12346') {
+          found3 = true;
+        }
+      });
+  
+      expect(found).toBe(true);
+      expect(found2).toBe(true);
+      expect(found3).toBe(true);
+      await firestore.deleteDocumentFromCollection('ordersMessages', 'testref1234');
+      await firestore.deleteDocumentFromCollection('ordersMessages', 'testref12345');
+      await firestore.deleteDocumentFromCollection('ordersMessages', 'testref12346');
+    });
+
+  },100000);
+
+
 
   test('deleteOrderFromCollectionArray', async () => {
+    await delay(1000)
     await firestore.deleteOrderFromCollectionArray(userTestId, 'testref12345');
-
+    await delay(200)
     const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = user.orders;
 
@@ -2124,19 +2174,19 @@ describe('deleteOrderFromUserFirestore', () => {
     });
 
     await firestore.deleteOrderFromCollectionArray(userTestId, 'testref1234');
-
+    await delay(200)
     const user2 = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders2 = user2.orders;
 
     expect(orders2.length).toEqual(1);
 
     await firestore.deleteOrderFromCollectionArray(userTestId, 'testref123456');
-
+    await delay(200)
     const user3 = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders3 = user3.orders;
 
     expect(orders3.length).toEqual(0);
-  });
+  },100000);
 });
 
 describe('updateOrderProofOfPaymentLink', () => {
@@ -2229,11 +2279,11 @@ describe('sendEmail', async () => {
     };
     const res = await cloudfirestore.sendEmail(data);
 
-    expect(res['success']).toEqual(true);
+    expect(res).toEqual('success');
   });
 }, 100000);
 
-describe.only('afterCheckoutRedirectLogic', () => {
+describe('afterCheckoutRedirectLogic', () => {
 
   class testCheckout {
     constructor() {
@@ -2269,7 +2319,7 @@ describe.only('afterCheckoutRedirectLogic', () => {
         deliveryFee : 100,
         vat : 200,
         rows : [],
-        area : 'Cebu',
+        area : ['lalamoveServiceArea'],
         fullName : 'Test User',
         eMail : 'test@gmail.com',
         phoneNumber : '09178927206',
@@ -2278,6 +2328,7 @@ describe.only('afterCheckoutRedirectLogic', () => {
         localDeliveryAddress : 'localDeliveryAddress',
         addressText : 'AddressText',
         userId : 'userId',
+        itemsTotal : 1000,
     },true);
     return res;
     }

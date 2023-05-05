@@ -5,24 +5,29 @@ import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { th } from 'date-fns/locale';
 import retryApi from '../utils/retryApi';
-import { httpsCallable,getFunctions } from "firebase/functions";
+import { httpsCallable,getFunctions,connectFunctionsEmulator } from "firebase/functions";
 
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app) {
+  constructor(app,test = false) {
     super();
     const appConfig = new AppConfig();
-    if (appConfig.getIsDevEnvironment()) {
+
+    
+
+    if (appConfig.getIsDevEnvironment() || test) {
       this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/';
     } else {
       this.url = 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/';
     }
+
     this.functions = getFunctions(app);
+    connectFunctionsEmulator(this.functions, 'localhost', 5001);
     this.functions.region = 'asia-southeast1';
 
-    if (appConfig.getIsDevEnvironment()) {
-      this.functions.emulatorOrigin = 'http://localhost:5001';
-    }
+    // if (appConfig.getIsDevEnvironment() || test) {
+    //   this.functions.emulatorOrigin = 'http://localhost:5001';
+    // }
 
   }
 
@@ -371,7 +376,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async sendEmail(data) {
-    const dataSchema = Joi.object({
+    const dataSchema = 
+    Joi.object({
       to: Joi.string().required(),
       subject: Joi.string().required(),
       text: Joi.string().required(),
@@ -384,14 +390,22 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
+    const jsonData = JSON.stringify(data);
+
+
+
     try {
       console.log(data);
       console.log(this.functions);
-      const sendEmailFunction = httpsCallable(this.functions, 'sendEmail');
+      
  
-      return sendEmailFunction(data).then((result) => {
-        return result.data
-      });
+      const res = await axios.post(`${this.url}sendEmail`,jsonData,{
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      const resData = res.data
+      return resData
     }
     catch (error){
       console.log(error);

@@ -5,11 +5,12 @@ import AppConfig from './AppConfig';
 import { getFunctions } from "firebase/functions";
 
 class cloudFirestoreFunctions {
-  constructor(app) {
+  constructor(app,test = false) {
 
     const appConfig = new AppConfig();
 
-    if (appConfig.getIsDevEnvironment()) {
+
+    if (appConfig.getIsDevEnvironment() || test) {
       this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
     }
     else {
