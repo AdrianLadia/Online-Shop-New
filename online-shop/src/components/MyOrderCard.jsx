@@ -5,7 +5,7 @@ import MyOrderCardModal from './MyOrderCardModal';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
-import UseWindowDimensions from './useWindowDimensions';
+import UseWindowDimensions from './UseWindowDimensions';
 import { BsFileImage } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
@@ -23,7 +23,7 @@ function MyOrderCard(props) {
   const { width } = UseWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const navigateTo = useNavigate()
-  console.log(order);
+  // console.log(order);
 
   function getPaymentStatus(x, y, z) {
     if (order.paid) {
@@ -141,9 +141,9 @@ function MyOrderCard(props) {
           </div>
       </div>
 
-      {screenMobile === false ? <div className="w-full border-t-2 mt-4 mb-1"></div> : null}
+      {/* {screenMobile === false ? <div className="w-full border-t-2 mt-4 mb-1"></div> : null} */}
 
-      {screenMobile === false ? (
+      {/* {screenMobile === false ? (
         <div className="w-full 2xs:w-11/12 flex self-center justify-center xs:justify-evenly gap-5 mt-5 font-bold text-lg ">
           <button className=" rounded-lg xs:mt-0 md:ml-7 px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">
             Cancel Order
@@ -155,7 +155,7 @@ function MyOrderCard(props) {
             <BsFileImage className="text-3xl" />
           </button>
         </div>
-      ) : null}
+      ) : null} */}
       <div>
         <MyOrderCardModal open={openModal} handleClose={handleClose} order={order} />
       </div>

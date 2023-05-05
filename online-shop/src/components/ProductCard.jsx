@@ -3,7 +3,7 @@ import Paper from '@mui/material/Paper';
 import { Button, Typography } from '@mui/material';
 import { Snackbar } from '@material-ui/core';
 import { useState, useContext, useEffect,useRef } from 'react';
-import UseWindowDimensions from './useWindowDimensions';
+import UseWindowDimensions from './UseWindowDimensions';
 import TextField from '@mui/material/TextField';
 import ProductCardModal from './ProductCardModal';
 import businessCalculations from '../../utils/businessCalculations';
@@ -34,7 +34,7 @@ const ProductCard = (props) => {
   const retailStocksAvailable = props.stocksAvailable
   const retailAverageSalesPerDay = props.averageSalesPerDay
 
-  console.log(width)
+  // console.log(width)
   
   let safetyStock 
   if (product.averageSalesPerDay != undefined) {
@@ -121,9 +121,11 @@ const ProductCard = (props) => {
   }, [product.stocksAvailable]);
 
   function responsiveStyle() {
-    if (width < 385) {
-      return '20px';
-    } else {
+    if (width < 396) {
+      return '19px';
+    }else if(width < 1){
+      return 
+    }else{
       return '23px';
     }
   }
