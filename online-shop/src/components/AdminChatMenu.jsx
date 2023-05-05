@@ -24,7 +24,6 @@ const AdminChatMenu = () => {
         firestore.readAllOrderMessages().then((res) => {
             let chatData = []
             res.forEach((chat) => {
-                console.log(chat)
                 const referenceNumber = chat.referenceNumber
                 const customerName = chat.ownerName
                 const messages = chat.messages
@@ -39,20 +38,16 @@ const AdminChatMenu = () => {
                     const userRole = message.userRole
                     if (userRole === "member") {
                         if (message.read === false) {
-                            unreadCount+= 1
+                            unreadCount += 1
                         }
                     }
                 })
-                
                 chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
             }) 
             console.log(chatData)
             setChatData(chatData)
-            
         })
     }, []);
-    // console.log(chat)
- 
     
   function convertChatMessageToFitTable(message) {
     let messageLength;
@@ -79,7 +74,6 @@ const AdminChatMenu = () => {
     setOpenChat(true);
     setSelectedChatOrderId(referenceNumber)
     setChatSwitch(!chatSwitch)
-
   };
 
   return (
@@ -92,7 +86,7 @@ const AdminChatMenu = () => {
               <TableCell></TableCell>
               <TableCell>Customer</TableCell>
               <TableCell>Latest Message</TableCell>
-              <TableCell>Unread Count</TableCell>
+              <TableCell>Unread Messages</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

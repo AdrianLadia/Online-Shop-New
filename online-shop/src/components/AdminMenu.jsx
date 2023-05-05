@@ -18,7 +18,7 @@ import { HiOutlineCash } from "react-icons/hi";
 import App from './Analytics/App';
 import { RiAdminFill } from "react-icons/ri";
 import Divider from "@mui/material/Divider";
-import UseWindowDimensions from "./useWindowDimensions";
+import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
 
 

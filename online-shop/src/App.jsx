@@ -91,7 +91,7 @@ function App() {
       
       // console.log('onAuthStateChanged ran');
       if (user) {
-        console.log('ran')
+        // console.log('ran')
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
         // console.log('FOUND USER', user.uid);

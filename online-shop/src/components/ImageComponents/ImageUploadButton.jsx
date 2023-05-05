@@ -14,7 +14,7 @@ const ImageUploadButton = (props) => {
   const storage = props.storage;
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
-  console.log(id);
+  // console.log(id);
 
   const [buttonColor, setButtonColor] = useState('primary');
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -40,15 +40,15 @@ const ImageUploadButton = (props) => {
       const ordersRefStorage = ref(storage, folderName + '/' + fileName);
 
       uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
-        console.log(snapshot);
-        console.log('Uploaded a blob or file!');
+        // console.log(snapshot);
+        // console.log('Uploaded a blob or file!');
         setButtonColor('success');
         setButtonText('Uploaded Successful');
         setLoading(false);
 
         // GET IMAGE URL
         const downloadURL = await getDownloadURL(ordersRefStorage);
-        console.log(downloadURL);
+        // console.log(downloadURL);
 
         if (onUploadFunction !== undefined) {
           onUploadFunction(downloadURL);

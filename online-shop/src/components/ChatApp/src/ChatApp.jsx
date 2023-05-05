@@ -4,10 +4,9 @@ import DisplayMessages from './components/DisplayMessages';
 import NavBar from './components/NavBar';
 import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../AppContext';
-// import db from"./firebase"
 
 const ChatApp = () => {
-  const { db, selectedChatOrderId, setSelectedChatOrderId, userId,firestore,chatSwitch } = useContext(AppContext);
+  const {db, selectedChatOrderId, setSelectedChatOrderId, userId, firestore, chatSwitch } = useContext(AppContext);
   const loggedInUserId = userId;
   const [messageDetails, setMessageDetails] = useState({});
   const [userName, setUserName] = useState('');
@@ -25,13 +24,14 @@ const ChatApp = () => {
     }
   }
 
+  // console.log(selectedChatOrderId)
 
   useEffect(() => {
-    console.log('ran')
+    // console.log('ran')
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     onSnapshot(docRef, (doc) => {
       if (doc.exists()) {
-        console.log(doc.data());
+        // console.log(doc.data());
         const username = doc.data().ownerName;
         setMessageDetails(doc.data());
         setUserName(username);
@@ -41,12 +41,6 @@ const ChatApp = () => {
     });
   }, [chatSwitch]);
 
-  useEffect(() => {
-    console.log('getting data')
-    getData();
-  }, [selectedChatOrderId]);
-
-  // console.log(messageDetails);
 
   return (
     <div className="flex justify-center w-screen h-screen ">
@@ -57,7 +51,7 @@ const ChatApp = () => {
           <DisplayMessages messages={messageDetails} userName={userName} loggedInUserId={loggedInUserId} />
         ) : null}
 
-        <InputField />
+        <InputField loggedInUserId={loggedInUserId} />
       </div>
     </div>
   );

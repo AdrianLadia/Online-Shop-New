@@ -1,14 +1,19 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { TiArrowLeftThick } from "react-icons/ti";
 import { useNavigate } from 'react-router-dom';
-// /myorders/orderList
+import AppContext from '../../../../AppContext';
 
 const NavBarBackButton = () => {
 
   const navigateTo = useNavigate()
+  const { isadmin } = useContext(AppContext);
 
   function onBackClick() {
-    navigateTo("/myorders/orderList")
+    if(isadmin){
+      navigateTo("/")
+    }else{
+      navigateTo("/myorders/orderList")
+    }
   }
 
   return (

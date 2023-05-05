@@ -1,10 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { TiArrowForward } from 'react-icons/ti';
+import { doc, getDoc } from 'firebase/firestore';
+import db from '../firebase';
+import AppContext from '../../../../AppContext';
 
 const DisplayMessagesAdmin = (props) => {
+
+  const { selectedChatOrderId, firestore } = useContext(AppContext);
   const message = props.message;
   const dateTime = props.dateTime;
-  const userRole = "Admin"
+  const userName = props.userName;
+  const loggedInUserId = props.loggedInUserId;
+  const userRole = props.userRole;
+  const read = props.read;
+
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -12,6 +21,59 @@ const DisplayMessagesAdmin = (props) => {
     dummy.current.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+async function updateMessages() {
+    const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
+    const messages = data.messages;
+
+    let unreadOwner = 0;
+    let unreadAdmin = 0;
+    messages.map((mess) => {
+
+      if (mess.userRole === 'member' && loggedInUserId !== mess.userId) {
+        // messages[index].read = true;
+        if (mess.dateTime == dateTime && mess.message == message) {
+          mess.read = true;
+        }
+      }
+
+      if (mess.userRole === 'member' && mess.read === false) {
+        unreadOwner += 1;
+      }
+      
+      if (mess.userRole != 'member' && mess.read === false) {
+        unreadAdmin += 1;
+      }
+    });
+    if (unreadAdmin === 0) {
+      data.adminReadAll = true;
+    } else {
+      data.adminReadAll = false;
+    }
+    if (unreadOwner === 0) {
+      data.ownerReadAll = true;
+    } else {
+      data.ownerReadAll = false;
+    }
+    // console.log(data.ownerReadAll)
+    firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, data.ownerReadAll);
+    firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll);
+    firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
+}
+
+  function handleBoth() {
+    setShowDetails(!showDetails);
+    updateMessages();
+  }
+
+  function adminColor(){
+    if(userRole === "member" && read === false){
+      return " bg-gradient-to-tr from-red-200 to-red-500"
+    }else{
+      return " bg-gradient-to-tr from-green1 to-green2"
+    }
+  }
 
   return (
     <div className="flex items-start h-max ml-0.5">
@@ -19,9 +81,8 @@ const DisplayMessagesAdmin = (props) => {
          
         <div className="w-16 h-16 bg-gradient-to-tl from-green2 to-green1 border-4 border-green1 rounded-full sm:h-20 sm:w-20 ">
           <div className="flex items-center justify-center h-full text-2xl font-bold text-white uppercase">
-            {userRole[0]}
+            {userName[0]}
           </div>
-          {/* <div className='flex items-center justify-center h-full text-2xl font-bold text-white uppercase'>{messages.userId}</div> */}
         </div>
       </div>
 
@@ -36,13 +97,13 @@ const DisplayMessagesAdmin = (props) => {
                 <p>Sent at {dateTime}</p>
               </>
             ) : (
-              <p className="ml-2">{userRole}</p>
+              <p className="ml-2">{userName}</p>
             )}
           </div>
 
           <div
-            className="max-w-full max-h-full p-3 px-4 m-2 my-2 mr-4 text-white bg-gradient-to-tr from-green1 to-green2 md:p-4 md:px-6 rounded-3xl cursor-help"
-            onClick={() => setShowDetails(!showDetails)}
+            className={"max-w-full max-h-full p-3 px-4 m-2 my-2 mr-4 text-white md:p-4 md:px-6 rounded-3xl cursor-help" + adminColor()}
+            onClick={handleBoth}
           >
             <p>{message}</p>
           </div>

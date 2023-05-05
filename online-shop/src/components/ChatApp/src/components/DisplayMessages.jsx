@@ -12,7 +12,9 @@ const DisplayMessages = (props) => {
   const userName = props.userName
   const loggedInUserId = props.loggedInUserId
 
-  // console.log(loggedInUserId)
+
+  // alert(loggedInUserId)
+
 
   // useEffect(()=>{
   //     console.log(messages)
@@ -29,14 +31,14 @@ const DisplayMessages = (props) => {
           <div className='flex flex-col w-full h-full overflow-auto scrollbar-thumb-gray-500 scrollbar-track-gray-200 scrollbar-thin'>
               { messages ?
               messages.map((m, index)=>{
-                console.log(m)
                 const message = m.message
                 const dateTime = m.dateTime
                 const userRole = m.userRole
-                if(m.userRole === "member"){
-                  return <DisplayMessagesUser message={message} dateTime={dateTime} key={index} userName={userName}/>
+                const read = m.read
+                if(m.userId === loggedInUserId){
+                  return <DisplayMessagesUser message={message} dateTime={dateTime} userRole={userRole} loggedInUserId={loggedInUserId}/>
                 }else{
-                  return <DisplayMessagesAdmin message={message} dateTime={dateTime} key={index} userRole={userRole}/>
+                  return <DisplayMessagesAdmin message={message} dateTime={dateTime} userName={userName} read={read} userRole={userRole} loggedInUserId={loggedInUserId}/>
                 }
               }) : null}
           </div>
