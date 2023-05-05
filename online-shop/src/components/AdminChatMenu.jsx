@@ -110,6 +110,7 @@ const AdminChatMenu = () => {
     useEffect(() => {
         firestore.readAllOrderMessages().then((res) => {
             let chatData = []
+            console.log(res)
             res.forEach((chat) => {
                 console.log(chat)
                 const referenceNumber = chat.referenceNumber
@@ -166,7 +167,6 @@ const AdminChatMenu = () => {
     setOpenChat(true);
     setSelectedChatOrderId(referenceNumber)
     setChatSwitch(!chatSwitch)
-
   };
 
   return (
