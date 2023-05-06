@@ -885,6 +885,7 @@ exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequ
   });
 });
 
+
 exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
@@ -924,6 +925,9 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         await userRef.update({
           orders: orders,
         });
+
+        // TODO
+        // ADD PAYMENT DATA TO PAYMENTS COLLECTION
 
         res.status(200).send('success');
       } catch (error) {

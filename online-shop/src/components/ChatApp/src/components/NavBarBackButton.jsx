@@ -6,12 +6,12 @@ import AppContext from '../../../../AppContext';
 const NavBarBackButton = () => {
 
   const navigateTo = useNavigate()
-  const { isadmin } = useContext(AppContext);
+  const { isadmin ,chatSwitch, setChatSwitch} = useContext(AppContext);
 
   function onBackClick() {
     if(isadmin){
-      navigateTo("/")
-    }else{
+      setChatSwitch(!chatSwitch)
+    }else{  
       navigateTo("/myorders/orderList")
     }
   }

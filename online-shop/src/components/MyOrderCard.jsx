@@ -9,11 +9,12 @@ import UseWindowDimensions from './useWindowDimensions';
 import { BsFileImage } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, getDoc } from 'firebase/firestore';
+import db from '../../firebase';
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, db, selectedChatOrderId } = React.useContext(AppContext);
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore,  selectedChatOrderId } = React.useContext(AppContext);
   const order = props.order;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
@@ -26,7 +27,22 @@ function MyOrderCard(props) {
   const navigateTo = useNavigate()
   const [ownerRead, setOwnerRead] = useState(null);
   const [test, setTest] = useState(0);
-  // console.log(order);
+  const [messageDetails, setMessageDetails] = useState({})
+
+
+  // async function readUnreadMessages(){
+  //   const docRef = doc(db, 'ordersMessages', order.reference);
+  //   const docSnap = await getDoc(docRef);
+  //   console.log(docSnap)
+  //   const data = docSnap.data();
+  //   console.log(data)
+
+  //   // const messages = data.messages;
+
+  //   // console.log(db, 'ordersMessages', order.reference)
+  //   // console.log(order.reference)
+  // }
+
 
   function getPaymentStatus(x, y, z) {
     if (order.paid) {
@@ -77,27 +93,14 @@ function MyOrderCard(props) {
     setSelectedChatOrderId(order.reference)
     navigateTo("/orderChat")
   }
-
-  // useEffect(()=>{
-  //   const docRef = doc(db, 'ordersMessages', "1521442023-160929");
-  //     onSnapshot(docRef, (doc)=>{
-  //       const data = doc.data();
-  //       const ownerReadAll = data.ownerReadAll
-        
-  //       if(ownerReadAll === false){
-  //         setOwnerRead(true)
-  //       }else{
-  //         setOwnerRead(false)
-  //       }
-  //   })
-  // },[])
-
+  
   return (
     <div
       className={
         'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()
       }
     >
+      {/* <button onClick={readUnreadMessages}>aasddd</button> */}
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
         <div className="flex justify-end mb-4">
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
@@ -141,29 +144,34 @@ function MyOrderCard(props) {
             </div>
         </div>
 
-        <div className="w-full border-t-2 mt-4 mb-1"/>
+        <div className="w-full border-t-2 mt-4 mb-1 "/>
 
-          <div className='flex flex-col lg:flex-row mt-5 gap-10 items-center'>
-            <div className='w-5/12 flex gap-5 '>
+          <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center'>
+            <div className='w-full lg:w-5/12 flex gap-5 justify-evenly'>
               <button className=" w-max rounded-lg px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
               <button className="w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
             </div>
-            <div className='w-full lg:w-9/12 flex gap-5 flex-col sm:flex-row justify-center items-center lg:justify-end '>
+
+        <div className="w-full border-t-2 mb-0.5 lg:border-t-0 "/>
+
+            <div className='w-full lg:w-9/12 flex gap-5 flex-col-reverse sm:flex-row justify-center items-center lg:justify-end '>
               <button 
-                  onClick={onMessageClick} className='p-3 w-max rounded-lg bg-blue1 text-white font-semibold hover:bg-color10b' 
+                  onClick={onMessageClick} 
+                  className='p-3 w-max rounded-lg  text-white font-semibold bg-color10a hover:bg-color10c' 
                   > <p className='flex gap-1 justify-center'>
                     <HiChatBubbleLeftEllipsis className='mt-1'/>Message
                     {/* {ownerRead ? (<p className='bg-red-500 p-1 rounded-full h-1 w-1'> </p>):null} */}
                     </p>
               </button>
-              <ImageUploadButton
-                id = {`order-${order.reference}`}
-                onUploadFunction={onUpload}
-                storage={storage}
-                folderName={'Orders/' + userId + '/' + order.reference}
-                buttonTitle={'Upload Proof of Payment'}
-                variant="outlined"
-              />
+
+                <ImageUploadButton
+                  id = {`order-${order.reference}`}
+                  onUploadFunction={onUpload}
+                  storage={storage}
+                  folderName={'Orders/' + userId + '/' + order.reference}
+                  buttonTitle={'Upload Proof of Payment'}
+                  variant="outlined"
+                />
             </div>
           </div>
       </div>

@@ -20,7 +20,7 @@ import { RiAdminFill } from "react-icons/ri";
 import Divider from "@mui/material/Divider";
 import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
-
+import { HiOutlineChatAlt } from "react-icons/hi";
 
 const AdminMenu = () => {
   const {products,firestore } = React.useContext(AppContext);
@@ -96,6 +96,8 @@ const AdminMenu = () => {
     }
   }
 
+  // console.log(anchorEl)
+
   return (
     // NAV BAR
     // bg-gradient-to-r from-colorbackground via-color2 to-color1 
@@ -110,7 +112,7 @@ const AdminMenu = () => {
         </div>
 
           {/* Menu Button */}
-        <div>
+        <div className='flex-row'>
           <Button
             id="basic-button"
             aria-controls={open ? 'basic-menu' : undefined}
@@ -118,7 +120,7 @@ const AdminMenu = () => {
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
           >          
-            <GiHamburgerMenu id='hamburgerAdmin' size={36} className='-mr-4 2xs:mr-6 text-white hover:text-color10b'/>
+            <GiHamburgerMenu id='hamburgerAdmin' size={36} className='-mr-4 2xs:mr-6 text-white hover:text-color10b '/>
           </Button>
           <Menu
             id="basic-menu"
@@ -128,6 +130,9 @@ const AdminMenu = () => {
             PaperProps={{
               elevation: 1,
               sx: {
+                width: 220,
+                display: "flex",
+                flexDirection:"column",
                 overflow: "visible",
                 filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
                 mt: .4,
@@ -155,18 +160,21 @@ const AdminMenu = () => {
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem className='hover:bg-color10b' id='inventoryMenu' onClick={handleClickInventory}> <BsBoxes size={19}/>     <span>Inventory</span></MenuItem>
-            <MenuItem className='hover:bg-color10b' id='createPaymentMenu' onClick={handleClickCreatePayment}> <HiOutlineCash size={19}/>     <span>Create Payment</span></MenuItem>
-            <MenuItem className='hover:bg-color10b' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
-            {/* <Divider className="mt-1 mb-1"/>   */}
-            <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
-            <MenuItem className='hover:bg-color10b' id='Analytics' onClick={handleClickAdminChat}> <BsGraphUp size={18}/>     <span>Admin Chat</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='inventoryMenu' onClick={handleClickInventory}> <BsBoxes size={19}/>     <span>Inventory</span></MenuItem>
+            {/* <Divider className="mt-0.5"/>   */}
+            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='createPaymentMenu' onClick={handleClickCreatePayment}> <HiOutlineCash size={19}/>     <span>Create Payment</span></MenuItem>
+            {/* <Divider className="mt-0.5"/>   */}
+            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
+            {/* <Divider className="mt-0.5"/>   */}
+            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
+            {/* <Divider className="mt-0.5"/>   */}
+            <MenuItem className='hover:bg-color10b w-full justify-start p-2 focus:text-blue1' id='Admin Chat' onClick={handleClickAdminChat}> <HiOutlineChatAlt size={20}/>     <span>Admin Chat</span></MenuItem>
           </Menu>
         </div>
       </div>
       {/* HERO */}
       <div>
-        {selectedMenu === 'Dashboard' && <AdminOrders users={users} />}
+        {/* {selectedMenu === 'Dashboard' && <AdminOrders users={users} />} */}
         {selectedMenu === 'Inventory' && (
           <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh}/>
         )}

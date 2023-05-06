@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   TableContainer,
   Table,
@@ -12,13 +12,13 @@ import {
 } from '@material-ui/core';
 import ChatApp from './ChatApp/src/ChatApp';
 import AppContext from '../AppContext';
-import { useState } from 'react';
-
+import { HiOutlineChatAlt, HiChatAlt } from "react-icons/hi";
 
 const AdminChatMenu = () => {
+    const dummy = useRef(null);
     const [openChat, setOpenChat] = useState(false);
-    const {firestore,width,selectedChatOrderId, setSelectedChatOrderId,chatSwitch,setChatSwitch} = useContext(AppContext);
-    const [chatData,setChatData] = useState([])
+    const {firestore,width,selectedChatOrderId, setSelectedChatOrderId,chatSwitch,setChatSwitch, isadmin} = useContext(AppContext);
+    const [chatData, setChatData] = useState([])
 
     useEffect(() => {
         firestore.readAllOrderMessages().then((res) => {
@@ -44,10 +44,10 @@ const AdminChatMenu = () => {
                 })
                 chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
             }) 
-            console.log(chatData)
+            // console.log(chatData)
             setChatData(chatData)
         })
-    }, []);
+    }, [chatSwitch]);
     
   function convertChatMessageToFitTable(message) {
     let messageLength;
@@ -70,38 +70,63 @@ const AdminChatMenu = () => {
   }
 
   const handleOpen = (referenceNumber) => {
-    console.log(referenceNumber)
-    setOpenChat(true);
+    // setPastRef(referenceNumber)
     setSelectedChatOrderId(referenceNumber)
     setChatSwitch(!chatSwitch)
   };
 
+  useEffect(()=>{
+      if(chatSwitch === true){
+        setOpenChat(!openChat)
+      }else{
+        setOpenChat(false)
+      }
+      dummy.current.scrollIntoView({ behavior: 'smooth' });
+  },[chatSwitch])
+
+  // console.log(chatSwitch)
+
   return (
     <div className="flex justify-center flex-col lg:flex-row">
+      <div ref={dummy}/>
       {openChat ? <ChatApp /> : null}
-      <TableContainer className="flex justify-center w-12/12 lg:w-10/12 h-screen" component={Paper}>
+      <TableContainer 
+          className="flex justify-center items-start w-12/12 lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1" 
+          component={Paper}>
         <Table aria-label="chat table">
           <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>Customer</TableCell>
-              <TableCell>Latest Message</TableCell>
-              <TableCell>Unread Messages</TableCell>
+            <TableRow className='bg-gradient-to-br from-green4 to-green1'>
+              <TableCell > <p className=' flex justify-center text-2xl mr-5'><HiChatAlt/></p> </TableCell>
+              <TableCell className='font-bold'>Customer</TableCell>
+              <TableCell className='font-bold'>Latest Message</TableCell>
+              <TableCell className='font-bold'>Unread Messages</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {chatData.map((chat) => (
-              <TableRow key={chat.id}>
-                <TableCell>
-                  <Button variant="contained" color="primary" onClick={() => handleOpen(chat.id)} className="px-4 py-1">
-                    Open Chat
+              <TableRow key={chat.id} >
+                <TableCell className='flex justify-center w-full '>
+                  {chatSwitch ? 
+                  <Button 
+                    variant="contained" 
+                    onClick={() => handleOpen(chat.id)} 
+                    className=" px-1 py-2 rounded-full bg-red-500 hover:bg-red-400 text-white mr-3"
+                    >X
                   </Button>
+                  :
+                  <Button 
+                    variant="contained" 
+                    onClick={() => handleOpen(chat.id)} 
+                    className=" px-4 py-1 bg-color60 hover:bg-color10c text-white mr-3"
+                    >Open
+                  </Button>
+                  }
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  <Typography className="font-semibold">{chat.customerName}</Typography>
+                  <Typography className="font-semibold text-slate-500">{chat.customerName}</Typography>
                 </TableCell>
                 <TableCell>{convertChatMessageToFitTable(chat.latestMessage)}</TableCell>
-                <TableCell>{chat.unreadCount}</TableCell>
+                <TableCell>{chat.unreadCount? (<p className='text-red-500 font-bold'>{chat.unreadCount}</p>): (<>{chat.unreadCount}</>) }</TableCell>
               </TableRow>
             ))}
           </TableBody>
