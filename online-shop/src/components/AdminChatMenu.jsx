@@ -95,10 +95,11 @@ const AdminChatMenu = () => {
           component={Paper}>
         <Table aria-label="chat table">
           <TableHead>
-            <TableRow className='bg-gradient-to-br from-green4 to-green1'>
+            <TableRow className='bg-gradient-to-br from-green4 to-green1 h-20'>
               <TableCell > <p className=' flex justify-center text-2xl mr-5'><HiChatAlt/></p> </TableCell>
               <TableCell className='font-bold'>Customer</TableCell>
-              <TableCell className='font-bold'>Latest Message</TableCell>
+              <TableCell className='font-bold'>Reference #</TableCell>
+              {/* <TableCell className='font-bold'>Latest Message</TableCell> */}
               <TableCell className='font-bold'>Unread Messages</TableCell>
             </TableRow>
           </TableHead>
@@ -106,7 +107,7 @@ const AdminChatMenu = () => {
             {chatData.map((chat) => (
               <TableRow key={chat.id} >
                 <TableCell className='flex justify-center w-full '>
-                  {chatSwitch ? 
+                  {selectedChatOrderId === chat.id && chatSwitch ? 
                   <Button 
                     variant="contained" 
                     onClick={() => handleOpen(chat.id)} 
@@ -125,7 +126,8 @@ const AdminChatMenu = () => {
                 <TableCell component="th" scope="row">
                   <Typography className="font-semibold text-slate-500">{chat.customerName}</Typography>
                 </TableCell>
-                <TableCell>{convertChatMessageToFitTable(chat.latestMessage)}</TableCell>
+                <TableCell>{chat.id}</TableCell>
+                {/* <TableCell>{convertChatMessageToFitTable(chat.latestMessage)}</TableCell> */}
                 <TableCell>{chat.unreadCount? (<p className='text-red-500 font-bold'>{chat.unreadCount}</p>): (<>{chat.unreadCount}</>) }</TableCell>
               </TableRow>
             ))}
