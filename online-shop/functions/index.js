@@ -890,7 +890,6 @@ exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequ
   });
 });
 
-
 exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
@@ -917,28 +916,40 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         return;
       }
 
-      try {
-        const db = admin.firestore();
-        const userRef = db.collection('Users').doc(userId);
-        const userDoc = await userRef.get();
-        const userData = userDoc.data();
-        const orders = userData.orders;
-        const orderIndex = orders.findIndex((order) => order.reference === orderReference);
-        const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
-        const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
-        orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
-        await userRef.update({
-          orders: orders,
-        });
+      const db = admin.firestore();
 
-        // TODO
-        // ADD PAYMENT DATA TO PAYMENTS COLLECTION
+      db.runTransaction(async (transaction) => {
+        try {
+          // READ
+          const userRef = db.collection('Users').doc(userId);
+          const userDoc = await transaction.get(userRef);
+          const userData = userDoc.data();
+          const orders = userData.orders;
+          const orderIndex = orders.findIndex((order) => order.reference === orderReference);
+          const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
+          const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
+          orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
 
-        res.status(200).send('success');
-      } catch (error) {
-        console.error('Error updating proof of payment link:', error);
-        res.status(400).send('Error updating proof of payment link.');
-      }
+          // WRITE
+          transaction.update(userRef, {
+            orders: orders,
+          });
+
+          // TODO
+          // ADD PAYMENT DATA TO PAYMENTS COLLECTION
+          transaction.set(db.collection('Payments').doc(orderReference), 
+            {
+              reference: orderReference,
+              proofOfPaymentLink: proofOfPaymentLink,
+              userId: userId,
+          });
+
+          res.status(200).send('success');
+        } catch {
+          console.error('Error updating proof of payment link:', error);
+          res.status(400).send('Error updating proof of payment link.');
+        }
+      });
     } catch (error) {
       res.status(400).send('Error updating proof of payment link.');
       console.error('Error updating proof of payment link:', error);
@@ -951,9 +962,9 @@ exports.sendEmail = functions.region('asia-southeast1').https.onRequest(async (r
     // get the recipient email address and message content from the client-side
     const data = req.body;
     const { to, subject, text } = data;
-  
+
     try {
-      sendEmail(to, subject, text)
+      sendEmail(to, subject, text);
       res.status(200).send('success');
     } catch (error) {
       console.error('Error sending email:', error);
