@@ -5,15 +5,12 @@ import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { th } from 'date-fns/locale';
 import retryApi from '../utils/retryApi';
-import { httpsCallable,getFunctions,connectFunctionsEmulator } from "firebase/functions";
-
+import { httpsCallable, getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app,test = false) {
+  constructor(app, test = false) {
     super();
     const appConfig = new AppConfig();
-
-    
 
     if (appConfig.getIsDevEnvironment() || test) {
       this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/';
@@ -28,7 +25,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     // if (appConfig.getIsDevEnvironment() || test) {
     //   this.functions.emulatorOrigin = 'http://localhost:5001';
     // }
-
   }
 
   async changeUserRole(userId, role) {
@@ -143,7 +139,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
-      eMail : Joi.string().required(),
+      eMail: Joi.string().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
@@ -272,14 +268,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const encodedData = encodeURIComponent(JSON.stringify(data));
       const response = await axios.post(`${this.url}createPayment?data=${encodedData}`);
       return response;
-    }
-    catch{
+    } catch {
       console.log(error);
       alert('An error occurred. Please try again later.');
     }
   }
-
-
 
   async testPayMayaWebHookSuccess(data) {
     const dataSchema = schemas.mayaSuccessRequestSchema();
@@ -309,7 +302,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async updateOrdersAsPaidOrNotPaid(userId) {
-    const userIdSchema = Joi.string().required()
+    const userIdSchema = Joi.string().required();
 
     const { error } = userIdSchema.validate(userId);
 
@@ -317,7 +310,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       alert(error.message);
       throw new Error(error.message);
     }
-
 
     try {
       const response = await axios.post(`${this.url}updateOrdersAsPaidOrNotPaid?data=${userId}`);
@@ -342,46 +334,43 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       amount: Joi.number().required(),
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
-    }).unknown(false)
+    }).unknown(false);
 
     const { error } = dataSchema.validate(data);
 
     if (error) {
       console.log(error);
-      throw new Error(error.message); 
+      throw new Error(error.message);
     }
 
     try {
       const encodedData = encodeURIComponent(JSON.stringify(data));
       const response = await axios.post(`${this.url}transactionCreatePayment?data=${encodedData}`);
       return response;
-    }
-    catch{
+    } catch {
       console.log(error);
       alert('An error occurred. Please try again later.');
     }
   }
 
-  async updateOrderProofOfPaymentLink(orderReference,userId,proofOfPaymentLink) {
-    try{
-      const json = {"orderReference":orderReference,"userId":userId,"proofOfPaymentLink":proofOfPaymentLink}
+  async updateOrderProofOfPaymentLink(orderReference, userId, proofOfPaymentLink) {
+    try {
+      const json = { orderReference: orderReference, userId: userId, proofOfPaymentLink: proofOfPaymentLink };
       // const encodedData = encodeURIComponent(JSON.stringify({ orderReference,userId}));
-      const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`,json)
+      const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, json);
       // const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}&proofOfPaymentLink=${proofOfPaymentLink}`)
-      const data = res.data
-    }
-    catch(error){
-      throw new Error(error)
+      const data = res.data;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
   async sendEmail(data) {
-    const dataSchema = 
-    Joi.object({
+    const dataSchema = Joi.object({
       to: Joi.string().required(),
       subject: Joi.string().required(),
       text: Joi.string().required(),
-    }).unknown(false)
+    }).unknown(false);
 
     const { error } = dataSchema.validate(data);
 
@@ -392,28 +381,35 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     const jsonData = JSON.stringify(data);
 
-
-
     try {
       console.log(data);
       console.log(this.functions);
-      
- 
-      const res = await axios.post(`${this.url}sendEmail`,jsonData,{
+
+      const res = await axios.post(`${this.url}sendEmail`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
-        }
-      })
-      const resData = res.data
-      return resData
-    }
-    catch (error){
+        },
+      });
+      const resData = res.data;
+      return resData;
+    } catch (error) {
       console.log(error);
       alert('Error sending email.');
       return { status: 'error' };
     }
   }
 
+  async deleteOldOrders() {
+    try {
+      const res = await axios.get(`${this.url}deleteOldOrders`);
+      const data = res.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      alert('Error deleting old orders.');
+      return { status: 'error' };
+    }
+  }
 }
 
 export default cloudFirestoreDb;
