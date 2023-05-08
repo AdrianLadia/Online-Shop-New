@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import CircularProgress from '@mui/material/CircularProgress';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import UseWindowDimensions from '../UseWindowDimensions';
 
 // import { storage } from './firebaseConfig';
 
@@ -14,7 +15,7 @@ const ImageUploadButton = (props) => {
   const storage = props.storage;
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
-  console.log(id);
+  const { width } = UseWindowDimensions();
 
   const [buttonColor, setButtonColor] = useState('primary');
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -40,15 +41,15 @@ const ImageUploadButton = (props) => {
       const ordersRefStorage = ref(storage, folderName + '/' + fileName);
 
       uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
-        console.log(snapshot);
-        console.log('Uploaded a blob or file!');
+        // console.log(snapshot);
+        // console.log('Uploaded a blob or file!');
         setButtonColor('success');
         setButtonText('Uploaded Successful');
         setLoading(false);
 
         // GET IMAGE URL
         const downloadURL = await getDownloadURL(ordersRefStorage);
-        console.log(downloadURL);
+        // console.log(downloadURL);
 
         if (onUploadFunction !== undefined) {
           onUploadFunction(downloadURL);
@@ -68,18 +69,14 @@ const ImageUploadButton = (props) => {
   //   }
   // }, [buttonText]);
 
-  // function
-
   return (
     <div >
       <Button
         id={id}
         startIcon={<CloudUploadIcon />}
-        className="shadow-md hover:bg-blue-500 focus:outline-none"
+        className="shadow-md focus:outline-none 2xs:h-12 2xs:w-64 tracking-tightest 3xs:tracking-tighter hover:bg-color10b rounded-lg"
         variant="contained"
         component="span"
-        color={buttonColor}
-        sx={{ width: 280, height: 45 }}
       >
         <input type="file" id={`imageUpload-${id}`} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
         <label htmlFor={`imageUpload-${id}`}>

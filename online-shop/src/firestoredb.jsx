@@ -2,6 +2,19 @@ import firestorefunctions from './firestorefunctions';
 import Joi from 'joi';
 import schemas from './schemas/schemas';
 import retryApi from '../utils/retryApi';
+import db from"../firebase"
+import {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  getDoc,
+  arrayUnion,
+  arrayRemove,
+  runTransaction,
+} from "firebase/firestore";
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
@@ -340,7 +353,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllOrderMessages() {
-    
     return await this.readAllDataFromCollection('ordersMessages');
   }
 
@@ -348,10 +360,34 @@ class firestoredb extends firestorefunctions {
     return await this.readSelectedDataFromCollection('ordersMessages', reference);
   }
 
-  async markMessageAsRead() {
-
+  async updateOrderMessageAsRead(reference, data) {
+    this.updateDocumentFromCollection('ordersMessages',reference,{['messages'] : data})
   }
 
+  async updateOrderMessageMarkAsAdminReadAll(reference, data) {
+    this.updateDocumentFromCollection('ordersMessages',reference,{'adminReadAll' : data})
+  }
+
+  async updateOrderMessageMarkAsOwnerReadAll(reference, data) {
+    this.updateDocumentFromCollection('ordersMessages',reference,{'ownerReadAll' : data})
+  }
+
+  async readPayments(){
+    return await this.readAllDataFromCollection("Payments")
+  }
+
+  async updatePaymentStatus(reference, status) {
+
+    const statusSchema = Joi.string().valid('pending','approved','declined')
+
+    const { error } = statusSchema.validate(status);
+
+    if (error) {
+      throw new Error(error);
+    }
+
+    this.updateDocumentFromCollection('Payments', reference,{'status' : status})
+  }
 
 }
 

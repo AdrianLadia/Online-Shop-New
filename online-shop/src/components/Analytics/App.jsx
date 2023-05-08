@@ -1,6 +1,6 @@
 import React from "react";
 import InventoryTable from "./InventoryTable";
-import { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState, createContext, useContext, useRef } from "react";
 import { getAuth, onAuthStateChanged, connectAuthEmulator } from "firebase/auth";
 import { LogInBox } from "./LogInBox";
 import { LogOutBox } from "./LogOutBox";
@@ -11,7 +11,7 @@ import {FaRegListAlt} from 'react-icons/fa'
 import AppContext from "../../AppContext";
 
 const App = () => {
-  const {firestore,setCategories} = useContext(AppContext)
+  const {firestore, setCategories, } = useContext(AppContext)
 
   // connectAuthEmulator(auth, "http://localhost:9099");
 
@@ -25,11 +25,12 @@ const App = () => {
   const { width } = useWindowDimensions();
   const [screenSizeMobile, setScreenSizeMobile] = useState()
   const [showMenu, setShowMenu] =useState(false)
+  const dummy = useRef(null);
 
-  
-  
-  // console.log(screenSizeMobile)
-  
+  useEffect(()=>{
+    dummy.current.scrollIntoView({behavior: "smooth"});
+  },[firestore])
+
   const handleProducts = (option1) => {
     setProducts(option1);
   };  
@@ -63,18 +64,19 @@ const App = () => {
   },[])
 
 
-  useEffect(() => {
-    if (loggedIn) {
-      if (user.email === "ladiaadrian@gmail.com" || "valletigio54@gmail.com") {
-        setAuthorized(true);
-      } else {
-        setAuthorized(false);
-      }
-    }
-  }, [loggedIn]);
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     if (user.email === "ladiaadrian@gmail.com" || "valletigio54@gmail.com") {
+  //       setAuthorized(true);
+  //     } else {
+  //       setAuthorized(false);
+  //     }
+  //   }
+  // }, [loggedIn]);
 
   return (
     <div>
+      <div ref={dummy}/>  
       <div className=" overflow-hidden bg-gradient-to-r h-screen from-green-200 via-cyan-200 to-emerald-200">
 
                         {screenSizeMobile === true ?(
@@ -90,8 +92,8 @@ const App = () => {
                         <>  
                           {screenSizeMobile === false ? 
                               (<MenuBar callback={handleTableContent} products={products}/>)
-                            : null
-                          }
+                              : null
+                            }
                         </>
                     
                   </>

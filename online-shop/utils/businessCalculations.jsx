@@ -13,15 +13,15 @@ class businessCalculations {
   }
 
   readAllParentProductsFromOnlineStoreProducts(products) {
-    console.log(products);
+    // console.log(products);
     const parentProducts = [];
     products.map((product) => {
-      console.log(product.parentProductId);
+      // console.log(product.parentProductId);
       if (product.parentProductID === '') {
         parentProducts.push(product.itemId);
       }
     });
-    console.log(parentProducts);
+    // console.log(parentProducts);
     return parentProducts;
   }
 
@@ -283,7 +283,7 @@ class businessCalculations {
   }
 
   getVehicleForDelivery(weightOfItems) {
-    console.log(weightOfItems);
+    // console.log(weightOfItems);
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -293,7 +293,7 @@ class businessCalculations {
     const vehicleSchema = Joi.object().required();
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
-      console.log('MOTORCYCLE SELECTED');
+      // console.log('MOTORCYCLE SELECTED');
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
 
       if (error2) {
@@ -417,9 +417,9 @@ class businessCalculations {
     let outOfStockDetected = false;
     const count = countStrings(cart);
     const countEntries = Object.entries(count);
-    console.log(countEntries);
+    // console.log(countEntries);
     const products = await this.cloudfirestore.readAllProductsForOnlineStore();
-    console.log(products);
+    // console.log(products);
     countEntries.map(([itemId, quantity]) => {
       products.map((dataitem) => {
         if (dataitem.itemId === itemId) {
@@ -427,7 +427,7 @@ class businessCalculations {
             dataitem.stocksAvailable,
             dataitem.averageSalesPerDay
           );
-          console.log(stocksAvailableLessSafetyStock);
+          // console.log(stocksAvailableLessSafetyStock);
           if (stocksAvailableLessSafetyStock < quantity) {
             let stocksLeft;
             if (stocksAvailableLessSafetyStock < 0) {
@@ -437,7 +437,7 @@ class businessCalculations {
             }
             message = message + `${dataitem.itemName} - ${stocksLeft} stocks left \n`;
             outOfStockDetected = true;
-            console.log(outOfStockDetected);
+            // console.log(outOfStockDetected);
           }
         }
       });
@@ -453,7 +453,7 @@ class businessCalculations {
         throw new Error('Data Validation Error');
       }
 
-      console.log(toReturn);
+      // console.log(toReturn);
       return toReturn;
     } else {
       const toReturn = [false, message];
@@ -641,7 +641,7 @@ class businessCalculations {
       const phoneNumber = data.phoneNumber;
       const totalPrice = data.grandTotal;
 
-      console.log('data', data);
+      // console.log('data', data);
 
       if (testing === false) {
         PaymayaSdk(

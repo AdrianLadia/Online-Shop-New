@@ -88,7 +88,7 @@ export function InventoryTable({name, category, customized, callback}) {
     useEffect(() => {
       const dataTable = [];
       const moreData = [];
-      dataUsedForTable.map((row) => {
+      dataUsedForTable.map((row, index) => {
         const data = row.tableData;
         const more = row.moreInfoData;
         dataTable.push(data);
@@ -115,7 +115,7 @@ export function InventoryTable({name, category, customized, callback}) {
   
  useEffect(()=>{
   const data = [];
-  tableData.map((s)=>{
+  tableData.map((s, index)=>{
     const n = s.name;
 
     data.push(n)

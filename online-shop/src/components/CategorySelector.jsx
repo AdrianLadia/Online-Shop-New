@@ -83,7 +83,7 @@ const CategorySelector = (props) => {
               scrollButtons="auto"
             >
               {categories && categories.map((category, index) => {
-                return <Tab sx={{fontWeight:"bold"}} label={category} {...a11yProps(index)} />;
+                return <Tab sx={{fontWeight:"bold"}} label={category} key={index} {...a11yProps(index)} />;
               })}
             </Tabs>
           </Box>

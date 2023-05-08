@@ -1,6 +1,6 @@
 import React from 'react';
 import firestoredb from '../firestoredb';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import OrdersCalendar from './OrdersCalendar';
 import { Typography } from '@mui/material';
 import Radio from '@mui/material/Radio';
@@ -21,6 +21,7 @@ import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import {BsFillBagCheckFill } from "react-icons/bs";
 
 const AdminOrders = (props) => {
+
   const { firestore } = React.useContext(AppContext);
 
   const styles = textFieldStyle();
@@ -39,8 +40,13 @@ const AdminOrders = (props) => {
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
+  const dummy = useRef(null)
 
   const users = props.users;
+
+  useEffect(()=>{
+    dummy.current.scrollIntoView({behavior: "smooth"})
+  },[])
 
   const handleChange = (newValue) => {
     setValue(newValue);
@@ -89,6 +95,7 @@ const AdminOrders = (props) => {
   return (
     
     <div className="flex flex-col w-full items-center bg-gradient-to-r from-colorbackground via-color2 to-color1 ">
+      <div ref={dummy}/>
       <div className="flex md:flex-row flex-row-reverse justify-center mt-6 md:-ml-14">
         <Typography variant="h2">Orders </Typography>
         <BsFillBagCheckFill/> 

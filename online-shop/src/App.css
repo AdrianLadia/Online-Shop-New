@@ -2,8 +2,8 @@ body{
     background: linear-gradient(to right, #e1fadd, #cceac7, #d3eecf);
 }
 ::-webkit-scrollbar{
-    width: 4px;
-    height: 1px;
+    width: 5px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-track{

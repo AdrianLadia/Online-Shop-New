@@ -7,6 +7,7 @@ const express = require('express');
 const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
+const { should } = require('vitest');
 
 admin.initializeApp();
 
@@ -916,25 +917,40 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         return;
       }
 
-      try {
-        const db = admin.firestore();
-        const userRef = db.collection('Users').doc(userId);
-        const userDoc = await userRef.get();
-        const userData = userDoc.data();
-        const orders = userData.orders;
-        const orderIndex = orders.findIndex((order) => order.reference === orderReference);
-        const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
-        const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
-        orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
-        await userRef.update({
-          orders: orders,
-        });
+      const db = admin.firestore();
 
-        res.status(200).send('success');
-      } catch (error) {
-        console.error('Error updating proof of payment link:', error);
-        res.status(400).send('Error updating proof of payment link.');
-      }
+      db.runTransaction(async (transaction) => {
+        try {
+          // READ
+          const userRef = db.collection('Users').doc(userId);
+          const userDoc = await transaction.get(userRef);
+          const userData = userDoc.data();
+          const orders = userData.orders;
+          const orderIndex = orders.findIndex((order) => order.reference === orderReference);
+          const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
+          const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
+          orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
+
+          // WRITE
+          transaction.update(userRef, {
+            orders: orders,
+          });
+
+          // TODO
+          // ADD PAYMENT DATA TO PAYMENTS COLLECTION
+          transaction.set(db.collection('Payments').doc(orderReference), {
+            orderReference: orderReference,
+            proofOfPaymentLink: proofOfPaymentLink,
+            userId: userId,
+            status: 'pending',
+          });
+
+          res.status(200).send('success');
+        } catch {
+          console.error('Error updating proof of payment link:', error);
+          res.status(400).send('Error updating proof of payment link.');
+        }
+      });
     } catch (error) {
       res.status(400).send('Error updating proof of payment link.');
       console.error('Error updating proof of payment link:', error);
@@ -947,9 +963,9 @@ exports.sendEmail = functions.region('asia-southeast1').https.onRequest(async (r
     // get the recipient email address and message content from the client-side
     const data = req.body;
     const { to, subject, text } = data;
-  
+
     try {
-      sendEmail(to, subject, text)
+      sendEmail(to, subject, text);
       res.status(200).send('success');
     } catch (error) {
       console.error('Error sending email:', error);
@@ -957,6 +973,75 @@ exports.sendEmail = functions.region('asia-southeast1').https.onRequest(async (r
     }
   });
 });
+
+async function deleteOldOrders() {
+  const db = admin.firestore();
+  const expiryHours = 24;
+  let currentTime = new Date();
+  const usersRef = db.collection('Users');
+  const snapshot = await usersRef.get();
+  try{
+    snapshot.forEach((doc) => {
+      const user = doc.data();
+      const orders = user.orders;
+      const userId = user.uid;
+      let foundExpiredOrders = false;
+
+      const filteredOrder = orders.filter((order) => {
+        let orderTimeStamp = order.orderDate;
+        try {
+          orderTimeStamp = orderTimeStamp.toDate();
+        } catch {
+          orderTimeStamp = new Date(orderTimeStamp);
+        }
+
+        const paid = order.paid;
+
+        if (paid) {
+          return true;
+        }
+
+        const diffTime = Math.abs(currentTime - orderTimeStamp);
+        const msInHour = 1000 * 60 * 60;
+        const diffHours = Math.floor(diffTime / msInHour);
+
+        const lessThanExpiryHours = diffHours < expiryHours;
+
+        if (lessThanExpiryHours) {
+          return true;
+        } else {
+          foundExpiredOrders = true;
+        }
+      });
+
+      if (foundExpiredOrders) {
+        db.collection('Users').doc(userId).update({ orders: filteredOrder });
+      }
+    });
+  }
+  catch{
+    console.log('Error deleting old orders')
+  }
+}
+
+exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try{
+      deleteOldOrders();
+      res.status(200).send('successfully deleted all orders');
+    }
+    catch(error){
+      res.status(400).send('failed to delete old orders');
+    }
+  });
+})
+
+exports.deleteOldOrdersScheduled = functions
+  .region('asia-southeast1')
+  .pubsub.schedule('every 1 hours')
+  .onRun(async (context) => {
+    deleteOldOrders();
+  });
 
 // exports.arrayUpdateTrigger = functions.firestore
 //   .document("Users/{userId}")

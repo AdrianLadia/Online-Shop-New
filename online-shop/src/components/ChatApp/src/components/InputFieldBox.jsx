@@ -18,7 +18,11 @@ const InputFieldBox = ({callback, sent}) => {
   callback(message, send)
 
   useEffect(()=>{
-    setMessage("")
+
+    if(sent === true){
+      setMessage("")
+    }
+
   },[sent])
 
   return (

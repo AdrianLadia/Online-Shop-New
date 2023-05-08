@@ -152,7 +152,7 @@ const AccountMenu = (props) => {
           </ListItemIcon>
           <span>Settings</span>
         </MenuItem>
-        <MenuItem id='logoutMenu' onClick={props.signout} className='hover:bg-color10b'>
+        <MenuItem id='logoutMenu' onClick={props.signout} className='hover:bg-red-300'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

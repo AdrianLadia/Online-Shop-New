@@ -1,12 +1,6 @@
-import { TextField, Typography } from '@mui/material';
+import { TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import React from 'react';
-import { useEffect } from 'react';
-import firestoredb from '../firestoredb';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import { useEffect, useRef } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
@@ -16,11 +10,12 @@ import {ThemeProvider } from '@mui/material/styles';
 import theme from "../colorPalette/MaterialUITheme";
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
-import { IoCashOutline } from "react-icons/io5";
 import { HiCash } from "react-icons/hi";
+import AdminCreatePaymentTable from './AdminCreatePaymentTable'
 
 const AdminCreatePayment = (props) => {
-  const { firestore,cloudfirestore } = useContext(AppContext);
+
+  const { cloudfirestore } = useContext(AppContext);
 
   const style = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
@@ -31,6 +26,11 @@ const AdminCreatePayment = (props) => {
   const [reference, setReference] = React.useState('');
   const [paymentProvider, setPaymentProvider] = React.useState('');
   const [amount, setAmount] = React.useState(0);
+  const dummy = useRef(null)
+
+  useEffect(()=>{
+    dummy.current.scrollIntoView({behavior: "smooth"})
+  },[])
 
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
@@ -48,15 +48,11 @@ const AdminCreatePayment = (props) => {
     cloudfirestore.transactionCreatePayment(data);
   }
 
-  useEffect(() => {
-    console.log(amount)
-  }, [amount]);
-
   return (
     <ThemeProvider theme={theme}>
     <div className="flex flex-col mb-8 items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
+      <div ref={dummy}></div>
       <div className='flex flex-col gap-10 w-11/12 md:w-9/12 '>
-
         <div className='flex md:flex-row flex-row-reverse justify-center mt-7'>
           <Typography variant="h2" className="mt-1  flex justify-center"><span>Create Payment</span></Typography>
           <HiCash size={25}/>
@@ -64,6 +60,7 @@ const AdminCreatePayment = (props) => {
 
         <Divider sx={{border:1}}/>
 
+        <div className='grid md:grid-cols-2 gap-5 lg:gap-10'>
         <Autocomplete
           onChange={(event, value) => setSelectedName(value)}
           disablePortal
@@ -74,25 +71,6 @@ const AdminCreatePayment = (props) => {
           sx={style}
         />
 
-        <Divider/>
-
-        {/* <Box sx={{ minWidth: 120 }}>
-        <FormControl fullWidth>
-          <InputLabel required id="demo-simple-select-label">Customer Name</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={selectedName}
-            label="selectedName"
-            onChange={handleChange}
-          >
-            {users.map((user) => {
-              return <MenuItem value={user.uid}>{user.name}</MenuItem>
-            })}
-          </Select>
-        </FormControl>
-      </Box> */}
-
         <TextField id='amountPayment' 
           onChange={(event) => setAmount(parseFloat(event.target.value) )} 
           required label="Amount" 
@@ -100,16 +78,12 @@ const AdminCreatePayment = (props) => {
           sx={style}
           />
 
-          <Divider/>
-
         <TextField id='referencePayment' 
           onChange={(event) => setReference(event.target.value)} 
           required label="Reference"
           InputLabelProps={labelStyle}
           sx={style}
           />
-
-          <Divider/>
 
         <TextField
           id='paymentProviderPayment'
@@ -119,18 +93,20 @@ const AdminCreatePayment = (props) => {
           InputLabelProps={labelStyle}
           sx={style}
           />
-          
-          <Divider/>
+        </div>
 
         <div className='flex justify-center'>
           <button 
             id='createPaymentButton' 
             onClick={onCreatePayment}  
-            className="w-5/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg sm:text-2xl text-xl"
+            className="w-4/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg sm:text-2xl text-xl"
             >{' '}Create Payment{' '}
           </button>
         </div>
+        
+        <Divider sx={{border:1}}/>
 
+        <AdminCreatePaymentTable/>
       </div>
     </div>
     </ThemeProvider>

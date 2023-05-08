@@ -103,8 +103,7 @@ const MyOrderCardModal = (props) => {
                   }
                 </Typography>
 
-                <ImageUploadButton name={`orderModal-${order.reference}`} onUploadFunction={onUpload2} storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  buttonTitle={'Upload Proof of Payment'} />
-              </div>
+                </div>
               
               <div className="w-3/4 text-end ">
                 <Typography
@@ -120,20 +119,22 @@ const MyOrderCardModal = (props) => {
 
             <div className="w-full border-t-2 mt-4"/>
           
-              <div className="flex flex-col-reverse w-full 2xs:w-11/12 self-center gap-5 mt-5 ">
+              {/* <div className="flex flex-col-reverse w-full 2xs:w-11/12 self-center gap-5 mt-5 ">
                 <div className="w-full flex justify-evenly">
                   <button className=" w-max rounded-lg px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
                   <button className="w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
                 </div>
                 <div className="flex justify-center">
                   <ImageUploadButton 
-                      onUploadFunction={onUpload2} 
-                      storage={storage} folderName={'Orders/' + userId + '/' + order.reference}  
-                      buttonTitle={'Upload Proof of Payment'} />
+                    name={`orderModal-${order.reference}`} 
+                    onUploadFunction={onUpload2} 
+                    storage={storage} 
+                    folderName={'Orders/' + userId + '/' + order.reference}  
+                    buttonTitle={'Upload Proof of Payment'} />
                 </div>
-              </div>
+              </div> */}
 
-            <div className="w-full border-t-2 mt-4"/>
+            {/* <div className="w-full border-t-2 mt-4"/> */}
 
             <List
               sx={{
