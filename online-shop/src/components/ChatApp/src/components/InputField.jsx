@@ -16,37 +16,6 @@ const InputField = (props) => {
   const timestampString = timestamp.toDate().toLocaleString();
   const {userId, selectedChatOrderId, userdata, firestore} = useContext(AppContext)
 
-    // async function updateMessages(){
-    //   firestore.readOrderMessageByReference(selectedChatOrderId).then((data) => {
-
-    //     console.log(data)
-
-    //       data.messages.map((mess)=>{
-    //         let unreadAdmin = null; 
-    //         let unreadOwner = null;
-
-    //         if(mess.read === false && mess.userRole === "member"){
-    //           unreadOwner = true;
-    //             if(unreadOwner){
-    //               data.ownerReadAll = true;
-    //             }else{
-    //               data.ownerReadAll = false;
-    //             }
-    //         }else if(mess.read === false && mess.userRole !== "member"){
-    //           unreadAdmin = true;
-    //             if(unreadOwner){
-    //               data.ownerReadAll = true;
-    //             }else{
-    //               data.ownerReadAll = false;
-    //             }
-    //         }
-    //       })
-    //     firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, data.ownerReadAll)
-    //     firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll)
-    //     firestore.updateOrderMessageAsRead(selectedChatOrderId, data.messages)
-    //   })
-    // }
-
     async function updateMessages(){
       const docRef = doc(db, "ordersMessages", selectedChatOrderId);
       const docSnap = await getDoc(docRef);

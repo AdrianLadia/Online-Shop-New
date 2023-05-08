@@ -372,8 +372,8 @@ class firestoredb extends firestorefunctions {
     this.updateDocumentFromCollection('ordersMessages',reference,{'ownerReadAll' : data})
   }
 
-  async updateOrderMessageMarkAsReadAll(){
-    this.readSelectedDataFromCollection()
+  async readPayments(){
+    return await this.readAllDataFromCollection("Payments")
   }
 
 }
