@@ -939,9 +939,10 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           // ADD PAYMENT DATA TO PAYMENTS COLLECTION
           transaction.set(db.collection('Payments').doc(orderReference), 
             {
-              reference: orderReference,
+              orderReference: orderReference,
               proofOfPaymentLink: proofOfPaymentLink,
               userId: userId,
+              status: 'pending'
           });
 
           res.status(200).send('success');
