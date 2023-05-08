@@ -2189,7 +2189,7 @@ describe('deleteOrderFromUserFirestore', () => {
   },100000);
 });
 
-describe('updateOrderProofOfPaymentLink', () => {
+describe.only('updateOrderProofOfPaymentLink', () => {
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2247,6 +2247,12 @@ describe('updateOrderProofOfPaymentLink', () => {
     expect(orderFound).toEqual(true);
   });
 
+  test('Check if proof of payment is added to payments', async () => {
+    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    await delay(300);
+    expect(data.proofOfPaymentLink).toEqual('https://testlink.com');
+  });
+
   test('add another proofOfPaymentLink', async () => {
     await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com');
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
@@ -2260,6 +2266,18 @@ describe('updateOrderProofOfPaymentLink', () => {
     });
     expect(orderFound).toEqual(true);
   });
+
+  test('Check if proof of payment is added to payments 2', async () => {
+    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    await delay(300);
+    expect(data.proofOfPaymentLink).toEqual('https://testlink2.com');
+  });
+
+  test('delete testref1234', async () => {
+    await firestore.deleteDocumentFromCollection('Payments', 'testref1234');
+    // await firestore.deleteDocumentFromCollection('Users', userTestId);
+  });
+
 }, 10000);
 
 describe('convert date timestamp to date string', () => {
