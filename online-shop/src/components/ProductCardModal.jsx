@@ -195,7 +195,7 @@ const ProductCardModal = (props) => {
                   <Typography className="mt-8 ml-1 w-full 2xs:w-11/12 text-sm 2xs:text-lg indent-5 tracking-wide first-letter:text-xl first-letter:font-semibold">
                       {props.product.description}
                   </Typography>):null} 
-
+                  
                 {/* IMAGE */}
                   <ImageList
                     className={classes.imageList}
@@ -227,6 +227,9 @@ const ProductCardModal = (props) => {
                                                   first-letter:text-xl xl:first-letter:text-2xl 2xl:first-letter:text-3xl first-letter:font-semibold">
                               {props.product.description}
                             </Typography>
+
+                            <Divider sx={{border:"1px solid lightgray"}} className="w-full mb-8 "/> 
+                            
                           </div>
                           <div className="w-full 2md:w-11/12 lg:w-7/12 ml-0 lg:ml-4 border-2 border-color60 rounded-sm">
                             {/* SPECIFICATION TABLE */}

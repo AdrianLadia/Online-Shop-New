@@ -123,8 +123,8 @@ const ProductCard = (props) => {
   function responsiveStyle() {
     if (width < 396) {
       return '19px';
-    }else if(width < 1){
-      return 
+    }else if(396 < width < 415){
+      return '19px';
     }else{
       return '23px';
     }
@@ -173,11 +173,6 @@ const ProductCard = (props) => {
     return () => clearTimeout(timer);
   }, []);
 
-
-  function responsiveImgWidth() {
-    return 'max-w-xl';
-} 
-
 function responsiveWidth() {
   return 'max-w-lg';
 } 
@@ -213,15 +208,19 @@ function responsiveWidth() {
                 </div>
               ) : null}
             </div>
+
+              {props.product.imageLinks ? 
               <img
                   src={props.product.imageLinks[0]}
-                  alt={props.product.itemName}
+                  alt={props.product.itemName }
                   // className={"h-full object-cover saturate-150" + responsiveImgWidth()}
                   // className={"h-full object-cover rounded-r-4xl border-t-2 border-b-2"}
-                  className={"h-full object-cover rounded-4xl  border-color60 "}
+                  className={"h-full object-cover rounded-4xl 3xs:w-60 border-color60 "}
                   onClick={() => setModal(true)}
-              >
-              </img>
+              />
+
+              : <div className="w-60"> </div>}
+              
           </div>
           {/* IMAGE */}
           {/* DETAILS */}
@@ -241,7 +240,7 @@ function responsiveWidth() {
                       Stocks left
                     </Typography>
                     <span className="flex h-3 w-3 ml-1 ">
-                      <span className="inline-flex items-center justify-center mt-0 2xl:mt-1 py-2 px-1 text-xs font-semibold text-white bg-red-600 rounded-full">
+                      <span className="inline-flex items-center justify-center mt-0 2xl:mt-1 py-2 px-1.5 text-xs font-semibold text-white bg-red-600 rounded-full">
                         {props.product.stocksAvailable - safetyStock}
                       </span>
                     </span>
