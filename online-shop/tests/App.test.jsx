@@ -2189,7 +2189,7 @@ describe('deleteOrderFromUserFirestore', () => {
   },100000);
 });
 
-describe.only('updateOrderProofOfPaymentLink', () => {
+describe('updateOrderProofOfPaymentLink', () => {
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2251,6 +2251,7 @@ describe.only('updateOrderProofOfPaymentLink', () => {
     const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
     await delay(300);
     expect(data.proofOfPaymentLink).toEqual('https://testlink.com');
+    expect(data.status).toEqual('pending');
   });
 
   test('add another proofOfPaymentLink', async () => {
@@ -2266,18 +2267,19 @@ describe.only('updateOrderProofOfPaymentLink', () => {
     });
     expect(orderFound).toEqual(true);
   });
-
+  
   test('Check if proof of payment is added to payments 2', async () => {
     const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
     await delay(300);
     expect(data.proofOfPaymentLink).toEqual('https://testlink2.com');
+    expect(data.status).toEqual('pending');
   });
-
+  
   test('delete testref1234', async () => {
     await firestore.deleteDocumentFromCollection('Payments', 'testref1234');
     // await firestore.deleteDocumentFromCollection('Users', userTestId);
   });
-
+  
 }, 10000);
 
 describe('convert date timestamp to date string', () => {
@@ -2383,4 +2385,71 @@ describe('afterCheckoutRedirectLogic', () => {
   //   const res = await cloudfirestore.afterCheckoutRedirectLogic(userTestId);
   //   expect(res).toEqual(false);
   // });
+});
+
+describe('updatePaymentStatus', () => {
+  test('Create Test Order', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    });
+  });
+  test('create Test Payment Proof Upload', async () => {
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com');
+    await delay(300);
+  });
+  test('update status to success',async () => {
+    await firestore.updatePaymentStatus('testref1234', 'approved');
+    await delay(200);
+    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    expect(data.status).toEqual('approved');
+  })
+  test('update status to failed',async () => {
+    await firestore.updatePaymentStatus('testref1234', 'declined');
+    await delay(200);
+    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    expect(data.status).toEqual('declined');
+  });
+  test('update status to pending',async () => {
+    await firestore.updatePaymentStatus('testref1234', 'pending');
+    await delay(200);
+    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    expect(data.status).toEqual('pending');
+  });
 });
