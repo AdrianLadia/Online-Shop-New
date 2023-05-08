@@ -102,7 +102,7 @@ const AdminCreatePayment = (props) => {
           <TableRow className='bg-color60 border border-color60'>
             <TableCell align="left" className='text-white'>Proof of Payment</TableCell>
             <TableCell align="right" className='text-white'>Reference #</TableCell>
-            <TableCell align="center" className='text-white'>Customer ID</TableCell>
+            <TableCell align="right" className='text-white'>Customer ID</TableCell>
             <TableCell align="right" className='text-white'>Payment Method</TableCell>
             <TableCell align="center" className='text-white'>Actions</TableCell>
           </TableRow>
