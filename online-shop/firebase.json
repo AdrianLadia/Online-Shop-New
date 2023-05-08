@@ -9,6 +9,16 @@
         "firebase-debug.log",
         "firebase-debug.*.log"
       ]
+    },
+    {
+      "source": "new",
+      "codebase": "new",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
     }
   ],
   "emulators": {
@@ -24,7 +34,13 @@
     "ui": {
       "enabled": true
     },
-    "singleProjectMode": true
+    "singleProjectMode": true,
+    "pubsub": {
+      "port": 8085
+    },
+    "storage": {
+      "port": 9199
+    }
   },
   "firestore": {
     "rules": "firestore.rules",
