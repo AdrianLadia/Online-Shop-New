@@ -23,7 +23,7 @@ const AdminChatMenu = () => {
     useEffect(() => {
         firestore.readAllOrderMessages().then((res) => {
             let chatData = []
-            console.log(res)
+            // console.log(res)
             res.forEach((chat) => {
                 const referenceNumber = chat.referenceNumber
                 const customerName = chat.ownerName
@@ -49,7 +49,7 @@ const AdminChatMenu = () => {
             setChatData(chatData)
         })
     }, [chatSwitch]);
-    
+  
   function convertChatMessageToFitTable(message) {
     let messageLength;
     if (width <= 390) {

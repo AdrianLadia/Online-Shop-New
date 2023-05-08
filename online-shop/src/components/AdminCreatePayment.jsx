@@ -11,7 +11,7 @@ import theme from "../colorPalette/MaterialUITheme";
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import { HiCash } from "react-icons/hi";
-import { BsFillImageFill,  } from "react-icons/bs";
+import AdminCreatePaymentTable from './AdminCreatePaymentTable'
 
 const AdminCreatePayment = (props) => {
   const { cloudfirestore } = useContext(AppContext);
@@ -96,36 +96,8 @@ const AdminCreatePayment = (props) => {
         </div>
         <Divider sx={{border:1}}/>
 
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650, minHeight: 150 }} className='border border-color60' size="small" aria-label="a dense table">
-        <TableHead>
-          <TableRow className='bg-color60 border border-color60'>
-            <TableCell align="left" className='text-white'>Proof of Payment</TableCell>
-            <TableCell align="right" className='text-white'>Reference #</TableCell>
-            <TableCell align="right" className='text-white'>Customer ID</TableCell>
-            <TableCell align="right" className='text-white'>Payment Method</TableCell>
-            <TableCell align="center" className='text-white'>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-           {/* {rows.map((row) => ( */}
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0} }}>
-              <TableCell component="th" scope="row" className="text-7xl"><BsFillImageFill/></TableCell>
-              <TableCell align="right">Test#12345</TableCell>
-              <TableCell align="right">TestUser54321</TableCell>
-              <TableCell align="right">maya</TableCell>
-              <TableCell align="right" >
-                <div className='flex justify-evenly gap-2 '>
-                  <button className=' border border-red-400 hover:bg-red-100 text-red-400 px-4 py-3 rounded-xl'>Deny</button>
-                  <button className='bg-color60 hover:bg-color10c text-white px-4 py-3 rounded-xl'>Approve</button>
-                </div>
-              </TableCell>
-            </TableRow>
-          {/* // ))}  */}
-        </TableBody>
-      </Table>
-    </TableContainer>
-
+        <AdminCreatePaymentTable/>
+        
       </div>
     </div>
     </ThemeProvider>
