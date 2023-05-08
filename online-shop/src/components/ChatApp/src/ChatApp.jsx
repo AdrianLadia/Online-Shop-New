@@ -6,7 +6,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../AppContext';
 
 const ChatApp = () => {
-  const {db, selectedChatOrderId, userId, firestore, chatSwitch, userdata } = useContext(AppContext);
+  const {db, selectedChatOrderId, userId, chatSwitch, userdata } = useContext(AppContext);
   const loggedInUserId = userId;
   const [messageDetails, setMessageDetails] = useState({});
   const [userName, setUserName] = useState('');
@@ -23,9 +23,7 @@ const ChatApp = () => {
         console.log('No such document!');
       }
     });
-  }, [chatSwitch]);
-
-  // console.log(messageDetails)
+  }, [selectedChatOrderId]);
 
   return (
     <div className="flex justify-center w-screen h-screen ">

@@ -1,17 +1,20 @@
 import React,{useState, useEffect, useContext, useRef} from 'react'
 import DisplayMessagesUser from './DisplayMessagesUser';
 import DisplayMessagesAdmin from './DisplayMessagesAdmin';
-import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../../AppContext';
 
 const DisplayMessages = (props) => {
 
-  const { isadmin } = useContext(AppContext);
+  const { isadmin, chatSwitch } = useContext(AppContext);
   const messages = props.messages.messages
   const userName = props.userName
   const loggedInUserId = props.loggedInUserId
   const user = props.user;
- 
+
+  useEffect(()=>{
+
+  },[chatSwitch])
+
   return (
     <div className='w-full bg-green4 border-color60 rounded-xl border-x-4 h-5/6'>
        <div className='h-full '>
@@ -29,7 +32,7 @@ const DisplayMessages = (props) => {
                 }
               }) : null}
           </div>
-       </div>         
+       </div>  
     </div>
   )
 }

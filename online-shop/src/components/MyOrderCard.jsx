@@ -6,11 +6,8 @@ import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
 import UseWindowDimensions from './useWindowDimensions';
-import { BsFileImage } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
-import { doc, onSnapshot, getDoc } from 'firebase/firestore';
-import db from '../../firebase';
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
@@ -25,24 +22,22 @@ function MyOrderCard(props) {
   const { width } = UseWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const navigateTo = useNavigate()
-  const [ownerRead, setOwnerRead] = useState(null);
-  const [test, setTest] = useState(0);
-  const [messageDetails, setMessageDetails] = useState({})
+  const [unRead, setUnRead] = useState();
 
+  async function readMessages(){
+    firestore.readOrderMessageByReference(order.reference).then((s)=>{
+      let unReadCount = 0;
+      s.messages.map((q)=>{
+        if(q.userRole === "superAdmin" || q.userRole === "Admin" && q.read === "false"){
+          unReadCount += 1 ;
+        };
+      });setUnRead(unReadCount)
+    })
+  }
 
-  // async function readUnreadMessages(){
-  //   const docRef = doc(db, 'ordersMessages', order.reference);
-  //   const docSnap = await getDoc(docRef);
-  //   console.log(docSnap)
-  //   const data = docSnap.data();
-  //   console.log(data)
-
-  //   // const messages = data.messages;
-
-  //   // console.log(db, 'ordersMessages', order.reference)
-  //   // console.log(order.reference)
-  // }
-
+  useEffect(()=>{
+    readMessages()
+  },[])
 
   function getPaymentStatus(x, y, z) {
     if (order.paid) {
@@ -100,7 +95,6 @@ function MyOrderCard(props) {
         'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()
       }
     >
-      {/* <button onClick={readUnreadMessages}>aasddd</button> */}
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
         <div className="flex justify-end mb-4">
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
@@ -160,7 +154,7 @@ function MyOrderCard(props) {
                   className='p-3 w-max rounded-lg  text-white font-semibold bg-color10a hover:bg-color10c' 
                   > <p className='flex gap-1 justify-center'>
                     <HiChatBubbleLeftEllipsis className='mt-1'/>Message
-                    {/* {ownerRead ? (<p className='bg-red-500 p-1 rounded-full h-1 w-1'> </p>):null} */}
+                    {unRead ? (<p className='bg-red-600 p-1 rounded-full h-1 w-1 animate-ping'></p>):null}
                     </p>
               </button>
 

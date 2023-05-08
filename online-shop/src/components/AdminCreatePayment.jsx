@@ -1,6 +1,6 @@
 import { TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
@@ -14,9 +14,8 @@ import { HiCash } from "react-icons/hi";
 import AdminCreatePaymentTable from './AdminCreatePaymentTable'
 
 const AdminCreatePayment = (props) => {
-  const { cloudfirestore } = useContext(AppContext);
 
-  // console.log(selectedChatOrderId)
+  const { cloudfirestore } = useContext(AppContext);
 
   const style = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
@@ -27,6 +26,11 @@ const AdminCreatePayment = (props) => {
   const [reference, setReference] = React.useState('');
   const [paymentProvider, setPaymentProvider] = React.useState('');
   const [amount, setAmount] = React.useState(0);
+  const dummy = useRef(null)
+
+  useEffect(()=>{
+    dummy.current.scrollIntoView({behavior: "smooth"})
+  },[])
 
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
@@ -47,12 +51,16 @@ const AdminCreatePayment = (props) => {
   return (
     <ThemeProvider theme={theme}>
     <div className="flex flex-col mb-8 items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
+      <div ref={dummy}></div>
       <div className='flex flex-col gap-10 w-11/12 md:w-9/12 '>
         <div className='flex md:flex-row flex-row-reverse justify-center mt-7'>
           <Typography variant="h2" className="mt-1  flex justify-center"><span>Create Payment</span></Typography>
           <HiCash size={25}/>
         </div>
+
         <Divider sx={{border:1}}/>
+
+        <div className='grid md:grid-cols-2 gap-5 lg:gap-10'>
         <Autocomplete
           onChange={(event, value) => setSelectedName(value)}
           disablePortal
@@ -62,21 +70,21 @@ const AdminCreatePayment = (props) => {
           className='flex w-full'
           sx={style}
         />
-        <Divider/>
+
         <TextField id='amountPayment' 
           onChange={(event) => setAmount(parseFloat(event.target.value) )} 
           required label="Amount" 
           InputLabelProps={labelStyle}
           sx={style}
           />
-          <Divider/>
+
         <TextField id='referencePayment' 
           onChange={(event) => setReference(event.target.value)} 
           required label="Reference"
           InputLabelProps={labelStyle}
           sx={style}
           />
-          <Divider/>
+
         <TextField
           id='paymentProviderPayment'
           onChange={(event) => setPaymentProvider(event.target.value)}
@@ -85,19 +93,20 @@ const AdminCreatePayment = (props) => {
           InputLabelProps={labelStyle}
           sx={style}
           />
-          <Divider/>
+        </div>
+
         <div className='flex justify-center'>
           <button 
             id='createPaymentButton' 
             onClick={onCreatePayment}  
-            className="w-5/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg sm:text-2xl text-xl"
+            className="w-4/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg sm:text-2xl text-xl"
             >{' '}Create Payment{' '}
           </button>
         </div>
+        
         <Divider sx={{border:1}}/>
 
         <AdminCreatePaymentTable/>
-        
       </div>
     </div>
     </ThemeProvider>

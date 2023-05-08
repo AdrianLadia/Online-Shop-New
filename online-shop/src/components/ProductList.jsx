@@ -21,7 +21,6 @@ const ProductList = (props) => {
   const businesscalculations = new businessCalculations();
   const cloudfirestoredb = new cloudFirestoreDb();
 
-  
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts } = React.useContext(AppContext);
   const favorites = favoriteitems;
@@ -100,11 +99,12 @@ const ProductList = (props) => {
                   stocksAvailable = p.stocksAvailable;
                   averageSalesPerDay = p.averageSalesPerDay;
                 }
+                
               });
             }
             return (
               <div className='flex justify-evenly'>
-                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
+                <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial}  setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
               </div>
             );
           })

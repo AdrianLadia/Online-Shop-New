@@ -7,7 +7,7 @@ import { BiCircle, BiCheckCircle, BiXCircle } from "react-icons/bi";
 
 const DisplayMessagesAdmin = (props) => {
 
-  const { selectedChatOrderId, firestore, isadmin } = useContext(AppContext);
+  const { selectedChatOrderId, firestore, isadmin, chatSwitch } = useContext(AppContext);
   const message = props.message;
   const dateTime = props.dateTime;
   const userName = props.userName;
@@ -64,7 +64,6 @@ async function updateMessages() {
     } else {
       data.ownerReadAll = false;
     }
-    // console.log(data.ownerReadAll)
     firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, data.ownerReadAll);
     firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll);
     firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);

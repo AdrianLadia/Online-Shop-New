@@ -17,13 +17,13 @@ import { HiOutlineChatAlt, HiChatAlt } from "react-icons/hi";
 const AdminChatMenu = () => {
     const dummy = useRef(null);
     const [openChat, setOpenChat] = useState(false);
-    const {firestore,width,selectedChatOrderId, setSelectedChatOrderId,chatSwitch,setChatSwitch, isadmin} = useContext(AppContext);
+    const {firestore,width,selectedChatOrderId, setSelectedChatOrderId, chatSwitch, setChatSwitch, isadmin} = useContext(AppContext);
     const [chatData, setChatData] = useState([])
 
     useEffect(() => {
         firestore.readAllOrderMessages().then((res) => {
             let chatData = []
-            // console.log(res)
+
             res.forEach((chat) => {
                 const referenceNumber = chat.referenceNumber
                 const customerName = chat.ownerName
@@ -70,22 +70,18 @@ const AdminChatMenu = () => {
     return message;
   }
 
-  const handleOpen = (referenceNumber) => {
-    // setPastRef(referenceNumber)
-    setSelectedChatOrderId(referenceNumber)
-    setChatSwitch(!chatSwitch)
-  };
+  function handleBoth(ref, toggle){
+    setChatSwitch(toggle)
+    setOpenChat(toggle)
+    setSelectedChatOrderId(ref)
+  }
 
   useEffect(()=>{
-      if(chatSwitch === true){
-        setOpenChat(!openChat)
-      }else{
-        setOpenChat(false)
-      }
+    if(chatSwitch === false){
+      setOpenChat(false)
+    }
       dummy.current.scrollIntoView({ behavior: 'smooth' });
   },[chatSwitch])
-
-  // console.log(chatSwitch)
 
   return (
     <div className="flex justify-center flex-col lg:flex-row">
@@ -107,24 +103,22 @@ const AdminChatMenu = () => {
           <TableBody>
             {chatData.map((chat) => (
               <TableRow key={chat.id} >
-                <TableCell className='flex justify-center w-full '>
-                  {selectedChatOrderId === chat.id && chatSwitch ? 
+                <TableCell className='flex justify-center w-full ' component="th">
+                  {selectedChatOrderId === chat.id && openChat ? 
                   <Button 
-                    variant="contained" 
-                    onClick={() => handleOpen(chat.id)} 
-                    className=" px-1 py-2 rounded-full bg-red-500 hover:bg-red-400 text-white mr-3"
+                    onClick={() => handleBoth(chat.id, false)} 
+                    className="  rounded-full bg-red-500 hover:bg-red-400 text-white mr-3"
                     >X
                   </Button>
                   :
                   <Button 
-                    variant="contained" 
-                    onClick={() => handleOpen(chat.id)} 
-                    className=" px-4 py-1 bg-color60 hover:bg-color10c text-white mr-3"
+                    onClick={() => handleBoth(chat.id, true)} 
+                    className=" bg-color60 hover:bg-color10c text-white mr-3"
                     >Open
                   </Button>
                   }
                 </TableCell>
-                <TableCell component="th" scope="row">
+                <TableCell  scope="row">
                   <Typography className="font-semibold text-slate-500">{chat.customerName}</Typography>
                 </TableCell>
                 <TableCell>{chat.id}</TableCell>

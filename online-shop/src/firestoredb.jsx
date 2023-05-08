@@ -375,6 +375,7 @@ class firestoredb extends firestorefunctions {
   async readPayments(){
     return await this.readAllDataFromCollection("Payments")
   }
+
   async updatePaymentStatus(reference, status) {
 
     const statusSchema = Joi.string().valid('pending','approved','declined')
@@ -385,7 +386,7 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    this.updateDocumentFromCollection('Payments',reference,{'status' : status})
+    this.updateDocumentFromCollection('Payments', reference,{'status' : status})
   }
 
 }
