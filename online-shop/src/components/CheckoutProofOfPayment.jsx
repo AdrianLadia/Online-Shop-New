@@ -1,23 +1,20 @@
 import React from 'react';
 import { useContext } from 'react';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
-import cloudFirestoreDb from '../cloudFirestoreDb';
 import { Divider, Typography } from '@mui/material';
 import CheckoutSummary from './CheckoutSummary';
-import CheckoutContext from '../context/CheckoutContext';
 import { Link } from 'react-router-dom';
-import LoginButton from './LoginButton';
 import AppContext from '../AppContext';
 import { useLocation } from 'react-router-dom';
+import CountdownTimer from './CountDownTimer';
 
 const CheckoutProofOfPayment = (props) => {
-
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
 
-  const {storage,cloudfirestore,userId,userdata} = useContext(AppContext)
+  const { storage, cloudfirestore, userId, userdata } = useContext(AppContext);
   const location = useLocation();
-  const { referenceNumber,itemsTotal,deliveryFee,grandTotal,vat,rows,area } = location.state;
+  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area } = location.state;
   console.log('referenceNumber', referenceNumber);
 
   console.log('rows', rows);
@@ -27,11 +24,11 @@ const CheckoutProofOfPayment = (props) => {
   const accountNumber = '006080021403';
 
   function onUpload(url) {
-    cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url,userdata.name,bankName);
+    cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
   }
 
   // console.log('referenceNumber', referenceNumber);
-// 
+  //
   return (
     <div>
       {referenceNumber == null ? (
@@ -53,9 +50,7 @@ const CheckoutProofOfPayment = (props) => {
         <div className="container mx-auto px-4 py-16">
           <div className="bg-white shadow-lg rounded-lg p-8">
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
-            {(referenceNumber != '') ? 
-            <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3>
-            : null}
+            {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
 
             <p>Please send your payment to the following bank account:</p>
             <div className="bg-gray-200 rounded p-4 my-4">
@@ -67,22 +62,42 @@ const CheckoutProofOfPayment = (props) => {
 
             <Divider className="mt-5"></Divider>
             {/* <CheckoutSummary/> */}
-            {(rows != null) ?
-            <CheckoutSummary
-              total={itemsTotal}
-              deliveryFee={deliveryFee}
-              grandTotal={grandTotal}
-              vat={vat}
-              rows={rows}
-              area={area}
-            /> : 
-            <div className='flex justify-center mt-5'> 
-              <Typography>{`Total : ₱ ${grandTotal}`}</Typography>
+            {rows != null ? (
+              <CheckoutSummary
+                total={itemsTotal}
+                deliveryFee={deliveryFee}
+                grandTotal={grandTotal}
+                vat={vat}
+                rows={rows}
+                area={area}
+              />
+            ) : (
+              <div className="flex justify-center mt-5">
+                <Typography>{`Total : ₱ ${grandTotal}`}</Typography>
+              </div>
+            )}
+
+            <div className="flex flex-col justify-center">
+              <div className='flex flex-row'>
+                <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
+                  Order will expire in :
+                </Typography>
+                <CountdownTimer initialTime={86400} />
+              </div>
+              <div className='mt-2'>
+                <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
+                  Please upload your proof of payment within 24 hours.
+                </Typography>
+              </div>
             </div>
-              
-            }
+
             <div className="flex justify-center mt-6">
-              <ImageUploadButton onUploadFunction={onUpload} storage={storage} folderName={'Orders/' + userId + '/' + referenceNumber}  buttonTitle={'Upload Proof Of Payment'} />
+              <ImageUploadButton
+                onUploadFunction={onUpload}
+                storage={storage}
+                folderName={'Orders/' + userId + '/' + referenceNumber}
+                buttonTitle={'Upload Proof Of Payment'}
+              />
             </div>
           </div>
         </div>

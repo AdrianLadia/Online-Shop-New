@@ -2185,6 +2185,7 @@ describe('deleteOrderFromUserFirestore', () => {
 });
 
 describe('updateOrderProofOfPaymentLink', () => {
+  let id1,id2
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2229,7 +2230,7 @@ describe('updateOrderProofOfPaymentLink', () => {
   });
 
   test('updateOrderProofOfPaymentLink', async () => {
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com');
+    id1 = await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER','BDO');
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -2243,14 +2244,14 @@ describe('updateOrderProofOfPaymentLink', () => {
   });
 
   test('Check if proof of payment is added to payments', async () => {
-    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    const data = await firestore.readSelectedDataFromCollection('Payments', id1);
     await delay(300);
     expect(data.proofOfPaymentLink).toEqual('https://testlink.com');
     expect(data.status).toEqual('pending');
   });
 
   test('add another proofOfPaymentLink', async () => {
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com');
+    id2 = await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com','TEST USER','BDO');
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -2264,7 +2265,7 @@ describe('updateOrderProofOfPaymentLink', () => {
   });
 
   test('Check if proof of payment is added to payments 2', async () => {
-    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    const data = await firestore.readSelectedDataFromCollection('Payments', id2);
     await delay(300);
     expect(data.proofOfPaymentLink).toEqual('https://testlink2.com');
     expect(data.status).toEqual('pending');
@@ -2383,6 +2384,7 @@ describe('afterCheckoutRedirectLogic', () => {
 });
 
 describe('updatePaymentStatus', () => {
+  let id1 
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2426,33 +2428,33 @@ describe('updatePaymentStatus', () => {
     });
   });
   test('create Test Payment Proof Upload', async () => {
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com');
+    id1 = await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER','BDO');
     await delay(300);
   });
   test('update status to success', async () => {
     await firestore.updatePaymentStatus('testref1234', 'approved');
     await delay(200);
-    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    const data = await firestore.readSelectedDataFromCollection('Payments', id1);
     expect(data.status).toEqual('approved');
   });
   test('update status to failed', async () => {
     await firestore.updatePaymentStatus('testref1234', 'declined');
     await delay(200);
-    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    const data = await firestore.readSelectedDataFromCollection('Payments', id1);
     expect(data.status).toEqual('declined');
   });
   test('update status to pending', async () => {
     await firestore.updatePaymentStatus('testref1234', 'pending');
     await delay(200);
-    const data = await firestore.readSelectedDataFromCollection('Payments', 'testref1234');
+    const data = await firestore.readSelectedDataFromCollection('Payments', id1);
     expect(data.status).toEqual('pending');
   });
   test('delete payment', async () => {
-    await firestore.deleteDocumentFromCollection('Payments', 'testref1234');
+    await firestore.deleteDocumentFromCollection('Payments', id1);
   });
 });
 
-describe.only('deleteOldOrders', () => {
+describe('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2462,32 +2464,10 @@ describe.only('deleteOldOrders', () => {
     });
     await delay(200)
   });
-  // test('create UNPAID 2 day ago order for testing', async () => {
-  //   const currentDate = new Date(); // Get the current date
-  //   const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
-  //   const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
-  //   await firestore.updateDocumentFromCollection('Users', userTestId, {
-  //     orders: [],
-  //   });
-  //   await delay(200)
-  // });
-  // test('create UNPAID TODAY order for testing', async () => {
-  //   const currentDate = new Date(); // Get the current date
-  //    await firestore.updateDocumentFromCollection('Users', userTestId, {
-  //     orders: [],
-  //   });
-  //   await delay(200)
-  // });
 
-  // test('create PAID TODAY order for testing', async () => {
-  //   const currentDate = new Date(); // Get the current date
-  //    await firestore.updateDocumentFromCollection('Users', userTestId, {
-  //     orders: [],
-  //   });
-  //   await delay(200)
-  // });
   test('check if order deleted', async () => {
     const res = await cloudfirestore.deleteOldOrders();
+    await delay(200)
     const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = testUserData.orders;
     let found1 = false

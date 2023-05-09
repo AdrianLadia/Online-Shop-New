@@ -360,6 +360,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, json);
       // const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}&proofOfPaymentLink=${proofOfPaymentLink}`)
       const data = res.data;
+      return data;
     } catch (error) {
       throw new Error(error);
     }

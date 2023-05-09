@@ -943,7 +943,9 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
 
           // TODO
           // ADD PAYMENT DATA TO PAYMENTS COLLECTION
-          transaction.set(db.collection('Payments').doc(), {
+          const newPaymentRef = db.collection('Payments').doc()
+
+          transaction.set(newPaymentRef, {
             orderReference: orderReference,
             proofOfPaymentLink: proofOfPaymentLink,
             userId: userId,
@@ -952,7 +954,9 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
             paymentMethod : paymentMethod,
           });
 
-          res.status(200).send('success');
+          const paymentId = newPaymentRef.id
+          console.log(paymentId)
+          res.status(200).send(paymentId);
         } catch {
           console.error('Error updating proof of payment link:', error);
           res.status(400).send('Error updating proof of payment link.');
