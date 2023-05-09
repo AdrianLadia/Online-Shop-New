@@ -25,7 +25,7 @@ import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
-import useWindowDimensions from './components/UseWindowDimensions';
+import useWindowDimensions from './components/useWindowDimensions';
 
 const devEnvironment = true;
 

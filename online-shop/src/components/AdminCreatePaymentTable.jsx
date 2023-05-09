@@ -86,7 +86,7 @@ const AdminCreatePaymentTable = () => {
           <TableBody>
             {paymentsData.map((data) => (
               <TableRow>
-                <TableCell className="text-7xl w-60">
+                <TableCell className="text-7xl w-60">{console.log(data.link)}
                   <img onClick={() => handleNewTab(data.link)} src={data.link} className="h-60 w-60 rounded-xl" />
                 </TableCell>
                 <TableCell align="right">{data.reference}</TableCell>

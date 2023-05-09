@@ -38,7 +38,7 @@ function MyOrderCard(props) {
     })
   }
 
-  console.log(unRead)
+  // console.log(unRead)
 
   useEffect(()=>{
     readMessages()
@@ -77,7 +77,6 @@ function MyOrderCard(props) {
   }
 
   function onUpload(proofOfPaymentLink) {
-
     cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink,userdata.name,'');
     setProofOfPaymentLinkCount(1);
   }
@@ -92,7 +91,7 @@ function MyOrderCard(props) {
 
   function onMessageClick() {
     setSelectedChatOrderId(order.reference)
-    navigateTo("/orderChat")
+    navigateTo("/orderChat",{state:{orderReference:order.reference}})
   }
   
   return (
@@ -166,7 +165,6 @@ function MyOrderCard(props) {
                     :null}
                     </p>
               </button>
-
                 <ImageUploadButton
                   id = {`order-${order.reference}`}
                   onUploadFunction={onUpload}
