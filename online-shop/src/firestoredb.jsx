@@ -4,16 +4,10 @@ import schemas from './schemas/schemas';
 import retryApi from '../utils/retryApi';
 import db from '../firebase';
 import {
+  query,
+  where,
   collection,
-  doc,
-  setDoc,
-  getDocs,
-  deleteDoc,
-  updateDoc,
-  getDoc,
-  arrayUnion,
-  arrayRemove,
-  runTransaction,
+  getDocs
 } from 'firebase/firestore';
 
 class firestoredb extends firestorefunctions {
@@ -383,26 +377,13 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    const paymentsRef = collection('Payments')
-    const query = paymentsRef.where('orderReference', '==', reference);
-    
-    query
-      .get()
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const docSnapshot = querySnapshot.docs[0];
-          // Update the age field of the document
-          return docSnapshot.ref.update({ status: status });
-        } else {
-          console.log('No matching documents found.');
-        }
-      })
-      .then(() => {
-        console.log('Document updated successfully.');
-      })
-      .catch((error) => {
-        console.error('Error updating document: ', error);
-      });
+    const paymentsRef = collection(this.db,'Payments')
+    const q = query(paymentsRef, where('orderReference', '==', reference));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // console.log(doc.id)
+      this.updateDocumentFromCollection('Payments', doc.id, { status: status });
+    });
   }
 }
 

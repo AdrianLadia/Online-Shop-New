@@ -17,6 +17,7 @@ const AdminCreatePaymentTable = () => {
         const link = data.proofOfPaymentLink;
         const reference = data.orderReference;
         const userId = data.userId;
+        console.log(data);
 
         if (data.status === 'pending') {
           paymentData.push({ link: link, reference: reference, userId: userId });
