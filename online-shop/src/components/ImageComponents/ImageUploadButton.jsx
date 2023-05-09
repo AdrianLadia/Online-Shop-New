@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import CircularProgress from '@mui/material/CircularProgress';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import UseWindowDimensions from '../UseWindowDimensions';
+// import UseWindowDimensions from '../UseWindowDimensions';
 
 // import { storage } from './firebaseConfig';
 
@@ -15,7 +15,7 @@ const ImageUploadButton = (props) => {
   const storage = props.storage;
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
-  const { width } = UseWindowDimensions();
+  // const { width } = UseWindowDimensions();
 
   const [buttonColor, setButtonColor] = useState('primary');
   const [buttonText, setButtonText] = useState(buttonTitle);

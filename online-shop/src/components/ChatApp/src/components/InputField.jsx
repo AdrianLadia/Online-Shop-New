@@ -49,7 +49,6 @@ const InputField = (props) => {
         }else{
           data.ownerReadAll = false;
         }
-        // console.log(data.adminReadAll)
       firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, data.ownerReadAll)
       firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll)
       firestore.updateOrderMessageAsRead(selectedChatOrderId, messages)
