@@ -65,16 +65,7 @@ const ImageUploadButton = (props) => {
     }, 2000)
   },[buttonText])
 
-  // useEffect(() => {
-  //   if (buttonText === 'Uploaded Successful') {
-  //     setTimeout(() => {
-  //       setButtonColor('primary');
-  //       setButtonText(buttonTitle);
-  //     }, 3000);
-  //   }
-  // }, [buttonText]);
 
-  // console.log(chat)
 
   return (
     <div >
