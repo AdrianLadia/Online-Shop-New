@@ -15,6 +15,7 @@ const DisplayMessagesAdmin = (props) => {
   const userRole = props.userRole;
   const read = props.read;
   const user = props.user;
+  const image = props.image
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -111,7 +112,10 @@ async function updateMessages() {
               className={"max-w-full max-h-full p-3 px-4 m-2 my-2 mr-4 text-white md:p-4 md:px-6 rounded-3xl cursor-help" + adminColor()}
               onClick={handleBoth}
             >
-              <p>{message}</p>
+              <p>
+                <p>{message}</p>
+                {image? <img src={image} alt='this should render an image' className='h-64 w-64'/>: null}
+              </p>
             </div>
             <div className='mb-2 -ml-3 text-green3'>
               {read? (<BiCheckCircle/>) : (<BiXCircle/>)}

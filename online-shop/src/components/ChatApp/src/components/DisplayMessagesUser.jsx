@@ -11,9 +11,12 @@ const DisplayMessagesUser = (props) => {
   const user = props.user;
   const loggedInUserId = props.loggedInUserId;
   const read = props.read;
+  const image= props.image;
+  console.log(image)
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
+  // const [image, setImage] = useState(null);
 
   useEffect(() => {
     if(isadmin === false){
@@ -31,7 +34,6 @@ const DisplayMessagesUser = (props) => {
           </div>
         </div>
       </div>
-
 
       <div className="flex flex-col items-end justify-center w-10/12 max-h-full lg:w-3/5">
         <>
@@ -51,7 +53,10 @@ const DisplayMessagesUser = (props) => {
               className="items-start justify-start max-w-full max-h-full p-3 px-4 m-2 my-2 text-white bg-gradient-to-tl from-color60 to-color10c cursor-help md:p-4 md:px-6 rounded-3xl"
               onClick={()=>{setShowDetails(!showDetails)}}
               >
-              <p>{message}</p>
+              <p>
+                  <p>{message}</p>
+                  {image? <img src={image} alt='this should render an image' className='h-64 w-64'/>: null}
+              </p>
             </div>
             <div className='mb-2 -mr-1 text-color60'>
               {read? (<BiCheckCircle/>) : (<BiXCircle/>)}

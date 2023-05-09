@@ -15,7 +15,6 @@ const ImageUploadButton = (props) => {
   const storage = props.storage;
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
-  // const { width } = UseWindowDimensions();
 
   const [buttonColor, setButtonColor] = useState('primary');
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -44,7 +43,7 @@ const ImageUploadButton = (props) => {
         // console.log(snapshot);
         // console.log('Uploaded a blob or file!');
         setButtonColor('success');
-        setButtonText('Uploaded Successful');
+        setButtonText('Uploaded Successfuly');
         setLoading(false);
 
         // GET IMAGE URL
@@ -60,6 +59,12 @@ const ImageUploadButton = (props) => {
     }
   };
 
+  useEffect(()=>{
+    setTimeout(()=>{
+      setButtonText(buttonTitle)
+    }, 2000)
+  },[buttonText])
+
   // useEffect(() => {
   //   if (buttonText === 'Uploaded Successful') {
   //     setTimeout(() => {
@@ -69,19 +74,20 @@ const ImageUploadButton = (props) => {
   //   }
   // }, [buttonText]);
 
+  // console.log(chat)
+
   return (
     <div >
       <Button
         id={id}
-        startIcon={<CloudUploadIcon />}
-        className="shadow-md focus:outline-none 2xs:h-12 2xs:w-64 tracking-tightest 3xs:tracking-tighter hover:bg-color10b rounded-lg"
+        startIcon={<CloudUploadIcon/>}
+        className="xl:w-64 shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter h-12 ml-2 hover:bg-color10b rounded-lg "
         variant="contained"
         component="span"
       >
         <input type="file" id={`imageUpload-${id}`} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
         <label htmlFor={`imageUpload-${id}`}>
-          {loading ? <CircularProgress size={30} color="inherit" /> : buttonText}
-          {/* <button type="button">Upload Image</button> */}
+          {loading ? <CircularProgress size={30} color="inherit" /> : buttonText ? buttonText : <> </> }
         </label>
       </Button>
     </div>
