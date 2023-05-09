@@ -26,7 +26,7 @@ const ProductList = (props) => {
   const favorites = favoriteitems;
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
 
-  const {width } = UseWindowDimensions();
+  const { width } = UseWindowDimensions();
 
   useEffect(() => {
     if (products != []) {
@@ -41,7 +41,6 @@ const ProductList = (props) => {
       retail,
       favorites
     );
-    // console.log('selected_products', selected_products);
     return selected_products;
   }
 

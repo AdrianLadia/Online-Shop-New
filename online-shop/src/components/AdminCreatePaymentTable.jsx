@@ -8,6 +8,7 @@ const AdminCreatePaymentTable = () => {
   const [paymentsData, setPaymentsData] = useState([]);
   const [reference, setReference] = useState('');
   const [status, setStatus] = useState('');
+  const [amount, setAmount] = useState(null);
 
   async function readPayments() {
     firestore.readPayments().then((payment) => {
@@ -38,10 +39,11 @@ const AdminCreatePaymentTable = () => {
   }, [selectedChatOrderId]);
 
   async function updatePaymentStatus(reference, status,userId) {
+    console.log(reference)
     firestore.updatePaymentStatus(reference, status);
     const data = {
       userId: userId,
-      amount: 10000,
+      amount: amount,
       reference: reference,
       paymentprovider: 'BDO',
     };
@@ -91,7 +93,7 @@ const AdminCreatePaymentTable = () => {
                 <TableCell align="right">
                   <div className="flex justify-evenly gap-2 xs:gap-3">
                     <button
-                      className=" border border-red-400 hover:bg-red-100 text-red-400 px-4 py-3 rounded-xl"
+                      className=" border border-red-400 hover:bg-red-50 text-red-400 px-4 py-3 rounded-xl"
                       onClick={() => updatePaymentStatus(data.reference, 'declined',data.userId)}
                     >
                       Deny
@@ -112,10 +114,12 @@ const AdminCreatePaymentTable = () => {
                                   w-3/4 p-3 '
                       placeholder='Amount'
                       type='number'
+                      value={amount}
+                      onChange={(event) => setAmount(event.target.value)}
                       >
                         
                     </input>
-                  </div>
+                  </div>{console.log(amount)}
                 </TableCell>
               </TableRow>
             ))}

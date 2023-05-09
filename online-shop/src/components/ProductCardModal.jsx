@@ -182,7 +182,7 @@ const ProductCardModal = (props) => {
                 X
               </button>
             </div>
-            <div className="flex flex-col">
+            <div className="">
               {/* TITLE */}
               <Typography variant={responsiveVariant()} className="mb-10 text-black" align="center">
                 {props.product.itemName}
@@ -223,12 +223,12 @@ const ProductCardModal = (props) => {
                             <Typography className="w-11/12 ml-2 font-light text-green-800 hyphens-auto
                                                   text-sm lg:text-md xl:text-lg 2xl:text-xl 3xl:text-2xl 
                                                   indent:2 lg:indent-4 2xl:indent-7 text-left
-                                                  tracking-widest xl:tracking-tighter 2xl:tracking-tightest 
+                                                  tracking-widest lg:tracking-tight xl:tracking-tighter 2xl:tracking-tightest 
                                                   first-letter:text-xl xl:first-letter:text-2xl 2xl:first-letter:text-3xl first-letter:font-semibold">
                               {props.product.description}
                             </Typography>
 
-                            <Divider sx={{border:"1px solid lightgray"}} className="w-full mb-8 "/> 
+                            {/* <Divider sx={{border:"1px solid lightgray"}} className="w-full mb-8 "/>  */}
                             
                           </div>
                           <div className="w-full 2md:w-11/12 lg:w-7/12 ml-0 lg:ml-4 border-2 border-color60 rounded-sm">

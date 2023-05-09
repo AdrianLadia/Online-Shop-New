@@ -2,7 +2,7 @@ import firestorefunctions from './firestorefunctions';
 import Joi from 'joi';
 import schemas from './schemas/schemas';
 import retryApi from '../utils/retryApi';
-import db from"../firebase"
+import db from '../firebase';
 import {
   collection,
   doc,
@@ -14,7 +14,7 @@ import {
   arrayUnion,
   arrayRemove,
   runTransaction,
-} from "firebase/firestore";
+} from 'firebase/firestore';
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
@@ -23,8 +23,8 @@ class firestoredb extends firestorefunctions {
 
   // USED FOR ADMIN INVENTORY
   async createProduct(data, id) {
-    console.log(data)
-    const schema = schemas.productSchema()
+    console.log(data);
+    const schema = schemas.productSchema();
 
     try {
       await schema.validateAsync(data);
@@ -33,12 +33,11 @@ class firestoredb extends firestorefunctions {
     }
 
     await retryApi(async () => await super.createDocument(data, id, 'Products'));
-    
   }
 
   async readAllProducts() {
     const products = await retryApi(async () => await super.readAllDataFromCollection('Products'));
-    const productsSchema = Joi.array().items(schemas.productSchema())  
+    const productsSchema = Joi.array().items(schemas.productSchema());
 
     try {
       await productsSchema.validateAsync(products);
@@ -50,8 +49,8 @@ class firestoredb extends firestorefunctions {
   }
 
   async readSelectedProduct(id) {
-    const product = await retryApi(async () => await super.readSelectedDataFromCollection('Products', id)); 
-    const productsSchema = schemas.productSchema()
+    const product = await retryApi(async () => await super.readSelectedDataFromCollection('Products', id));
+    const productsSchema = schemas.productSchema();
 
     try {
       await productsSchema.validateAsync(product);
@@ -118,12 +117,11 @@ class firestoredb extends firestorefunctions {
           .join(' '),
         'Categories'
       );
-    })
-
+    });
   }
 
   async readAllCategories() {
-    const categories = await retryApi(async () => await super.readAllDataFromCollection('Categories')); 
+    const categories = await retryApi(async () => await super.readAllDataFromCollection('Categories'));
 
     const categoriesSchema = Joi.array();
 
@@ -137,7 +135,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllUserIds() {
-    const ids = await retryApi(async () => await super.readAllIdsFromCollection('Users')); 
+    const ids = await retryApi(async () => await super.readAllIdsFromCollection('Users'));
 
     const idsSchema = Joi.array().items(Joi.string().required());
 
@@ -156,7 +154,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async createNewUser(data, id) {
-    const schema = schemas.userSchema()
+    const schema = schemas.userSchema();
 
     const { error } = schema.validate(data);
     if (error) {
@@ -166,8 +164,8 @@ class firestoredb extends firestorefunctions {
   }
 
   async readUserById(id) {
-    const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', id)); 
-    
+    const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', id));
+
     return user;
   }
 
@@ -177,7 +175,6 @@ class firestoredb extends firestorefunctions {
 
   async removeItemFromFavorites(userid, data) {
     await retryApi(async () => await super.deleteDocumentFromCollectionArray('Users', userid, data, 'favoriteItems'));
-    
   }
 
   async createUserCart(data, userid) {
@@ -186,7 +183,6 @@ class firestoredb extends firestorefunctions {
         cart: data,
       });
     });
-    
   }
 
   async deleteAllUserCart(userid) {
@@ -194,17 +190,16 @@ class firestoredb extends firestorefunctions {
       super.updateDocumentFromCollection('Users', userid, {
         cart: [],
       });
-    })
+    });
   }
 
   async readUserAddress(userid) {
     const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', userid));
-    
+
     return user.deliveryaddress;
   }
 
   async deleteAddress(userid, latitude, longitude, address) {
-  
     await retryApi(async () => {
       super.deleteDocumentFromCollectionArray(
         'Users',
@@ -212,19 +207,24 @@ class firestoredb extends firestorefunctions {
         { latitude: latitude, longitude: longitude, address: address },
         'deliveryAddress'
       );
-    })
+    });
   }
 
   async readUserContactPersons(userid) {
     const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', userid));
-  
+
     return user.contactPerson;
   }
 
   async deleteUserContactPersons(userid, name, phonenumber) {
     await retryApi(async () => {
-      await super.deleteDocumentFromCollectionArray('Users', userid, { name: name, phonenumber: phonenumber }, 'contactPerson');
-    })
+      await super.deleteDocumentFromCollectionArray(
+        'Users',
+        userid,
+        { name: name, phonenumber: phonenumber },
+        'contactPerson'
+      );
+    });
   }
 
   async updateLatitudeLongitude(userid, latitude, longitude) {
@@ -233,7 +233,7 @@ class firestoredb extends firestorefunctions {
         latitude: latitude,
         longitude: longitude,
       });
-    })
+    });
   }
 
   async updatePhoneNumber(userid, phonenumber) {
@@ -242,7 +242,6 @@ class firestoredb extends firestorefunctions {
         phonenumber: phonenumber,
       });
     });
-    
   }
 
   async createTestCollection() {
@@ -252,7 +251,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async readTestCollection() {
-    
     const data = await retryApi(async () => await super.readAllDataFromCollection('test', 'test'));
     //  const data2 = await super.readAllDataFromCollection('test');
     return data;
@@ -315,33 +313,33 @@ class firestoredb extends firestorefunctions {
     super.updateDocumentFromCollection('Tests', 'orderData', { data: orderData });
   }
 
-  async deleteOrderFromCollectionArray(userId,orderReference) {
+  async deleteOrderFromCollectionArray(userId, orderReference) {
     try {
       // Get the user document
       const userData = await this.readUserById(userId);
       const userDoc = userData;
-  
+
       if (userDoc === undefined) {
         console.log('User document not found');
         return;
       }
-  
+
       // Get the orders array from the user document
       const orders = userDoc.orders;
-  
+
       // Find the index of the order with the specified reference number
       const orderIndex = orders.findIndex((order) => order.reference === orderReference);
-  
+
       // If order is found, remove it from the orders array
       if (orderIndex !== -1) {
         orders.splice(orderIndex, 1);
-  
+
         // Update the user document with the new orders array
         // await userDocRef.update({
         //   orders: orders,
         // });
-  
-        await super.updateDocumentFromCollection('Users', userId, {orders : orders})
+
+        await super.updateDocumentFromCollection('Users', userId, { orders: orders });
 
         console.log('Order deleted successfully');
       } else {
@@ -361,24 +359,23 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateOrderMessageAsRead(reference, data) {
-    this.updateDocumentFromCollection('ordersMessages',reference,{['messages'] : data})
+    this.updateDocumentFromCollection('ordersMessages', reference, { ['messages']: data });
   }
 
   async updateOrderMessageMarkAsAdminReadAll(reference, data) {
-    this.updateDocumentFromCollection('ordersMessages',reference,{'adminReadAll' : data})
+    this.updateDocumentFromCollection('ordersMessages', reference, { adminReadAll: data });
   }
 
   async updateOrderMessageMarkAsOwnerReadAll(reference, data) {
-    this.updateDocumentFromCollection('ordersMessages',reference,{'ownerReadAll' : data})
+    this.updateDocumentFromCollection('ordersMessages', reference, { ownerReadAll: data });
   }
 
-  async readPayments(){
-    return await this.readAllDataFromCollection("Payments")
+  async readPayments() {
+    return await this.readAllDataFromCollection('Payments');
   }
 
   async updatePaymentStatus(reference, status) {
-
-    const statusSchema = Joi.string().valid('pending','approved','declined')
+    const statusSchema = Joi.string().valid('pending', 'approved', 'declined');
 
     const { error } = statusSchema.validate(status);
 
@@ -386,12 +383,28 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    this.updateDocumentFromCollection('Payments', reference,{'status' : status})
+    const paymentsRef = collection('Payments')
+    const query = paymentsRef.where('orderReference', '==', reference);
+    
+    query
+      .get()
+      .then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const docSnapshot = querySnapshot.docs[0];
+          // Update the age field of the document
+          return docSnapshot.ref.update({ status: status });
+        } else {
+          console.log('No matching documents found.');
+        }
+      })
+      .then(() => {
+        console.log('Document updated successfully.');
+      })
+      .catch((error) => {
+        console.error('Error updating document: ', error);
+      });
   }
-
 }
-
-
 
 export default firestoredb;
 

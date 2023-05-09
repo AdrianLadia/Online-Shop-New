@@ -11,7 +11,7 @@ import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore,  selectedChatOrderId } = React.useContext(AppContext);
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore,  selectedChatOrderId,userdata } = React.useContext(AppContext);
   const order = props.order;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
@@ -28,16 +28,21 @@ function MyOrderCard(props) {
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
       let unReadCount = 0;
       s.messages.map((q)=>{
-        if(q.userRole === "superAdmin" || q.userRole === "Admin" && q.read === "false"){
-          unReadCount += 1 ;
+        if(q.userRole === "superAdmin" || q.userRole === "Admin" ){
+          if(q.read === false){
+            unReadCount += 1 ;
+          }
         };
-      });setUnRead(unReadCount)
+      });
+      setUnRead(unReadCount)
     })
   }
 
+  console.log(unRead)
+
   useEffect(()=>{
     readMessages()
-  },[])
+  },[firestore])
 
   function getPaymentStatus(x, y, z) {
     if (order.paid) {
@@ -72,7 +77,8 @@ function MyOrderCard(props) {
   }
 
   function onUpload(proofOfPaymentLink) {
-    cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink);
+
+    cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink,userdata.name,'');
     setProofOfPaymentLinkCount(1);
   }
 
@@ -90,11 +96,7 @@ function MyOrderCard(props) {
   }
   
   return (
-    <div
-      className={
-        'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()
-      }
-    >
+    <div className={'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()}>
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
         <div className="flex justify-end mb-4">
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
@@ -142,7 +144,7 @@ function MyOrderCard(props) {
 
           <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center'>
             <div className='w-full lg:w-5/12 flex gap-5 justify-evenly'>
-              <button className=" w-max rounded-lg px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
+              <button className=" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50">Cancel Order</button>
               <button className="w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
             </div>
 
@@ -151,10 +153,17 @@ function MyOrderCard(props) {
             <div className='w-full lg:w-9/12 flex gap-5 flex-col-reverse sm:flex-row justify-center items-center lg:justify-end '>
               <button 
                   onClick={onMessageClick} 
-                  className='p-3 w-max rounded-lg  text-white font-semibold bg-color10a hover:bg-color10c' 
+                  className='p-3 w-max rounded-lg text-white font-semibold bg-color10a hover:bg-color10c' 
                   > <p className='flex gap-1 justify-center'>
                     <HiChatBubbleLeftEllipsis className='mt-1'/>Message
-                    {unRead ? (<p className='bg-red-600 p-1 rounded-full h-1 w-1 animate-ping'></p>):null}
+                    {unRead ? 
+                    (<div className='relative flex h-3 w-3'>
+                      <span className='bg-red-500 absolute inline-flex rounded-full h-2 w-2 animate-ping opacity-150'>
+                      </span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-red-400 ">
+                      </span>
+                    </div>)
+                    :null}
                     </p>
               </button>
 

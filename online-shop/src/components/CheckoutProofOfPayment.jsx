@@ -15,7 +15,7 @@ const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
 
-  const {storage,cloudfirestore,userId} = useContext(AppContext)
+  const {storage,cloudfirestore,userId,userdata} = useContext(AppContext)
   const location = useLocation();
   const { referenceNumber,itemsTotal,deliveryFee,grandTotal,vat,rows,area } = location.state;
   console.log('referenceNumber', referenceNumber);
@@ -27,7 +27,7 @@ const CheckoutProofOfPayment = (props) => {
   const accountNumber = '006080021403';
 
   function onUpload(url) {
-    cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url);
+    cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url,userdata.name,bankName);
   }
 
   // console.log('referenceNumber', referenceNumber);

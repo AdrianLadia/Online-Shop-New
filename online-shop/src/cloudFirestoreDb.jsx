@@ -353,9 +353,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async updateOrderProofOfPaymentLink(orderReference, userId, proofOfPaymentLink) {
+  async updateOrderProofOfPaymentLink(orderReference, userId, proofOfPaymentLink,userName,paymentMethod) {
     try {
-      const json = { orderReference: orderReference, userId: userId, proofOfPaymentLink: proofOfPaymentLink };
+      const json = { orderReference: orderReference, userId: userId, proofOfPaymentLink: proofOfPaymentLink,userName:userName,paymentMethod:paymentMethod };
       // const encodedData = encodeURIComponent(JSON.stringify({ orderReference,userId}));
       const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, json);
       // const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}&proofOfPaymentLink=${proofOfPaymentLink}`)

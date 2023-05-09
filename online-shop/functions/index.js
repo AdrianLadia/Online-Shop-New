@@ -896,6 +896,9 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
     try {
       // Get the user document
       const data = req.body;
+      console.log(data)
+      const userName = data.userName
+      const paymentMethod = data.paymentMethod
       const orderReference = data.orderReference;
       const userId = data.userId;
       const proofOfPaymentLink = data.proofOfPaymentLink;
@@ -907,6 +910,8 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         orderReference: Joi.string().required(),
         userId: Joi.string().required(),
         proofOfPaymentLink: Joi.string().required(),
+        paymentMethod: Joi.string().required().allow(''),
+        userName : Joi.string().required()
       }).unknown(false);
 
       const { error } = dataSchema.validate(data);
@@ -938,11 +943,13 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
 
           // TODO
           // ADD PAYMENT DATA TO PAYMENTS COLLECTION
-          transaction.set(db.collection('Payments').doc(orderReference), {
+          transaction.set(db.collection('Payments').doc(), {
             orderReference: orderReference,
             proofOfPaymentLink: proofOfPaymentLink,
             userId: userId,
             status: 'pending',
+            userName : userName,
+            paymentMethod : paymentMethod,
           });
 
           res.status(200).send('success');

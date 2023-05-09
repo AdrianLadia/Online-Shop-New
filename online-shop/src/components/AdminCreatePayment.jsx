@@ -30,7 +30,7 @@ const AdminCreatePayment = (props) => {
 
   useEffect(()=>{
     dummy.current.scrollIntoView({behavior: "smooth"})
-  },[])
+  },[props])
 
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
