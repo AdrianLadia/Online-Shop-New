@@ -17,7 +17,7 @@ const AdminCreatePaymentTable = () => {
         const link = data.proofOfPaymentLink;
         const reference = data.orderReference;
         const userId = data.userId;
-        console.log(data);
+        
 
         if (data.status === 'pending') {
           paymentData.push({ link: link, reference: reference, userId: userId });
@@ -86,7 +86,7 @@ const AdminCreatePaymentTable = () => {
           <TableBody>
             {paymentsData.map((data) => (
               <TableRow>
-                <TableCell className="text-7xl w-60">{console.log(data.link)}
+                <TableCell className="text-7xl w-60">
                   <img onClick={() => handleNewTab(data.link)} src={data.link} className="h-60 w-60 rounded-xl" />
                 </TableCell>
                 <TableCell align="right">{data.reference}</TableCell>
