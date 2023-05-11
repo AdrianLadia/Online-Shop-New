@@ -130,7 +130,7 @@ const InputField = (props) => {
           <ImageUploadButton 
             id={'userUploadPhotoButton'}
             folderName={'Orders/' + userId + '/' + orderReferenceId}
-            buttonTitle={""}
+            buttonTitle={"PHOTO"}
             storage={storage}
             onUploadFunction={getUploadedImageUrl}
           />

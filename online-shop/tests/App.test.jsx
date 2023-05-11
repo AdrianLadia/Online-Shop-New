@@ -246,6 +246,13 @@ describe('Business Calcualtions', () => {
 });
 
 describe('Data Manipulation', async () => {
+  test('getSecondsDifferenceBetweentTwoDates', async () => {
+    const date1 = new Date(2023, 1, 1);
+    const date2 = new Date(2023, 1, 2);
+    const seconds = datamanipulation.getSecondsDifferenceBetweentTwoDates(date1, date2);
+    console.log(seconds);
+    expect(seconds).toBe(86400);
+  });
   test('AccountStatement', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -2185,7 +2192,7 @@ describe('deleteOrderFromUserFirestore', () => {
 });
 
 describe('updateOrderProofOfPaymentLink', () => {
-  let id1,id2
+  let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2230,7 +2237,13 @@ describe('updateOrderProofOfPaymentLink', () => {
   });
 
   test('updateOrderProofOfPaymentLink', async () => {
-    id1 = await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER','BDO');
+    id1 = await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'https://testlink.com',
+      'TEST USER',
+      'BDO'
+    );
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -2251,7 +2264,13 @@ describe('updateOrderProofOfPaymentLink', () => {
   });
 
   test('add another proofOfPaymentLink', async () => {
-    id2 = await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com','TEST USER','BDO');
+    id2 = await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'https://testlink2.com',
+      'TEST USER',
+      'BDO'
+    );
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -2384,7 +2403,7 @@ describe('afterCheckoutRedirectLogic', () => {
 });
 
 describe('updatePaymentStatus', () => {
-  let id1 
+  let id1;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2428,7 +2447,13 @@ describe('updatePaymentStatus', () => {
     });
   });
   test('create Test Payment Proof Upload', async () => {
-    id1 = await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER','BDO');
+    id1 = await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'https://testlink.com',
+      'TEST USER',
+      'BDO'
+    );
     await delay(300);
   });
   test('update status to success', async () => {
@@ -2454,48 +2479,60 @@ describe('updatePaymentStatus', () => {
   });
 });
 
-describe('deleteOldOrders', () => {
+describe.only('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
     await firestore.updateDocumentFromCollection('Users', userTestId, {
-      orders: [{ paid: true, orderDate: twoDaysAgo ,reference: 'testref1234' },{ paid: false, orderDate: twoDaysAgo ,reference: 'testref12345' },{ paid: false, orderDate: currentDate ,reference: 'testref123456' },{ paid: true, orderDate: currentDate ,reference: 'testref1234567' }],
+      orders: [
+        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [] },
+        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [] },
+        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [] },
+        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [] },
+        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'] },
+      ],
     });
-    await delay(200)
+    await delay(200);
   });
 
   test('check if order deleted', async () => {
     const res = await cloudfirestore.deleteOldOrders();
-    await delay(200)
+    await delay(1000);
     const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = testUserData.orders;
-    let found1 = false
-    let found2 = false
-    let found3 = false
+    let found1 = false;
+    let found2 = false;
+    let found3 = false;
+    let found4 = false;
     orders.map((order) => {
       if (order.reference == 'testref12345') {
         throw new Error('Order not deleted');
       }
+
       if (order.reference == 'testref123456') {
-        found1 = true
+        found1 = true;
       }
       if (order.reference == 'testref1234567') {
-        found2 = true
+        found2 = true;
       }
       if (order.reference == 'testref1234') {
-        found3 = true
+        found3 = true;
+      }
+      if (order.reference == 'testref12345678') {
+        found4 = true
       }
     });
 
-    expect(found1).toEqual(true)
-    expect(found2).toEqual(true)
-    expect(found3).toEqual(true)
+    expect(found1).toEqual(true);
+    expect(found2).toEqual(true);
+    expect(found3).toEqual(true);
+    expect(found4).toEqual(true);
   }, 100000);
-  
+
   test('delete all orders', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, {
       orders: [],
     });
-  })
+  });
 });

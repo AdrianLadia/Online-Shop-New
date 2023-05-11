@@ -5,9 +5,12 @@ import MyOrderCardModal from './MyOrderCardModal';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
-import UseWindowDimensions from './useWindowDimensions';
+import UseWindowDimensions from './UseWindowDimensions';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
+import CountdownTimer from './CountDownTimer';
+
+
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
@@ -23,6 +26,17 @@ function MyOrderCard(props) {
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const navigateTo = useNavigate()
   const [unRead, setUnRead] = useState();
+
+
+  const orderDateObject = new Date(orderDate)
+  const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
+  const dateNow = new Date()
+  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(orderExpiryDate ,dateNow);
+  
+  console.log(new Date())
+  console.log(dateDifference)
+
+  // useEffect(()=>{},[selectedChatOrderId])
 
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
@@ -118,7 +132,12 @@ function MyOrderCard(props) {
   return (
     <div className={'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()}>
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
-        <div className="flex justify-end mb-4">
+        
+
+
+
+        <div className="flex flex-row justify-between mb-4">
+          {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' /> : <div> </div>  }
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
         </div>
 

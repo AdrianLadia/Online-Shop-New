@@ -998,7 +998,32 @@ async function deleteOldOrders() {
       const userId = user.uid;
       let foundExpiredOrders = false;
 
+
+
       const filteredOrder = orders.filter((order) => {
+
+        // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
+        let paymentLinks
+        paymentLinks = order.proofOfPaymentLink
+        console.log(paymentLinks)
+        if(paymentLinks == null) {
+          console.log('converted to empty array')
+          paymentLinks = []
+        }
+
+
+        if(paymentLinks.length > 0){
+          console.log('payment links length > 0')
+          return true
+        }
+
+        // IF ORDER IS PAID. DO NOT DELETE
+        const paid = order.paid;
+        if (paid) {
+          return true;
+        }
+
+        // IF ORDER IS NOT EXPIRED DO NOT DELETE (24 hr window)
         let orderTimeStamp = order.orderDate;
         try {
           orderTimeStamp = orderTimeStamp.toDate();
@@ -1006,23 +1031,18 @@ async function deleteOldOrders() {
           orderTimeStamp = new Date(orderTimeStamp);
         }
 
-        const paid = order.paid;
-
-        if (paid) {
-          return true;
-        }
-
         const diffTime = Math.abs(currentTime - orderTimeStamp);
         const msInHour = 1000 * 60 * 60;
         const diffHours = Math.floor(diffTime / msInHour);
-
         const lessThanExpiryHours = diffHours < expiryHours;
 
         if (lessThanExpiryHours) {
           return true;
-        } else {
-          foundExpiredOrders = true;
         }
+        
+        console.log('found expired orders')
+        foundExpiredOrders = true;
+        
       });
 
       if (foundExpiredOrders) {
@@ -1030,8 +1050,8 @@ async function deleteOldOrders() {
       }
     });
   }
-  catch{
-    console.log('Error deleting old orders')
+  catch(error){
+    console.log(error)
   }
 }
 
