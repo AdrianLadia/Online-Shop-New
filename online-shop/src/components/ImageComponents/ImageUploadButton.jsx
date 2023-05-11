@@ -66,7 +66,7 @@ const ImageUploadButton = (props) => {
   },[buttonText])
 
   return (
-    <div className='flex justify-center h-5/6 ml-0.5'>
+    <div className='flex justify-center h-3/4 ml-0.5'>
       <Button
         id={id}
         className="w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter hover:bg-color10b rounded-lg "

@@ -53,7 +53,7 @@ const ChatApp = () => {
 
   return (
     <div className="flex justify-center w-screen h-screen ">
-      <div className="flex flex-col w-full h-full justify-evenly bg-color60">
+      <div className="flex flex-col w-full h-full justify-evenly bg-color60 overflow-hidden">
         <NavBar messages={messageDetails} orderReferenceId={orderRef}/>
 
         {messageDetails != {} ? (
