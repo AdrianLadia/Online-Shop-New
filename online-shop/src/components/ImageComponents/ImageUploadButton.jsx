@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Button } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import CircularProgress from '@mui/material/CircularProgress';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-// import UseWindowDimensions from '../UseWindowDimensions';
-
-// import { storage } from './firebaseConfig';
+import { FaImage } from "react-icons/fa";
+import AppContext from '../../AppContext';
 
 const ImageUploadButton = (props) => {
+  const { selectedChatOrderId } = useContext(AppContext);
   const id = props.id;
   const folderName = props.folderName;
   let fileName = props.fileName;
@@ -65,20 +65,19 @@ const ImageUploadButton = (props) => {
     }, 2000)
   },[buttonText])
 
-
-
   return (
-    <div >
+    <div className='flex justify-center h-5/6 ml-0.5'>
       <Button
         id={id}
-        startIcon={<CloudUploadIcon/>}
-        className="xl:w-64 shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter h-12 ml-2 hover:bg-color10b rounded-lg "
+        className="w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter hover:bg-color10b rounded-lg "
         variant="contained"
         component="span"
       >
         <input type="file" id={`imageUpload-${id}`} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
         <label htmlFor={`imageUpload-${id}`}>
-          {loading ? <CircularProgress size={30} color="inherit" /> : buttonText ? buttonText : <> </> }
+          {loading ? <CircularProgress size={30} color="inherit" /> 
+          : buttonText ? <span className='gap-2 flex'><CloudUploadIcon/> {buttonText}</span> 
+          : <FaImage className='text-2xl xl:text-3xl'/> }
         </label>
       </Button>
     </div>

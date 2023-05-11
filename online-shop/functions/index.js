@@ -957,7 +957,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const paymentId = newPaymentRef.id
           console.log(paymentId)
           res.status(200).send(paymentId);
-        } catch {
+        } catch(error) {
           console.error('Error updating proof of payment link:', error);
           res.status(400).send('Error updating proof of payment link.');
         }

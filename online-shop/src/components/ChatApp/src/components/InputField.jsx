@@ -124,7 +124,7 @@ const InputField = (props) => {
   }, [send]);
 
   return (
-    <div className="flex flex-col justify-end w-full h-1/10">
+    <div className="flex flex-col justify-end w-full h-14">
       <div className="w-full h-full">
         <div className="flex items-center gap-1 w-full h-full rounded-lg">
           <ImageUploadButton 

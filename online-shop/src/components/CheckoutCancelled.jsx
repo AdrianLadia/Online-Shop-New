@@ -1,6 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function CheckoutCancelled() {
+
+  const navigateTo = useNavigate();
+
+  function handleHome(){
+    navigateTo("/");
+  };
+  
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white shadow-lg p-8 rounded-md w-full md:w-96">
@@ -12,7 +20,10 @@ function CheckoutCancelled() {
           <p className="mt-4 text-gray-600">You have cancelled the checkout process.</p>
           <p className="mt-2 text-gray-600">If you need assistance or have any questions, please contact our support team.</p>
         </div>
-        <button className="mt-6 bg-yellow-500 text-white w-full py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50" onClick={() => window.location.reload()}>
+        {/* <button className="mt-6 bg-yellow-500 text-white w-full py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50" onClick={() => window.location.reload()}>
+          Return to Shop
+        </button> */}
+        <button className="mt-6 bg-yellow-500 text-white w-full py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50" onClick={handleHome}>
           Return to Shop
         </button>
       </div>
