@@ -12,7 +12,7 @@ const DisplayMessagesUser = (props) => {
   const loggedInUserId = props.loggedInUserId;
   const read = props.read;
   const image= props.image;
-  console.log(image)
+  // console.log(image)
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -55,10 +55,10 @@ const DisplayMessagesUser = (props) => {
               >
               <p>
                   <p>{message}</p>
-                  {image? <img src={image} alt='this should render an image' className='h-64 w-64'/>: null}
+                  {image ? <img src={image} alt='this should be an image' className='h-64 w-64'/> : null}
               </p>
             </div>
-            <div className='mb-2 -mr-1 text-color60'>
+            <div className='mb-2 -mr-2.5 text-color60'>
               {read? (<BiCheckCircle/>) : (<BiXCircle/>)}
             </div>
           </div>

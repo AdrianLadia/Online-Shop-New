@@ -5,7 +5,7 @@ import MyOrderCardModal from './MyOrderCardModal';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
-import UseWindowDimensions from './UseWindowDimensions';
+import UseWindowDimensions from './useWindowDimensions';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 import CountdownTimer from './CountDownTimer';
@@ -14,7 +14,7 @@ import CountdownTimer from './CountDownTimer';
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore,  selectedChatOrderId,userdata } = React.useContext(AppContext);
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, selectedChatOrderId, userdata } = React.useContext(AppContext);
   const order = props.order;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
@@ -51,8 +51,6 @@ function MyOrderCard(props) {
       setUnRead(unReadCount)
     })
   }
-
-  // console.log(unRead)
 
   useEffect(()=>{
     readMessages()
@@ -106,6 +104,29 @@ function MyOrderCard(props) {
   function onMessageClick() {
     setSelectedChatOrderId(order.reference)
     navigateTo("/orderChat",{state:{orderReference:order.reference}})
+  };
+
+
+  function handlePay(){
+    let price;
+    userdata.orders.map((s)=>{
+      if(order.reference === s.reference){
+        price = s.grandTotal;
+      }
+    });
+
+    navigateTo(
+      '/AccountStatementPayment',
+      {state : {
+        firstName: userdata.firstName,
+        lastName: userdata.lastName,
+        fullname: userdata.name,
+        eMail: userdata.email,
+        phoneNumber: userdata.contactPerson[0].phoneNumber,
+        totalPrice: price,
+        userId: userdata.uid,
+        orderReference: order.reference
+      }})
   }
   
   return (
@@ -162,8 +183,16 @@ function MyOrderCard(props) {
 
           <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center'>
             <div className='w-full lg:w-5/12 flex gap-5 justify-evenly'>
-              <button className=" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50">Cancel Order</button>
-              <button className="w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
+              <button 
+                className=" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50"
+
+                >Cancel Order
+              </button>
+              <button 
+                className="w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b"
+                onClick={handlePay}
+                >Pay
+              </button> 
             </div>
 
         <div className="w-full border-t-2 mb-0.5 lg:border-t-0 "/>

@@ -20,7 +20,6 @@ const Shop = () => {
       <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory}/>
       {/* PRODUCTS */}
       <ProductList wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
-      {/* CART BUTTON */}
     </div>
   )
 }

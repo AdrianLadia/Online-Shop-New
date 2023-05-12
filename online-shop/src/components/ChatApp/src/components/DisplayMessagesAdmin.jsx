@@ -114,10 +114,10 @@ async function updateMessages() {
             >
               <p>
                 <p>{message}</p>
-                {image? <img src={image} alt='this should render an image' className='h-64 w-64'/>: null}
+                {image ? <img src={image} alt='this should be an image' className='h-64 w-64'/> : null}
               </p>
             </div>
-            <div className='mb-2 -ml-3 text-green3'>
+            <div className='mb-2 -ml-5 text-green3'>
               {read? (<BiCheckCircle/>) : (<BiXCircle/>)}
             </div>
           </div>

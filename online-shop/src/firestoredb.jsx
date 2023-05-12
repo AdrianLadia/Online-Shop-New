@@ -3,12 +3,7 @@ import Joi from 'joi';
 import schemas from './schemas/schemas';
 import retryApi from '../utils/retryApi';
 import db from '../firebase';
-import {
-  query,
-  where,
-  collection,
-  getDocs
-} from 'firebase/firestore';
+import { query, where, collection, getDocs } from 'firebase/firestore';
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
@@ -159,7 +154,6 @@ class firestoredb extends firestorefunctions {
 
   async readUserById(id) {
     const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', id));
-
     return user;
   }
 
@@ -377,13 +371,32 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    const paymentsRef = collection(this.db,'Payments')
+    const paymentsRef = collection(this.db, 'Payments');
     const q = query(paymentsRef, where('orderReference', '==', reference));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // console.log(doc.id)
       this.updateDocumentFromCollection('Payments', doc.id, { status: status });
     });
+  }
+
+  async deleteDeclinedPayment(reference, userId, link) {
+    const userData = await this.readUserById(userId);
+    const userDoc = userData;
+    const orders = userDoc.orders;
+
+    orders.forEach((order) => {
+      const orderReference = order.reference;
+      if (orderReference == reference) {
+        const proofOfPaymentLinks = order.proofOfPaymentLink;
+        const declinedIndex = proofOfPaymentLinks.findIndex((l) => l === link);
+        const data = proofOfPaymentLinks.filter((item) => item !== link);
+        order.proofOfPaymentLink = data
+      }
+    });
+
+    this.updateDocumentFromCollection('Users', userId, {orders:orders});
+
   }
 }
 
