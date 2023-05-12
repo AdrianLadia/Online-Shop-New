@@ -1053,61 +1053,101 @@ async function deleteOldOrders() {
       }
     });
 
-  
-    const dataNeededToUpdateProductValue = [] //This is the data needed to do the writes it follows this schema 
+    const dataNeededToUpdateProductValue = []; //This is the data needed to do the writes it follows this schema
     // {reference:reference,userId:userId,quantity:null,itemId:itemId}
-    let cartItems
+    const allCartItems = []
     deletedOrders.forEach(async (order) => {
       const cart = order.cart;
       const reference = order.reference;
       const userId = order.userId;
-      cartItems = Array.from(new Set(cart));
+      const cartItems = Array.from(new Set(cart));
       cartItems.map(async (itemId) => {
-        const deletedOrderData = {reference:reference,userId:userId,quantity:null,itemId:itemId}; // {itemId: quantity}
+        const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
         quantity = cart.filter((c) => c == itemId).length;
         deletedOrderData.quantity = quantity;
-        dataNeededToUpdateProductValue.push(deletedOrderData)
+        dataNeededToUpdateProductValue.push(deletedOrderData);
+        if (!allCartItems.includes(itemId)) {
+          allCartItems.push(itemId)
+        }
       });
     });
 
-    console.log(dataNeededToUpdateProductValue)
+    // console.log(allCartItems)
 
-    const finalDataNeededToUpdateProductValue = []
-    const stocksToAdjust = {}
+    const finalDataNeededToUpdateProductValue = [];
+    const stocksToAdjust = {};
+    const stocksOnHoldToAdjust = {}
 
-    cartItems.map(async (itemId) => {
+
+    await Promise.all(allCartItems.map(async (itemId) => {
+  
       const productRef = db.collection('Products').doc(itemId);
-      const prodData = (await productRef.get()).data()
-      const stocksAvailable  = prodData.stocksAvailable;
-      stocksToAdjust[itemId] = stocksAvailable    
-    })
+      const productGet = await productRef.get();
+      const prodData = productGet.data();
+      // console.log(prodData)
+      const stocksAvailable = prodData.stocksAvailable;
+      const stocksOnHold = prodData.stocksOnHold;
+      // console.log(stocksOnHold)
+      // console.log(stocksAvailable)
+      
+      stocksToAdjust[itemId] = stocksAvailable;
+      stocksOnHoldToAdjust[itemId] = stocksOnHold
+    }))
+
+    
 
 
-    dataNeededToUpdateProductValue.forEach(async (data) => {
+    dataNeededToUpdateProductValue.map( (data) => {
       const reference = data.reference;
       const userId = data.userId;
       const quantity = data.quantity;
       const itemId = data.itemId;
-      stocksToAdjust[itemId] -= quantity
+      stocksToAdjust[itemId] += quantity;
+      const stocksOnHold =  stocksOnHoldToAdjust[itemId]
+      // console.log('_____________________________________________')
+      // console.log(itemId)
+      // console.log(stocksOnHold)
+      // console.log(reference)
       const newStocksOnHold = stocksOnHold.filter((order) => order.reference != reference);
-      const newData = {itemId:itemId, newStocksAvailable:newStocksAvailable, newStocksOnHold:newStocksOnHold}
-      finalDataNeededToUpdateProductValue.push(newData)
-    })
+      // console.log(newStocksOnHold)
+      // console.log('_____________________________________________')
+      stocksOnHoldToAdjust[itemId] = newStocksOnHold
+      const newData = { itemId: itemId, newStocksOnHold: newStocksOnHold };
+      finalDataNeededToUpdateProductValue.push(newData);
+    });
 
+    console.log(stocksOnHoldToAdjust)
+    console.log(stocksToAdjust)
+
+// 
     db.runTransaction(async (transaction) => {
       dataNeededToUpdateOrderValue.forEach(async (data) => {
         const userId = data.userId;
         const userRef = db.collection('Users').doc(userId);
         transaction.update(userRef, { orders: data.filteredOrder });
       });
-      stocksToAdjust.forEa
-      finalDataNeededToUpdateProductValue.forEach(async (data) => {
-        const itemId = data.itemId;
-        const productRef = db.collection('Products').doc(itemId);
-        transaction.update(productRef, { stocksAvailable: data.newStocksAvailable });
-        transaction.update(productRef, { stocksOnHold: data.newStocksOnHold });
-      });
+
+      const entries = Object.entries(stocksToAdjust);
+
+      for (const [key, value] of entries) {
+        const itemId = key
+        const newStocksAvailable = value
+        const productRef = db.collection('Products').doc(itemId)
+        transaction.update(productRef,{stocksAvailable:newStocksAvailable})
+      }
+
+      const entries2 = Object.entries(stocksOnHoldToAdjust);
+
+      for (const [key, value] of entries2) {
+        const itemId = key
+        const newStocksOnHold = value
+        const productRef = db.collection('Products').doc(itemId)
+        transaction.update(productRef,{stocksOnHold:newStocksOnHold})
+      }
+
+      
     });
+  
   } catch (error) {
     console.log(error);
   }

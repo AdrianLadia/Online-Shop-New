@@ -2489,61 +2489,61 @@ describe('updatePaymentStatus', () => {
 });
 
 describe.only('deleteOldOrders', () => {
-  // test('create PAID 2 day ago order for testing', async () => {
-  //   const currentDate = new Date(); // Get the current date
-  //   const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
-  //   const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
-  //   await firestore.updateDocumentFromCollection('Users', userTestId, {
-  //     orders: [
-  //       { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [] },
-  //       { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [] },
-  //       { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [] },
-  //       { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [] },
-  //       { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'] },
-  //     ],
-  //   });
-  //   await delay(200);
-  // });
+  test('create PAID 2 day ago order for testing', async () => {
+    const currentDate = new Date(); // Get the current date
+    const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
+    const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
+    await firestore.updateDocumentFromCollection('Users', userTestId, {
+      orders: [
+        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [] },
+        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [] },
+        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [] },
+        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [] },
+        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'] },
+      ],
+    });
+    await delay(200);
+  });
 
-  // test('check if order deleted', async () => {
-  //   const res = await cloudfirestore.deleteOldOrders();
-  //   await delay(1000);
-  //   const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
-  //   const orders = testUserData.orders;
-  //   let found1 = false;
-  //   let found2 = false;
-  //   let found3 = false;
-  //   let found4 = false;
-  //   orders.map((order) => {
-  //     if (order.reference == 'testref12345') {
-  //       throw new Error('Order not deleted');
-  //     }
+  test('check if order deleted', async () => {
+    const res = await cloudfirestore.deleteOldOrders();
+    await delay(1000);
+    const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = testUserData.orders;
+    let found1 = false;
+    let found2 = false;
+    let found3 = false;
+    let found4 = false;
+    orders.map((order) => {
+      if (order.reference == 'testref12345') {
+        throw new Error('Order not deleted');
+      }
 
-  //     if (order.reference == 'testref123456') {
-  //       found1 = true;
-  //     }
-  //     if (order.reference == 'testref1234567') {
-  //       found2 = true;
-  //     }
-  //     if (order.reference == 'testref1234') {
-  //       found3 = true;
-  //     }
-  //     if (order.reference == 'testref12345678') {
-  //       found4 = true
-  //     }
-  //   });
+      if (order.reference == 'testref123456') {
+        found1 = true;
+      }
+      if (order.reference == 'testref1234567') {
+        found2 = true;
+      }
+      if (order.reference == 'testref1234') {
+        found3 = true;
+      }
+      if (order.reference == 'testref12345678') {
+        found4 = true
+      }
+    });
 
-  //   expect(found1).toEqual(true);
-  //   expect(found2).toEqual(true);
-  //   expect(found3).toEqual(true);
-  //   expect(found4).toEqual(true);
-  // }, 100000);
+    expect(found1).toEqual(true);
+    expect(found2).toEqual(true);
+    expect(found3).toEqual(true);
+    expect(found4).toEqual(true);
+  }, 100000);
 
-  // test('delete all orders', async () => {
-  //   await firestore.updateDocumentFromCollection('Users', userTestId, {
-  //     orders: [],
-  //   });
-  // });
+  test('delete all orders', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, {
+      orders: [],
+    });
+  });
 
   test('Create an order with items to test if items are added back to stocksAvailable', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -2616,6 +2616,53 @@ describe.only('deleteOldOrders', () => {
 
     await firestore.updateDocumentFromCollection('Users',userTestId,{orders: orders})
 
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    });
+
 
   },100000)
   test('invoke function', async () => {
@@ -2633,7 +2680,23 @@ describe.only('deleteOldOrders', () => {
 
     expect(newPPB16Stocks - oldPPB16Stocks).toEqual(12);
     expect(newPPB12Stocks - oldPPB12Stocks).toEqual(12);
-  });  
+
+    const userData = await firestore.readUserById(userTestId)
+    const orders = userData.orders
+
+    let found = false
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        throw new Error('Order not deleted');
+      }
+      if (order.reference == 'testref12345') {
+        found = true
+      }
+    })
+
+    expect(found).toEqual(true)
+
+  },100000);  
 });
 
 describe('transactionPlaceOrder test retail', async () => {
