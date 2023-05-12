@@ -8,7 +8,7 @@ import { Routes,Route } from 'react-router-dom';
 import ChatApp from './ChatApp/src/ChatApp'
 
 function MyOrders() {
-  const { orders, refreshUser, setRefreshUser } = useContext(AppContext);
+  const { orders } = useContext(AppContext);
 
   const [reversedOrders, setReversedOrders] = useState([]);
 

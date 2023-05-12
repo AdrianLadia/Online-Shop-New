@@ -3,19 +3,18 @@ import Paper from '@mui/material/Paper';
 import { Button, Typography } from '@mui/material';
 import { Snackbar } from '@material-ui/core';
 import { useState, useContext, useEffect, useRef } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import UseWindowDimensions from './UseWindowDimensions';
 import TextField from '@mui/material/TextField';
 import ProductCardModal from './ProductCardModal';
 import businessCalculations from '../../utils/businessCalculations';
 import AppContext from '../AppContext';
-import { FaImage } from 'react-icons/fa';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
-import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { FaHandPointDown } from 'react-icons/fa';
 
 const ProductCard = (props) => {
-  // console.log(props)
+
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(false);
@@ -43,6 +42,7 @@ const ProductCard = (props) => {
   if (product.averageSalesPerDay == undefined) {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
+
 
   function ClearForm() {
     document.getElementById('inputquantity' + props.product.itemName).value = '';
@@ -201,14 +201,13 @@ const ProductCard = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>
-        {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
+      <div className={" flex justify-center h-80 w-11/12 2xs:w-96"+ responsiveWidth()}>
+
+      {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
           elevation={10}
-          // className="flex flex-row w-11/12 justify-center my-5 h-60 bg-color30 "
           className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
                       bg-gradient-to-r from-color60 via-color60 to-color10c shadow-lg shadow-slate-500"
-          // className="flex flex-row rounded-4xl w-11/12 justify-center my-5 bg-gradient-to-r from-color60 to-color10c drop-shadow-2xl"
         >
           {/* IMAGE */}
           <div className=" w-8/12 relative rounded-4xl cursor-pointer">
@@ -237,10 +236,11 @@ const ProductCard = (props) => {
                 className={'h-full object-cover rounded-4xl 3xs:w-60 border-color60 '}
                 onClick={() => setModal(true)}
               />
-            ) : (
-              <div className="w-60"> </div>
-            )}
+
+              : <div className="w-60"> </div>}
+              
           </div>
+
           {/* IMAGE */}
           {/* DETAILS */}
           <div className="flex flex-col ml-3 w-5/12 m-1 ">
@@ -270,7 +270,6 @@ const ProductCard = (props) => {
               </>
             )}
 
-            {/* {console.log(props.product)} */}
             <div className="h-2/6 ">
               <Typography sx={{ fontSize: responsiveStyle(), mr: 1, cursor: 'help' }} onClick={() => setModal(true)}>
                 {props.product.itemName}
