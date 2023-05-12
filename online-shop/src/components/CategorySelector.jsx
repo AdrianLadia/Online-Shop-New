@@ -21,29 +21,25 @@ function a11yProps(index) {
 }
 
 const CategorySelector = (props) => {
+  
   const [value, setValue] = React.useState(4);
+  const setSelectedCategory = props.setSelectedCategory;
+  const { firestore, categories, setCategories } = useContext(AppContext);
+  const datamanipulation = new dataManipulation();
+  const featured_category = 'Paper Bag';
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-  const setSelectedCategory = props.setSelectedCategory;
-
-  const { firestore,categories,setCategories } = useContext(AppContext);
-
-  const datamanipulation = new dataManipulation();
   
-
   useEffect(() => {
     async function fetchCategories() {
       const categories = await firestore.readAllCategories();
-      const categoryList = datamanipulation.getCategoryList(categories)
-      
+      const categoryList = datamanipulation.getCategoryList(categories);
       setCategories(categoryList);
     }
     fetchCategories();
   }, []);
-
-  const featured_category = 'Paper Bag';
 
   useEffect(() => {
     if (categories != null) {
@@ -51,26 +47,10 @@ const CategorySelector = (props) => {
     }
   }, [value, categories]);
 
-  // const sample = ['test','test2','test3', 'test4', 'test5']
-
-  // const theme = createTheme({
-  //   palette: {
-  //     primary: {
-  //       main: '#9bfab5',
-  //     }
-  //   },
-  // });
-
   return (
-    <ThemeProvider theme={theme}>
+  <ThemeProvider theme={theme}>
     <div className="w-full">
       <div className="flex flex-col items-center mt-5 from-colorbackground via-color2 to-color1">
-
-        {/* <div className="flex flex-row overflow-scroll">
-          {categories.map((category, index) => {
-            return <CategoryButton onCategoryClick={OnCategoryClick} category={category} key={index} />;
-          })}
-        </div> */}
         <Box sx={{ width: '100%' }}>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>
             <Tabs
@@ -90,7 +70,7 @@ const CategorySelector = (props) => {
         </Box>
       </div>
     </div>
-    </ThemeProvider>
+  </ThemeProvider>
   );
 };
 
