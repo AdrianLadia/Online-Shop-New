@@ -91,9 +91,11 @@ class dataManipulation {
       });
     }
 
-    // console.log(data)
+    console.log(data)
     data.sort((a, b) => {
       
+      console.log(a)
+      console.log(b.date)
       if (forTesting) {
         return b.date - a.date;
       } else {

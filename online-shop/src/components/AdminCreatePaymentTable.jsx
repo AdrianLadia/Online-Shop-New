@@ -12,6 +12,7 @@ const AdminCreatePaymentTable = () => {
 
   async function readPayments() {
     firestore.readPayments().then((payment) => {
+      console.log(payment)
       const paymentData = [];
       payment.forEach((data) => {
         const link = data.proofOfPaymentLink;
