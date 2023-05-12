@@ -14,6 +14,7 @@ function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
   const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, selectedChatOrderId, userdata, setUserState, setRefreshUser, refreshUser  } = React.useContext(AppContext);
   const order = props.order;
+  const paid = order.paid
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
 
@@ -29,7 +30,11 @@ function MyOrderCard(props) {
   const orderDateObject = new Date(orderDate)
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
   const dateNow = new Date()
-  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(orderExpiryDate ,dateNow);
+  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
+
+  console.log(order.reference)
+  console.log(dateDifference)
+
 
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
@@ -114,16 +119,51 @@ function MyOrderCard(props) {
     handleOpenModal();
   }
 
+
+
   function disabledColor(){
+    if(dateDifference <= 0 && proofOfPaymentLinkCount <= 0){
+      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+    }
+  }
+
+  function disabledColorCancelButton(){
+    if(proofOfPaymentLinkCount > 0){
+      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+    }
+    if(paid){
+      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+    }
     if(dateDifference <= 0){
       return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
     }
   }
 
-  function disableButton(){
-    if(dateDifference > 0){
+  function disableButtonCancelOrder(){
+    if (dateDifference <= 0) {
+      return true
+    }
+    if(proofOfPaymentLinkCount > 0){
+      console.log('cancel button disabled')
+      return true
+    }
+    if(paid){
+      return true
+    }
+    else{
       return false
-    }else{
+    }
+  }
+
+  function disableButton(){
+  
+    if(dateDifference >= 0){
+      return false
+    }
+    if(proofOfPaymentLinkCount > 0){
+      return false
+    }
+    else{
       return true
     }
   }
@@ -150,7 +190,7 @@ function MyOrderCard(props) {
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
     
         <div className="flex flex-row justify-between mb-4">
-          {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' /> : <div> </div>  }
+          {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' id={order.reference} /> : <div> </div>  }
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
         </div>
 
@@ -197,9 +237,9 @@ function MyOrderCard(props) {
           <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center '>
             <div className='w-full lg:w-5/12 flex gap-5 justify-evenly'>
               <button 
-                className={" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50 " + disabledColor()}
+                className={" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50 " + disabledColorCancelButton()}
                 onClick={handleCancel}
-                disabled={disableButton()}
+                disabled={disableButtonCancelOrder()}
                 >Cancel Order
               </button>
               <button 

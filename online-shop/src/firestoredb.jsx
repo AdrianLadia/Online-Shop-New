@@ -3,7 +3,8 @@ import Joi from 'joi';
 import schemas from './schemas/schemas';
 import retryApi from '../utils/retryApi';
 import db from '../firebase';
-import { query, where, collection, getDocs } from 'firebase/firestore';
+import { query, where, collection, getDocs, runTransaction,doc } from 'firebase/firestore';
+import { CollectionsOutlined } from '@mui/icons-material';
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
@@ -375,26 +376,37 @@ class firestoredb extends firestorefunctions {
     const q = query(paymentsRef, where('orderReference', '==', reference));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      // console.log(doc.id)
       this.updateDocumentFromCollection('Payments', doc.id, { status: status });
     });
   }
 
   async deleteDeclinedPayment(reference, userId, link) {
-    const userData = await this.readUserById(userId);
-    const userDoc = userData;
-    const orders = userDoc.orders;
+    
+    await runTransaction(this.db, async (transaction) => {
+      console.log('deleteDeclinedPayment');
+      const userRef = doc(this.db, 'Users/', userId);
+      const userRefDoc = await transaction.get(userRef);
+      const userDoc = userRefDoc.data();
+      const orders = userDoc.orders;
+      console.log(orders)
+      orders.forEach((order) => {
+        const orderReference = order.reference;
+        if (orderReference == reference) {
+          const proofOfPaymentLinks = order.proofOfPaymentLink;
+          const data = proofOfPaymentLinks.filter((item) => item !== link);
+          order.proofOfPaymentLink = data
+        }
+      });
 
-    orders.forEach((order) => {
-      const orderReference = order.reference;
-      if (orderReference == reference) {
-        const proofOfPaymentLinks = order.proofOfPaymentLink;
-        const data = proofOfPaymentLinks.filter((item) => item !== link);
-        order.proofOfPaymentLink = data
-      }
+      transaction.update(userRef, { orders: orders });
+
+      const paymentsRef = collection(this.db, 'Payments');
+      const q = query(paymentsRef, where('orderReference', '==', reference));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        transaction.update(doc.ref, { status: 'declined' });
+      });
     });
-
-    this.updateDocumentFromCollection('Users', userId, {orders:orders});
   }
 
   async removeCanceledProductsFromStocksOnHold(reference, itemName){

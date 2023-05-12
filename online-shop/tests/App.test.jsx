@@ -2488,7 +2488,7 @@ describe('updatePaymentStatus', () => {
   });
 });
 
-describe.only('deleteOldOrders', () => {
+describe('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2809,6 +2809,8 @@ describe('deleteDeclinedPayments', () => {
   test('checking values', async () => {
     const user = await firestore.readUserById(userTestId);
     const orders = user.orders;
+    const payments = await firestore.readAllDataFromCollection('Payments');
+
 
     let found = false
     orders.map((order) => {
@@ -2820,6 +2822,17 @@ describe('deleteDeclinedPayments', () => {
     });
 
     expect(found).toEqual(true)
+
+    let found2 = false
+    payments.map((payment) => {
+      if (payment.orderReference == 'testref1234') {
+        found2 = true
+        expect(payment.status).toEqual('declined');
+      }
+    })
+
+    expect(found2).toEqual(true)
+
 
   });
 },100000);
