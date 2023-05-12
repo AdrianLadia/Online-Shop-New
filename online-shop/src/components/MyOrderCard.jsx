@@ -10,11 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 import CountdownTimer from './CountDownTimer';
 
-
-
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, selectedChatOrderId, userdata } = React.useContext(AppContext);
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, selectedChatOrderId, userdata, setUserState, setRefreshUser, refreshUser  } = React.useContext(AppContext);
   const order = props.order;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
@@ -26,17 +24,12 @@ function MyOrderCard(props) {
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const navigateTo = useNavigate()
   const [unRead, setUnRead] = useState();
-
+  const [disable, setDisable] = useState(null);
 
   const orderDateObject = new Date(orderDate)
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
   const dateNow = new Date()
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(orderExpiryDate ,dateNow);
-  
-  console.log(new Date())
-  console.log(dateDifference)
-
-  // useEffect(()=>{},[selectedChatOrderId])
 
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
@@ -52,10 +45,6 @@ function MyOrderCard(props) {
     })
   }
 
-  useEffect(()=>{
-    readMessages()
-  },[firestore])
-
   function getPaymentStatus(x, y, z) {
     if (order.paid) {
       return x;
@@ -69,43 +58,19 @@ function MyOrderCard(props) {
     }
   }
 
-  function responsiveCssPaperColorIfDelivered() {
-    if (order.delivered && order.paid) {
-      return 'bg-green-300';
-    }
-    if (order.delivered && !order.paid) {
-      return 'bg-orange-300';
-    }
-    if (!order.delivered && order.paid) {
-      return 'bg-yellow-200';
-    }
-    if (!order.delivered && !order.paid) {
-      return 'bg-red-400';
-    }
-  }
-
-  function onQuestionMarkClick() {
-    handleOpenModal();
-  }
-
   function onUpload(proofOfPaymentLink) {
     cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink,userdata.name,'');
     setProofOfPaymentLinkCount(1);
   }
-
-  useEffect(() => {
-    if (width < 770) {
-      return setScreenSizeMobile(false);
-    } else {
-      return setScreenSizeMobile(true);
-    }
-  }, [width]);
 
   function onMessageClick() {
     setSelectedChatOrderId(order.reference)
     navigateTo("/orderChat",{state:{orderReference:order.reference}})
   };
 
+  function handleCancel(){
+    firestore.deleteCancelledOrder(userdata.uid, order.reference);
+  }
 
   function handlePay(){
     let price;
@@ -128,14 +93,61 @@ function MyOrderCard(props) {
         orderReference: order.reference
       }})
   }
+
+  function responsiveCssPaperColorIfDelivered() {
+    if (order.delivered && order.paid) {
+      return 'bg-green-300';
+    }
+    if (order.delivered && !order.paid) {
+      return 'bg-orange-300';
+    }
+    if (!order.delivered && order.paid) {
+      return 'bg-yellow-200';
+    }
+    if (!order.delivered && !order.paid) {
+      return 'bg-red-400';
+    }
+  }
+
+  function onQuestionMarkClick() {
+    handleOpenModal();
+  }
+
+  function disabledColor(){
+    if(dateDifference <= 0){
+      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+    }
+  }
+
+  function disableButton(){
+    if(dateDifference > 0){
+      return false
+    }else{
+      return true
+    }
+  }
   
+  useEffect(()=>{
+    readMessages()
+  },[firestore])
+  
+  useEffect(()=>{
+    disableButton()
+    disabledColor()
+  },[])
+
+  useEffect(() => {
+    if (width < 770) {
+      return setScreenSizeMobile(false);
+    } else {
+      return setScreenSizeMobile(true);
+    }
+  }, [width]);
+
   return (
     <div className={'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()}>
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
-        
-
-
-
+    
         <div className="flex flex-row justify-between mb-4">
           {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' /> : <div> </div>  }
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
@@ -181,16 +193,18 @@ function MyOrderCard(props) {
 
         <div className="w-full border-t-2 mt-4 mb-1 "/>
 
-          <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center'>
+          <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center '>
             <div className='w-full lg:w-5/12 flex gap-5 justify-evenly'>
               <button 
-                className=" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50"
-
+                className={" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50 " + disabledColor()}
+                onClick={handleCancel}
+                disabled={disableButton()}
                 >Cancel Order
               </button>
               <button 
-                className="w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b"
+                className={"w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b " + disabledColor()}
                 onClick={handlePay}
+                disabled={disableButton()}
                 >Pay
               </button> 
             </div>
@@ -200,7 +214,8 @@ function MyOrderCard(props) {
             <div className='w-full lg:w-9/12 flex gap-5 flex-col-reverse sm:flex-row justify-center items-center lg:justify-end '>
               <button 
                   onClick={onMessageClick} 
-                  className='p-3 w-max rounded-lg text-white font-semibold bg-color10a hover:bg-color10c' 
+                  className={"px-3 py-2 w-max rounded-lg text-white font-semibold bg-color60 hover:bg-color10c " + disabledColor()}
+                  disabled={disableButton()}
                   > <p className='flex gap-1 justify-center'>
                     <HiChatBubbleLeftEllipsis className='mt-1'/>Message
                     {unRead ? 
@@ -220,6 +235,7 @@ function MyOrderCard(props) {
                   folderName={'Orders/' + userId + '/' + order.reference}
                   buttonTitle={'Upload Proof of Payment'}
                   variant="outlined"
+                  disabled={disableButton()}
                 />
             </div>
           </div>

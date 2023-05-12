@@ -122,11 +122,11 @@ const OpenCartButton = (props) => {
 
   return (
     <div>
-      <div className="flex fixed bottom-20 w-full justify-center ">
+      <div className="flex fixed bottom-20 w-full justify-center z-50">
         <button
           id="opencartbutton"
           onClick={ViewCart}
-          className={" bg-color10b text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 position fixed bottom-2  content-center " + responsiveShakeCartAnimation() }
+          className={" bg-color10b text-white font-bold py-3 px-4 rounded-full w-2/4 lg:w-1/5 xl:w-72 2xl:w-1/6 position fixed bottom-2 content-center " + responsiveShakeCartAnimation() }
         >
           {userstate !== 'userloading' ? (
             <div className="flex flex-row justify-center">

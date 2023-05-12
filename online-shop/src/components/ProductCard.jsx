@@ -301,8 +301,8 @@ function responsiveWidth() {
                 InputLabelProps={{
                   style: {
                     color: '#6ab15d',
-                    fontSize:15
-                  },}}
+                    fontSize:15,
+                  },}} 
                 sx={{backgroundColor:"#ffffff",
                     '& .MuiOutlinedInput-notchedOutline': {
                       border: 2 ,

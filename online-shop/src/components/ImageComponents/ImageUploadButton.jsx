@@ -15,6 +15,7 @@ const ImageUploadButton = (props) => {
   const storage = props.storage;
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
+  const disableButton = props.disabled;
 
   const [buttonColor, setButtonColor] = useState('primary');
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -65,13 +66,20 @@ const ImageUploadButton = (props) => {
     }, 2000)
   },[buttonText])
 
+  function disable(){
+    if(disableButton){
+      return " cursor-not-allowed"
+    }
+  }
+
   return (
     <div className='flex justify-center h-3/4 ml-0.5'>
       <Button
         id={id}
-        className="w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter hover:bg-color10b rounded-lg "
+        className={"w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter py-2 hover:bg-color10b rounded-lg " + disable()}
         variant="contained"
         component="span"
+        disabled={disableButton}
       >
         <input type="file" id={`imageUpload-${id}`} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
         <label htmlFor={`imageUpload-${id}`}>

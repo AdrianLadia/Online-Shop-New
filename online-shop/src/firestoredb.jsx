@@ -389,15 +389,55 @@ class firestoredb extends firestorefunctions {
       const orderReference = order.reference;
       if (orderReference == reference) {
         const proofOfPaymentLinks = order.proofOfPaymentLink;
-        const declinedIndex = proofOfPaymentLinks.findIndex((l) => l === link);
         const data = proofOfPaymentLinks.filter((item) => item !== link);
         order.proofOfPaymentLink = data
       }
     });
 
     this.updateDocumentFromCollection('Users', userId, {orders:orders});
-
   }
+
+  async removeCanceledProductsFromStocksOnHold(reference, itemName){
+    const productData = await this.readSelectedProduct(itemName);
+    const removeStock = productData.stocksOnHold;
+    const newStock = removeStock.filter((stock)=> stock.reference != reference);
+
+    this.updateDocumentFromCollection('Products', itemName, {stocksOnHold:newStock})
+  }
+
+  async addCancelledProductsToStocksAvailable(itemName, number){
+    const productData = await this.readSelectedProduct(itemName);
+    const productDoc = productData
+    let stocksAvailable = productDoc.stocksAvailable + number[itemName];      
+
+    this.updateDocumentFromCollection('Products', itemName, {stocksAvailable:stocksAvailable})
+  }
+    
+  async deleteCancelledOrder(userId, reference){
+    const userData = await this.readUserById(userId);
+    const userDoc = userData;
+    let orders = userDoc.orders;
+    const data = orders.filter((order)=>order.reference !== reference);
+
+    const cancelledData = orders.filter((order)=>order.reference === reference);
+    const cancelledProducts = cancelledData[0].cart;
+
+    orders = data;
+
+    this.updateDocumentFromCollection('Users', userId, {orders:orders});
+
+    cancelledProducts.map((s)=>{
+      const counts = cancelledProducts.reduce((acc, item) => {
+        acc[item] = (acc[item] || 0) + 1;
+        return acc;
+      }, {});
+      this.addCancelledProductsToStocksAvailable(s, counts);
+      this.removeCanceledProductsFromStocksOnHold(reference, s);
+    })
+
+    alert(reference + " is Cancelled")
+  }
+
 }
 
 export default firestoredb;

@@ -8,7 +8,7 @@ import { Routes,Route } from 'react-router-dom';
 import ChatApp from './ChatApp/src/ChatApp'
 
 function MyOrders() {
-  const { orders } = useContext(AppContext);
+  const { orders, refreshUser, setRefreshUser } = useContext(AppContext);
 
   const [reversedOrders, setReversedOrders] = useState([]);
 
@@ -30,8 +30,7 @@ function MyOrders() {
                 <BsFillBagCheckFill />
               </div>
               {reversedOrders.map((order) => {
-                // console.log(order);
-                return <MyOrderCard key={order.reference} order={order} />;
+                return <MyOrderCard reference={order.reference} order={order} />;
               })}
             </div>
           </React.Fragment>
