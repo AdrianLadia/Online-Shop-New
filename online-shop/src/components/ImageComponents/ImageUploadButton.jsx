@@ -67,6 +67,7 @@ const ImageUploadButton = (props) => {
   },[buttonText])
 
   function disable(){
+    console.log(disableButton)
     if(disableButton){
       return " cursor-not-allowed"
     }

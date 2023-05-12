@@ -76,7 +76,11 @@ const AdminCreatePaymentTable = () => {
   }
 
   async function deleteDeclinedProofOfPaymentLink(reference, userId, link){
-    firestore.deleteDeclinedPayment(reference, userId, link)
+    console.log('denying')
+    console.log(reference)
+    console.log(userId)
+    console.log(link)
+    await firestore.deleteDeclinedPayment(reference, userId, link)
     
   }
 
