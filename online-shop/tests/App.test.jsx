@@ -183,6 +183,7 @@ describe('Business Calcualtions', () => {
     });
   });
   test('checkStocksIfAvailableInFirestore', async () => {
+
     const products = await firestore.readAllProducts();
     const result = await businesscalculations.checkStocksIfAvailableInFirestore(products, [
       'PPB#1',
@@ -1991,6 +1992,11 @@ describe('cloudfirestoredb', async () => {
       expect(roles.includes(userRole)).toEqual(true);
     });
   });
+
+  test('deleteProduct', async () => {
+    await firestore.deleteProduct('test')
+    await firestore.deleteProduct('test2')
+  })
 });
 
 describe('retryApiCall', () => {
@@ -2482,65 +2488,155 @@ describe('updatePaymentStatus', () => {
   });
 });
 
-describe('deleteOldOrders', () => {
-  test('create PAID 2 day ago order for testing', async () => {
+describe.only('deleteOldOrders', () => {
+  // test('create PAID 2 day ago order for testing', async () => {
+  //   const currentDate = new Date(); // Get the current date
+  //   const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
+  //   const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
+  //   await firestore.updateDocumentFromCollection('Users', userTestId, {
+  //     orders: [
+  //       { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [] },
+  //       { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [] },
+  //       { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [] },
+  //       { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [] },
+  //       { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'] },
+  //     ],
+  //   });
+  //   await delay(200);
+  // });
+
+  // test('check if order deleted', async () => {
+  //   const res = await cloudfirestore.deleteOldOrders();
+  //   await delay(1000);
+  //   const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
+  //   const orders = testUserData.orders;
+  //   let found1 = false;
+  //   let found2 = false;
+  //   let found3 = false;
+  //   let found4 = false;
+  //   orders.map((order) => {
+  //     if (order.reference == 'testref12345') {
+  //       throw new Error('Order not deleted');
+  //     }
+
+  //     if (order.reference == 'testref123456') {
+  //       found1 = true;
+  //     }
+  //     if (order.reference == 'testref1234567') {
+  //       found2 = true;
+  //     }
+  //     if (order.reference == 'testref1234') {
+  //       found3 = true;
+  //     }
+  //     if (order.reference == 'testref12345678') {
+  //       found4 = true
+  //     }
+  //   });
+
+  //   expect(found1).toEqual(true);
+  //   expect(found2).toEqual(true);
+  //   expect(found3).toEqual(true);
+  //   expect(found4).toEqual(true);
+  // }, 100000);
+
+  // test('delete all orders', async () => {
+  //   await firestore.updateDocumentFromCollection('Users', userTestId, {
+  //     orders: [],
+  //   });
+  // });
+
+  test('Create an order with items to test if items are added back to stocksAvailable', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
+    const ppb12Price = ppb12.price;
+    const itemsTotal = ((ppb12Price * 12) + (ppb16Price * 12)) / 1.12;
+    const vat = ((ppb12Price * 12) + (ppb16Price * 12)) - itemsTotal;
+    
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    });
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
-    await firestore.updateDocumentFromCollection('Users', userTestId, {
-      orders: [
-        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [] },
-        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [] },
-        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [] },
-        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [] },
-        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'] },
-      ],
-    });
-    await delay(200);
-  });
-
-  test('check if order deleted', async () => {
-    const res = await cloudfirestore.deleteOldOrders();
-    await delay(1000);
-    const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
-    const orders = testUserData.orders;
-    let found1 = false;
-    let found2 = false;
-    let found3 = false;
-    let found4 = false;
+    const userdata = await firestore.readUserById(userTestId)
+    const orders = userdata.orders
+    
     orders.map((order) => {
-      if (order.reference == 'testref12345') {
-        throw new Error('Order not deleted');
-      }
-
-      if (order.reference == 'testref123456') {
-        found1 = true;
-      }
-      if (order.reference == 'testref1234567') {
-        found2 = true;
-      }
       if (order.reference == 'testref1234') {
-        found3 = true;
+        order.orderDate = twoDaysAgo
       }
-      if (order.reference == 'testref12345678') {
-        found4 = true
-      }
-    });
+    })
+    
+    console.log(orders)
 
-    expect(found1).toEqual(true);
-    expect(found2).toEqual(true);
-    expect(found3).toEqual(true);
-    expect(found4).toEqual(true);
-  }, 100000);
+    await firestore.updateDocumentFromCollection('Users',userTestId,{orders: orders})
 
-  test('delete all orders', async () => {
-    await firestore.updateDocumentFromCollection('Users', userTestId, {
-      orders: [],
-    });
-  });
+
+  },100000)
+  test('invoke function', async () => {
+    await delay(2000)
+    const oldPPB16 = await firestore.readSelectedProduct('PPB#16');
+    const oldPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const oldPPB16Stocks = oldPPB16.stocksAvailable
+    const oldPPB12Stocks = oldPPB12.stocksAvailable
+    await cloudfirestore.deleteOldOrders();
+    await delay(300)
+    const newPPB16 = await firestore.readSelectedProduct('PPB#16');
+    const newPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const newPPB16Stocks = newPPB16.stocksAvailable
+    const newPPB12Stocks = newPPB12.stocksAvailable
+
+    expect(newPPB16Stocks - oldPPB16Stocks).toEqual(12);
+    expect(newPPB12Stocks - oldPPB12Stocks).toEqual(12);
+  });  
 });
 
-describe.only('transactionPlaceOrder test retail', async () => {
+describe('transactionPlaceOrder test retail', async () => {
   test('retail items', async () => {
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
     await delay(300)
@@ -2595,3 +2691,72 @@ describe.only('transactionPlaceOrder test retail', async () => {
     expect(stocksAvailable - stocksAvailable2).toEqual(1);
   },50000);
 });
+
+describe('deleteDeclinedPayments', () => {
+  test('Setup test', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    })
+
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER' ,'BDO')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com','TEST USER' ,'BDO')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink3.com','TEST USER' ,'BDO')
+  });
+
+  test('invoking function', async () => {
+    await firestore.deleteDeclinedPayment('testref1234', userTestId,'https://testlink.com');
+  });
+  test('checking values', async () => {
+    const user = await firestore.readUserById(userTestId);
+    const orders = user.orders;
+
+    let found = false
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        found = true
+        expect(order.proofOfPaymentLink).toEqual(['https://testlink2.com','https://testlink3.com']);
+      }
+      
+    });
+
+    expect(found).toEqual(true)
+
+  });
+},100000);

@@ -961,7 +961,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const paymentId = newPaymentRef.id;
           console.log(paymentId);
           res.status(200).send(paymentId);
-        } catch(error) {
+        } catch (error) {
           console.error('Error updating proof of payment link:', error);
           res.status(400).send('Error updating proof of payment link.');
         }
@@ -995,6 +995,8 @@ async function deleteOldOrders() {
   let currentTime = new Date();
   const usersRef = db.collection('Users');
   const snapshot = await usersRef.get();
+  const deletedOrders = [];
+  const dataNeededToUpdateOrderValue = []; // {userId, filteredOrders}
   try {
     snapshot.forEach((doc) => {
       const user = doc.data();
@@ -1006,7 +1008,6 @@ async function deleteOldOrders() {
         // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
         let paymentLinks;
         paymentLinks = order.proofOfPaymentLink;
-        console.log(paymentLinks);
         if (paymentLinks == null) {
           console.log('converted to empty array');
           paymentLinks = [];
@@ -1042,11 +1043,70 @@ async function deleteOldOrders() {
 
         console.log('found expired orders');
         foundExpiredOrders = true;
+        // WE PASS THE ORDER TO THE ARRAY ADD THE ORDER CART BACK TO THE INVENTORY
+        deletedOrders.push(order);
       });
 
       if (foundExpiredOrders) {
-        db.collection('Users').doc(userId).update({ orders: filteredOrder });
+        dataNeededToUpdateOrderValue.push({ userId: userId, filteredOrder: filteredOrder });
+        // db.collection('Users').doc(userId).update({ orders: filteredOrder });
       }
+    });
+
+  
+    const dataNeededToUpdateProductValue = [] //This is the data needed to do the writes it follows this schema 
+    // {reference:reference,userId:userId,quantity:null,itemId:itemId}
+    let cartItems
+    deletedOrders.forEach(async (order) => {
+      const cart = order.cart;
+      const reference = order.reference;
+      const userId = order.userId;
+      cartItems = Array.from(new Set(cart));
+      cartItems.map(async (itemId) => {
+        const deletedOrderData = {reference:reference,userId:userId,quantity:null,itemId:itemId}; // {itemId: quantity}
+        quantity = cart.filter((c) => c == itemId).length;
+        deletedOrderData.quantity = quantity;
+        dataNeededToUpdateProductValue.push(deletedOrderData)
+      });
+    });
+
+    console.log(dataNeededToUpdateProductValue)
+
+    const finalDataNeededToUpdateProductValue = []
+    const stocksToAdjust = {}
+
+    cartItems.map(async (itemId) => {
+      const productRef = db.collection('Products').doc(itemId);
+      const prodData = (await productRef.get()).data()
+      const stocksAvailable  = prodData.stocksAvailable;
+      stocksToAdjust[itemId] = stocksAvailable    
+    })
+
+
+    dataNeededToUpdateProductValue.forEach(async (data) => {
+      const reference = data.reference;
+      const userId = data.userId;
+      const quantity = data.quantity;
+      const itemId = data.itemId;
+      stocksToAdjust[itemId] -= quantity
+      const newStocksOnHold = stocksOnHold.filter((order) => order.reference != reference);
+      const newData = {itemId:itemId, newStocksAvailable:newStocksAvailable, newStocksOnHold:newStocksOnHold}
+      finalDataNeededToUpdateProductValue.push(newData)
+    })
+
+    db.runTransaction(async (transaction) => {
+      dataNeededToUpdateOrderValue.forEach(async (data) => {
+        const userId = data.userId;
+        const userRef = db.collection('Users').doc(userId);
+        transaction.update(userRef, { orders: data.filteredOrder });
+      });
+      stocksToAdjust.forEa
+      finalDataNeededToUpdateProductValue.forEach(async (data) => {
+        const itemId = data.itemId;
+        const productRef = db.collection('Products').doc(itemId);
+        transaction.update(productRef, { stocksAvailable: data.newStocksAvailable });
+        transaction.update(productRef, { stocksOnHold: data.newStocksOnHold });
+      });
     });
   } catch (error) {
     console.log(error);

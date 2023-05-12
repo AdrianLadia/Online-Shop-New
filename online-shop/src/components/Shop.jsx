@@ -7,15 +7,15 @@ import CountdownTimer from './CountDownTimer'
 
 const Shop = () => {
 
-  const [wholesale, setWholesale] = useState(true);
-  const [retail, setRetail] = useState(false);
+  const [wholesale, setWholesale] = useState(false);
+  const [retail, setRetail] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('Paper Bag');
 
   return (
     <div className='flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 '>
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
       {/* WHOLESALE RETAIL */}
-      <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/>
+      {/* <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/> */}
       {/* CATEGORY */}
       <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory}/>
       {/* PRODUCTS */}
