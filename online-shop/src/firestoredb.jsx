@@ -3,12 +3,8 @@ import Joi from 'joi';
 import schemas from './schemas/schemas';
 import retryApi from '../utils/retryApi';
 import db from '../firebase';
-import {
-  query,
-  where,
-  collection,
-  getDocs
-} from 'firebase/firestore';
+import { query, where, collection, getDocs, runTransaction,doc } from 'firebase/firestore';
+import { CollectionsOutlined } from '@mui/icons-material';
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {
@@ -159,7 +155,6 @@ class firestoredb extends firestorefunctions {
 
   async readUserById(id) {
     const user = retryApi(async () => await super.readSelectedDataFromCollection('Users', id));
-
     return user;
   }
 
@@ -377,14 +372,83 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    const paymentsRef = collection(this.db,'Payments')
+    const paymentsRef = collection(this.db, 'Payments');
     const q = query(paymentsRef, where('orderReference', '==', reference));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      // console.log(doc.id)
       this.updateDocumentFromCollection('Payments', doc.id, { status: status });
     });
   }
+
+  async deleteDeclinedPayment(reference, userId, link) {
+    
+    await runTransaction(this.db, async (transaction) => {
+      console.log('deleteDeclinedPayment');
+      const userRef = doc(this.db, 'Users/', userId);
+      const userRefDoc = await transaction.get(userRef);
+      const userDoc = userRefDoc.data();
+      const orders = userDoc.orders;
+      orders.forEach((order) => {
+        const orderReference = order.reference;
+        if (orderReference == reference) {
+          const proofOfPaymentLinks = order.proofOfPaymentLink;
+          const data = proofOfPaymentLinks.filter((item) => item !== link);
+          order.proofOfPaymentLink = data
+        }
+      });
+
+      transaction.update(userRef, { orders: orders });
+
+      const paymentsRef = collection(this.db, 'Payments');
+      const q = query(paymentsRef, where('orderReference', '==', reference));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        transaction.update(doc.ref, { status: 'declined' });
+      });
+    });
+  }
+
+  async removeCanceledProductsFromStocksOnHold(reference, itemName){
+    const productData = await this.readSelectedProduct(itemName);
+    const removeStock = productData.stocksOnHold;
+    const newStock = removeStock.filter((stock)=> stock.reference != reference);
+
+    this.updateDocumentFromCollection('Products', itemName, {stocksOnHold:newStock})
+  }
+
+  async addCancelledProductsToStocksAvailable(itemName, number){
+    const productData = await this.readSelectedProduct(itemName);
+    const productDoc = productData
+    let stocksAvailable = productDoc.stocksAvailable + number[itemName];      
+
+    this.updateDocumentFromCollection('Products', itemName, {stocksAvailable:stocksAvailable})
+  }
+    
+  async deleteCancelledOrder(userId, reference){
+    const userData = await this.readUserById(userId);
+    const userDoc = userData;
+    let orders = userDoc.orders;
+    const data = orders.filter((order)=>order.reference !== reference);
+
+    const cancelledData = orders.filter((order)=>order.reference === reference);
+    const cancelledProducts = cancelledData[0].cart;
+
+    orders = data;
+
+    this.updateDocumentFromCollection('Users', userId, {orders:orders});
+
+    cancelledProducts.map((s)=>{
+      const counts = cancelledProducts.reduce((acc, item) => {
+        acc[item] = (acc[item] || 0) + 1;
+        return acc;
+      }, {});
+      this.addCancelledProductsToStocksAvailable(s, counts);
+      this.removeCanceledProductsFromStocksOnHold(reference, s);
+    })
+
+    alert(reference + " is Cancelled")
+  }
+
 }
 
 export default firestoredb;

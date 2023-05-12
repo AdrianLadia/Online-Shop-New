@@ -6,6 +6,7 @@ const CountdownTimer = (props) => {
   const size = props.size;
   const className = props.className;
   const expiredText = props.expiredText;
+  const id = props.id;
 
   const formatTime = (totalSeconds) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -55,7 +56,7 @@ const CountdownTimer = (props) => {
   }, [timeLeft]);
 
   return (
-    <div className={className}>
+    <div id={props.reference} className={className}>
       <Typography variant={getSize()} color={'#6bd0ff'} >{(timeLeft > 0) ? formatTime(timeLeft) : expiredText }</Typography>
     </div>
   );

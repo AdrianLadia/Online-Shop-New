@@ -30,8 +30,7 @@ function MyOrders() {
                 <BsFillBagCheckFill />
               </div>
               {reversedOrders.map((order) => {
-                // console.log(order);
-                return <MyOrderCard key={order.reference} order={order} />;
+                return <MyOrderCard reference={order.reference} order={order} />;
               })}
             </div>
           </React.Fragment>

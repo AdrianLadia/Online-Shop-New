@@ -359,25 +359,7 @@ const CheckoutPage = () => {
               </button>
             </div>
           </div>
-          <TextField
-            id="addressEntry"
-            label="Address"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 self-center mb-5 bg-white"
-            onChange={(event) => setLocalDeliveryAddress(event.target.value)}
-            value={localDeliveryAddress}
-          />
-
-          <TextField
-            disabled
-            id="googleAddress"
-            label="Google Pipoint Address"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 self-center mb-5 bg-white"
-            value={addressText}
-          />
+      
         </div>
 
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
@@ -396,6 +378,26 @@ const CheckoutPage = () => {
         />
 
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+
+        <TextField
+            id="addressEntry"
+            label="Address"
+            InputLabelProps={labelStyle}
+            variant="filled"
+            className=" w-11/12 self-center mb-5 bg-white"
+            onChange={(event) => setLocalDeliveryAddress(event.target.value)}
+            value={localDeliveryAddress}
+          />
+
+          <TextField
+            disabled
+            id="googleAddress"
+            label="Google Pipoint Address"
+            InputLabelProps={labelStyle}
+            variant="filled"
+            className=" w-11/12 self-center mb-5 bg-white"
+            value={addressText}
+          />
 
         <div className="flex flex-col self-center items-center gap-6 w-full">
           <div className="flex flex-row w-full justify-between ml-4 my-5">

@@ -140,13 +140,7 @@ class firestorefunctions {
     });
   }
 
-  async deleteDocumentFromCollectionArray(
-    collectionname,
-    id,
-    data,
-    arrayname,
-    localphonenumber
-  ) {
+  async deleteDocumentFromCollectionArray(collectionname, id, data, arrayname) {
     const arrayRef = doc(this.db, collectionname + "/", id);
 
     if (consolelog) {
@@ -164,8 +158,6 @@ class firestorefunctions {
       [arrayname]: arrayRemove(data),
     });
   }
-
-  
 
   async transactionPlaceOrder(
     data

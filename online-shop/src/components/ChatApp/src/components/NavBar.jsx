@@ -2,8 +2,9 @@ import React, {useState, useEffect, useContext} from 'react'
 import NavBarBackButton from './NavBarBackButton'
 import AppContext from '../../../../AppContext'
 
-const NavBar = () => {
+const NavBar = (props) => {
  
+    const orderReferenceId = props.orderReferenceId;
     const {selectedChatOrderId} = useContext(AppContext)
 
   return (
@@ -13,7 +14,7 @@ const NavBar = () => {
                 <NavBarBackButton />
             </div>
             <div className='flex items-center justify-start w-7/12 sm:w-5/12 '>
-                <div className='mt-0.5 text-xl sm:text-2xl font-semibold text-white first-letter:uppercase '>ORDER REFERENCE : {selectedChatOrderId} </div>
+                <div className='mt-0.5 text-xl sm:text-2xl font-semibold text-white first-letter:uppercase '>ORDER REFERENCE : {orderReferenceId} </div>
             </div>
         </div>
     </div>

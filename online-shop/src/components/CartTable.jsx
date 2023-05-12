@@ -10,6 +10,7 @@ import useWindowDimensions from './UseWindowDimensions';
 import TableRow from '@mui/material/TableRow';
 
 const CartTable = (props) => {
+
     const {width, height} = useWindowDimensions();
     function getMaxHeightTable() {
         return height - 355
@@ -25,6 +26,13 @@ const CartTable = (props) => {
         { id: 'itemimage', label: 'Image', minWidth: 100},
         { id: 'itemName', label: 'Item', minWidth:1 },
         { id: 'quantity', label: 'Qty', minWidth: 1 },
+        {
+          id: 'pieces',
+          label: 'Pieces',
+          minWidth: 1,
+          align: 'right',
+          format: (value) => value.toLocaleString('en-US'),
+        },
         { id: 'addbutton', label: 'Add', minWidth: 1 },
         { id: 'removebutton', label: 'Remove', minWidth: 1 },
         {

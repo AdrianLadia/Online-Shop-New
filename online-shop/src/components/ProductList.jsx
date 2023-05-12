@@ -98,7 +98,6 @@ const ProductList = (props) => {
                   stocksAvailable = p.stocksAvailable;
                   averageSalesPerDay = p.averageSalesPerDay;
                 }
-                
               });
             }
             return (

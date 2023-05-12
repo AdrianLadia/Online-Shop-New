@@ -11,7 +11,7 @@ import AppContext from '../AppContext';
 
 const AccountStatementPayment = (props) => {
 
-    // const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products } = useContext(AppContext);
+    const { setSelectedChatOrderId } = useContext(AppContext);
     // const { userdata, cart, setCart, userstate } = React.useContext(AppContext);
 
     const {setMayaRedirectUrl,setMayaCheckoutId,mayaRedirectUrl} = useContext(AppContext);
@@ -29,7 +29,22 @@ const AccountStatementPayment = (props) => {
     const businesscalculations = new businessCalculations();
     const location = useLocation();
     const navigateTo = useNavigate();
-    const {firstName,lastName,eMail,phoneNumber,totalPrice,userId} = location.state;
+    const {firstName,lastName, eMail, phoneNumber, totalPrice, userId, fullname,orderReference} = location.state;
+    
+
+    // WE DO THIS BECAUSE WE ARE USING THE SAME COMPONENT FOR CHECKOUT AND MY ORDER CARD PAYMENT
+    // IF WE CHECKOUT NORMALLY WE NEED TO GENERATE A REFERENCENUMBER
+    // IF WE ARE PAYING FOR AN ORDER WE NEED TO USE THE ORDERREFERENCE
+    function getReference() {
+      if (orderReference != null) {
+        return orderReference;    
+      }
+      else {
+        return businesscalculations.generateOrderReference();
+      }
+
+    }
+
 
 const paymentMethodValues = {
     bdoselected,
@@ -88,7 +103,6 @@ const paymentMethodValues = {
   ]);
 
   function payTotal() {
-
     businesscalculations.afterCheckoutRedirectLogic(
       {
         bdoselected : bdoselected,
@@ -100,13 +114,13 @@ const paymentMethodValues = {
         bitcoinselected : bitcoinselected,
         ethereumselected : ethereumselected,
         solanaselected : solanaselected,
-        referenceNumber : businesscalculations.generateOrderReference(),
+        referenceNumber :  getReference() ,
         grandTotal : totalPrice,
         deliveryFee : null,
         vat : null,
         rows : null,
         area : null,
-        fullName : firstName + ' ' + lastName,
+        fullName : firstName && lastName ? firstName + ' ' + lastName : fullname,
         eMail : eMail,
         phoneNumber : phoneNumber,
         setMayaRedirectUrl : setMayaRedirectUrl,
@@ -121,8 +135,11 @@ const paymentMethodValues = {
     )
   }
 
-  console.log(bdoselected, unionbankselected, gcashselected, mayaselected, visaselected, mastercardselected, bitcoinselected, ethereumselected, solanaselected)
-  console.log(firstName,lastName,eMail,phoneNumber,totalPrice,userId)
+  // console.log(bdoselected, unionbankselected, gcashselected, mayaselected, visaselected, mastercardselected, bitcoinselected, ethereumselected, solanaselected)
+  console.log(firstName, lastName, fullname, eMail, phoneNumber, totalPrice, userId)
+
+  console.log(totalPrice)
+
   return (
     <div>
       <div className='flex flex-col justify-center gap-16 mb-8'>

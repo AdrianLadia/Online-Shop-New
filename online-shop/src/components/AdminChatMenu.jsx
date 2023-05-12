@@ -96,7 +96,6 @@ const AdminChatMenu = () => {
               <TableCell > <p className=' flex justify-center text-2xl mr-5'><HiChatAlt/></p> </TableCell>
               <TableCell className='font-bold'>Customer</TableCell>
               <TableCell className='font-bold'>Reference #</TableCell>
-              {/* <TableCell className='font-bold'>Latest Message</TableCell> */}
               <TableCell className='font-bold'>Unread Messages</TableCell>
             </TableRow>
           </TableHead>
@@ -122,7 +121,6 @@ const AdminChatMenu = () => {
                   <Typography className="font-semibold text-slate-500">{chat.customerName}</Typography>
                 </TableCell>
                 <TableCell>{chat.id}</TableCell>
-                {/* <TableCell>{convertChatMessageToFitTable(chat.latestMessage)}</TableCell> */}
                 <TableCell>{chat.unreadCount? (<p className='text-red-500 font-bold'>{chat.unreadCount}</p>): (<>{chat.unreadCount}</>) }</TableCell>
               </TableRow>
             ))}

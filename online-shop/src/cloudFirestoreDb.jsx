@@ -169,6 +169,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
+  
+
   async readUserRole(userId) {
     const userIdSchema = Joi.string();
 

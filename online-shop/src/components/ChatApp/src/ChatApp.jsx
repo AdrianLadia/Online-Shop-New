@@ -7,7 +7,7 @@ import AppContext from '../../../AppContext';
 import { useLocation } from 'react-router-dom';
 
 const ChatApp = () => {
-  const {db, selectedChatOrderId, userId, chatSwitch, userdata ,setRefreshUser,refreshUser} = useContext(AppContext);
+  const {db, selectedChatOrderId, userId, userdata ,setRefreshUser,refreshUser} = useContext(AppContext);
   const loggedInUserId = userId;
   const location = useLocation();
   let orderRef
@@ -41,7 +41,6 @@ const ChatApp = () => {
       const docRef = doc(db, 'ordersMessages', orderRef);
       onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
-          console.log(doc.data())
           const username = doc.data().ownerName;
           setMessageDetails(doc.data());
           setUserName(username);
@@ -50,12 +49,12 @@ const ChatApp = () => {
         }
       });
     }
-  }, []);
+  }, [selectedChatOrderId]);
 
   return (
     <div className="flex justify-center w-screen h-screen ">
-      <div className="flex flex-col w-full h-full justify-evenly bg-color60">
-        <NavBar messages={messageDetails} />
+      <div className="flex flex-col w-full h-full justify-evenly bg-color60 overflow-hidden">
+        <NavBar messages={messageDetails} orderReferenceId={orderRef}/>
 
         {messageDetails != {} ? (
           <DisplayMessages messages={messageDetails} userName={userName} loggedInUserId={loggedInUserId} user={user}/>

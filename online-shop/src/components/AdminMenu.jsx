@@ -23,7 +23,7 @@ import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
 
 const AdminMenu = () => {
-  const {products,firestore } = React.useContext(AppContext);
+  const {products, firestore } = React.useContext(AppContext);
 
   const {width } = UseWindowDimensions();
   const [refresh, setRefresh] = useState(false);
@@ -95,8 +95,6 @@ const AdminMenu = () => {
       return "mt-2 text-blue1"
     }
   }
-
-  // console.log(anchorEl)
 
   return (
     // NAV BAR

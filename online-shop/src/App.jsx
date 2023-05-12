@@ -25,7 +25,7 @@ import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
-import useWindowDimensions from './components/useWindowDimensions';
+import useWindowDimensions from './components/UseWindowDimensions';
 
 const devEnvironment = true;
 
@@ -186,7 +186,7 @@ function App() {
         }
         if (guestLoginClicked === false) {
           // console.log('guestLoginClicked is false');
-          console.log('setting Cart');
+          // console.log('setting Cart');
           setCart(data.cart);
         }
         // FLOW FOR GUEST LOGIN

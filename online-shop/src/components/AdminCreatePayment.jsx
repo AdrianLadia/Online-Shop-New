@@ -29,7 +29,7 @@ const AdminCreatePayment = (props) => {
   const dummy = useRef(null)
 
   useEffect(()=>{
-    dummy.current.scrollIntoView({behavior: "smooth"})
+    // dummy.current.scrollIntoView({behavior: "smooth"})
   },[props])
 
   useEffect(() => {

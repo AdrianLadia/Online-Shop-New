@@ -733,8 +733,8 @@ class dataManipulation {
       return formattedDate
   }
 
-  getSecondsDifferenceBetweentTwoDates(startDate,endDate) {
-    const differenceInMilliseconds = startDate - endDate;
+  getSecondsDifferenceBetweentTwoDates(expiryDate,dateNow) {
+    const differenceInMilliseconds = dateNow - expiryDate;
     const differenceInSeconds = differenceInMilliseconds / 1000;
     return differenceInSeconds
   }

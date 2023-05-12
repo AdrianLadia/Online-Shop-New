@@ -31,10 +31,9 @@ const CartModal = (props) => {
     height: "80%",
     transform: "translate(-50%, -50%)",
     width: "95%",
-    // overflow: 'scroll',
 
     "@media (min-width: 1024px)": {
-      width: "50%",
+      width: "70%",
     },
 
     bgcolor: "background.paper",
