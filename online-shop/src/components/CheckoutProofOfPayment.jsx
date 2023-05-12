@@ -14,14 +14,32 @@ const CheckoutProofOfPayment = (props) => {
 
   const { storage, cloudfirestore, userId, userdata } = useContext(AppContext);
   const location = useLocation();
-  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area } = location.state;
+  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area,bdoselected,unionbankselected,gcashselected } = location.state;
   console.log('referenceNumber', referenceNumber);
 
   console.log('rows', rows);
 
-  const bankName = 'BDO';
-  const accountName = 'ADRIAN LADIA';
-  const accountNumber = '006080021403';
+  console.log(bdoselected, unionbankselected, gcashselected)
+
+  let bankName 
+  let accountName
+  let accountNumber 
+
+  if (bdoselected) {
+    bankName = 'BDO';
+    accountName = 'ADRIAN LADIA';
+    accountNumber = '006080021403';
+  }
+  if (unionbankselected) {
+    bankName = 'UNIONBANK';
+    accountName = 'ADRIAN LADIA';
+    accountNumber = '109355469422';
+  }
+  if(gcashselected){
+    bankName = 'GCASH';
+    accountName = 'ADRIAN LADIA';
+    accountNumber = '0917-892-7206';
+  }
 
   function onUpload(url) {
     cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);

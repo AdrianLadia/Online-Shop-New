@@ -666,10 +666,13 @@ class businessCalculations {
         return 'maya'
       } 
     }
-    if (data.bdoselected) {
+    if (data.bdoselected || data.unionbankselected || data.gcashselected) {
       if (testing === false) {
         data.navigateTo('/checkout/proofOfPayment', {
           state: {
+            bdoselected : data.bdoselected,
+            unionbankselected : data.unionbankselected,
+            gcashselected : data.gcashselected,
             referenceNumber: data.referenceNumber,
             itemsTotal: data.itemsTotal,
             deliveryFee: data.deliveryFee,
@@ -685,24 +688,9 @@ class businessCalculations {
       }
     }
 
-    if (data.unionbankselected) {
-      if (testing === false) {
-        navigateTo('/checkout/proofOfPayment', {
-          state: {
-            referenceNumber: data.referenceNumber,
-            total: data.total,
-            deliveryFee: data.deliveryFee,
-            grandTotal: data.grandTotal,
-            vat: data.vat,
-            rows: data.rows,
-            area: data.area,
-          },
-        });
-      }
-      else {
-        return 'unionbank'
-      }
-    }
+
+
+    
   }
 
   generateOrderReference() {

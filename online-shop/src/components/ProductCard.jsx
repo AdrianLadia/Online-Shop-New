@@ -33,7 +33,14 @@ const ProductCard = (props) => {
   const retailAverageSalesPerDay = props.averageSalesPerDay;
   const isWholesale = props.isWholesale;
 
-  // console.log(width)
+
+
+  console.log(product)
+
+  if (product.imageLinks.length == 0) {
+    return
+  }
+
 
   let safetyStock;
   if (product.averageSalesPerDay != undefined) {
@@ -227,7 +234,7 @@ const ProductCard = (props) => {
               ) : null}
             </div>
 
-            {props.product.imageLinks ? 
+            {props.product.imageLinks.length > 0 ? 
               <img
                 src={props.product.imageLinks[0]}
                 alt={props.product.itemName}

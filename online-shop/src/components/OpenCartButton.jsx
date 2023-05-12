@@ -45,6 +45,7 @@ const OpenCartButton = (props) => {
             itemId: item.itemId,
             quantity: item.quantity,
             pieces: product.pieces,
+            totalPieces: item.quantity * product.pieces,
             price: product.price,
             total: product.price * item.quantity,
             addbutton: (

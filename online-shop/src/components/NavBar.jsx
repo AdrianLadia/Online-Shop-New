@@ -10,7 +10,8 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 import Logo from './Logo';
 import LoginButton from './LoginButton';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { Typography } from '@mui/material';
 
 const userMenu = ['My Account', 'Orders History', 'Logout'];
 
@@ -25,21 +26,34 @@ const NavBar = () => {
     setUserLoaded(true);
     setUserState('guest');
     setCart([]);
-    navigateTo("/");
+    navigateTo('/');
     console.log('logged out');
   }
 
   function storeClick() {
-    navigateTo("/");
+    navigateTo('/');
   }
 
   return (
     <div>
       <div className="flex items-center justify-between flex-wrap bg-gradient-to-r from-color10c via-color10c to-color60 w-full h-16 ">
-        <Logo onClick={storeClick}/>
-        
+        <Logo onClick={storeClick} />
+        <div className="flex flex-col justify-center">
+          <div className="text-white text-sm cursor-pointer hover:underline" onClick={storeClick}>
+            {/* <Typography id="modal-modal-title" variant="h5" component="h2"> */}
+            We are on <strong>SOFT OPENING!</strong>
+            {/* </Typography> */}
+          </div>
+          <div className="flex justify-center text-white text-sm cursor-pointer hover:underline" onClick={storeClick}>
+            {/* <Typography id="modal-modal-title" variant="h5" component="h2"> */}
+            <strong> More Products Soon </strong>.
+            {/* </Typography> */}
+          </div>
+          
+        </div>
+
         <div className="flex flex-row 2xs:mr-5 ">
-          {userdata ? <AccountMenu userdata={userdata} signout={logOutClick} /> :<LoginButton position={'left'} />}
+          {userdata ? <AccountMenu userdata={userdata} signout={logOutClick} /> : <LoginButton position={'left'} />}
         </div>
       </div>
     </div>
