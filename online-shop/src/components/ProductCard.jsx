@@ -3,7 +3,7 @@ import Paper from '@mui/material/Paper';
 import { Button, Typography } from '@mui/material';
 import { Snackbar } from '@material-ui/core';
 import { useState, useContext, useEffect, useRef } from 'react';
-import { useState, useContext, useEffect, useRef } from 'react';
+
 import UseWindowDimensions from './UseWindowDimensions';
 import TextField from '@mui/material/TextField';
 import ProductCardModal from './ProductCardModal';
@@ -227,7 +227,7 @@ const ProductCard = (props) => {
               ) : null}
             </div>
 
-            {props.product.imageLinks ? (
+            {props.product.imageLinks ? 
               <img
                 src={props.product.imageLinks[0]}
                 alt={props.product.itemName}
