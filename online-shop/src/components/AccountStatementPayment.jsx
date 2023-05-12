@@ -30,6 +30,21 @@ const AccountStatementPayment = (props) => {
     const location = useLocation();
     const navigateTo = useNavigate();
     const {firstName,lastName, eMail, phoneNumber, totalPrice, userId, fullname,orderReference} = location.state;
+    
+
+    // WE DO THIS BECAUSE WE ARE USING THE SAME COMPONENT FOR CHECKOUT AND MY ORDER CARD PAYMENT
+    // IF WE CHECKOUT NORMALLY WE NEED TO GENERATE A REFERENCENUMBER
+    // IF WE ARE PAYING FOR AN ORDER WE NEED TO USE THE ORDERREFERENCE
+    function getReference() {
+      if (orderReference != null) {
+        return orderReference;    
+      }
+      else {
+        return businesscalculations.generateOrderReference();
+      }
+
+    }
+
 
 const paymentMethodValues = {
     bdoselected,
@@ -99,7 +114,7 @@ const paymentMethodValues = {
         bitcoinselected : bitcoinselected,
         ethereumselected : ethereumselected,
         solanaselected : solanaselected,
-        referenceNumber :  businesscalculations.generateOrderReference(),
+        referenceNumber :  getReference() ,
         grandTotal : totalPrice,
         deliveryFee : null,
         vat : null,

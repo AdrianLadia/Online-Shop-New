@@ -80,6 +80,7 @@ function MyOrderCard(props) {
       }
     });
 
+
     navigateTo(
       '/AccountStatementPayment',
       {state : {

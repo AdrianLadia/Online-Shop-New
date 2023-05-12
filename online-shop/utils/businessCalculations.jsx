@@ -397,6 +397,7 @@ class businessCalculations {
   }
 
   async checkStocksIfAvailableInFirestore(cart) {
+    console.log(cart)
     const cartSchema = Joi.array().required();
 
     const { error2 } = cartSchema.validate(cart);
@@ -421,6 +422,9 @@ class businessCalculations {
     const products = await this.cloudfirestore.readAllProductsForOnlineStore();
     // console.log(products);
     countEntries.map(([itemId, quantity]) => {
+      if (itemId.slice(-4) === "-RET") {
+        return
+      } 
       products.map((dataitem) => {
         if (dataitem.itemId === itemId) {
           const stocksAvailableLessSafetyStock = this.getStocksAvailableLessSafetyStock(

@@ -33,6 +33,7 @@ const ProductCard = (props) => {
   const setShakeCartAnimation = props.setShakeCartAnimation
   const retailStocksAvailable = props.stocksAvailable
   const retailAverageSalesPerDay = props.averageSalesPerDay
+  
 
   // console.log(width)
   
@@ -69,9 +70,29 @@ const ProductCard = (props) => {
     }
     const totalOrder = cartQuantity + parseInt(quantity);
 
+
+
+    function getStocksAvailable() {
+      if (props.product.unit == 'Pack') {
+        return retailStocksAvailable;
+      }
+      if (props.product.unit != 'Pack') {
+        return props.product.stocksAvailable;
+      }
+    }
+
+    function getAverageSalesPerDay() {
+      if (props.product.unit == 'Pack') {
+        return retailAverageSalesPerDay;
+      }
+      if (props.product.unit != 'Pack') {
+        return props.product.averageSalesPerDay;
+      }
+    }
+
     if (
       totalOrder >
-      calculations.getStocksAvailableLessSafetyStock(props.product.stocksAvailable, props.product.averageSalesPerDay)
+      calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())
     ) {
       setQuantity('');
       alert('Not enough stocks available');

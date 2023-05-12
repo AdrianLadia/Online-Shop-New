@@ -183,6 +183,7 @@ describe('Business Calcualtions', () => {
     });
   });
   test('checkStocksIfAvailableInFirestore', async () => {
+
     const products = await firestore.readAllProducts();
     const result = await businesscalculations.checkStocksIfAvailableInFirestore(products, [
       'PPB#1',
@@ -196,6 +197,7 @@ describe('Business Calcualtions', () => {
       'PPB#1',
       'PPB#1',
       'PPB#1',
+      'PPB#1-RET'
     ]);
   });
   test('getValueAddedTax', () => {
@@ -1697,6 +1699,8 @@ describe('cloudfirestoredb', async () => {
     await delay(300);
     expect(falseUser).toEqual(false);
   });
+
+
   test('transactionPlaceOrder', async () => {
     await firestore.createProduct(
       {
@@ -1988,6 +1992,11 @@ describe('cloudfirestoredb', async () => {
       expect(roles.includes(userRole)).toEqual(true);
     });
   });
+
+  test('deleteProduct', async () => {
+    await firestore.deleteProduct('test')
+    await firestore.deleteProduct('test2')
+  })
 });
 
 describe('retryApiCall', () => {
@@ -2535,4 +2544,282 @@ describe.only('deleteOldOrders', () => {
       orders: [],
     });
   });
+
+  test('Create an order with items to test if items are added back to stocksAvailable', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
+    const ppb12Price = ppb12.price;
+    const itemsTotal = ((ppb12Price * 12) + (ppb16Price * 12)) / 1.12;
+    const vat = ((ppb12Price * 12) + (ppb16Price * 12)) - itemsTotal;
+    
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    });
+    const currentDate = new Date(); // Get the current date
+    const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
+    const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
+    const userdata = await firestore.readUserById(userTestId)
+    const orders = userdata.orders
+    
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        order.orderDate = twoDaysAgo
+      }
+    })
+    
+    console.log(orders)
+
+    await firestore.updateDocumentFromCollection('Users',userTestId,{orders: orders})
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+        'PPB#12',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    });
+
+
+  },100000)
+  test('invoke function', async () => {
+    await delay(2000)
+    const oldPPB16 = await firestore.readSelectedProduct('PPB#16');
+    const oldPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const oldPPB16Stocks = oldPPB16.stocksAvailable
+    const oldPPB12Stocks = oldPPB12.stocksAvailable
+    await cloudfirestore.deleteOldOrders();
+    await delay(300)
+    const newPPB16 = await firestore.readSelectedProduct('PPB#16');
+    const newPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const newPPB16Stocks = newPPB16.stocksAvailable
+    const newPPB12Stocks = newPPB12.stocksAvailable
+
+    expect(newPPB16Stocks - oldPPB16Stocks).toEqual(12);
+    expect(newPPB12Stocks - oldPPB12Stocks).toEqual(12);
+
+    const userData = await firestore.readUserById(userTestId)
+    const orders = userData.orders
+
+    let found = false
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        throw new Error('Order not deleted');
+      }
+      if (order.reference == 'testref12345') {
+        found = true
+      }
+    })
+
+    expect(found).toEqual(true)
+
+  },100000);  
 });
+
+describe('transactionPlaceOrder test retail', async () => {
+  test('retail items', async () => {
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
+    await delay(300)
+    const ppb1RET = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
+    const ppb1RETPrice = ppb1RET.price;
+    const itemsTotal = (ppb1RETPrice * 11 + 5000) / 1.12;
+    const vat = ppb1RETPrice * 11 + 5000 - itemsTotal;
+
+    const data = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const stocksAvailable = data.stocksAvailable;
+    
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    })
+    await delay(300)
+    const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const stocksOnHold2 = data2.stocksOnHold;
+    const stocksAvailable2 = data2.stocksAvailable;
+
+    expect(stocksOnHold2.length).toEqual(1);
+    expect(stocksAvailable - stocksAvailable2).toEqual(1);
+  },50000);
+});
+
+describe('deleteDeclinedPayments', () => {
+  test('Setup test', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    })
+
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER' ,'BDO')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com','TEST USER' ,'BDO')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink3.com','TEST USER' ,'BDO')
+  });
+
+  test('invoking function', async () => {
+    await firestore.deleteDeclinedPayment('testref1234', userTestId,'https://testlink.com');
+  });
+  test('checking values', async () => {
+    const user = await firestore.readUserById(userTestId);
+    const orders = user.orders;
+
+    let found = false
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        found = true
+        expect(order.proofOfPaymentLink).toEqual(['https://testlink2.com','https://testlink3.com']);
+      }
+      
+    });
+
+    expect(found).toEqual(true)
+
+  });
+},100000);
