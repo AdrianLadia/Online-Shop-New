@@ -29,7 +29,11 @@ function MyOrderCard(props) {
   const orderDateObject = new Date(orderDate)
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
   const dateNow = new Date()
-  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(orderExpiryDate ,dateNow);
+  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
+
+  console.log(order.reference)
+  console.log(dateDifference)
+
 
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
@@ -150,7 +154,7 @@ function MyOrderCard(props) {
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
     
         <div className="flex flex-row justify-between mb-4">
-          {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' /> : <div> </div>  }
+          {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' id={order.reference} /> : <div> </div>  }
           <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
         </div>
 
