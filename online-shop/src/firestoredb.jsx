@@ -388,7 +388,6 @@ class firestoredb extends firestorefunctions {
       const userRefDoc = await transaction.get(userRef);
       const userDoc = userRefDoc.data();
       const orders = userDoc.orders;
-      console.log(orders)
       orders.forEach((order) => {
         const orderReference = order.reference;
         if (orderReference == reference) {
