@@ -196,6 +196,7 @@ describe('Business Calcualtions', () => {
       'PPB#1',
       'PPB#1',
       'PPB#1',
+      'PPB#1-RET'
     ]);
   });
   test('getValueAddedTax', () => {
@@ -1697,6 +1698,8 @@ describe('cloudfirestoredb', async () => {
     await delay(300);
     expect(falseUser).toEqual(false);
   });
+
+
   test('transactionPlaceOrder', async () => {
     await firestore.createProduct(
       {
@@ -2479,7 +2482,7 @@ describe('updatePaymentStatus', () => {
   });
 });
 
-describe.only('deleteOldOrders', () => {
+describe('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2535,4 +2538,60 @@ describe.only('deleteOldOrders', () => {
       orders: [],
     });
   });
+});
+
+describe.only('transactionPlaceOrder test retail', async () => {
+  test('retail items', async () => {
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
+    await delay(300)
+    const ppb1RET = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
+    const ppb1RETPrice = ppb1RET.price;
+    const itemsTotal = (ppb1RETPrice * 11 + 5000) / 1.12;
+    const vat = ppb1RETPrice * 11 + 5000 - itemsTotal;
+
+    const data = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const stocksAvailable = data.stocksAvailable;
+    
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: [
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#1-RET',
+        'PPB#16',
+      ],
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+    })
+    await delay(300)
+    const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const stocksOnHold2 = data2.stocksOnHold;
+    const stocksAvailable2 = data2.stocksAvailable;
+
+    expect(stocksOnHold2.length).toEqual(1);
+    expect(stocksAvailable - stocksAvailable2).toEqual(1);
+  },50000);
 });

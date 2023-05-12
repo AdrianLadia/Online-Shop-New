@@ -8,7 +8,6 @@ const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
 
-
 admin.initializeApp();
 
 app.use(corsHandler);
@@ -501,8 +500,13 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
 
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
+
+        console.log(cartUniqueItems);
         await Promise.all(
           cartUniqueItems.map(async (itemId) => {
+            if (itemId.slice(-4) === '-RET') {
+              return; // skip processing for items ending with "-RET"
+            }
             const prodref = db.collection('Products').doc(itemId);
             const orderQuantity = data.cart.filter((c) => c == itemId).length;
             const newStocksAvailable = currentInventory[itemId] - orderQuantity;
@@ -896,9 +900,9 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
     try {
       // Get the user document
       const data = req.body;
-      console.log(data)
-      const userName = data.userName
-      const paymentMethod = data.paymentMethod
+      console.log(data);
+      const userName = data.userName;
+      const paymentMethod = data.paymentMethod;
       const orderReference = data.orderReference;
       const userId = data.userId;
       const proofOfPaymentLink = data.proofOfPaymentLink;
@@ -911,7 +915,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         userId: Joi.string().required(),
         proofOfPaymentLink: Joi.string().required(),
         paymentMethod: Joi.string().required().allow(''),
-        userName : Joi.string().required()
+        userName: Joi.string().required(),
       }).unknown(false);
 
       const { error } = dataSchema.validate(data);
@@ -943,19 +947,19 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
 
           // TODO
           // ADD PAYMENT DATA TO PAYMENTS COLLECTION
-          const newPaymentRef = db.collection('Payments').doc()
+          const newPaymentRef = db.collection('Payments').doc();
 
           transaction.set(newPaymentRef, {
             orderReference: orderReference,
             proofOfPaymentLink: proofOfPaymentLink,
             userId: userId,
             status: 'pending',
-            userName : userName,
-            paymentMethod : paymentMethod,
+            userName: userName,
+            paymentMethod: paymentMethod,
           });
 
-          const paymentId = newPaymentRef.id
-          console.log(paymentId)
+          const paymentId = newPaymentRef.id;
+          console.log(paymentId);
           res.status(200).send(paymentId);
         } catch {
           console.error('Error updating proof of payment link:', error);
@@ -991,30 +995,26 @@ async function deleteOldOrders() {
   let currentTime = new Date();
   const usersRef = db.collection('Users');
   const snapshot = await usersRef.get();
-  try{
+  try {
     snapshot.forEach((doc) => {
       const user = doc.data();
       const orders = user.orders;
       const userId = user.uid;
       let foundExpiredOrders = false;
 
-
-
       const filteredOrder = orders.filter((order) => {
-
         // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
-        let paymentLinks
-        paymentLinks = order.proofOfPaymentLink
-        console.log(paymentLinks)
-        if(paymentLinks == null) {
-          console.log('converted to empty array')
-          paymentLinks = []
+        let paymentLinks;
+        paymentLinks = order.proofOfPaymentLink;
+        console.log(paymentLinks);
+        if (paymentLinks == null) {
+          console.log('converted to empty array');
+          paymentLinks = [];
         }
 
-
-        if(paymentLinks.length > 0){
-          console.log('payment links length > 0')
-          return true
+        if (paymentLinks.length > 0) {
+          console.log('payment links length > 0');
+          return true;
         }
 
         // IF ORDER IS PAID. DO NOT DELETE
@@ -1039,33 +1039,30 @@ async function deleteOldOrders() {
         if (lessThanExpiryHours) {
           return true;
         }
-        
-        console.log('found expired orders')
+
+        console.log('found expired orders');
         foundExpiredOrders = true;
-        
       });
 
       if (foundExpiredOrders) {
         db.collection('Users').doc(userId).update({ orders: filteredOrder });
       }
     });
-  }
-  catch(error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
   }
 }
 
 exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    try{
+    try {
       deleteOldOrders();
       res.status(200).send('successfully deleted all orders');
-    }
-    catch(error){
+    } catch (error) {
       res.status(400).send('failed to delete old orders');
     }
   });
-})
+});
 
 exports.deleteOldOrdersScheduled = functions
   .region('asia-southeast1')

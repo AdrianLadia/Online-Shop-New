@@ -97,10 +97,12 @@ const ProductList = (props) => {
                 if (p.itemId == product.parentProductID) {
                   stocksAvailable = p.stocksAvailable;
                   averageSalesPerDay = p.averageSalesPerDay;
+                  
                 }
                 
               });
             }
+            console.log(stocksAvailable)
             return (
               <div className='flex justify-evenly'>
                 <ProductCard addtocart={AddToCart} product={product} key={'productCard-' + product.itemId} showTutorial={product.forTutorial}  setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
