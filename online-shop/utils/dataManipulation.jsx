@@ -438,9 +438,12 @@ class dataManipulation {
     return dataFilteredByPaid;
   }
 
-  getCategoryList(categories) {
+  getCategoryList(categories,hiddenCategories = null) {
     const c = [];
     categories.map((category) => {
+      if (hiddenCategories.includes(category.category)) {
+        return
+      }
       c.push(category.category);
     });
 

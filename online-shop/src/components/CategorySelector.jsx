@@ -12,6 +12,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
+import { hi } from 'date-fns/locale';
 
 function a11yProps(index) {
   return {
@@ -22,11 +23,19 @@ function a11yProps(index) {
 
 const CategorySelector = (props) => {
   
-  const [value, setValue] = React.useState(4);
+  const [value, setValue] = React.useState(3);
   const setSelectedCategory = props.setSelectedCategory;
   const { firestore, categories, setCategories } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
   const featured_category = 'Paper Bag';
+  const hiddenCategories = [
+    'Bowls',
+    'Plastic Containers',
+    'Plates',
+    'Sauce Cups',
+    'Tissue Paper',
+    'Utensils'
+  ]
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -35,7 +44,7 @@ const CategorySelector = (props) => {
   useEffect(() => {
     async function fetchCategories() {
       const categories = await firestore.readAllCategories();
-      const categoryList = datamanipulation.getCategoryList(categories);
+      const categoryList = datamanipulation.getCategoryList(categories,hiddenCategories);
       setCategories(categoryList);
     }
     fetchCategories();
@@ -63,6 +72,7 @@ const CategorySelector = (props) => {
               scrollButtons="auto"
             >
               {categories && categories.map((category, index) => {
+
                 return <Tab sx={{fontWeight:"bold"}} label={category} key={index} {...a11yProps(index)} />;
               })}
             </Tabs>

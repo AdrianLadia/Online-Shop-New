@@ -12,9 +12,10 @@ import AppContext from '../AppContext';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
 import { FaHandPointDown } from 'react-icons/fa';
+import { Card, CardContent } from '@material-ui/core';
+
 
 const ProductCard = (props) => {
-
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(false);
@@ -33,14 +34,25 @@ const ProductCard = (props) => {
   const retailAverageSalesPerDay = props.averageSalesPerDay;
   const isWholesale = props.isWholesale;
 
-
-
-  console.log(product)
+  console.log(product);
 
   if (product.imageLinks.length == 0) {
-    return
-  }
+    return (
+      <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>
+        {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
+        <Paper
+          elevation={10}
+          className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
+                      bg-gradient-to-r from-color60 via-color60 to-color10c shadow-lg shadow-slate-500"
+        >
+          <Typography className="flex justify-center items-center text-2xl font-bold text-color10c">
+          COMING SOON
+          </Typography>
 
+        </Paper>
+      </div>
+    );
+  }
 
   let safetyStock;
   if (product.averageSalesPerDay != undefined) {
@@ -49,7 +61,6 @@ const ProductCard = (props) => {
   if (product.averageSalesPerDay == undefined) {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
-
 
   function ClearForm() {
     document.getElementById('inputquantity' + props.product.itemName).value = '';
@@ -98,9 +109,11 @@ const ProductCard = (props) => {
         alert('Not enough stocks available');
         return;
       }
-    }
-    else {
-      if (totalOrder > (calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay()) * 5)) {
+    } else {
+      if (
+        totalOrder >
+        calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay()) * 5
+      ) {
         setQuantity('');
         alert('Not enough stocks available');
         return;
@@ -208,9 +221,8 @@ const ProductCard = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={" flex justify-center h-80 w-11/12 2xs:w-96"+ responsiveWidth()}>
-
-      {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
+      <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>
+        {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
           elevation={10}
           className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
@@ -234,7 +246,7 @@ const ProductCard = (props) => {
               ) : null}
             </div>
 
-            {props.product.imageLinks.length > 0 ? 
+            {props.product.imageLinks.length > 0 ? (
               <img
                 src={props.product.imageLinks[0]}
                 alt={props.product.itemName}
@@ -243,9 +255,9 @@ const ProductCard = (props) => {
                 className={'h-full object-cover rounded-4xl 3xs:w-60 border-color60 '}
                 onClick={() => setModal(true)}
               />
-
-              : <div className="w-60"> </div>}
-              
+            ) : (
+              <div className="w-60"> </div>
+            )}
           </div>
 
           {/* IMAGE */}
