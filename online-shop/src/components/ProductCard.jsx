@@ -3,6 +3,7 @@ import Paper from '@mui/material/Paper';
 import { Button, Typography } from '@mui/material';
 import { Snackbar } from '@material-ui/core';
 import { useState, useContext, useEffect, useRef } from 'react';
+
 import UseWindowDimensions from './UseWindowDimensions';
 import TextField from '@mui/material/TextField';
 import ProductCardModal from './ProductCardModal';
@@ -11,9 +12,9 @@ import AppContext from '../AppContext';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
 import { FaHandPointDown } from 'react-icons/fa';
+import { Card, CardContent } from '@material-ui/core';
 
 const ProductCard = (props) => {
-
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(false);
@@ -26,19 +27,45 @@ const ProductCard = (props) => {
   const { cart } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(true);
   const ref = useRef(null);
-  const showTutorial = props.showTutorial
-  const setShakeCartAnimation = props.setShakeCartAnimation
-  const retailStocksAvailable = props.stocksAvailable
-  const retailAverageSalesPerDay = props.averageSalesPerDay
-  
-  let safetyStock 
+  const showTutorial = props.showTutorial;
+  const setShakeCartAnimation = props.setShakeCartAnimation;
+  const retailStocksAvailable = props.stocksAvailable;
+  const retailAverageSalesPerDay = props.averageSalesPerDay;
+  const isWholesale = props.isWholesale;
+
+  console.log(product);
+
+  if (product.imageLinks.length == 0) {
+    return (
+      <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>
+        {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
+        <Paper
+          elevation={10}
+          className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
+                      bg-gradient-to-r from-color60 via-color60 to-color10c shadow-lg shadow-slate-500"
+        >
+          <div className='flex flex-col justify-center items-center'>
+          <Typography className="flex justify-center items-center text-2xl font-bold text-color10c">
+            {product.itemName}
+          </Typography>
+
+          <Typography className="flex justify-center items-center text-2xl font-bold text-color10c">
+            COMING SOON
+          </Typography>
+          </div>
+        </Paper>
+      </div>
+    );
+  }
+
+  let safetyStock;
   if (product.averageSalesPerDay != undefined) {
     safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
   }
   if (product.averageSalesPerDay == undefined) {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
-  
+
   function ClearForm() {
     document.getElementById('inputquantity' + props.product.itemName).value = '';
   }
@@ -80,13 +107,21 @@ const ProductCard = (props) => {
       }
     }
 
-    if (
-      totalOrder >
-      calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())
-    ) {
-      setQuantity('');
-      alert('Not enough stocks available');
-      return;
+    if (isWholesale) {
+      if (totalOrder > calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
+        setQuantity('');
+        alert('Not enough stocks available');
+        return;
+      }
+    } else {
+      if (
+        totalOrder >
+        calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay()) * 5
+      ) {
+        setQuantity('');
+        alert('Not enough stocks available');
+        return;
+      }
     }
 
     if (quantity > 0) {
@@ -97,7 +132,7 @@ const ProductCard = (props) => {
       //back to 0
       setQuantity('');
       //shake cart
-      setShakeCartAnimation(true)
+      setShakeCartAnimation(true);
     }
   }
 
@@ -134,9 +169,9 @@ const ProductCard = (props) => {
   function responsiveStyle() {
     if (width < 396) {
       return '19px';
-    }else if(396 < width < 415){
+    } else if (396 < width < 415) {
       return '19px';
-    }else{
+    } else {
       return '23px';
     }
   }
@@ -144,7 +179,7 @@ const ProductCard = (props) => {
   function responsivePrice() {
     if (width < 300) {
       return '13px';
-    }else if (width < 768) {
+    } else if (width < 768) {
       return '13px';
     } else if (width < 1024) {
       return '13px';
@@ -184,23 +219,24 @@ const ProductCard = (props) => {
     return () => clearTimeout(timer);
   }, []);
 
-function responsiveWidth() {
-  return 'max-w-lg';
-} 
+  function responsiveWidth() {
+    return 'max-w-lg';
+  }
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={" flex justify-center h-80 w-11/12 2xs:w-96"+ responsiveWidth()}>
+      <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>
+        {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
           elevation={10}
           className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
                       bg-gradient-to-r from-color60 via-color60 to-color10c shadow-lg shadow-slate-500"
         >
           {/* IMAGE */}
-          <div className=" w-8/12 relative rounded-4xl cursor-pointer" >
+          <div className=" w-8/12 relative rounded-4xl cursor-pointer">
             <div className="absolute inset-0 flex justify-center mt-12 p-2" onClick={() => setModal(true)}>
-              {(iconVisible && showTutorial) ? (
-                <div className=''>
+              {iconVisible && showTutorial ? (
+                <div className="">
                   <FaHandPointDown
                     onClick={() => setModal(true)}
                     color="#6bd0ff"
@@ -208,22 +244,24 @@ function responsiveWidth() {
                     className="animate-bounce-fade-5 mt-4"
                   />
                   <h1 className="absolute text-sm -top-20 left-14 whitespace-nowrap">
-                    <span className="text-transparent font-bold bg-clip-text bg-color10b"> 
-                    TAP FOR MORE INFO
-                    </span>
+                    <span className="text-transparent font-bold bg-clip-text bg-color10b">TAP FOR MORE INFO</span>
                   </h1>
                 </div>
               ) : null}
             </div>
 
-              {props.product.imageLinks ? 
+            {props.product.imageLinks.length > 0 ? (
               <img
-                  src={props.product.imageLinks[0]}
-                  alt={props.product.itemName }
-                  className={"h-full object-cover rounded-4xl 3xs:w-60 border-color60 "}
-                  onClick={() => setModal(true)}
+                src={props.product.imageLinks[0]}
+                alt={props.product.itemName}
+                // className={"h-full object-cover saturate-150" + responsiveImgWidth()}
+                // className={"h-full object-cover rounded-r-4xl border-t-2 border-b-2"}
+                className={'h-full object-cover rounded-4xl 3xs:w-60 border-color60 '}
+                onClick={() => setModal(true)}
               />
-              : <div className="w-60"> </div>}
+            ) : (
+              <div className="w-60"> </div>
+            )}
           </div>
 
           {/* IMAGE */}
@@ -256,18 +294,15 @@ function responsiveWidth() {
             )}
 
             <div className="h-2/6 ">
-              <Typography
-                sx={{ fontSize: responsiveStyle(), mr: 1, cursor: 'help' }}
-                onClick={() => setModal(true)}
-              >
+              <Typography sx={{ fontSize: responsiveStyle(), mr: 1, cursor: 'help' }} onClick={() => setModal(true)}>
                 {props.product.itemName}
               </Typography>
             </div>
 
             <div className="h-1/9 w-max mt-2 2xs:mt-0 ">
               <Typography
-                sx={{ fontSize: responsivePrice(),mt: 2 , cursor: 'help' }}
-                className='tracking-tight'
+                sx={{ fontSize: responsivePrice(), mt: 2, cursor: 'help' }}
+                className="tracking-tight"
                 onClick={() => setModal(true)}
               >
                 Pieces: {props.product.pieces}
@@ -275,10 +310,7 @@ function responsiveWidth() {
             </div>
 
             <div className="h-1/6 flex items-center">
-              <Typography 
-                sx={{ fontSize: responsivePrice(), mb: 1, cursor: 'text' }}
-                className='tracking-tight'
-              >
+              <Typography sx={{ fontSize: responsivePrice(), mb: 1, cursor: 'text' }} className="tracking-tight">
                 Price: {'₱ ' + props.product.price}
               </Typography>
             </div>
@@ -298,53 +330,53 @@ function responsiveWidth() {
                 type="number"
                 color="enter"
                 value={quantity}
-                onChange={(event) => {setQuantity(event.target.value);}}
+                onChange={(event) => {
+                  setQuantity(event.target.value);
+                }}
                 className="m-2 h-max w-7/12 rounded-xl "
                 label="Qty."
                 InputLabelProps={{
                   style: {
                     color: '#6ab15d',
-                    fontSize:15,
-                  },}} 
-                sx={{backgroundColor:"#ffffff",
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      border: 2 ,
-                      color:'#6ab15d',
-                      borderRadius:2,
-                    },
-                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                      color: '#6ab15d',
-                      border:2
-                    }
-                  }}
+                    fontSize: 15,
+                  },
+                }}
+                sx={{
+                  backgroundColor: '#ffffff',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: 2,
+                    color: '#6ab15d',
+                    borderRadius: 2,
+                  },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                    color: '#6ab15d',
+                    border: 2,
+                  },
+                }}
               />
+            </div>
           </div>
+        </Paper>
+        <div>
+          <ProductCardModal modal={modal} closeModal={closeModal} product={product} />
         </div>
-      </Paper>
-      <div>
-        <ProductCardModal
-          modal={modal}
-          closeModal={closeModal}
-          product={product}
-        />
+        <div>
+          <Snackbar
+            className="mb-5 lg:mb-5"
+            variant="success"
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            open={open}
+            onClose={handleClose}
+            message={DisplayItem()}
+            action={
+              <Button color="success" size="small" onClick={handleClose}>
+                {' '}
+                Close{' '}
+              </Button>
+            }
+          />
+        </div>
       </div>
-      <div>
-        <Snackbar
-          className="mb-5 lg:mb-5"
-          variant="success"
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          open={open}
-          onClose={handleClose}
-          message={DisplayItem()}
-          action={
-            <Button color="success" size="small" onClick={handleClose}>
-              {" "}
-              Close{" "}
-            </Button>
-          }
-        />
-      </div>
-    </div>
     </ThemeProvider>
   );
 };

@@ -25,6 +25,7 @@ const AdminCreatePaymentTable = () => {
 
   async function readPayments() {
     firestore.readPayments().then((payment) => {
+      console.log(payment)
       const paymentData = [];
       const photoLink = [];
       payment.forEach((data) => {

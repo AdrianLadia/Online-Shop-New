@@ -8,7 +8,7 @@ function PaymentMethods() {
 
   const { bdoselected, setBdoselected, unionbankselected, setUnionbankselected, gcashselected, setGcashselected, mayaselected, setMayaselected, visaselected, setVisaselected, mastercardselected, setMastercardselected, bitcoinselected, setBitcoinselected, ethereumselected, setEthereumselected, solanaselected, setSolanaselected } = useContext(CheckoutContext);
   const { width } = useWindowDimensions();
-  const [screen, setScreen] = useState(false)
+
 
   useEffect(() => {
     if (bdoselected === true) {
@@ -110,16 +110,8 @@ function PaymentMethods() {
 
   }, [bdoselected, unionbankselected, gcashselected, mayaselected, visaselected, mastercardselected, bitcoinselected, ethereumselected, solanaselected]);
 
-  useEffect(()=>{
-    if(width < 366){
-      setScreen(true)
-    }else{
-      setScreen(false)
-    }
-  },[width])
-
   function overFlow(){
-    if (screen === true) {
+    if (width < 366) {
       return " grid-flow-col overflow-x-auto bg-color2 rounded-2xl "
     }else{
       return " 3xl:grid-cols-9 2xl:grid-cols-8 xl:grid-cols-7 lg:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 2xs:grid-cols-2"
@@ -133,14 +125,14 @@ function PaymentMethods() {
       <PaymentCheckoutCard paymentOption={"unionbank"} cardSelected={unionbankselected} setCardSelected={setUnionbankselected} />
 
       <PaymentCheckoutCard paymentOption={"gcash"}  cardSelected={gcashselected} setCardSelected={setGcashselected} />
-      <PaymentCheckoutCard paymentOption={"maya"}  cardSelected={mayaselected} setCardSelected={setMayaselected}/>
+      {/* <PaymentCheckoutCard paymentOption={"maya"}  cardSelected={mayaselected} setCardSelected={setMayaselected}/>
 
       <PaymentCheckoutCard paymentOption={"visa"}  cardSelected={visaselected} setCardSelected={setVisaselected}/>
       <PaymentCheckoutCard paymentOption={"mastercard"}  cardSelected={mastercardselected} setCardSelected={setMastercardselected}/>
 
       <PaymentCheckoutCard paymentOption={"bitcoin"}  cardSelected={bitcoinselected} setCardSelected={setBitcoinselected}/>
       <PaymentCheckoutCard paymentOption={"ethereum"}  cardSelected={ethereumselected} setCardSelected={setEthereumselected}/>
-      <PaymentCheckoutCard paymentOption={"solana"}  cardSelected={solanaselected} setCardSelected={setSolanaselected}/>
+      <PaymentCheckoutCard paymentOption={"solana"}  cardSelected={solanaselected} setCardSelected={setSolanaselected}/> */}
     </div>
   );
 }

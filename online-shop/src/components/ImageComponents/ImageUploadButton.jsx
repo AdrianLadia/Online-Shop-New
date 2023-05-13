@@ -63,7 +63,8 @@ const ImageUploadButton = (props) => {
   useEffect(()=>{
     setTimeout(()=>{
       setButtonText(buttonTitle)
-    }, 2000)
+      setButtonColor('primary')
+    }, 3000)
   },[buttonText])
 
   function disable(){
@@ -80,6 +81,7 @@ const ImageUploadButton = (props) => {
         variant="contained"
         component="span"
         disabled={disableButton}
+        color= {buttonColor}
       >
         <input type="file" id={`imageUpload-${id}`} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
         <label htmlFor={`imageUpload-${id}`}>

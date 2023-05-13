@@ -35,7 +35,7 @@ const style = {
 };
 
 const AdminAddItemModal = (props) => {
-  const { firestore,products } = React.useContext(AppContext);
+  const { firestore, products } = React.useContext(AppContext);
   const { width, height } = useWindowDimensions();
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
@@ -66,11 +66,14 @@ const AdminAddItemModal = (props) => {
   const [openAddCategoryModal, setOpenAddCategoryModal] = React.useState(false);
   const [parentProducts, setParentProducts] = React.useState([]);
   const [isCustomized, setIsCustomized] = React.useState(false);
+  const [retailPrice, setRetailPrice] = React.useState(0);
+  const [packWeight, setPackWeight] = React.useState(0);
+  const [piecesPerPack,setPiecesPerPack] = React.useState(0);
   const cloudfirestore = new cloudFirestoreDb();
   const categories = props.categories;
   const businesscalculations = new businessCalculations();
 
-  console.log(parentProductID)
+  console.log(parentProductID);
   async function addItem() {
     // FORM CHECKER
     if (itemID === '') {
@@ -102,7 +105,7 @@ const AdminAddItemModal = (props) => {
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
-    firestore.createProduct(
+    await firestore.createProduct(
       {
         itemId: itemID,
         itemName: itemName,
@@ -123,11 +126,43 @@ const AdminAddItemModal = (props) => {
         averageSalesPerDay: 0,
         parentProductID: parentProductID,
         stocksOnHoldCompleted: [],
-        forOnlineStore : true,
+        forOnlineStore: true,
         isCustomized: isCustomized,
+        stocksIns : []
       },
       itemID
     );
+
+    if (isThisRetail) {
+      console.log('is retail')
+      await firestore.createProduct(
+        {
+          itemId: itemID + '-RET',
+          itemName: itemName,
+          unit: 'Pack',
+          price: retailPrice,
+          description: description,
+          weight: packWeight,
+          dimensions: dimensions,
+          category: category,
+          imageLinks: filteredimageLinks,
+          brand: brand,
+          pieces: piecesPerPack,
+          color: color,
+          material: material,
+          size: size,
+          stocksAvailable: null,
+          stocksOnHold: null,
+          averageSalesPerDay: 0,
+          parentProductID: itemID,
+          stocksOnHoldCompleted: null,
+          forOnlineStore: true,
+          isCustomized: isCustomized,
+          stocksIns : null
+        },
+        itemID + '-RET'
+      );
+    }
 
     props.setRefresh(!props.refresh);
   }
@@ -137,9 +172,9 @@ const AdminAddItemModal = (props) => {
   }
 
   useEffect(() => {
-    const parentProductsList = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products)
-    setParentProducts(parentProductsList)  
-  }, [])
+    const parentProductsList = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products);
+    setParentProducts(parentProductsList);
+  }, []);
 
   return (
     <div>
@@ -288,18 +323,8 @@ const AdminAddItemModal = (props) => {
                   setIsThisRetail(!isThisRetail);
                 }}
               />
-              <Typography sx={{ marginTop: 1 }}> Is this for retail?</Typography>
+              <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
             </div>
-
-            <div className="flex flex-row">
-              <Checkbox
-                onClick={() => {
-                  setIsCustomized(!isCustomized);
-                }}
-              />
-              <Typography sx={{ marginTop: 1 }}> Is this Customized?</Typography>
-            </div>
-
 
             {isThisRetail ? (
               // <TextField
@@ -309,15 +334,51 @@ const AdminAddItemModal = (props) => {
               //   sx={{ width: "90%" }}
               //   onChange={(event) => setParentProductID(event.target.value)}
               // />
-              <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                options={parentProducts}
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Parent ID" />}
-                onChange={(event) => setParentProductID(event.target.value)}
-              />
+              <div>
+                {/* <Autocomplete
+                  required
+                  disablePortal
+                  id="combo-box-demo"
+                  options={parentProducts}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="Parent ID" />}
+                  onChange={(event) => setParentProductID(event.target.value)}
+                /> */}
+                <TextField
+                  required
+                  id="outlined-basic"
+                  label="Retail Price"
+                  variant="outlined"
+                  sx={{ width: '90%', mt: 1 }}
+                  onChange={(event) => setRetailPrice(parseFloat(event.target.value))}
+                />
+                 <TextField
+                  required
+                  id="outlined-basic"
+                  label="Pack Weight"
+                  variant="outlined"
+                  sx={{ width: '90%', mt: 3 }}
+                  onChange={(event) => setPackWeight(parseFloat(event.target.value))}
+                />
+                <TextField
+                  required
+                  id="outlined-basic"
+                  label="Pieces Per Pack"
+                  variant="outlined"
+                  sx={{ width: '90%', mt: 3 }}
+                  onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
+                />
+              </div>
             ) : null}
+
+            <div className="flex flex-row">
+              <Checkbox
+                onClick={() => {
+                  setIsCustomized(!isCustomized);
+                }}
+              />
+              <Typography sx={{ marginTop: 1 }}> Is this Customized?</Typography>
+            </div>
 
             <TextField
               id="outlined-basic"
