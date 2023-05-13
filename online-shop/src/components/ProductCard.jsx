@@ -231,7 +231,7 @@ function responsiveWidth() {
           <div className="flex flex-col ml-3 w-5/12 m-1 ">
             {outofstock === true ? (
               <div className="flex flex-row h-1/12">
-                <Typography fontSize={responsiveFont()} color="red">
+                <Typography fontSize={responsiveFont()} color="red" >
                   Out of Stock
                 </Typography>
                 <span className="flex h-3 w-3 mt-1 ml-2 flex-grow-0"></span>

@@ -450,6 +450,13 @@ class firestoredb extends firestorefunctions {
     alert(reference + " is Cancelled")
   }
 
+  async addProductInteraction(userId, itemName, timeStamp){
+    const productInteraction = {
+      itemName: itemName,
+      timeStamp: timeStamp,
+    }
+    this.addDocumentArrayFromCollection("Users", userId, productInteraction, "productInteraction")
+  }
 }
 
 export default firestoredb;

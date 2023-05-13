@@ -16,7 +16,7 @@ import firestoredb from "../firestoredb";
 import { useEffect } from "react";
 import Divider from '@mui/material/Divider';
 import { Scrollbars } from 'react-custom-scrollbars';
-
+import { Timestamp } from 'firebase/firestore';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
     justifyContent: "space-around",
     overflow: "hidden",
-
+    
     backgroundColor: theme.palette.background.paper,
     marginTop: "20px",
   },
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   titleBar: {
     background:
-      "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
+    "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
   },
 }));
 
@@ -55,7 +55,7 @@ const style = {
   boxShadow: 24,
   p: 1,
   borderRadius:"20px",
-
+  
   "@media (min-width: 366px)": {
     p:3
   },
@@ -64,22 +64,43 @@ const style = {
     width: "80%",
     p:4
   },
-
+  
   "@media (min-width: 1024px)": {
     width: "60%",
     p:5
   },
 };
 
-
 const ProductCardModal = (props) => {
   const { height, width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
-  const {userdata,firestore,favoriteitems,setFavoriteItems} = React.useContext(AppContext);
+  const {userdata, firestore, favoriteitems, setFavoriteItems} = React.useContext(AppContext);
   const [onInitialize, setOninitialize] = useState(true);
   const [screenMobile, setScreenSizeMobile] = useState(null);
+  const date = new Date();
+  
+  const size = props.product.size;
+  const color = props.product.color;
+  const material = props.product.material;
+  const pieces = props.product.pieces;
+  const brand = props.product.brand;
+  const dimensions = props.product.dimensions;
+  const weight = props.product.weight;
+  const unit = props.product.unit;
+  const lengthOfImageList = props.product.imageLinks.length;
+  const centerImage = lengthOfImageList === 1;
 
+  const specs = {
+    size: size,
+    color: color,
+    material: material,
+    pieces: pieces,
+    brand: brand,
+    dimensions: dimensions,
+    weight: weight,
+    unit : unit
+  };
 
   function onHeartClick() {
     if (heart) {
@@ -116,28 +137,6 @@ const ProductCardModal = (props) => {
      }
   },[width])
 
-    const size = props.product.size;
-    const color = props.product.color;
-    const material = props.product.material;
-    const pieces = props.product.pieces;
-    const brand = props.product.brand;
-    const dimensions = props.product.dimensions;
-    const weight = props.product.weight;
-    const unit = props.product.unit;
-    const lengthOfImageList = props.product.imageLinks.length;
-    const centerImage = lengthOfImageList === 1;
-
-    const specs = {
-      size: size,
-      color: color,
-      material: material,
-      pieces: pieces,
-      brand: brand,
-      dimensions: dimensions,
-      weight: weight,
-      unit : unit
-    };
-
     Object.keys(specs).map((key) => {
       if (specs[key] === undefined || specs[key] === "") {
         delete specs[key];
@@ -151,6 +150,18 @@ const ProductCardModal = (props) => {
       return "h3"
     }
   }
+
+  useEffect(()=>{
+    function productInteraction(){
+      const timestamp = Timestamp.fromDate(date);
+      const timestampString = timestamp.toDate().toLocaleString();
+
+      if(props.modal == true){
+        firestore.addProductInteraction(userdata.uid, props.product.itemName, timestampString)
+      }
+    }
+    productInteraction()
+  },[props.modal])
 
   return (
     <Modal open={props.modal} onClose={props.closeModal}>
