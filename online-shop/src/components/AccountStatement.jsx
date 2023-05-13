@@ -23,13 +23,23 @@ const AccountStatement = () => {
   const [buttonClicked, setButtonClicked] = useState(null);
   const [total, setTotal] = useState(0);
   const { width } = UseWindowDimensions();
+
+  if (userdata == null) {
+    return
+  }
   const fullName = userdata.name;
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1];
+  const [remainingBalance, setRemainingBalance] = useState(0);
+
+
 
   useEffect(() => {
     try {
       const dataToUse = datamanipulation.accountStatementData(orders, payments);
+      const remainingBalance = (dataToUse[dataToUse.length - 1])[4]
+      setRemainingBalance(remainingBalance)
+
       setTableData(dataToUse);
     } catch (e) {
       console.log(e);
@@ -51,7 +61,7 @@ const AccountStatement = () => {
     setButtonClicked(true);
   }, [buttonClicked]);
 
-  function onClicks() {
+  function onPayButtonClick() {
     if (buttonClicked) {
       navigateTo(
         '/AccountStatementPayment',
@@ -60,7 +70,7 @@ const AccountStatement = () => {
           lastName: lastName,
           eMail: userdata.email,
           phoneNumber: userdata.phoneNumber,
-          totalPrice: total,
+          totalPrice: remainingBalance,
           userId: userdata.uid,
         }}
       );
@@ -94,9 +104,9 @@ const AccountStatement = () => {
           {openButton ? (
             <button
               className="flex self-center w-1/2 xs:w-1/3 justify-center p-2 mr-2 text-white text-lg font-semibold rounded-lg bg-blue1 hover:bg-color10b"
-              onClick={onClicks}
+              onClick={onPayButtonClick}
             >
-              Pay   ({'₱' + ' ' + total})
+              Pay   ({'₱' + ' ' + remainingBalance})
             </button>
           ) : null}
         </div>

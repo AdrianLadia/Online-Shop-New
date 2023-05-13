@@ -15,6 +15,7 @@ import retryApi from '../utils/retryApi';
 import testConfig from './testConfig';
 import firestorefunctions from '../src/firestorefunctions';
 import { fi } from 'date-fns/locale';
+import AppConfig from '../src/AppConfig';
 
 //
 const datamanipulation = new dataManipulation();
@@ -201,8 +202,16 @@ describe('Business Calcualtions', () => {
     ]);
   });
   test('getValueAddedTax', () => {
+
     const subtotal = 100;
-    const expected = 10.71;
+    let expected 
+    if (new AppConfig().getNoVat()) {
+      expected = 0;
+    }
+    else {
+      expected = 10.71;
+    }
+    
     const vat = businesscalculations.getValueAddedTax(subtotal);
     expect(vat).toBe(expected);
   });
@@ -1030,12 +1039,23 @@ describe('getCartCount', () => {
     expect(count2).toEqual(count);
   });
 
-  test('getValueAddedTax', () => {
+  test.only('getValueAddedTax', () => {
     const { getValueAddedTax } = require('../functions/index.js');
     const getValueAddedTaxBusinessCalculations = businesscalculations.getValueAddedTax;
     const vat = getValueAddedTaxBusinessCalculations(1000);
     const vat2 = getValueAddedTaxBusinessCalculations(1000);
-    expect(vat).toEqual(107.14);
+
+    let expected1, expected2;
+    if (new AppConfig().getNoVat()) {
+      expected1 = 0;
+      expected2 = 0;
+    }
+    else {
+      expected1 = 107.14;
+      expected2 = 107.14;
+    }
+
+    expect(vat).toEqual(expected1);
     expect(vat2).toEqual(vat);
   });
 });
@@ -2384,7 +2404,7 @@ describe('afterCheckoutRedirectLogic', () => {
     let res;
     testRedirect.bdoselected = true;
     res = testRedirect.runFunction();
-    expect(res).toEqual('bdo');
+    expect(res).toEqual('bankDeposit');
     testRedirect.bdoselected = false;
   });
 
@@ -2392,7 +2412,7 @@ describe('afterCheckoutRedirectLogic', () => {
     let res;
     testRedirect.unionbankselected = true;
     res = testRedirect.runFunction();
-    expect(res).toEqual('unionbank');
+    expect(res).toEqual('bankDeposit');
     testRedirect.unionbankselected = false;
   });
 

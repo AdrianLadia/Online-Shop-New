@@ -685,7 +685,7 @@ class businessCalculations {
         });
       }
       else {
-        return 'bdo'
+        return 'bankDeposit'
       }
     }
 

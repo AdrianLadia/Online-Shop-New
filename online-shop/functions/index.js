@@ -642,6 +642,21 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         The Star Pack Team</p>`
         );
 
+        await sendEmail(
+          'ladiaadrian@gmail.com',
+          'Order Received',
+          `<p>Order received,</p>
+        
+        <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+        <p><strong>Customer:</strong> ${newOrder.userName}</p>
+        <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
+
+        <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
+        
+        <p>Best Regards,<br>
+        Star Pack Head</p>`
+        );
+
         res.send('SUCCESS');
       } catch (e) {
         console.log(e);
@@ -1055,7 +1070,7 @@ async function deleteOldOrders() {
 
     const dataNeededToUpdateProductValue = []; //This is the data needed to do the writes it follows this schema
     // {reference:reference,userId:userId,quantity:null,itemId:itemId}
-    const allCartItems = []
+    const allCartItems = [];
     deletedOrders.forEach(async (order) => {
       const cart = order.cart;
       const reference = order.reference;
@@ -1067,7 +1082,7 @@ async function deleteOldOrders() {
         deletedOrderData.quantity = quantity;
         dataNeededToUpdateProductValue.push(deletedOrderData);
         if (!allCartItems.includes(itemId)) {
-          allCartItems.push(itemId)
+          allCartItems.push(itemId);
         }
       });
     });
@@ -1076,34 +1091,31 @@ async function deleteOldOrders() {
 
     const finalDataNeededToUpdateProductValue = [];
     const stocksToAdjust = {};
-    const stocksOnHoldToAdjust = {}
+    const stocksOnHoldToAdjust = {};
 
+    await Promise.all(
+      allCartItems.map(async (itemId) => {
+        const productRef = db.collection('Products').doc(itemId);
+        const productGet = await productRef.get();
+        const prodData = productGet.data();
+        // console.log(prodData)
+        const stocksAvailable = prodData.stocksAvailable;
+        const stocksOnHold = prodData.stocksOnHold;
+        // console.log(stocksOnHold)
+        // console.log(stocksAvailable)
 
-    await Promise.all(allCartItems.map(async (itemId) => {
-  
-      const productRef = db.collection('Products').doc(itemId);
-      const productGet = await productRef.get();
-      const prodData = productGet.data();
-      // console.log(prodData)
-      const stocksAvailable = prodData.stocksAvailable;
-      const stocksOnHold = prodData.stocksOnHold;
-      // console.log(stocksOnHold)
-      // console.log(stocksAvailable)
-      
-      stocksToAdjust[itemId] = stocksAvailable;
-      stocksOnHoldToAdjust[itemId] = stocksOnHold
-    }))
+        stocksToAdjust[itemId] = stocksAvailable;
+        stocksOnHoldToAdjust[itemId] = stocksOnHold;
+      })
+    );
 
-    
-
-
-    dataNeededToUpdateProductValue.map( (data) => {
+    dataNeededToUpdateProductValue.map((data) => {
       const reference = data.reference;
       const userId = data.userId;
       const quantity = data.quantity;
       const itemId = data.itemId;
       stocksToAdjust[itemId] += quantity;
-      const stocksOnHold =  stocksOnHoldToAdjust[itemId]
+      const stocksOnHold = stocksOnHoldToAdjust[itemId];
       // console.log('_____________________________________________')
       // console.log(itemId)
       // console.log(stocksOnHold)
@@ -1111,15 +1123,15 @@ async function deleteOldOrders() {
       const newStocksOnHold = stocksOnHold.filter((order) => order.reference != reference);
       // console.log(newStocksOnHold)
       // console.log('_____________________________________________')
-      stocksOnHoldToAdjust[itemId] = newStocksOnHold
+      stocksOnHoldToAdjust[itemId] = newStocksOnHold;
       const newData = { itemId: itemId, newStocksOnHold: newStocksOnHold };
       finalDataNeededToUpdateProductValue.push(newData);
     });
 
-    console.log(stocksOnHoldToAdjust)
-    console.log(stocksToAdjust)
+    console.log(stocksOnHoldToAdjust);
+    console.log(stocksToAdjust);
 
-// 
+    //
     db.runTransaction(async (transaction) => {
       dataNeededToUpdateOrderValue.forEach(async (data) => {
         const userId = data.userId;
@@ -1130,24 +1142,21 @@ async function deleteOldOrders() {
       const entries = Object.entries(stocksToAdjust);
 
       for (const [key, value] of entries) {
-        const itemId = key
-        const newStocksAvailable = value
-        const productRef = db.collection('Products').doc(itemId)
-        transaction.update(productRef,{stocksAvailable:newStocksAvailable})
+        const itemId = key;
+        const newStocksAvailable = value;
+        const productRef = db.collection('Products').doc(itemId);
+        transaction.update(productRef, { stocksAvailable: newStocksAvailable });
       }
 
       const entries2 = Object.entries(stocksOnHoldToAdjust);
 
       for (const [key, value] of entries2) {
-        const itemId = key
-        const newStocksOnHold = value
-        const productRef = db.collection('Products').doc(itemId)
-        transaction.update(productRef,{stocksOnHold:newStocksOnHold})
+        const itemId = key;
+        const newStocksOnHold = value;
+        const productRef = db.collection('Products').doc(itemId);
+        transaction.update(productRef, { stocksOnHold: newStocksOnHold });
       }
-
-      
     });
-  
   } catch (error) {
     console.log(error);
   }
