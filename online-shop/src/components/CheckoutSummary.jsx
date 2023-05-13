@@ -16,6 +16,7 @@ import useWindowDimensions from './UseWindowDimensions';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import AppConfig from '../AppConfig';
 
 const CheckoutSummary = (props) => {
   const { firestore, cart, products } = useContext(AppContext);
@@ -145,23 +146,25 @@ const CheckoutSummary = (props) => {
                 <ListItemText primary="Weight of Items" secondary={totalWeight + ' Kg'} />
               </ListItem>
             ) : null}
-            
-              <div className='grid grid-cols-2 md:grid-cols-4 justify-start items-start gap-5 xs:gap-10'>
-                <ListItem>
-                  <ListItemText primary="Items Total" secondary={'₱ ' + total.toLocaleString()} />
-                </ListItem>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 justify-start items-start gap-5 xs:gap-10">
+              <ListItem>
+                <ListItemText primary="Items Total" secondary={'₱ ' + total.toLocaleString()} />
+              </ListItem>
+              {new AppConfig().getNoVat() ? null : (
                 <ListItem>
                   <ListItemText primary="Tax" secondary={'₱ ' + vat.toLocaleString()} />
                 </ListItem>
-                <ListItem>
-                  <ListItemText primary="Delivery Fee" secondary={'₱ ' + deliveryFee.toLocaleString()} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Grand Total" secondary={'₱ ' + grandTotal.toLocaleString()} />
-                </ListItem>
-              </div>
-            </List>
-            
+              )}
+
+              <ListItem>
+                <ListItemText primary="Delivery Fee" secondary={'₱ ' + deliveryFee.toLocaleString()} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Grand Total" secondary={'₱ ' + grandTotal.toLocaleString()} />
+              </ListItem>
+            </div>
+          </List>
 
           {/* <div className="flex flex-col justify-between lg:flex-row w-8/12 ">
             <div className="flex xl:w-2/6 lg:w-2/6 md:w-full sm:w-full flex-col m-5 gap-3">
@@ -199,7 +202,6 @@ const CheckoutSummary = (props) => {
               </Typography>
             </div>
           </div> */}
-
         </div>
       )}
     </div>

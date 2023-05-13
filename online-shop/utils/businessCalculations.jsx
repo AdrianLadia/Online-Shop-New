@@ -4,6 +4,7 @@ import Joi from 'joi';
 import cloudFirestoreDb from '../src/cloudFirestoreDb';
 import PaymayaSdk from '../src/components/PaymayaSdk';
 import { useNavigate } from 'react-router-dom';
+import AppConfig from '../src/AppConfig';
 
 class businessCalculations {
   constructor() {
@@ -470,7 +471,7 @@ class businessCalculations {
     }
   }
 
-  getValueAddedTax(totalPrice,noVat = false) {
+  getValueAddedTax(totalPrice,noVat = new AppConfig().getNoVat()) {
     const totalPriceSchema = Joi.number().required();
     const { error } = totalPriceSchema.validate(totalPrice);
     if (error) {

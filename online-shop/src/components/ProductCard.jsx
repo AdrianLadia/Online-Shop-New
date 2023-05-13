@@ -14,7 +14,6 @@ import theme from '../colorPalette/MaterialUITheme';
 import { FaHandPointDown } from 'react-icons/fa';
 import { Card, CardContent } from '@material-ui/core';
 
-
 const ProductCard = (props) => {
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
@@ -45,10 +44,15 @@ const ProductCard = (props) => {
           className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
                       bg-gradient-to-r from-color60 via-color60 to-color10c shadow-lg shadow-slate-500"
         >
+          <div className='flex flex-col justify-center items-center'>
           <Typography className="flex justify-center items-center text-2xl font-bold text-color10c">
-          COMING SOON
+            {product.itemName}
           </Typography>
 
+          <Typography className="flex justify-center items-center text-2xl font-bold text-color10c">
+            COMING SOON
+          </Typography>
+          </div>
         </Paper>
       </div>
     );

@@ -4,6 +4,7 @@ class AppConfig {
     constructor() {
         this.isDevEnvironment = false
         this.isPaymentSandBox = true
+        this.noVat = true
     }
 
     getIsDevEnvironment() {
@@ -12,6 +13,10 @@ class AppConfig {
 
     getIsPaymentSandBox() {
         return this.isPaymentSandBox
+    }
+
+    getNoVat() {
+        return this.noVat
     }
 }
 

@@ -5,6 +5,7 @@ import { parseISO } from 'date-fns';
 import Joi from 'joi';
 import businessCalculations from './businessCalculations';
 import dateConverter from '../functions/utils/dateConverter';
+import AppConfig from '../src/AppConfig';
 
 class dataManipulation {
   constructor() {}
@@ -640,7 +641,19 @@ class dataManipulation {
           selected_products.push(product);
         }
       });
-    }
+    } 
+
+    selected_products.sort((a, b) => {
+      if (a.imageLinks.length === 0 && b.imageLinks.length > 0) {
+        return 1; // a comes after b if a has no imageLinks
+      }
+      if (a.imageLinks.length > 0 && b.imageLinks.length === 0) {
+        return -1; // a comes before b if b has no imageLinks
+      }
+      return 0; // a and b have the same condition, maintain their original order
+    });
+
+    console.log(selected_products)
 
     const selectedProductsSchema = Joi.array();
 
