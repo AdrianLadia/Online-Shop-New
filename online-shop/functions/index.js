@@ -400,20 +400,22 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
     const eMail = data.eMail;
+    let cartUniqueItems = [];
 
     const db = admin.firestore();
-    const cartCount = getCartCount(cart);
+
 
     let itemsTotalBackEnd = 0;
-    const itemKeys = Object.keys(cartCount);
+    const itemKeys = Object.keys(cart);
 
     for (const key of itemKeys) {
       const itemId = key;
-      const itemQuantity = cartCount[key];
+      const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
       const price = item.data().price;
       const total = price * itemQuantity;
       itemsTotalBackEnd += total;
+      cartUniqueItems.push(itemId);
     }
 
     console.log(itemsTotalBackEnd);
@@ -484,7 +486,6 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         const userData = user.data();
         const deliveryAddress = userData.deliveryAddress;
         const contactPerson = userData.contactPerson;
-        const cartUniqueItems = Array.from(new Set(data.cart));
         const ordersOnHold = {};
         const currentInventory = {};
 
@@ -508,13 +509,18 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
               return; // skip processing for items ending with "-RET"
             }
             const prodref = db.collection('Products').doc(itemId);
-            const orderQuantity = data.cart.filter((c) => c == itemId).length;
+            const orderQuantity = data.cart[itemId];
             const newStocksAvailable = currentInventory[itemId] - orderQuantity;
-            console.log(ordersOnHold);
-            console.log(itemId);
             const oldOrdersOnHold = ordersOnHold[itemId];
             const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
             const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
+
+            console.log('orderQuantity', orderQuantity);
+            console.log('newStocksAvailable', newStocksAvailable);
+            console.log('oldOrdersOnHold', oldOrdersOnHold);
+            console.log('newOrderOnHold', newOrderOnHold);
+            console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
+
             transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
             transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
           })
@@ -1017,6 +1023,7 @@ async function deleteOldOrders() {
       const user = doc.data();
       const orders = user.orders;
       const userId = user.uid;
+      console.log('orders',userId,orders)
       let foundExpiredOrders = false;
 
       const filteredOrder = orders.filter((order) => {
@@ -1062,6 +1069,8 @@ async function deleteOldOrders() {
         deletedOrders.push(order);
       });
 
+      console.log('filteredOrder',filteredOrder)
+
       if (foundExpiredOrders) {
         dataNeededToUpdateOrderValue.push({ userId: userId, filteredOrder: filteredOrder });
         // db.collection('Users').doc(userId).update({ orders: filteredOrder });
@@ -1075,11 +1084,11 @@ async function deleteOldOrders() {
       const cart = order.cart;
       const reference = order.reference;
       const userId = order.userId;
-      const cartItems = Array.from(new Set(cart));
+      console.log('cart',cart)
+      const cartItems = Object.keys(cart);
       cartItems.map(async (itemId) => {
         const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
-        quantity = cart.filter((c) => c == itemId).length;
-        deletedOrderData.quantity = quantity;
+        deletedOrderData.quantity = cart[itemId];
         dataNeededToUpdateProductValue.push(deletedOrderData);
         if (!allCartItems.includes(itemId)) {
           allCartItems.push(itemId);
@@ -1128,8 +1137,9 @@ async function deleteOldOrders() {
       finalDataNeededToUpdateProductValue.push(newData);
     });
 
-    console.log(stocksOnHoldToAdjust);
-    console.log(stocksToAdjust);
+    console.log('dataNeededToUpdateOrderValue',dataNeededToUpdateOrderValue)
+    console.log('stocksOnHoldToAdjust',stocksOnHoldToAdjust);
+    console.log('stocksToAdjust',stocksToAdjust);
 
     //
     db.runTransaction(async (transaction) => {
@@ -1140,7 +1150,7 @@ async function deleteOldOrders() {
       });
 
       const entries = Object.entries(stocksToAdjust);
-
+      console.log('entries',entries)
       for (const [key, value] of entries) {
         const itemId = key;
         const newStocksAvailable = value;

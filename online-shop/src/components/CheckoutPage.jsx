@@ -268,6 +268,7 @@ const CheckoutPage = () => {
       try {
         const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
+        console.log('running')
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,

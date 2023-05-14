@@ -1039,7 +1039,7 @@ describe('getCartCount', () => {
     expect(count2).toEqual(count);
   });
 
-  test.only('getValueAddedTax', () => {
+  test('getValueAddedTax', () => {
     const { getValueAddedTax } = require('../functions/index.js');
     const getValueAddedTaxBusinessCalculations = businesscalculations.getValueAddedTax;
     const vat = getValueAddedTaxBusinessCalculations(1000);
@@ -1140,7 +1140,7 @@ describe('cloudfirestoredb', async () => {
 
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-  });
+  },100000);
   test('updateOrdersAsPaidOrNotPaid', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -2263,7 +2263,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
     });
-  });
+  },100000);
 
   test('updateOrderProofOfPaymentLink', async () => {
     id1 = await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -2506,7 +2506,7 @@ describe('updatePaymentStatus', () => {
   test('delete payment', async () => {
     await firestore.deleteDocumentFromCollection('Payments', id1);
   });
-});
+},100000);
 
 describe('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
@@ -2515,11 +2515,11 @@ describe('deleteOldOrders', () => {
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
     await firestore.updateDocumentFromCollection('Users', userTestId, {
       orders: [
-        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [] },
-        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [] },
-        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [] },
-        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [] },
-        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'] },
+        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [],cart : {} },
+        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [],cart : {} },
+        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [],cart : {} },
+        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [],cart : {} },
+        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'],cart : {} },
       ],
     });
     await delay(200);
@@ -2527,7 +2527,7 @@ describe('deleteOldOrders', () => {
 
   test('check if order deleted', async () => {
     const res = await cloudfirestore.deleteOldOrders();
-    await delay(1000);
+    await delay(3000);
     const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = testUserData.orders;
     let found1 = false;
@@ -2620,6 +2620,9 @@ describe('deleteOldOrders', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
     });
+
+    await delay(300);
+
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
@@ -2635,6 +2638,7 @@ describe('deleteOldOrders', () => {
     console.log(orders)
 
     await firestore.updateDocumentFromCollection('Users',userTestId,{orders: orders})
+    await delay(300);
 
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
@@ -2682,17 +2686,18 @@ describe('deleteOldOrders', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
     });
+    await delay(2000)
 
 
   },100000)
   test('invoke function', async () => {
-    await delay(2000)
+    
     const oldPPB16 = await firestore.readSelectedProduct('PPB#16');
     const oldPPB12 = await firestore.readSelectedProduct('PPB#12');
     const oldPPB16Stocks = oldPPB16.stocksAvailable
     const oldPPB12Stocks = oldPPB12.stocksAvailable
     await cloudfirestore.deleteOldOrders();
-    await delay(300)
+    await delay(2000)
     const newPPB16 = await firestore.readSelectedProduct('PPB#16');
     const newPPB12 = await firestore.readSelectedProduct('PPB#12');
     const newPPB16Stocks = newPPB16.stocksAvailable

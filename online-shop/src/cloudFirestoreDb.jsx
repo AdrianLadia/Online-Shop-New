@@ -6,6 +6,7 @@ import AppConfig from './AppConfig';
 import { th } from 'date-fns/locale';
 import retryApi from '../utils/retryApi';
 import { httpsCallable, getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import businessCalculations from '../utils/businessCalculations';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false) {
@@ -144,6 +145,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     const { error } = schema.validate(data);
 
+    const count = new businessCalculations().getCartCount(data.cart);
+
+    data.cart = count
+
     const encodedData = encodeURIComponent(JSON.stringify(data));
 
     if (error) {
@@ -152,7 +157,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(`${this.url}transactionPlaceOrder?data=${encodedData}`);
+      const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
       alert('Order placed successfully');
       return response;
     } catch (error) {
