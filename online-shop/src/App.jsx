@@ -52,7 +52,7 @@ function App() {
 
   // Initialize firestore class
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
-  const db = firestore.db
+  const db = firestore.db;
   const cloudfirestore = new cloudFirestoreDb();
 
   const [userId, setUserId] = useState(null);
@@ -76,19 +76,55 @@ function App() {
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
   const [categories, setCategories] = useState(null);
   const [initialStartup, setInitialStartup] = useState(true);
-  const [selectedChatOrderId,setSelectedChatOrderId] = useState(null)
+  const [selectedChatOrderId, setSelectedChatOrderId] = useState(null);
   const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
   const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
-  const {width,height} = useWindowDimensions
-  const [chatSwitch,setChatSwitch] = useState(false)
+  const { width, height } = useWindowDimensions;
+  const [chatSwitch, setChatSwitch] = useState(false);
+  const [isSupportedBrowser, setIsSupportedBrowser] = useState(null);
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  // GET USER BROWSER
+  function checkIfBrowserSupported() {
+
+    let userAgent = navigator.userAgent;
+    if (document.documentElement.classList.contains('in-app-browser')) {
+      return false
+    }
+    if (typeof FB_IAB !== 'undefined') {
+      return false;
+    }
+
+    if (userAgent.match(/FBAN|FBAV/i)) {
+      return false;
+    }
+
+    if (userAgent.indexOf('FBAN') > -1) {
+      return false;
+    }
+    if (
+      userAgent.indexOf('Chrome') > -1 ||
+      userAgent.indexOf('Firefox') > -1 ||
+      userAgent.indexOf('Safari') > -1 ||
+      userAgent.indexOf('Edge') > -1 ||
+      userAgent.indexOf('MSIE ') > -1 ||
+      userAgent.indexOf('Trident/') > -1
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  useEffect(() => {
+    setIsSupportedBrowser(checkIfBrowserSupported());
+  }, []);
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      
       // console.log('onAuthStateChanged ran');
       if (user) {
         // console.log('ran')
@@ -110,7 +146,7 @@ function App() {
               // "moderator": Represents a user with additional privileges to manage and moderate content created by other users.
               // "admin": Represents an administrator with broad system access, including managing users, settings, and other high-level functions.
               // "superAdmin": Represents a super administrator with the highest level of access, able to manage all aspects of the system, including creating and managing other admin-level users.
-            
+
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -129,7 +165,6 @@ function App() {
                 },
                 user.uid
               );
-              
             }
             // console.log('creating new user');
             createNewUser().then(() => {
@@ -229,7 +264,7 @@ function App() {
     categories: categories,
     setCategories: setCategories,
     firebaseApp: app,
-    db:db,
+    db: db,
     user: user,
     userdata: userdata,
     setUserData: setUserData,
@@ -269,17 +304,19 @@ function App() {
     setProducts: setProducts,
     goToCheckoutPage: goToCheckoutPage,
     setGoToCheckoutPage: setGoToCheckoutPage,
-    storage:storage,
-    selectedChatOrderId : selectedChatOrderId,
-    setSelectedChatOrderId : setSelectedChatOrderId,
-    mayaRedirectUrl : mayaRedirectUrl,
-    setMayaRedirectUrl : setMayaRedirectUrl,
-    mayaCheckoutId : mayaCheckoutId,
-    setMayaCheckoutId : setMayaCheckoutId,
+    storage: storage,
+    selectedChatOrderId: selectedChatOrderId,
+    setSelectedChatOrderId: setSelectedChatOrderId,
+    mayaRedirectUrl: mayaRedirectUrl,
+    setMayaRedirectUrl: setMayaRedirectUrl,
+    mayaCheckoutId: mayaCheckoutId,
+    setMayaCheckoutId: setMayaCheckoutId,
     width: width,
-    height, height,
-    chatSwitch : chatSwitch,
-    setChatSwitch : setChatSwitch,
+    height,
+    height,
+    chatSwitch: chatSwitch,
+    setChatSwitch: setChatSwitch,
+    isSupportedBrowser: isSupportedBrowser,
   };
 
   return (

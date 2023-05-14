@@ -350,7 +350,7 @@ class businessCalculations {
       return this.lalamovedeliveryvehicles.van;
     }
     if (
-      weightOfItems <= this.lalamovedeliveryvehicles.closedvan.maxWeight &&
+    
       weightOfItems > this.lalamovedeliveryvehicles.van.maxWeight
     ) {
       const { error7 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.closedvan);
