@@ -19,6 +19,8 @@ const InputField = (props) => {
   const { userId, selectedChatOrderId, userdata, firestore, storage } = useContext(AppContext);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
 
+  console.log(uploadedImageUrl)
+
   async function updateMessages() {
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     const docSnap = await getDoc(docRef);

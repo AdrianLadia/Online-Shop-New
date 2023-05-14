@@ -32,10 +32,6 @@ function MyOrderCard(props) {
   const dateNow = new Date()
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
 
-  console.log(order.reference)
-  console.log(dateDifference)
-
-
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
       let unReadCount = 0;
@@ -101,6 +97,9 @@ function MyOrderCard(props) {
   }
 
   function responsiveCssPaperColorIfDelivered() {
+    if(dateDifference <= 0 && proofOfPaymentLinkCount <= 0){
+      return 'bg-gray-300'
+    }
     if (order.delivered && order.paid) {
       return 'bg-green-300';
     }
@@ -113,29 +112,31 @@ function MyOrderCard(props) {
     if (!order.delivered && !order.paid) {
       return 'bg-red-400';
     }
+  
   }
 
   function onQuestionMarkClick() {
     handleOpenModal();
   }
 
-
-
   function disabledColor(){
     if(dateDifference <= 0 && proofOfPaymentLinkCount <= 0){
-      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+      return " bg-gray-300 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
     }
   }
 
   function disabledColorCancelButton(){
     if(proofOfPaymentLinkCount > 0){
-      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+      return " bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed"
     }
     if(paid){
-      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+      return " bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed"
     }
     if(dateDifference <= 0){
-      return " bg-gray-300 text-gray-500 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+      return " bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed"
+    }
+    else{
+      return " text-red-400 hover:bg-red-50"
     }
   }
 
@@ -144,7 +145,6 @@ function MyOrderCard(props) {
       return true
     }
     if(proofOfPaymentLinkCount > 0){
-      console.log('cancel button disabled')
       return true
     }
     if(paid){
@@ -156,7 +156,6 @@ function MyOrderCard(props) {
   }
 
   function disableButton(){
-  
     if(dateDifference >= 0){
       return false
     }
@@ -184,6 +183,8 @@ function MyOrderCard(props) {
       return setScreenSizeMobile(true);
     }
   }, [width]);
+
+  console.log(props)
 
   return (
     <div className={'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()}>
@@ -237,7 +238,7 @@ function MyOrderCard(props) {
           <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center '>
             <div className='w-full lg:w-5/12 flex gap-5 justify-evenly'>
               <button 
-                className={" w-max rounded-lg px-3 py-2 text-red-500 border border-red-500 hover:bg-red-50 " + disabledColorCancelButton()}
+                className={" w-max rounded-lg px-3 py-2 border border-red-400 " + disabledColorCancelButton()}
                 onClick={handleCancel}
                 disabled={disableButtonCancelOrder()}
                 >Cancel Order

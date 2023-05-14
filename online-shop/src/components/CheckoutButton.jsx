@@ -1,27 +1,39 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContext,useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import AppContext from '../AppContext';
 import GuestSignInModal from './GuestSignInModal';
 import { CircularProgress, Typography } from '@mui/material';
 
 const CheckoutButton = () => {
-  // const navigateTo = useNavigate();
-  const { userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage } = useContext(AppContext);
+  const { userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata } = useContext(AppContext);
   const [openGuestSignInModal,setOpenGuestSignInModal] = useState(false);
+  const [totalCredit, setTotalCredit] = useState(0);
+
+  useEffect(()=>{
+    let credit = 0
+    userdata.orders.map((s)=>{
+      credit += s.grandTotal;
+    })
+    setTotalCredit(credit)
+  },[])
 
   function handleCloseGuestSignInModal(){
     setOpenGuestSignInModal(false)
   }
 
   function onCheckoutButtonClick() {
-    if (userId === null) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-      setOpenGuestSignInModal(true);
-      setGuestLoginClicked(true);
-    }
-    if (userId !== null) {
-      setGoToCheckoutPage(true)
+    if(totalCredit <= 50000){
+      if (userId === null) {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        setOpenGuestSignInModal(true);
+        setGuestLoginClicked(true);
+      }
+      if (userId !== null) {
+        setGoToCheckoutPage(true)
+      }
+    }else{
+      alert("Your credit is " + totalCredit + ". You cannot make a purchase if your credit is 50,000 and above.")
     }
   }
 

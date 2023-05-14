@@ -83,6 +83,12 @@ async function updateMessages() {
     }
   }
 
+  function adminTextColor(){
+    if(userRole === "member" && read === false){
+      return " text-red-300"
+    }
+  }
+
   return (
     <div className="flex items-start h-max ml-0.5">
 
@@ -96,7 +102,7 @@ async function updateMessages() {
 
       <div className="flex flex-col items-start justify-center w-11/12 max-h-full lg:w-3/5">
         <>
-          <div className="flex justify-center max-w-full max-h-full mt-3 text-green3 md:ml-2 hyphens-auto">
+          <div className={"flex justify-center max-w-full max-h-full mt-3 text-green3 md:ml-2 hyphens-auto" + adminTextColor()}>
             {showDetails ? (
               <>
                   <p><TiArrowForward className="mt-1" /></p>
@@ -104,7 +110,7 @@ async function updateMessages() {
                   {read? (<p> Seen</p>) : (null)}
               </>
             ) : (
-              <p className="ml-2">{name}</p>
+              <p className="ml-2 ">{name}</p>
             )}
           </div>
           <div className='flex flex-row items-end'>
@@ -117,7 +123,7 @@ async function updateMessages() {
                 {image ? <img src={image} alt='this should be an image' className='h-64 w-64'/> : null}
               </p>
             </div>
-            <div className='mb-2 -ml-5 text-green3'>
+            <div className={'mb-2 -ml-5 text-green3 ' + adminTextColor()}>
               {read? (<BiCheckCircle/>) : (<BiXCircle/>)}
             </div>
           </div>
