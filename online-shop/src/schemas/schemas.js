@@ -43,7 +43,7 @@ class schemas {
       contactPerson: Joi.array(),
       isAnonymous: Joi.boolean(),
       orders: Joi.array(),
-      cart: Joi.array(),
+      cart: Joi.object(),
       favoriteItems: Joi.array(),
       payments: Joi.array(),
       userRole: Joi.string().required()

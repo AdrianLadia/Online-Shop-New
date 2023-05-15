@@ -150,6 +150,9 @@ class firestoredb extends firestorefunctions {
     if (error) {
       throw new Error(error);
     }
+
+    console.log(data);
+
     retryApi(async () => await super.createDocument(data, id, 'Users'));
   }
 
@@ -225,10 +228,10 @@ class firestoredb extends firestorefunctions {
     });
   }
 
-  async updatePhoneNumber(userid, phonenumber) {
+  async updatePhoneNumber(userid, phoneNumber) {
     await retryApi(async () => {
       await super.updateDocumentFromCollection('Users', userid, {
-        phonenumber: phonenumber,
+        phoneNumber: phoneNumber,
       });
     });
   }

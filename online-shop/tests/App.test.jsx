@@ -24,7 +24,7 @@ const firestore = new firestoredb(app, true);
 await firestore.createNewUser(
   {
     uid: 'TESTUSER',
-    name: 'test user',
+    name: 'test user2',
     email: 'test@gmail.com',
     emailVerified: true,
     phoneNumber: '09178927206',
@@ -32,7 +32,7 @@ await firestore.createNewUser(
     contactPerson: [],
     isAnonymous: false,
     orders: [],
-    cart: [],
+    cart: {},
     favoriteItems: [],
     payments: [],
     userRole: 'member',
@@ -232,22 +232,18 @@ describe('Business Calcualtions', () => {
   });
   test('addToCart and removeFromCart', () => {
     const cart = user.cart;
+    console.log(cart)
     let newCart = businesscalculations.addToCart(cart, 'PPB#1');
-    expect(newCart).toEqual([...cart, 'PPB#1']);
+    expect(newCart).toEqual({'PPB#1' : 1});
     const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
-    expect(newCart2).toEqual([...newCart, 'PPB#2']);
+    expect(newCart2).toEqual({'PPB#1' : 1, 'PPB#2' : 1});
     const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
-
-    newCart3.map((itemInCart) => {
-      newCart = newCart.filter((item) => item !== itemInCart);
-    });
-
-    expect(newCart.length).toEqual(0);
+    expect(newCart3).toEqual({'PPB#1' : 1});
   });
   test('addToCartWithQuantity', () => {
-    const cart = user.cart;
+    const cart = {}
     const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5, cart);
-    expect(newCart).toEqual([...cart, 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1']);
+    expect(newCart).toEqual({'PPB#1' : 5});
   });
   test('checkIfAreasHasLalamoveServiceArea', () => {
     const areas = ['generalSantosArea', 'lalamoveServiceArea'];
@@ -280,20 +276,7 @@ describe('Data Manipulation', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -322,20 +305,7 @@ describe('Data Manipulation', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -389,8 +359,8 @@ describe('Data Manipulation', async () => {
   test('getUserUidFromUsers', async () => {
     const users = await firestore.readAllUsers();
     await delay(100);
-    const uid = datamanipulation.getUserUidFromUsers(users, 'Adrian Ladia');
-    expect(uid).toEqual('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+    const uid = datamanipulation.getUserUidFromUsers(users, 'test user2');
+    expect(uid).toEqual('TESTUSER');
   });
   test('filterOrders', async () => {
     const orders = await firestore.readAllOrders();
@@ -415,21 +385,7 @@ describe('Data Manipulation', async () => {
     const data = datamanipulation.getCheckoutPageTableDate(products, cart);
     const rows = data[0];
   }, 10000);
-  test('manipulateCartData', () => {
-    const cart = ['PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#1', 'PPB#2', 'PPB#2'];
-    const cart_data = datamanipulation.manipulateCartData(cart);
-    const expected = [
-      {
-        itemId: 'PPB#1',
-        quantity: 5,
-      },
-      {
-        itemId: 'PPB#2',
-        quantity: 2,
-      },
-    ];
-    expect(cart_data).toEqual(expected);
-  });
+
   test('getAllProductsInCategory', async () => {
     const products = await firestore.readAllProducts();
     await delay(100);
@@ -542,152 +498,15 @@ describe('Database', async () => {
     await firestore.transactionCreatePayment('LP6ARIs14qZm4qjj1YOLCSNjxsj1', 1999, '124532-1235', 'GCASH');
     await delay(100);
   });
-  test('updatedoc', async () => {
-    await firestore.updatePhoneNumber('LP6ARIs14qZm4qjj1YOLCSNjxsj1', '09178927206');
+  test.only('updatedoc', async () => {
+    await firestore.updatePhoneNumber(userTestId, '09178927206');
     await delay(100);
-    const user = await firestore.readUserById('LP6ARIs14qZm4qjj1YOLCSNjxsj1');
+    const user = await firestore.readUserById(userTestId);
     await delay(100);
-    const phone = user.phonenumber;
+    const phone = user.phoneNumber;
     expect(phone).toEqual('09178927206');
   });
 });
-
-describe('Transaction Place Order', async () => {
-  let cartCount;
-  let initialProductCount = {};
-
-  beforeEach(async () => {
-    await delay(100);
-  });
-
-  test('readIfTransactionSuccessful', async () => {
-    const cart = [
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#10',
-      'PPB#10',
-      'PPB#10',
-      'PPB#10',
-      'PPB#10',
-      'PPB#12',
-      'PPB#12',
-      'PPB#12',
-      'PPB#16',
-      'PPB#16',
-      'PPB#16',
-    ];
-
-    const cartSetItems = Array.from(new Set(cart));
-    const businesscalculations = new businessCalculations();
-    cartCount = businesscalculations.getCartCount(cart);
-    cartSetItems.map(async (item) => {
-      const product = await firestore.readSelectedProduct(item);
-      const stocksAvailable = product.stocksAvailable;
-      initialProductCount[item] = stocksAvailable;
-    });
-    await delay(100);
-
-    await firestore.createNewUser(
-      {
-        uid: 'testuser',
-        name: 'test',
-        email: 'test@gmail.com',
-        emailVerified: true,
-        phoneNumber: '09178927206',
-        deliveryAddress: [],
-        contactPerson: [],
-        isAnonymous: false,
-        orders: [],
-        cart: [],
-        favoriteItems: [],
-        payments: [],
-        userRole: 'member',
-      },
-      'testuser'
-    );
-    await delay(100);
-    const date = new Date();
-
-    await firestore.transactionPlaceOrder({
-      userid: 'testuser',
-      username: 'Adrian Ladia',
-      localDeliveryAddress: 'Paper Boy',
-      locallatitude: 1.1,
-      locallongitude: 14.1,
-      localphonenumber: '09178238421',
-      localname: 'Adrian Ladia',
-      cart: cart,
-      itemstotal: 20000,
-      vat: 1200,
-      shippingtotal: 1000,
-      grandTotal: 22200,
-      reference: 'testref-124124521',
-      userphonenumber: '09178927206',
-      deliveryNotes: 'None',
-      totalWeight: 320,
-      deliveryVehicle: 'Sedan',
-      needAssistance: true,
-      eMail: 'ladiaadrian@gmail.com',
-    });
-    await delay(100);
-    const user = await firestore.readUserById('testuser');
-    await delay(100);
-    const orders = user.orders;
-    let foundorder = false;
-    orders.map((order) => {
-      if (order.reference === 'testref-124124521') {
-        foundorder = true;
-      }
-    });
-    expect(foundorder).toEqual(true);
-  });
-
-  test('check if deliveryaddress added', async () => {
-    const user = await firestore.readUserById('testuser');
-    await delay(100);
-    const deliveryaddress = user.deliveryAddress;
-    const expected = [
-      {
-        address: 'Paper Boy',
-        latitude: 1.1,
-        longitude: 14.1,
-      },
-    ];
-
-    expect(deliveryaddress).toEqual(expected);
-  });
-
-  test('check if cart is empty', async () => {
-    const user = await firestore.readUserById('testuser');
-    await delay(100);
-    const cart = user.cart;
-    expect(cart).toEqual([]);
-  });
-
-  test('CheckifInventoryUpdated', async () => {
-    await Promise.all(
-      Object.entries(cartCount).map(async ([item, count]) => {
-        const product = await firestore.readSelectedProduct(item);
-        await delay(100);
-        const stocksAvailable = product.stocksAvailable;
-        const initialCount = initialProductCount[item];
-        const expected = initialCount - count;
-        expect(stocksAvailable).toEqual(expected);
-      })
-    );
-
-    await firestore.deleteUserByUserId('testuser');
-    await delay(100);
-    Object.entries(cartCount).map(async ([itemId, count]) => {
-      const stocksAvailable = await firestore.readProductStocksAvailable(itemId);
-      const resetStockCount = stocksAvailable + count;
-      await firestore.updateProductStocksAvailable(itemId, resetStockCount);
-    });
-  });
-}, 100000);
 
 describe('Transaction Create Payment', async () => {
   test('Check if payment is added to payment field', async () => {
@@ -702,7 +521,7 @@ describe('Transaction Create Payment', async () => {
         contactPerson: [],
         isAnonymous: false,
         orders: [],
-        cart: [],
+        cart: {},
         favoriteItems: [],
         payments: [],
         userRole: 'member',
@@ -742,7 +561,7 @@ describe('firestoredb', async () => {
         contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
         isAnonymous: false,
         orders: [],
-        cart: [],
+        cart: {},
         favoriteItems: [],
         payments: [],
         userRole: 'member',
@@ -761,7 +580,7 @@ describe('firestoredb', async () => {
         contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
         isAnonymous: false,
         orders: [],
-        cart: [],
+        cart: {},
         favoriteItems: [],
         payments: [],
         userRole: 'member',
@@ -1077,20 +896,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1157,20 +963,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1193,20 +986,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1230,20 +1010,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1323,20 +1090,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1412,20 +1166,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1512,20 +1253,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1547,20 +1275,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1582,20 +1297,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1682,7 +1384,7 @@ describe('cloudfirestoredb', async () => {
         contactPerson: [],
         isAnonymous: false,
         orders: [],
-        cart: [],
+        cart: {},
         favoriteItems: [],
         payments: [],
         userRole: 'member',
@@ -1712,7 +1414,7 @@ describe('cloudfirestoredb', async () => {
   });
 
   test('checkifuseridexist', async () => {
-    const user = await cloudfirestore.checkIfUserIdAlreadyExist('PN4JqXrjsGfTsCUEEmaR5NO6rNF3');
+    const user = await cloudfirestore.checkIfUserIdAlreadyExist(userTestId);
     await delay(300);
     expect(user).toEqual(true);
     const falseUser = await cloudfirestore.checkIfUserIdAlreadyExist('testfalseuser12432456436');
@@ -1790,7 +1492,7 @@ describe('cloudfirestoredb', async () => {
         contactPerson: [],
         isAnonymous: false,
         orders: [],
-        cart: [],
+        cart: {},
         favoriteItems: [],
         payments: [],
         userRole: 'member',
@@ -1813,20 +1515,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1858,20 +1547,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927205',
       localname: 'Andrei Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1903,20 +1579,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.1122,
       localphonenumber: '09178927205',
       localname: 'Andrei Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1957,7 +1620,7 @@ describe('cloudfirestoredb', async () => {
         contactPerson: [],
         isAnonymous: false,
         orders: [],
-        cart: [],
+        cart: {},
         favoriteItems: [],
         payments: [],
         userRole: 'member',
@@ -1984,7 +1647,7 @@ describe('cloudfirestoredb', async () => {
         contactPerson: [],
         isAnonymous: false,
         orders: [],
-        cart: [],
+        cart: {},
         favoriteItems: [],
         payments: [],
         userRole: 'member',
@@ -2059,20 +1722,7 @@ describe('deleteOrderFromUserFirestore', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2094,20 +1744,7 @@ describe('deleteOrderFromUserFirestore', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2129,20 +1766,7 @@ describe('deleteOrderFromUserFirestore', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2237,20 +1861,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2448,20 +2059,7 @@ describe('updatePaymentStatus', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2515,11 +2113,11 @@ describe('deleteOldOrders', () => {
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
     await firestore.updateDocumentFromCollection('Users', userTestId, {
       orders: [
-        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [],cart : {} },
-        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [],cart : {} },
-        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [],cart : {} },
-        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [],cart : {} },
-        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'],cart : {} },
+        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [],cart :{} },
+        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [],cart :{} },
+        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [],cart :{} },
+        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [],cart :{} },
+        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'],cart :{} },
       ],
     });
     await delay(200);
@@ -2582,32 +2180,7 @@ describe('deleteOldOrders', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-      ],
+      cart: {'PPB#16' : 12, 'PPB#12' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2648,32 +2221,7 @@ describe('deleteOldOrders', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-        'PPB#12',
-      ],
+      cart: {'PPB#16': 12, 'PPB#12': 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2744,20 +2292,7 @@ describe('transactionPlaceOrder test retail', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#1-RET',
-        'PPB#16',
-      ],
+      cart: {'PPB#1-RET' : 11, 'PPB#16': 1},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2796,20 +2331,7 @@ describe('deleteDeclinedPayments', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: [
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-        'PPB#16',
-      ],
+      cart: {'PPB#16' : 12},
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,

@@ -26,6 +26,7 @@ import Checkout from './components/Checkout';
 import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
+import businessCalculations from '../utils/businessCalculations';
 
 const devEnvironment = true;
 
@@ -54,6 +55,7 @@ function App() {
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
   const cloudfirestore = new cloudFirestoreDb();
+  const businesscalculation = new businessCalculations();
 
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
@@ -82,6 +84,7 @@ function App() {
   const { width, height } = useWindowDimensions;
   const [chatSwitch, setChatSwitch] = useState(false);
   const [isSupportedBrowser, setIsSupportedBrowser] = useState(null);
+  const [updateCartInfo,setUpdateCartInfo]  = useState(false)
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -158,7 +161,7 @@ function App() {
                   contactPerson: [],
                   isAnonymous: user.isAnonymous,
                   orders: [],
-                  cart: [],
+                  cart: {},
                   favoriteItems: [],
                   payments: [],
                   userRole: 'member',
@@ -204,24 +207,22 @@ function App() {
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
-        // console.log(userId);
         const data = await cloudfirestore.readSelectedUserById(userId);
-        // console.log(data);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
         if (guestLoginClicked === true) {
+          console.log(localStorageCart)
           setCart(localStorageCart);
           firestore.createUserCart(localStorageCart, userId).then(() => {
             localStorage.removeItem('cart');
-            // console.log('cart removed from local storage');
             setGuestLoginClicked(false);
             setGoToCheckoutPage(true);
           });
         }
         if (guestLoginClicked === false) {
-          // console.log('guestLoginClicked is false');
-          // console.log('setting Cart');
+          // console.log(data.cart)
+          // const cartCount = businesscalculation.getCartCount(data.cart)
           setCart(data.cart);
         }
         // FLOW FOR GUEST LOGIN
@@ -317,6 +318,8 @@ function App() {
     chatSwitch: chatSwitch,
     setChatSwitch: setChatSwitch,
     isSupportedBrowser: isSupportedBrowser,
+    updateCartInfo:updateCartInfo,
+    setUpdateCartInfo:setUpdateCartInfo,
   };
 
   return (

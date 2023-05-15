@@ -1084,6 +1084,7 @@ async function deleteOldOrders() {
       const cart = order.cart;
       const reference = order.reference;
       const userId = order.userId;
+      console.log('_____________________________')
       console.log('cart',cart)
       const cartItems = Object.keys(cart);
       cartItems.map(async (itemId) => {

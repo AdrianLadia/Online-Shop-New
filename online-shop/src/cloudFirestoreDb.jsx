@@ -129,7 +129,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       locallongitude: Joi.number().required(),
       localphonenumber: Joi.string().required(),
       localname: Joi.string().required(),
-      cart: Joi.array().required(),
+      cart: Joi.object().required(),
       itemstotal: Joi.number().required(),
       vat: Joi.number().required(),
       shippingtotal: Joi.number().required(),
@@ -144,10 +144,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }).unknown(false);
 
     const { error } = schema.validate(data);
-
-    const count = new businessCalculations().getCartCount(data.cart);
-
-    data.cart = count
 
     const encodedData = encodeURIComponent(JSON.stringify(data));
 

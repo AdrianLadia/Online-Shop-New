@@ -463,7 +463,7 @@ class dataManipulation {
 
   getCheckoutPageTableDate(product_list, cart) {
     const productListSchema = Joi.array();
-    const productListCart = Joi.array();
+    const productListCart = Joi.object();
 
     const { error1 } = productListSchema.validate(product_list);
     const { error2 } = productListCart.validate(cart);
@@ -472,24 +472,16 @@ class dataManipulation {
       throw new Error(error1);
     }
 
-    function createData(itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal,itemId) {
-      return { itemimage, itemName, itemquantity, itemprice, itemtotal, weighttotal,itemId };
+    function createData(itemimage, itemName, itemquantity,pieces, itemprice, itemtotal, weighttotal,itemId) {
+      return { itemimage, itemName, itemquantity,pieces, itemprice, itemtotal, weighttotal,itemId };
     }
 
     let rows_non_state = [];
     let total_non_state = 0;
     let total_weight_non_state = 0;
-    const items = [...new Set(cart)];
-    let item_count = {};
-    items.map((item, index) => {
-      item_count[item] = 0;
-    });
+    console.log(cart)
 
-    cart.map((item, index) => {
-      item_count[item] += 1;
-    });
-
-    Object.entries(item_count).map(([key, quantity]) => {
+    Object.entries(cart).map(([key, quantity]) => {
       product_list.map((product) => {
         if (product.itemId === key) {
           total_weight_non_state += product.weight * quantity;
@@ -499,6 +491,7 @@ class dataManipulation {
             product.imageLinks[0],
             product.itemName,
             quantity.toLocaleString(),
+            (product.pieces * quantity).toLocaleString(),
             parseInt(product.price).toLocaleString(),
             (product.price * quantity).toLocaleString(),
             total_weight_non_state,
@@ -527,48 +520,6 @@ class dataManipulation {
     return toReturn;
   }
 
-  manipulateCartData(cart) {
-    const cartSchema = Joi.array();
-    const { error } = cartSchema.validate(cart);
-    if (error) {
-      throw new Error(error);
-    }
-
-    //get unique items of array
-    function set(arr) {
-      return [...new Set(arr)];
-    }
-
-    let unique_items = set(cart);
-
-    let cart_data = [];
-    unique_items.map((item, index) => {
-      cart_data.push({ itemId: item, quantity: 0 });
-    });
-
-    cart_data.map((item, index) => {
-      cart.map((cart_item, index) => {
-        if (item.itemId === cart_item) {
-          item.quantity += 1;
-        }
-      });
-    });
-
-    const cartDataSchema = Joi.array().items(
-      Joi.object({
-        itemId: Joi.string().required(),
-        quantity: Joi.number().required(),
-      }).unknown(false)
-    );
-
-    const { error2 } = cartDataSchema.validate(cart_data);
-
-    if (error2) {
-      throw new Error(error2);
-    }
-
-    return cart_data;
-  }
 
   getAllProductsInCategory(products, categorySelected, wholesale, retail, favorites) {
     // const productsSchema = Joi.array()

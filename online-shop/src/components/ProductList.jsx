@@ -22,7 +22,7 @@ const ProductList = (props) => {
   const cloudfirestoredb = new cloudFirestoreDb();
 
   const [productdataloading, setProductDataLoading] = useState(true);
-  const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts } = React.useContext(AppContext);
+  const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
   const favorites = favoriteitems;
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
 
@@ -53,7 +53,7 @@ const ProductList = (props) => {
     if (cart != [] && userdata != null) {
       firestore.createUserCart(cart, userdata.uid);
     }
-  }, [cart]);
+  }, [cart,updateCartInfo]);
 
   function divCssIfProductNoteLoaded() {
     if (productdataloading) {

@@ -228,7 +228,7 @@ function MyOrderCard(props) {
 
             <div className="flex w-full sm:w-6/12 justify-end text-end lg:justify-center lg:text-start sm:mr-7">
               <Typography variant="h5" component="div" className="tracking-tighter xs:tracking-normal">
-                Total : ₱{order.grandTotal}
+                Total : ₱{order.grandTotal.toLocaleString('en-US',{style: 'decimal'})}
               </Typography>
             </div>
         </div>
