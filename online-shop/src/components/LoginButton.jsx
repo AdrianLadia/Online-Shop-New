@@ -21,7 +21,7 @@ const LoginButton = (props) => {
   async function signIn(signInProvider) {
     handleCloseGuestSignInModal();
     setAnchorEl(null);
-    const result = await signInWithPopup(auth, signInProvider);
+    const result = await signInWithRedirect(auth, signInProvider);
     const user = result.user;
   }
 
