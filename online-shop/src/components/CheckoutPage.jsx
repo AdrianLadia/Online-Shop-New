@@ -290,6 +290,7 @@ const CheckoutPage = () => {
           deliveryVehicle: deliveryVehicle.name,
           needAssistance: needAssistance,
           eMail: localemail,
+          sendEmail: true
         });
 
         setTransactionStatus(res.data);

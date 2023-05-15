@@ -70,7 +70,7 @@ function MyOrderCard(props) {
   };
 
   function handleCancel(){
-    firestore.deleteCancelledOrder(userdata.uid, order.reference);
+    cloudfirestore.transactionCancelOrder({userId:userdata.uid,orderReference:order.reference});
   }
 
   function handlePay(){

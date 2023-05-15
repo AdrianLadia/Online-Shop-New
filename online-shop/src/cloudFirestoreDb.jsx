@@ -141,6 +141,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
       eMail: Joi.string().required(),
+      sendEmail : Joi.boolean().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
@@ -414,6 +415,40 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return { status: 'error' };
     }
   }
+
+  async transactionCancelOrder(data) {
+    const dataSchema = Joi.object({
+      orderReference: Joi.string().required(),
+      userId: Joi.string().required(),
+    });
+
+    const { error } = dataSchema.validate(data);
+
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+
+    const jsonData = JSON.stringify(data);
+
+    try {
+      const res = await axios.post(`${this.url}transactionCancelOrder`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const resData = res.data;
+      alert('Order cancelled successfully');
+      return resData;
+    }
+    catch (error) {
+      console.log(error);
+      alert('Error cancelling order.');
+      return { status: 'error' };
+    }
+
+  }
+
 }
 
 export default cloudFirestoreDb;

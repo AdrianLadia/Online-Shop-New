@@ -21,7 +21,9 @@ import AppConfig from '../src/AppConfig';
 const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
 const firestore = new firestoredb(app, true);
-await firestore.createNewUser(
+const cloudfirestorefunctions = new cloudFirestoreFunctions(app, true);
+const cloudfirestore = new cloudFirestoreDb(app);
+await cloudfirestore.createNewUser(
   {
     uid: 'TESTUSER',
     name: 'test user2',
@@ -42,8 +44,6 @@ await firestore.createNewUser(
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
-const cloudfirestorefunctions = new cloudFirestoreFunctions(app, true);
-const cloudfirestore = new cloudFirestoreDb(app);
 const userTestId = 'TESTUSER';
 const testconfig = new testConfig();
 const testid = testconfig.getTestUserId();
@@ -288,6 +288,8 @@ describe('Data Manipulation', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
+
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -317,6 +319,7 @@ describe('Data Manipulation', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -908,6 +911,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
     await delay(200);
 
@@ -975,6 +979,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
     await delay(200);
 
@@ -998,6 +1003,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await delay(200);
@@ -1022,6 +1028,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await delay(200);
@@ -1102,6 +1109,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await delay(300);
@@ -1178,6 +1186,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
     await delay(300);
 
@@ -1265,6 +1274,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1287,6 +1297,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1309,6 +1320,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     const req3 = {
@@ -1527,6 +1539,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
     await delay(500);
 
@@ -1559,6 +1572,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
     await delay(500);
 
@@ -1591,6 +1605,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
     await delay(300);
 
@@ -1734,6 +1749,7 @@ describe('deleteOrderFromUserFirestore', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1756,6 +1772,7 @@ describe('deleteOrderFromUserFirestore', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1778,6 +1795,7 @@ describe('deleteOrderFromUserFirestore', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     test('check if reference is added to orderMessages collection', async () => {
@@ -1873,6 +1891,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
   },100000);
 
@@ -2071,6 +2090,7 @@ describe('updatePaymentStatus', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
   });
   test('create Test Payment Proof Upload', async () => {
@@ -2192,6 +2212,7 @@ describe('deleteOldOrders', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
 
     await delay(300);
@@ -2233,6 +2254,7 @@ describe('deleteOldOrders', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     });
     await delay(2000)
 
@@ -2304,6 +2326,7 @@ describe('transactionPlaceOrder test retail', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     })
     await delay(300)
     const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2343,6 +2366,7 @@ describe('deleteDeclinedPayments', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
+      sendEmail: false
     })
 
     await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER' ,'BDO')
@@ -2383,3 +2407,65 @@ describe('deleteDeclinedPayments', () => {
 
   });
 },100000);
+
+describe.only('testCancelOrder', () => {
+  test('Setup test', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const ppb16Retail = await firestore.readSelectedProduct('PPB#16-RET');
+    const ppb16RetPrice = ppb16Retail.price    
+    const itemsTotal = (ppb16Price * 12 + ppb16RetPrice * 12) / 1.12;
+    const vat = (ppb16Price * 12 + ppb16RetPrice * 12) - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: {'PPB#16' : 12,'PPB#16-RET':12},
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+    });
+  })
+
+  test('deleteCancelledOrder invoke ', async () => {
+    await delay(200)
+
+    const productDataOld = await cloudfirestore.readSelectedDataFromCollection('Products','PPB#16')
+    const stocksAvailableOld = productDataOld.stocksAvailable
+    
+    await cloudfirestore.transactionCancelOrder({userId:userTestId,orderReference:'testref1234'});
+    const user = await cloudfirestore.readSelectedUserById(userTestId);
+    const order = user.orders
+
+    expect (order.length).toEqual(0)
+
+    const productDataNew = await cloudfirestore.readSelectedDataFromCollection('Products','PPB#16')
+    productDataNew.stocksOnHold.map((stock) => {
+      if (stock.reference == 'testref1234') {
+        throw new Error('Stock not deleted')
+      }
+    })
+
+    const stocksAvailableNew = productDataNew.stocksAvailable
+
+    expect(stocksAvailableNew-stocksAvailableOld).toEqual(12)
+
+
+
+  });
+},100000)
