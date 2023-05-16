@@ -91,7 +91,7 @@ async function updateMessages() {
   return (
     <div className="flex items-start h-max ml-0.5">
 
-      <div className="flex items-center justify-center w-2/12 h-full rounded-full sm:w-1/12 mt-3">
+      <div className="flex items-center justify-center w-2/12 h-full rounded-full lg:w-1/12 mt-3">
         <div className="w-16 h-16 bg-gradient-to-tl from-green2 to-green1 border-4 border-green1 rounded-full sm:h-20 sm:w-20 ">
           <div className="flex items-center justify-center h-full text-2xl font-bold text-white uppercase">
             {name[0]}

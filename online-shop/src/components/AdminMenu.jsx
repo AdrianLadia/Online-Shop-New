@@ -145,7 +145,7 @@ const AdminMenu = () => {
                   display: "block",
                   position: "absolute",
                   top: 0,
-                  right: 28,
+                  right: 30,
                   width: 10,
                   height: 10,
                   bgcolor: "background.paper",
@@ -158,15 +158,15 @@ const AdminMenu = () => {
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='inventoryMenu' onClick={handleClickInventory}> <BsBoxes size={19}/>     <span>Inventory</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='inventoryMenu' onClick={handleClickInventory}> <BsBoxes size={19}/>     <span>Inventory</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='createPaymentMenu' onClick={handleClickCreatePayment}> <HiOutlineCash size={19}/>     <span>Create Payment</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='createPaymentMenu' onClick={handleClickCreatePayment}> <HiOutlineCash size={19}/>     <span>Create Payment</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-full justify-start p-2' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-full justify-start p-2 focus:text-blue1' id='Admin Chat' onClick={handleClickAdminChat}> <HiOutlineChatAlt size={20}/>     <span>Admin Chat</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Admin Chat' onClick={handleClickAdminChat}> <HiOutlineChatAlt size={20}/>     <span>Admin Chat</span></MenuItem>
           </Menu>
         </div>
       </div>
