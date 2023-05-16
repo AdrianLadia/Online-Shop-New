@@ -172,7 +172,7 @@ const CheckoutPage = () => {
   // PAYMENT METHODS
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
-      setCart([]);
+      setCart({});
       console.log('success');
       console.log(area)
       businesscalculations.afterCheckoutRedirectLogic(
@@ -656,7 +656,7 @@ const CheckoutPage = () => {
                     onClick={onPlaceOrder}
                     className="hover:bg-color10b bg-blue1 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
                   >
-                    {placeOrderLoading ? <ClipLoader size={50} color='#1585ca'/> : 'Place Order'}
+                    {placeOrderLoading ? <ClipLoader size={50} color='#ffffff'/> : 'Place Order'}
                   </button>
                 </div>
               </>

@@ -57,7 +57,7 @@ const CartModal = (props) => {
   }
 
   function clearCart() {
-    setCart([]);
+    setCart({});
     firestore.createUserCart({cart:[]},userdata.uid)
     }
 
@@ -109,7 +109,7 @@ const CartModal = (props) => {
                 </div>
 
                 <div>
-                  <CheckoutButton />
+                  <CheckoutButton totalPrice={totalPrice} />
                 </div>
               </div>
             )}

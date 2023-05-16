@@ -25,7 +25,7 @@ const NavBar = () => {
     setUserData(null);
     setUserLoaded(true);
     setUserState('guest');
-    setCart([]);
+    setCart({});
     navigateTo('/');
     console.log('logged out');
   }
