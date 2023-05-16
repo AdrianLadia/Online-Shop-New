@@ -3,7 +3,7 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({
-  origin: ['https://starpack.ph', 'http://localhost:5173'],
+  origin: ['https://starpack.ph', 'http://localhost:5173','http://localhost:3000'],
 });
 
 const express = require('express');
@@ -1093,11 +1093,13 @@ async function deleteOldOrders() {
       console.log('cart', cart);
       const cartItems = Object.keys(cart);
       cartItems.map(async (itemId) => {
-        const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
-        deletedOrderData.quantity = cart[itemId];
-        dataNeededToUpdateProductValue.push(deletedOrderData);
-        if (!allCartItems.includes(itemId)) {
-          allCartItems.push(itemId);
+        if (itemId.slice(-4) != '-RET') {
+          const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
+          deletedOrderData.quantity = cart[itemId];
+          dataNeededToUpdateProductValue.push(deletedOrderData);
+          if (!allCartItems.includes(itemId)) {
+            allCartItems.push(itemId);
+        }
         }
       });
     });
@@ -1133,7 +1135,7 @@ async function deleteOldOrders() {
       const stocksOnHold = stocksOnHoldToAdjust[itemId];
       // console.log('_____________________________________________')
       // console.log(itemId)
-      // console.log(stocksOnHold)
+      console.log('stocksOnHold',stocksOnHold)
       // console.log(reference)
       const newStocksOnHold = stocksOnHold.filter((order) => order.reference != reference);
       // console.log(newStocksOnHold)

@@ -501,7 +501,7 @@ describe('Database', async () => {
     await firestore.transactionCreatePayment('LP6ARIs14qZm4qjj1YOLCSNjxsj1', 1999, '124532-1235', 'GCASH');
     await delay(100);
   });
-  test.only('updatedoc', async () => {
+  test('updatedoc', async () => {
     await firestore.updatePhoneNumber(userTestId, '09178927206');
     await delay(100);
     const user = await firestore.readUserById(userTestId);
@@ -794,12 +794,12 @@ describe('firestoredb', async () => {
   });
 
   test('updatePhoneNumber', async () => {
-    await firestore.updatePhoneNumber('testuser', '09178927206');
+    await firestore.updatePhoneNumber(userTestId, '09178927206');
     await delay(100);
-    const user = await firestore.readUserById('testuser');
+    const user = await firestore.readUserById('TESTUSER');
     await delay(100);
-    const phonenumber = user.phonenumber;
-    expect(phonenumber).toEqual('09178927206');
+    const phoneNumber = user.phoneNumber;
+    expect(phoneNumber).toEqual('09178927206');
   });
 });
 
@@ -1081,7 +1081,7 @@ describe('cloudfirestoredb', async () => {
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await delay(100);
   });
-  test('testPayMayaWebHookSuccess', async () => {
+  test.only('testPayMayaWebHookSuccess', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -1115,33 +1115,36 @@ describe('cloudfirestoredb', async () => {
     await delay(300);
 
     const req = {
-      totalAmount: {
-        value: 62002,
-        currency: 'PHP',
+      "totalAmount": {
+        "value": 62002,
+        "currency": "PHP"
       },
-      buyer: {
-        contact: {
-          email: 'ladia.adrian@gmail.com',
-          phone: '09178927206',
+      "buyer": {
+        "contact": {
+          "email": "ladia.adrian@gmail.com",
+          "phone": "09178927206"
         },
-        shippingAddress: {
-          line1: 'Cebu',
-          line2: 'Cebu City',
-          countryCode: 'PH',
+        "shippingAddress": {
+          "line1": "Cebu",
+          "line2": "Cebu City",
+          "countryCode": "PH"
         },
-        firstName: 'Adrian',
-        lastName: 'Ladia',
+        "firstName": "Adrian",
+        "lastName": "Ladia"
       },
-      redirectUrl: {
-        success: 'http://localhost:5173/checkoutSuccess',
-        failure: 'http://localhost:5173/checkoutFailed',
-        cancel: 'http://localhost:5173/checkoutCancelled',
+      "redirectUrl": {
+        "success": "http://starpack.ph/checkoutSuccess",
+        "failure": "http://starpack.ph/checkoutFailed",
+        "cancel": "http://starpack.ph/checkoutCancelled"
       },
-      requestReferenceNumber: 'testref1234',
-      metadata: {
-        userId: userTestId,
-      },
+      "requestReferenceNumber": "testref1234",
+      "metadata": {
+        "userId": userTestId
+      }
     };
+
+    
+
     const res = await cloudfirestore.testPayMayaWebHookSuccess(req);
     await delay(300);
     const data = res.data;
@@ -1200,33 +1203,33 @@ describe('cloudfirestoredb', async () => {
     });
 
     const req2 = {
-      totalAmount: {
-        value: 62002,
-        currency: 'PHP',
+      "totalAmount": {
+        "value": 62002,
+        "currency": "PHP"
       },
-      buyer: {
-        contact: {
-          email: 'ladia.adrian@gmail.com',
-          phone: '09178927206',
+      "buyer": {
+        "contact": {
+          "email": "ladia.adrian@gmail.com",
+          "phone": "09178927206"
         },
-        shippingAddress: {
-          line1: 'Cebu',
-          line2: 'Cebu City',
-          countryCode: 'PH',
+        "shippingAddress": {
+          "line1": "Cebu",
+          "line2": "Cebu City",
+          "countryCode": "PH"
         },
-        firstName: 'Adrian',
-        lastName: 'Ladia',
+        "firstName": "Adrian",
+        "lastName": "Ladia"
       },
-      redirectUrl: {
-        success: 'http://localhost:5173/checkoutSuccess',
-        failure: 'http://localhost:5173/checkoutFailed',
-        cancel: 'http://localhost:5173/checkoutCancelled',
+      "redirectUrl": {
+        "success": "http://localhost:5173/checkoutSuccess",
+        "failure": "http://localhost:5173/checkoutFailed",
+        "cancel": "http://localhost:5173/checkoutCancelled"
       },
-      requestReferenceNumber: 'testref12345',
-      metadata: {
-        userId: userTestId,
-      },
-    };
+      "requestReferenceNumber": "testref12345",
+      "metadata": {
+        "userId": userTestId
+      }
+    }
 
     const res2 = await cloudfirestore.testPayMayaWebHookSuccess(req2);
     await delay(300);
@@ -1324,32 +1327,32 @@ describe('cloudfirestoredb', async () => {
     });
 
     const req3 = {
-      totalAmount: {
-        value: 62002,
-        currency: 'PHP',
+      "totalAmount": {
+        "value": 62002,
+        "currency": "PHP"
       },
-      buyer: {
-        contact: {
-          email: 'ladia.adrian@gmail.com',
-          phone: '09178927206',
+      "buyer": {
+        "contact": {
+          "email": "ladia.adrian@gmail.com",
+          "phone": "09178927206"
         },
-        shippingAddress: {
-          line1: 'Cebu',
-          line2: 'Cebu City',
-          countryCode: 'PH',
+        "shippingAddress": {
+          "line1": "Cebu",
+          "line2": "Cebu City",
+          "countryCode": "PH"
         },
-        firstName: 'Adrian',
-        lastName: 'Ladia',
+        "firstName": "Adrian",
+        "lastName": "Ladia"
       },
-      redirectUrl: {
-        success: 'http://localhost:5173/checkoutSuccess',
-        failure: 'http://localhost:5173/checkoutFailed',
-        cancel: 'http://localhost:5173/checkoutCancelled',
+      "redirectUrl": {
+        "success": "http://localhost:5173/checkoutSuccess",
+        "failure": "http://localhost:5173/checkoutFailed",
+        "cancel": "http://localhost:5173/checkoutCancelled"
       },
-      requestReferenceNumber: 'testref12345678',
-      metadata: {
-        userId: userTestId,
-      },
+      "requestReferenceNumber": "testref12345678",
+      "metadata": {
+        "userId": userTestId
+      }
     };
 
     const res3 = await cloudfirestore.testPayMayaWebHookSuccess(req3);
@@ -1893,6 +1896,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false
     });
+    await delay(300)
   },100000);
 
   test('updateOrderProofOfPaymentLink', async () => {
@@ -1903,6 +1907,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       'TEST USER',
       'BDO'
     );
+    await delay(300)
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -1930,6 +1935,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       'TEST USER',
       'BDO'
     );
+    await delay(300)
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -2408,7 +2414,7 @@ describe('deleteDeclinedPayments', () => {
   });
 },100000);
 
-describe.only('testCancelOrder', () => {
+describe('testCancelOrder', () => {
   test('Setup test', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
