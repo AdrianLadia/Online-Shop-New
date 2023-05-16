@@ -432,11 +432,18 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const jsonData = JSON.stringify(data);
 
     try {
-      const res = await axios.post(`${this.url}transactionCancelOrder`, jsonData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const res = retryApi(() => {
+        return axios.post(`${this.url}transactionCancelOrder`, jsonData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      })
+      // const res = await axios.post(`${this.url}transactionCancelOrder`, jsonData, {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // });
       const resData = res.data;
       alert('Order cancelled successfully');
       return resData;

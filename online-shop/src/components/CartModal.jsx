@@ -57,7 +57,7 @@ const CartModal = (props) => {
   }
 
   function clearCart() {
-    setCart([]);
+    setCart({});
     firestore.createUserCart({cart:[]},userdata.uid)
     }
 
