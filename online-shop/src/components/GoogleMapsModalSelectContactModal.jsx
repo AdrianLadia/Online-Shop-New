@@ -47,6 +47,9 @@ const GoogleMapsModalSelectContactModal = (props) => {
                   >X
               </button>
             </div>
+
+            <div className='border-b-2 w-full border-color60 mt-4'/>
+            
             <div className='mt-6'>
               {contactPerson.map((contact) => {
                 return (

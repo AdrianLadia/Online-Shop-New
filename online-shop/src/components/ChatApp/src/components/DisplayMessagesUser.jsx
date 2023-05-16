@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { TiArrowBack } from 'react-icons/ti';
 import AppContext from '../../../../AppContext';
-import { BiCircle, BiCheckCircle, BiXCircle } from "react-icons/bi";
+import { BiCheckCircle, BiXCircle } from "react-icons/bi";
 
 const DisplayMessagesUser = (props) => {
 
@@ -12,7 +12,6 @@ const DisplayMessagesUser = (props) => {
   const loggedInUserId = props.loggedInUserId;
   const read = props.read;
   const image= props.image;
-
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -27,8 +26,8 @@ const DisplayMessagesUser = (props) => {
   return (
     <div className="flex flex-row-reverse items-start h-max mr-0.5">
 
-      <div className="flex items-center justify-center w-2/12 h-full rounded-full sm:w-1/12 mt-3">
-        <div className="w-16 h-16 bg-gradient-to-tr from-color10c to-color60 border-4 border-color60 rounded-full sm:h-20 sm:w-20">
+      <div className="flex items-center justify-center w-2/12 rounded-full h-full lg:w-1/12 mt-3">
+        <div className="w-16 h-16 sm:h-20 sm:w-20 bg-gradient-to-tr from-color10c to-color60 border-4 border-color60 rounded-full">
           <div className="flex items-center justify-center h-full text-2xl font-bold text-white uppercase">
             {user[0]}
           </div>

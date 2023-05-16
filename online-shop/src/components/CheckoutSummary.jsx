@@ -64,24 +64,24 @@ const CheckoutSummary = (props) => {
       return '90%';
     }
     if (width < 750) {
-      return '80%';
+      return '75%';
     }
     if (width < 1000) {
-      return '70%';
+      return '78%';
     }
     if (width < 1200) {
-      return '60%';
+      return '70%';
     }
     if (width < 1400) {
-      return '50%';
+      return '60%';
     }
     if (width < 1600) {
-      return '40%';
+      return '50%';
     }
     if (width < 1800) {
-      return '30%';
+      return '45%';
     } else {
-      return '20%';
+      return '40%';
     }
   }
 
@@ -94,8 +94,8 @@ const CheckoutSummary = (props) => {
           </Typography>
         </div>
       ) : (
-        <div className="flex flex-col align-center items-center gap-4 ">
-          <TableContainer component={Paper} elevation={10} className="flex align-center w-11/12 m-2">
+        <div className="flex flex-col align-center items-center gap-4 justify-center">
+          <TableContainer component={Paper} elevation={10} className="flex align-center w-11/12 m-2 mb-4">
             <Table sx={{ minWidth: 650 }} className=" font-bold border-2 border-color60" aria-label="simple table">
               <TableHead>
                 <TableRow className="bg-color10c">
@@ -123,46 +123,50 @@ const CheckoutSummary = (props) => {
               </TableBody>
             </Table>
           </TableContainer>
+
           <List
             sx={{
               width: responsiveWidth(),
               bgcolor: 'background.paper',
               marginLeft: -2,
+              borderRadius: "8px",
+              border: 1 ,
+              borderColor: "#99A98F"
             }}
           >
-            {deliveryVehicle ? (
-              <ListItem>
-                <ListItemText primary="Delivery Vehicle" secondary={deliveryVehicle} />
-              </ListItem>
-            ) : null}
-            {maxWeight ? (
-              <ListItem>
-                <ListItemText primary="Max Weight" secondary={maxWeight + ' Kg'} />
-              </ListItem>
-            ) : null}
-
-            {totalWeight ? (
-              <ListItem>
-                <ListItemText primary="Weight of Items" secondary={totalWeight + ' Kg'} />
-              </ListItem>
-            ) : null}
-
-            <div className="grid grid-cols-2 md:grid-cols-4 justify-start items-start gap-5 xs:gap-10">
-              <ListItem>
-                <ListItemText primary="Items Total" secondary={'₱ ' + total.toLocaleString()} />
-              </ListItem>
-              {new AppConfig().getNoVat() ? null : (
+          <div className="grid grid-cols-2 md:grid-cols-6 justify-start items-start gap-5 xs:gap-10 ">
+              {deliveryVehicle ? (
                 <ListItem>
-                  <ListItemText primary="Tax" secondary={'₱ ' + vat.toLocaleString()} />
+                  <ListItemText primary="Delivery Vehicle:" secondary={deliveryVehicle} />
                 </ListItem>
-              )}
+              ) : null}
+              {maxWeight ? (
+                <ListItem>
+                  <ListItemText primary="Max Weight:" secondary={maxWeight + ' Kg'} />
+                </ListItem>
+              ) : null}
 
-              <ListItem>
-                <ListItemText primary="Delivery Fee" secondary={'₱ ' + deliveryFee.toLocaleString()} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary="Grand Total" secondary={'₱ ' + grandTotal.toLocaleString()} />
-              </ListItem>
+              {totalWeight ? (
+                <ListItem>
+                  <ListItemText primary="Weight of Items:" secondary={totalWeight + ' Kg'} />
+                </ListItem>
+              ) : null}
+
+                <ListItem>
+                  <ListItemText primary="Items Total:" secondary={'₱' + total.toLocaleString()} />
+                </ListItem>
+                {new AppConfig().getNoVat() ? null : (
+                  <ListItem>
+                    <ListItemText primary="Tax:" secondary={'₱' + vat.toLocaleString()} />
+                  </ListItem>
+                )}
+
+                <ListItem>
+                  <ListItemText primary="Delivery Fee:" secondary={'₱' + deliveryFee.toLocaleString()} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="Grand Total:" secondary={'₱' + grandTotal.toLocaleString()} />
+                </ListItem>
             </div>
           </List>
 

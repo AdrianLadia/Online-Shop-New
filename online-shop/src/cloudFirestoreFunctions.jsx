@@ -40,6 +40,7 @@ class cloudFirestoreFunctions {
     const encodedData = encodeURIComponent(JSON.stringify({ collection, id, firestoreData }));
     try {
 
+      let response
       await retryApi(async () => {
         const response = await axios.post(
           `${this.url}createDocument?data=${encodedData}`

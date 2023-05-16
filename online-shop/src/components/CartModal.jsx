@@ -3,7 +3,7 @@ import { Modal, Typography } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import { useContext, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
-import useWindowDimensions from "./UseWindowDimensions";
+import useWindowDimensions from "./useWindowDimensions";
 import CheckoutButton from "./CheckoutButton";
 import CartTable from "./CartTable";
 import Fade from "@mui/material/Fade";
@@ -33,7 +33,7 @@ const CartModal = (props) => {
     width: "95%",
 
     "@media (min-width: 1024px)": {
-      width: "70%",
+      width: "85%",
     },
 
     bgcolor: "background.paper",
@@ -57,7 +57,7 @@ const CartModal = (props) => {
   }
 
   function clearCart() {
-    setCart([]);
+    setCart({});
     firestore.createUserCart({cart:[]},userdata.uid)
     }
 
@@ -109,7 +109,7 @@ const CartModal = (props) => {
                 </div>
 
                 <div>
-                  <CheckoutButton />
+                  <CheckoutButton totalPrice={totalPrice} />
                 </div>
               </div>
             )}

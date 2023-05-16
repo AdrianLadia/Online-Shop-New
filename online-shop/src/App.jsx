@@ -62,7 +62,7 @@ function App() {
   const [userdata, setUserData] = useState(null);
   const [isadmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({});
   const [refreshUser, setRefreshUser] = useState(false);
   const [userLoaded, setUserLoaded] = useState(null);
   const [deliveryaddress, setDeliveryAddress] = useState(null);
@@ -85,6 +85,7 @@ function App() {
   const [chatSwitch, setChatSwitch] = useState(false);
   const [isSupportedBrowser, setIsSupportedBrowser] = useState(null);
   const [updateCartInfo,setUpdateCartInfo]  = useState(false)
+  const [isAffiliate, setIsAffiliate] = useState(false)
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -219,12 +220,18 @@ function App() {
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
         const adminRoles = ['admin', 'superAdmin'];
+        
 
         const userRole = await cloudfirestore.readUserRole(data.uid);
         if (adminRoles.includes(userRole)) {
           setIsAdmin(true);
         } else {
           setIsAdmin(false);
+        }
+        if (userRole === 'affiliate') {
+          setIsAffiliate(true)
+        } else {
+          setIsAffiliate(false)
         }
         // ADMIN CHECK
 

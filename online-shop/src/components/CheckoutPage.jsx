@@ -6,10 +6,7 @@ import GoogleMaps from './GoogleMaps';
 import AppContext from '../AppContext';
 import { useState, useContext } from 'react';
 import TextField from '@mui/material/TextField';
-
 import PaymentMethods from './PaymentMethods';
-
-
 import GoogleMapsModalSelectSaveAddress from './GoogleMapsModalSelectSaveAddress';
 import GoogleMapsModalSelectContactModal from './GoogleMapsModalSelectContactModal';
 import Switch from '@mui/material/Switch';
@@ -24,7 +21,8 @@ import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import CheckoutContext from '../context/CheckoutContext';
 import { useNavigate } from 'react-router-dom';
 import dataManipulation from '../../utils/dataManipulation';
-import { CircularProgress } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import ClipLoader from "react-spinners/ClipLoader";
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -172,7 +170,9 @@ const CheckoutPage = () => {
   // PAYMENT METHODS
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
-      setCart([]);
+      setCart({});
+      console.log('success');
+      console.log(area)
       businesscalculations.afterCheckoutRedirectLogic(
         { bdoselected : bdoselected,
           unionbankselected : unionbankselected,
@@ -259,7 +259,6 @@ const CheckoutPage = () => {
       setPlaceOrderLoading(false);
       return;
     }
-
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
       try {
@@ -288,7 +287,6 @@ const CheckoutPage = () => {
           eMail: localemail,
           sendEmail: true
         });
-
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
       } catch (err) {
@@ -351,7 +349,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full">
               <button
                 id="selectFromSavedAddressButton"
-                className="bg-color10b hover:bg-blue-400 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                className="bg-blue1 hover:bg-color10b text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenModalSavedAddress}
               >
                 Select From Saved Address
@@ -360,6 +358,26 @@ const CheckoutPage = () => {
           </div>
       
         </div>
+
+        <TextField
+            id="addressEntry"
+            label="Address"
+            InputLabelProps={labelStyle}
+            variant="filled"
+            className=" w-11/12 self-center mb-5 bg-white"
+            onChange={(event) => setLocalDeliveryAddress(event.target.value)}
+            value={localDeliveryAddress}
+          />
+
+          <TextField
+            disabled
+            id="googleAddress"
+            label="Google Pinpoint Address"
+            InputLabelProps={labelStyle}
+            variant="filled"
+            className=" w-11/12 self-center bg-white"
+            value={addressText}
+          />
 
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 
@@ -378,26 +396,6 @@ const CheckoutPage = () => {
 
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 
-        <TextField
-            id="addressEntry"
-            label="Address"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 self-center mb-5 bg-white"
-            onChange={(event) => setLocalDeliveryAddress(event.target.value)}
-            value={localDeliveryAddress}
-          />
-
-          <TextField
-            disabled
-            id="googleAddress"
-            label="Google Pipoint Address"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 self-center mb-5 bg-white"
-            value={addressText}
-          />
-
         <div className="flex flex-col self-center items-center gap-6 w-full">
           <div className="flex flex-row w-full justify-between ml-4 my-5">
             <div className="flex justify-center w-full p-3">
@@ -408,7 +406,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full ">
               <button
                 id="selectFromSavedContactsButton"
-                className="bg-color10b hover:bg-blue-400 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                className="bg-blue1 hover:bg-color10b text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenContactModal}
               >
                 Select From Saved Contacts
@@ -655,8 +653,9 @@ const CheckoutPage = () => {
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
                     className="hover:bg-color10b bg-blue1 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
+                    disabled={placeOrderLoading}
                   >
-                    {placeOrderLoading ? <CircularProgress /> : 'Place Order'}
+                    {placeOrderLoading ? <ClipLoader size={50} color='#ffffff'/> : 'Place Order'}
                   </button>
                 </div>
               </>

@@ -7,7 +7,7 @@ import { FaImage } from "react-icons/fa";
 import AppContext from '../../AppContext';
 
 const ImageUploadButton = (props) => {
-  const { selectedChatOrderId } = useContext(AppContext);
+  const { selectedChatOrderId, payments } = useContext(AppContext);
   const id = props.id;
   const folderName = props.folderName;
   let fileName = props.fileName;
@@ -33,7 +33,6 @@ const ImageUploadButton = (props) => {
       };
       reader.readAsDataURL(file);
       // Perform image upload operations here
-
       if (fileName === undefined) {
         fileName = file.name;
       }
@@ -84,7 +83,7 @@ const ImageUploadButton = (props) => {
         <label htmlFor={`imageUpload-${id}`}>
           {loading ? <CircularProgress size={30} color="inherit" /> 
           : buttonText ? <span className='gap-2 flex'><CloudUploadIcon/> {buttonText}</span> 
-          : <FaImage className='text-2xl xl:text-3xl'/> }
+          : <FaImage className='text-2xl xl:text-4xl 2xl:text-6xl'/> }
         </label>
       </Button>
     </div>

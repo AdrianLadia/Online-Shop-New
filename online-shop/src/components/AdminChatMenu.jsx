@@ -88,12 +88,12 @@ const AdminChatMenu = () => {
       <div ref={dummy}/>
       {openChat ? <ChatApp /> : null}
       <TableContainer 
-          className="flex justify-center items-start w-12/12 lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1" 
+          className="flex justify-center items-start w-12/12 lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1 " 
           component={Paper}>
-        <Table aria-label="chat table">
+        <Table aria-label="chat table" className='w-full overflow-auto ' >
           <TableHead>
-            <TableRow className='bg-gradient-to-br from-green4 to-green1 h-20'>
-              <TableCell > <p className=' flex justify-center text-2xl mr-5'><HiChatAlt/></p> </TableCell>
+            <TableRow className='bg-gradient-to-br from-green4 to-green1 h-24 '>
+              <TableCell > <p className=' flex justify-center text-2xl xl:mr-5 '><HiChatAlt/></p> </TableCell>
               <TableCell className='font-bold'>Customer</TableCell>
               <TableCell className='font-bold'>Reference #</TableCell>
               <TableCell className='font-bold'>Unread Messages</TableCell>
@@ -102,19 +102,19 @@ const AdminChatMenu = () => {
           <TableBody>
             {chatData.map((chat) => (
               <TableRow key={chat.id} >
-                <TableCell className='flex justify-center w-full ' component="th">
+                <TableCell  component="th">
                   {selectedChatOrderId === chat.id && openChat ? 
-                  <Button 
-                    onClick={() => handleBoth(chat.id, false)} 
-                    className="  rounded-full bg-red-500 hover:bg-red-400 text-white mr-3"
-                    >X
-                  </Button>
+                    <Button 
+                      onClick={() => handleBoth(chat.id, false)} 
+                      className=" rounded-full bg-red-500 hover:bg-red-400 text-white"
+                      >X
+                    </Button>
                   :
-                  <Button 
-                    onClick={() => handleBoth(chat.id, true)} 
-                    className=" bg-color60 hover:bg-color10c text-white mr-3"
-                    >Open
-                  </Button>
+                    <Button 
+                      onClick={() => handleBoth(chat.id, true)} 
+                      className=" bg-color60 hover:bg-color10c text-white "
+                      >Open
+                    </Button>
                   }
                 </TableCell>
                 <TableCell  scope="row">

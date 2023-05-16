@@ -74,13 +74,12 @@ const AccountMenu = (props) => {
             id = "accountMenu"
             onClick={handleClick}
             size="small"
-            sx={{ ml: 0 }}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             className='hover:bg-blue1'
           >
-            <Avatar sx={{ width: 36, height: 36, bgcolor:'#6bd0ff',justifyItems:"center"}}>
+            <Avatar sx={{ width: 36, height: 36, bgcolor:'#6bd0ff',justifyItems:"end"}} className="mr-0 xs:-mr-4 xl:mr-0">
               <Typography color='white' sx={{ mt:.2, fontWeight:600}}>
                 {userdata.name[0].toUpperCase()}
               </Typography>
@@ -152,7 +151,7 @@ const AccountMenu = (props) => {
           </ListItemIcon>
           <span>Settings</span>
         </MenuItem>
-        <MenuItem id='logoutMenu' onClick={props.signout} className='hover:bg-red-400'>
+        <MenuItem id='logoutMenu' onClick={props.signout} className='hover:bg-red-300'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -161,7 +160,7 @@ const AccountMenu = (props) => {
         {isadmin ? (
           <div>
             <Divider className="mt-1 mb-1"/>
-            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-slate-300'>
+            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-slate-600'>
               <RiAdminLine size={21} className="-ml-.5 font-bold text-blue1" />
               <span className="ml-5 mt-1 text-blue1">Admin</span>
             </MenuItem>
