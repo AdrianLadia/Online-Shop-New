@@ -23,7 +23,7 @@ const CheckoutButton = () => {
   }
 
   function onCheckoutButtonClick() {
-    if(totalCredit <= 50000){
+    if(totalCredit >= 50000){
       if (userId === null) {
         localStorage.setItem('cart', JSON.stringify(cart));
         setOpenGuestSignInModal(true);

@@ -653,7 +653,7 @@ class dataManipulation {
       return 0; // a and b have the same condition, maintain their original order
     });
 
-    console.log(selected_products)
+    // console.log(selected_products)
 
     const selectedProductsSchema = Joi.array();
 

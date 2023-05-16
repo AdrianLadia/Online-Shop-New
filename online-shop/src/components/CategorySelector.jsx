@@ -44,7 +44,7 @@ const CategorySelector = (props) => {
   useEffect(() => {
     async function fetchCategories() {
       const categories = await firestore.readAllCategories();
-      const categoryList = datamanipulation.getCategoryList(categories,hiddenCategories);
+      const categoryList = datamanipulation.getCategoryList(categories, hiddenCategories);
       setCategories(categoryList);
     }
     fetchCategories();
@@ -55,6 +55,8 @@ const CategorySelector = (props) => {
       setSelectedCategory(categories[value]);
     }
   }, [value, categories]);
+
+  console.log(categories)
 
   return (
   <ThemeProvider theme={theme}>
@@ -72,7 +74,6 @@ const CategorySelector = (props) => {
               scrollButtons="auto"
             >
               {categories && categories.map((category, index) => {
-
                 return <Tab sx={{fontWeight:"bold"}} label={category} key={index} {...a11yProps(index)} />;
               })}
             </Tabs>

@@ -7,14 +7,16 @@ import { Link } from 'react-router-dom';
 import AppContext from '../AppContext';
 import { useLocation } from 'react-router-dom';
 import CountdownTimer from './CountDownTimer';
+import { Timestamp } from 'firebase/firestore';
 
 const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
 
-  const { storage, cloudfirestore, userId, userdata } = useContext(AppContext);
+  const { storage, cloudfirestore, userId, userdata, firestore } = useContext(AppContext);
   const location = useLocation();
-  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area,bdoselected,unionbankselected,gcashselected } = location.state;
+  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area, bdoselected, unionbankselected, gcashselected } = location.state;
+  const date = new Date();
   console.log('referenceNumber', referenceNumber);
 
   console.log('rows', rows);
@@ -42,11 +44,13 @@ const CheckoutProofOfPayment = (props) => {
   }
 
   function onUpload(url) {
+    const timestamp = Timestamp.fromDate(date);
+    const timestampString = timestamp.toDate().toLocaleString();
+
     cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
+    firestore.sendProofOfPaymentToOrdersMessages(referenceNumber, url, timestampString, userdata.uid, userdata.userRole)
   }
 
-  // console.log('referenceNumber', referenceNumber);
-  //
   return (
     <div>
       {referenceNumber == null ? (

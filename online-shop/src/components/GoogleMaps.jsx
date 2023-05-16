@@ -15,7 +15,6 @@ import UpdateMapMarkerModal from './UpdateMapMarkerModal';
 
 const GoogleMaps = (props) => {
 
-
   let { isLoaded } = useLoadScript({
     // googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
     googleMapsApiKey: 'AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I',

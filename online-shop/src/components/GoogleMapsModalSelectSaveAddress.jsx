@@ -57,6 +57,9 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
               > X
               </button>
             </div>
+
+            <div className='border-b-2 w-full border-color60 mt-4'/>
+            
             <div className="flex flex-col justify-center mt-6">
               {userdata ? (
                 userdata.deliveryAddress.map((address, index) => {

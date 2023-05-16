@@ -33,8 +33,6 @@ const ProductCard = (props) => {
   const retailAverageSalesPerDay = props.averageSalesPerDay;
   const isWholesale = props.isWholesale;
 
-  console.log(product);
-
   if (product.imageLinks.length == 0) {
     return (
       <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>

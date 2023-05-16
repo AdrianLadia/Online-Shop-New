@@ -26,7 +26,6 @@ const ChatApp = () => {
 
   useEffect(()=>{
     setRefreshUser(!refreshUser)
-    console.log(orderRef)
   },[])
 
   useEffect(()=>{
@@ -37,7 +36,6 @@ const ChatApp = () => {
   
   useEffect(() => {
     if (orderRef != null) {
-      console.log(orderRef)
       const docRef = doc(db, 'ordersMessages', orderRef);
       onSnapshot(docRef, (doc) => {
         if (doc.exists()) {

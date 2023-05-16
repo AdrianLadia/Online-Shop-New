@@ -3,7 +3,7 @@ import Joi from 'joi';
 import schemas from './schemas/schemas';
 import retryApi from '../utils/retryApi';
 import db from '../firebase';
-import { query, where, collection, getDocs, runTransaction,doc } from 'firebase/firestore';
+import { query, where, collection, getDocs, runTransaction, doc } from 'firebase/firestore';
 import { CollectionsOutlined } from '@mui/icons-material';
 
 class firestoredb extends firestorefunctions {
@@ -433,6 +433,8 @@ class firestoredb extends firestorefunctions {
     const cancelledData = orders.filter((order)=>order.reference === reference);
     const cancelledProducts = cancelledData[0].cart;
 
+    console.log(cancelledProducts)
+
     orders = data;
 
     this.updateDocumentFromCollection('Users', userId, {orders:orders});
@@ -442,19 +444,32 @@ class firestoredb extends firestorefunctions {
         acc[item] = (acc[item] || 0) + 1;
         return acc;
       }, {});
+
       this.addCancelledProductsToStocksAvailable(s, counts);
       this.removeCanceledProductsFromStocksOnHold(reference, s);
     })
 
-    alert(reference + " is Cancelled")
+    alert(reference + " is Cancelled. Please refresh")
   }
 
   async addProductInteraction(userId, itemName, timeStamp){
     const productInteraction = {
       itemName: itemName,
-      timeStamp: timeStamp,
+      dateTime: timeStamp,
     }
     this.addDocumentArrayFromCollection("Users", userId, productInteraction, "productInteraction")
+  }
+
+  async sendProofOfPaymentToOrdersMessages(reference, url, dateTime, userId, userRole){
+    const messages = {
+      dateTime: dateTime,
+      image: url,
+      message: "",
+      read: false,
+      userId: userId,
+      userRole: userRole,
+    }
+    this.addDocumentArrayFromCollection("ordersMessages", reference, messages, "messages")
   }
 }
 

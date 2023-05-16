@@ -9,14 +9,11 @@ import ChatApp from './ChatApp/src/ChatApp'
 
 function MyOrders() {
   const { orders } = useContext(AppContext);
-
   const [reversedOrders, setReversedOrders] = useState([]);
 
   useEffect(() => {
     setReversedOrders([...orders].reverse());
   }, [orders]);
-
-  console.log(reversedOrders)
 
   return (
     <Routes>
