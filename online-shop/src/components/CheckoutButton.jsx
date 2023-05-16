@@ -49,7 +49,7 @@ const CheckoutButton = (props) => {
         className="bg-color10b w-24 hover:bg-blue-700 hover:animate-bounce text-white p-2 rounded-md mt-5"
       >
         {goToCheckoutPage ? 
-         <CircularProgress size="2vh" />
+         <CircularProgress className="text-white" size="2vh" />
          : "Checkout"}
         
       </button>

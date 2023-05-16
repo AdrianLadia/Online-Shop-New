@@ -86,7 +86,7 @@ const ImageUploadButton = (props) => {
         <label htmlFor={`imageUpload-${id}`}>
           {loading ? <CircularProgress size={30} color="inherit" /> 
           : buttonText ? <span className='gap-2 flex'><CloudUploadIcon/> {buttonText}</span> 
-          : <FaImage className='text-2xl xl:text-3xl'/> }
+          : <FaImage className='text-2xl xl:text-4xl 2xl:text-6xl'/> }
         </label>
       </Button>
     </div>

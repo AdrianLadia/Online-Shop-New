@@ -14,7 +14,7 @@ import { AiOutlineFileSearch, AiOutlineSearch } from "react-icons/ai";
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, selectedChatOrderId, userdata} = React.useContext(AppContext);
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata} = React.useContext(AppContext);
   const order = props.order;
   const paid = order.paid
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
@@ -80,8 +80,14 @@ function MyOrderCard(props) {
   };
 
   function handleCancel(){
-    cloudfirestore.transactionCancelOrder({userId:userdata.uid,orderReference:order.reference});
+    cloudfirestore.transactionCancelOrder({userId:userdata.uid, orderReference:order.reference});
   }
+
+  // function handleCancel(){
+  //   cloudfirestore.justATest({collectionName:"Users", reference:userdata.uid});
+  // }
+
+  console.log(userdata)
 
   function handlePay(){
     let price;
@@ -90,7 +96,6 @@ function MyOrderCard(props) {
         price = s.grandTotal;
       }
     });
-
 
     navigateTo(
       '/AccountStatementPayment',
@@ -266,6 +271,7 @@ function MyOrderCard(props) {
         <div className="w-full border-t-2 mb-0.5 lg:border-t-0 "/>
 
             <div className='w-full lg:w-9/12 flex gap-5 flex-col-reverse sm:flex-row justify-center items-center lg:justify-end '>
+              { isadmin ? (<> </>):
               <button 
                   onClick={onMessageClick} 
                   className={"px-3 py-2 w-max rounded-lg text-white font-semibold bg-color60 hover:bg-color10c " + disabledColor()}
@@ -281,7 +287,7 @@ function MyOrderCard(props) {
                     </div>)
                     :null}
                     </p>
-              </button>
+              </button>}
                 <ImageUploadButton
                   id = {`order-${order.reference}`}
                   onUploadFunction={onUpload}
