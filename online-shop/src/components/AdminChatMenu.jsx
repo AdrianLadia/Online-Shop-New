@@ -92,7 +92,7 @@ const AdminChatMenu = () => {
           component={Paper}>
         <Table aria-label="chat table">
           <TableHead>
-            <TableRow className='bg-gradient-to-br from-green4 to-green1 h-20'>
+            <TableRow className='bg-gradient-to-br from-green4 to-green1 h-24 '>
               <TableCell > <p className=' flex justify-center text-2xl mr-5'><HiChatAlt/></p> </TableCell>
               <TableCell className='font-bold'>Customer</TableCell>
               <TableCell className='font-bold'>Reference #</TableCell>

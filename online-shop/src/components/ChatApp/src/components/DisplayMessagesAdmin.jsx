@@ -38,11 +38,10 @@ async function updateMessages() {
 
     let unreadOwner = 0;
     let unreadAdmin = 0;
-    messages.map((mess) => {
 
+    messages.map((mess) => {
       if (mess.userRole === 'member' && loggedInUserId !== mess.userId) {
-        // messages[index].read = true;
-        if (mess.dateTime == dateTime && mess.message == message) {
+        if (mess.dateTime == dateTime && mess.message == message && image == mess.image) {
           mess.read = true;
         }
       }

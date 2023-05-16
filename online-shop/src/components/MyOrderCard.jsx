@@ -9,10 +9,12 @@ import UseWindowDimensions from './useWindowDimensions';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 import CountdownTimer from './CountDownTimer';
+import { Timestamp } from 'firebase/firestore';
+import { AiOutlineFileSearch, AiOutlineSearch } from "react-icons/ai";
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, selectedChatOrderId, userdata, setUserState, setRefreshUser, refreshUser  } = React.useContext(AppContext);
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, selectedChatOrderId, userdata} = React.useContext(AppContext);
   const order = props.order;
   const paid = order.paid
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
@@ -31,17 +33,24 @@ function MyOrderCard(props) {
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
   const dateNow = new Date()
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
+  const timestamp = Timestamp.fromDate(dateNow);
+  const timestampString = timestamp.toDate().toLocaleString();
 
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
+      const messages = s.messages;
       let unReadCount = 0;
-      s.messages.map((q)=>{
-        if(q.userRole === "superAdmin" || q.userRole === "Admin" ){
-          if(q.read === false){
-            unReadCount += 1 ;
-          }
-        };
-      });
+      try{
+        messages && messages.map((q)=>{
+            if(q.userRole === "superAdmin" || q.userRole === "Admin" ){
+              if(q.read === false){
+                unReadCount += 1 ;
+              }
+            };
+        });
+      }catch(e){
+        console.log(e)
+      }
       setUnRead(unReadCount)
     })
   }
@@ -61,6 +70,7 @@ function MyOrderCard(props) {
 
   function onUpload(proofOfPaymentLink) {
     cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink,userdata.name,'');
+    firestore.sendProofOfPaymentToOrdersMessages(order.reference, proofOfPaymentLink, timestampString, userdata.uid, userdata.userRole)
     setProofOfPaymentLinkCount(1);
   }
 
@@ -184,15 +194,17 @@ function MyOrderCard(props) {
     }
   }, [width]);
 
-  console.log(props)
-
   return (
     <div className={'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()}>
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
     
         <div className="flex flex-row justify-between mb-4">
           {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' id={order.reference} /> : <div> </div>  }
-          <AiFillQuestionCircle className="cursor-pointer" onClick={onQuestionMarkClick} size="2em" />
+          <AiOutlineFileSearch className="cursor-pointer text-blue1 text-lg hover:text-color10b" onClick={onQuestionMarkClick} size="2em" />
+           {/* <span className="flex cursor-pointer text-blue1 hover:text-color10b text-2xl" onClick={onQuestionMarkClick}>
+              <>Details</>
+              <AiOutlineSearch className='mt-1'/>
+            </span> */}
         </div>
 
         <div className="flex flex-row">
@@ -246,7 +258,7 @@ function MyOrderCard(props) {
               <button 
                 className={"w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b " + disabledColor()}
                 onClick={handlePay}
-                disabled={disableButton()}
+                disabled={disableButton()} 
                 >Pay
               </button> 
             </div>

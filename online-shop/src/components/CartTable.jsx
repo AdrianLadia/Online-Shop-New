@@ -16,18 +16,17 @@ const CartTable = (props) => {
         return height - 355
     }
 
-
     const rows = props.rows
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const columns = [
-        { id: 'itemimage', label: 'Image', minWidth: 100},
+        { id: 'itemimage', label: 'Image', minWidth: 120},
         { id: 'itemName', label: 'Item', minWidth:1 },
         {
           id: 'pieces',
-          label: 'Pieces / Unit',
+          label: 'Pieces/Unit',
           minWidth: 1,
           align: 'left',
           format: (value) => value.toLocaleString('en-US'),
@@ -38,7 +37,7 @@ const CartTable = (props) => {
         { id: 'removebutton', label: 'Remove', minWidth: 1 },
         {
           id: 'price',
-          label: 'Price / Unit',
+          label: 'Price/Unit',
           minWidth: 1,
           align: 'right',
           format: (value) => value.toLocaleString('en-US'),
