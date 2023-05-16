@@ -655,6 +655,7 @@ const CheckoutPage = () => {
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
                     className="hover:bg-color10b bg-blue1 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
+                    disabled={placeOrderLoading}
                   >
                     {placeOrderLoading ? <ClipLoader size={50} color='#ffffff'/> : 'Place Order'}
                   </button>

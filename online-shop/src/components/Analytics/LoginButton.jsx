@@ -20,12 +20,12 @@ const LoginButton = (props) => {
 
   function GoogleSignIn() {
 
-    signInWithPopup(getAuth(), new GoogleAuthProvider());
+    signInWithRedirect(getAuth(), new GoogleAuthProvider());
   }
 
   function FacebookSignIn(auth) {
 
-    signInWithPopup(getAuth(), new FacebookAuthProvider());
+    signInWithRedirect(getAuth(), new FacebookAuthProvider());
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null);

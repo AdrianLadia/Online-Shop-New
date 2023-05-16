@@ -12,11 +12,13 @@ const CheckoutButton = (props) => {
   const [totalCredit, setTotalCredit] = useState(0);
 
   useEffect(()=>{
-    let credit = 0
-    userdata.orders.map((s)=>{
-      credit += s.grandTotal;
-    })
-    setTotalCredit(credit + totalPrice)
+    if (userdata != null) {
+      let credit = 0
+      userdata.orders.map((s)=>{
+        credit += s.grandTotal;
+      })
+      setTotalCredit(credit + totalPrice)
+    }
   },[])
 
   function handleCloseGuestSignInModal(){

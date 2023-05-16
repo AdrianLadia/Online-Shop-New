@@ -62,7 +62,7 @@ function App() {
   const [userdata, setUserData] = useState(null);
   const [isadmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({});
   const [refreshUser, setRefreshUser] = useState(false);
   const [userLoaded, setUserLoaded] = useState(null);
   const [deliveryaddress, setDeliveryAddress] = useState(null);
