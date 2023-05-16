@@ -18,40 +18,48 @@ const OpenCartButton = (props) => {
   let [finalCartData, setFinalCartData] = useState([]);
   const shakeCartAnimation = props.shakeCartAnimation
   const setShakeCartAnimation = props.setShakeCartAnimation
+  
 
   const location = useLocation();
-  const { refreshUser, setRefreshUser, userstate, cart, setCart, products } = useContext(AppContext);
+  const { refreshUser, setRefreshUser, userstate, cart, setCart, products,updateCartInfo,setUpdateCartInfo } = useContext(AppContext);
+  console.log('cart',cart)
 
   function onAddToCartClick(product) {
+    console.log('oldcart', cart)
     const newCart = businesscalculations.addToCart(cart, product);
-   
+    console.log('newCart', newCart)
+    setUpdateCartInfo(!updateCartInfo)
+    console.log('newCart', newCart)
     setCart(newCart);
   }
 
   function RemoveFromCart(product) {
     const newCart = businesscalculations.removeFromCart(cart, product);
+    console.log('newCart', newCart)
+    setUpdateCartInfo(!updateCartInfo)
+    console.log('newCart', newCart)
     setCart(newCart);
   }
 
   function GetPricePerProduct() {
     let prices = [];
-  
-    datamanipulation.manipulateCartData(cart).map((item, index) => {
+    console.log('cart', cart)
+    Object.entries(cart).map(([key, value]) => {
       products.map((product, index) => {
-        if (item.itemId === product.itemId) {
+        if (key === product.itemId) {
           prices.push({
             itemimage: product.imageLinks[0],
             itemName: product.itemName,
-            itemId: item.itemId,
-            quantity: item.quantity,
+            itemId: key,
+            quantity: value,
             pieces: product.pieces,
-            totalPieces: item.quantity * product.pieces,
+            totalPieces: value * product.pieces,
             price: product.price,
-            total: product.price * item.quantity,
+            total: product.price * value,
             addbutton: (
               <button
                 id = 'addToCartIncrement'
-                onClick={() => onAddToCartClick(item.itemId)}
+                onClick={() => onAddToCartClick(key)}
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
                 +
@@ -60,7 +68,7 @@ const OpenCartButton = (props) => {
             removebutton: (
               <button
                 id = 'addToCartDecrement'
-                onClick={() => RemoveFromCart(item.itemId)}
+                onClick={() => RemoveFromCart(key)}
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
               >
                 -
@@ -83,16 +91,20 @@ const OpenCartButton = (props) => {
   }
 
   useEffect(() => {
-    
+    console.log('running')
     GetPricePerProduct();
-  }, [cart,products]);
+  }, [cart,products,updateCartInfo]);
 
   useEffect(() => {
     setRefreshUser(!refreshUser);
   }, []);
 
   function GetQuantity() {
-    return cart.length;
+    let count = 0
+    Object.entries(cart).map(([key, value]) => {
+      count += value
+    });
+    return count;
   }
 
   function ViewCart() {

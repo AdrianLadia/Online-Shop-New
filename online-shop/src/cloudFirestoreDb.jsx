@@ -6,6 +6,7 @@ import AppConfig from './AppConfig';
 import { th } from 'date-fns/locale';
 import retryApi from '../utils/retryApi';
 import { httpsCallable, getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import businessCalculations from '../utils/businessCalculations';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false) {
@@ -128,7 +129,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       locallongitude: Joi.number().required(),
       localphonenumber: Joi.string().required(),
       localname: Joi.string().required(),
-      cart: Joi.array().required(),
+      cart: Joi.object().required(),
       itemstotal: Joi.number().required(),
       vat: Joi.number().required(),
       shippingtotal: Joi.number().required(),
@@ -140,6 +141,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
       eMail: Joi.string().required(),
+      sendEmail : Joi.boolean().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
@@ -152,7 +154,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(`${this.url}transactionPlaceOrder?data=${encodedData}`);
+      const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
       alert('Order placed successfully');
       return response;
     } catch (error) {
@@ -413,6 +415,40 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return { status: 'error' };
     }
   }
+
+  async transactionCancelOrder(data) {
+    const dataSchema = Joi.object({
+      orderReference: Joi.string().required(),
+      userId: Joi.string().required(),
+    });
+
+    const { error } = dataSchema.validate(data);
+
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+
+    const jsonData = JSON.stringify(data);
+
+    try {
+      const res = await axios.post(`${this.url}transactionCancelOrder`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const resData = res.data;
+      alert('Order cancelled successfully');
+      return resData;
+    }
+    catch (error) {
+      console.log(error);
+      alert('Error cancelling order.');
+      return { status: 'error' };
+    }
+
+  }
+
 }
 
 export default cloudFirestoreDb;

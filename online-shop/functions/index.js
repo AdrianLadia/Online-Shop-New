@@ -13,7 +13,7 @@ admin.initializeApp();
 app.use(corsHandler);
 app.use(express.json());
 
-async function sendEmail(to, subject, htmlContent) {
+async function sendmail(to, subject, htmlContent) {
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -400,20 +400,22 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
     const deliveryVehicle = data.deliveryVehicle;
     const needAssistance = data.needAssistance;
     const eMail = data.eMail;
+    const sendMail = data.sendEmail;
+    let cartUniqueItems = [];
 
     const db = admin.firestore();
-    const cartCount = getCartCount(cart);
 
     let itemsTotalBackEnd = 0;
-    const itemKeys = Object.keys(cartCount);
+    const itemKeys = Object.keys(cart);
 
     for (const key of itemKeys) {
       const itemId = key;
-      const itemQuantity = cartCount[key];
+      const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
       const price = item.data().price;
       const total = price * itemQuantity;
       itemsTotalBackEnd += total;
+      cartUniqueItems.push(itemId);
     }
 
     console.log(itemsTotalBackEnd);
@@ -484,7 +486,6 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         const userData = user.data();
         const deliveryAddress = userData.deliveryAddress;
         const contactPerson = userData.contactPerson;
-        const cartUniqueItems = Array.from(new Set(data.cart));
         const ordersOnHold = {};
         const currentInventory = {};
 
@@ -508,13 +509,18 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
               return; // skip processing for items ending with "-RET"
             }
             const prodref = db.collection('Products').doc(itemId);
-            const orderQuantity = data.cart.filter((c) => c == itemId).length;
+            const orderQuantity = data.cart[itemId];
             const newStocksAvailable = currentInventory[itemId] - orderQuantity;
-            console.log(ordersOnHold);
-            console.log(itemId);
             const oldOrdersOnHold = ordersOnHold[itemId];
             const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
             const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
+
+            console.log('orderQuantity', orderQuantity);
+            console.log('newStocksAvailable', newStocksAvailable);
+            console.log('oldOrdersOnHold', oldOrdersOnHold);
+            console.log('newOrderOnHold', newOrderOnHold);
+            console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
+
             transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
             transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
           })
@@ -609,7 +615,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
 
         transaction.update(userRef, { orders: updatedOrders });
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
-        transaction.update(userRef, { cart: [] });
+        transaction.update(userRef, { cart: {} });
 
         // CREATE ORDERMESSAGES CHAT
         const orderMessagesRef = db.collection('ordersMessages').doc(reference);
@@ -623,24 +629,41 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
 
         console.log(newOrder.eMail);
 
-        await sendEmail(
-          newOrder.eMail,
-          'Order Confirmation',
-          `<p>Dear Customer,</p>
-        
-        <p>We are pleased to inform you that your order has been confirmed.</p>
-        
-        <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
-        
-        <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
-        
-        <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
-        
-        <p>Thank you for choosing Star Pack!</p>
-        
-        <p>Best Regards,<br>
-        The Star Pack Team</p>`
-        );
+        if (sendMail == true) {
+          await sendmail(
+            newOrder.eMail,
+            'Order Confirmation',
+            `<p>Dear Customer,</p>
+          
+          <p>We are pleased to inform you that your order has been confirmed.</p>
+          
+          <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+          
+          <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
+          
+          <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
+          
+          <p>Thank you for choosing Star Pack!</p>
+          
+          <p>Best Regards,<br>
+          The Star Pack Team</p>`
+          );
+
+          await sendmail(
+            'ladiaadrian@gmail.com',
+            'Order Received',
+            `<p>Order received,</p>
+          
+          <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+          <p><strong>Customer:</strong> ${newOrder.userName}</p>
+          <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
+  
+          <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
+          
+          <p>Best Regards,<br>
+          Star Pack Head</p>`
+          );
+        }
 
         res.send('SUCCESS');
       } catch (e) {
@@ -980,7 +1003,7 @@ exports.sendEmail = functions.region('asia-southeast1').https.onRequest(async (r
     const { to, subject, text } = data;
 
     try {
-      sendEmail(to, subject, text);
+      sendmail(to, subject, text);
       res.status(200).send('success');
     } catch (error) {
       console.error('Error sending email:', error);
@@ -1002,6 +1025,7 @@ async function deleteOldOrders() {
       const user = doc.data();
       const orders = user.orders;
       const userId = user.uid;
+      console.log('orders', userId, orders);
       let foundExpiredOrders = false;
 
       const filteredOrder = orders.filter((order) => {
@@ -1047,6 +1071,8 @@ async function deleteOldOrders() {
         deletedOrders.push(order);
       });
 
+      console.log('filteredOrder', filteredOrder);
+
       if (foundExpiredOrders) {
         dataNeededToUpdateOrderValue.push({ userId: userId, filteredOrder: filteredOrder });
         // db.collection('Users').doc(userId).update({ orders: filteredOrder });
@@ -1055,19 +1081,20 @@ async function deleteOldOrders() {
 
     const dataNeededToUpdateProductValue = []; //This is the data needed to do the writes it follows this schema
     // {reference:reference,userId:userId,quantity:null,itemId:itemId}
-    const allCartItems = []
+    const allCartItems = [];
     deletedOrders.forEach(async (order) => {
       const cart = order.cart;
       const reference = order.reference;
       const userId = order.userId;
-      const cartItems = Array.from(new Set(cart));
+      console.log('_____________________________');
+      console.log('cart', cart);
+      const cartItems = Object.keys(cart);
       cartItems.map(async (itemId) => {
         const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
-        quantity = cart.filter((c) => c == itemId).length;
-        deletedOrderData.quantity = quantity;
+        deletedOrderData.quantity = cart[itemId];
         dataNeededToUpdateProductValue.push(deletedOrderData);
         if (!allCartItems.includes(itemId)) {
-          allCartItems.push(itemId)
+          allCartItems.push(itemId);
         }
       });
     });
@@ -1076,34 +1103,31 @@ async function deleteOldOrders() {
 
     const finalDataNeededToUpdateProductValue = [];
     const stocksToAdjust = {};
-    const stocksOnHoldToAdjust = {}
+    const stocksOnHoldToAdjust = {};
 
+    await Promise.all(
+      allCartItems.map(async (itemId) => {
+        const productRef = db.collection('Products').doc(itemId);
+        const productGet = await productRef.get();
+        const prodData = productGet.data();
+        // console.log(prodData)
+        const stocksAvailable = prodData.stocksAvailable;
+        const stocksOnHold = prodData.stocksOnHold;
+        // console.log(stocksOnHold)
+        // console.log(stocksAvailable)
 
-    await Promise.all(allCartItems.map(async (itemId) => {
-  
-      const productRef = db.collection('Products').doc(itemId);
-      const productGet = await productRef.get();
-      const prodData = productGet.data();
-      // console.log(prodData)
-      const stocksAvailable = prodData.stocksAvailable;
-      const stocksOnHold = prodData.stocksOnHold;
-      // console.log(stocksOnHold)
-      // console.log(stocksAvailable)
-      
-      stocksToAdjust[itemId] = stocksAvailable;
-      stocksOnHoldToAdjust[itemId] = stocksOnHold
-    }))
+        stocksToAdjust[itemId] = stocksAvailable;
+        stocksOnHoldToAdjust[itemId] = stocksOnHold;
+      })
+    );
 
-    
-
-
-    dataNeededToUpdateProductValue.map( (data) => {
+    dataNeededToUpdateProductValue.map((data) => {
       const reference = data.reference;
       const userId = data.userId;
       const quantity = data.quantity;
       const itemId = data.itemId;
       stocksToAdjust[itemId] += quantity;
-      const stocksOnHold =  stocksOnHoldToAdjust[itemId]
+      const stocksOnHold = stocksOnHoldToAdjust[itemId];
       // console.log('_____________________________________________')
       // console.log(itemId)
       // console.log(stocksOnHold)
@@ -1111,15 +1135,16 @@ async function deleteOldOrders() {
       const newStocksOnHold = stocksOnHold.filter((order) => order.reference != reference);
       // console.log(newStocksOnHold)
       // console.log('_____________________________________________')
-      stocksOnHoldToAdjust[itemId] = newStocksOnHold
+      stocksOnHoldToAdjust[itemId] = newStocksOnHold;
       const newData = { itemId: itemId, newStocksOnHold: newStocksOnHold };
       finalDataNeededToUpdateProductValue.push(newData);
     });
 
-    console.log(stocksOnHoldToAdjust)
-    console.log(stocksToAdjust)
+    console.log('dataNeededToUpdateOrderValue', dataNeededToUpdateOrderValue);
+    console.log('stocksOnHoldToAdjust', stocksOnHoldToAdjust);
+    console.log('stocksToAdjust', stocksToAdjust);
 
-// 
+    //
     db.runTransaction(async (transaction) => {
       dataNeededToUpdateOrderValue.forEach(async (data) => {
         const userId = data.userId;
@@ -1128,26 +1153,23 @@ async function deleteOldOrders() {
       });
 
       const entries = Object.entries(stocksToAdjust);
-
+      console.log('entries', entries);
       for (const [key, value] of entries) {
-        const itemId = key
-        const newStocksAvailable = value
-        const productRef = db.collection('Products').doc(itemId)
-        transaction.update(productRef,{stocksAvailable:newStocksAvailable})
+        const itemId = key;
+        const newStocksAvailable = value;
+        const productRef = db.collection('Products').doc(itemId);
+        transaction.update(productRef, { stocksAvailable: newStocksAvailable });
       }
 
       const entries2 = Object.entries(stocksOnHoldToAdjust);
 
       for (const [key, value] of entries2) {
-        const itemId = key
-        const newStocksOnHold = value
-        const productRef = db.collection('Products').doc(itemId)
-        transaction.update(productRef,{stocksOnHold:newStocksOnHold})
+        const itemId = key;
+        const newStocksOnHold = value;
+        const productRef = db.collection('Products').doc(itemId);
+        transaction.update(productRef, { stocksOnHold: newStocksOnHold });
       }
-
-      
     });
-  
   } catch (error) {
     console.log(error);
   }
@@ -1171,42 +1193,76 @@ exports.deleteOldOrdersScheduled = functions
     deleteOldOrders();
   });
 
-// exports.arrayUpdateTrigger = functions.firestore
-//   .document("Users/{userId}")
-//   .onUpdate(async (change, context) => {
-//     // Get the updated document's data
-//     const updatedDoc = change.after.data();
-//     console.log("Updated document data: ", updatedDoc);
-//     const orders = updatedDoc.orders
-//     const userId = updatedDoc.uid
-//     const email = updatedDoc.email
-
-//     function sortTimeStampArrayByDate(array) {
-//       array.sort((a, b) => {
-//           const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
-//           const timeB = b.orderDate.seconds * 1e9 + b.orderDate.nanoseconds;
-//           return timeA - timeB;
-//         });
-
-//       return array
-//    }
-
-//     const sortedOrders = sortTimeStampArrayByDate(orders)
-//     const recentOrder = sortedOrders[sortedOrders.length - 1]
-
-//     try {
-//       await sendEmail('ladia.adrian@gmail.com','Order Confirmation',`Your order has been confirmed.\n\nYour order reference is ${recentOrder.reference}.\n\nPlease pay within 24 hours.\n\nYou can view and pay your order in your "My Orders" page in www.starpack.ph.\n\nThank You\nStar Pack Team`)
-//     }
-//     catch (error) {
-//       console.error('Error sending email:', error);
-//     }
-
-//     // Get the array you want to watch from the updated document's data
-//     const yourArray = updatedDoc.yourArray;
-
-//     // Perform your desired operations based on the updated array
-//     // ...
-
-//     // Log the updated array (or any other information you need)
-//     console.log("Updated array: ", yourArray);
-//   });
+exports.transactionCancelOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const data = req.body;
+    const { userId, orderReference } = data;
+    const db = admin.firestore();
+    db.runTransaction(async (transaction) => {
+      try{
+        // READ
+        const userRef = db.collection('Users').doc(userId);
+        const userDataObj = await transaction.get(userRef);
+        const userData = userDataObj.data();
+        let orders = userData.orders;
+        const data = orders.filter((order) => order.reference !== orderReference);
+        const cancelledData = orders.filter((order) => order.reference === orderReference);
+        const cancelledDataCart = cancelledData[0].cart;
+  
+        console.log('data', data);
+        console.log('cancelledData', cancelledData);
+        console.log('cancelledDataCart', cancelledDataCart);
+  
+        orders = data;
+        // READ OLD STOCKSAVAILABLE
+        const oldStocksAvailable = {};
+        const newStocksOnHoldData = {};
+  
+        await Promise.all(
+          Object.entries(cancelledDataCart).map(async ([itemId, quantity]) => {
+            const productRef = db.collection('Products').doc(itemId);
+            if (itemId.slice(-4) === '-RET') {
+              console.log('Skipped retail');
+              return Promise.resolve(); // skip processing for items ending with "-RET"
+            }
+  
+            const prodSnap = await transaction.get(productRef);
+            const prodData = prodSnap.data();
+            const stocksOnHold = prodData.stocksOnHold;
+            const stocksAvailable = prodData.stocksAvailable;
+            oldStocksAvailable[itemId] = stocksAvailable;
+            const newStocksOnHold = stocksOnHold.filter((data) => {
+              if (data.reference != orderReference) {
+                return true;
+              }
+            });
+            newStocksOnHoldData[itemId] = newStocksOnHold;
+          })
+        );
+  
+        console.log(oldStocksAvailable);
+        console.log(newStocksOnHoldData);
+        // WRITE
+        Object.entries(cancelledDataCart).map(([itemId, quantity]) => {
+          console.log(itemId);
+          if (itemId.slice(-4) === '-RET') {
+            console.log('Skipped retail');
+            return; // skip processing for items ending with "-RET"
+          }
+          const productRef = db.collection('Products').doc(itemId);
+          const newStocksAvailable = oldStocksAvailable[itemId] + quantity;
+          const newStocksOnHold = newStocksOnHoldData[itemId];
+          console.log(newStocksOnHold);
+          transaction.update(productRef, { stocksAvailable: newStocksAvailable });
+          transaction.update(productRef, { stocksOnHold: newStocksOnHold });
+        });
+  
+        transaction.update(userRef, { orders: orders });
+        res.status(200).send('success')
+      }
+      catch {
+        res.status(400).send('Error deleting order.')
+      }
+    });
+  });
+});

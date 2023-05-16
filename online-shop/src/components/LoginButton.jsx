@@ -2,7 +2,7 @@ import React from 'react';
 import AppContext from '../AppContext';
 import { useContext } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
-import { GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, signInWithRedirect } from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 
@@ -21,7 +21,7 @@ const LoginButton = (props) => {
   async function signIn(signInProvider) {
     handleCloseGuestSignInModal();
     setAnchorEl(null);
-    const result = await signInWithPopup(auth, signInProvider);
+    const result = await signInWithRedirect(auth, signInProvider);
     const user = result.user;
   }
 

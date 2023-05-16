@@ -120,6 +120,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     async function getTableData() {
+      console.log(cart)
       const [rows_non_state, total_non_state, total_weight_non_state, vat] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart
@@ -129,7 +130,7 @@ const CheckoutPage = () => {
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
-      console.log(total_non_state);
+
       setTotal(total_non_state);
       setTotalWeight(total_weight_non_state);
     }
@@ -265,6 +266,7 @@ const CheckoutPage = () => {
       try {
         const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
+        console.log('running')
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
@@ -285,6 +287,7 @@ const CheckoutPage = () => {
           deliveryVehicle: deliveryVehicle.name,
           needAssistance: needAssistance,
           eMail: localemail,
+          sendEmail: true
         });
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);

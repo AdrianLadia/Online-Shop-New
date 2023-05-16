@@ -350,7 +350,7 @@ class businessCalculations {
       return this.lalamovedeliveryvehicles.van;
     }
     if (
-      weightOfItems <= this.lalamovedeliveryvehicles.closedvan.maxWeight &&
+    
       weightOfItems > this.lalamovedeliveryvehicles.van.maxWeight
     ) {
       const { error7 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.closedvan);
@@ -399,7 +399,7 @@ class businessCalculations {
 
   async checkStocksIfAvailableInFirestore(cart) {
     console.log(cart)
-    const cartSchema = Joi.array().required();
+    const cartSchema = Joi.object().required();
 
     const { error2 } = cartSchema.validate(cart);
 
@@ -407,22 +407,20 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    function countStrings(arr) {
-      const counts = {};
-      arr.forEach((str) => {
-        counts[str] = counts[str] ? counts[str] + 1 : 1;
-      });
-      return counts;
-    }
+    // function countStrings(arr) {
+    //   const counts = {};
+    //   arr.forEach((str) => {
+    //     counts[str] = counts[str] ? counts[str] + 1 : 1;
+    //   });
+    //   return counts;
+    // }
     // CONFIRM AGAIN IF STOCKS AVAILABLE
     let message = 'Unfortunately someone else might have bought the stocks listed below. \n \n';
     let outOfStockDetected = false;
-    const count = countStrings(cart);
-    const countEntries = Object.entries(count);
-    // console.log(countEntries);
+    // const count = countStrings(cart);
+    // const countEntries = Object.entries(count);
     const products = await this.cloudfirestore.readAllProductsForOnlineStore();
-    // console.log(products);
-    countEntries.map(([itemId, quantity]) => {
+    Object.entries(cart).map(([itemId, quantity]) => {
       if (itemId.slice(-4) === "-RET") {
         return
       } 
@@ -524,7 +522,7 @@ class businessCalculations {
   }
 
   addToCart(cart, product) {
-    const cartSchema = Joi.array().required();
+    const cartSchema = Joi.object().required();
     const productSchema = Joi.string().required();
 
     const { error1 } = cartSchema.validate(cart);
@@ -534,19 +532,25 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    const newCart = [...cart, product];
+    if (cart[product] === undefined) {
+      cart[product] = 0;
+    }
 
-    const newCartSchema = Joi.array().required();
-    const { error3 } = newCartSchema.validate(newCart);
+    console.log(cart)
+    cart[product] += 1;
+    console.log(cart)
+
+    const newCartSchema = Joi.object().required();
+    const { error3 } = newCartSchema.validate(cart);
     if (error3) {
       throw new Error('Data Validation Error');
     }
 
-    return newCart;
+    return cart;
   }
 
   removeFromCart(cart, product) {
-    const cartSchema = Joi.array().required();
+    const cartSchema = Joi.object().required();
     const productSchema = Joi.string().required();
 
     const { error1 } = cartSchema.validate(cart);
@@ -556,26 +560,29 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    let toRemove = cart.indexOf(product);
-    let cartCopy = [...cart];
+    console.log(cart)
+    cart[product] -= 1;
+    console.log(cart)
 
-    if (toRemove > -1) {
-      cartCopy.splice(toRemove, 1);
-    }
+    Object.entries(cart).map(([itemId, quantity]) => {
+      if (quantity === 0) {
+        delete cart[itemId];
+      }
+    });
 
-    const cartCopySchema = Joi.array().required();
-    const { error3 } = cartCopySchema.validate(cartCopy);
+    const cartCopySchema = Joi.object().required();
+    const { error3 } = cartCopySchema.validate(cart);
     if (error3) {
       throw new Error('Data Validation Error');
     }
 
-    return cartCopy;
+    return cart;
   }
 
   addToCartWithQuantity(itemId, quantity, cart) {
     const itemIdSchema = Joi.string().required();
     const quantitySchema = Joi.number().required();
-    const cartSchema = Joi.array().required();
+    const cartSchema = Joi.object().required();
 
     const { error1 } = itemIdSchema.validate(itemId);
     const { error2 } = quantitySchema.validate(quantity);
@@ -585,20 +592,21 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    let items = [];
-    for (let i = 0; i < quantity; i++) {
-      items.push(itemId);
+    if (cart[itemId] == null) {
+      cart[itemId] = 0
     }
 
-    const newCart = [...cart, ...items];
+    cart[itemId] += parseFloat(quantity)
 
-    const newCartSchema = Joi.array().required();
-    const { error4 } = newCartSchema.validate(newCart);
+    console.log(cart)
+
+    const newCartSchema = Joi.object().required();
+    const { error4 } = newCartSchema.validate(cart);
     if (error4) {
       throw new Error('Data Validation Error');
     }
 
-    return newCart;
+    return cart;
   }
 
   afterCheckoutRedirectLogic(data,testing=false) {
@@ -685,7 +693,7 @@ class businessCalculations {
         });
       }
       else {
-        return 'bdo'
+        return 'bankDeposit'
       }
     }
 
