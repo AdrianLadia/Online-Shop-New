@@ -6,6 +6,6 @@ import { signInWithPopup,GoogleAuthProvider } from "firebase/auth";
 firebase.initializeApp(firebaseConfig);
 const auth = getAuth();
 
-signInWithPopup(auth, new GoogleAuthProvider());
+signInWithRedirect(auth, new GoogleAuthProvider());
 
 export {auth};

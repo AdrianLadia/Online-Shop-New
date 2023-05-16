@@ -2,7 +2,10 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
-const corsHandler = cors({ origin: true });
+const corsHandler = cors({
+  origin: ['https://starpack.ph', 'http://localhost:5173'],
+});
+
 const express = require('express');
 const app = express();
 const Joi = require('joi');

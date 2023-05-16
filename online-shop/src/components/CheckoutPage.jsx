@@ -174,7 +174,7 @@ const CheckoutPage = () => {
   // PAYMENT METHODS
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
-      setCart([]);
+      setCart({});
       console.log('success');
       console.log(area)
       businesscalculations.afterCheckoutRedirectLogic(
@@ -659,6 +659,7 @@ const CheckoutPage = () => {
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
                     className="hover:bg-color10b bg-blue1 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
+                    disabled={placeOrderLoading}
                   >
                     {placeOrderLoading ? <CircularProgress /> : 'Place Order'}
                   </button>
