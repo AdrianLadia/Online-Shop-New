@@ -135,11 +135,6 @@ const paymentMethodValues = {
     )
   }
 
-  // console.log(bdoselected, unionbankselected, gcashselected, mayaselected, visaselected, mastercardselected, bitcoinselected, ethereumselected, solanaselected)
-  console.log(firstName, lastName, fullname, eMail, phoneNumber, totalPrice, userId)
-
-  console.log(totalPrice)
-
   return (
     <div>
       <div className='flex flex-col justify-center gap-16 mb-8'>

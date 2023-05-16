@@ -25,7 +25,7 @@ const AdminCreatePaymentTable = () => {
 
   async function readPayments() {
     firestore.readPayments().then((payment) => {
-      console.log(payment)
+
       const paymentData = [];
       const photoLink = [];
       payment.forEach((data) => {
@@ -77,12 +77,7 @@ const AdminCreatePaymentTable = () => {
   }
 
   async function deleteDeclinedProofOfPaymentLink(reference, userId, link){
-    console.log('denying')
-    console.log(reference)
-    console.log(userId)
-    console.log(link)
     await firestore.deleteDeclinedPayment(reference, userId, link)
-    
   }
 
   return (

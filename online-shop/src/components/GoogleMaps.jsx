@@ -98,7 +98,6 @@ const GoogleMaps = (props) => {
       (response) => {
         // const address = datamanipulation.cleanGeocode(response.results[0].formatted_address)
         const address = response.results[0].formatted_address;
-        console.log(address);
         setAddressText(address);
       },
       (error) => {

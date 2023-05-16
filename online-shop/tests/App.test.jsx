@@ -232,7 +232,6 @@ describe('Business Calcualtions', () => {
   });
   test('addToCart and removeFromCart', () => {
     const cart = user.cart;
-    console.log(cart)
     let newCart = businesscalculations.addToCart(cart, 'PPB#1');
     expect(newCart).toEqual({'PPB#1' : 1});
     const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
@@ -257,7 +256,7 @@ describe('Data Manipulation', async () => {
     const date1 = new Date(2023, 1, 1);
     const date2 = new Date(2023, 1, 2);
     const seconds = datamanipulation.getSecondsDifferenceBetweentTwoDates(date1, date2);
-    console.log(seconds);
+
     expect(seconds).toBe(86400);
   });
   test('AccountStatement', async () => {
@@ -808,7 +807,7 @@ describe('cloudfirestorefunctions', async () => {
     await cloudfirestorefunctions.createDocument({ test: 'test' }, 'test', 'Products');
     await delay(100);
     const data = await cloudfirestorefunctions.readSelectedDataFromCollection('Products', 'test');
-    // console.log(data);
+
     expect(data).toEqual({ test: 'test' });
   });
 
@@ -820,7 +819,7 @@ describe('cloudfirestorefunctions', async () => {
   test('readAllIdsFromCollection', async () => {
     const data = await cloudfirestorefunctions.readAllIdsFromCollection('Products');
     await delay(100);
-    console.log(data);
+
     expect(data).toBeInstanceOf(Array);
   });
   test('readSelectedDataFromCollection', async () => {
@@ -1686,7 +1685,7 @@ describe('cloudfirestoredb', async () => {
     const userRoles = await Promise.all(userRolesPromises);
     const roles = ['member', 'admin', 'superAdmin'];
     userRoles.map((userRole) => {
-      console.log(userRole);
+
       expect(roles.includes(userRole)).toEqual(true);
     });
   });
@@ -1991,7 +1990,7 @@ describe('afterCheckoutRedirectLogic', () => {
     }
 
     mockFunction() {
-      console.log('mockFunction');
+
     }
 
     runFunction() {
@@ -2229,7 +2228,6 @@ describe('deleteOldOrders', () => {
       }
     })
     
-    console.log(orders)
 
     await firestore.updateDocumentFromCollection('Users',userTestId,{orders: orders})
     await delay(300);

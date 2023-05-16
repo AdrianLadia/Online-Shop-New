@@ -19,7 +19,6 @@ const InputField = (props) => {
   const { userId, selectedChatOrderId, userdata, firestore, storage } = useContext(AppContext);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
 
-  console.log(uploadedImageUrl)
 
   async function updateMessages() {
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
@@ -62,7 +61,7 @@ const InputField = (props) => {
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     // Add data to the array field
     if (newMessage || uploadedImageUrl) {
-      console.log('ran');
+
       const timestamp = Timestamp.fromDate(date);
       const timestampString = timestamp.toDate().toLocaleString();
       updateDoc(docRef, {

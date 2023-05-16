@@ -45,7 +45,7 @@ class cloudFirestoreFunctions {
           `${this.url}createDocument?data=${encodedData}`
         );
       })
-      console.log(response.data);
+
       return response.data;
     } catch (error) {
       console.error('Error adding document:', error);
@@ -173,7 +173,7 @@ class cloudFirestoreFunctions {
           `${this.url}deleteDocumentFromCollection?data=${encodedData}`
         );
       })
-      console.log(response.data);
+
     } catch (error) {
       console.error('Error deleting document:', error);
     }
@@ -201,7 +201,7 @@ class cloudFirestoreFunctions {
           `${this.url}updateDocumentFromCollection?data=${encodedData}`
         );
       })
-      console.log(response.data);
+
     } catch (error) {
       console.error('Error updating document:', error);
     }

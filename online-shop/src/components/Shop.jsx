@@ -14,7 +14,7 @@ const Shop = () => {
   const [retail, setRetail] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('Paper Bag');
   const {isSupportedBrowser} = useContext(AppContext);
-  console.log('isSupportedBrowser',isSupportedBrowser);
+
   return (
     <div className='flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 '>
       {/* <OpeningSoonModal /> */}
@@ -25,7 +25,7 @@ const Shop = () => {
       {/* CATEGORY */}
       <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory}/>
       {/* PRODUCTS */}
-      <ProductList wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
+      <ProductList key={'ProductList'} wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
     </div>
   )
 }

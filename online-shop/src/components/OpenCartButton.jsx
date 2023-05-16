@@ -22,28 +22,21 @@ const OpenCartButton = (props) => {
 
   const location = useLocation();
   const { refreshUser, setRefreshUser, userstate, cart, setCart, products,updateCartInfo,setUpdateCartInfo } = useContext(AppContext);
-  console.log('cart',cart)
 
   function onAddToCartClick(product) {
-    console.log('oldcart', cart)
     const newCart = businesscalculations.addToCart(cart, product);
-    console.log('newCart', newCart)
     setUpdateCartInfo(!updateCartInfo)
-    console.log('newCart', newCart)
     setCart(newCart);
   }
 
   function RemoveFromCart(product) {
     const newCart = businesscalculations.removeFromCart(cart, product);
-    console.log('newCart', newCart)
     setUpdateCartInfo(!updateCartInfo)
-    console.log('newCart', newCart)
     setCart(newCart);
   }
 
   function GetPricePerProduct() {
     let prices = [];
-    console.log('cart', cart)
     Object.entries(cart).map(([key, value]) => {
       products.map((product, index) => {
         if (key === product.itemId) {
@@ -91,7 +84,6 @@ const OpenCartButton = (props) => {
   }
 
   useEffect(() => {
-    console.log('running')
     GetPricePerProduct();
   }, [cart,products,updateCartInfo]);
 
@@ -116,7 +108,6 @@ const OpenCartButton = (props) => {
   }
 
   useEffect(() => {
-    console.log('shakeCartAnimation', shakeCartAnimation)
     if (shakeCartAnimation) {
       setTimeout(() => {
         setShakeCartAnimation(false)
@@ -128,7 +119,6 @@ const OpenCartButton = (props) => {
 
   function responsiveShakeCartAnimation() {
     if (shakeCartAnimation) {
-      console.log('shakeCartAnimation')
       return 'animate-shake'
     }
   }

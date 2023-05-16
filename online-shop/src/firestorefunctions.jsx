@@ -163,7 +163,6 @@ class firestorefunctions {
     data
   ) {
 
-    console.log(data)
     const schema = Joi.object({
       userid: Joi.string().required(),
       username: Joi.string().required(),
@@ -212,8 +211,7 @@ class firestorefunctions {
           // currentInventory.push(productdoc.data().stocksAvailable)
           currentInventory[c] = productdoc.data().stocksAvailable
         }))
-        
-        console.log(currentInventory)
+
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
         
@@ -259,7 +257,7 @@ class firestorefunctions {
             },
           ];
           const updatedAddressList = [...newAddress, ...deliveryAddress];
-          console.log(updatedAddressList);
+
           await transaction.update(docRef, {
             deliveryAddress: updatedAddressList,
           });
@@ -286,7 +284,6 @@ class firestorefunctions {
             { name: data.localname, phoneNumber: data.localphonenumber },
           ];
           const updatedContactList = [...newContact, ...contactPerson];
-          console.log(updatedContactList);
           await transaction.update(docRef, {
             contactPerson: updatedContactList,
           });
@@ -323,11 +320,7 @@ class firestorefunctions {
             needAssistance : data.needAssistance,
             userId : data.userid
           }
-        
 
-        // const updated_orders = [...new_orders, ...orders];
-        // console.log(updated_orders);
-        console.log(new_orders)
         
         await transaction.update(docRef, { ['orders']: arrayUnion(new_orders) });
 
@@ -349,8 +342,6 @@ class firestorefunctions {
     const referenceSchema = Joi.string().required();
     const paymentproviderSchema = Joi.string().required();
 
-    console.log(typeof(amount))
-    console.log(amount)
 
     const {error1} = userIdSchema.validate(userid);
 
@@ -381,7 +372,6 @@ class firestorefunctions {
 
         payments.map((payment) => {
           data.push(payment);
-          console.log(parseFloat(payment.amount));
           totalpayments += parseFloat(payment.amount);
         });
 
@@ -398,7 +388,6 @@ class firestorefunctions {
           totalpayments = Math.round(totalpayments);
           if (totalpayments >= 0) {
             console.log("Order Paid");
-            console.log(order.reference);
             if (order.paid == false) {
               console.log(
                 "Updating Order to Paid with reference ",
@@ -413,12 +402,11 @@ class firestorefunctions {
               transaction.update(docRef, {
                 ["orders"]: arrayUnion(order),
               });
-              console.log(order);
+
             }
           }
           if (order.paid == true && totalpayments < 0) {
             console.log("Order Was Paid but now unpaid");
-            console.log(order.reference);
             // WRITE
             transaction.update(docRef, {
               ["orders"]: arrayRemove(order),
@@ -428,7 +416,7 @@ class firestorefunctions {
             transaction.update(docRef, {
               ["orders"]: arrayUnion(order),
             });
-            console.log(order);
+
           }
         });
 

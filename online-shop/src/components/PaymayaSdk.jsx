@@ -19,17 +19,6 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
   let publicKey 
   let secretKey;
 
-  console.log('firstName', firstName)
-  console.log('lastName', lastName)
-
-  
-
-  console.log('eMail', eMail)
-  console.log('phoneNumber', phoneNumber)
-  console.log('totalPrice', totalPrice)
-  console.log('customerAddress', customerAddress)
-  console.log('geocodeAddress', geocodeAddress)
-  console.log('referenceNumber', referenceNumber)
 
   if (appConfig.getIsPaymentSandBox()) {
     url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
@@ -80,10 +69,9 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
     authorization: `Basic ${convertToBase64(publicKey)}`,
     'content-type': 'application/json',
   };
-  console.log(headers);
+
   const response = await axios.post(url, req, { headers });
   const checkout = response.data;
-  console.log(checkout);
   setMayaRedirectUrl(checkout.redirectUrl)
   setMayaCheckoutId(checkout.checkoutId)
 }

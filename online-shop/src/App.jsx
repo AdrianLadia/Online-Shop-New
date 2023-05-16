@@ -128,28 +128,20 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      // console.log('onAuthStateChanged ran');
+
       if (user) {
-        // console.log('ran')
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        // console.log('FOUND USER', user.uid);
+
         setUserState('userloading');
         setUser(user);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
-          // console.log(userExists);
+
           if (userExists) {
-            // console.log('user exists');
+
             setUserId(user.uid);
           } else {
-            // console.log('user does not exist');
+
 
             async function createNewUser() {
-              // "member": Represents a registered user with standard privileges, such as creating and editing their own content.
-              // "moderator": Represents a user with additional privileges to manage and moderate content created by other users.
-              // "admin": Represents an administrator with broad system access, including managing users, settings, and other high-level functions.
-              // "superAdmin": Represents a super administrator with the highest level of access, able to manage all aspects of the system, including creating and managing other admin-level users.
-
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -169,7 +161,7 @@ function App() {
                 user.uid
               );
             }
-            // console.log('creating new user');
+
             createNewUser().then(() => {
               delay(1000).then(() => {
                 setUserId(user.uid);
@@ -212,7 +204,7 @@ function App() {
         setFavoriteItems(data.favoriteItems);
 
         if (guestLoginClicked === true) {
-          console.log(localStorageCart)
+
           setCart(localStorageCart);
           firestore.createUserCart(localStorageCart, userId).then(() => {
             localStorage.removeItem('cart');
@@ -221,8 +213,7 @@ function App() {
           });
         }
         if (guestLoginClicked === false) {
-          // console.log(data.cart)
-          // const cartCount = businesscalculation.getCartCount(data.cart)
+
           setCart(data.cart);
         }
         // FLOW FOR GUEST LOGIN
@@ -258,8 +249,6 @@ function App() {
       });
     }
   }, [goToCheckoutPage]);
-
-  // console.log(userdata)
 
   const appContextValue = {
     categories: categories,
@@ -356,7 +345,7 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <NavBar />
-              {userstate === 'userloading' || cart === [] ? (
+              {userstate === 'userloading' || cart == {} ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">
                     <div className="flex justify-center ">

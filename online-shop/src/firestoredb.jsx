@@ -13,7 +13,6 @@ class firestoredb extends firestorefunctions {
 
   // USED FOR ADMIN INVENTORY
   async createProduct(data, id) {
-    console.log(data);
     const schema = schemas.productSchema();
 
     try {
@@ -151,7 +150,6 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-    console.log(data);
 
     retryApi(async () => await super.createDocument(data, id, 'Users'));
   }

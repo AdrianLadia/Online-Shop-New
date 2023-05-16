@@ -92,11 +92,9 @@ class dataManipulation {
       });
     }
 
-    console.log(data)
+
     data.sort((a, b) => {
       
-      console.log(a)
-      console.log(b.date)
       if (forTesting) {
         return b.date - a.date;
       } else {
@@ -140,7 +138,7 @@ class dataManipulation {
 
     const { error } = dataToUseSchema.validate(dataToUse);
     if (error) {
-      // console.log(dataToUse)
+
       throw new Error(error);
     }
 
@@ -479,7 +477,7 @@ class dataManipulation {
     let rows_non_state = [];
     let total_non_state = 0;
     let total_weight_non_state = 0;
-    console.log(cart)
+
 
     Object.entries(cart).map(([key, quantity]) => {
       product_list.map((product) => {
@@ -606,7 +604,7 @@ class dataManipulation {
       return 0; // a and b have the same condition, maintain their original order
     });
 
-    console.log(selected_products)
+
 
     const selectedProductsSchema = Joi.array();
 
@@ -619,7 +617,6 @@ class dataManipulation {
   }
 
   cleanGeocode(address) {
-    // console.log(address)
     if (address != '') {
       const addressSchema = Joi.string().required();
       const { error } = addressSchema.validate(address);
@@ -631,7 +628,6 @@ class dataManipulation {
       let newString = ''
   
       for (let i = 0; i < address.length; i++) {
-        // console.log(address[i]);
   
         const string = address[i]
         if (string == ',') {

@@ -45,7 +45,7 @@ const AdminChatMenu = () => {
                 })
                 chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
             }) 
-            // console.log(chatData)
+
             setChatData(chatData)
         })
     }, [chatSwitch]);

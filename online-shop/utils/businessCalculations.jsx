@@ -14,15 +14,15 @@ class businessCalculations {
   }
 
   readAllParentProductsFromOnlineStoreProducts(products) {
-    // console.log(products);
+
     const parentProducts = [];
     products.map((product) => {
-      // console.log(product.parentProductId);
+
       if (product.parentProductID === '') {
         parentProducts.push(product.itemId);
       }
     });
-    // console.log(parentProducts);
+
     return parentProducts;
   }
 
@@ -284,7 +284,7 @@ class businessCalculations {
   }
 
   getVehicleForDelivery(weightOfItems) {
-    // console.log(weightOfItems);
+
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -294,7 +294,7 @@ class businessCalculations {
     const vehicleSchema = Joi.object().required();
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
-      // console.log('MOTORCYCLE SELECTED');
+
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
 
       if (error2) {
@@ -398,7 +398,7 @@ class businessCalculations {
   }
 
   async checkStocksIfAvailableInFirestore(cart) {
-    console.log(cart)
+
     const cartSchema = Joi.object().required();
 
     const { error2 } = cartSchema.validate(cart);
@@ -430,7 +430,7 @@ class businessCalculations {
             dataitem.stocksAvailable,
             dataitem.averageSalesPerDay
           );
-          // console.log(stocksAvailableLessSafetyStock);
+
           if (stocksAvailableLessSafetyStock < quantity) {
             let stocksLeft;
             if (stocksAvailableLessSafetyStock < 0) {
@@ -440,7 +440,7 @@ class businessCalculations {
             }
             message = message + `${dataitem.itemName} - ${stocksLeft} stocks left \n`;
             outOfStockDetected = true;
-            // console.log(outOfStockDetected);
+
           }
         }
       });
@@ -456,7 +456,6 @@ class businessCalculations {
         throw new Error('Data Validation Error');
       }
 
-      // console.log(toReturn);
       return toReturn;
     } else {
       const toReturn = [false, message];
@@ -464,7 +463,7 @@ class businessCalculations {
       if (error4) {
         throw new Error('Data Validation Error');
       }
-      console.log(toReturn);
+
       return toReturn;
     }
   }
@@ -536,9 +535,9 @@ class businessCalculations {
       cart[product] = 0;
     }
 
-    console.log(cart)
+
     cart[product] += 1;
-    console.log(cart)
+
 
     const newCartSchema = Joi.object().required();
     const { error3 } = newCartSchema.validate(cart);
@@ -560,9 +559,9 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    console.log(cart)
+
     cart[product] -= 1;
-    console.log(cart)
+
 
     Object.entries(cart).map(([itemId, quantity]) => {
       if (quantity === 0) {
@@ -598,7 +597,7 @@ class businessCalculations {
 
     cart[itemId] += parseFloat(quantity)
 
-    console.log(cart)
+
 
     const newCartSchema = Joi.object().required();
     const { error4 } = newCartSchema.validate(cart);
@@ -654,7 +653,7 @@ class businessCalculations {
       const phoneNumber = data.phoneNumber;
       const totalPrice = data.grandTotal;
 
-      // console.log('data', data);
+
 
       if (testing === false) {
         PaymayaSdk(

@@ -33,7 +33,7 @@ const ProductCard = (props) => {
   const retailAverageSalesPerDay = props.averageSalesPerDay;
   const isWholesale = props.isWholesale;
 
-  console.log(product);
+
 
   if (product.imageLinks.length == 0) {
     return (

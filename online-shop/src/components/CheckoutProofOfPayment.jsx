@@ -15,11 +15,6 @@ const CheckoutProofOfPayment = (props) => {
   const { storage, cloudfirestore, userId, userdata } = useContext(AppContext);
   const location = useLocation();
   const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area,bdoselected,unionbankselected,gcashselected } = location.state;
-  console.log('referenceNumber', referenceNumber);
-
-  console.log('rows', rows);
-
-  console.log(bdoselected, unionbankselected, gcashselected)
 
   let bankName 
   let accountName

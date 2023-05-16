@@ -122,13 +122,11 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     async function getTableData() {
-      console.log(cart)
       const [rows_non_state, total_non_state, total_weight_non_state, vat] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart
       );
 
-      console.log(rows_non_state);
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
@@ -175,8 +173,6 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
       setCart([]);
-      console.log('success');
-      console.log(area)
       businesscalculations.afterCheckoutRedirectLogic(
         { bdoselected : bdoselected,
           unionbankselected : unionbankselected,

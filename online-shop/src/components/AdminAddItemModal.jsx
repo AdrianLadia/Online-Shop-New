@@ -73,7 +73,7 @@ const AdminAddItemModal = (props) => {
   const categories = props.categories;
   const businesscalculations = new businessCalculations();
 
-  console.log(parentProductID);
+
   async function addItem() {
     // FORM CHECKER
     if (itemID === '') {

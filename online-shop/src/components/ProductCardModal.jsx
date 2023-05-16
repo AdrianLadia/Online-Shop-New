@@ -155,13 +155,15 @@ const ProductCardModal = (props) => {
     function productInteraction(){
       const timestamp = Timestamp.fromDate(date);
       const timestampString = timestamp.toDate().toLocaleString();
-
       if(props.modal == true){
         firestore.addProductInteraction(userdata.uid, props.product.itemName, timestampString)
       }
+      
     }
-    productInteraction()
-  },[props.modal])
+    if (userdata != null) {
+      productInteraction()
+    }
+    },[props.modal])
 
   return (
     <Modal open={props.modal} onClose={props.closeModal}>

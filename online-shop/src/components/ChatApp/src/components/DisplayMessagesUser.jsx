@@ -12,7 +12,7 @@ const DisplayMessagesUser = (props) => {
   const loggedInUserId = props.loggedInUserId;
   const read = props.read;
   const image= props.image;
-  // console.log(image)
+
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);

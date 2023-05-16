@@ -16,7 +16,6 @@ function MyOrders() {
     setReversedOrders([...orders].reverse());
   }, [orders]);
 
-  console.log(reversedOrders)
 
   return (
     <Routes>

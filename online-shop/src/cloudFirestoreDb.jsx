@@ -56,7 +56,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      console.log('RAN');
       const response = await axios.get(`${this.url}checkIfUserIdAlreadyExist?userId=${userId}`);
 
       const toReturn = response.data;

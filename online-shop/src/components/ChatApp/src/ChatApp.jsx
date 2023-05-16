@@ -14,11 +14,11 @@ const ChatApp = () => {
   try{
     const {orderReference} = location.state
     orderRef = orderReference
-    console.log('ran user')
+
   }
   catch{
     orderRef = selectedChatOrderId
-    console.log('ran admin')
+
   }
   const [messageDetails, setMessageDetails] = useState({});
   const [userName, setUserName] = useState('');
@@ -26,7 +26,7 @@ const ChatApp = () => {
 
   useEffect(()=>{
     setRefreshUser(!refreshUser)
-    console.log(orderRef)
+
   },[])
 
   useEffect(()=>{
@@ -37,7 +37,7 @@ const ChatApp = () => {
   
   useEffect(() => {
     if (orderRef != null) {
-      console.log(orderRef)
+
       const docRef = doc(db, 'ordersMessages', orderRef);
       onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
