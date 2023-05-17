@@ -8,18 +8,25 @@ import AppContext from '../AppContext';
 import { useLocation } from 'react-router-dom';
 import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
+import dataManipulation from '../../utils/dataManipulation';
 
 const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
-
+  const datamanipulation = new dataManipulation();
   const { storage, cloudfirestore, userId, userdata, firestore } = useContext(AppContext);
   const location = useLocation();
-  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area,bdoselected,unionbankselected,gcashselected } = location.state;
+  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area,bdoselected,unionbankselected,gcashselected,date } = location.state;
+  const orderDateObject = new Date(date)
+  const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
+  const dateNow = new Date()
+  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
 
   let bankName 
   let accountName
   let accountNumber 
+
+  console.log(date)
 
   if (bdoselected) {
     bankName = 'BDO';
@@ -38,6 +45,7 @@ const CheckoutProofOfPayment = (props) => {
   }
 
   function onUpload(url) {
+
     const timestamp = Timestamp.fromDate(date);
     const timestampString = timestamp.toDate().toLocaleString();
 
@@ -98,7 +106,7 @@ const CheckoutProofOfPayment = (props) => {
                 <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
                   Order will expire in :
                 </Typography>
-                <CountdownTimer initialTime={86400} />
+                <CountdownTimer initialTime={dateDifference} />
               </div>
               <div className='flex justify-center mt-2'>
                 <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>

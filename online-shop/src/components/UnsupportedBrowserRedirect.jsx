@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Button } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -23,23 +23,39 @@ const style = {
   p: 4,
 };
 function UnsupportedBrowserRedirect(props) {
+  const isSupportedBrowser = props.isSupportedBrowser;
+  const open = props.open;
+  const setOpen = props.setOpen;
 
-    const isSupportedBrowser = props.isSupportedBrowser;
-  const [open, setOpen] = useState(false);
+  console.log(open)
 
-  useEffect(() => {
-    if (isSupportedBrowser == false) {
-        console.log('browser is Unsupported')
-        const timer = setTimeout(() => {
-          setOpen(true);
-        }, 5000);
-    
-        return () => clearTimeout(timer);
-    }
-  }, [isSupportedBrowser]);
+  // useEffect(() => {
+  //   if (isSupportedBrowser == false) {
+  //     console.log('browser is Unsupported');
+  //     const timer = setTimeout(() => {
+  //       setOpen(true);
+  //     }, 5000);
 
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isSupportedBrowser]);
 
   const handleClose = () => setOpen(false);
+
+  function copyLink() {
+    // /* Get the text field */
+    // var copyText = document.getElementById("myInput");
+
+    // /* Select the text field */
+    // copyText.select();
+    // copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+    /* Copy the text inside the text field */
+    navigator.clipboard.writeText('www.starpack.ph');
+
+    /* Alert the copied text */
+    alert('Copied the url: www.starpack.ph');
+  }
 
   return (
     <div>
@@ -63,32 +79,36 @@ function UnsupportedBrowserRedirect(props) {
           }}
         >
           <Typography variant="h4" component="h2" gutterBottom className="font-bold mb-6 text-center">
-            Unsupported Browser
+            Browser Not Supported
           </Typography>
-          <Typography variant="body1" gutterBottom className="mb-4 text-center">
-            Our website does not support the <strong>Facebook in-app browser</strong>. Please open this page in Authorized Browsers for the best
-            experience.
+          <Typography variant="h5" gutterBottom className="mb-5 font-bold text-center">
+            How to solve this problem?
           </Typography>
-            <Typography variant="body1" gutterBottom className="mb-4 text-center">
-            <strong>Authorized Browsers</strong>
-            </Typography>
-            <Typography variant="body1" gutterBottom className="mb-4 text-center">
-                <ul>
-                    <li>Safari</li>
-                    <li>Chrome</li>
-                    <li>Firefox</li>
-                    <li>Edge</li>
-                </ul>
-            </Typography>
-            <Typography variant="body1" gutterBottom className="mb-4 text-center">
-                <strong>www.starpack.ph</strong>
-            </Typography>
-            <Typography variant="body1" gutterBottom className="mb-4 text-center">
-                You cannot login with the facebook in-app browser. Please open this page in Authorized Browsers for the best experience.
-            </Typography>
-          {/* <Button variant="contained" color="primary" href="https://starpack.ph" target="_blank" className="text-white">
-            Open in Authorized Browser
-          </Button> */}
+          {/* <Typography variant="body1" gutterBottom className="mb-2 text-center">
+        Our website doesn't support the Facebook in-app browser. 
+      </Typography> */}
+          <Divider sx={{ width: '100%', marginBottom: 1 }} />
+          <Typography variant="body1" gutterBottom className="mb-2 text-center">
+            Click the button to <strong>Copy the URL</strong>
+          </Typography>
+
+          <Button variant="contained" color="primary" onClick={copyLink} sx={{ mb: 1 }}>
+            www.starpack.ph
+          </Button>
+          <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
+          <Typography variant="body1" gutterBottom className="mb-2 text-center">
+            <strong>Open an authorized browser</strong>: Safari / Chrome / Firefox / Edge
+          </Typography>
+          <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
+          <Typography variant="body1" gutterBottom className="mb-2 text-center">
+            <strong>Paste the URL </strong>
+            in the address bar and press enter.
+          </Typography>
+          <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
+          <Typography variant="body1" gutterBottom className="mb-2 text-center">
+            Note: Logging in via Facebook / Instagram / Messenger in-app browser isn't supported by Google
+            Authentication. Please use authorized browsers to login.
+          </Typography>
         </Box>
       </Modal>
     </div>

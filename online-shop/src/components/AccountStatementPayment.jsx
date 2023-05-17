@@ -29,7 +29,7 @@ const AccountStatementPayment = (props) => {
     const businesscalculations = new businessCalculations();
     const location = useLocation();
     const navigateTo = useNavigate();
-    const {firstName,lastName, eMail, phoneNumber, totalPrice, userId, fullname,orderReference} = location.state;
+    const {firstName,lastName, eMail, phoneNumber, totalPrice, userId, fullname,orderReference,date} = location.state;
     
 
     // WE DO THIS BECAUSE WE ARE USING THE SAME COMPONENT FOR CHECKOUT AND MY ORDER CARD PAYMENT
@@ -130,7 +130,7 @@ const paymentMethodValues = {
         userId : userId ,
         navigateTo : navigateTo,
         itemsTotal : null,
-      
+        date : date
       }
     )
   }

@@ -635,6 +635,7 @@ class businessCalculations {
         userId : Joi.string().required(),
         navigateTo : Joi.func(),
         itemsTotal : Joi.number().required().allow(null),
+        date: Joi.date().required()
       }
     ).required();
 
@@ -688,6 +689,7 @@ class businessCalculations {
             vat: data.vat,
             rows: data.rows,
             area: data.area,
+            date: data.date,
           },
         });
       }

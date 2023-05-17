@@ -1,13 +1,15 @@
 import React from 'react';
 import AppContext from '../AppContext';
-import { useContext } from 'react';
+import { useContext,useState } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, signInWithRedirect } from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
+import UnsupportedBrowserRedirect from './UnsupportedBrowserRedirect';
 
 const LoginButton = (props) => {
   const position = props.position;
+  const [openUnsupportedBrowserModal, setOpenUnsupportedBrowserModal] = useState(false);
   let handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
 
   if (handleCloseGuestSignInModal == null) {
@@ -16,9 +18,10 @@ const LoginButton = (props) => {
     handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
   }
 
-  const { auth } = useContext(AppContext);
+  const { auth,isSupportedBrowser } = useContext(AppContext);
 
   async function signIn(signInProvider) {
+    
     handleCloseGuestSignInModal();
     setAnchorEl(null);
     const result = await signInWithRedirect(auth, signInProvider);
@@ -28,14 +31,22 @@ const LoginButton = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
+    if (!isSupportedBrowser) {
+      console.log('Setting to open unsupported modal')
+      setOpenUnsupportedBrowserModal(true);
+      return;
+    }
+
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+    
     setAnchorEl(null);
   };
 
   return (
     <div>
+      <UnsupportedBrowserRedirect open={openUnsupportedBrowserModal} isSupportedBrowser={isSupportedBrowser} setOpen={setOpenUnsupportedBrowserModal}/>
       <Button
         id="loginButton"
         aria-controls={open ? 'demo-positioned-menu' : undefined}
