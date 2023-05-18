@@ -50,7 +50,7 @@ module.exports = {
       colors: {
         color60: '#69b05c', //logo green
         color30: '#bb9541', //logo brown
-        color10a: '#6ab15d', // 
+        color10a: '#6ab15d', // dark green
         color10b: '#6bd0ff', //light blue
         color10c: '#B6E388', //light green
         colorbackground: '#e1fadd', //bright green
