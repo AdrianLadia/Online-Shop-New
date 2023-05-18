@@ -337,7 +337,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       amount: Joi.number().required(),
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
-    }).unknown(false);
+      proofOfPaymentLink: Joi.string(),
+    })
 
     const { error } = dataSchema.validate(data);
 

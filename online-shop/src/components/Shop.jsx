@@ -18,7 +18,7 @@ const Shop = () => {
   return (
     <div className='flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 '>
       {/* <OpeningSoonModal /> */}
-      <UnsupportedBrowserRedirect isSupportedBrowser={isSupportedBrowser}/>
+      
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
       {/* WHOLESALE RETAIL */}
       {/* <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/> */}

@@ -11,6 +11,7 @@ import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
 import { AiOutlineFileSearch, AiOutlineSearch } from "react-icons/ai";
+import { date } from 'joi';
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
@@ -35,6 +36,8 @@ function MyOrderCard(props) {
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
   const timestamp = Timestamp.fromDate(dateNow);
   const timestampString = timestamp.toDate().toLocaleString();
+
+  console.log(orderDateObject)
 
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{
@@ -107,7 +110,8 @@ function MyOrderCard(props) {
         phoneNumber: userdata.contactPerson[0].phoneNumber,
         totalPrice: price,
         userId: userdata.uid,
-        orderReference: order.reference
+        orderReference: order.reference,
+        date : orderDateObject
       }})
   }
 

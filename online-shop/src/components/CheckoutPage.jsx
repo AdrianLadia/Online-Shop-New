@@ -198,7 +198,8 @@ const CheckoutPage = () => {
           addressText : addressText ,
           userId : userdata.uid ,
           navigateTo : navigateTo,
-          itemsTotal : total
+          itemsTotal : total,
+          date : new Date(),
         }
       )
     }
