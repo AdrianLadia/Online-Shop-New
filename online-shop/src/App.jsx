@@ -117,7 +117,7 @@ function App() {
       userAgent.indexOf('MSIE ') > -1 ||
       userAgent.indexOf('Trident/') > -1
     ) {
-      return false;
+      return true;
     }
 
     return false;

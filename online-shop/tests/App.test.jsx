@@ -184,7 +184,6 @@ describe('Business Calcualtions', () => {
     });
   });
   test('checkStocksIfAvailableInFirestore', async () => {
-
     const products = await firestore.readAllProducts();
     const result = await businesscalculations.checkStocksIfAvailableInFirestore(products, [
       'PPB#1',
@@ -198,20 +197,18 @@ describe('Business Calcualtions', () => {
       'PPB#1',
       'PPB#1',
       'PPB#1',
-      'PPB#1-RET'
+      'PPB#1-RET',
     ]);
   });
   test('getValueAddedTax', () => {
-
     const subtotal = 100;
-    let expected 
+    let expected;
     if (new AppConfig().getNoVat()) {
       expected = 0;
-    }
-    else {
+    } else {
       expected = 10.71;
     }
-    
+
     const vat = businesscalculations.getValueAddedTax(subtotal);
     expect(vat).toBe(expected);
   });
@@ -233,16 +230,16 @@ describe('Business Calcualtions', () => {
   test('addToCart and removeFromCart', () => {
     const cart = user.cart;
     let newCart = businesscalculations.addToCart(cart, 'PPB#1');
-    expect(newCart).toEqual({'PPB#1' : 1});
+    expect(newCart).toEqual({ 'PPB#1': 1 });
     const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
-    expect(newCart2).toEqual({'PPB#1' : 1, 'PPB#2' : 1});
+    expect(newCart2).toEqual({ 'PPB#1': 1, 'PPB#2': 1 });
     const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
-    expect(newCart3).toEqual({'PPB#1' : 1});
+    expect(newCart3).toEqual({ 'PPB#1': 1 });
   });
   test('addToCartWithQuantity', () => {
-    const cart = {}
+    const cart = {};
     const newCart = businesscalculations.addToCartWithQuantity('PPB#1', 5, cart);
-    expect(newCart).toEqual({'PPB#1' : 5});
+    expect(newCart).toEqual({ 'PPB#1': 5 });
   });
   test('checkIfAreasHasLalamoveServiceArea', () => {
     const areas = ['generalSantosArea', 'lalamoveServiceArea'];
@@ -275,7 +272,7 @@ describe('Data Manipulation', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -287,15 +284,17 @@ describe('Data Manipulation', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
-
+      sendEmail: false,
     });
+
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink3','Adrian Ladia','Maya')
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
       amount: 62002,
       reference: 'testref1234',
       paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -306,7 +305,7 @@ describe('Data Manipulation', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -318,14 +317,17 @@ describe('Data Manipulation', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
+
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink2','Adrian Ladia','Maya')
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
       amount: 62002,
       reference: 'testref1234',
       paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink2',
     });
 
     await delay(1000);
@@ -870,8 +872,7 @@ describe('getCartCount', () => {
     if (new AppConfig().getNoVat()) {
       expected1 = 0;
       expected2 = 0;
-    }
-    else {
+    } else {
       expected1 = 107.14;
       expected2 = 107.14;
     }
@@ -885,6 +886,7 @@ describe('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await firestore.deleteDocumentFromCollectionByFieldValue('Payments', 'orderReference', 'testref1234');
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
     const itemsTotal = (ppb16Price * 12) / 1.12;
@@ -898,7 +900,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -910,8 +912,13 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
+    await delay(200);
+
+    await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',userTestId,'testlink3','userName','Maya'
+    )
     await delay(200);
 
     const data = {
@@ -919,9 +926,22 @@ describe('cloudfirestoredb', async () => {
       amount: 62002,
       reference: 'testref1234',
       paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
     };
 
     await cloudfirestore.transactionCreatePayment(data);
+
+    const payments2 = await firestore.readAllDataFromCollection('Payments')
+    let found2
+    payments2.map((payment)=>{
+      if (payment.proofOfPaymentLink === 'testlink3'){
+        expect(payment.status).toEqual('approved')
+        found2 = true
+      }
+    })
+
+    expect(found2).toEqual(true)
+
 
     await delay(100);
 
@@ -949,7 +969,7 @@ describe('cloudfirestoredb', async () => {
 
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-  },100000);
+  }, 100000);
   test('updateOrdersAsPaidOrNotPaid', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -966,7 +986,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -978,7 +998,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
     await delay(200);
 
@@ -990,7 +1010,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1002,7 +1022,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await delay(200);
@@ -1015,7 +1035,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1027,7 +1047,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await delay(200);
@@ -1080,7 +1100,7 @@ describe('cloudfirestoredb', async () => {
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await delay(100);
   });
-  test.only('testPayMayaWebHookSuccess', async () => {
+  test('testPayMayaWebHookSuccess', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -1096,7 +1116,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1108,41 +1128,39 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await delay(300);
 
     const req = {
-      "totalAmount": {
-        "value": 62002,
-        "currency": "PHP"
+      totalAmount: {
+        value: 62002,
+        currency: 'PHP',
       },
-      "buyer": {
-        "contact": {
-          "email": "ladia.adrian@gmail.com",
-          "phone": "09178927206"
+      buyer: {
+        contact: {
+          email: 'ladia.adrian@gmail.com',
+          phone: '09178927206',
         },
-        "shippingAddress": {
-          "line1": "Cebu",
-          "line2": "Cebu City",
-          "countryCode": "PH"
+        shippingAddress: {
+          line1: 'Cebu',
+          line2: 'Cebu City',
+          countryCode: 'PH',
         },
-        "firstName": "Adrian",
-        "lastName": "Ladia"
+        firstName: 'Adrian',
+        lastName: 'Ladia',
       },
-      "redirectUrl": {
-        "success": "http://starpack.ph/checkoutSuccess",
-        "failure": "http://starpack.ph/checkoutFailed",
-        "cancel": "http://starpack.ph/checkoutCancelled"
+      redirectUrl: {
+        success: 'http://starpack.ph/checkoutSuccess',
+        failure: 'http://starpack.ph/checkoutFailed',
+        cancel: 'http://starpack.ph/checkoutCancelled',
       },
-      "requestReferenceNumber": "testref1234",
-      "metadata": {
-        "userId": userTestId
-      }
+      requestReferenceNumber: 'paymayaref',
+      metadata: {
+        userId: userTestId,
+      },
     };
-
-    
 
     const res = await cloudfirestore.testPayMayaWebHookSuccess(req);
     await delay(300);
@@ -1154,14 +1172,14 @@ describe('cloudfirestoredb', async () => {
     const payments = user.payments;
 
     orders.map((order) => {
-      if (order.reference == 'testref1234') {
+      if (order.reference == 'paymayaref') {
         expect(order.paid).toEqual(true);
       }
     });
 
     let found1 = false;
     payments.map((payment) => {
-      if (payment.reference == 'testref1234') {
+      if (payment.reference == 'paymayaref') {
         found1 = true;
       }
     });
@@ -1176,7 +1194,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1188,7 +1206,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
     await delay(300);
 
@@ -1202,33 +1220,33 @@ describe('cloudfirestoredb', async () => {
     });
 
     const req2 = {
-      "totalAmount": {
-        "value": 62002,
-        "currency": "PHP"
+      totalAmount: {
+        value: 62002,
+        currency: 'PHP',
       },
-      "buyer": {
-        "contact": {
-          "email": "ladia.adrian@gmail.com",
-          "phone": "09178927206"
+      buyer: {
+        contact: {
+          email: 'ladia.adrian@gmail.com',
+          phone: '09178927206',
         },
-        "shippingAddress": {
-          "line1": "Cebu",
-          "line2": "Cebu City",
-          "countryCode": "PH"
+        shippingAddress: {
+          line1: 'Cebu',
+          line2: 'Cebu City',
+          countryCode: 'PH',
         },
-        "firstName": "Adrian",
-        "lastName": "Ladia"
+        firstName: 'Adrian',
+        lastName: 'Ladia',
       },
-      "redirectUrl": {
-        "success": "http://localhost:5173/checkoutSuccess",
-        "failure": "http://localhost:5173/checkoutFailed",
-        "cancel": "http://localhost:5173/checkoutCancelled"
+      redirectUrl: {
+        success: 'http://localhost:5173/checkoutSuccess',
+        failure: 'http://localhost:5173/checkoutFailed',
+        cancel: 'http://localhost:5173/checkoutCancelled',
       },
-      "requestReferenceNumber": "testref12345",
-      "metadata": {
-        "userId": userTestId
-      }
-    }
+      requestReferenceNumber: 'testref12345',
+      metadata: {
+        userId: userTestId,
+      },
+    };
 
     const res2 = await cloudfirestore.testPayMayaWebHookSuccess(req2);
     await delay(300);
@@ -1264,7 +1282,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1276,7 +1294,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1287,7 +1305,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1299,7 +1317,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1310,7 +1328,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1322,36 +1340,36 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     const req3 = {
-      "totalAmount": {
-        "value": 62002,
-        "currency": "PHP"
+      totalAmount: {
+        value: 62002,
+        currency: 'PHP',
       },
-      "buyer": {
-        "contact": {
-          "email": "ladia.adrian@gmail.com",
-          "phone": "09178927206"
+      buyer: {
+        contact: {
+          email: 'ladia.adrian@gmail.com',
+          phone: '09178927206',
         },
-        "shippingAddress": {
-          "line1": "Cebu",
-          "line2": "Cebu City",
-          "countryCode": "PH"
+        shippingAddress: {
+          line1: 'Cebu',
+          line2: 'Cebu City',
+          countryCode: 'PH',
         },
-        "firstName": "Adrian",
-        "lastName": "Ladia"
+        firstName: 'Adrian',
+        lastName: 'Ladia',
       },
-      "redirectUrl": {
-        "success": "http://localhost:5173/checkoutSuccess",
-        "failure": "http://localhost:5173/checkoutFailed",
-        "cancel": "http://localhost:5173/checkoutCancelled"
+      redirectUrl: {
+        success: 'http://localhost:5173/checkoutSuccess',
+        failure: 'http://localhost:5173/checkoutFailed',
+        cancel: 'http://localhost:5173/checkoutCancelled',
       },
-      "requestReferenceNumber": "testref12345678",
-      "metadata": {
-        "userId": userTestId
-      }
+      requestReferenceNumber: 'testref12345678',
+      metadata: {
+        userId: userTestId,
+      },
     };
 
     const res3 = await cloudfirestore.testPayMayaWebHookSuccess(req3);
@@ -1382,6 +1400,24 @@ describe('cloudfirestoredb', async () => {
     });
 
     expect(user4payments.length).toEqual(3);
+
+    await delay(200);
+
+    await cloudfirestore.testPayMayaWebHookSuccess();
+
+    const payments2 = await firestore.readAllDataFromCollection('Payments');
+
+    let found2 = false;
+    payments2.map((payment) => {
+      if (payment.orderReference === 'testref12345678') {
+        found2 = true;
+        if (payment.status != 'approved') {
+          throw new Error('Payment not approved');
+        }
+      }
+    });
+
+    expect(found2).toEqual(true);
 
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1435,7 +1471,6 @@ describe('cloudfirestoredb', async () => {
     await delay(300);
     expect(falseUser).toEqual(false);
   });
-
 
   test('transactionPlaceOrder', async () => {
     await firestore.createProduct(
@@ -1529,7 +1564,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1541,7 +1576,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
     await delay(500);
 
@@ -1562,7 +1597,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927205',
       localname: 'Andrei Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1574,7 +1609,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
     await delay(500);
 
@@ -1595,7 +1630,7 @@ describe('cloudfirestoredb', async () => {
       locallongitude: 2.1122,
       localphonenumber: '09178927205',
       localname: 'Andrei Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1607,7 +1642,7 @@ describe('cloudfirestoredb', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
     await delay(300);
 
@@ -1688,15 +1723,14 @@ describe('cloudfirestoredb', async () => {
     const userRoles = await Promise.all(userRolesPromises);
     const roles = ['member', 'admin', 'superAdmin'];
     userRoles.map((userRole) => {
-
       expect(roles.includes(userRole)).toEqual(true);
     });
   });
 
   test('deleteProduct', async () => {
-    await firestore.deleteProduct('test')
-    await firestore.deleteProduct('test2')
-  })
+    await firestore.deleteProduct('test');
+    await firestore.deleteProduct('test2');
+  });
 });
 
 describe('retryApiCall', () => {
@@ -1739,7 +1773,7 @@ describe('deleteOrderFromUserFirestore', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1751,7 +1785,7 @@ describe('deleteOrderFromUserFirestore', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1762,7 +1796,7 @@ describe('deleteOrderFromUserFirestore', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1774,7 +1808,7 @@ describe('deleteOrderFromUserFirestore', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1785,7 +1819,7 @@ describe('deleteOrderFromUserFirestore', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1797,7 +1831,7 @@ describe('deleteOrderFromUserFirestore', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     test('check if reference is added to orderMessages collection', async () => {
@@ -1881,7 +1915,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -1893,10 +1927,10 @@ describe('updateOrderProofOfPaymentLink', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
-    await delay(300)
-  },100000);
+    await delay(300);
+  }, 100000);
 
   test('updateOrderProofOfPaymentLink', async () => {
     id1 = await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -1906,7 +1940,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       'TEST USER',
       'BDO'
     );
-    await delay(300)
+    await delay(300);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -1934,7 +1968,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       'TEST USER',
       'BDO'
     );
-    await delay(300)
+    await delay(300);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
     let orderFound = false;
@@ -1981,7 +2015,7 @@ describe('sendEmail', async () => {
   });
 }, 100000);
 
-describe('afterCheckoutRedirectLogic', () => {
+describe.only('afterCheckoutRedirectLogic', () => {
   class testCheckout {
     constructor() {
       this.bdoselected = false;
@@ -1995,9 +2029,7 @@ describe('afterCheckoutRedirectLogic', () => {
       this.solanaselected = false;
     }
 
-    mockFunction() {
-
-    }
+    mockFunction() {}
 
     runFunction() {
       const res = businesscalculations.afterCheckoutRedirectLogic(
@@ -2026,6 +2058,7 @@ describe('afterCheckoutRedirectLogic', () => {
           addressText: 'AddressText',
           userId: 'userId',
           itemsTotal: 1000,
+          date: new Date()
         },
         true
       );
@@ -2083,7 +2116,7 @@ describe('updatePaymentStatus', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2095,7 +2128,7 @@ describe('updatePaymentStatus', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
   });
   test('create Test Payment Proof Upload', async () => {
@@ -2108,28 +2141,17 @@ describe('updatePaymentStatus', () => {
     );
     await delay(300);
   });
-  test('update status to success', async () => {
-    await firestore.updatePaymentStatus('testref1234', 'approved');
-    await delay(200);
-    const data = await firestore.readSelectedDataFromCollection('Payments', id1);
-    expect(data.status).toEqual('approved');
-  });
+
   test('update status to failed', async () => {
-    await firestore.updatePaymentStatus('testref1234', 'declined');
+    await firestore.updatePaymentStatusDeclined('testref1234');
     await delay(200);
     const data = await firestore.readSelectedDataFromCollection('Payments', id1);
     expect(data.status).toEqual('declined');
   });
-  test('update status to pending', async () => {
-    await firestore.updatePaymentStatus('testref1234', 'pending');
-    await delay(200);
-    const data = await firestore.readSelectedDataFromCollection('Payments', id1);
-    expect(data.status).toEqual('pending');
-  });
   test('delete payment', async () => {
     await firestore.deleteDocumentFromCollection('Payments', id1);
   });
-},100000);
+}, 100000);
 
 describe('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
@@ -2138,11 +2160,11 @@ describe('deleteOldOrders', () => {
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
     await firestore.updateDocumentFromCollection('Users', userTestId, {
       orders: [
-        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [],cart :{} },
-        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [],cart :{} },
-        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [],cart :{} },
-        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [],cart :{} },
-        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'],cart :{} },
+        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [], cart: {} },
+        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [], cart: {} },
+        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [], cart: {} },
+        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [], cart: {} },
+        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'], cart: {} },
       ],
     });
     await delay(200);
@@ -2172,7 +2194,7 @@ describe('deleteOldOrders', () => {
         found3 = true;
       }
       if (order.reference == 'testref12345678') {
-        found4 = true
+        found4 = true;
       }
     });
 
@@ -2194,9 +2216,9 @@ describe('deleteOldOrders', () => {
     const ppb16Price = ppb16.price;
     const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
     const ppb12Price = ppb12.price;
-    const itemsTotal = ((ppb12Price * 12) + (ppb16Price * 12)) / 1.12;
-    const vat = ((ppb12Price * 12) + (ppb16Price * 12)) - itemsTotal;
-    
+    const itemsTotal = (ppb12Price * 12 + ppb16Price * 12) / 1.12;
+    const vat = ppb12Price * 12 + ppb16Price * 12 - itemsTotal;
+
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
       username: 'Adrian',
@@ -2205,7 +2227,7 @@ describe('deleteOldOrders', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12, 'PPB#12' : 12},
+      cart: { 'PPB#16': 12, 'PPB#12': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2217,7 +2239,7 @@ describe('deleteOldOrders', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
 
     await delay(300);
@@ -2225,17 +2247,16 @@ describe('deleteOldOrders', () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
-    const userdata = await firestore.readUserById(userTestId)
-    const orders = userdata.orders
-    
+    const userdata = await firestore.readUserById(userTestId);
+    const orders = userdata.orders;
+
     orders.map((order) => {
       if (order.reference == 'testref1234') {
-        order.orderDate = twoDaysAgo
+        order.orderDate = twoDaysAgo;
       }
-    })
-    
+    });
 
-    await firestore.updateDocumentFromCollection('Users',userTestId,{orders: orders})
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: orders });
     await delay(300);
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2246,7 +2267,7 @@ describe('deleteOldOrders', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16': 12, 'PPB#12': 12},
+      cart: { 'PPB#16': 12, 'PPB#12': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2258,50 +2279,46 @@ describe('deleteOldOrders', () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
+      sendEmail: false,
     });
-    await delay(2000)
-
-
-  },100000)
+    await delay(2000);
+  }, 100000);
   test('invoke function', async () => {
-    
     const oldPPB16 = await firestore.readSelectedProduct('PPB#16');
     const oldPPB12 = await firestore.readSelectedProduct('PPB#12');
-    const oldPPB16Stocks = oldPPB16.stocksAvailable
-    const oldPPB12Stocks = oldPPB12.stocksAvailable
+    const oldPPB16Stocks = oldPPB16.stocksAvailable;
+    const oldPPB12Stocks = oldPPB12.stocksAvailable;
     await cloudfirestore.deleteOldOrders();
-    await delay(2000)
+    await delay(2000);
     const newPPB16 = await firestore.readSelectedProduct('PPB#16');
     const newPPB12 = await firestore.readSelectedProduct('PPB#12');
-    const newPPB16Stocks = newPPB16.stocksAvailable
-    const newPPB12Stocks = newPPB12.stocksAvailable
+    const newPPB16Stocks = newPPB16.stocksAvailable;
+    const newPPB12Stocks = newPPB12.stocksAvailable;
 
     expect(newPPB16Stocks - oldPPB16Stocks).toEqual(12);
     expect(newPPB12Stocks - oldPPB12Stocks).toEqual(12);
 
-    const userData = await firestore.readUserById(userTestId)
-    const orders = userData.orders
+    const userData = await firestore.readUserById(userTestId);
+    const orders = userData.orders;
 
-    let found = false
+    let found = false;
     orders.map((order) => {
       if (order.reference == 'testref1234') {
         throw new Error('Order not deleted');
       }
       if (order.reference == 'testref12345') {
-        found = true
+        found = true;
       }
-    })
+    });
 
-    expect(found).toEqual(true)
-
-  },100000);  
+    expect(found).toEqual(true);
+  }, 100000);
 });
 
 describe('transactionPlaceOrder test retail', async () => {
   test('retail items', async () => {
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
-    await delay(300)
+    await delay(300);
     const ppb1RET = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
     const ppb1RETPrice = ppb1RET.price;
     const itemsTotal = (ppb1RETPrice * 11 + 5000) / 1.12;
@@ -2309,7 +2326,7 @@ describe('transactionPlaceOrder test retail', async () => {
 
     const data = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const stocksAvailable = data.stocksAvailable;
-    
+
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
       username: 'Adrian',
@@ -2318,7 +2335,7 @@ describe('transactionPlaceOrder test retail', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#1-RET' : 11, 'PPB#16': 1},
+      cart: { 'PPB#1-RET': 11, 'PPB#16': 1 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2330,16 +2347,16 @@ describe('transactionPlaceOrder test retail', async () => {
       deliveryVehicle: 'Sedan',
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
-      sendEmail: false
-    })
-    await delay(300)
+      sendEmail: false,
+    });
+    await delay(300);
     const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const stocksOnHold2 = data2.stocksOnHold;
     const stocksAvailable2 = data2.stocksAvailable;
 
     expect(stocksOnHold2.length).toEqual(1);
     expect(stocksAvailable - stocksAvailable2).toEqual(1);
-  },50000);
+  }, 50000);
 });
 
 describe('deleteDeclinedPayments', () => {
@@ -2358,79 +2375,7 @@ describe('deleteDeclinedPayments', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12},
-      itemstotal: itemsTotal,
-      vat: vat,
-      shippingtotal: 2002,
-      grandTotal: itemsTotal + vat + 2002,
-      reference: 'testref1234',
-      userphonenumber: '09178927206',
-      deliveryNotes: 'Test',
-      totalWeight: 122,
-      deliveryVehicle: 'Sedan',
-      needAssistance: true,
-      eMail: 'starpackph@gmail.com',
-      sendEmail: false
-    })
-
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink.com','TEST USER' ,'BDO')
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink2.com','TEST USER' ,'BDO')
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234', userTestId, 'https://testlink3.com','TEST USER' ,'BDO')
-  });
-
-  test('invoking function', async () => {
-    await firestore.deleteDeclinedPayment('testref1234', userTestId,'https://testlink.com');
-  });
-  test('checking values', async () => {
-    const user = await firestore.readUserById(userTestId);
-    const orders = user.orders;
-    const payments = await firestore.readAllDataFromCollection('Payments');
-
-
-    let found = false
-    orders.map((order) => {
-      if (order.reference == 'testref1234') {
-        found = true
-        expect(order.proofOfPaymentLink).toEqual(['https://testlink2.com','https://testlink3.com']);
-      }
-      
-    });
-
-    expect(found).toEqual(true)
-
-    let found2 = false
-    payments.map((payment) => {
-      if (payment.orderReference == 'testref1234') {
-        found2 = true
-        expect(payment.status).toEqual('declined');
-      }
-    })
-
-    expect(found2).toEqual(true)
-
-
-  });
-},100000);
-
-describe('testCancelOrder', () => {
-  test('Setup test', async () => {
-    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
-    const ppb16Price = ppb16.price;
-    const ppb16Retail = await firestore.readSelectedProduct('PPB#16-RET');
-    const ppb16RetPrice = ppb16Retail.price    
-    const itemsTotal = (ppb16Price * 12 + ppb16RetPrice * 12) / 1.12;
-    const vat = (ppb16Price * 12 + ppb16RetPrice * 12) - itemsTotal;
-
-    await cloudfirestore.transactionPlaceOrder({
-      userid: userTestId,
-      username: 'Adrian',
-      localDeliveryAddress: 'Test City',
-      locallatitude: 1.24,
-      locallongitude: 2.112,
-      localphonenumber: '09178927206',
-      localname: 'Adrian Ladia',
-      cart: {'PPB#16' : 12,'PPB#16-RET':12},
+      cart: { 'PPB#16': 12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2444,32 +2389,115 @@ describe('testCancelOrder', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
     });
-  })
+
+    await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'https://testlink.com',
+      'TEST USER',
+      'BDO'
+    );
+    await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'https://testlink2.com',
+      'TEST USER',
+      'BDO'
+    );
+    await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'https://testlink3.com',
+      'TEST USER',
+      'BDO'
+    );
+  });
+
+  test('invoking function', async () => {
+    await firestore.deleteDeclinedPayment('testref1234', userTestId, 'https://testlink.com');
+  });
+  test('checking values', async () => {
+    const user = await firestore.readUserById(userTestId);
+    const orders = user.orders;
+    const payments = await firestore.readAllDataFromCollection('Payments');
+
+    let found = false;
+    orders.map((order) => {
+      if (order.reference == 'testref1234') {
+        found = true;
+        expect(order.proofOfPaymentLink).toEqual(['https://testlink2.com', 'https://testlink3.com']);
+      }
+    });
+
+    expect(found).toEqual(true);
+
+    let found2 = false;
+    payments.map((payment) => {
+      if (payment.orderReference == 'testref1234') {
+        found2 = true;
+        expect(payment.status).toEqual('declined');
+      }
+    });
+
+    expect(found2).toEqual(true);
+  });
+}, 100000);
+
+describe('testCancelOrder', () => {
+  test('Setup test', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const ppb16Retail = await firestore.readSelectedProduct('PPB#16-RET');
+    const ppb16RetPrice = ppb16Retail.price;
+    const itemsTotal = (ppb16Price * 12 + ppb16RetPrice * 12) / 1.12;
+    const vat = ppb16Price * 12 + ppb16RetPrice * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12, 'PPB#16-RET': 12 },
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+    });
+  });
 
   test('deleteCancelledOrder invoke ', async () => {
-    await delay(200)
+    await delay(200);
 
-    const productDataOld = await cloudfirestore.readSelectedDataFromCollection('Products','PPB#16')
-    const stocksAvailableOld = productDataOld.stocksAvailable
-    
-    await cloudfirestore.transactionCancelOrder({userId:userTestId,orderReference:'testref1234'});
+    const productDataOld = await cloudfirestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const stocksAvailableOld = productDataOld.stocksAvailable;
+
+    await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' });
     const user = await cloudfirestore.readSelectedUserById(userTestId);
-    const order = user.orders
+    const order = user.orders;
 
-    expect (order.length).toEqual(0)
+    expect(order.length).toEqual(0);
 
-    const productDataNew = await cloudfirestore.readSelectedDataFromCollection('Products','PPB#16')
+    const productDataNew = await cloudfirestore.readSelectedDataFromCollection('Products', 'PPB#16');
     productDataNew.stocksOnHold.map((stock) => {
       if (stock.reference == 'testref1234') {
-        throw new Error('Stock not deleted')
+        throw new Error('Stock not deleted');
       }
-    })
+    });
 
-    const stocksAvailableNew = productDataNew.stocksAvailable
+    const stocksAvailableNew = productDataNew.stocksAvailable;
 
-    expect(stocksAvailableNew-stocksAvailableOld).toEqual(12)
-
-
-
+    expect(stocksAvailableNew - stocksAvailableOld).toEqual(12);
   });
-},100000)
+}, 100000);

@@ -363,21 +363,23 @@ class firestoredb extends firestorefunctions {
   async readPayments() {
     return await this.readAllDataFromCollection('Payments');
   }
+  // NOT USING THIS IF IN THE TRANSACTION CREATE PAYMENT CLOUD FIRESTORE WILL BE COMBINED WITH THIS FUNCTION
 
-  async updatePaymentStatus(reference, status) {
-    const statusSchema = Joi.string().valid('pending', 'approved', 'declined');
+  async updatePaymentStatusDeclined(reference) {
 
-    const { error } = statusSchema.validate(status);
+    const referenceSchema = Joi.string().required();
 
-    if (error) {
-      throw new Error(error);
+    const { error2 } = referenceSchema.validate(reference);
+
+    if (error2) {
+      throw new Error(error2);
     }
 
     const paymentsRef = collection(this.db, 'Payments');
     const q = query(paymentsRef, where('orderReference', '==', reference));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      this.updateDocumentFromCollection('Payments', doc.id, { status: status });
+      this.updateDocumentFromCollection('Payments', doc.id, { status: 'declined' });
     });
   }
 
