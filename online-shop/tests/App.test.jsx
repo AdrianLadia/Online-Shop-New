@@ -930,7 +930,7 @@ describe('cloudfirestoredb', async () => {
     };
 
     await cloudfirestore.transactionCreatePayment(data);
-
+    await delay(200);
     const payments2 = await firestore.readAllDataFromCollection('Payments')
     let found2
     payments2.map((payment)=>{
@@ -2015,7 +2015,7 @@ describe('sendEmail', async () => {
   });
 }, 100000);
 
-describe.only('afterCheckoutRedirectLogic', () => {
+describe('afterCheckoutRedirectLogic', () => {
   class testCheckout {
     constructor() {
       this.bdoselected = false;
