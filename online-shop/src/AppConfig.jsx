@@ -2,8 +2,8 @@
 
 class AppConfig {
     constructor() {
-        this.isDevEnvironment = true
-        this.isPaymentSandBox = false
+        this.isDevEnvironment = false
+        this.isPaymentSandBox = true
         this.noVat = true
     }
 

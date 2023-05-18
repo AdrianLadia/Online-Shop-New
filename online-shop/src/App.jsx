@@ -86,10 +86,20 @@ function App() {
   const [isSupportedBrowser, setIsSupportedBrowser] = useState(null);
   const [updateCartInfo,setUpdateCartInfo]  = useState(false)
   const [isAffiliate, setIsAffiliate] = useState(false)
+  const [isAppleDevice, setIsAppleDevice] = useState(false)
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  // GET IF APPLE USER 
+  // IF APPLE USER USE AUTH POP UP IF NOT USE REDIRECT
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
+  }, []);
+
+
 
   // GET USER BROWSER
   function checkIfBrowserSupported() {
@@ -309,13 +319,12 @@ function App() {
     mayaCheckoutId: mayaCheckoutId,
     setMayaCheckoutId: setMayaCheckoutId,
     width: width,
-    height,
-    height,
     chatSwitch: chatSwitch,
     setChatSwitch: setChatSwitch,
     isSupportedBrowser: isSupportedBrowser,
     updateCartInfo:updateCartInfo,
     setUpdateCartInfo:setUpdateCartInfo,
+    isAppleDevice : isAppleDevice,
   };
 
   return (

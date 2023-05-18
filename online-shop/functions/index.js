@@ -856,7 +856,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
 // Expose the Express app as a Cloud Function
 exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    if (req.method !== 'POST') {
+    if (req.method != 'POST') {
       res.status(405).send('Method Not Allowed');
       return;
     }
@@ -894,7 +894,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
 });
 
 exports.payMayaWebHookFailed = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
-  if (req.method !== 'POST') {
+  if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
   }
@@ -908,7 +908,7 @@ exports.payMayaWebHookFailed = functions.region('asia-southeast1').https.onReque
 });
 
 exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
-  if (req.method !== 'POST') {
+  if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
   }
@@ -1210,8 +1210,8 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
         const userDataObj = await transaction.get(userRef);
         const userData = userDataObj.data();
         let orders = userData.orders;
-        const data = orders.filter((order) => order.reference !== orderReference);
-        const cancelledData = orders.filter((order) => order.reference === orderReference);
+        const data = orders.filter((order) => order.reference != orderReference);
+        const cancelledData = orders.filter((order) => order.reference == orderReference);
         const cancelledDataCart = cancelledData[0].cart;
   
         console.log('data', data);

@@ -16,12 +16,19 @@ const LoginButton = (props) => {
     handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
   }
 
-  const { auth } = useContext(AppContext);
+  const { auth, isAppleDevice } = useContext(AppContext);
+  
 
   async function signIn(signInProvider) {
     handleCloseGuestSignInModal();
     setAnchorEl(null);
-    const result = await signInWithRedirect(auth, signInProvider);
+    let result
+    if (isAppleDevice) {
+      result = await signInWithPopup(auth, signInProvider);
+    }
+    else {
+      result = await signInWithRedirect(auth, signInProvider);
+    }
     const user = result.user;
   }
 
