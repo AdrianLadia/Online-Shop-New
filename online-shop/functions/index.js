@@ -836,8 +836,8 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const data = parseData(req.query.data);
-    console.log(data)
+    const data = req.body
+    // console.log(data)
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink
     const db = admin.firestore();
@@ -846,12 +846,13 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     console.log(proofOfPaymentLink)
     const paymentQuery = paymentsRef.where("proofOfPaymentLink" ,'==', proofOfPaymentLink)
     const paymentSnapshot = await paymentQuery.get()
-    console.log('paymentSnapshot',paymentSnapshot)
-    console.log('running')
+    // console.log('paymentSnapshot',paymentSnapshot)
+    // console.log('running')
     let documentID
     let paymentsData 
     paymentSnapshot.forEach((doc) => {
       paymentsData = doc.data()
+      console.log('paymentsData',paymentsData)
       paymentsData.status = 'approved'
       documentID = doc.id
     })

@@ -32,10 +32,12 @@ const AdminCreatePaymentTable = () => {
         const link = data.proofOfPaymentLink;
         const reference = data.orderReference;
         const userId = data.userId;
+        const userName = data.userName
+        console.log(data)
         
 
         if (data.status === 'pending') {
-          paymentData.push({ link: link, reference: reference, userId: userId });
+          paymentData.push({ link: link, reference: reference, userId: userId,userName:userName });
           photoLink.push({link: link})
         }
       });
@@ -73,9 +75,7 @@ const AdminCreatePaymentTable = () => {
       setAmount(null)
   }
 
-  async function deleteDeclinedProofOfPaymentLink(reference, userId, link){
-    await firestore.deleteDeclinedPayment(reference, userId, link)
-  }
+
 
   console.log(paymentsData)
 
@@ -100,6 +100,9 @@ const AdminCreatePaymentTable = () => {
               <TableCell align="right" className="text-white">
                 Customer ID
               </TableCell>
+              <TableCell align="right" className="text-white">
+                Customer Name
+              </TableCell>
               <TableCell align="center" className="text-white">
                 Actions
               </TableCell>
@@ -110,8 +113,7 @@ const AdminCreatePaymentTable = () => {
           </TableHead>
           <TableBody>
             {paymentsData.map((data) => (
-             
-              <AdminCreatePaymentTableRow proofOfPaymentLink={data.link} orderReference={data.reference} userId={data.userId}/>
+              <AdminCreatePaymentTableRow paymentsData={paymentsData} setPaymentsData={setPaymentsData} proofOfPaymentLink={data.link} orderReference={data.reference} userId={data.userId} userName={data.userName}/>
             ))}
           </TableBody>
         </Table>

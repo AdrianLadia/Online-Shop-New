@@ -347,9 +347,21 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
+    const jsonData = JSON.stringify(data);
+
+    // const res = await axios.post(`${this.url}sendEmail`, jsonData, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+
     try {
       const encodedData = encodeURIComponent(JSON.stringify(data));
-      const response = await axios.post(`${this.url}transactionCreatePayment?data=${encodedData}`);
+      const response = await axios.post(`${this.url}transactionCreatePayment`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       return response;
     } catch {
       console.log(error);

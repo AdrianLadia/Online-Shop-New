@@ -1,30 +1,48 @@
 import React from 'react';
 import { TableRow, TableCell } from '@mui/material';
-import { useState } from 'react';
+import { useState,useContext } from 'react';
+import AppContext from '../AppContext';
 
 const AdminCreatePaymentTableRow = (props) => {
   const proofOfPaymentLink = props.proofOfPaymentLink;
   const orderReference = props.orderReference;
   const userId = props.userId;
   const userName = props.userName;
+  const setPaymentsData = props.setPaymentsData;
   const [amount, setAmount] = useState('');
+  const { cloudfirestore,firestore } = useContext(AppContext);
+  const paymentsData = props.paymentsData;
+
+  console.log(paymentsData)
 
   const handleNewTab = (link) => {
     window.open(link, '_blank');
   };
 
-  async function updatePaymentStatus() {
-    console.log(amount)
-    // const data = {
-    //   userId: userId,
-    //   amount: amount,
-    //   reference: orderReference,
-    //   paymentprovider: 'TEST',
-    //   proofOfPaymentLink: proofOfPaymentLink,
-    // };
-    // cloudfirestore.transactionCreatePayment(data);
-    // alert('Reference: ' + reference + ' is ' + status + a);
-    setAmount('');
+  
+  
+
+  async function updatePaymentStatus(status) {
+    if (status === 'approved') {
+      console.log(amount)
+      const data = {
+        userId: userId,
+        amount: amount,
+        reference: orderReference,
+        paymentprovider: 'TEST',
+        proofOfPaymentLink: proofOfPaymentLink,
+      };
+      cloudfirestore.transactionCreatePayment(data);
+      alert('Reference: ' + data.reference + ' is ' + status);
+      setAmount('');
+    }
+    if (status === 'declined') {
+      await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink)
+    }
+
+    const newPaymentsData = paymentsData.filter((data) => data.reference != orderReference)
+    setPaymentsData(newPaymentsData)
+   
   }
 
   console.log(amount);
@@ -40,18 +58,19 @@ const AdminCreatePaymentTableRow = (props) => {
       </TableCell>
       <TableCell align="right">{orderReference}</TableCell>
       <TableCell align="right">{userId}</TableCell>
+      <TableCell align="right">{userName}</TableCell>
       <TableCell align="right">
         <div className="flex justify-evenly gap-2 xs:gap-3">
           <button
             className=" border border-red-400 hover:bg-red-50 text-red-400 px-4 py-3 rounded-xl"
             // onClick={() => data.link === data.link? (deleteDeclinedProofOfPaymentLink(data.reference, 'declined',data.userId, data.link)) : null}
-            onClick={() => deleteDeclinedProofOfPaymentLink(data.reference, data.userId, data.link)}
+            onClick={() => updatePaymentStatus('declined')}
           >
             Deny
           </button>
           <button
             className="bg-blue1 hover:bg-color10b border border-blue1 text-white px-4 py-3 rounded-xl"
-            onClick={updatePaymentStatus}
+            onClick={() => updatePaymentStatus('approved')}
           >
             Approve
           </button>
