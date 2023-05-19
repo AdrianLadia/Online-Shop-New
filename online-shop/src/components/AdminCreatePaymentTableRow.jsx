@@ -18,10 +18,7 @@ const AdminCreatePaymentTableRow = (props) => {
   const handleNewTab = (link) => {
     window.open(link, '_blank');
   };
-
   
-  
-
   async function updatePaymentStatus(status) {
     if (status === 'approved') {
       console.log(amount)

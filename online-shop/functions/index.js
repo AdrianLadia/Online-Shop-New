@@ -1033,6 +1033,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
       const orderReference = data.orderReference;
       const userId = data.userId;
       const proofOfPaymentLink = data.proofOfPaymentLink;
+      const forTesting = data.forTesting
 
       console.log(proofOfPaymentLink);
 
@@ -1043,7 +1044,8 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         proofOfPaymentLink: Joi.string().required(),
         paymentMethod: Joi.string().required().allow(''),
         userName: Joi.string().required(),
-      }).unknown(false);
+        forTesting : Joi.boolean()
+      })
 
       const { error } = dataSchema.validate(data);
 
@@ -1058,6 +1060,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
       db.runTransaction(async (transaction) => {
         try {
           // READ
+          const orderMessagesRef = db.collection('ordersMessages').doc(orderReference);
           const userRef = db.collection('Users').doc(userId);
           const userDoc = await transaction.get(userRef);
           const userData = userDoc.data();
@@ -1066,8 +1069,22 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
           const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
           orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
+          const orderMessages = await transaction.get(orderMessagesRef);
+          const orderMessagesData = orderMessages.data();
+          const oldMessages = orderMessagesData.messages;
+          const newMessage = {
+            dateTime: new Date(),
+            image : proofOfPaymentLink,
+            message: '',
+            read : false,
+            userId : userId,
+            userRole : 'member' }
+          const newMessageHistory = [...oldMessages,newMessage]
 
           // WRITE
+
+          transaction.update(orderMessagesRef,{messages:newMessageHistory})
+
           transaction.update(userRef, {
             orders: orders,
           });
@@ -1087,6 +1104,23 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
 
           const paymentId = newPaymentRef.id;
           console.log(paymentId);
+
+          if (forTesting == false) {
+            await sendmail('ladiaadrian@gmail.com','Payment Uploaded',
+            `<h2>Payment Uploaded</h2>
+            
+            <p>Order Reference Number: <strong>${orderReference}</strong></p>
+            <p>Proof of Payment: <a href=${proofOfPaymentLink}>Click here</a></p>
+            <p>User Name: <strong>${userName}</strong></p>
+            <p>User ID: <strong>${userId}</strong></p>
+            <p>Payment Method: <strong>${paymentMethod}</strong></p>
+  
+            <p>You can accept or reject this payment in Admin Create Payments Menu</p>
+  
+            <p>Best regards,</p>
+            <p>Your Company</p>`
+            )
+          }
           res.status(200).send(paymentId);
         } catch (error) {
           console.error('Error updating proof of payment link:', error);

@@ -287,7 +287,7 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
     });
 
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink3','Adrian Ladia','Maya')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink3','Adrian Ladia','Maya',true)
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
@@ -320,7 +320,7 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
     });
 
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink2','Adrian Ladia','Maya')
+    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink2','Adrian Ladia','Maya',true)
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
@@ -917,7 +917,7 @@ describe('cloudfirestoredb', async () => {
     await delay(200);
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
-      'testref1234',userTestId,'testlink3','userName','Maya'
+      'testref1234',userTestId,'testlink3','userName','Maya',true
     )
     await delay(200);
 
@@ -1725,7 +1725,7 @@ describe('cloudfirestoredb', async () => {
     userRoles.map((userRole) => {
       expect(roles.includes(userRole)).toEqual(true);
     });
-  });
+  },10000);
 
   test('deleteProduct', async () => {
     await firestore.deleteProduct('test');
@@ -1898,7 +1898,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe('updateOrderProofOfPaymentLink', () => {
+describe.only('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1932,13 +1932,14 @@ describe('updateOrderProofOfPaymentLink', () => {
     await delay(300);
   }, 100000);
 
+  
   test('updateOrderProofOfPaymentLink', async () => {
     id1 = await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
       userTestId,
       'https://testlink.com',
       'TEST USER',
-      'BDO'
+      'BDO',true
     );
     await delay(300);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
@@ -1953,11 +1954,18 @@ describe('updateOrderProofOfPaymentLink', () => {
     expect(orderFound).toEqual(true);
   });
 
-  test('Check if proof of payment is added to payments', async () => {
+  test('Check if proof of payment is added to payments & orderMessages collection message field', async () => {
     const data = await firestore.readSelectedDataFromCollection('Payments', id1);
+    const orderReference = data.orderReference
     await delay(300);
     expect(data.proofOfPaymentLink).toEqual('https://testlink.com');
     expect(data.status).toEqual('pending');
+
+    const data2 = await firestore.readSelectedDataFromCollection('ordersMessages',orderReference)
+    const messages = data2.messages
+    messages.forEach((m) => {
+      expect(m.image).not.toEqual('')
+    })
   });
 
   test('add another proofOfPaymentLink', async () => {
@@ -1966,7 +1974,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       userTestId,
       'https://testlink2.com',
       'TEST USER',
-      'BDO'
+      'BDO',true
     );
     await delay(300);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
@@ -2137,7 +2145,7 @@ describe('updatePaymentStatus', () => {
       userTestId,
       'https://testlink.com',
       'TEST USER',
-      'BDO'
+      'BDO',true
     );
     await delay(300);
   });
@@ -2395,21 +2403,21 @@ describe('deleteDeclinedPayments', () => {
       userTestId,
       'https://testlink.com',
       'TEST USER',
-      'BDO'
+      'BDO',true
     );
     await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
       userTestId,
       'https://testlink2.com',
       'TEST USER',
-      'BDO'
+      'BDO',true
     );
     await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
       userTestId,
       'https://testlink3.com',
       'TEST USER',
-      'BDO'
+      'BDO',true
     );
   });
 

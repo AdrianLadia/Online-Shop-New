@@ -46,9 +46,6 @@ const AdminCreatePaymentTable = () => {
     });
   }
 
-  const handleNewTab = (link) => {
-    window.open(link, '_blank');
-  };
 
   useEffect(() => {
     readPayments();
@@ -56,25 +53,6 @@ const AdminCreatePaymentTable = () => {
       alert('Reference: ' + reference + ' is ' + status );
     }
   }, [selectedChatOrderId]);
-
-  
-
-  async function updatePaymentStatus(reference, status, userId,amount,proofOfPaymentLink) {
-    const data = {
-      userId: userId,
-      amount: amount,
-      reference: reference,
-      paymentprovider: 'BDO',
-      proofOfPaymentLink: proofOfPaymentLink,
-    };
-    cloudfirestore.transactionCreatePayment(data);
-    alert('Reference: ' + reference + ' is ' + status + a)  
-      setSelectedChatOrderId(reference);
-      setStatus(status);
-      setReference(reference);
-      setAmount(null)
-  }
-
 
 
   console.log(paymentsData)
