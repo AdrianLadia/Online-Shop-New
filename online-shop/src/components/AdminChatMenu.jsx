@@ -13,40 +13,83 @@ import {
 import ChatApp from './ChatApp/src/ChatApp';
 import AppContext from '../AppContext';
 import { HiOutlineChatAlt, HiChatAlt } from "react-icons/hi";
+import { doc, onSnapshot,collection } from 'firebase/firestore';
+import { set } from 'date-fns';
 
 const AdminChatMenu = () => {
     const dummy = useRef(null);
     const [openChat, setOpenChat] = useState(false);
-    const {firestore,width,selectedChatOrderId, setSelectedChatOrderId, chatSwitch, setChatSwitch, isadmin} = useContext(AppContext);
+    const {firestore,width,selectedChatOrderId, setSelectedChatOrderId, chatSwitch, setChatSwitch, isadmin,db} = useContext(AppContext);
     const [chatData, setChatData] = useState([])
 
     useEffect(() => {
-        firestore.readAllOrderMessages().then((res) => {
-            let chatData = []
-
-            res.forEach((chat) => {
-                const referenceNumber = chat.referenceNumber
-                const customerName = chat.ownerName
-                const messages = chat.messages
-                let unreadCount = 0
-                let latestMessage
-                if (messages.length === 0) {
-                    return null
-                }
-                
-                latestMessage = messages[messages.length - 1].message
-                messages.forEach((message) => {
-                    const userRole = message.userRole
-                    if (userRole === "member") {
-                        if (message.read === false) {
-                            unreadCount += 1
-                        }
+      const docRef = collection(db, 'ordersMessages')
+      onSnapshot(docRef, (querySnapshot) => {
+        const chats = []
+        querySnapshot.forEach((doc) => {
+          if (doc.exists()) {
+            const data = doc.data();
+            const referenceNumber = data.referenceNumber
+            const customerName = data.ownerName
+            const messages = data.messages
+            let unreadCount = 0
+            let latestMessage
+            if (messages.length === 0) {
+                return null
+            }
+            
+            latestMessage = messages[messages.length - 1].message
+            messages.forEach((message) => {
+                const userRole = message.userRole
+                if (userRole === "member") {
+                    if (message.read === false) {
+                        unreadCount += 1
                     }
-                })
-                chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
-            }) 
+                }
+            })
+  
+            if (unreadCount >= 1) {
+              chats.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
+            }
+            
+  
+          } else {
+            console.log('No such document!');
+          }
+          setChatData(chats)
+        })
+      // });
+      //   firestore.readAllOrderMessages().then((res) => {
+      //       let chatData = []
 
-            setChatData(chatData)
+      //       res.forEach((chat) => {
+            
+      //           const referenceNumber = chat.referenceNumber
+      //           const customerName = chat.ownerName
+      //           const messages = chat.messages
+      //           let unreadCount = 0
+      //           let latestMessage
+      //           if (messages.length === 0) {
+      //               return null
+      //           }
+                
+      //           latestMessage = messages[messages.length - 1].message
+      //           messages.forEach((message) => {
+      //               const userRole = message.userRole
+      //               if (userRole === "member") {
+      //                   if (message.read === false) {
+      //                       unreadCount += 1
+      //                   }
+      //               }
+      //           })
+
+      //           if (unreadCount >= 1) {
+      //             chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
+      //           }
+
+      //       }) 
+
+          
         })
     }, [chatSwitch]);
   
@@ -86,7 +129,7 @@ const AdminChatMenu = () => {
   return (
     <div className="flex justify-center flex-col lg:flex-row">
       <div ref={dummy}/>
-      {openChat ? <ChatApp /> : null}
+      {openChat ? <ChatApp setChatData={setChatData} chatData={chatData} /> : null}
       <TableContainer 
           className="flex justify-center items-start w-12/12 lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1 " 
           component={Paper}>

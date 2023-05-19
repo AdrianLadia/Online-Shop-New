@@ -30,13 +30,10 @@ const AccountStatement = () => {
   const fullName = userdata.name;
   let firstName = fullName.split(' ')[0];
   let lastName = fullName.split(' ')[1];
-  console.log(firstName)
-  console.log(lastName)
   if (firstName === undefined) {
     firstName = '';
   }
   if (lastName === undefined) {
-    console.log('null')
     lastName = '';
   }
 

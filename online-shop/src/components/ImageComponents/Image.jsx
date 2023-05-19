@@ -20,25 +20,21 @@ const style = {
 const Image = (props) => {
     
     const [isFullScreen, setIsFullScreen] = useState(false);
-    const previewImage = props.previewImage;
+    const imageUrl = props.imageUrl;
+    const className = props.className;
   
     const handleClose = () => setIsFullScreen(false);
 
     return (
     <div>
-      {previewImage && (
+      {imageUrl && (
         <img
           onClick={() => {
             setIsFullScreen(!isFullScreen);
           }}
-          src={previewImage}
+          src={imageUrl}
           alt="Uploaded preview"
-          style={{
-            maxWidth: isFullScreen ? '90vw' : '300px',
-            maxHeight: isFullScreen ? '95vh' : '300px',
-            objectFit: 'contain',
-            cursor: 'pointer',
-          }}
+          className={className}
         />
       )}
         <Modal
@@ -62,7 +58,7 @@ const Image = (props) => {
             </div>
             <div className='flex justify-center'>
               <img
-                src={previewImage}
+                src={imageUrl}
                 alt="Uploaded preview"
                 style={{
                   maxWidth: '100vw',

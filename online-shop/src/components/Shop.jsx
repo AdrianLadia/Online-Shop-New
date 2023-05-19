@@ -25,7 +25,7 @@ const Shop = () => {
       {/* CATEGORY */}
       <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory}/>
       {/* PRODUCTS */}
-      <ProductList key={'ProductList'} wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
+      <ProductList  wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
     </div>
   )
 }
