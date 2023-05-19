@@ -50,7 +50,6 @@ const CheckoutProofOfPayment = (props) => {
     const timestampString = timestamp.toDate().toLocaleString();
 
     cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
-    // firestore.sendProofOfPaymentToOrdersMessages(referenceNumber, url, timestampString, userdata.uid, userdata.userRole)
   }
 
   return (

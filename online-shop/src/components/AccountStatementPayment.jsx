@@ -120,7 +120,7 @@ const paymentMethodValues = {
         vat : null,
         rows : null,
         area : null,
-        fullName : firstName && lastName ? firstName + ' ' + lastName : fullname,
+        fullName : firstName + lastName,
         eMail : eMail,
         phoneNumber : phoneNumber,
         setMayaRedirectUrl : setMayaRedirectUrl,
@@ -130,7 +130,7 @@ const paymentMethodValues = {
         userId : userId ,
         navigateTo : navigateTo,
         itemsTotal : null,
-        date : date
+        date : new Date()
       }
     )
   }

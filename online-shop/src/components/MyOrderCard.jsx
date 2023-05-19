@@ -73,7 +73,6 @@ function MyOrderCard(props) {
 
   function onUpload(proofOfPaymentLink) {
     cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink,userdata.name,'');
-    firestore.sendProofOfPaymentToOrdersMessages(order.reference, proofOfPaymentLink, timestampString, userdata.uid, userdata.userRole)
     setProofOfPaymentLinkCount(1);
   }
 
