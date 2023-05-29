@@ -25,6 +25,7 @@ const MyOrderCardModalTable = (props) => {
 
   const [rows, setRows] = React.useState([]);
 
+  console.log(order)
 
   useEffect(() => {
     async function getTableData() {
