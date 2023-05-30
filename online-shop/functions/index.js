@@ -411,6 +411,8 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cart);
+    
+    const cartItemsPrice = {}
 
     for (const key of itemKeys) {
       const itemId = key;
@@ -420,6 +422,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
       const total = price * itemQuantity;
       itemsTotalBackEnd += total;
       cartUniqueItems.push(itemId);
+      cartItemsPrice[itemId] = price;
     }
 
     console.log(itemsTotalBackEnd);
@@ -613,6 +616,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
           userId: userid,
           proofOfPaymentLink: [],
           eMail: eMail,
+          cartItemsPrice: cartItemsPrice,
         };
 
         const updatedOrders = [newOrder, ...oldOrders];
