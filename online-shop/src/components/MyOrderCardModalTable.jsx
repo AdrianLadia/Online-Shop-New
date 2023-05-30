@@ -21,7 +21,9 @@ const MyOrderCardModalTable = (props) => {
   }
   const order = props.order;
   const cart = order.cart;
+  const cartItemsPrice = order.cartItemsPrice;
   const datamanipulation = new dataManipulation();
+  console.log(cartItemsPrice)
 
   const [rows, setRows] = React.useState([]);
 
@@ -32,8 +34,11 @@ const MyOrderCardModalTable = (props) => {
     
       const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
         products,
-        cart
+        cart,
+        cartItemsPrice
       );
+
+      console.log(rows_non_state)
 
       setRows(rows_non_state);
     }

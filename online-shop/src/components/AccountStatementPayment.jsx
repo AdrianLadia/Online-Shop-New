@@ -29,9 +29,9 @@ const AccountStatementPayment = (props) => {
     const businesscalculations = new businessCalculations();
     const location = useLocation();
     const navigateTo = useNavigate();
-    const {firstName,lastName, eMail, phoneNumber, totalPrice, userId, fullname,orderReference,date} = location.state;
-    
+    const {eMail, phoneNumber, totalPrice, userId, fullname,orderReference,date} = location.state;
 
+    console.log(fullname)
     // WE DO THIS BECAUSE WE ARE USING THE SAME COMPONENT FOR CHECKOUT AND MY ORDER CARD PAYMENT
     // IF WE CHECKOUT NORMALLY WE NEED TO GENERATE A REFERENCENUMBER
     // IF WE ARE PAYING FOR AN ORDER WE NEED TO USE THE ORDERREFERENCE
@@ -120,7 +120,7 @@ const paymentMethodValues = {
         vat : null,
         rows : null,
         area : null,
-        fullName : firstName + lastName,
+        fullName : fullname,
         eMail : eMail,
         phoneNumber : phoneNumber,
         setMayaRedirectUrl : setMayaRedirectUrl,

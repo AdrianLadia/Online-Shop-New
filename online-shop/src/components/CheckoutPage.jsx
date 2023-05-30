@@ -122,7 +122,8 @@ const CheckoutPage = () => {
     async function getTableData() {
       const [rows_non_state, total_non_state, total_weight_non_state, vat] = datamanipulation.getCheckoutPageTableDate(
         products,
-        cart
+        cart,
+        null
       );
 
       setVat(vat);
@@ -321,6 +322,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (!area.includes('lalamoveServiceArea') && area.length > 0) {
+      
       if (total + vat < 10000) setAllowShipping(false);
       else {
         setAllowShipping(true);

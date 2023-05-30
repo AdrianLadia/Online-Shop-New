@@ -1,7 +1,7 @@
 import React from 'react';
 import { useContext } from 'react';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
-import { Divider, Typography } from '@mui/material';
+import { Button, Divider, Typography } from '@mui/material';
 import CheckoutSummary from './CheckoutSummary';
 import { Link } from 'react-router-dom';
 import AppContext from '../AppContext';
@@ -9,6 +9,8 @@ import { useLocation } from 'react-router-dom';
 import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
 import dataManipulation from '../../utils/dataManipulation';
+import { useNavigate } from 'react-router-dom';
+import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
 
 const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
@@ -16,17 +18,30 @@ const CheckoutProofOfPayment = (props) => {
   const datamanipulation = new dataManipulation();
   const { storage, cloudfirestore, userId, userdata, firestore } = useContext(AppContext);
   const location = useLocation();
-  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area,bdoselected,unionbankselected,gcashselected,date } = location.state;
-  const orderDateObject = new Date(date)
-  const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
-  const dateNow = new Date()
-  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
+  const {
+    referenceNumber,
+    itemsTotal,
+    deliveryFee,
+    grandTotal,
+    vat,
+    rows,
+    area,
+    bdoselected,
+    unionbankselected,
+    gcashselected,
+    date,
+  } = location.state;
+  const orderDateObject = new Date(date);
+  const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
+  const dateNow = new Date();
+  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
+  const navigateTo = useNavigate();
 
-  let bankName 
-  let accountName
-  let accountNumber 
+  let bankName;
+  let accountName;
+  let accountNumber;
 
-  console.log(date)
+  console.log(date);
 
   if (bdoselected) {
     bankName = 'BDO';
@@ -38,14 +53,13 @@ const CheckoutProofOfPayment = (props) => {
     accountName = 'ADRIAN LADIA';
     accountNumber = '109355469422';
   }
-  if(gcashselected){
+  if (gcashselected) {
     bankName = 'GCASH';
     accountName = 'ADRIAN LADIA';
     accountNumber = '0917-892-7206';
   }
 
   function onUpload(url) {
-
     const timestamp = Timestamp.fromDate(date);
     const timestampString = timestamp.toDate().toLocaleString();
 
@@ -101,13 +115,13 @@ const CheckoutProofOfPayment = (props) => {
             )}
 
             <div className="flex flex-col justify-center">
-              <div className='flex flex-row justify-center'>
+              <div className="flex flex-row justify-center">
                 <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
                   Order will expire in :
                 </Typography>
                 <CountdownTimer initialTime={dateDifference} />
               </div>
-              <div className='flex justify-center mt-2'>
+              <div className="flex justify-center mt-2">
                 <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
                   Please upload your proof of payment within 24 hours.
                 </Typography>
@@ -121,6 +135,16 @@ const CheckoutProofOfPayment = (props) => {
                 folderName={'Orders/' + userId + '/' + referenceNumber}
                 buttonTitle={'Upload Proof Of Payment'}
               />
+            </div>
+            <div className="flex justify-center mt-5">
+              <Button
+                onClick={() => navigateTo('/orderChat', { state: { orderReference: referenceNumber } })}
+                variant="contained"
+                color="success"
+              >
+                <HiChatBubbleLeftEllipsis />
+                <Typography sx={{marginLeft:1}} >Message us</Typography>
+              </Button>
             </div>
           </div>
         </div>

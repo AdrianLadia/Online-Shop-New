@@ -11,7 +11,7 @@ import {
   arrayRemove,
   runTransaction,
   query,
-  where
+  where,
 } from 'firebase/firestore';
 import Joi from 'joi';
 
@@ -101,7 +101,7 @@ class firestorefunctions {
     await deleteDoc(docRef);
   }
 
-  async deleteDocumentFromCollectionByFieldValue(collectionName,fieldToMatch,ValueToMatch) {
+  async deleteDocumentFromCollectionByFieldValue(collectionName, fieldToMatch, ValueToMatch) {
     const collectionReference = collection(this.db, collectionName);
     const q = query(collectionReference, where(fieldToMatch, '==', ValueToMatch));
     const querySnapshot = await getDocs(q);
@@ -396,6 +396,37 @@ class firestorefunctions {
       console.log('Transaction successfully committed!');
     } catch (e) {
       console.log('Transaction failed: ', e);
+    }
+  }
+
+  async updateOrderMessagesAsReadForUser(reference) {
+    console.log(reference)
+    try {
+      await runTransaction(this.db, async (transaction) => {
+        // READ ORDER MESSAGES
+        const orderMessageRef = doc(this.db, 'ordersMessages' + '/', reference);
+        const docSnap = await transaction.get(orderMessageRef);
+        const data = docSnap.data();
+        // GET MESSAGES
+        const messages = data.messages;
+        // GET USERREADALL
+        const userReadAll = data.userReadAll;
+        // Update ALL admin messages to true
+        messages.map((message) => {
+          if (message.userRole === 'admin' || message.userRole === 'superAdmin') {
+            if (message.read === false) {
+              message.read = true;
+            }
+          }
+        });
+
+        transaction.update(orderMessageRef, { messages: messages });
+
+        // Update userReadAll to true
+        transaction.update(orderMessageRef, { adminReadAll: true });
+      });
+    } catch (e) {
+      console.log('Transaction Failed', e);
     }
   }
 }

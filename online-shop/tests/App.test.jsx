@@ -381,14 +381,51 @@ describe('Data Manipulation', async () => {
     });
     expect(allCategories).toEqual(expected);
   });
-  test('getCheckoutPageTableDate & createPayMayaCheckoutItems', async () => {
+  test.only('getCheckoutPageTableDate & createPayMayaCheckoutItems', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb16Price * 12) / 1.12;
+    const vat = ppb16Price * 12 - itemsTotal;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+    });
+
+    const orders = await firestore.readUserById(userTestId)
+    await delay(100);
+    const order = orders.orders[0];
+    const cart = order.cart;
+    const cartItemsPrice = order.cartItemsPrice
+
     const products = await firestore.readAllProducts();
     await delay(100);
 
-    const cart = user.cart;
-    const data = datamanipulation.getCheckoutPageTableDate(products, cart);
+    const data = datamanipulation.getCheckoutPageTableDate(products, cart,cartItemsPrice);
     const rows = data[0];
-  }, 10000);
+
+    expect(rows.length).toBe(1);
+
+  }, 10000000);
 
   test('getAllProductsInCategory', async () => {
     const products = await firestore.readAllProducts();
@@ -1898,7 +1935,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe.only('updateOrderProofOfPaymentLink', () => {
+describe('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });

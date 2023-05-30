@@ -459,7 +459,7 @@ class dataManipulation {
     return categoryWithFavorites;
   }
 
-  getCheckoutPageTableDate(product_list, cart) {
+  getCheckoutPageTableDate(product_list, cart,cartItemPrice) {
     const productListSchema = Joi.array();
     const productListCart = Joi.object();
 
@@ -482,16 +482,30 @@ class dataManipulation {
     Object.entries(cart).map(([key, quantity]) => {
       product_list.map((product) => {
         if (product.itemId === key) {
+          console.log(product)
+          let productPrice
+          console.log(cartItemPrice)
+          if (cartItemPrice === null) {
+            productPrice = product.price
+          }
+          else {
+            productPrice = cartItemPrice[key]
+          }
+
+
           total_weight_non_state += product.weight * quantity;
-          total_non_state += product.price * quantity;
+          total_non_state += productPrice * quantity;
+
+
+          console.log(total_non_state)
           
           let row = createData(
             product.imageLinks[0],
             product.itemName,
             quantity.toLocaleString(),
             (product.pieces * quantity).toLocaleString(),
-            parseInt(product.price).toLocaleString(),
-            (product.price * quantity).toLocaleString(),
+            parseInt(productPrice).toLocaleString(),
+            (productPrice * quantity).toLocaleString(),
             total_weight_non_state,
             product.itemId
           );

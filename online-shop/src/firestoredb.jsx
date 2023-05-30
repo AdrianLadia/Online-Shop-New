@@ -359,7 +359,7 @@ class firestoredb extends firestorefunctions {
   async updateOrderMessageMarkAsOwnerReadAll(reference, data) {
     this.updateDocumentFromCollection('ordersMessages', reference, { ownerReadAll: data });
   }
-
+  
   async readPayments() {
     return await this.readAllDataFromCollection('Payments');
   }

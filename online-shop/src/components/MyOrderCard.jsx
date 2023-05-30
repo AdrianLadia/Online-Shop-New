@@ -77,8 +77,11 @@ function MyOrderCard(props) {
   }
 
   function onMessageClick() {
+    console.log("clicked")
+    firestore.updateOrderMessagesAsReadForUser(order.reference)
     setSelectedChatOrderId(order.reference)
     navigateTo("/orderChat",{state:{orderReference:order.reference}})
+
   };
 
   function handleCancel(){
@@ -98,6 +101,8 @@ function MyOrderCard(props) {
         price = s.grandTotal;
       }
     });
+
+    console.log(userdata)
 
     navigateTo(
       '/AccountStatementPayment',
