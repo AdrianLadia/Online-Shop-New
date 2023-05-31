@@ -140,7 +140,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
       eMail: Joi.string().required(),
-      sendEmail : Joi.boolean().required(),
+      sendEmail: Joi.boolean().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
@@ -169,8 +169,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       }
     }
   }
-
-  
 
   async readUserRole(userId) {
     const userIdSchema = Joi.string();
@@ -338,7 +336,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
       proofOfPaymentLink: Joi.string(),
-    })
+    });
 
     const { error } = dataSchema.validate(data);
 
@@ -369,9 +367,23 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async updateOrderProofOfPaymentLink(orderReference, userId, proofOfPaymentLink,userName,paymentMethod,forTesting = false) {
+  async updateOrderProofOfPaymentLink(
+    orderReference,
+    userId,
+    proofOfPaymentLink,
+    userName,
+    paymentMethod,
+    forTesting = false
+  ) {
     try {
-      const json = { orderReference: orderReference, userId: userId, proofOfPaymentLink: proofOfPaymentLink,userName:userName,paymentMethod:paymentMethod,forTesting:forTesting};
+      const json = {
+        orderReference: orderReference,
+        userId: userId,
+        proofOfPaymentLink: proofOfPaymentLink,
+        userName: userName,
+        paymentMethod: paymentMethod,
+        forTesting: forTesting,
+      };
       // const encodedData = encodeURIComponent(JSON.stringify({ orderReference,userId}));
       const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, json);
       // const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}&proofOfPaymentLink=${proofOfPaymentLink}`)
@@ -452,15 +464,15 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const resData = res.data;
       alert('Order cancelled successfully');
       return resData;
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       alert('Error cancelling order.');
       return { status: 'error' };
     }
-
   }
 
+  // async (data) {}
+  
 }
 
 export default cloudFirestoreDb;

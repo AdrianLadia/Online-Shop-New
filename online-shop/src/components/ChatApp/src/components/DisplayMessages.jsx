@@ -28,7 +28,6 @@ const DisplayMessages = (props) => {
 
   return (
     <div className="w-full bg-green4 border-color60 rounded-xl border-x-4 h-5/6">
-  
       <div className="h-full ">
         <div ref={messagesRef} className="flex flex-col w-full h-full overflow-auto scrollbar-thumb-gray-500 scrollbar-track-gray-200 scrollbar-thin">
           {messages

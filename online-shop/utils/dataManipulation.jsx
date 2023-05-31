@@ -10,8 +10,6 @@ import AppConfig from '../src/AppConfig';
 class dataManipulation {
   constructor() {}
 
-  
-
   convertDateToNanoSecondsAndSeconds(dateObject) {
     const date = new Date(dateObject);
     const nanoseconds = (date.getTime() % 1000) * 1000000;
@@ -92,15 +90,13 @@ class dataManipulation {
       });
     }
 
-
     data.sort((a, b) => {
-      
       if (forTesting) {
         return b.date - a.date;
       } else {
-        const dateA = new Date(a.date._seconds)
-        const dateB = new Date(b.date._seconds)
-        return dateB - dateA
+        const dateA = new Date(a.date._seconds);
+        const dateB = new Date(b.date._seconds);
+        return dateB - dateA;
       }
     });
 
@@ -138,7 +134,6 @@ class dataManipulation {
 
     const { error } = dataToUseSchema.validate(dataToUse);
     if (error) {
-
       throw new Error(error);
     }
 
@@ -156,14 +151,14 @@ class dataManipulation {
         const parsed = parseISO(item[0]);
         date = format(parsed, 'M/d/yyyy');
       } else {
-        date =  this.convertDateTimeStampToDateString(item[0]);
+        date = this.convertDateTimeStampToDateString(item[0]);
       }
 
       rowsdata.push(createData(date, item[1], item[2], item[3], item[4], item[5]));
     });
     return rowsdata;
   }
-  
+
   getOrderFromReference(referencenumber, orders, forTesting = false) {
     const referenceNumberSchema = Joi.string().required();
     const { error } = referenceNumberSchema.validate(referencenumber);
@@ -437,12 +432,12 @@ class dataManipulation {
     return dataFilteredByPaid;
   }
 
-  getCategoryList(categories,hiddenCategories = null) {
+  getCategoryList(categories, hiddenCategories = null) {
     const c = [];
     categories.map((category) => {
       if (hiddenCategories !== null) {
         if (hiddenCategories.includes(category.category)) {
-          return
+          return;
         }
       }
       c.push(category.category);
@@ -459,7 +454,7 @@ class dataManipulation {
     return categoryWithFavorites;
   }
 
-  getCheckoutPageTableDate(product_list, cart,cartItemPrice) {
+  getCheckoutPageTableDate(product_list, cart, cartItemPrice) {
     const productListSchema = Joi.array();
     const productListCart = Joi.object();
 
@@ -470,35 +465,31 @@ class dataManipulation {
       throw new Error(error1);
     }
 
-    function createData(itemimage, itemName, itemquantity,pieces, itemprice, itemtotal, weighttotal,itemId) {
-      return { itemimage, itemName, itemquantity,pieces, itemprice, itemtotal, weighttotal,itemId };
+    function createData(itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId) {
+      return { itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId };
     }
 
     let rows_non_state = [];
     let total_non_state = 0;
     let total_weight_non_state = 0;
 
-
     Object.entries(cart).map(([key, quantity]) => {
       product_list.map((product) => {
         if (product.itemId === key) {
-          console.log(product)
-          let productPrice
-          console.log(cartItemPrice)
+          console.log(product);
+          let productPrice;
+          console.log(cartItemPrice);
           if (cartItemPrice === null) {
-            productPrice = product.price
+            productPrice = product.price;
+          } else {
+            productPrice = cartItemPrice[key];
           }
-          else {
-            productPrice = cartItemPrice[key]
-          }
-
 
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
 
+          console.log(total_non_state);
 
-          console.log(total_non_state)
-          
           let row = createData(
             product.imageLinks[0],
             product.itemName,
@@ -509,7 +500,7 @@ class dataManipulation {
             total_weight_non_state,
             product.itemId
           );
-        
+
           rows_non_state.push(row);
         }
       });
@@ -531,7 +522,6 @@ class dataManipulation {
 
     return toReturn;
   }
-
 
   getAllProductsInCategory(products, categorySelected, wholesale, retail, favorites) {
     // const productsSchema = Joi.array()
@@ -577,17 +567,28 @@ class dataManipulation {
     }
 
     let selected_products_by_category = [];
-    let count = 0
+    let wholesale_count = 0;
+    let retail_count = 0;
+
     for (let i = 0; i < products.length; i++) {
       if (products[i].category === categorySelected) {
-          count += 1
-          if (count == 1) {
-            products[i]['forTutorial'] = true
+        if (products[i].unit === 'Pack') {
+          retail_count += 1;
+          if (retail_count == 1) {
+            products[i]['forTutorial'] = true;
+          } else {
+            products[i]['forTutorial'] = false;
           }
-          else {
-            products[i]['forTutorial'] = false
+        }
+        else{
+          wholesale_count += 1;
+          if (wholesale_count == 1) {
+            products[i]['forTutorial'] = true;
+          } else {
+            products[i]['forTutorial'] = false;
           }
-          selected_products_by_category.push(products[i]);
+        }
+        selected_products_by_category.push(products[i]);
       }
     }
 
@@ -606,7 +607,7 @@ class dataManipulation {
           selected_products.push(product);
         }
       });
-    } 
+    }
 
     selected_products.sort((a, b) => {
       if (a.imageLinks.length === 0 && b.imageLinks.length > 0) {
@@ -617,8 +618,6 @@ class dataManipulation {
       }
       return 0; // a and b have the same condition, maintain their original order
     });
-
-
 
     const selectedProductsSchema = Joi.array();
 
@@ -637,90 +636,79 @@ class dataManipulation {
       if (error) {
         throw new Error(error);
       }
-  
+
       let foundComma = false;
-      let newString = ''
-  
+      let newString = '';
+
       for (let i = 0; i < address.length; i++) {
-  
-        const string = address[i]
+        const string = address[i];
         if (string == ',') {
           foundComma = true;
-          continue
+          continue;
         }
-  
-        if (foundComma) { 
-          newString += string
+
+        if (foundComma) {
+          newString += string;
         }
       }
-      return newString
+      return newString;
     }
   }
 
-    createPayMayaCheckoutItems(itemRows) {
+  createPayMayaCheckoutItems(itemRows) {
+    const itemRowsSchema = Joi.array().items(
+      Joi.object({
+        itemId: Joi.string().required(),
+        itemName: Joi.string().required(),
+        itemimage: Joi.any(),
+        itemprice: Joi.string().required(),
+        itemquantity: Joi.string().required(),
+        itemtotal: Joi.string().required(),
+        weighttotal: Joi.number().required(),
+      }).unknown(false)
+    );
 
-      const itemRowsSchema = Joi.array().items(
-        Joi.object({
-          itemId : Joi.string().required(),
-          itemName : Joi.string().required(),
-          itemimage : Joi.any(),
-          itemprice : Joi.string().required(),
-          itemquantity : Joi.string().required(),
-          itemtotal : Joi.string().required(),
-          weighttotal : Joi.number().required()
-        }).unknown(false)
-      )
+    const { error } = itemRowsSchema.validate(itemRows);
 
-      const { error } = itemRowsSchema.validate(itemRows);
-
-      if (error) {
-        throw new Error(error);
-      }
-    
-
-      const toReturn = []
-
-      itemRows.map((item) => {
-        const itemId = item.itemId
-        const itemName = item.itemName
-        const itemPrice = parseFloat(item.itemprice)
-        const itemQuantity = parseInt(item.itemquantity)
-        const itemTotal = parseFloat(item.itemtotal)
-
-
-
-      });
-
+    if (error) {
+      throw new Error(error);
     }
 
-    convertDateTimeStampToDateString(timestamp) {
-      let date
-      if (timestamp._seconds === undefined) {
-          date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-      }
-      if (timestamp.seconds === undefined) {
-          date = new Date(timestamp._seconds * 1000 + timestamp._nanoseconds / 1000000);
-      }
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+    const toReturn = [];
 
-      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      return formattedDate
+    itemRows.map((item) => {
+      const itemId = item.itemId;
+      const itemName = item.itemName;
+      const itemPrice = parseFloat(item.itemprice);
+      const itemQuantity = parseInt(item.itemquantity);
+      const itemTotal = parseFloat(item.itemtotal);
+    });
   }
 
-  getSecondsDifferenceBetweentTwoDates(expiryDate,dateNow) {
+  convertDateTimeStampToDateString(timestamp) {
+    let date;
+    if (timestamp._seconds === undefined) {
+      date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+    }
+    if (timestamp.seconds === undefined) {
+      date = new Date(timestamp._seconds * 1000 + timestamp._nanoseconds / 1000000);
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return formattedDate;
+  }
+
+  getSecondsDifferenceBetweentTwoDates(expiryDate, dateNow) {
     const differenceInMilliseconds = dateNow - expiryDate;
     const differenceInSeconds = differenceInMilliseconds / 1000;
-    return differenceInSeconds
+    return differenceInSeconds;
   }
- 
-
-  
-
 
   // convertTimestampToFirebaseTimestamp(timestamp) {
   //   const date = new Date(timestamp.seconds * 1000);

@@ -75,11 +75,12 @@ const ProductCardModal = (props) => {
   const { height, width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
-  const {userdata, firestore, favoriteitems, setFavoriteItems} = React.useContext(AppContext);
+  const {userdata, firestore, favoriteitems, setFavoriteItems,userId} = React.useContext(AppContext);
   const [onInitialize, setOninitialize] = useState(true);
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const date = new Date();
-  
+
+  const itemId = props.product.itemId;
   const size = props.product.size;
   const color = props.product.color;
   const material = props.product.material;
@@ -102,7 +103,11 @@ const ProductCardModal = (props) => {
     unit : unit
   };
 
+
   function onHeartClick() {
+
+    if (userId === null) return alert("Login to add items to favorites")
+
     if (heart) {
       setHeart(!heart);
       setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemId))
@@ -119,7 +124,10 @@ const ProductCardModal = (props) => {
     if (favoriteitems.includes(props.product.itemId)) {
       setHeart(true);
     }
-  },[favoriteitems])
+    else {
+      setHeart(false);
+    }
+  },[props.product])
 
   function responsiveimagemodal() {
     if (width >= 1024) {
@@ -175,6 +183,7 @@ const ProductCardModal = (props) => {
               {/* HEART */}
               {heart ? (
                 <AiFillHeart
+                  id={itemId}
                   size={40}
                   onClick={onHeartClick}
                   className=" cursor-pointer text-red-500 "

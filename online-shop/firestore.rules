@@ -25,8 +25,8 @@ service cloud.firestore {
 
     match /Products/{productId}/{product=**} {
       allow read: if true
-      allow create: if isAdminOrSuperAdmin();
-      allow update: if isAdminOrSuperAdmin();
+      allow create: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
+      allow update: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
       allow delete: if isSuperAdmin();
     }
 

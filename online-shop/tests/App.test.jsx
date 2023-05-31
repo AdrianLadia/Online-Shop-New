@@ -287,7 +287,14 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
     });
 
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink3','Adrian Ladia','Maya',true)
+    await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'testlink3',
+      'Adrian Ladia',
+      'Maya',
+      true
+    );
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
@@ -320,7 +327,14 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
     });
 
-    await cloudfirestore.updateOrderProofOfPaymentLink('testref1234',userTestId,'testlink2','Adrian Ladia','Maya',true)
+    await cloudfirestore.updateOrderProofOfPaymentLink(
+      'testref1234',
+      userTestId,
+      'testlink2',
+      'Adrian Ladia',
+      'Maya',
+      true
+    );
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
@@ -381,7 +395,7 @@ describe('Data Manipulation', async () => {
     });
     expect(allCategories).toEqual(expected);
   });
-  test.only('getCheckoutPageTableDate & createPayMayaCheckoutItems', async () => {
+  test('getCheckoutPageTableDate & createPayMayaCheckoutItems', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -411,20 +425,19 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
     });
 
-    const orders = await firestore.readUserById(userTestId)
+    const orders = await firestore.readUserById(userTestId);
     await delay(100);
     const order = orders.orders[0];
     const cart = order.cart;
-    const cartItemsPrice = order.cartItemsPrice
+    const cartItemsPrice = order.cartItemsPrice;
 
     const products = await firestore.readAllProducts();
     await delay(100);
 
-    const data = datamanipulation.getCheckoutPageTableDate(products, cart,cartItemsPrice);
+    const data = datamanipulation.getCheckoutPageTableDate(products, cart, cartItemsPrice);
     const rows = data[0];
 
     expect(rows.length).toBe(1);
-
   }, 10000000);
 
   test('getAllProductsInCategory', async () => {
@@ -954,8 +967,13 @@ describe('cloudfirestoredb', async () => {
     await delay(200);
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
-      'testref1234',userTestId,'testlink3','userName','Maya',true
-    )
+      'testref1234',
+      userTestId,
+      'testlink3',
+      'userName',
+      'Maya',
+      true
+    );
     await delay(200);
 
     const data = {
@@ -968,17 +986,16 @@ describe('cloudfirestoredb', async () => {
 
     await cloudfirestore.transactionCreatePayment(data);
     await delay(200);
-    const payments2 = await firestore.readAllDataFromCollection('Payments')
-    let found2
-    payments2.map((payment)=>{
-      if (payment.proofOfPaymentLink === 'testlink3'){
-        expect(payment.status).toEqual('approved')
-        found2 = true
+    const payments2 = await firestore.readAllDataFromCollection('Payments');
+    let found2;
+    payments2.map((payment) => {
+      if (payment.proofOfPaymentLink === 'testlink3') {
+        expect(payment.status).toEqual('approved');
+        found2 = true;
       }
-    })
+    });
 
-    expect(found2).toEqual(true)
-
+    expect(found2).toEqual(true);
 
     await delay(100);
 
@@ -1762,7 +1779,7 @@ describe('cloudfirestoredb', async () => {
     userRoles.map((userRole) => {
       expect(roles.includes(userRole)).toEqual(true);
     });
-  },10000);
+  }, 10000);
 
   test('deleteProduct', async () => {
     await firestore.deleteProduct('test');
@@ -1969,14 +1986,14 @@ describe('updateOrderProofOfPaymentLink', () => {
     await delay(300);
   }, 100000);
 
-  
   test('updateOrderProofOfPaymentLink', async () => {
     id1 = await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
       userTestId,
       'https://testlink.com',
       'TEST USER',
-      'BDO',true
+      'BDO',
+      true
     );
     await delay(300);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
@@ -1993,16 +2010,16 @@ describe('updateOrderProofOfPaymentLink', () => {
 
   test('Check if proof of payment is added to payments & orderMessages collection message field', async () => {
     const data = await firestore.readSelectedDataFromCollection('Payments', id1);
-    const orderReference = data.orderReference
+    const orderReference = data.orderReference;
     await delay(300);
     expect(data.proofOfPaymentLink).toEqual('https://testlink.com');
     expect(data.status).toEqual('pending');
 
-    const data2 = await firestore.readSelectedDataFromCollection('ordersMessages',orderReference)
-    const messages = data2.messages
+    const data2 = await firestore.readSelectedDataFromCollection('ordersMessages', orderReference);
+    const messages = data2.messages;
     messages.forEach((m) => {
-      expect(m.image).not.toEqual('')
-    })
+      expect(m.image).not.toEqual('');
+    });
   });
 
   test('add another proofOfPaymentLink', async () => {
@@ -2011,7 +2028,8 @@ describe('updateOrderProofOfPaymentLink', () => {
       userTestId,
       'https://testlink2.com',
       'TEST USER',
-      'BDO',true
+      'BDO',
+      true
     );
     await delay(300);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
@@ -2103,7 +2121,7 @@ describe('afterCheckoutRedirectLogic', () => {
           addressText: 'AddressText',
           userId: 'userId',
           itemsTotal: 1000,
-          date: new Date()
+          date: new Date(),
         },
         true
       );
@@ -2182,7 +2200,8 @@ describe('updatePaymentStatus', () => {
       userTestId,
       'https://testlink.com',
       'TEST USER',
-      'BDO',true
+      'BDO',
+      true
     );
     await delay(300);
   });
@@ -2440,21 +2459,24 @@ describe('deleteDeclinedPayments', () => {
       userTestId,
       'https://testlink.com',
       'TEST USER',
-      'BDO',true
+      'BDO',
+      true
     );
     await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
       userTestId,
       'https://testlink2.com',
       'TEST USER',
-      'BDO',true
+      'BDO',
+      true
     );
     await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
       userTestId,
       'https://testlink3.com',
       'TEST USER',
-      'BDO',true
+      'BDO',
+      true
     );
   });
 
@@ -2545,4 +2567,55 @@ describe('testCancelOrder', () => {
 
     expect(stocksAvailableNew - stocksAvailableOld).toEqual(12);
   });
+
+  
 }, 100000);
+
+
+describe('updateProductClicks', async () => {
+  test('Create test product', async () => {
+    await firestore.createProduct(
+      {
+        itemId: 'test',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 500,
+        description: 'none',
+        weight: 10,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+      },
+      'test'
+    );
+
+  });
+  test('invoking function', async () => {
+    await delay(200)
+    await firestore.updateProductClicks('test', userTestId);
+    await delay(200)
+    const products = await firestore.readAllDataFromCollection('Products');
+  
+    const testProduct = products.filter((product) => product.itemId == 'test')[0];
+    expect(testProduct.clicks.length).toEqual(1);
+  });
+  test('deleting test product', async () => {
+    await firestore.deleteDocumentFromCollection('Products', 'test');
+  });
+
+  // await cloudfirestore.updateProductClicks('PPB#16-RET');
+});

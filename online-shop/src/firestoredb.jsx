@@ -150,7 +150,6 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
 
-
     retryApi(async () => await super.createDocument(data, id, 'Users'));
   }
 
@@ -359,14 +358,13 @@ class firestoredb extends firestorefunctions {
   async updateOrderMessageMarkAsOwnerReadAll(reference, data) {
     this.updateDocumentFromCollection('ordersMessages', reference, { ownerReadAll: data });
   }
-  
+
   async readPayments() {
     return await this.readAllDataFromCollection('Payments');
   }
   // NOT USING THIS IF IN THE TRANSACTION CREATE PAYMENT CLOUD FIRESTORE WILL BE COMBINED WITH THIS FUNCTION
 
   async updatePaymentStatusDeclined(reference) {
-
     const referenceSchema = Joi.string().required();
 
     const { error2 } = referenceSchema.validate(reference);
@@ -384,7 +382,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteDeclinedPayment(reference, userId, link) {
-    
     await runTransaction(this.db, async (transaction) => {
       console.log('deleteDeclinedPayment');
       const userRef = doc(this.db, 'Users/', userId);
@@ -396,7 +393,7 @@ class firestoredb extends firestorefunctions {
         if (orderReference == reference) {
           const proofOfPaymentLinks = order.proofOfPaymentLink;
           const data = proofOfPaymentLinks.filter((item) => item !== link);
-          order.proofOfPaymentLink = data
+          order.proofOfPaymentLink = data;
         }
       });
 
@@ -422,11 +419,11 @@ class firestoredb extends firestorefunctions {
   // async addCancelledProductsToStocksAvailable(itemName, number){
   //   const productData = await this.readSelectedProduct(itemName);
   //   const productDoc = productData
-  //   let stocksAvailable = productDoc.stocksAvailable + number[itemName];      
+  //   let stocksAvailable = productDoc.stocksAvailable + number[itemName];
 
   //   this.updateDocumentFromCollection('Products', itemName, {stocksAvailable:stocksAvailable})
   // }
-    
+
   // async deleteCancelledOrder(userId, reference){
   //   const userData = await this.readUserById(userId);
   //   const userDoc = userData;
@@ -452,24 +449,39 @@ class firestoredb extends firestorefunctions {
   //   alert(reference + " is Cancelled")
   // }
 
-  async addProductInteraction(userId, itemName, timeStamp){
+  async addProductInteraction(userId, itemName, timeStamp) {
     const productInteraction = {
       itemName: itemName,
       dateTime: timeStamp,
-    }
-    this.addDocumentArrayFromCollection("Users", userId, productInteraction, "productInteraction")
+    };
+    this.addDocumentArrayFromCollection('Users', userId, productInteraction, 'productInteraction');
   }
 
-  async sendProofOfPaymentToOrdersMessages(reference, url, dateTime, userId, userRole){
+  async sendProofOfPaymentToOrdersMessages(reference, url, dateTime, userId, userRole) {
     const messages = {
       dateTime: dateTime,
       image: url,
-      message: "",
+      message: '',
       read: false,
       userId: userId,
       userRole: userRole,
-    }
-    this.addDocumentArrayFromCollection("ordersMessages", reference, messages, "messages")
+    };
+    this.addDocumentArrayFromCollection('ordersMessages', reference, messages, 'messages');
+  }
+
+  async updateProductClicks(productid, userId = null) {
+    // const docRef = doc(this.db, 'productClicks' + '/', productid);
+    // const docSnapshot = await docRef.get();
+    // if (docSnapshot.exists()) {
+    // } else {
+    //   await super.createDocument({ productid: productid, clicks: [] }, productid, 'productClicks');
+    // }
+
+    await super.addDocumentArrayFromCollection(
+      'Products',
+      productid,
+      { date: new Date(), userId: userId },'clicks'
+    );
   }
 }
 
