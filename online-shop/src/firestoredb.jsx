@@ -470,18 +470,11 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProductClicks(productid, userId = null) {
-    // const docRef = doc(this.db, 'productClicks' + '/', productid);
-    // const docSnapshot = await docRef.get();
-    // if (docSnapshot.exists()) {
-    // } else {
-    //   await super.createDocument({ productid: productid, clicks: [] }, productid, 'productClicks');
-    // }
+    await super.addDocumentArrayFromCollection('Products', productid, { date: new Date(), userId: userId }, 'clicks');
+  }
 
-    await super.addDocumentArrayFromCollection(
-      'Products',
-      productid,
-      { date: new Date(), userId: userId },'clicks'
-    );
+  async readAllPaymentProviders() {
+    return await super.readAllDataFromCollection('PaymentProviders');
   }
 }
 

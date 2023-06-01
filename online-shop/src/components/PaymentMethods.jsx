@@ -3,11 +3,22 @@ import { useState, useContext } from "react";
 import PaymentCheckoutCard from "./PaymentCheckoutCard";
 import CheckoutContext from "../context/CheckoutContext";
 import useWindowDimensions from "./UseWindowDimensions";
+import AppContext from "../AppContext"
 
 function PaymentMethods() {
 
   const { bdoselected, setBdoselected, unionbankselected, setUnionbankselected, gcashselected, setGcashselected, mayaselected, setMayaselected, visaselected, setVisaselected, mastercardselected, setMastercardselected, bitcoinselected, setBitcoinselected, ethereumselected, setEthereumselected, solanaselected, setSolanaselected } = useContext(CheckoutContext);
   const { width } = useWindowDimensions();
+  const {firestore} = useContext(AppContext)
+  const [paymentMethods,setPaymentMethods] = useState([])
+
+  useEffect(() => {
+     firestore.readAllPaymentProviders().then((providers) => {
+      console.log(providers)
+      setPaymentMethods(providers)
+     })
+  },[])
+
 
   useEffect(() => {
     if (bdoselected === true) {
