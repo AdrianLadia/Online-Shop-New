@@ -31,6 +31,8 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
     secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
   }
 
+  console.log(phoneNumber)
+
   const req = {
     "totalAmount": {
          "value": parseFloat(totalPrice),
@@ -39,7 +41,7 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
     "buyer": {
          "contact": {
               "email": eMail,
-              "phone" : phoneNumber
+              ...(phoneNumber && { "phone": phoneNumber })
          },
          "shippingAddress": {
               "line1": customerAddress,

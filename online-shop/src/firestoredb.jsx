@@ -205,12 +205,13 @@ class firestoredb extends firestorefunctions {
     return user.contactPerson;
   }
 
-  async deleteUserContactPersons(userid, name, phonenumber) {
+  async deleteUserContactPersons(userid, name, phoneNumber) {
+    console.log(userid, name, phoneNumber);
     await retryApi(async () => {
       await super.deleteDocumentFromCollectionArray(
         'Users',
         userid,
-        { name: name, phonenumber: phonenumber },
+        { name: name, phoneNumber: phoneNumber },
         'contactPerson'
       );
     });

@@ -2619,3 +2619,10 @@ describe('updateProductClicks', async () => {
 
   // await cloudfirestore.updateProductClicks('PPB#16-RET');
 });
+
+describe('readPaymentProviders', async () => {
+  test('invoking function', async () => {
+    const paymentProviders = await firestore.readAllPaymentProviders();
+    expect(paymentProviders.length).toBeGreaterThan(0);
+  });
+} );

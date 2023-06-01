@@ -107,6 +107,7 @@ function MyOrderCard(props) {
     navigateTo(
       '/AccountStatementPayment',
       {state : {
+        
         firstName: userdata.firstName,
         lastName: userdata.lastName,
         fullname: userdata.name,

@@ -87,6 +87,22 @@ function App() {
   const [updateCartInfo,setUpdateCartInfo]  = useState(false)
   const [isAffiliate, setIsAffiliate] = useState(false)
   const [isAppleDevice, setIsAppleDevice] = useState(false)
+  const [cardSelected,setCardSelected] = useState(null)
+  const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
+  const [changeCard, setChangeCard] = useState(false);
+
+  useEffect(() => {
+    let paymentState = {}
+    firestore.readAllPaymentProviders().then((providers) => {
+      providers.map((provider) => {
+        if (provider.enabled === true) {
+          paymentState[provider.id] = false 
+        }
+      })
+    });
+    setCardSelected(paymentState)
+  }, []);
+
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -268,6 +284,12 @@ function App() {
   }, [goToCheckoutPage]);
 
   const appContextValue = {
+    cardSelected : cardSelected,
+    setCardSelected : setCardSelected,
+    changeCard : changeCard,
+    setChangeCard : setChangeCard,
+    paymentMethodSelected : paymentMethodSelected,
+    setPaymentMethodSelected : setPaymentMethodSelected,
     categories: categories,
     setCategories: setCategories,
     firebaseApp: app,

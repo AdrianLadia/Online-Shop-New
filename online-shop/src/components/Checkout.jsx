@@ -1,19 +1,12 @@
-import { React, useState } from 'react';
+import { React, useState, useContext, useEffect } from 'react';
 import CheckoutPage from './CheckoutPage';
 import CheckoutProofOfPayment from './CheckoutProofOfPayment';
 import { Link, Routes, Route } from 'react-router-dom';
 import CheckoutContext from '../context/CheckoutContext';
+import AppContext from '../AppContext';
 
 const Checkout = () => {
-  const [bdoselected, setBdoselected] = useState(false);
-  const [unionbankselected, setUnionbankselected] = useState(false);
-  const [gcashselected, setGcashselected] = useState(false);
-  const [mayaselected, setMayaselected] = useState(false);
-  const [visaselected, setVisaselected] = useState(false);
-  const [mastercardselected, setMastercardselected] = useState(false);
-  const [bitcoinselected, setBitcoinselected] = useState(false);
-  const [ethereumselected, setEthereumselected] = useState(false);
-  const [solanaselected, setSolanaselected] = useState(false);
+  const { firestore } = useContext(AppContext);
   const [rows, setRows] = useState(null);
   const [total, setTotal] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
@@ -22,26 +15,8 @@ const Checkout = () => {
   const [totalWeight, setTotalWeight] = useState(0);
   const [area, setArea] = useState([]);
   const [referenceNumber, setReferenceNumber] = useState('');
-
+  
   const checkoutContextValues = {
-    bdoselected,
-    setBdoselected,
-    unionbankselected,
-    setUnionbankselected,
-    gcashselected,
-    setGcashselected,
-    mayaselected,
-    setMayaselected,
-    visaselected,
-    setVisaselected,
-    mastercardselected,
-    setMastercardselected,
-    bitcoinselected,
-    setBitcoinselected,
-    ethereumselected,
-    setEthereumselected,
-    solanaselected,
-    setSolanaselected,
     rows,
     setRows,
     total,

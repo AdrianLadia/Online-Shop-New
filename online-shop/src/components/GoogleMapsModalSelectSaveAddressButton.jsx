@@ -2,11 +2,14 @@ import React,{useEffect, useState} from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import AppContext from '../AppContext';
 import Geocode from 'react-geocode';
+import { set } from 'date-fns';
 
 const GoogleMapsModalSelectSaveAddressButton = (props) => {
   const savedlongitude = props.savedlongitude;
   const savedlatitude = props.savedlatitude;
   const address = props.address;
+  const deliveryAddresses = props.deliveryAddresses;
+  const setDeliveryAddresses = props.setDeliveryAddresses;
 
   const { firestore, userId, refreshUser, setRefreshUser } = React.useContext(AppContext);
   const [realAddress, setRealAddress] = useState(null);
@@ -20,8 +23,19 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
   }
 
   function handleDeleteClick() {
-    firestore.deleteAddress(userId, props.savedlatitude, props.savedlongitude, address);
     setRefreshUser(!refreshUser);
+    
+    const filtered = deliveryAddresses.filter((address) => {
+      if (address.latitude != savedlatitude && address.longitude != savedlongitude) {
+        return true
+      }
+    })
+    
+    firestore.deleteAddress(userId, savedlatitude, savedlongitude, address)
+    setDeliveryAddresses(filtered)
+
+    console.log(filtered)
+
   }
 
   useEffect(()=>{
@@ -41,7 +55,7 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
       <div className="flex flex-row w-full justify-center mt-5">
           <button id='savedAddressButton' onClick={handleAddressClick} className=" bg-blue1 hover:bg-color10b text-lg text-white p-3 rounded-lg w-full mr-3">
             {' '}
-            {realAddress}{' '}
+            {address}{' '}
           </button>
           <button onClick={handleDeleteClick} className="border-red-400 text-red-400 hover:bg-red-50 border-2 p-3 rounded-lg w-1/5">
           <div className="flex justify-center">

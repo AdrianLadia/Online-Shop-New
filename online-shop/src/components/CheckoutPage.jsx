@@ -22,7 +22,9 @@ import CheckoutContext from '../context/CheckoutContext';
 import { useNavigate } from 'react-router-dom';
 import dataManipulation from '../../utils/dataManipulation';
 import CircularProgress from '@mui/material/CircularProgress';
-import ClipLoader from "react-spinners/ClipLoader";
+import ClipLoader from 'react-spinners/ClipLoader';
+import Geocode from 'react-geocode';
+import Button from '@mui/material/Button';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -31,24 +33,6 @@ const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const CheckoutPage = () => {
   const {
-    bdoselected,
-    setBdoselected,
-    unionbankselected,
-    setUnionbankselected,
-    gcashselected,
-    setGcashselected,
-    mayaselected,
-    setMayaselected,
-    visaselected,
-    setVisaselected,
-    mastercardselected,
-    setMastercardselected,
-    bitcoinselected,
-    setBitcoinselected,
-    ethereumselected,
-    setEthereumselected,
-    solanaselected,
-    setSolanaselected,
     rows,
     setRows,
     total,
@@ -68,8 +52,23 @@ const CheckoutPage = () => {
   } = useContext(CheckoutContext);
 
   const datamanipulation = new dataManipulation();
-  const { userdata, firestore, cart, setCart, refreshUser, setRefreshUser, userstate, products,mayaRedirectUrl,setMayaRedirectUrl,setMayaCheckoutId } =
-    React.useContext(AppContext);
+  const {
+    userdata,
+    firestore,
+    cart,
+    setCart,
+    refreshUser,
+    setRefreshUser,
+    userstate,
+    products,
+    mayaRedirectUrl,
+    setMayaRedirectUrl,
+    setMayaCheckoutId,
+    paymentMethodSelected,
+    setPaymentMethodSelected,
+    cardSelected,
+    setCardSelected,
+  } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
 
@@ -111,11 +110,12 @@ const CheckoutPage = () => {
 
   const [mayaCheckoutItemDetails, setMayaCheckoutItemDetails] = useState(null);
   const [addressText, setAddressText] = useState('');
+  const [addressGeocodeSearch, setAddressGeocodeSearch] = useState('');
 
   const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
 
-  //Payment checker
-  const [paymentMethodSelected, setPaymentMethodSelected] = useState(false);
+  // GEO CODE
+
   // PAYMENT METHODS
 
   useEffect(() => {
@@ -136,73 +136,32 @@ const CheckoutPage = () => {
     getTableData();
   }, []);
 
-  useEffect(() => {
-    if (
-      bdoselected == false &&
-      unionbankselected == false &&
-      gcashselected == false &&
-      mayaselected == false &&
-      visaselected == false &&
-      mastercardselected == false &&
-      bitcoinselected == false &&
-      ethereumselected == false &&
-      solanaselected == false
-    ) {
-      setPaymentMethodSelected(false);
-    } else {
-      setPaymentMethodSelected(true);
-    }
-  }, [
-    bdoselected,
-    unionbankselected,
-    gcashselected,
-    mayaselected,
-    visaselected,
-    mastercardselected,
-    bitcoinselected,
-    ethereumselected,
-    solanaselected,
-    rows,
-    total,
-    grandTotal,
-    deliveryFee,
-  ]);
-
   // PAYMENT METHODS
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
       setCart({});
       console.log('success');
-      console.log(area)
-      businesscalculations.afterCheckoutRedirectLogic(
-        { bdoselected : bdoselected,
-          unionbankselected : unionbankselected,
-          gcashselected : gcashselected,
-          mayaselected : mayaselected,
-          visaselected : visaselected, 
-          mastercardselected : mastercardselected ,
-          bitcoinselected : bitcoinselected ,
-          ethereumselected : ethereumselected ,
-          solanaselected : solanaselected ,
-          referenceNumber : referenceNumber,
-          grandTotal : grandTotal,
-          deliveryFee : deliveryFee,
-          vat : vat,
-          rows : rows,
-          area : area,
-          fullName : userdata.name,
-          eMail : userdata.email,
-          phoneNumber : userdata.phoneNumber ,
-          setMayaRedirectUrl :setMayaRedirectUrl,
-          setMayaCheckoutId : setMayaCheckoutId,
-          localDeliveryAddress : localDeliveryAddress ,
-          addressText : addressText ,
-          userId : userdata.uid ,
-          navigateTo : navigateTo,
-          itemsTotal : total,
-          date : new Date(),
-        }
-      )
+      console.log(area);
+      businesscalculations.afterCheckoutRedirectLogic({
+        paymentMethodSelected: paymentMethodSelected,
+        referenceNumber: referenceNumber,
+        grandTotal: grandTotal,
+        deliveryFee: deliveryFee,
+        vat: vat,
+        rows: rows,
+        area: area,
+        fullName: userdata.name,
+        eMail: userdata.email,
+        phoneNumber: userdata.phoneNumber,
+        setMayaRedirectUrl: setMayaRedirectUrl,
+        setMayaCheckoutId: setMayaCheckoutId,
+        localDeliveryAddress: localDeliveryAddress,
+        addressText: addressText,
+        userId: userdata.uid,
+        navigateTo: navigateTo,
+        itemsTotal: total,
+        date: new Date(),
+      });
     }
 
     setPlaceOrderLoading(false);
@@ -245,8 +204,13 @@ const CheckoutPage = () => {
     let orderdata = null;
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
-
   async function onPlaceOrder() {
+    console.log(paymentMethodSelected);
+    if (paymentMethodSelected == null) {
+      alert('Please select a payment method');
+      setPlaceOrderLoading(false);
+      return;
+    }
     // Check if order has enough stocks
     setPlaceOrderLoading(true);
     const readproducts = products;
@@ -256,17 +220,12 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (paymentMethodSelected != true) {
-      alert('Please select a payment method');
-      setPlaceOrderLoading(false);
-      return;
-    }
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
       try {
         const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
-        console.log('running')
+        console.log('running');
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
@@ -287,7 +246,7 @@ const CheckoutPage = () => {
           deliveryVehicle: deliveryVehicle.name,
           needAssistance: needAssistance,
           eMail: localemail,
-          sendEmail: true
+          sendEmail: true,
         });
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
@@ -322,7 +281,6 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (!area.includes('lalamoveServiceArea') && area.length > 0) {
-      
       if (total + vat < 10000) setAllowShipping(false);
       else {
         setAllowShipping(true);
@@ -336,6 +294,20 @@ const CheckoutPage = () => {
     const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee);
     setGrandTotal(grandTotal);
   }, [total, vat, deliveryFee]);
+
+  function searchAddress() {
+    Geocode.fromAddress(addressGeocodeSearch, 'AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I', 'en', 'ph').then(
+      (response) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        setLocalLatitude(lat);
+        setLocalLongitude(lng);
+        setZoom(15)
+        setAddressGeocodeSearch('')
+
+        
+      }
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -359,30 +331,37 @@ const CheckoutPage = () => {
               </button>
             </div>
           </div>
-      
         </div>
 
-        <TextField
-            id="addressEntry"
-            label="Address"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 self-center mb-5 bg-white"
-            onChange={(event) => setLocalDeliveryAddress(event.target.value)}
-            value={localDeliveryAddress}
-          />
+        {/* <TextField
+          // disabled
+          id="googleAddress"
+          label="Google Pinpoint Address"
+          InputLabelProps={labelStyle}
+          variant="filled"
+          className=" w-11/12 self-center bg-white"
+          value={addressText}
+          // onChange={(e) => setAddressText(e.target.value)}
+        /> */}
 
+        <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+
+        <div className="flex lg:mx-14 mb-1">
+          <button onClick={searchAddress} className="p-4 bg-blue-300 rounded-lg mr-2 lg:mr-5">
+            Search
+          </button>
           <TextField
-            disabled
-            id="googleAddress"
-            label="Google Pinpoint Address"
+            // disabled
+            id="address search"
+            label="Search Address And Pinpoint In Google Maps"
             InputLabelProps={labelStyle}
             variant="filled"
             className=" w-11/12 self-center bg-white"
-            value={addressText}
+            value={addressGeocodeSearch}
+            onChange={(e) => setAddressGeocodeSearch(e.target.value)}
           />
 
-        <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+        </div>
 
         <GoogleMaps
           selectedAddress={selectedAddress}
@@ -397,7 +376,19 @@ const CheckoutPage = () => {
           setAddressText={setAddressText}
         />
 
+
+
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+
+        <TextField
+            id="addressEntry"
+            label="Address"
+            InputLabelProps={labelStyle}
+            variant="filled"
+            className=" w-11/12 self-center bg-white"
+            onChange={(event) => setLocalDeliveryAddress(event.target.value)}
+            value={localDeliveryAddress}
+          />
 
         <div className="flex flex-col self-center items-center gap-6 w-full">
           <div className="flex flex-row w-full justify-between ml-4 my-5">
@@ -658,7 +649,7 @@ const CheckoutPage = () => {
                     className="hover:bg-color10b bg-blue1 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
                     disabled={placeOrderLoading}
                   >
-                    {placeOrderLoading ? <ClipLoader size={50} color='#ffffff'/> : 'Place Order'}
+                    {placeOrderLoading ? <ClipLoader size={50} color="#ffffff" /> : 'Place Order'}
                   </button>
                 </div>
               </>

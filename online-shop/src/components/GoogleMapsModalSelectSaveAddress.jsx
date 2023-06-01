@@ -29,11 +29,14 @@ const style = {
 
 const GoogleMapsModalSelectSaveAddress = (props) => {
   const { userdata } = React.useContext(AppContext);
+  const [deliveryAddresses, setDeliveryAddresses]= React.useState(userdata ? userdata.deliveryAddress : [])
+
 
   const setLocalLatitude = props.setLocalLatitude;
   const setLocalLongitude = props.setLocalLongitude;
   const setLocalDeliveryAddress = props.setLocalDeliveryAddress;
   const setZoom = props.setZoom;
+  
 
   return (
     <div className='flex flex-col '>
@@ -62,7 +65,8 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
             
             <div className="flex flex-col justify-center mt-6">
               {userdata ? (
-                userdata.deliveryAddress.map((address, index) => {
+                deliveryAddresses.map((address, index) => {
+                  console.log(address);
                   return (
                     <GoogleMapsModalSelectSaveAddressButton
                       handleClose={props.handleClose}
@@ -73,6 +77,8 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
                       setLocalLongitude={setLocalLongitude}
                       setLocalDeliveryAddress={setLocalDeliveryAddress}
                       setZoom={setZoom}
+                      deliveryAddresses={deliveryAddresses}
+                      setDeliveryAddresses={setDeliveryAddresses}
                     ></GoogleMapsModalSelectSaveAddressButton>
                   );
                 })

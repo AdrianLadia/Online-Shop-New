@@ -24,7 +24,8 @@ const style = {
 };
 
 const GoogleMapsModalSelectContactModal = (props) => {
-  const { contactPerson } = React.useContext(AppContext);
+  const { userdata } = React.useContext(AppContext);
+  const [contactPerson, setContactPerson] = React.useState(userdata ? userdata.contactPerson : []);
 
   return (
     <div class>
@@ -58,6 +59,8 @@ const GoogleMapsModalSelectContactModal = (props) => {
                     setLocalPhoneNumber={props.setLocalPhoneNumber}
                     setLocalName={props.setLocalName}
                     handleCloseModal={props.handleClose}
+                    contactPerson={contactPerson}
+                    setContactPerson={setContactPerson}
                   />
                 );
               })}

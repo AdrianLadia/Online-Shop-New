@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext } from 'react';
+import { useContext,useState,useEffect } from 'react';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import { Button, Divider, Typography } from '@mui/material';
 import CheckoutSummary from './CheckoutSummary';
@@ -26,9 +26,7 @@ const CheckoutProofOfPayment = (props) => {
     vat,
     rows,
     area,
-    bdoselected,
-    unionbankselected,
-    gcashselected,
+    paymentMethodSelected,
     date,
   } = location.state;
   const orderDateObject = new Date(date);
@@ -36,6 +34,14 @@ const CheckoutProofOfPayment = (props) => {
   const dateNow = new Date();
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
   const navigateTo = useNavigate();
+  const [paymentMethods,setPaymentMethods] = useState([])
+
+  useEffect(() => {
+      firestore.readAllPaymentProviders().then((providers) => {
+        console.log(providers)
+        setPaymentMethods(providers)
+      })
+  }, []);
 
   let bankName;
   let accountName;
@@ -43,17 +49,17 @@ const CheckoutProofOfPayment = (props) => {
 
   console.log(date);
 
-  if (bdoselected) {
+  if (paymentMethodSelected == 'bdo') {
     bankName = 'BDO';
     accountName = 'ADRIAN LADIA';
     accountNumber = '006080021403';
   }
-  if (unionbankselected) {
+  if (paymentMethodSelected == 'unionbank') {
     bankName = 'UNIONBANK';
     accountName = 'ADRIAN LADIA';
     accountNumber = '109355469422';
   }
-  if (gcashselected) {
+  if (paymentMethodSelected == 'gcash') {
     bankName = 'GCASH';
     accountName = 'ADRIAN LADIA';
     accountNumber = '0917-892-7206';

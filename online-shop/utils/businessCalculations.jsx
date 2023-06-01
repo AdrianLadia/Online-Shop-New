@@ -610,15 +610,7 @@ class businessCalculations {
 
   afterCheckoutRedirectLogic(data,testing=false) {
     const dataSchema = Joi.object(
-      { bdoselected : Joi.boolean().required(),
-        unionbankselected : Joi.boolean().required(),
-        gcashselected : Joi.boolean().required(),
-        mayaselected : Joi.boolean().required(),
-        visaselected : Joi.boolean().required(),
-        mastercardselected : Joi.boolean().required(),
-        bitcoinselected : Joi.boolean().required(),
-        ethereumselected : Joi.boolean().required(),
-        solanaselected : Joi.boolean().required(),
+      { paymentMethodSelected : Joi.string().required(),
         referenceNumber : Joi.string().required().allow(''),
         grandTotal : Joi.number().required(),
         deliveryFee : Joi.number().required().allow(null),
@@ -645,15 +637,15 @@ class businessCalculations {
       throw new Error(error);
     }
 
+    const paymentMethodSelected = data.paymentMethodSelected;
 
-    if (data.mayaselected) {
+    if (paymentMethodSelected === 'maya') {
       const fullName = data.fullName;
       const firstName = fullName.split(' ')[0];
       const lastName = fullName.split(' ')[1];
       const eMail = data.eMail;
       const phoneNumber = data.phoneNumber;
       const totalPrice = data.grandTotal;
-
 
 
       if (testing === false) {
@@ -675,13 +667,11 @@ class businessCalculations {
         return 'maya'
       } 
     }
-    if (data.bdoselected || data.unionbankselected || data.gcashselected) {
+    if (['bdo','unionbank','gcash'].includes(paymentMethodSelected)) {
       if (testing === false) {
         data.navigateTo('/checkout/proofOfPayment', {
           state: {
-            bdoselected : data.bdoselected,
-            unionbankselected : data.unionbankselected,
-            gcashselected : data.gcashselected,
+            paymentMethodSelected: paymentMethodSelected,
             referenceNumber: data.referenceNumber,
             itemsTotal: data.itemsTotal,
             deliveryFee: data.deliveryFee,
