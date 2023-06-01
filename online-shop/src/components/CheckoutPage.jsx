@@ -324,7 +324,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full">
               <button
                 id="selectFromSavedAddressButton"
-                className="bg-blue1 hover:bg-color10b text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                className="hover:bg-blue1 bg-color10b text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenModalSavedAddress}
               >
                 Select From Saved Address
@@ -344,10 +344,19 @@ const CheckoutPage = () => {
           // onChange={(e) => setAddressText(e.target.value)}
         /> */}
 
-        <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+        <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
+        <div className='flex justify-start ml-2 lg:mx-14 flex-col mb-2 '>
+          <Typography>
+          • Please <strong>pinpoint</strong>  your delivery address below.
+          </Typography>
+          <Typography>
+          • Use the <strong>search button</strong> to easily find your address and adjust the pin to your address.
+          </Typography>
 
-        <div className="flex lg:mx-14 mb-1">
-          <button onClick={searchAddress} className="p-4 bg-blue-300 rounded-lg mr-2 lg:mr-5">
+        </div>
+
+        <div className="flex lg:mx-14 mb-0.5">
+          <button onClick={searchAddress} className="p-4 text-slate-200 font-bold bg-color10b rounded-lg mr-2 lg:mr-5">
             Search
           </button>
           <TextField
@@ -363,6 +372,7 @@ const CheckoutPage = () => {
 
         </div>
 
+        <div className='lg:mx-14'>
         <GoogleMaps
           selectedAddress={selectedAddress}
           setSelectedAddress={setSelectedAddress}
@@ -375,21 +385,22 @@ const CheckoutPage = () => {
           setZoom={setZoom}
           setAddressText={setAddressText}
         />
+        </div>
 
 
 
-        <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 
         <TextField
             id="addressEntry"
-            label="Address"
+            label="Address (required)"
             InputLabelProps={labelStyle}
             variant="filled"
-            className=" w-11/12 self-center bg-white"
+            className=" w-11/12 self-center bg-white mt-7"
             onChange={(event) => setLocalDeliveryAddress(event.target.value)}
             value={localDeliveryAddress}
           />
 
+        <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
         <div className="flex flex-col self-center items-center gap-6 w-full">
           <div className="flex flex-row w-full justify-between ml-4 my-5">
             <div className="flex justify-center w-full p-3">
@@ -400,7 +411,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full ">
               <button
                 id="selectFromSavedContactsButton"
-                className="bg-blue1 hover:bg-color10b text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                className="bg-color10b hover:bg-blue1  text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenContactModal}
               >
                 Select From Saved Contacts
@@ -410,7 +421,7 @@ const CheckoutPage = () => {
 
           <TextField
             id="contactNumberEntry"
-            label="Contact #"
+            label="Contact # (required)"
             InputLabelProps={labelStyle}
             variant="filled"
             className=" w-11/12 mt-1 bg-white"
@@ -419,7 +430,7 @@ const CheckoutPage = () => {
           />
           <TextField
             id="contactNameEntry"
-            label="Name"
+            label="Name (required)"
             InputLabelProps={labelStyle}
             variant="filled"
             className=" w-11/12 mt-1 bg-white"
