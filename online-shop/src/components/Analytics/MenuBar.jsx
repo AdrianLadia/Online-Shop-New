@@ -3,7 +3,6 @@ import { CheckBoxes } from "./CheckBoxes";
 import { SearchBar } from "./SearchBar";
 import LogoutButton from "./LogoutButton";
 
-
 export const MenuBar = ({callback, products}) => {
 
   const [selectedOption, setSelectedOption] = useState(null)

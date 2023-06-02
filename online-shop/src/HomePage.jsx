@@ -7,11 +7,10 @@ import { FaFacebookF, FaViber, FaInstagram, FaGoogle, FaPhoneAlt, FaMapMarkerAlt
 import { FaPlay, FaPause, FaPenSquare, FaForward, FaBackward } from "react-icons/fa";
 import AppContext from './AppContext';
 import GoogleMaps from './components/GoogleMaps'
-import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
 
 const HomePage = () => {
   
-  // const {  products } = useContext(AppContext);
+  const {  products, trendyItems } = useContext(AppContext);
   const navigateTo = useNavigate()
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
@@ -50,6 +49,8 @@ const HomePage = () => {
   const { width } = useWindowDimensions();
   const [showMenu, setShowMenu] = useState(false);
   const [showToolTip, setShowToolTip] = useState(false);
+
+  // alert(trendyItems)
     
     function handleCategory(item){
       if(item === "Paper Bags"){
@@ -211,7 +212,7 @@ const HomePage = () => {
     };
 
     function footerCardStyle(){
-      return "  hover:bg-green1 hover:bg-opacity-20 hover:border-none w-full h-full p-2 gap-1 flex flex-col justify-center items-center border border-color60 rounded-t-xl"
+      return " hover:bg-green1 hover:bg-opacity-20 hover:border-none w-full h-full p-2 gap-1 flex flex-col justify-center items-center border border-color60 rounded-t-xl"
     }
     
     return (

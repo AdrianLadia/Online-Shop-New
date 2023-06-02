@@ -11,7 +11,6 @@ class businessCalculation {
     }
 
     getRateOfChange(salesData,period) {
-
         const p = (period + 1)
         try {
             const currentSalesData = salesData[salesData.length-1].totalSalesPerMonth
@@ -26,6 +25,11 @@ class businessCalculation {
         catch {
             return 0
         }
+    }
+
+    getClicks(clicks, period) {
+        const average = clicks / period;
+        return average;
     }
 }
 

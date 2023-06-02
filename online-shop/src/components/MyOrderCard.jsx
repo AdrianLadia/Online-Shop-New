@@ -4,7 +4,7 @@ import MyOrderCardModal from './MyOrderCardModal';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
-import UseWindowDimensions from './UseWindowDimensions';
+import UseWindowDimensions from './useWindowDimensions';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 import CountdownTimer from './CountDownTimer';
@@ -35,8 +35,6 @@ function MyOrderCard(props) {
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
   const timestamp = Timestamp.fromDate(dateNow);
   const timestampString = timestamp.toDate().toLocaleString();
-
-  console.log(orderDateObject)
 
   async function readMessages(){
     firestore.readOrderMessageByReference(order.reference).then((s)=>{

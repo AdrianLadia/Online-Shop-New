@@ -91,6 +91,7 @@ function App() {
   const [cardSelected,setCardSelected] = useState(null)
   const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
   const [changeCard, setChangeCard] = useState(false);
+  const [trendyItems, setTrendyItems] = useState([]);
 
   useEffect(() => {
     let paymentState = {}
@@ -104,7 +105,6 @@ function App() {
     setCardSelected(paymentState)
   }, []);
 
-
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -115,8 +115,6 @@ function App() {
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
   }, []);
-
-
 
   // GET USER BROWSER
   function checkIfBrowserSupported() {
@@ -348,6 +346,8 @@ function App() {
     updateCartInfo:updateCartInfo,
     setUpdateCartInfo:setUpdateCartInfo,
     isAppleDevice : isAppleDevice,
+    trendyItems : trendyItems,
+    setTrendyItems : setTrendyItems,
   };
 
   return (

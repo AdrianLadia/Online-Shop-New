@@ -8,7 +8,7 @@ import {FaRegListAlt} from 'react-icons/fa'
 import AppContext from "../../AppContext";
 
 const App = () => {
-  const {firestore, setCategories, } = useContext(AppContext)
+  const {firestore, setCategories} = useContext(AppContext)
 
   // connectAuthEmulator(auth, "http://localhost:9099");
 
