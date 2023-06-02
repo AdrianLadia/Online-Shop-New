@@ -52,9 +52,9 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
          "lastName": lastName ? lastName : '',
     },
     "redirectUrl": {
-         "success": "http://localhost:5173/checkoutSuccess",
-         "failure": "http://localhost:5173/checkoutFailed",
-         "cancel": "http://localhost:5173/checkoutCancelled"
+         "success": "https://starpack.ph/checkoutSuccess",
+         "failure": "https://starpack.ph/checkoutFailed",
+         "cancel": "https://starpack.ph/checkoutCancelled"
     },
     "requestReferenceNumber": referenceNumber,
     "metadata": {

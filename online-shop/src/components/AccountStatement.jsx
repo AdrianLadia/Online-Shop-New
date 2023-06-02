@@ -92,6 +92,8 @@ const AccountStatement = () => {
     }
   }
 
+  console.log(tableData)
+
   return (
     <div className="overflow-x-hidden flex flex-col justify-center items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
       <div className="flex ml-5 mt-10 w-11/12 md:flex-row flex-row-reverse justify-center">
@@ -107,7 +109,7 @@ const AccountStatement = () => {
           setOrderInfoData={setOrderInfoData}
           setOpen={setOpen}
         />
-        <div className="flex justify-end mt-4">
+        {/* <div className="flex justify-end mt-4">
           {openButton ? (
             <button
               className="flex self-center w-1/2 xs:w-1/3 justify-center p-2 mr-2 text-white text-lg font-semibold rounded-lg bg-blue1 hover:bg-color10b"
@@ -116,7 +118,7 @@ const AccountStatement = () => {
               Pay   ({'₱' + ' ' + remainingBalance})
             </button>
           ) : null}
-        </div>
+        </div> */}
       </div>
 
       {orderInfoData ? <MyOrderCardModal order={orderInfoData} open={open} handleClose={handleClose} /> : null}

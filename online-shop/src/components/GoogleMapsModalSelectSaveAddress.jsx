@@ -66,7 +66,7 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
             <div className="flex flex-col justify-center mt-6">
               {userdata ? (
                 deliveryAddresses.map((address, index) => {
-                  console.log(address);
+            
                   return (
                     <GoogleMapsModalSelectSaveAddressButton
                       handleClose={props.handleClose}

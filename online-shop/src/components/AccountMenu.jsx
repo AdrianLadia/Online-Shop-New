@@ -144,7 +144,7 @@ const AccountMenu = (props) => {
         </MenuItem>
         <Divider />
         {/* ADMIN MENU */}
-
+        
         <MenuItem id='settingsMenu' className='hover:bg-color10b'>
           <ListItemIcon>
             <Settings fontSize="small" />

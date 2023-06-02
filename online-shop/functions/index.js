@@ -901,7 +901,10 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         // WRITE
         console.log(paymentsData)
         console.log(documentID)
-        transaction.update(db.collection('Payments').doc(documentID), paymentsData);
+        
+        if (paymentsData) {
+          transaction.update(db.collection('Payments').doc(documentID), paymentsData);
+        }
         transaction.update(userRef, { payments: newPayments });
         transaction.update(userRef, { orders: orders });
       });

@@ -57,11 +57,10 @@ const PaymentCheckoutCard = (props) => {
   const setPaymentMethodSelected = props.setPaymentMethodSelected;
   const [elevation, setElevation] = useState(5);
   
-  console.log(cardSelected)
+
 
   useEffect(() => {
     if (cardSelected[paymentOption] === true) {
-      console.log('elevate' + paymentOption)
       setCardElevate(true);
     }
     else {
@@ -70,7 +69,7 @@ const PaymentCheckoutCard = (props) => {
   }, [changeCard]);
   
   function onClick() {
-    console.log(paymentOption);
+
     Object.keys(cardSelected).forEach((key) => {
       if (key == paymentOption) {
         cardSelected[key] = true;

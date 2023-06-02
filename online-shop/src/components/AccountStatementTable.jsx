@@ -1,19 +1,16 @@
-import React, { useEffect } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Link, Typography } from "@mui/material";
+import React, { useEffect } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { Link, Typography } from '@mui/material';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import dataManipulation from "../../utils/dataManipulation";
-
+import dataManipulation from '../../utils/dataManipulation';
 
 const AccountStatementTable = (props) => {
-  
-
   const tableData = props.tableData;
   const [rows, setRows] = React.useState([]);
   const orders = props.orders;
@@ -21,22 +18,28 @@ const AccountStatementTable = (props) => {
   const setOpen = props.setOpen;
   const datamanipulation = new dataManipulation();
 
+  console.log(tableData);
+
   useEffect(() => {
-    const rowsdata = datamanipulation.accountStatementTable(tableData)
+    const rowsdata = datamanipulation.accountStatementTable(tableData);
 
     setRows(rowsdata);
   }, [tableData]);
 
-  function openOrderInfoModal(reference) {
-    const filter = datamanipulation.getOrderFromReference(reference,orders)
-    setOrderInfoData(filter);
-    setOpen(true);
+  function operReferenceNumber(reference,proofOfPaymentLink) {
+    if (proofOfPaymentLink) {
+      window.open(proofOfPaymentLink, '_blank');
+    }
+    else {
+      const filter = datamanipulation.getOrderFromReference(reference, orders);
+      setOrderInfoData(filter);
+      setOpen(true);
+    }
   }
-    
 
   return (
     <div className=" my-5 border-2 border-color60 rounded-lg">
-      <TableContainer component={Paper} >
+      <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead className="bg-color10c border-b-2 border-color60">
             <TableRow>
@@ -49,27 +52,28 @@ const AccountStatementTable = (props) => {
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                onClick={() => {
-                  openOrderInfoModal(row.reference);
-                }}
-              >
+              <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row">
                   {row.date}
                 </TableCell>
 
                 <TableCell align="right">
-                  <Link href="#">{row.reference}</Link>
+                  <Link
+                    href="#"
+                    onClick={() => {
+                      operReferenceNumber(row.reference,row.proofOfPaymentLink);
+                    }}
+                  >
+                    {row.reference}
+                  </Link>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h7" color={"red"}>
+                  <Typography variant="h7" color={'red'}>
                     {row.credit}
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h7" color={"green"}>
+                  <Typography variant="h7" color={'green'}>
                     {row.debit}
                   </Typography>
                 </TableCell>

@@ -12,10 +12,12 @@ import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import { HiCash } from "react-icons/hi";
 import AdminCreatePaymentTable from './AdminCreatePaymentTable'
+import ImageUploadButton from './ImageComponents/ImageUploadButton';
+import Joi from 'joi';
 
 const AdminCreatePayment = (props) => {
 
-  const { cloudfirestore } = useContext(AppContext);
+  const { cloudfirestore,storage } = useContext(AppContext);
 
   const style = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
@@ -25,8 +27,9 @@ const AdminCreatePayment = (props) => {
   const [allUserNames, setAllUserNames] = React.useState([]);
   const [reference, setReference] = React.useState('');
   const [paymentProvider, setPaymentProvider] = React.useState('');
-  const [amount, setAmount] = React.useState(0);
+  const [amount, setAmount] = React.useState('');
   const dummy = useRef(null)
+  const [paymentLink,setPaymentLink] = React.useState('');
 
   useEffect(()=>{
     // dummy.current.scrollIntoView({behavior: "smooth"})
@@ -39,13 +42,45 @@ const AdminCreatePayment = (props) => {
 
   function onCreatePayment() {
     const userid = datamanipulation.getUserUidFromUsers(users, selectedName);
+    console.log(paymentProvider)
     const data = {
       userId: userid,
-      amount: amount,
+      amount: parseFloat(amount),
       reference: reference,
       paymentprovider: paymentProvider,
+      proofOfPaymentLink : paymentLink,
     }
-    cloudfirestore.transactionCreatePayment(data);
+
+    const paymentSchema = Joi.object({
+      userId : Joi.string().required(),
+      amount : Joi.number().required(),
+      reference : Joi.string().required(),
+      paymentprovider : Joi.string().required(),
+      proofOfPaymentLink : Joi.string().uri().required()
+    })
+
+    const {error} = paymentSchema.validate(data)
+
+    if (error) {
+      alert(error.message)
+    }
+
+    cloudfirestore.transactionCreatePayment(data).then((result) => {
+      if (result.data == 'success') {
+        alert('Payment Created Successfully');
+        // setAmount('');
+        // setReference('')
+        // setPaymentProvider('')
+        // setPaymentLink('') 
+      }
+      else {
+        alert('Payment Creation Failed. Please try again.');
+      }
+    });
+  }
+
+  function onUploadFunction(url) {
+    setPaymentLink(url);
   }
 
   return (
@@ -72,10 +107,12 @@ const AdminCreatePayment = (props) => {
         />
 
         <TextField id='amountPayment' 
-          onChange={(event) => setAmount(parseFloat(event.target.value) )} 
+          onChange={(event) => setAmount(event.target.value)} 
           required label="Amount" 
           InputLabelProps={labelStyle}
           sx={style}
+          value={amount}
+          typeof='number'
           />
 
         <TextField id='referencePayment' 
@@ -83,6 +120,7 @@ const AdminCreatePayment = (props) => {
           required label="Reference"
           InputLabelProps={labelStyle}
           sx={style}
+          value={reference}
           />
 
         <TextField
@@ -91,18 +129,29 @@ const AdminCreatePayment = (props) => {
           required
           label="Payment Provider ex. GCash / Paymaya"
           InputLabelProps={labelStyle}
+          value={paymentProvider}
           sx={style}
           />
         </div>
 
-        <div className='flex justify-center'>
+        <div className='flex justify-evenly'>
+          
           <button 
             id='createPaymentButton' 
             onClick={onCreatePayment}  
             className="w-4/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg sm:text-2xl text-xl"
             >{' '}Create Payment{' '}
           </button>
+          <div className='mt-5'>
+            <ImageUploadButton onUploadFunction={onUploadFunction} folderName={'Payments/' + selectedName + '/' + reference} storage={storage} id='createPayment'  buttonTitle='Upload Proof Of Payment'/>
+          </div>
         </div>
+          <TextField id='proofOfPaymentLink' 
+          disabled
+          required label="Payment Link"
+          InputLabelProps={labelStyle}
+          value={paymentLink}
+          />
         
         <Divider sx={{border:1}}/>
 
