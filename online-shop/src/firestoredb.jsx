@@ -471,7 +471,13 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProductClicks(productid, userId = null) {
-    await super.addDocumentArrayFromCollection('Products', productid, { date: new Date(), userId: userId }, 'clicks');
+    
+    let id = productid;
+    if (productid.endsWith('-RET')) {
+      id = productid.substring(0, productid.length - 4);
+    }
+
+    await super.addDocumentArrayFromCollection('Products', id, { date: new Date(), userId: userId }, 'clicks');
   }
 
   async readAllPaymentProviders() {
