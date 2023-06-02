@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import { AiFillQuestionCircle } from 'react-icons/ai';
 import MyOrderCardModal from './MyOrderCardModal';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
-import UseWindowDimensions from './useWindowDimensions';
+import UseWindowDimensions from './UseWindowDimensions';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
+<<<<<<< Updated upstream
 import { AiOutlineFileSearch, AiOutlineSearch } from "react-icons/ai";
 import { date } from 'joi';
+=======
+import { AiOutlineFileSearch } from "react-icons/ai";
+>>>>>>> Stashed changes
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();

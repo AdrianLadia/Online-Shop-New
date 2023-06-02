@@ -49,7 +49,7 @@ const AccountMenu = (props) => {
   function storeClick() {
     setUserState("userloading");
     setRefreshUser(!refreshUser);
-    navigateTo("/");
+    navigateTo("/shop");
   }
 
   function myOrdersClick() {

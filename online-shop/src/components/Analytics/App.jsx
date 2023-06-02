@@ -1,9 +1,6 @@
 import React from "react";
 import InventoryTable from "./InventoryTable";
-import { useEffect, useState, createContext, useContext, useRef } from "react";
-import { getAuth, onAuthStateChanged, connectAuthEmulator } from "firebase/auth";
-import { LogInBox } from "./LogInBox";
-import { LogOutBox } from "./LogOutBox";
+import { useEffect, useState, useContext, useRef } from "react";
 import useWindowDimensions from "./utils/UseWindowDimensions";
 import { MenuBar } from "./MenuBar";
 import { MenuBarMobile } from "./MenuBarMobile";

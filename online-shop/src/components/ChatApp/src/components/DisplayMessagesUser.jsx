@@ -21,7 +21,6 @@ const DisplayMessagesUser = (props) => {
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
-  // const [image, setImage] = useState(null);
 
   function viewImage() {
 
