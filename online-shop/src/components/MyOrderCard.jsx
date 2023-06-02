@@ -9,12 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
 import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
-<<<<<<< Updated upstream
 import { AiOutlineFileSearch, AiOutlineSearch } from "react-icons/ai";
 import { date } from 'joi';
-=======
-import { AiOutlineFileSearch } from "react-icons/ai";
->>>>>>> Stashed changes
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
