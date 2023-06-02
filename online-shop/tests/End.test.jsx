@@ -48,8 +48,6 @@ describe('Integration', () => {
     await driver.clickAccountMenu()
     await driver.clickLogoutButton()
 
-    console.log('logged out')
-
   }, 1000000);
 
   test('login', async () => {
@@ -104,7 +102,6 @@ describe('Integration', () => {
 
     await driver.clickCartCheckoutButton()
     
-    console.log('clicked checkout button')
 
     await driver.writeTestUserDetails()
     await driver.clickMayaPaymentOption()

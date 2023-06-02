@@ -2,12 +2,18 @@ import React, { useRef, useEffect, useState, useContext } from 'react';
 import { TiArrowBack } from 'react-icons/ti';
 import AppContext from '../../../../AppContext';
 import { BiCheckCircle, BiXCircle } from "react-icons/bi";
+import dataManipulation from '../../../../../utils/dataManipulation';
+import Image from '../../../ImageComponents/Image';
 
 const DisplayMessagesUser = (props) => {
 
   const { isadmin } = useContext(AppContext);
   const message = props.message;
-  const dateTime = props.dateTime;
+  let dateTime = props.dateTime;
+  const datamanipulation = new dataManipulation(); 
+  dateTime = datamanipulation.convertDateTimeStampToDateString(dateTime)
+  
+  
   const user = props.user;
   const loggedInUserId = props.loggedInUserId;
   const read = props.read;
@@ -17,6 +23,11 @@ const DisplayMessagesUser = (props) => {
   const [showDetails, setShowDetails] = useState(false);
   // const [image, setImage] = useState(null);
 
+  function viewImage() {
+
+  }
+
+
   useEffect(() => {
     if(isadmin === false){
       dummy.current.scrollIntoView({ behavior: 'smooth' });
@@ -24,8 +35,9 @@ const DisplayMessagesUser = (props) => {
   }, []);
 
   return (
+    
     <div className="flex flex-row-reverse items-start h-max mr-0.5">
-
+      
       <div className="flex items-center justify-center w-2/12 rounded-full h-full lg:w-1/12 mt-3">
         <div className="w-16 h-16 sm:h-20 sm:w-20 bg-gradient-to-tr from-color10c to-color60 border-4 border-color60 rounded-full">
           <div className="flex items-center justify-center h-full text-2xl font-bold text-white uppercase">
@@ -54,7 +66,8 @@ const DisplayMessagesUser = (props) => {
               >
               <p>
                   <p>{message}</p>
-                  {image ? <img src={image} alt='this should be an image' className='h-64 w-64'/> : null}
+                  {/* {image ? <img src={image} alt='this should be an image' className='h-64 w-64'/> : null} */}
+                  {image ? <Image imageUrl={image} /> : null}
               </p>
             </div>
             <div className='mb-2 -mr-2.5 text-color60'>

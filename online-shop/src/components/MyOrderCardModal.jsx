@@ -154,7 +154,7 @@ const MyOrderCardModal = (props) => {
                 <ListItemText
                   primary="Order Date"
                   secondary={
-                    order !== [] ? orderDate : null
+                    order != [] ? orderDate : null
                   }
                 />
               </ListItem>

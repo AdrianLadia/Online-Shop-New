@@ -28,8 +28,15 @@ const AccountStatement = () => {
     return
   }
   const fullName = userdata.name;
-  const firstName = fullName.split(' ')[0];
-  const lastName = fullName.split(' ')[1];
+  let firstName = fullName.split(' ')[0];
+  let lastName = fullName.split(' ')[1];
+  if (firstName === undefined) {
+    firstName = '';
+  }
+  if (lastName === undefined) {
+    lastName = '';
+  }
+
   const [remainingBalance, setRemainingBalance] = useState(0);
 
 

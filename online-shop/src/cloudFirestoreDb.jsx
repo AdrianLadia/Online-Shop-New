@@ -56,7 +56,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      console.log('RAN');
       const response = await axios.get(`${this.url}checkIfUserIdAlreadyExist?userId=${userId}`);
 
       const toReturn = response.data;
@@ -141,7 +140,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
       eMail: Joi.string().required(),
-      sendEmail : Joi.boolean().required(),
+      sendEmail: Joi.boolean().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
@@ -170,8 +169,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       }
     }
   }
-
-  
 
   async readUserRole(userId) {
     const userIdSchema = Joi.string();
@@ -338,7 +335,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       amount: Joi.number().required(),
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
-    }).unknown(false);
+      proofOfPaymentLink: Joi.string(),
+    });
 
     const { error } = dataSchema.validate(data);
 
@@ -347,9 +345,21 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
+    const jsonData = JSON.stringify(data);
+
+    // const res = await axios.post(`${this.url}sendEmail`, jsonData, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+
     try {
       const encodedData = encodeURIComponent(JSON.stringify(data));
-      const response = await axios.post(`${this.url}transactionCreatePayment?data=${encodedData}`);
+      const response = await axios.post(`${this.url}transactionCreatePayment`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       return response;
     } catch {
       console.log(error);
@@ -357,9 +367,23 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async updateOrderProofOfPaymentLink(orderReference, userId, proofOfPaymentLink,userName,paymentMethod) {
+  async updateOrderProofOfPaymentLink(
+    orderReference,
+    userId,
+    proofOfPaymentLink,
+    userName,
+    paymentMethod,
+    forTesting = false
+  ) {
     try {
-      const json = { orderReference: orderReference, userId: userId, proofOfPaymentLink: proofOfPaymentLink,userName:userName,paymentMethod:paymentMethod };
+      const json = {
+        orderReference: orderReference,
+        userId: userId,
+        proofOfPaymentLink: proofOfPaymentLink,
+        userName: userName,
+        paymentMethod: paymentMethod,
+        forTesting: forTesting,
+      };
       // const encodedData = encodeURIComponent(JSON.stringify({ orderReference,userId}));
       const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, json);
       // const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}&proofOfPaymentLink=${proofOfPaymentLink}`)
@@ -432,30 +456,23 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const jsonData = JSON.stringify(data);
 
     try {
-      const res = retryApi(() => {
-        return axios.post(`${this.url}transactionCancelOrder`, jsonData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-      })
-      // const res = await axios.post(`${this.url}transactionCancelOrder`, jsonData, {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
+      const res = await axios.post(`${this.url}transactionCancelOrder`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const resData = res.data;
       alert('Order cancelled successfully');
       return resData;
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       alert('Error cancelling order.');
       return { status: 'error' };
     }
-
   }
 
+  // async (data) {}
+  
 }
 
 export default cloudFirestoreDb;

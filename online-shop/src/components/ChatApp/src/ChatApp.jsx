@@ -6,7 +6,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../AppContext';
 import { useLocation } from 'react-router-dom';
 
-const ChatApp = () => {
+const ChatApp = (props) => {
   const {db, selectedChatOrderId, userId, userdata ,setRefreshUser,refreshUser} = useContext(AppContext);
   const loggedInUserId = userId;
   const location = useLocation();
@@ -14,15 +14,17 @@ const ChatApp = () => {
   try{
     const {orderReference} = location.state
     orderRef = orderReference
-    console.log('ran user')
+
   }
   catch{
     orderRef = selectedChatOrderId
-    console.log('ran admin')
+
   }
   const [messageDetails, setMessageDetails] = useState({});
   const [userName, setUserName] = useState('');
   const [user,setUser] = useState('')
+  const chatData = props.chatData
+  const setChatData = props.setChatData
 
   useEffect(()=>{
     setRefreshUser(!refreshUser)
@@ -50,12 +52,12 @@ const ChatApp = () => {
   }, [selectedChatOrderId]);
 
   return (
-    <div className="flex justify-center w-screen h-screen ">
+    <div className="flex justify-center w-screen h-screen  ">
       <div className="flex flex-col w-full h-full justify-evenly bg-color60 overflow-hidden">
         <NavBar messages={messageDetails} orderReferenceId={orderRef}/>
 
         {messageDetails != {} ? (
-          <DisplayMessages messages={messageDetails} userName={userName} loggedInUserId={loggedInUserId} user={user}/>
+          <DisplayMessages chatData={chatData} setChatData={setChatData} messages={messageDetails} userName={userName} loggedInUserId={loggedInUserId} user={user}/>
         ) : null}
 
         <InputField loggedInUserId={loggedInUserId} orderReferenceId={orderRef} />

@@ -13,6 +13,7 @@ import {
   arrayRemove,
   runTransaction,
 } from "firebase/firestore";
+import AdminCreatePaymentTableRow from './AdminCreatePaymentTableRow';
 
 const AdminCreatePaymentTable = () => {
   const { firestore, selectedChatOrderId, setSelectedChatOrderId, cloudfirestore } = useContext(AppContext);
@@ -20,22 +21,23 @@ const AdminCreatePaymentTable = () => {
   const [reference, setReference] = useState('');
   const [status, setStatus] = useState('');
   const [link, setLink] = useState([]);
-  const [newAmount, setNewAmount] = useState();
   const [amount, setAmount] = useState(null);
 
   async function readPayments() {
     firestore.readPayments().then((payment) => {
-      console.log(payment)
+
       const paymentData = [];
       const photoLink = [];
       payment.forEach((data) => {
         const link = data.proofOfPaymentLink;
         const reference = data.orderReference;
         const userId = data.userId;
+        const userName = data.userName
+        console.log(data)
         
 
         if (data.status === 'pending') {
-          paymentData.push({ link: link, reference: reference, userId: userId });
+          paymentData.push({ link: link, reference: reference, userId: userId,userName:userName });
           photoLink.push({link: link})
         }
       });
@@ -44,9 +46,6 @@ const AdminCreatePaymentTable = () => {
     });
   }
 
-  const handleNewTab = (link) => {
-    window.open(link, '_blank');
-  };
 
   useEffect(() => {
     readPayments();
@@ -55,35 +54,8 @@ const AdminCreatePaymentTable = () => {
     }
   }, [selectedChatOrderId]);
 
-  async function updatePaymentStatus(reference, status, userId) {
-    setNewAmount(amount);
-    if(amount){
-      const a = amount;
-      alert('Reference: ' + reference + ' is ' + status + a)
-      firestore.updatePaymentStatus(reference, status);
-    }
-    const data = {
-      userId: userId,
-      amount: newAmount,
-      reference: reference,
-      paymentprovider: 'BDO',
-    };
-      cloudfirestore.transactionCreatePayment(data);
-      setSelectedChatOrderId(reference);
-      setStatus(status);
-      setReference(reference);
-      setNewAmount(null);
-      setAmount(null)
-  }
 
-  async function deleteDeclinedProofOfPaymentLink(reference, userId, link){
-    console.log('denying')
-    console.log(reference)
-    console.log(userId)
-    console.log(link)
-    await firestore.deleteDeclinedPayment(reference, userId, link)
-    
-  }
+  console.log(paymentsData)
 
   return (
     <div>
@@ -106,6 +78,9 @@ const AdminCreatePaymentTable = () => {
               <TableCell align="right" className="text-white">
                 Customer ID
               </TableCell>
+              <TableCell align="right" className="text-white">
+                Customer Name
+              </TableCell>
               <TableCell align="center" className="text-white">
                 Actions
               </TableCell>
@@ -116,43 +91,7 @@ const AdminCreatePaymentTable = () => {
           </TableHead>
           <TableBody>
             {paymentsData.map((data) => (
-              <TableRow>
-                <TableCell className="text-7xl w-60">
-                  <img onClick={() => handleNewTab(data.link)} src={data.link} className="h-60 w-60 rounded-xl" />
-                </TableCell>
-                <TableCell align="right">{data.reference}</TableCell>
-                <TableCell align="right">{data.userId}</TableCell>
-                <TableCell align="right">
-                  <div className="flex justify-evenly gap-2 xs:gap-3">
-                    <button
-                      className=" border border-red-400 hover:bg-red-50 text-red-400 px-4 py-3 rounded-xl"
-                      // onClick={() => data.link === data.link? (deleteDeclinedProofOfPaymentLink(data.reference, 'declined',data.userId, data.link)) : null}
-                      onClick={() => data.link === data.link? (deleteDeclinedProofOfPaymentLink(data.reference, data.userId, data.link)) : null}
-                    >
-                      Deny
-                    </button>
-                    <button
-                      className="bg-blue1 hover:bg-color10b border border-blue1 text-white px-4 py-3 rounded-xl"
-                      onClick={() => data.link === data.link? (updatePaymentStatus(data.reference, 'approved',data.userId, data.link)) : null}
-                    >
-                      Approve
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell align="center">
-                  <div className='flex justify-center'>
-                    <input 
-                      className='border-2 border-color60 hover:border-color10c focus:border-color10c outline-none rounded-xl
-                                placeholder:text-color60 placeholder:focus:text-color10c text-color60 
-                                  w-3/4 p-3 '
-                      placeholder='Amount'
-                      type='number'
-                      value={newAmount}
-                      onChange={(event) => setAmount(event.target.value)}
-                      />
-                  </div>
-                </TableCell>
-              </TableRow>
+              <AdminCreatePaymentTableRow paymentsData={paymentsData} setPaymentsData={setPaymentsData} proofOfPaymentLink={data.link} orderReference={data.reference} userId={data.userId} userName={data.userName}/>
             ))}
           </TableBody>
         </Table>

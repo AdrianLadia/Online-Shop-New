@@ -75,6 +75,7 @@ class schemas {
       isCustomized: Joi.boolean().required().invalid('', null),
       salesPerMonth: Joi.array(),
       stocksIns: Joi.array().allow(null),
+      clicks: Joi.array()
     }).unknown(false);
   }
 }

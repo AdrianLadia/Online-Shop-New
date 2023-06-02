@@ -40,15 +40,12 @@ const ImageUploadButton = (props) => {
       const ordersRefStorage = ref(storage, folderName + '/' + fileName);
 
       uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
-        // console.log(snapshot);
-        // console.log('Uploaded a blob or file!');
         setButtonColor('success');
         setButtonText('Uploaded Successfuly');
         setLoading(false);
 
         // GET IMAGE URL
         const downloadURL = await getDownloadURL(ordersRefStorage);
-        // console.log(downloadURL);
 
         if (onUploadFunction !== undefined) {
           onUploadFunction(downloadURL);

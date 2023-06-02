@@ -3,13 +3,15 @@ import { useContext, useState, useEffect } from 'react';
 import AppContext from '../AppContext';
 import GuestSignInModal from './GuestSignInModal';
 import { CircularProgress } from '@mui/material';
+import UnsupportedBrowserRedirect from './UnsupportedBrowserRedirect';
 
 const CheckoutButton = (props) => {
 
   const totalPrice = props.totalPrice
-  const { userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata } = useContext(AppContext);
+  const { userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata,isSupportedBrowser } = useContext(AppContext);
   const [openGuestSignInModal,setOpenGuestSignInModal] = useState(false);
   const [totalCredit, setTotalCredit] = useState(0);
+  const [isSupportedBrowserModalOpen, setIsSupportedBrowserModalOpen] = useState(false);
 
   useEffect(()=>{
     if (userdata != null) {
@@ -27,6 +29,13 @@ const CheckoutButton = (props) => {
 
   function onCheckoutButtonClick() {
     // if(totalCredit < 50000){
+
+      if (!isSupportedBrowser) {
+        console.log('Setting to open unsupported')
+        setIsSupportedBrowserModalOpen(true);
+        return;
+      }
+
       if (userId === null) {
         localStorage.setItem('cart', JSON.stringify(cart));
         
@@ -43,6 +52,7 @@ const CheckoutButton = (props) => {
 
   return (
     <div>
+      <UnsupportedBrowserRedirect open={isSupportedBrowserModalOpen} isSupportedBrowser={isSupportedBrowser} setOpen={setIsSupportedBrowserModalOpen}/>
       <button
         id="cartcheckoutbutton"
         onClick={onCheckoutButtonClick}

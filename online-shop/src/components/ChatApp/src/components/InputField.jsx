@@ -19,6 +19,9 @@ const InputField = (props) => {
   const { userId, selectedChatOrderId, userdata, firestore, storage } = useContext(AppContext);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
 
+  console.log(message);
+  console.log(send);
+
   async function updateMessages() {
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     const docSnap = await getDoc(docRef);
@@ -56,86 +59,90 @@ const InputField = (props) => {
     firestore.updateOrderMessageAsRead(orderReferenceId, messages);
   }
 
-  async function sendMessages() {
+  async function sendImage(url) {
+    console.log(orderReferenceId);
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     // Add data to the array field
-    if (newMessage || uploadedImageUrl) {
-      console.log('ran');
-      const timestamp = Timestamp.fromDate(date);
-      const timestampString = timestamp.toDate().toLocaleString();
-      updateDoc(docRef, {
-        messages: arrayUnion({
-          // add a new map object to the array field
-          message: newMessage,
-          userId: userId,
-          dateTime: timestampString,
-          userRole: userdata.userRole,
-          read: false,
-          image: uploadedImageUrl,
-        }),
+    updateDoc(docRef, {
+      messages: arrayUnion({
+        // add a new map object to the array field
+        message: '',
+        userId: userId,
+        dateTime: new Date(),
+        userRole: userdata.userRole,
+        read: false,
+        image: url,
+      }),
+    })
+      .then(() => {
+        console.log('Message is sent Successfuly: ', newMessage);
+        setMessage('');
+        setNewMessage('');
       })
-        .then(() => {
-          console.log('Message is sent Successfuly: ', newMessage);
-          setMessage('');
-          setNewMessage('');
-        })
-        .catch((error) => {
-          console.error('Error adding data to the array field: ', error);
-          setMessage('');
-          setNewMessage('');
-        });
-    }
+      .catch((error) => {
+        console.error('Error adding data to the array field: ', error);
+        setMessage('');
+        setNewMessage('');
+      });
+  }
+
+  async function sendMessage() {
+    console.log(orderReferenceId);
+    const docRef = doc(db, 'ordersMessages', orderReferenceId);
+    // Add data to the array field
+    updateDoc(docRef, {
+      messages: arrayUnion({
+        // add a new map object to the array field
+        message: message,
+        userId: userId,
+        dateTime: new Date(),
+        userRole: userdata.userRole,
+        read: false,
+        image: '',
+      }),
+    })
+      .then(() => {
+        console.log('Message is sent Successfuly: ', newMessage);
+        setMessage('');
+        setNewMessage('');
+      })
+      .catch((error) => {
+        console.error('Error adding data to the array field: ', error);
+        setMessage('');
+        setNewMessage('');
+      });
+
+
   }
 
   function inputMessage(option1, option2) {
+    console.log('a');
     setMessage(option1);
     setSend(option2);
     if (option2 === true) {
       setNewMessage(message);
-      sendMessages();
-    }
-  }
-
-  function sendMessage(option1) {
-    setSend(option1);
-    if (option1 === true) {
-      setNewMessage(message);
-      setMessage('');
-      sendMessages();
+      sendMessage();
     }
   }
 
   function getUploadedImageUrl(url) {
     setUploadedImageUrl(url);
-    setSend(true);
+    sendImage(url);
   }
-
-  useEffect(() => {
-    sendMessages()
-    setUploadedImageUrl(null)
-  }, [uploadedImageUrl]);
-
-  useEffect(() => {
-    if (send) {
-      setNewMessage(message);
-      setImageLink('');
-    }
-    updateMessages();
-  }, [send]);
 
   return (
     <div className="flex flex-col justify-end w-full h-1/10 ml-0.5 md:ml-2">
       <div className="w-full h-full">
         <div className="flex items-center gap-1 w-full h-full rounded-lg">
-          <ImageUploadButton 
+          <ImageUploadButton
             id={'userUploadPhotoButton'}
             folderName={'Orders/' + userId + '/' + orderReferenceId}
-            buttonTitle={""}
+            buttonTitle={''}
             storage={storage}
             onUploadFunction={getUploadedImageUrl}
           />
-          <InputBox callback={inputMessage} sent={send} image={imageLink} />
-          <InputSendButton callback={sendMessage} />
+          <InputBox sendMessage={sendMessage} message={message} setMessage={setMessage} sent={send} image={imageLink} />
+          <InputSendButton sendMessage={sendMessage} setMessage={setMessage} />
         </div>
       </div>
     </div>

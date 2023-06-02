@@ -21,7 +21,7 @@ const LineGraph = (props) => {
   'Dec.',
   ];
 
-  // console.log(salesData)
+
 
 const data = {
   labels: salesData && salesData.map((sale) => `${monthNames[sale.month]} ${sale.year}`),

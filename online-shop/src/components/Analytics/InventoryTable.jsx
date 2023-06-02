@@ -53,12 +53,12 @@ export function InventoryTable({name, category, customized, callback}) {
   const [productNames, setproductNames] = useState(null);
   const { width } = useWindowDimensions();
 
-  // console.log(selectedOption)
+
 
   useEffect(() => {
     firestore.readAllDataFromCollection("Products").then((data) => {
       const filteredData = datamanipulation.appRemovePacksFromProducts(data);
-      // console.log(filteredData)
+
       setProductsData(filteredData);
     });
   }, [refreshData]);

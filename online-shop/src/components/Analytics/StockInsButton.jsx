@@ -31,7 +31,7 @@ const styles = {
 
 const StockInsButton = (props) => {
 
-  // console.log(props)
+
     const name = props.name
     const info = props.data
     const inss = info.stocksIns
