@@ -89,6 +89,8 @@ const GoogleMaps = (props) => {
     }
   }, [latitude, longitude]);
 
+  
+
   useEffect(() => {
     Geocode.setApiKey('AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I');
     Geocode.setLanguage('en');
