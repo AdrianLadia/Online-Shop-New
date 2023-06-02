@@ -301,11 +301,13 @@ const CheckoutPage = () => {
         const { lat, lng } = response.results[0].geometry.location;
         setLocalLatitude(lat);
         setLocalLongitude(lng);
-        setZoom(15)
-        setAddressGeocodeSearch('')
-
-        
+        setZoom(15);
+        setAddressGeocodeSearch('');
+      },
+      (error) => {
+        alert('Address not found. Be more specific.')
       }
+      
     );
   }
 
@@ -313,7 +315,6 @@ const CheckoutPage = () => {
     <ThemeProvider theme={theme}>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
-
         <div className="flex flex-col self-center items-center gap-6 w-full">
           <div className="flex flex-row w-full justify-between ml-4 my-5">
             <div className="flex justify-center w-full p-3">
@@ -332,7 +333,6 @@ const CheckoutPage = () => {
             </div>
           </div>
         </div>
-
         {/* <TextField
           // disabled
           id="googleAddress"
@@ -343,18 +343,16 @@ const CheckoutPage = () => {
           value={addressText}
           // onChange={(e) => setAddressText(e.target.value)}
         /> */}
-
         <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
-        <div className='flex justify-start ml-2 lg:mx-14 flex-col mb-2 '>
+        <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
           <Typography>
-          • Please <strong>pinpoint</strong>  your delivery address below.
+            • Please <strong>pinpoint</strong> your delivery address below.
           </Typography>
           <Typography>
-          • Use the <strong>search button</strong> to easily find your address and adjust the pin to your address.
+            • Use the <strong>search button</strong> to easily find your address and adjust the pin to your address.
           </Typography>
-
         </div>
-
+        
         <div className="flex lg:mx-14 mb-0.5">
           <button onClick={searchAddress} className="p-4 text-slate-200 font-bold bg-color10b rounded-lg mr-2 lg:mr-5">
             Search
@@ -368,38 +366,32 @@ const CheckoutPage = () => {
             className=" w-11/12 self-center bg-white"
             value={addressGeocodeSearch}
             onChange={(e) => setAddressGeocodeSearch(e.target.value)}
+            
           />
-
         </div>
-
-        <div className='lg:mx-14'>
-        <GoogleMaps
-          selectedAddress={selectedAddress}
-          setSelectedAddress={setSelectedAddress}
-          locallatitude={locallatitude}
-          setLocalLatitude={setLocalLatitude}
-          locallongitude={locallongitude}
-          setLocalLongitude={setLocalLongitude}
-          setLocalDeliveryAddress={setLocalDeliveryAddress}
-          zoom={zoom}
-          setZoom={setZoom}
-          setAddressText={setAddressText}
-        />
+        <div className="lg:mx-14">
+          <GoogleMaps
+            selectedAddress={selectedAddress}
+            setSelectedAddress={setSelectedAddress}
+            locallatitude={locallatitude}
+            setLocalLatitude={setLocalLatitude}
+            locallongitude={locallongitude}
+            setLocalLongitude={setLocalLongitude}
+            setLocalDeliveryAddress={setLocalDeliveryAddress}
+            zoom={zoom}
+            setZoom={setZoom}
+            setAddressText={setAddressText}
+          />
         </div>
-
-
-
-
         <TextField
-            id="addressEntry"
-            label="Address (required)"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 self-center bg-white mt-7"
-            onChange={(event) => setLocalDeliveryAddress(event.target.value)}
-            value={localDeliveryAddress}
-          />
-
+          id="addressEntry"
+          label="Address (required)"
+          InputLabelProps={labelStyle}
+          variant="filled"
+          className=" w-11/12 self-center bg-white mt-7"
+          onChange={(event) => setLocalDeliveryAddress(event.target.value)}
+          value={localDeliveryAddress}
+        />
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
         <div className="flex flex-col self-center items-center gap-6 w-full">
           <div className="flex flex-row w-full justify-between ml-4 my-5">
@@ -438,9 +430,7 @@ const CheckoutPage = () => {
             value={localname || ''}
           />
         </div>
-
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-
         {allowShipping == false ? (
           <div className="flex justify-center my-5">
             <Typography variant="h7" color="red">
@@ -667,7 +657,6 @@ const CheckoutPage = () => {
             )}
           </>
         )}
-
         <GoogleMapsModalSelectSaveAddress
           open={openModalSavedAddress}
           handleClose={handleCloseModalSavedAddress}

@@ -7,17 +7,18 @@ import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
 import UseWindowDimensions from './useWindowDimensions';
 import { useNavigate } from 'react-router-dom';
-import { HiChatBubbleLeftEllipsis } from "react-icons/hi2";
+import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
 import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
-import { AiOutlineFileSearch, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineFileSearch, AiOutlineSearch } from 'react-icons/ai';
 import { date } from 'joi';
 
 function MyOrderCard(props) {
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata} = React.useContext(AppContext);
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata } =
+    React.useContext(AppContext);
   const order = props.order;
-  const paid = order.paid
+  const paid = order.paid;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
 
@@ -26,36 +27,37 @@ function MyOrderCard(props) {
   const handleClose = () => setOpenModal(false);
   const { width } = UseWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
-  const navigateTo = useNavigate()
+  const navigateTo = useNavigate();
   const [unRead, setUnRead] = useState();
   const [disable, setDisable] = useState(null);
 
-  const orderDateObject = new Date(orderDate)
-  const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000)
-  const dateNow = new Date()
-  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow ,orderExpiryDate);
+  const orderDateObject = new Date(orderDate);
+  const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
+  const dateNow = new Date();
+  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
   const timestamp = Timestamp.fromDate(dateNow);
   const timestampString = timestamp.toDate().toLocaleString();
 
-  console.log(orderDateObject)
+  console.log(orderDateObject);
 
-  async function readMessages(){
-    firestore.readOrderMessageByReference(order.reference).then((s)=>{
+  async function readMessages() {
+    firestore.readOrderMessageByReference(order.reference).then((s) => {
       const messages = s.messages;
       let unReadCount = 0;
-      try{
-        messages && messages.map((q)=>{
-            if(q.userRole === "superAdmin" || q.userRole === "Admin" ){
-              if(q.read === false){
-                unReadCount += 1 ;
+      try {
+        messages &&
+          messages.map((q) => {
+            if (q.userRole === 'superAdmin' || q.userRole === 'Admin') {
+              if (q.read === false) {
+                unReadCount += 1;
               }
-            };
-        });
-      }catch(e){
-        console.log(e)
+            }
+          });
+      } catch (e) {
+        console.log(e);
       }
-      setUnRead(unReadCount)
-    })
+      setUnRead(unReadCount);
+    });
   }
 
   function getPaymentStatus(x, y, z) {
@@ -72,42 +74,39 @@ function MyOrderCard(props) {
   }
 
   function onUpload(proofOfPaymentLink) {
-    cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink,userdata.name,'');
+    cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink, userdata.name, '');
     setProofOfPaymentLinkCount(1);
   }
 
   function onMessageClick() {
-    console.log("clicked")
-    firestore.updateOrderMessagesAsReadForUser(order.reference)
-    setSelectedChatOrderId(order.reference)
-    navigateTo("/orderChat",{state:{orderReference:order.reference}})
+    console.log('clicked');
+    firestore.updateOrderMessagesAsReadForUser(order.reference);
+    setSelectedChatOrderId(order.reference);
+    navigateTo('/orderChat', { state: { orderReference: order.reference } });
+  }
 
-  };
-
-  function handleCancel(){
-    cloudfirestore.transactionCancelOrder({userId:userdata.uid, orderReference:order.reference});
+  function handleCancel() {
+    cloudfirestore.transactionCancelOrder({ userId: userdata.uid, orderReference: order.reference });
   }
 
   // function handleCancel(){
   //   cloudfirestore.justATest({collectionName:"Users", reference:userdata.uid});
   // }
 
-  console.log(userdata)
+  console.log(userdata);
 
-  function handlePay(){
+  function handlePay() {
     let price;
-    userdata.orders.map((s)=>{
-      if(order.reference === s.reference){
+    userdata.orders.map((s) => {
+      if (order.reference === s.reference) {
         price = s.grandTotal;
       }
     });
 
-    console.log(userdata)
+    console.log(userdata);
 
-    navigateTo(
-      '/AccountStatementPayment',
-      {state : {
-        
+    navigateTo('/AccountStatementPayment', {
+      state: {
         firstName: userdata.firstName,
         lastName: userdata.lastName,
         fullname: userdata.name,
@@ -116,13 +115,14 @@ function MyOrderCard(props) {
         totalPrice: price,
         userId: userdata.uid,
         orderReference: order.reference,
-        date : orderDateObject
-      }})
+        date: orderDateObject,
+      },
+    });
   }
 
   function responsiveCssPaperColorIfDelivered() {
-    if(dateDifference <= 0 && proofOfPaymentLinkCount <= 0){
-      return 'bg-gray-300'
+    if (dateDifference <= 0 && proofOfPaymentLinkCount <= 0) {
+      return 'bg-gray-300';
     }
     if (order.delivered && order.paid) {
       return 'bg-green-300';
@@ -136,69 +136,65 @@ function MyOrderCard(props) {
     if (!order.delivered && !order.paid) {
       return 'bg-red-400';
     }
-  
   }
 
   function onQuestionMarkClick() {
     handleOpenModal();
   }
 
-  function disabledColor(){
-    if(dateDifference <= 0 && proofOfPaymentLinkCount <= 0){
-      return " bg-gray-300 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed"
+  function disabledColor() {
+    if (dateDifference <= 0 && proofOfPaymentLinkCount <= 0) {
+      return ' bg-gray-300 hover:bg-gray-300 border-0 drop-shadow-lg cursor-not-allowed';
     }
   }
 
-  function disabledColorCancelButton(){
-    if(proofOfPaymentLinkCount > 0){
-      return " bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed"
+  function disabledColorCancelButton() {
+    if (proofOfPaymentLinkCount > 0) {
+      return ' bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed';
     }
-    if(paid){
-      return " bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed"
+    if (paid) {
+      return ' bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed';
     }
-    if(dateDifference <= 0){
-      return " bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed"
-    }
-    else{
-      return " text-red-400 hover:bg-red-50"
-    }
-  }
-
-  function disableButtonCancelOrder(){
     if (dateDifference <= 0) {
-      return true
-    }
-    if(proofOfPaymentLinkCount > 0){
-      return true
-    }
-    if(paid){
-      return true
-    }
-    else{
-      return false
+      return ' bg-gray-300 text-white hover:bg-none border-0 drop-shadow-lg cursor-not-allowed';
+    } else {
+      return ' text-red-400 hover:bg-red-50';
     }
   }
 
-  function disableButton(){
-    if(dateDifference >= 0){
-      return false
+  function disableButtonCancelOrder() {
+    if (dateDifference <= 0) {
+      return true;
     }
-    if(proofOfPaymentLinkCount > 0){
-      return false
+    if (proofOfPaymentLinkCount > 0) {
+      return true;
     }
-    else{
-      return true
+    if (paid) {
+      return true;
+    } else {
+      return false;
     }
   }
-  
-  useEffect(()=>{
-    readMessages()
-  },[firestore])
-  
-  useEffect(()=>{
-    disableButton()
-    disabledColor()
-  },[])
+
+  function disableButton() {
+    if (dateDifference >= 0) {
+      return false;
+    }
+    if (proofOfPaymentLinkCount > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  useEffect(() => {
+    readMessages();
+  }, [firestore]);
+
+  useEffect(() => {
+    disableButton();
+    disabledColor();
+  }, []);
 
   useEffect(() => {
     if (width < 770) {
@@ -209,13 +205,30 @@ function MyOrderCard(props) {
   }, [width]);
 
   return (
-    <div className={'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()}>
+    <div
+      className={
+        'self-center w-full xs:w-11/12 lg:w-10/12 mb-3 sm:mb-5 rounded-xl ' + responsiveCssPaperColorIfDelivered()
+      }
+    >
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
-    
         <div className="flex flex-row justify-between mb-4">
-          {(proofOfPaymentLinkCount <= 0) ? <CountdownTimer className='ml-2 mt-1' size={3} initialTime={dateDifference} expiredText='Order Expired' id={order.reference} /> : <div> </div>  }
-          <AiOutlineFileSearch className="cursor-pointer text-blue1 text-lg hover:text-color10b" onClick={onQuestionMarkClick} size="2em" />
-           {/* <span className="flex cursor-pointer text-blue1 hover:text-color10b text-2xl" onClick={onQuestionMarkClick}>
+          {proofOfPaymentLinkCount <= 0 ? (
+            <CountdownTimer
+              className="ml-2 mt-1"
+              size={3}
+              initialTime={dateDifference}
+              expiredText="Order Expired"
+              id={order.reference}
+            />
+          ) : (
+            <div> </div>
+          )}
+          <AiOutlineFileSearch
+            className="cursor-pointer text-blue1 text-lg hover:text-color10b"
+            onClick={onQuestionMarkClick}
+            size="2em"
+          />
+          {/* <span className="flex cursor-pointer text-blue1 hover:text-color10b text-2xl" onClick={onQuestionMarkClick}>
               <>Details</>
               <AiOutlineSearch className='mt-1'/>
             </span> */}
@@ -252,62 +265,70 @@ function MyOrderCard(props) {
             </Typography>
           </div>
 
-            <div className="flex w-full sm:w-6/12 justify-end text-end lg:justify-center lg:text-start sm:mr-7">
-              <Typography variant="h5" component="div" className="tracking-tighter xs:tracking-normal">
-                Total : ₱{order.grandTotal.toLocaleString('en-US',{style: 'decimal'})}
-              </Typography>
-            </div>
+          <div className="flex w-full sm:w-6/12 justify-end text-end lg:justify-center lg:text-start sm:mr-7">
+            <Typography variant="h5" component="div" className="tracking-tighter xs:tracking-normal">
+              Total : ₱{order.grandTotal.toLocaleString('en-US', { style: 'decimal' })}
+            </Typography>
+          </div>
         </div>
 
-        <div className="w-full border-t-2 mt-4 mb-1 "/>
+        <div className="w-full border-t-2 mt-4 mb-1 " />
 
-          <div className='flex flex-col lg:flex-row mt-5 gap-5 items-center '>
-            <div className='w-full lg:w-5/12 flex gap-5 justify-evenly'>
-              <button 
-                className={" w-max rounded-lg px-3 py-2 border border-red-400 " + disabledColorCancelButton()}
-                onClick={handleCancel}
-                disabled={disableButtonCancelOrder()}
-                >Cancel Order
-              </button>
-              <button 
-                className={"w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b " + disabledColor()}
-                onClick={handlePay}
-                disabled={disableButton()} 
-                >Pay
-              </button> 
-            </div>
-
-        <div className="w-full border-t-2 mb-0.5 lg:border-t-0 "/>
-
-            <div className='w-full lg:w-9/12 flex gap-5 flex-col-reverse sm:flex-row justify-center items-center lg:justify-end '>
-              { isadmin ? (<> </>):
-              <button 
-                  onClick={onMessageClick} 
-                  className={"px-3 py-2 w-max rounded-lg text-white font-semibold bg-color60 hover:bg-color10c " + disabledColor()}
-                  disabled={disableButton()}
-                  > <p className='flex gap-1 justify-center'>
-                    <HiChatBubbleLeftEllipsis className='mt-1'/>Message
-                    {unRead ? 
-                    (<div className='relative flex h-3 w-3'>
-                      <span className='bg-red-500 absolute inline-flex rounded-full h-2 w-2 animate-ping opacity-150'>
-                      </span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-red-400 ">
-                      </span>
-                    </div>)
-                    :null}
-                    </p>
-              </button>}
-                <ImageUploadButton
-                  id = {`order-${order.reference}`}
-                  onUploadFunction={onUpload}
-                  storage={storage}
-                  folderName={'Orders/' + userId + '/' + order.reference}
-                  buttonTitle={'Upload Proof of Payment'}
-                  variant="outlined"
-                  disabled={disableButton()}
-                />
-            </div>
+        <div className="flex flex-col lg:flex-row mt-5 gap-5 items-center ">
+          <div className="w-full lg:w-5/12 flex gap-5 justify-evenly">
+            <button
+              className={' w-max rounded-lg px-3 py-2 border border-red-400 ' + disabledColorCancelButton()}
+              onClick={handleCancel}
+              disabled={disableButtonCancelOrder()}
+            >
+              Cancel Order
+            </button>
+            <button
+              className={
+                'w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b ' +
+                disabledColor()
+              }
+              onClick={handlePay}
+              disabled={disableButton()}
+            >
+              Pay
+            </button>
           </div>
+
+          <div className="w-full border-t-2 mb-0.5 lg:border-t-0 " />
+
+          <div className="w-full lg:w-9/12 flex gap-5 flex-col-reverse sm:flex-row justify-center items-center lg:justify-end ">
+            <button
+              onClick={onMessageClick}
+              className={
+                'px-3 py-2 w-max rounded-lg text-white font-semibold bg-color60 hover:bg-color10c ' + disabledColor()
+              }
+              disabled={disableButton()}
+            >
+              {' '}
+              <p className="flex gap-1 justify-center">
+                <HiChatBubbleLeftEllipsis className="mt-1" />
+                Message
+                {unRead ? (
+                  <div className="relative flex h-3 w-3">
+                    <span className="bg-red-500 absolute inline-flex rounded-full h-2 w-2 animate-ping opacity-150"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-400 "></span>
+                  </div>
+                ) : null}
+              </p>
+            </button>
+
+            <ImageUploadButton
+              id={`order-${order.reference}`}
+              onUploadFunction={onUpload}
+              storage={storage}
+              folderName={'Orders/' + userId + '/' + order.reference}
+              buttonTitle={'Upload Proof of Payment'}
+              variant="outlined"
+              disabled={disableButton()}
+            />
+          </div>
+        </div>
       </div>
       <div>
         <MyOrderCardModal open={openModal} handleClose={handleClose} order={order} />

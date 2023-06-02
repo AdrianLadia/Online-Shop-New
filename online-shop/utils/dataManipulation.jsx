@@ -105,15 +105,22 @@ class dataManipulation {
     const dataToUse = [];
     data.map((item) => {
       if (item.paymentprovider) {
-        const dataToPush = [item.date, item.paymentprovider + ' ' + item.reference, '', parseFloat(item.amount)];
+        let proofOfPaymentLink = '';
+        if (item.proofOfPaymentLink) {
+          proofOfPaymentLink = item.proofOfPaymentLink;
+        }
+
+        const dataToPush = [item.date, item.paymentprovider + ' ' + item.reference, '', parseFloat(item.amount),proofOfPaymentLink];
         dataToUse.push(dataToPush);
       } else {
         dataToUse.push([item.date, item.reference, item.grandTotal, '']);
       }
     });
 
+    
     let runningBalance = 0;
     dataToUse.map((item) => {
+      
       runningBalance += item[2];
       runningBalance -= item[3];
       item.push(Math.round(runningBalance * 100) / 100);
@@ -122,6 +129,15 @@ class dataManipulation {
       } else {
         item.push('green');
       }
+
+      if (item[2] == '') {
+        let proofOfPaymentLink = item.splice(4, 1)[0];
+        item.push(proofOfPaymentLink)
+      }
+
+
+    
+
     });
 
     if (forTesting) {
@@ -129,20 +145,20 @@ class dataManipulation {
         item[0] = this.convertDateToNanoSecondsAndSeconds(item[0]);
       });
     }
-
-    const dataToUseSchema = Joi.array().items(Joi.array().length(6).required()).required();
-
+    
+    const dataToUseSchema = Joi.array().required();
+    
     const { error } = dataToUseSchema.validate(dataToUse);
     if (error) {
       throw new Error(error);
     }
-
+    
     return dataToUse;
   }
-
+  
   accountStatementTable(tableData, forTesting = false) {
-    function createData(date, reference, credit, debit, runningBalance, color) {
-      return { date, reference, credit, debit, runningBalance, color };
+    function createData(date, reference, credit, debit, runningBalance, color, proofOfPaymentLink) {
+      return { date, reference, credit, debit, runningBalance, color, proofOfPaymentLink };
     }
     const rowsdata = [];
     tableData.map((item) => {
@@ -154,8 +170,15 @@ class dataManipulation {
         date = this.convertDateTimeStampToDateString(item[0]);
       }
 
-      rowsdata.push(createData(date, item[1], item[2], item[3], item[4], item[5]));
+      let proofOfPaymentLink
+      if (item[6]) {
+        proofOfPaymentLink = item[6]
+      }
+
+      rowsdata.push(createData(date, item[1], item[2], item[3], item[4], item[5], proofOfPaymentLink));
     });
+
+    console.log(rowsdata)
     return rowsdata;
   }
 
