@@ -53,7 +53,7 @@ const OpenCartButton = (props) => {
               <button
                 id = 'addToCartIncrement'
                 onClick={() => onAddToCartClick(key)}
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-color60 hover:bg-color10c text-white font-bold py-2 px-4 rounded"
               >
                 +
               </button>
@@ -62,7 +62,7 @@ const OpenCartButton = (props) => {
               <button
                 id = 'addToCartDecrement'
                 onClick={() => RemoveFromCart(key)}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-red1 hover:bg-red-400 text-white font-bold py-2 px-4 rounded"
               >
                 -
               </button>

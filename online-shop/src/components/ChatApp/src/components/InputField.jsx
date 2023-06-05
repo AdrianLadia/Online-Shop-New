@@ -19,9 +19,6 @@ const InputField = (props) => {
   const { userId, selectedChatOrderId, userdata, firestore, storage } = useContext(AppContext);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
 
-  console.log(message);
-  console.log(send);
-
   async function updateMessages() {
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     const docSnap = await getDoc(docRef);
@@ -111,8 +108,6 @@ const InputField = (props) => {
         setMessage('');
         setNewMessage('');
       });
-
-
   }
 
   function inputMessage(option1, option2) {

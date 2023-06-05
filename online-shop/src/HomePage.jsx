@@ -49,8 +49,6 @@ const HomePage = () => {
   const { width } = useWindowDimensions();
   const [showMenu, setShowMenu] = useState(false);
   const [showToolTip, setShowToolTip] = useState(false);
-
-  // alert(trendyItems)
     
     function handleCategory(item){
       if(item === "Paper Bags"){
@@ -229,7 +227,7 @@ const HomePage = () => {
           </div>
           {/* Menu */}
           <div className='w-full sm:w-8/12 md:w-11/12 flex-row-reverse md:flex-row justify-start md:justify-between flex '>
-            {/* Sm Screen Menu */}
+            {/* SMall Screen Menu */}
             <div className='block md:hidden w-3/12 sm:w-2/12 text-3xl h-20 p-2 '> 
               <div className=' flex justify-center items-center w-full h-full'>
                 {showMenu == false ? 
@@ -246,7 +244,7 @@ const HomePage = () => {
                 </div> : null
               }
             </div> 
-            {/* LG screen menu */}
+            {/* LarGe screen menu */}
             <div className='hidden md:block w-11/12 lg:w-2/3 xl:w-1/2 text-base md:text-lg xl:text-xl h-20 gap-0.5 justify-evenly items-start '>
               <button onClick={()=>{scroll("page1")}} className={buttonStyle("page1")}>Home</button>
               <button onClick={()=>{scroll("page2")}} className={buttonStyle("page2")}>About</button>
@@ -537,13 +535,13 @@ const HomePage = () => {
               <div className='h-4/10 w-full 2xs:w-19/20 md:w-10/12 bg-opacity-60 rounded-t-3xl bg-color60 p-2'> 
               <div className='h-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch gap-2 rounded-t-3xl overflow-y-auto'>
                 {/* Find Us */}
-                <div className='flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch overflow-y-auto min-h-4/10 row-span-2 col-span-2'>
+                <div className='overflow-y-hidden flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch min-h-4/10 row-span-2 col-span-2'>
                   <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Find Us</h1>
                   <div className='flex items-start 2xs:items-center justify-start gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full '>
                     <span className={spanFooterStyle()}><FaMapMarkerAlt className='text-white'/></span>
                     <p className='text-slate-500 text-xs tracking-tighter overflow-x-auto'>9W6M+7GX, P.Sanchez / Pagsabungan Rd, Mandaue City, Cebu.</p>
                   </div>
-                    <div className='w-full '>
+                    <div className='w-full'>
                       <GoogleMaps
                         selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} locallatitude={locallatitude}
                         setLocalLatitude={setLocalLatitude} locallongitude={locallongitude} setLocalLongitude={setLocalLongitude}

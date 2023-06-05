@@ -44,10 +44,8 @@ function MyOrderCard(props) {
       try {
         messages &&
           messages.map((q) => {
-            if (q.userRole === 'superAdmin' || q.userRole === 'Admin') {
-              if (q.read === false) {
-                unReadCount += 1;
-              }
+            if ((q.userRole === 'superAdmin') && q.read === false) {
+              unReadCount += 1;
             }
           });
       } catch (e) {
@@ -76,7 +74,7 @@ function MyOrderCard(props) {
   }
 
   function onMessageClick() {
-    console.log('clicked');
+    readMessages();
     firestore.updateOrderMessagesAsReadForUser(order.reference);
     setSelectedChatOrderId(order.reference);
     navigateTo('/orderChat', { state: { orderReference: order.reference } });
@@ -86,12 +84,6 @@ function MyOrderCard(props) {
     cloudfirestore.transactionCancelOrder({ userId: userdata.uid, orderReference: order.reference });
   }
 
-  // function handleCancel(){
-  //   cloudfirestore.justATest({collectionName:"Users", reference:userdata.uid});
-  // }
-
-  console.log(userdata);
-
   function handlePay() {
     let price;
     userdata.orders.map((s) => {
@@ -99,8 +91,6 @@ function MyOrderCard(props) {
         price = s.grandTotal;
       }
     });
-
-    console.log(userdata);
 
     navigateTo('/AccountStatementPayment', {
       state: {
@@ -122,21 +112,17 @@ function MyOrderCard(props) {
       return 'bg-gray-300';
     }
     if (order.delivered && order.paid) {
-      return 'bg-green-300';
+      return 'bg-color60';
     }
     if (order.delivered && !order.paid) {
-      return 'bg-orange-300';
+      return 'bg-orange-400';
     }
     if (!order.delivered && order.paid) {
-      return 'bg-yellow-200';
+      return 'bg-yellow-300';
     }
     if (!order.delivered && !order.paid) {
-      return 'bg-red-400';
+      return 'bg-red-600';
     }
-  }
-
-  function onQuestionMarkClick() {
-    handleOpenModal();
   }
 
   function disabledColor() {
@@ -221,14 +207,10 @@ function MyOrderCard(props) {
             <div> </div>
           )}
           <AiOutlineFileSearch
-            className="cursor-pointer text-blue1 text-lg hover:text-color10b"
-            onClick={onQuestionMarkClick}
+            className="cursor-pointer text-color10b text-lg hover:text-blue1"
+            onClick={handleOpenModal}
             size="2em"
           />
-          {/* <span className="flex cursor-pointer text-blue1 hover:text-color10b text-2xl" onClick={onQuestionMarkClick}>
-              <>Details</>
-              <AiOutlineSearch className='mt-1'/>
-            </span> */}
         </div>
 
         <div className="flex flex-row">
@@ -282,7 +264,7 @@ function MyOrderCard(props) {
             </button>
             <button
               className={
-                'w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b ' +
+                'w-max rounded-lg px-8 py-2 font-bold text-white border border-color10b bg-color10b hover:bg-blue1 ' +
                 disabledColor()
               }
               onClick={handlePay}

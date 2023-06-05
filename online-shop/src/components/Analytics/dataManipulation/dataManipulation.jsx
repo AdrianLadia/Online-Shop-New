@@ -32,6 +32,7 @@ class dataManipulation {
     })
     return favoriteItems
   }
+  
 }
 
 export default dataManipulation;

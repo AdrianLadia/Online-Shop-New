@@ -17,7 +17,6 @@ const CartTable = (props) => {
     }
 
     const rows = props.rows
-
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -35,6 +34,7 @@ const CartTable = (props) => {
 
         { id: 'addbutton', label: 'Add', minWidth: 1 },
         { id: 'removebutton', label: 'Remove', minWidth: 1 },
+
         {
           id: 'price',
           label: 'Price/Unit',
@@ -84,7 +84,6 @@ const CartTable = (props) => {
                   <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                     {columns.map((column) => {
                       const value = row[column.id];
-                    
                       if (column.id === 'itemimage') {
                         return(
                           <TableCell key={column.id} align={column.align}>

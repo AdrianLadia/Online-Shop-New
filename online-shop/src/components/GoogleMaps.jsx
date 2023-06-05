@@ -42,7 +42,7 @@ const GoogleMaps = (props) => {
 
   useEffect(()=>{
     if(props.forFooter){
-      setContainerClassName("w-full h-[calc(50vh-200px)]") 
+      setContainerClassName("w-full h-[calc(45vh-200px)]") 
     }
   },[props.forFooter])
 
@@ -63,7 +63,6 @@ const GoogleMaps = (props) => {
     if (noAddressHistory) {
       setSelectedAddress(true);
     }
-
     setLatitude(e.latLng.lat());
     setLongitude(e.latLng.lng());
     setLocalDeliveryAddress('');

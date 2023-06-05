@@ -85,8 +85,8 @@ export const CheckBoxesMobile = ({name, callback}) => {
               <div className="col-span-2 grid gap-1 justify-items-center ">
                 {customized === ""  && selectedOption === "" ?  null  : 
                     <div className="flex"> 
-                        <button className="p-1  bg-red-400 border-2 text-xs border-red-600 rounded-lg hover:bg-red-300 " 
-                             onClick={handleClear}>Clear All</button>    
+                        <button className="p-1 text-white bg-red1 border-2 text-xs border-red-700 rounded-lg hover:bg-red-400 " 
+                             onClick={handleClear}>Clear</button>    
                     </div>
                 }  
                

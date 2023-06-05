@@ -13,10 +13,10 @@ import useWindowDimensions from "./utils/UseWindowDimensions";
 import businessCalculation from "./bussinessCalculation/businessCalculation";
 import { SimpleMovingAverage } from "./SimpleMovingAverage";
 import { Clicks } from "./Clicks";
-import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,
-} from "chart.js";
 import { RateOfChange } from "./RateOfChange";
+import Favorites from "./Favorites";
 
+import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend} from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function InventoryTable({name, category, customized, callback}) {
@@ -26,7 +26,7 @@ export function InventoryTable({name, category, customized, callback}) {
   const [productsData, setProductsData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [dataUsedForTable, setDataUsedForTable] = useState([]);
-  const { firestore, trendyItems ,setTrendyItems } = useContext(AppContext);
+  const { firestore } = useContext(AppContext);
 
   const { ref: p1, inView: p1inView } = useInView();
   const [loading, setLoading] = useState(false);
@@ -58,10 +58,7 @@ export function InventoryTable({name, category, customized, callback}) {
         })
     })
     setTrendingItems(trending)
-    setTrendyItems(trending)
   },[favorites])
-
-  // alert(trendyItems)
   
   useEffect(() => {
     firestore.readAllDataFromCollection("Products").then((data) => {
@@ -77,6 +74,7 @@ export function InventoryTable({name, category, customized, callback}) {
       const totalStocks = businesslogic.getTotalStocks(product);
       const type = product.category;
       const custom = product.isCustomized;
+      const itemId = product.itemId;
 
       tableData.push({
         tableData: {
@@ -85,6 +83,7 @@ export function InventoryTable({name, category, customized, callback}) {
           category: type,
           totalStocks: totalStocks,
           isCustomized: custom,
+          itemId: itemId,
         },
         moreInfoData: product,
       });
@@ -111,19 +110,13 @@ export function InventoryTable({name, category, customized, callback}) {
     setSelectedName(name)
   }, [name, category, customized]);
 
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  }, []);
-
   callback(productNames)
   
   useEffect(()=>{
     const data = [];
     tableData.map((s, index)=>{
       const n = s.name;
+
 
       data.push(n)
     })
@@ -216,6 +209,7 @@ export function InventoryTable({name, category, customized, callback}) {
   }
 
   const columns = [
+    /* Item Name */
     {
       field: "name",
       headerName: (
@@ -253,6 +247,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Category */
     {
       field: "category",
       headerName: (
@@ -315,6 +310,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Total Stocks */
     {
       field: "totalStocks",
       headerName: (
@@ -356,6 +352,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Graph for StocksPerMonth and SalesPerMonth */
     {
       field: "graph",
       headerName: (
@@ -394,6 +391,7 @@ export function InventoryTable({name, category, customized, callback}) {
         />
       ),
     },
+    /* Item Name */
     {
       field: "name1",
       headerName: (
@@ -431,6 +429,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage1 */
     {
       field: "SalesAverage1",
       headerName: (
@@ -473,6 +472,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage3 */
     {
       field: "SalesAverage3",
       headerName: (
@@ -515,6 +515,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage6 */
     {
       field: "SalesAverage6",
       headerName: (
@@ -557,6 +558,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage12 */
     {
       field: "SalesAverage12",
       headerName: (
@@ -599,6 +601,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Item Name */
     {
       field: "name2",
       headerName: (
@@ -636,6 +639,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange1 */
     {
       field: "RateOfChange1",
       headerName: (
@@ -679,6 +683,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange3 */
     {
       field: "RateOfChange3",
       headerName: (
@@ -722,6 +727,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange6 */
     {
       field: "RateOfChange6",
       headerName: (
@@ -765,6 +771,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange12 */
     {
       field: "RateOfChange12",
       headerName: (
@@ -808,7 +815,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
-    ,
+    /* Item Name */
     {
       field: "name3",
       headerName: (
@@ -846,6 +853,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Clicks1 */
     {
       field: "Clicks1",
       headerName: (
@@ -889,6 +897,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Clicks3 */
     {
       field: "Clicks3",
       headerName: (
@@ -932,6 +941,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Clicks6 */
     {
       field: "Clicks6",
       headerName: (
@@ -975,6 +985,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Clicks12 */
     {
       field: "Clicks12",
       headerName: (
@@ -1018,6 +1029,44 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Favorites */
+    {
+      field: "Favorite Level",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+          Favorite Level   
+        </div>
+      ),
+      width: responsiveTableWidth(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color: "#480032",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "500",
+          }}
+        >
+          <Favorites items={filteredTableData.row.name} favorites={trendingItems} />
+        </div>
+      ),
+    },
+    /* StockInsButton */
     {
       field: "StockInsButton",
       headerName: (
@@ -1050,6 +1099,7 @@ export function InventoryTable({name, category, customized, callback}) {
         />
       ),
     },
+    /* RecentOrdersButton */
     {
       field: "RecentOrdersButton",
       headerName: (
@@ -1088,13 +1138,6 @@ export function InventoryTable({name, category, customized, callback}) {
 
   return (
     <div ref={p1} className=" w-11/12 2lg:w-9/12 ml-1 mr-3 mt-10 2lg:mt-0 bg-gradient-to-t from-stone-100 to-green-100 border-2 border-green-700 rounded-md">
-      {/* {loading === true ? ( */}
-        <div
-          style={{display: "flex", justifyContent: "center", alignItems: "center"}}
-        >
-          {/* <RingLoader color={"#36d7b7"} loading={loading} size={290} />{" "} */}
-        </div>
-      {/* ) : ( */}
         <Box
           sx={{
             height: "100%",

@@ -271,8 +271,8 @@ const ProductCard = (props) => {
               </div>
               {props.product.imageLinks.length > 0 ? (
                 imageLoading ? (
-                  <div className="flex justify-center mt-24">
-                    <CircularProgress size="14vh" />
+                  <div className="flex justify-center items-center mt-24">
+                    <CircularProgress size="10vh" />
                   </div>
                 ) : (
                   <img

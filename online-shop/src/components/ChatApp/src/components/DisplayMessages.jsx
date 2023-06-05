@@ -25,7 +25,6 @@ const DisplayMessages = (props) => {
     scrollToBottom();
   }, [messages]);
 
-
   return (
     <div className="w-full bg-green4 border-color60 rounded-xl border-x-4 h-5/6">
       <div className="h-full ">
