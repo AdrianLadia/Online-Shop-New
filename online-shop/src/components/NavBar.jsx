@@ -26,7 +26,7 @@ const NavBar = () => {
     setUserLoaded(true);
     setUserState('guest');
     setCart({});
-    navigateTo('/');
+    navigateTo('/shop');
     console.log('logged out');
   }
 
@@ -39,19 +39,17 @@ const NavBar = () => {
       <div className="flex items-center justify-between flex-wrap bg-gradient-to-r from-color10c via-color10c to-color60 w-full h-16 ">
         <Logo onClick={storeClick} />
         <div className="flex flex-col justify-center">
-          <div className="text-white text-sm cursor-pointer hover:underline" onClick={storeClick}>
+          <div className="text-white text-xs 2xs:text-sm cursor-pointer hover:underline" onClick={storeClick}>
             {/* <Typography id="modal-modal-title" variant="h5" component="h2"> */}
             We are on <strong>SOFT OPENING!</strong>
             {/* </Typography> */}
           </div>
-          <div className="flex justify-center text-white text-sm cursor-pointer hover:underline" onClick={storeClick}>
+          <div className="flex justify-center text-white text-xs 2xs:text-sm cursor-pointer hover:underline" onClick={storeClick}>
             {/* <Typography id="modal-modal-title" variant="h5" component="h2"> */}
             <strong> More Products Soon </strong>.
             {/* </Typography> */}
           </div>
-          
         </div>
-
         <div className="flex flex-row 2xs:mr-5 ">
           {userdata ? <AccountMenu userdata={userdata} signout={logOutClick} /> : <LoginButton position={'left'} />}
         </div>

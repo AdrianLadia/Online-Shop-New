@@ -3,12 +3,11 @@ import { Modal, Typography } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import { useContext, useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
-import useWindowDimensions from "./useWindowDimensions";
+import useWindowDimensions from "./UseWindowDimensions";
 import CheckoutButton from "./CheckoutButton";
 import CartTable from "./CartTable";
 import Fade from "@mui/material/Fade";
 import AppContext from "../AppContext";
-
 
 const CartModal = (props) => {
   const openCart = props.openCart;
@@ -73,7 +72,7 @@ const CartModal = (props) => {
               <button
                 id = 'closeCartButton'
                 onClick={CloseCart}
-                className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
+                className="bg-red1 hover:bg-red-400 p-2 rounded-full w-10 text-white"
               >
                 X
               </button>
@@ -91,7 +90,7 @@ const CartModal = (props) => {
           </div>
 
           {/* TABLE  */}
-          {cartisempty ? <> Cart is empty</> : <CartTable rows={rows} />}
+          {cartisempty ? <> Cart is empty </> : <CartTable rows={rows} />}
 
           <div className="flex ">
             {cartisempty ? (
@@ -102,7 +101,7 @@ const CartModal = (props) => {
                   <button
                   id='clearCartButton'
                     onClick={clearCart}
-                    className="bg-red-500 h-10 mt-5 hover:bg-red-800 p-2 rounded-lg  text-white "
+                    className="bg-red1h-10 mt-5 hover:bg-red-400 p-2 rounded-lg text-white "
                   >
                     Clear Cart
                   </button>

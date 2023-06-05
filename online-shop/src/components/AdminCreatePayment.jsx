@@ -139,8 +139,8 @@ const AdminCreatePayment = (props) => {
           <button 
             id='createPaymentButton' 
             onClick={onCreatePayment}  
-            className="w-4/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg sm:text-2xl text-xl"
-            >{' '}Create Payment{' '}
+            className="w-4/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg text-md uppercase"
+            >{''}Create Payment{''}
           </button>
           <div className='mt-5'>
             <ImageUploadButton onUploadFunction={onUploadFunction} folderName={'Payments/' + selectedName + '/' + reference} storage={storage} id='createPayment'  buttonTitle='Upload Proof Of Payment'/>

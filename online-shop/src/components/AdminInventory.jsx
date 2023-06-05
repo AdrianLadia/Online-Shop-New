@@ -182,7 +182,7 @@ const AdminInventory = (props) => {
                   <TableCell align="center">{row.brand}</TableCell>
                   <TableCell align="center">{row.weight}</TableCell>
                   <TableCell align="center">{row.dimensions}</TableCell>
-                  <TableCell align="center">{row.description}</TableCell>
+                  <TableCell align="center" className="h-32 overflow-y-auto">{row.description}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -192,20 +192,20 @@ const AdminInventory = (props) => {
       {/* BUTTONS */}
       <div className="flex flex-col gap-2 2xs:flex-row w-6/12 md:w-2/4 justify-evenly 2xs:mt-8 m-5 ">
         <button
-          onClick={handleOpenAddItem}
-          className="bg-green-400 hover:bg-green-300 rounded-lg p-3 font-bold cursor-copy"
-        >
-          Add Item
-        </button>
-        <button
           onClick={handleOpenDeleteItem}
-          className="bg-red-400 hover:bg-red-300 rounded-lg p-3 font-bold"
+          className="bg-red-600 hover:bg-red-400 text-white rounded-lg p-3 font-bold"
         >
           Delete Item
         </button>
         <button
+          onClick={handleOpenAddItem}
+          className="bg-color60 hover:bg-green-400 text-white rounded-lg p-3 font-bold cursor-copy"
+        >
+          Add Item
+        </button>
+        <button
           onClick={handleOpenEditItem}
-          className="bg-yellow-400 hover:bg-yellow-300 rounded-lg p-3 font-bold"
+          className="bg-yellow-500 hover:bg-yellow-400 text-white rounded-lg p-3 font-bold"
         >
           Edit Item
         </button>

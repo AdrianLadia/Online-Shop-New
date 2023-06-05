@@ -81,6 +81,7 @@ const ProductCardModal = (props) => {
   const date = new Date();
 
   const itemId = props.product.itemId;
+  const itemName = props.product.itemName;
   const size = props.product.size;
   const color = props.product.color;
   const material = props.product.material;
@@ -110,18 +111,18 @@ const ProductCardModal = (props) => {
 
     if (heart) {
       setHeart(!heart);
-      setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemId))
-      firestore.removeItemFromFavorites(userdata.uid,props.product.itemId)
+      setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemName))
+      firestore.removeItemFromFavorites(userdata.uid,props.product.itemName)
     }
     else {
       setHeart(!heart);
-      setFavoriteItems([...favoriteitems, props.product.itemId])
-      firestore.addItemToFavorites(userdata.uid,props.product.itemId)
+      setFavoriteItems([...favoriteitems, props.product.itemName])
+      firestore.addItemToFavorites(userdata.uid,props.product.itemName)
     }
   }
 
   useEffect (() => {
-    if (favoriteitems.includes(props.product.itemId)) {
+    if (favoriteitems.includes(props.product.itemName)) {
       setHeart(true);
     }
     else {
@@ -183,7 +184,7 @@ const ProductCardModal = (props) => {
               {/* HEART */}
               {heart ? (
                 <AiFillHeart
-                  id={itemId}
+                  id={itemName}
                   size={40}
                   onClick={onHeartClick}
                   className=" cursor-pointer text-red-500 "

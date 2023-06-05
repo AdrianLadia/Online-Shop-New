@@ -5,7 +5,6 @@ export const RateOfChange = ({data, number}) => {
 
     const businesscalculation = new businessCalculation();  
     const [averageSales, setAverageSales] = useState(0);
-
     
     useEffect(()=>{
       if(number){ 
@@ -17,7 +16,7 @@ export const RateOfChange = ({data, number}) => {
             setAverageSales(sales.toFixed(2))
           }else{
             setAverageSales(0)
-          }typeof sales === "number"
+          }
         }
     },[])
 

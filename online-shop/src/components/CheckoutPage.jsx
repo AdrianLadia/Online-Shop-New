@@ -307,7 +307,6 @@ const CheckoutPage = () => {
       (error) => {
         alert('Address not found. Be more specific.')
       }
-      
     );
   }
 
@@ -325,7 +324,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full">
               <button
                 id="selectFromSavedAddressButton"
-                className="hover:bg-blue1 bg-color10b text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                className="hover:bg-blue1 bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenModalSavedAddress}
               >
                 Select From Saved Address
@@ -353,8 +352,8 @@ const CheckoutPage = () => {
           </Typography>
         </div>
         
-        <div className="flex lg:mx-14 mb-0.5">
-          <button onClick={searchAddress} className="p-4 text-slate-200 font-bold bg-color10b rounded-lg mr-2 lg:mr-5">
+        <div className="gap-2 p-2 flex flex-row-reverse justify-between w-11/12 self-center">
+          <button onClick={searchAddress} className="p-4 text-white font-bold bg-color10b hover:bg-blue1 rounded-lg mr-2 lg:mr-5">
             Search
           </button>
           <TextField
@@ -363,13 +362,12 @@ const CheckoutPage = () => {
             label="Search Address And Pinpoint In Google Maps"
             InputLabelProps={labelStyle}
             variant="filled"
-            className=" w-11/12 self-center bg-white"
+            className="w-full self-center bg-white"
             value={addressGeocodeSearch}
             onChange={(e) => setAddressGeocodeSearch(e.target.value)}
-            
           />
         </div>
-        <div className="lg:mx-14">
+        <div className="lg:mx-14 mt-5">
           <GoogleMaps
             selectedAddress={selectedAddress}
             setSelectedAddress={setSelectedAddress}
@@ -403,7 +401,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full ">
               <button
                 id="selectFromSavedContactsButton"
-                className="bg-color10b hover:bg-blue1  text-slate-200 rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                className="bg-color10b hover:bg-blue1  text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenContactModal}
               >
                 Select From Saved Contacts
@@ -647,7 +645,7 @@ const CheckoutPage = () => {
                   <button
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
-                    className="hover:bg-color10b bg-blue1 text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
+                    className="hover:bg-blue1 bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
                     disabled={placeOrderLoading}
                   >
                     {placeOrderLoading ? <ClipLoader size={50} color="#ffffff" /> : 'Place Order'}

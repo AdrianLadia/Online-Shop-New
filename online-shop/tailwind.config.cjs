@@ -11,6 +11,29 @@ module.exports = {
       height: {
         '1/10': "10%",
         '2/15': "12%",
+        '3/20': "15%",
+        '2/10': "20%",
+        '3/10': "30%",
+        '4/10': "40%",
+        '11/20': "55%",
+        '6/10': "60%",
+        '7/10': "70%",
+        '8/10': "80%",
+        '9/10': "90%",
+        '19/20': "95%",
+      },
+      minHeight: {
+        '3/10': '30vh',
+        '7/20': '35vh',
+        '4/10': '40vh',
+        '9/20': '45vh',
+        '5/10': '50vh',
+      },
+      width: {
+        '3/10': "30%",
+        '4/10': "40%",
+        '6/10': "60%",
+        '7/10': "70%",
         '9/10': "90%",
         '19/20': "95%",
       },
@@ -45,23 +68,29 @@ module.exports = {
         '3xl' : '1751px'
       },
       borderRadius: {
-        '4xl': '2rem'
+        '4xl': '2rem',
+        'semifull': '20rem'
       },
       colors: {
         color60: '#69b05c', //logo green
         color30: '#bb9541', //logo brown
-        color10a: '#6ab15d', // 
+        color10a: '#6ab15d', // dark green
         color10b: '#6bd0ff', //light blue
         color10c: '#B6E388', //light green
         colorbackground: '#e1fadd', //bright green
         color1:"#d3eecf",
         color2:"#cceac7", //pale green
         blue1:"#429eff", //dark blue
+        red1: "#dc2626",
         green1:"#AAC8A7",
         green2:"#C9DBB2",
         green3:"#96BB7C",
         green4:"#D6EFC7",
-        green5:"#4E6C50"
+        green5:"#4E6C50",
+        fbBlue:"#3b5998",
+        messBlue:" #0099FF",
+        viberIndigo:"#59267c",
+        androidGreen:"#a4c639",
       },
     },
   }

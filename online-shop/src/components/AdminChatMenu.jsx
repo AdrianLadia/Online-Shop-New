@@ -37,22 +37,18 @@ const AdminChatMenu = () => {
             if (messages.length === 0) {
                 return null
             }
-            
             latestMessage = messages[messages.length - 1].message
             messages.forEach((message) => {
-                const userRole = message.userRole
-                if (userRole === "member") {
-                    if (message.read === false) {
-                        unreadCount += 1
-                    }
+              const userRole = message.userRole
+              if (userRole === "member") {
+                if (message.read === false) {
+                    unreadCount += 1
                 }
+              }
             })
-  
             if (unreadCount >= 1) {
               chats.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
             }
-            
-  
           } else {
             console.log('No such document!');
           }
@@ -61,35 +57,28 @@ const AdminChatMenu = () => {
       // });
       //   firestore.readAllOrderMessages().then((res) => {
       //       let chatData = []
-
       //       res.forEach((chat) => {
-            
-      //           const referenceNumber = chat.referenceNumber
-      //           const customerName = chat.ownerName
-      //           const messages = chat.messages
-      //           let unreadCount = 0
-      //           let latestMessage
-      //           if (messages.length === 0) {
-      //               return null
+      //         const referenceNumber = chat.referenceNumber
+      //         const customerName = chat.ownerName
+      //         const messages = chat.messages
+      //         let unreadCount = 0
+      //         let latestMessage
+      //         if (messages.length === 0) {
+      //             return null
+      //         }
+      //         latestMessage = messages[messages.length - 1].message
+      //         messages.forEach((message) => {
+      //           const userRole = message.userRole
+      //           if (userRole === "member") {
+      //             if (message.read === false) {
+      //                 unreadCount += 1
+      //             }
       //           }
-                
-      //           latestMessage = messages[messages.length - 1].message
-      //           messages.forEach((message) => {
-      //               const userRole = message.userRole
-      //               if (userRole === "member") {
-      //                   if (message.read === false) {
-      //                       unreadCount += 1
-      //                   }
-      //               }
-      //           })
-
-      //           if (unreadCount >= 1) {
-      //             chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
-      //           }
-
+      //          })
+      //         if (unreadCount >= 1) {
+      //           chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
+      //         }
       //       }) 
-
-          
         })
     }, [chatSwitch]);
   
@@ -127,15 +116,15 @@ const AdminChatMenu = () => {
   },[chatSwitch])
 
   return (
-    <div className="flex justify-center flex-col lg:flex-row">
+    <div className="flex justify-center flex-col lg:flex-row overflow-x-auto">
       <div ref={dummy}/>
       {openChat ? <ChatApp setChatData={setChatData} chatData={chatData} /> : null}
       <TableContainer 
-          className="flex justify-center items-start w-12/12 lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1 " 
+          className="flex justify-center items-start w-full lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1 " 
           component={Paper}>
         <Table aria-label="chat table" className='w-full overflow-auto ' >
           <TableHead>
-            <TableRow className='bg-gradient-to-br from-green4 to-green1 h-24 '>
+            <TableRow className=' bg-gradient-to-br from-green4 to-green1 h-24 '>
               <TableCell > <p className=' flex justify-center text-2xl xl:mr-5 '><HiChatAlt/></p> </TableCell>
               <TableCell className='font-bold'>Customer</TableCell>
               <TableCell className='font-bold'>Reference #</TableCell>
@@ -145,11 +134,11 @@ const AdminChatMenu = () => {
           <TableBody>
             {chatData.map((chat) => (
               <TableRow key={chat.id} >
-                <TableCell  component="th">
+                <TableCell component="th">
                   {selectedChatOrderId === chat.id && openChat ? 
                     <Button 
                       onClick={() => handleBoth(chat.id, false)} 
-                      className=" rounded-full bg-red-500 hover:bg-red-400 text-white"
+                      className=" rounded-full bg-red1 hover:bg-red-400 text-white"
                       >X
                     </Button>
                   :

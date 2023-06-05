@@ -118,7 +118,7 @@ const AdminOrders = (props) => {
             />
           </div>
           <div className="ml-1 flex">
-            <button className="p-3 rounded-lg bg-red-400 hover:bg-red-300 border-2 border-red-600">Clear</button>
+            <button className="p-3 rounded-lg text-white bg-red1 hover:bg-red-400 border-2 border-red-600">Clear</button>
           </div>
         </div>
 
@@ -137,7 +137,7 @@ const AdminOrders = (props) => {
             />
           </div>
           <div className="ml-1 flex">
-            <button className="p-3 rounded-lg bg-red-400 hover:bg-red-300 border-2 border-red-600">Clear</button>
+            <button className="p-3 rounded-lg text-white bg-red1 hover:bg-red-400 border-2 border-red-600">Clear</button>
           </div>
         </div>
 
@@ -148,7 +148,7 @@ const AdminOrders = (props) => {
           <div className='flex ml-1'>
             <button
               onClick={() => {setStartDate('')}}
-              className=" p-3 rounded-lg bg-red-400 hover:bg-red-300 border-2 border-red-600"
+              className=" p-3 rounded-lg text-white bg-red1 hover:bg-red-400 border-2 border-red-600"
             >
               Clear
             </button>

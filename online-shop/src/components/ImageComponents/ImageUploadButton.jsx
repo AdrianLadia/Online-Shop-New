@@ -17,7 +17,7 @@ const ImageUploadButton = (props) => {
   const onUploadFunction = props.onUploadFunction;
   const disableButton = props.disabled;
 
-  const [buttonColor, setButtonColor] = useState('primary');
+  const [buttonColor, setButtonColor] = useState(false);
   const [buttonText, setButtonText] = useState(buttonTitle);
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +40,7 @@ const ImageUploadButton = (props) => {
       const ordersRefStorage = ref(storage, folderName + '/' + fileName);
 
       uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
-        setButtonColor('success');
+        setButtonColor(true);
         setButtonText('Uploaded Successfuly');
         setLoading(false);
 
@@ -59,13 +59,15 @@ const ImageUploadButton = (props) => {
   useEffect(()=>{
     setTimeout(()=>{
       setButtonText(buttonTitle)
-      setButtonColor('primary')
+      setButtonColor(false)
     }, 3000)
   },[buttonText])
 
   function disable(){
     if(disableButton){
       return " bg-gray-300 hover:bg-gray-300 border-0 drop-shadow-md cursor-not-allowed text-white"
+    }else if(buttonColor == false){
+      return " bg-color10b"
     }
   }
 
@@ -73,11 +75,10 @@ const ImageUploadButton = (props) => {
     <div className='flex justify-center h-3/4 ml-0.5'>
       <Button
         id={id}
-        className={"w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter py-2 hover:bg-color10b rounded-lg " + disable()}
+        className={"w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter py-2 hover:bg-blue1 rounded-lg " + disable()}
         variant="contained"
         component="span"
         disabled={disableButton}
-        color= {buttonColor}
       >
         <input type="file" id={`imageUpload-${id}`} accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
         <label htmlFor={`imageUpload-${id}`}>

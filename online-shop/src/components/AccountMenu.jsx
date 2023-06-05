@@ -17,6 +17,7 @@ import { AiOutlineHistory } from "react-icons/ai";
 import { BsBook } from "react-icons/bs";
 import { RiAdminLine } from "react-icons/ri";
 import { Typography } from "@mui/material";
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const AccountMenu = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -26,7 +27,9 @@ const AccountMenu = (props) => {
     refreshUser,
     setRefreshUser,
     setUserState,
+    userstate
    } = useContext(AppContext);
+
   const open = Boolean(anchorEl);
 
   const navigateTo = useNavigate();
@@ -49,7 +52,7 @@ const AccountMenu = (props) => {
   function storeClick() {
     setUserState("userloading");
     setRefreshUser(!refreshUser);
-    navigateTo("/");
+    navigateTo("/shop");
   }
 
   function myOrdersClick() {
@@ -66,22 +69,23 @@ const AccountMenu = (props) => {
 
   return (
     <React.Fragment>
-      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
+      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }} >
         {/* <Typography sx={{ minWidth: 100 }}>Contact</Typography>
           <Typography sx={{ minWidth: 100 }}>Profile</Typography> */}
         <Tooltip title="My Profile">
           <IconButton
             id = "accountMenu"
             onClick={handleClick}
-            size="small"
+            // size="small"
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
-            className='hover:bg-blue1'
+            className='flex justify-center items-center hover:bg-blue1'
+            sx={{width: 48, height: 48}}
           >
-            <Avatar sx={{ width: 36, height: 36, bgcolor:'#6bd0ff',justifyItems:"end"}} className="mr-0 xs:-mr-4 xl:mr-0">
-              <Typography color='white' sx={{ mt:.2, fontWeight:600}}>
-                {userdata.name[0].toUpperCase()}
+            <Avatar sx={{ width: 36, height: 36, bgcolor:'#6bd0ff',justifyItems:"end"}} >
+              <Typography color='white' sx={{ fontWeight:600}} className="flex justify-center items-center">
+                {userstate == 'userloaded' ? <p className="mt-0.5">{userdata.name[0].toUpperCase()}</p> : <ClipLoader size={20} color="#ffffff"/>}
               </Typography>
             </Avatar>
           </IconButton>
@@ -151,7 +155,7 @@ const AccountMenu = (props) => {
           </ListItemIcon>
           <span>Settings</span>
         </MenuItem>
-        <MenuItem id='logoutMenu' onClick={props.signout} className='hover:bg-red-300'>
+        <MenuItem id='logoutMenu' onClick={props.signout} className='hover:bg-red-400'>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -160,7 +164,7 @@ const AccountMenu = (props) => {
         {isadmin ? (
           <div>
             <Divider className="mt-1 mb-1"/>
-            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-slate-600'>
+            <MenuItem id='adminMenu' onClick={adminClick} className='hover:bg-slate-300'>
               <RiAdminLine size={21} className="-ml-.5 font-bold text-blue1" />
               <span className="ml-5 mt-1 text-blue1">Admin</span>
             </MenuItem>

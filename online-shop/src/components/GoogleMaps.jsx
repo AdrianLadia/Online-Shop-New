@@ -9,7 +9,7 @@ import Geocode from 'react-geocode';
 import dataManipulation from '../../utils/dataManipulation';
 import UpdateMapMarkerModal from './UpdateMapMarkerModal';
 
-//NOTES
+// NOTES
 // How to set up marker on click
 // https://react-google-maps-api-docs.netlify.app/
 
@@ -35,20 +35,27 @@ const GoogleMaps = (props) => {
   const setZoom = props.setZoom;
   const setLocalDeliveryAddress = props.setLocalDeliveryAddress;
   const setAddressText = props.setAddressText;
+  const [containerClassName, setContainerClassName ] = useState("w-full h-[calc(100vh-200px)]") 
 
   const { firestore, userId, deliveryaddress, latitude, setLatitude, longitude, setLongitude } =
     React.useContext(AppContext);
 
+  useEffect(()=>{
+    if(props.forFooter){
+      setContainerClassName("w-full h-[calc(45vh-200px)]") 
+    }
+  },[props.forFooter])
+
   let getLocation = () => {
-    if (navigator.geolocation) {
+    if(locallatitude && locallongitude) {
+      setLocalLatitude(10.3622224);
+      setLocalLongitude(123.9192341);
+      setZoom(7);
+    }else{
       navigator.geolocation.getCurrentPosition((position) => {
         setLocalLatitude(position.coords.latitude);
         setLocalLongitude(position.coords.longitude);
       });
-    } else {
-      setLocalLatitude(10.3622224);
-      setLocalLongitude(123.9192341);
-      setZoom(7);
     }
   };
 
@@ -56,7 +63,6 @@ const GoogleMaps = (props) => {
     if (noAddressHistory) {
       setSelectedAddress(true);
     }
-
     setLatitude(e.latLng.lat());
     setLongitude(e.latLng.lng());
     setLocalDeliveryAddress('');
@@ -118,7 +124,7 @@ const GoogleMaps = (props) => {
             onClick={(e) => {
               onMapClick(e);
             }}
-            mapContainerClassName="w-full h-[calc(100vh-200px)]"
+            mapContainerClassName={containerClassName}
             disableDefaultUI={true}
             mapTypeControl={false}
           >

@@ -6,11 +6,11 @@ const textFieldStyle = () => ({
     borderRadius:"5px",
         '& .MuiOutlinedInput-notchedOutline': {
             border: 2,
-            color:"#429eff",
+            color:"#6bd0ff",
         },
         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
             border:2,
-            color: '#6bd0ff'
+            color: '#429eff'
         }
 });
 

@@ -470,8 +470,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return { status: 'error' };
     }
   }
-
-  // async (data) {}
   
 }
 

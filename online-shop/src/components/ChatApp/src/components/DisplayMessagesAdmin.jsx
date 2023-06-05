@@ -149,7 +149,7 @@ const DisplayMessagesAdmin = (props) => {
               <p>
                 <p>{message}</p>
                 {/* {image ? <img src={image} alt='this should be an image' className='h-64 w-64'/> : null} */}
-                {image ? <Image imageUrl={image} /> : null}
+                {image ? <Image imageUrl={image} className='h-64 w-64'/> : null}
               </p>
             </div>
             <div className={'mb-2 -ml-5 text-green3 ' + adminTextColor()}>

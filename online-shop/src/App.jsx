@@ -1,5 +1,6 @@
 import './App.css';
 import NavBar from './components/NavBar';
+import HomePage from './HomePage';
 import Shop from './components/Shop';
 import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
@@ -103,7 +104,6 @@ function App() {
     setCardSelected(paymentState)
   }, []);
 
-
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -114,8 +114,6 @@ function App() {
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
   }, []);
-
-
 
   // GET USER BROWSER
   function checkIfBrowserSupported() {
@@ -354,6 +352,14 @@ function App() {
       <Routes>
         <Route
           path="/"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <HomePage />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/shop"
           element={
             <AppContext.Provider value={appContextValue}>
               <NavBar />

@@ -1,39 +1,23 @@
 import { useEffect, useState, useContext } from "react";
+import { useInView } from 'react-intersection-observer';
 import dataManipulation from "./dataManipulation/dataManipulation";
 import businessLogic from "./businessLogic/businessLogic";
 import AppContext from "../../AppContext";
-import RingLoader from "react-spinners/RingLoader";
 import { DataGrid } from "@mui/x-data-grid";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import StockInsButton from "./StockInsButton";
 import RecentOrdersButton from "./RecentOrdersButton";
-import LineGraph from "./LineGraph";
-import { Chart } from "react-chartjs-2";
+import Graph from "./Graph";
 import useWindowDimensions from "./utils/UseWindowDimensions";
 import businessCalculation from "./bussinessCalculation/businessCalculation";
 import { SimpleMovingAverage } from "./SimpleMovingAverage";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Clicks } from "./Clicks";
 import { RateOfChange } from "./RateOfChange";
+import Favorites from "./Favorites";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend} from "chart.js";
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function InventoryTable({name, category, customized, callback}) {
   const datamanipulation = new dataManipulation();
@@ -44,6 +28,7 @@ export function InventoryTable({name, category, customized, callback}) {
   const [dataUsedForTable, setDataUsedForTable] = useState([]);
   const { firestore } = useContext(AppContext);
 
+  const { ref: p1, inView: p1inView } = useInView();
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [moreInfo, setMoreInfo] = useState([]);
@@ -52,13 +37,32 @@ export function InventoryTable({name, category, customized, callback}) {
   const [selectedName, setSelectedName] = useState(null);
   const [productNames, setproductNames] = useState(null);
   const { width } = useWindowDimensions();
+  const [favorites, setFavorites] = useState([]);
+  const [trendingItems, setTrendingItems] = useState({});
+  
+  useEffect(() => {
+    firestore.readAllDataFromCollection("Users").then((data) => {
+      const favoriteItems = datamanipulation.readUsersFavoriteItems(data);
+      setFavorites(favoriteItems);
+    });
+  }, [refreshData]);
 
-
-
+  useEffect(()=>{
+    const trending = [];
+    const itemname = favorites.filter((item, index) => favorites.indexOf(item) === index);
+    const count = favorites.reduce((count, item) => {count[item] = (count[item] || 0) + 1; return count;}, {});
+    itemname.map((s)=>{
+       trending.push({
+            itemname: s,
+            score: count[s]
+        })
+    })
+    setTrendingItems(trending)
+  },[favorites])
+  
   useEffect(() => {
     firestore.readAllDataFromCollection("Products").then((data) => {
       const filteredData = datamanipulation.appRemovePacksFromProducts(data);
-
       setProductsData(filteredData);
     });
   }, [refreshData]);
@@ -70,6 +74,7 @@ export function InventoryTable({name, category, customized, callback}) {
       const totalStocks = businesslogic.getTotalStocks(product);
       const type = product.category;
       const custom = product.isCustomized;
+      const itemId = product.itemId;
 
       tableData.push({
         tableData: {
@@ -78,6 +83,7 @@ export function InventoryTable({name, category, customized, callback}) {
           category: type,
           totalStocks: totalStocks,
           isCustomized: custom,
+          itemId: itemId,
         },
         moreInfoData: product,
       });
@@ -85,18 +91,18 @@ export function InventoryTable({name, category, customized, callback}) {
     setDataUsedForTable(tableData);
   }, [productsData]);
 
-    useEffect(() => {
-      const dataTable = [];
-      const moreData = [];
-      dataUsedForTable.map((row, index) => {
-        const data = row.tableData;
-        const more = row.moreInfoData;
-        dataTable.push(data);
-        moreData.push(more);
-      });
-      setTableData(dataTable);
-      setMoreInfo(moreData);
-    }, [dataUsedForTable]);
+  useEffect(() => {
+    const dataTable = [];
+    const moreData = [];
+    dataUsedForTable.map((row, index) => {
+      const data = row.tableData;
+      const more = row.moreInfoData;
+      dataTable.push(data);
+      moreData.push(more);
+    });
+    setTableData(dataTable);
+    setMoreInfo(moreData);
+  }, [dataUsedForTable]);
 
   useEffect(() => {
     setSelectedOption(category);
@@ -104,24 +110,17 @@ export function InventoryTable({name, category, customized, callback}) {
     setSelectedName(name)
   }, [name, category, customized]);
 
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  }, []);
-
   callback(productNames)
   
- useEffect(()=>{
-  const data = [];
-  tableData.map((s, index)=>{
-    const n = s.name;
+  useEffect(()=>{
+    const data = [];
+    tableData.map((s, index)=>{
+      const n = s.name;
 
-    data.push(n)
-  })
-    setproductNames(data)
-    
+
+      data.push(n)
+    })
+      setproductNames(data)
   },[tableData])
   
   const filteredData = datamanipulation.filterData(
@@ -210,6 +209,7 @@ export function InventoryTable({name, category, customized, callback}) {
   }
 
   const columns = [
+    /* Item Name */
     {
       field: "name",
       headerName: (
@@ -247,6 +247,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Category */
     {
       field: "category",
       headerName: (
@@ -309,6 +310,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Total Stocks */
     {
       field: "totalStocks",
       headerName: (
@@ -350,6 +352,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Graph for StocksPerMonth and SalesPerMonth */
     {
       field: "graph",
       headerName: (
@@ -372,7 +375,7 @@ export function InventoryTable({name, category, customized, callback}) {
       sortable: false,
       disableColumnMenu: true,
       renderCell: (filteredTableData) => (
-        <LineGraph
+        <Graph
           name={filteredTableData.row.name}
           data={
             dataUsedForTable.find(
@@ -388,6 +391,7 @@ export function InventoryTable({name, category, customized, callback}) {
         />
       ),
     },
+    /* Item Name */
     {
       field: "name1",
       headerName: (
@@ -425,6 +429,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage1 */
     {
       field: "SalesAverage1",
       headerName: (
@@ -467,6 +472,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage3 */
     {
       field: "SalesAverage3",
       headerName: (
@@ -509,6 +515,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage6 */
     {
       field: "SalesAverage6",
       headerName: (
@@ -551,6 +558,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* SalesAverage12 */
     {
       field: "SalesAverage12",
       headerName: (
@@ -593,6 +601,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Item Name */
     {
       field: "name2",
       headerName: (
@@ -630,6 +639,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange1 */
     {
       field: "RateOfChange1",
       headerName: (
@@ -673,6 +683,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange3 */
     {
       field: "RateOfChange3",
       headerName: (
@@ -716,6 +727,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange6 */
     {
       field: "RateOfChange6",
       headerName: (
@@ -759,6 +771,7 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* RateOfChange12 */
     {
       field: "RateOfChange12",
       headerName: (
@@ -802,6 +815,258 @@ export function InventoryTable({name, category, customized, callback}) {
         </div>
       ),
     },
+    /* Item Name */
+    {
+      field: "name3",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+          ITEM NAME
+        </div>
+      ),
+      width: responsiveTableWidthItemName(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      editable: false,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color: "#790252",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "600",
+          }}
+        >
+          {filteredTableData.row.name}
+        </div>
+      ),
+    },
+    /* Clicks1 */
+    {
+      field: "Clicks1",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+         (1)Clicks 
+        </div>
+      ),
+      width: responsiveTableWidth(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color: "#480032",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "500",
+          }}
+        >
+          <Clicks
+            number={1}
+            data={
+              dataUsedForTable.find(
+                (a) => a.tableData.id === filteredTableData.row.id
+              )?.moreInfoData ?? []
+            }
+          />
+        </div>
+      ),
+    },
+    /* Clicks3 */
+    {
+      field: "Clicks3",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+         (3)Clicks   
+        </div>
+      ),
+      width: responsiveTableWidth(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color: "#480032",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "500",
+          }}
+        >
+          <Clicks
+            number={3}
+            data={
+              dataUsedForTable.find(
+                (a) => a.tableData.id === filteredTableData.row.id
+              )?.moreInfoData ?? []
+            }
+          />
+        </div>
+      ),
+    },
+    /* Clicks6 */
+    {
+      field: "Clicks6",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+         (6)Clicks   
+        </div>
+      ),
+      width: responsiveTableWidth(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color: "#480032",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "500",
+          }}
+        >
+          <Clicks
+            number={6}
+            data={
+              dataUsedForTable.find(
+                (a) => a.tableData.id === filteredTableData.row.id
+              )?.moreInfoData ?? []
+            }
+          />
+        </div>
+      ),
+    },
+    /* Clicks12 */
+    {
+      field: "Clicks12",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+         (12)Clicks   
+        </div>
+      ),
+      width: responsiveTableWidth(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color: "#480032",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "500",
+          }}
+        >
+          <Clicks
+            number={12}
+            data={
+              dataUsedForTable.find(
+                (a) => a.tableData.id === filteredTableData.row.id
+              )?.moreInfoData ?? []
+            }
+          />
+        </div>
+      ),
+    },
+    /* Favorites */
+    {
+      field: "Favorite Level",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+          Favorite Level   
+        </div>
+      ),
+      width: responsiveTableWidth(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color: "#480032",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "500",
+          }}
+        >
+          <Favorites items={filteredTableData.row.name} favorites={trendingItems} />
+        </div>
+      ),
+    },
+    /* StockInsButton */
     {
       field: "StockInsButton",
       headerName: (
@@ -834,6 +1099,7 @@ export function InventoryTable({name, category, customized, callback}) {
         />
       ),
     },
+    /* RecentOrdersButton */
     {
       field: "RecentOrdersButton",
       headerName: (
@@ -871,14 +1137,7 @@ export function InventoryTable({name, category, customized, callback}) {
   const ROW_HEIGHT = 230;
 
   return (
-    <div className=" w-11/12 2lg:w-9/12 ml-1 mr-3 mt-10 2lg:mt-0 bg-gradient-to-t from-stone-100 to-green-100 border-2 border-green-700 rounded-md">
-      {/* {loading === true ? ( */}
-        <div
-          style={{display: "flex", justifyContent: "center", alignItems: "center"}}
-        >
-          {/* <RingLoader color={"#36d7b7"} loading={loading} size={290} />{" "} */}
-        </div>
-      {/* ) : ( */}
+    <div ref={p1} className=" w-11/12 2lg:w-9/12 ml-1 mr-3 mt-10 2lg:mt-0 bg-gradient-to-t from-stone-100 to-green-100 border-2 border-green-700 rounded-md">
         <Box
           sx={{
             height: "100%",

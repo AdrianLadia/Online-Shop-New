@@ -21,7 +21,6 @@ const DisplayMessagesUser = (props) => {
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
-  // const [image, setImage] = useState(null);
 
   function viewImage() {
 
@@ -67,7 +66,7 @@ const DisplayMessagesUser = (props) => {
               <p>
                   <p>{message}</p>
                   {/* {image ? <img src={image} alt='this should be an image' className='h-64 w-64'/> : null} */}
-                  {image ? <Image imageUrl={image} /> : null}
+                  {image ? <Image imageUrl={image} className='h-64 w-64'/> : null}
               </p>
             </div>
             <div className='mb-2 -mr-2.5 text-color60'>
