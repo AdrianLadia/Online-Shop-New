@@ -12,16 +12,33 @@ class firestoredb extends firestorefunctions {
   }
 
   // USED FOR ADMIN INVENTORY
-  async createProduct(data, id) {
+  async createProduct(data, id, products) {
+    console.log(data);
     const schema = schemas.productSchema();
 
-    try {
-      await schema.validateAsync(data);
-    } catch (error) {
-      throw new Error(error);
+    const { error } = schema.validate(data);
+
+    if (error) {
+      alert(error);
+    }
+
+    console.log(products)
+
+    let foundSimilarProductId = false;
+    products.map((product) => {
+      if (product.itemId === data.itemId) {
+        foundSimilarProductId = true;
+        return;
+      }
+    });
+
+    if (foundSimilarProductId) {
+      alert('Product ID already exists');
+      return;
     }
 
     await retryApi(async () => await super.createDocument(data, id, 'Products'));
+    alert('Product created successfully');
   }
 
   async readAllProducts() {
@@ -471,7 +488,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProductClicks(productid, userId = null) {
-    
     let id = productid;
     if (productid.endsWith('-RET')) {
       id = productid.substring(0, productid.length - 4);

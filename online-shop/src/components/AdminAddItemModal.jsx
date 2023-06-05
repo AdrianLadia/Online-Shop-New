@@ -68,29 +68,14 @@ const AdminAddItemModal = (props) => {
   const [isCustomized, setIsCustomized] = React.useState(false);
   const [retailPrice, setRetailPrice] = React.useState(0);
   const [packWeight, setPackWeight] = React.useState(0);
-  const [piecesPerPack,setPiecesPerPack] = React.useState(0);
+  const [piecesPerPack, setPiecesPerPack] = React.useState(0);
+  const [packsPerBox, setPacksPerBox] = React.useState(0);
+
   const cloudfirestore = new cloudFirestoreDb();
   const categories = props.categories;
   const businesscalculations = new businessCalculations();
 
-
   async function addItem() {
-    // FORM CHECKER
-    if (itemID === '') {
-      alert('Item ID is required');
-      return;
-    }
-
-    if (itemName === '') {
-      alert('Item Name is required');
-      return;
-    }
-
-    if (price === '') {
-      alert('Price is required');
-      return;
-    }
-
     let imageLinks = [
       imageLink1,
       imageLink2,
@@ -104,6 +89,14 @@ const AdminAddItemModal = (props) => {
       imageLink10,
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
+
+    console.log(piecesPerPack)
+    console.log(packsPerBox)
+    console.log(pieces)
+    if (piecesPerPack * packsPerBox !== pieces) { 
+      alert('Pieces per pack * Packs per box must be equal to total pieces');
+      return;
+    }
 
     await firestore.createProduct(
       {
@@ -128,13 +121,15 @@ const AdminAddItemModal = (props) => {
         stocksOnHoldCompleted: [],
         forOnlineStore: true,
         isCustomized: isCustomized,
-        stocksIns : []
+        stocksIns: [],
+        piecesPerPack: piecesPerPack,
+        packsPerBox: packsPerBox,
       },
-      itemID
+      itemID,products
     );
 
     if (isThisRetail) {
-      console.log('is retail')
+      console.log('is retail');
       await firestore.createProduct(
         {
           itemId: itemID + '-RET',
@@ -158,9 +153,9 @@ const AdminAddItemModal = (props) => {
           stocksOnHoldCompleted: null,
           forOnlineStore: true,
           isCustomized: isCustomized,
-          stocksIns : null
+          stocksIns: null,
         },
-        itemID + '-RET'
+        itemID + '-RET',products
       );
     }
 
@@ -188,7 +183,7 @@ const AdminAddItemModal = (props) => {
           <div className="flex flex-col space-y-5 overflow-y-auto h-full w-full">
             <TextField
               required
-              id="outlined-basic"
+              id="outlined-basic123"
               label="Item ID"
               variant="outlined"
               sx={{ width: '90%', marginTop: 3 }}
@@ -228,12 +223,57 @@ const AdminAddItemModal = (props) => {
             />
 
             <TextField
+              required
+              id="outlined-basic"
+              label="Pieces"
+              variant="outlined"
+              sx={{ width: '90%' }}
+              onChange={(event) => setPieces(parseFloat(event.target.value))}
+            />
+
+            <TextField
+              required
+              id="outlined-basic"
+              label="Packs Per Box"
+              variant="outlined"
+              sx={{ width: '90%' }}
+              onChange={(event) => setPacksPerBox(parseFloat(event.target.value))}
+              typeof="number"
+            />
+            <TextField
+              required
+              id="outlined-basic"
+              label="Pieces Per Pack"
+              variant="outlined"
+              sx={{ width: '90%', mt: 3 }}
+              onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
+              typeof="number"
+            />
+            {/* <TextField
               id="outlined-basic"
               label="Unit"
               variant="outlined"
               sx={{ width: '90%' }}
               onChange={(event) => setUnit(event.target.value)}
-            />
+              
+            /> */}
+            <Box sx={{ width: 550 }}>
+              <FormControl fullWidth>
+                <InputLabel required={true} id="demo-simple-select-label">
+                  Unit
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={unit}
+                  label="Category"
+                  onChange={(event) => setUnit(event.target.value)}
+                >
+                  <MenuItem value={'Bale'}>Bale</MenuItem>
+                  <MenuItem value={'Box'}>Box</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
             <TextField
               id="outlined-basic"
               label="Color"
@@ -264,14 +304,7 @@ const AdminAddItemModal = (props) => {
             />
             <TextField
               id="outlined-basic"
-              label="Pieces"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setPieces(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Dimensions"
+              label="Box Dimensions"
               variant="outlined"
               sx={{ width: '90%' }}
               onChange={(event) => setDimensions(event.target.value)}
@@ -352,21 +385,13 @@ const AdminAddItemModal = (props) => {
                   sx={{ width: '90%', mt: 1 }}
                   onChange={(event) => setRetailPrice(parseFloat(event.target.value))}
                 />
-                 <TextField
+                <TextField
                   required
                   id="outlined-basic"
                   label="Pack Weight"
                   variant="outlined"
                   sx={{ width: '90%', mt: 3 }}
                   onChange={(event) => setPackWeight(parseFloat(event.target.value))}
-                />
-                <TextField
-                  required
-                  id="outlined-basic"
-                  label="Pieces Per Pack"
-                  variant="outlined"
-                  sx={{ width: '90%', mt: 3 }}
-                  onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
                 />
               </div>
             ) : null}
