@@ -77,7 +77,9 @@ class schemas {
       stocksIns: Joi.array().allow(null),
       clicks: Joi.array(),
       piecesPerPack: Joi.number(),
-      packsPerBox: Joi.number()
+      packsPerBox: Joi.number(),
+      cbm: Joi.number().allow('',null),
+      manufactured: Joi.boolean().required()
     }).unknown(false);
   }
 }

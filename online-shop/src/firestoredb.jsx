@@ -20,6 +20,7 @@ class firestoredb extends firestorefunctions {
 
     if (error) {
       alert(error);
+      return
     }
 
     console.log(products)

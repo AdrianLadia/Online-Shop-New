@@ -70,6 +70,8 @@ const AdminAddItemModal = (props) => {
   const [packWeight, setPackWeight] = React.useState(0);
   const [piecesPerPack, setPiecesPerPack] = React.useState(0);
   const [packsPerBox, setPacksPerBox] = React.useState(0);
+  const [manufactured, setManufactured] = React.useState(false);
+  const [cbm, setCbm] = React.useState('');
 
   const cloudfirestore = new cloudFirestoreDb();
   const categories = props.categories;
@@ -90,10 +92,10 @@ const AdminAddItemModal = (props) => {
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
-    console.log(piecesPerPack)
-    console.log(packsPerBox)
-    console.log(pieces)
-    if (piecesPerPack * packsPerBox !== pieces) { 
+    console.log(piecesPerPack);
+    console.log(packsPerBox);
+    console.log(pieces);
+    if (piecesPerPack * packsPerBox !== pieces) {
       alert('Pieces per pack * Packs per box must be equal to total pieces');
       return;
     }
@@ -124,8 +126,11 @@ const AdminAddItemModal = (props) => {
         stocksIns: [],
         piecesPerPack: piecesPerPack,
         packsPerBox: packsPerBox,
+        cbm : cbm,
+        manufactured: manufactured,
       },
-      itemID,products
+      itemID,
+      products
     );
 
     if (isThisRetail) {
@@ -154,8 +159,11 @@ const AdminAddItemModal = (props) => {
           forOnlineStore: true,
           isCustomized: isCustomized,
           stocksIns: null,
+          cbm: null,
+          manufactured : manufactured,
         },
-        itemID + '-RET',products
+        itemID + '-RET',
+        products
       );
     }
 
@@ -249,6 +257,7 @@ const AdminAddItemModal = (props) => {
               onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
               typeof="number"
             />
+
             {/* <TextField
               id="outlined-basic"
               label="Unit"
@@ -266,7 +275,7 @@ const AdminAddItemModal = (props) => {
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={unit}
-                  label="Category"
+                  label="Unit"
                   onChange={(event) => setUnit(event.target.value)}
                 >
                   <MenuItem value={'Bale'}>Bale</MenuItem>
@@ -274,6 +283,34 @@ const AdminAddItemModal = (props) => {
                 </Select>
               </FormControl>
             </Box>
+
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel required={true} id="demo-simple-select-label">
+                  Did we manufacture this product?
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={manufactured}
+                  label="manufactured"
+                  onChange={(event) => setManufactured(event.target.value)}
+                >
+                  <MenuItem value={true}>Yes</MenuItem>
+                  <MenuItem value={false}>No</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            <TextField
+              id="outlined-basic"
+              label="Cubic Meter"
+              variant="outlined"
+              sx={{ width: '90%', mt: 3 }}
+              onChange={(event) => setCbm(parseFloat(event.target.value))}
+              typeof="number"
+            />
+
             <TextField
               id="outlined-basic"
               label="Color"
