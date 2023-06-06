@@ -401,7 +401,7 @@ class firestoredb extends firestorefunctions {
       transaction.update(userRef, { orders: orders });
 
       const paymentsRef = collection(this.db, 'Payments');
-      const q = query(paymentsRef, where('orderReference', '==', reference));
+      const q = query(paymentsRef, where('proofOfPaymentLink', '==', link));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         transaction.update(doc.ref, { status: 'declined' });

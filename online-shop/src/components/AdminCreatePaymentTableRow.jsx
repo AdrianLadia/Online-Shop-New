@@ -37,7 +37,7 @@ const AdminCreatePaymentTableRow = (props) => {
       await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink)
     }
 
-    const newPaymentsData = paymentsData.filter((data) => data.reference != orderReference)
+    const newPaymentsData = paymentsData.filter((data) => data.link != proofOfPaymentLink)
     setPaymentsData(newPaymentsData)
    
   }
