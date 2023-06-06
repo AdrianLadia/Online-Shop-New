@@ -72,6 +72,15 @@ const AdminAddItemModal = (props) => {
   const [packsPerBox, setPacksPerBox] = React.useState(0);
   const [manufactured, setManufactured] = React.useState(false);
   const [cbm, setCbm] = React.useState('');
+  const [machines, setMachines] = React.useState([]);
+  const [machineFormat,setMachineFormat] = React.useState('');
+
+  useEffect(() => {
+    firestore.readAllMachines().then((machines) => {
+      console.log(machines);
+      setMachines(machines);
+    });
+  }, []);
 
   const cloudfirestore = new cloudFirestoreDb();
   const categories = props.categories;
@@ -126,8 +135,9 @@ const AdminAddItemModal = (props) => {
         stocksIns: [],
         piecesPerPack: piecesPerPack,
         packsPerBox: packsPerBox,
-        cbm : cbm,
+        cbm: cbm,
         manufactured: manufactured,
+        machinesThatCanProduce: machineFormat,
       },
       itemID,
       products
@@ -160,7 +170,8 @@ const AdminAddItemModal = (props) => {
           isCustomized: isCustomized,
           stocksIns: null,
           cbm: null,
-          manufactured : manufactured,
+          manufactured: manufactured,
+          machinesThatCanProduce: machineFormat,
         },
         itemID + '-RET',
         products
@@ -172,6 +183,19 @@ const AdminAddItemModal = (props) => {
 
   function onAddCategoryClick() {
     setOpenAddCategoryModal(true);
+  }
+
+  function createMachineFormat(checked,machine) {
+    if (checked) {
+      const newMachineFormat = machineFormat + machine.machineCode + '-'
+      console.log(newMachineFormat)
+      setMachineFormat(newMachineFormat)
+    }
+    else {
+      const newMachineFormat = machineFormat.replace('-' + machine.machineCode, '')
+      console.log(newMachineFormat)
+      setMachineFormat(newMachineFormat)
+    }
   }
 
   useEffect(() => {
@@ -301,6 +325,26 @@ const AdminAddItemModal = (props) => {
                 </Select>
               </FormControl>
             </Box>
+
+            {manufactured ? (
+              <>
+                Which machines can produce this product?
+                {machines.map((machine) => {
+                  
+                  return (
+                    <div className='flex flex-row'>
+
+                      <Checkbox
+                        onClick={() => {
+                          createMachineFormat(event.target.checked,machine);
+                        }}
+                      />
+                      <Typography sx={{ marginTop: 1 }}> {machine.machineName}</Typography>
+                    </div>
+                  );
+                })}
+              </>
+            ) : null}
 
             <TextField
               id="outlined-basic"

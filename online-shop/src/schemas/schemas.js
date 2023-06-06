@@ -79,7 +79,8 @@ class schemas {
       piecesPerPack: Joi.number(),
       packsPerBox: Joi.number(),
       cbm: Joi.number().allow('',null),
-      manufactured: Joi.boolean().required()
+      manufactured: Joi.boolean().required(),
+      machinesThatCanProduce: Joi.string().allow(''),
     }).unknown(false);
   }
 }

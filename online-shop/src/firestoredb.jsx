@@ -500,6 +500,11 @@ class firestoredb extends firestorefunctions {
   async readAllPaymentProviders() {
     return await super.readAllDataFromCollection('PaymentProviders');
   }
+
+  async readAllMachines() {
+    return await super.readAllDataFromCollection('Machines');
+  }
+
 }
 
 export default firestoredb;

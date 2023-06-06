@@ -2626,3 +2626,10 @@ describe('readPaymentProviders', async () => {
     expect(paymentProviders.length).toBeGreaterThan(0);
   });
 } );
+
+describe.only('readAllMachines', async () => {
+  test('invoking function', async () => {
+    const machines = await firestore.readAllMachines();
+    expect(machines.length).toBeGreaterThan(0);
+  });
+});
