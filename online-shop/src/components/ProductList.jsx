@@ -41,6 +41,8 @@ const ProductList = (props) => {
       retail,
       favorites
     );
+
+    console.log(selected_products)
     return selected_products;
   }
 
@@ -74,6 +76,7 @@ const ProductList = (props) => {
     }
   }
 
+
   return (
     <div className='mb-16 mt-5'>
       <div id='productList' className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
@@ -90,6 +93,7 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
+            console.log(product)
           
             let stocksAvailable = null
             let averageSalesPerDay = null
