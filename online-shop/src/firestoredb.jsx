@@ -409,47 +409,6 @@ class firestoredb extends firestorefunctions {
     });
   }
 
-  // async removeCanceledProductsFromStocksOnHold(reference, itemName){
-  //   const productData = await this.readSelectedProduct(itemName);
-  //   const removeStock = productData.stocksOnHold;
-  //   const newStock = removeStock.filter((stock)=> stock.reference != reference);
-
-  //   this.updateDocumentFromCollection('Products', itemName, {stocksOnHold:newStock})
-  // }
-
-  // async addCancelledProductsToStocksAvailable(itemName, number){
-  //   const productData = await this.readSelectedProduct(itemName);
-  //   const productDoc = productData
-  //   let stocksAvailable = productDoc.stocksAvailable + number[itemName];
-
-  //   this.updateDocumentFromCollection('Products', itemName, {stocksAvailable:stocksAvailable})
-  // }
-
-  // async deleteCancelledOrder(userId, reference){
-  //   const userData = await this.readUserById(userId);
-  //   const userDoc = userData;
-  //   let orders = userDoc.orders;
-  //   const data = orders.filter((order)=>order.reference !== reference);
-
-  //   const cancelledData = orders.filter((order)=>order.reference === reference);
-  //   const cancelledProducts = cancelledData[0].cart;
-
-  //   orders = data;
-
-  //   this.updateDocumentFromCollection('Users', userId, {orders:orders});
-
-  //   cancelledProducts.map((s)=>{
-  //     const counts = cancelledProducts.reduce((acc, item) => {
-  //       acc[item] = (acc[item] || 0) + 1;
-  //       return acc;
-  //     }, {});
-  //     this.addCancelledProductsToStocksAvailable(s, counts);
-  //     this.removeCanceledProductsFromStocksOnHold(reference, s);
-  //   })
-
-  //   alert(reference + " is Cancelled")
-  // }
-
   async addProductInteraction(userId, itemName, timeStamp) {
     const productInteraction = {
       itemName: itemName,
@@ -482,6 +441,11 @@ class firestoredb extends firestorefunctions {
 
   async readAllPaymentProviders() {
     return await super.readAllDataFromCollection('PaymentProviders');
+  }
+
+  async readEmailAddressByUserId(userId) {
+    const userData = await this.readUserById(userId);
+    return userData.email;
   }
 }
 

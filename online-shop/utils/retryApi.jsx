@@ -27,7 +27,7 @@ const sleep = (milliseconds) => {
         }
       }
     }
-  
+    alert('Failed to do transaction. Please try again.')
     throw new Error('Max retries reached. API call failed');
   };
   
