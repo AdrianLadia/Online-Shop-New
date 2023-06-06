@@ -205,6 +205,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     try {
       const response = await axios.request(`${this.url}readAllProductsForOnlineStore`);
       const toReturn = response.data;
+
+      console.log(response.data)
+
       const toReturnSchema = Joi.array().items(
         Joi.object({
           averageSalesPerDay: Joi.number().required().allow(null),
