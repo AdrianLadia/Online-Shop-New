@@ -140,7 +140,7 @@ class firestoredb extends firestorefunctions {
 
     return categories;
   }
-
+  
   async readAllUserIds() {
     const ids = await retryApi(async () => await super.readAllIdsFromCollection('Users'));
 

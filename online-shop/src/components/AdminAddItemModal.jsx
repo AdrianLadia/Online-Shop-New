@@ -203,6 +203,15 @@ const AdminAddItemModal = (props) => {
     setParentProducts(parentProductsList);
   }, []);
 
+  function onRetailCheckBoxClick(result) {
+    if (result) {
+      setIsThisRetail(true);
+    }
+    else {
+      setIsThisRetail(false);
+    }
+  }
+
   return (
     <div>
       <Modal
@@ -433,9 +442,7 @@ const AdminAddItemModal = (props) => {
 
             <div className="flex flex-row">
               <Checkbox
-                onClick={() => {
-                  setIsThisRetail(!isThisRetail);
-                }}
+                onChange={(event) => onRetailCheckBoxClick(event.target.checked)}
               />
               <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
             </div>
@@ -449,15 +456,7 @@ const AdminAddItemModal = (props) => {
               //   onChange={(event) => setParentProductID(event.target.value)}
               // />
               <div>
-                {/* <Autocomplete
-                  required
-                  disablePortal
-                  id="combo-box-demo"
-                  options={parentProducts}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Parent ID" />}
-                  onChange={(event) => setParentProductID(event.target.value)}
-                /> */}
+               
                 <TextField
                   required
                   id="outlined-basic"
