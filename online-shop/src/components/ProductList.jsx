@@ -26,8 +26,6 @@ const ProductList = (props) => {
   const favorites = favoriteitems;
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
 
-  console.log(products)
-
   const { width } = UseWindowDimensions();
 
   useEffect(() => {
