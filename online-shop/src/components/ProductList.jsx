@@ -23,8 +23,9 @@ const ProductList = (props) => {
 
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
-  const favorites = favoriteitems;
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
+
+  console.log(favoriteitems)
 
   const { width } = UseWindowDimensions();
 
@@ -39,10 +40,9 @@ const ProductList = (props) => {
       product_category,
       wholesale,
       retail,
-      favorites
+      favoriteitems
     );
 
-    console.log(selected_products)
     return selected_products;
   }
 
@@ -93,8 +93,7 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
-            console.log(product)
-          
+    
             let stocksAvailable = null
             let averageSalesPerDay = null
             if (product.unit == 'Pack') {
