@@ -111,18 +111,18 @@ const ProductCardModal = (props) => {
 
     if (heart) {
       setHeart(!heart);
-      setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemName))
-      firestore.removeItemFromFavorites(userdata.uid,props.product.itemName)
+      setFavoriteItems(favoriteitems.filter(item => item !== props.product.itemId))
+      firestore.removeItemFromFavorites(userdata.uid,props.product.itemId)
     }
     else {
       setHeart(!heart);
-      setFavoriteItems([...favoriteitems, props.product.itemName])
-      firestore.addItemToFavorites(userdata.uid,props.product.itemName)
+      setFavoriteItems([...favoriteitems, props.product.itemId])
+      firestore.addItemToFavorites(userdata.uid,props.product.itemId)
     }
   }
 
   useEffect (() => {
-    if (favoriteitems.includes(props.product.itemName)) {
+    if (favoriteitems.includes(props.product.itemId)) {
       setHeart(true);
     }
     else {

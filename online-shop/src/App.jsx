@@ -225,6 +225,7 @@ function App() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
+        console.log(data.favoriteItems)
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 

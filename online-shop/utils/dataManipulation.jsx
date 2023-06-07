@@ -580,12 +580,14 @@ class dataManipulation {
     }
 
     if (categorySelected === 'Favorites') {
+      console.log(favorites);
       let selected_products = [];
       products.map((product) => {
         if (favorites.includes(product.itemId)) {
           selected_products.push(product);
         }
       });
+      console.log(selected_products);
       return selected_products;
     }
 

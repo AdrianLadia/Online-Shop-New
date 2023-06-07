@@ -29,12 +29,7 @@ const CategorySelector = (props) => {
   const datamanipulation = new dataManipulation();
   const featured_category = 'Paper Bag';
   const hiddenCategories = [
-    'Bowls',
-    'Plastic Containers',
-    'Plates',
-    'Sauce Cups',
-    'Tissue Paper',
-    'Utensils'
+   
   ]
 
   const handleChange = (event, newValue) => {

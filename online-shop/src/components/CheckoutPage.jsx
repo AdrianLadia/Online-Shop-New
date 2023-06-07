@@ -303,6 +303,7 @@ const CheckoutPage = () => {
         setLocalLongitude(lng);
         setZoom(15);
         setAddressGeocodeSearch('');
+        setLocalDeliveryAddress('')
       },
       (error) => {
         alert('Address not found. Be more specific.')
