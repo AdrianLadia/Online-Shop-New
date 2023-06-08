@@ -91,6 +91,18 @@ function App() {
   const [cardSelected,setCardSelected] = useState(null)
   const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
   const [changeCard, setChangeCard] = useState(false);
+  const [allUserData, setAllUserData] = useState(null);
+
+  useEffect(() => {
+    if (userdata) {
+      if (userdata.userRole == 'admin' || userdata.userRole == 'superadmin') {
+        firestore.readAllDataFromCollection('Users').then((users) => {
+          console.log(users)
+          setAllUserData(users)
+        });
+      }
+    }
+  }, [userdata]);
 
   useEffect(() => {
     let paymentState = {}
@@ -346,6 +358,8 @@ function App() {
     updateCartInfo:updateCartInfo,
     setUpdateCartInfo:setUpdateCartInfo,
     isAppleDevice : isAppleDevice,
+    allUserData : allUserData,
+    setAllUserData:setAllUserData
   };
 
   return (
