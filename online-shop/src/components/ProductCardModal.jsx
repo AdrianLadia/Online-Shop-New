@@ -75,7 +75,7 @@ const ProductCardModal = (props) => {
   const { height, width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
-  const {userdata, firestore, favoriteitems, setFavoriteItems,userId} = React.useContext(AppContext);
+  const {userdata, firestore, favoriteitems, setFavoriteItems, userId} = React.useContext(AppContext);
   const [onInitialize, setOninitialize] = useState(true);
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const date = new Date();

@@ -16,6 +16,7 @@ const HomePage = () => {
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
   const contactsImage = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123"
   const logo = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fstarpack.png?alt=media&token=e108388d-74f7-45a1-8344-9c6af612f053"
+  const videoAd = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed.mp4?alt=media&token=bc6b257e-7ba9-4568-b843-b32c4927a5fb&_gl=1*1pcfpf3*_ga*MTk5NDU4NTY2OC4xNjc4NDI0NDg0*_ga_CW55HF8NVT*MTY4NjE5NjY5Ny4xOC4xLjE2ODYxOTY3NjguMC4wLjA"
   const page1 = useRef();
   const page2 = useRef();
   const page3 = useRef();
@@ -300,7 +301,7 @@ const HomePage = () => {
                   <div className='h-7/10 w-full flex justify-center items-center relative' >
                     <video ref={videoRef} autoPlay loop muted plays-inline="true" onClick={()=>{setShowButton(!showButton)}}
                           className='h-full w-11/12 xl:w-10/12 flex justify-center items-center'>
-                      <source src="./vids/Starpack_Trimmed.mp4" />
+                      <source src={videoAd} />
                     </video>
                     {showButton ?
                     (<div className='absolute flex justify-center items-center gap-12 2xs:gap-16 lg:gap-20 ' >

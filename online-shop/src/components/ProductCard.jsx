@@ -3,8 +3,7 @@ import Paper from '@mui/material/Paper';
 import { Button, Typography } from '@mui/material';
 import { Snackbar } from '@material-ui/core';
 import { useState, useContext, useEffect, useRef } from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
-
+import CircularProgress from '@mui/material/CircularProgress'; 
 import UseWindowDimensions from './UseWindowDimensions';
 import TextField from '@mui/material/TextField';
 import ProductCardModal from './ProductCardModal';
@@ -209,6 +208,7 @@ const ProductCard = (props) => {
     if (!showTutorial) {
       return;
     }
+    
     const timer = setTimeout(() => {
       setIconVisible(false);
     }, 3750);
@@ -220,6 +220,8 @@ const ProductCard = (props) => {
   function responsiveWidth() {
     return 'max-w-lg';
   }
+
+  console.log("showTutorial" + showTutorial)
 
   if (product.imageLinks.length === 0) {
     return (
