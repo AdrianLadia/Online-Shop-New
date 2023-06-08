@@ -68,29 +68,25 @@ const AdminAddItemModal = (props) => {
   const [isCustomized, setIsCustomized] = React.useState(false);
   const [retailPrice, setRetailPrice] = React.useState(0);
   const [packWeight, setPackWeight] = React.useState(0);
-  const [piecesPerPack,setPiecesPerPack] = React.useState(0);
+  const [piecesPerPack, setPiecesPerPack] = React.useState(0);
+  const [packsPerBox, setPacksPerBox] = React.useState(0);
+  const [manufactured, setManufactured] = React.useState(false);
+  const [cbm, setCbm] = React.useState('');
+  const [machines, setMachines] = React.useState([]);
+  const [machineFormat,setMachineFormat] = React.useState('');
+
+  useEffect(() => {
+    firestore.readAllMachines().then((machines) => {
+      console.log(machines);
+      setMachines(machines);
+    });
+  }, []);
+
   const cloudfirestore = new cloudFirestoreDb();
   const categories = props.categories;
   const businesscalculations = new businessCalculations();
 
-
   async function addItem() {
-    // FORM CHECKER
-    if (itemID === '') {
-      alert('Item ID is required');
-      return;
-    }
-
-    if (itemName === '') {
-      alert('Item Name is required');
-      return;
-    }
-
-    if (price === '') {
-      alert('Price is required');
-      return;
-    }
-
     let imageLinks = [
       imageLink1,
       imageLink2,
@@ -104,6 +100,14 @@ const AdminAddItemModal = (props) => {
       imageLink10,
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
+
+    console.log(piecesPerPack);
+    console.log(packsPerBox);
+    console.log(pieces);
+    if (piecesPerPack * packsPerBox !== pieces) {
+      alert('Pieces per pack * Packs per box must be equal to total pieces');
+      return;
+    }
 
     await firestore.createProduct(
       {
@@ -128,13 +132,19 @@ const AdminAddItemModal = (props) => {
         stocksOnHoldCompleted: [],
         forOnlineStore: true,
         isCustomized: isCustomized,
-        stocksIns : []
+        stocksIns: [],
+        piecesPerPack: piecesPerPack,
+        packsPerBox: packsPerBox,
+        cbm: cbm,
+        manufactured: manufactured,
+        machinesThatCanProduce: machineFormat,
       },
-      itemID
+      itemID,
+      products
     );
 
     if (isThisRetail) {
-      console.log('is retail')
+      console.log('is retail');
       await firestore.createProduct(
         {
           itemId: itemID + '-RET',
@@ -158,9 +168,13 @@ const AdminAddItemModal = (props) => {
           stocksOnHoldCompleted: null,
           forOnlineStore: true,
           isCustomized: isCustomized,
-          stocksIns : null
+          stocksIns: null,
+          cbm: null,
+          manufactured: manufactured,
+          machinesThatCanProduce: machineFormat,
         },
-        itemID + '-RET'
+        itemID + '-RET',
+        products
       );
     }
 
@@ -171,10 +185,32 @@ const AdminAddItemModal = (props) => {
     setOpenAddCategoryModal(true);
   }
 
+  function createMachineFormat(checked,machine) {
+    if (checked) {
+      const newMachineFormat = machineFormat + machine.machineCode + '-'
+      console.log(newMachineFormat)
+      setMachineFormat(newMachineFormat)
+    }
+    else {
+      const newMachineFormat = machineFormat.replace('-' + machine.machineCode, '')
+      console.log(newMachineFormat)
+      setMachineFormat(newMachineFormat)
+    }
+  }
+
   useEffect(() => {
     const parentProductsList = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products);
     setParentProducts(parentProductsList);
   }, []);
+
+  function onRetailCheckBoxClick(result) {
+    if (result) {
+      setIsThisRetail(true);
+    }
+    else {
+      setIsThisRetail(false);
+    }
+  }
 
   return (
     <div>
@@ -188,7 +224,7 @@ const AdminAddItemModal = (props) => {
           <div className="flex flex-col space-y-5 overflow-y-auto h-full w-full">
             <TextField
               required
-              id="outlined-basic"
+              id="outlined-basic123"
               label="Item ID"
               variant="outlined"
               sx={{ width: '90%', marginTop: 3 }}
@@ -228,12 +264,106 @@ const AdminAddItemModal = (props) => {
             />
 
             <TextField
+              required
+              id="outlined-basic"
+              label="Pieces"
+              variant="outlined"
+              sx={{ width: '90%' }}
+              onChange={(event) => setPieces(parseFloat(event.target.value))}
+            />
+
+            <TextField
+              required
+              id="outlined-basic"
+              label="Packs Per Box"
+              variant="outlined"
+              sx={{ width: '90%' }}
+              onChange={(event) => setPacksPerBox(parseFloat(event.target.value))}
+              typeof="number"
+            />
+            <TextField
+              required
+              id="outlined-basic"
+              label="Pieces Per Pack"
+              variant="outlined"
+              sx={{ width: '90%', mt: 3 }}
+              onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
+              typeof="number"
+            />
+
+            {/* <TextField
               id="outlined-basic"
               label="Unit"
               variant="outlined"
               sx={{ width: '90%' }}
               onChange={(event) => setUnit(event.target.value)}
+              
+            /> */}
+            <Box sx={{ width: 550 }}>
+              <FormControl fullWidth>
+                <InputLabel required={true} id="demo-simple-select-label">
+                  Unit
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={unit}
+                  label="Unit"
+                  onChange={(event) => setUnit(event.target.value)}
+                >
+                  <MenuItem value={'Bale'}>Bale</MenuItem>
+                  <MenuItem value={'Box'}>Box</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel required={true} id="demo-simple-select-label">
+                  Did we manufacture this product?
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={manufactured}
+                  label="manufactured"
+                  onChange={(event) => setManufactured(event.target.value)}
+                >
+                  <MenuItem value={true}>Yes</MenuItem>
+                  <MenuItem value={false}>No</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            {manufactured ? (
+              <>
+                Which machines can produce this product?
+                {machines.map((machine) => {
+                  
+                  return (
+                    <div className='flex flex-row'>
+
+                      <Checkbox
+                        onClick={() => {
+                          createMachineFormat(event.target.checked,machine);
+                        }}
+                      />
+                      <Typography sx={{ marginTop: 1 }}> {machine.machineName}</Typography>
+                    </div>
+                  );
+                })}
+              </>
+            ) : null}
+
+            <TextField
+              id="outlined-basic"
+              label="Cubic Meter"
+              variant="outlined"
+              sx={{ width: '90%', mt: 3 }}
+              onChange={(event) => setCbm(parseFloat(event.target.value))}
+              typeof="number"
             />
+
             <TextField
               id="outlined-basic"
               label="Color"
@@ -264,14 +394,7 @@ const AdminAddItemModal = (props) => {
             />
             <TextField
               id="outlined-basic"
-              label="Pieces"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setPieces(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Dimensions"
+              label="Box Dimensions"
               variant="outlined"
               sx={{ width: '90%' }}
               onChange={(event) => setDimensions(event.target.value)}
@@ -319,9 +442,7 @@ const AdminAddItemModal = (props) => {
 
             <div className="flex flex-row">
               <Checkbox
-                onClick={() => {
-                  setIsThisRetail(!isThisRetail);
-                }}
+                onChange={(event) => onRetailCheckBoxClick(event.target.checked)}
               />
               <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
             </div>
@@ -335,15 +456,7 @@ const AdminAddItemModal = (props) => {
               //   onChange={(event) => setParentProductID(event.target.value)}
               // />
               <div>
-                {/* <Autocomplete
-                  required
-                  disablePortal
-                  id="combo-box-demo"
-                  options={parentProducts}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Parent ID" />}
-                  onChange={(event) => setParentProductID(event.target.value)}
-                /> */}
+               
                 <TextField
                   required
                   id="outlined-basic"
@@ -352,21 +465,13 @@ const AdminAddItemModal = (props) => {
                   sx={{ width: '90%', mt: 1 }}
                   onChange={(event) => setRetailPrice(parseFloat(event.target.value))}
                 />
-                 <TextField
+                <TextField
                   required
                   id="outlined-basic"
                   label="Pack Weight"
                   variant="outlined"
                   sx={{ width: '90%', mt: 3 }}
                   onChange={(event) => setPackWeight(parseFloat(event.target.value))}
-                />
-                <TextField
-                  required
-                  id="outlined-basic"
-                  label="Pieces Per Pack"
-                  variant="outlined"
-                  sx={{ width: '90%', mt: 3 }}
-                  onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
                 />
               </div>
             ) : null}

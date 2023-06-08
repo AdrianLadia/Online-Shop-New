@@ -23,7 +23,7 @@ import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
 
 const AdminMenu = () => {
-  const {products, firestore } = React.useContext(AppContext);
+  const {products, firestore,allUserData,setAllUserData } = React.useContext(AppContext);
 
   const {width } = UseWindowDimensions();
   const [refresh, setRefresh] = useState(false);
@@ -33,7 +33,7 @@ const AdminMenu = () => {
   const [selectedMenu, setSelectedMenu] = React.useState('Admin Chat');
  
   let [categories, setCategories] = useState([]);
-  let [users, setUsers] = useState([]);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -75,9 +75,7 @@ const AdminMenu = () => {
     firestore.readAllCategories().then((c) => {
       setCategories(c);
     });
-    firestore.readAllUsers().then((user) => {
-      setUsers(user);
-    });
+
   }, [refresh]);
 
   function responsiveSize(){
@@ -176,8 +174,8 @@ const AdminMenu = () => {
         {selectedMenu === 'Inventory' && (
           <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh}/>
         )}
-        {selectedMenu === 'Create Payment' && <AdminCreatePayment users={users} setUsers={setUsers} />}
-        {selectedMenu === 'Customer Orders' && <AdminOrders users={users} />}
+        {selectedMenu === 'Create Payment' && <AdminCreatePayment users={allUserData} setUsers={setAllUserData} />}
+        {selectedMenu === 'Customer Orders' && <AdminOrders users={allUserData} />}
         {selectedMenu === 'Analytics' && <App />}
         {selectedMenu === 'Admin Chat' && <AdminChatMenu />}
       </div>

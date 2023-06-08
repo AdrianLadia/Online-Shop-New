@@ -12,16 +12,36 @@ class firestoredb extends firestorefunctions {
   }
 
   // USED FOR ADMIN INVENTORY
-  async createProduct(data, id) {
+  async createProduct(data, id, products) {
+    console.log(data);
     const schema = schemas.productSchema();
 
-    try {
-      await schema.validateAsync(data);
-    } catch (error) {
+    const { error } = schema.validate(data);
+
+    if (error) {
+
+      alert(error);
       throw new Error(error);
+      return
+    }
+
+    console.log(products)
+
+    let foundSimilarProductId = false;
+    products.map((product) => {
+      if (product.itemId === data.itemId) {
+        foundSimilarProductId = true;
+        return;
+      }
+    });
+
+    if (foundSimilarProductId) {
+      alert('Product ID already exists');
+      return;
     }
 
     await retryApi(async () => await super.createDocument(data, id, 'Products'));
+    alert('Product created successfully');
   }
 
   async readAllProducts() {
@@ -122,7 +142,7 @@ class firestoredb extends firestorefunctions {
 
     return categories;
   }
-
+  
   async readAllUserIds() {
     const ids = await retryApi(async () => await super.readAllIdsFromCollection('Users'));
 
@@ -430,7 +450,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProductClicks(productid, userId = null) {
-    
     let id = productid;
     if (productid.endsWith('-RET')) {
       id = productid.substring(0, productid.length - 4);
@@ -447,6 +466,11 @@ class firestoredb extends firestorefunctions {
     const userData = await this.readUserById(userId);
     return userData.email;
   }
+
+  async readAllMachines() {
+    return await super.readAllDataFromCollection('Machines');
+  }
+
 }
 
 export default firestoredb;

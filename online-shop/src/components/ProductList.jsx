@@ -93,14 +93,16 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
-    
             let stocksAvailable = null
             let averageSalesPerDay = null
             if (product.unit == 'Pack') {
               products.map((p, index) => {
+                stocksAvailable = p.stocksAvailable;
+                // console.log(p)
                 if (p.itemId == product.parentProductID) {
-                  stocksAvailable = p.stocksAvailable;
-                  averageSalesPerDay = p.averageSalesPerDay;
+                  console.log(p.itemId)
+                  console.log(p.averageSalesPerDay)
+                  averageSalesPerDay = p.averageSalesPerDay
                 }
               });
             }
