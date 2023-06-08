@@ -645,15 +645,13 @@ class businessCalculations {
 
     const paymentMethodSelected = data.paymentMethodSelected;
 
-    if (paymentMethodSelected === 'maya') {
+    if (['maya','visa','mastercard','gcash'].includes(paymentMethodSelected)) {
       const fullName = data.fullName;
       const firstName = fullName.split(' ')[0];
       const lastName = fullName.split(' ')[1];
       const eMail = data.eMail;
       const phoneNumber = data.phoneNumber;
       const totalPrice = data.grandTotal;
-
-
       if (testing === false) {
         PaymayaSdk(
           data.setMayaRedirectUrl,
@@ -670,7 +668,7 @@ class businessCalculations {
         );
       }
       else {
-        return 'maya'
+        return paymentMethodSelected
       } 
     }
     if (['bdo','unionbank','gcash'].includes(paymentMethodSelected)) {
@@ -690,7 +688,7 @@ class businessCalculations {
         });
       }
       else {
-        return 'bankDeposit'
+        return paymentMethodSelected
       }
     }
 

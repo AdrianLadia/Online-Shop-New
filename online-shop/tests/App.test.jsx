@@ -48,6 +48,7 @@ const userTestId = 'TESTUSER';
 const testconfig = new testConfig();
 const testid = testconfig.getTestUserId();
 const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', userTestId);
+const allProducts = await firestore.readAllProducts()
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -612,7 +613,7 @@ describe('firestoredb', async () => {
         emailVerified: true,
         phoneNumber: '09178927206',
         deliveryAddress: [{ address: 'Paper Boy', latitude: 1, longitude: 0 }],
-        contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
+        contactPerson: [{ name: 'testname', phoneNumber: '09178927206' }],
         isAnonymous: false,
         orders: [],
         cart: {},
@@ -631,7 +632,7 @@ describe('firestoredb', async () => {
         emailVerified: true,
         phoneNumber: '09178927206',
         deliveryAddress: [{ address: 'Paper Boy', latitude: 1, longitude: 0 }],
-        contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
+        contactPerson: [{ name: 'testname', phoneNumber: '09178927206' }],
         isAnonymous: false,
         orders: [],
         cart: {},
@@ -650,6 +651,7 @@ describe('firestoredb', async () => {
     await delay(100);
   });
   test('createProduct and readAll Products', async () => {
+    
     await firestore.createProduct(
       {
         itemId: 'test',
@@ -683,7 +685,7 @@ describe('firestoredb', async () => {
         machinesThatCanProduce: '',
         stocksLowestPoint: []
       },
-      'test'
+      'test',allProducts
     );
     await delay(200);
     const products = await firestore.readAllProducts();
@@ -1567,7 +1569,7 @@ describe('cloudfirestoredb', async () => {
         machinesThatCanProduce: '',
         stocksLowestPoint: []
       },
-      'test'
+      'test',allProducts
     );
     await firestore.createProduct(
       {
@@ -1602,7 +1604,7 @@ describe('cloudfirestoredb', async () => {
         machinesThatCanProduce: '',
         stocksLowestPoint: []
       },
-      'test2'
+      'test2',allProducts
     );
 
     await firestore.createNewUser(
@@ -2102,31 +2104,14 @@ describe('sendEmail', async () => {
 describe('afterCheckoutRedirectLogic', () => {
   class testCheckout {
     constructor() {
-      this.bdoselected = false;
-      this.mayaselected = false;
-      this.unionbankselected = false;
-      this.gcashselected = false;
-      this.visaselected = false;
-      this.mastercardselected = false;
-      this.bitcoinselected = false;
-      this.ethereumselected = false;
-      this.solanaselected = false;
     }
 
     mockFunction() {}
 
-    runFunction() {
+    runFunction(paymentMethodSelected) {
       const res = businesscalculations.afterCheckoutRedirectLogic(
         {
-          bdoselected: this.bdoselected,
-          unionbankselected: this.unionbankselected,
-          gcashselected: this.gcashselected,
-          mayaselected: this.mayaselected,
-          visaselected: this.visaselected,
-          mastercardselected: this.mastercardselected,
-          bitcoinselected: this.bitcoinselected,
-          ethereumselected: this.ethereumselected,
-          solanaselected: this.solanaselected,
+          paymentMethodSelected: paymentMethodSelected,
           referenceNumber: 'testref1234',
           grandTotal: 10000,
           deliveryFee: 100,
@@ -2154,26 +2139,44 @@ describe('afterCheckoutRedirectLogic', () => {
 
   test('Test BDO', async () => {
     let res;
-    testRedirect.bdoselected = true;
-    res = testRedirect.runFunction();
-    expect(res).toEqual('bankDeposit');
-    testRedirect.bdoselected = false;
+    res = testRedirect.runFunction('bdo');
+    expect(res).toEqual('bdo');
+
   });
 
   test('Test Unionbank', async () => {
     let res;
-    testRedirect.unionbankselected = true;
-    res = testRedirect.runFunction();
-    expect(res).toEqual('bankDeposit');
-    testRedirect.unionbankselected = false;
+    res = testRedirect.runFunction('unionbank');
+    expect(res).toEqual('unionbank');
+
   });
 
   test('Test Maya', async () => {
     let res;
-    testRedirect.mayaselected = true;
-    res = testRedirect.runFunction();
+    res = testRedirect.runFunction('maya');
     expect(res).toEqual('maya');
-    testRedirect.mayaselected = false;
+
+  });
+
+  test('Test Maya', async () => {
+    let res;
+    res = testRedirect.runFunction('gcash');
+    expect(res).toEqual('gcash');
+
+  });
+
+  test('Test Maya', async () => {
+    let res;
+    res = testRedirect.runFunction('visa');
+    expect(res).toEqual('visa');
+
+  });
+
+  test('Test Maya', async () => {
+    let res;
+    res = testRedirect.runFunction('mastercard');
+    expect(res).toEqual('mastercard');
+
   });
 
   // test('should return false if user has orders', async () => {
@@ -2446,6 +2449,10 @@ describe('transactionPlaceOrder test retail', async () => {
 
 describe('deleteDeclinedPayments', () => {
   test('Setup test', async () => {
+    const paymentIds = await firestore.readAllIdsFromCollection('Payments')
+    paymentIds.map(async (paymentId) => {
+      await firestore.deleteDocumentFromCollection('Payments', paymentId)
+    })
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -2521,9 +2528,12 @@ describe('deleteDeclinedPayments', () => {
 
     let found2 = false;
     payments.map((payment) => {
-      if (payment.orderReference == 'testref1234') {
+      if (payment.orderReference == 'testref1234' && payment.proofOfPaymentLink == 'https://testlink.com') {
         found2 = true;
         expect(payment.status).toEqual('declined');
+      }
+      if (['https://testlink2.com', 'https://testlink3.com'].includes(payment.proofOfPaymentLink)) {
+        expect(payment.status).toEqual('pending');
       }
     });
 
@@ -2625,7 +2635,7 @@ describe('updateProductClicks', async () => {
         machinesThatCanProduce: '',
         stocksLowestPoint: []
       },
-      'test'
+      'test',allProducts
     );
   });
   test('invoking function', async () => {
