@@ -184,7 +184,7 @@ const ProductCardModal = (props) => {
               {/* HEART */}
               {heart ? (
                 <AiFillHeart
-                  id={itemName}
+                  id={itemId}
                   size={40}
                   onClick={onHeartClick}
                   className=" cursor-pointer text-red-500 "
