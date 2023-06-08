@@ -4,53 +4,53 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // match /{document=**} {
-    //   allow read, write: if true
+    match /{document=**} {
+      allow read, write: if true
+    }
+
+    // function isAdminOrSuperAdmin() {
+    //   let userRole = get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.userRole;
+    //   return userRole == 'admin' || userRole == 'superAdmin';
     // }
 
-    function isAdminOrSuperAdmin() {
-      let userRole = get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.userRole;
-      return userRole == 'admin' || userRole == 'superAdmin';
-    }
+    // function isSuperAdmin() {
+    //   let userRole = get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.userRole;
+    //   return userRole == 'superAdmin';
+    // }
 
-    function isSuperAdmin() {
-      let userRole = get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.userRole;
-      return userRole == 'superAdmin';
-    }
+    // match /Users/{userId} {
+    //   allow write: if (request.auth != null && request.auth.uid == userId && "cart" in request.resource.data) || isSuperAdmin()  
+    //   allow read: if isAdminOrSuperAdmin();
+    // }
 
-    match /Users/{userId} {
-      allow write: if (request.auth != null && request.auth.uid == userId && "cart" in request.resource.data) || isSuperAdmin()  
-      allow read: if isAdminOrSuperAdmin();
-    }
+    // match /Products/{productId}/{product=**} {
+    //   allow read: if true
+    //   allow create: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
+    //   allow update: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
+    //   allow delete: if isSuperAdmin();
+    // }
 
-    match /Products/{productId}/{product=**} {
-      allow read: if true
-      allow create: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
-      allow update: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
-      allow delete: if isSuperAdmin();
-    }
+    // match /Categories/{categoryId}/{category=**} {
+    //   allow read: if true
+    // }
 
-    match /Categories/{categoryId}/{category=**} {
-      allow read: if true
-    }
-
-    match /ordersMessages/{referenceNumber} {
-      allow read, write : if request.auth != null && request.auth.uid == resource.data.ownerUserId || isAdminOrSuperAdmin();
+    // match /ordersMessages/{referenceNumber} {
+    //   allow read, write : if request.auth != null && request.auth.uid == resource.data.ownerUserId || isAdminOrSuperAdmin();
       
-    }
+    // }
 
-    match /Payments/{orderReference} {
-      allow read, write : if request.auth != null && isAdminOrSuperAdmin();
-    } 
+    // match /Payments/{orderReference} {
+    //   allow read, write : if request.auth != null && isAdminOrSuperAdmin();
+    // } 
 
-    match /PaymentProviders/{providers} {
-      allow read: if true
-      allow write : if request.auth != null && isAdminOrSuperAdmin();
-    }
+    // match /PaymentProviders/{providers} {
+    //   allow read: if true
+    //   allow write : if request.auth != null && isAdminOrSuperAdmin();
+    // }
 
-    match /Machines/{machine} {
-      allow read: if true
-      allow write : if request.auth != null && isAdminOrSuperAdmin();
-    } 
+    // match /Machines/{machine} {
+    //   allow read: if true
+    //   allow write : if request.auth != null && isAdminOrSuperAdmin();
+    // } 
   }
 }

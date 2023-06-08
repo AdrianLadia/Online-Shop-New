@@ -47,7 +47,7 @@ class businessCalculations {
     return safetyStock;
   }
 
-  getStocksAvailableLessSafetyStock(stocksAvailable, averageSalesPerDay) {
+  getStocksAvailableLessSafetyStock(stocksAvailable, averageSalesPerDay, isRetail=false) {
     // VALIDATION
     const stocksAvailableSchema = Joi.number().required();
     const averageSalesPerDaySchema = Joi.number().required();
@@ -58,7 +58,13 @@ class businessCalculations {
     }
 
     // FUNCTION
-    const stocksAvailableLessSafetyStock = stocksAvailable - this.getSafetyStock(averageSalesPerDay);
+    let stocksAvailableLessSafetyStock
+    if (isRetail) {
+      stocksAvailableLessSafetyStock = stocksAvailable - 10
+    }
+    else {
+      stocksAvailableLessSafetyStock = stocksAvailable - this.getSafetyStock(averageSalesPerDay);
+    }
 
     // VALIDATION
     const stocksAvailableLessSafetyStockSchema = Joi.number().required();

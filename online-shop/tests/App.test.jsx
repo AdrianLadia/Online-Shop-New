@@ -675,12 +675,19 @@ describe('firestoredb', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
       'test'
     );
-    await delay(100);
+    await delay(200);
     const products = await firestore.readAllProducts();
-    await delay(100);
+    await delay(200);
     let found = false;
     products.map((product) => {
       if (product.itemId === 'test') {
@@ -1552,6 +1559,13 @@ describe('cloudfirestoredb', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
       'test'
     );
@@ -1580,6 +1594,13 @@ describe('cloudfirestoredb', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
       'test2'
     );
@@ -2567,10 +2588,7 @@ describe('testCancelOrder', () => {
 
     expect(stocksAvailableNew - stocksAvailableOld).toEqual(12);
   });
-
-  
 }, 100000);
-
 
 describe('updateProductClicks', async () => {
   test('Create test product', async () => {
@@ -2599,17 +2617,23 @@ describe('updateProductClicks', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
       'test'
     );
-
   });
   test('invoking function', async () => {
-    await delay(200)
+    await delay(200);
     await firestore.updateProductClicks('test', userTestId);
-    await delay(200)
+    await delay(200);
     const products = await firestore.readAllDataFromCollection('Products');
-  
+
     const testProduct = products.filter((product) => product.itemId == 'test')[0];
     expect(testProduct.clicks.length).toEqual(1);
   });
@@ -2625,11 +2649,52 @@ describe('readPaymentProviders', async () => {
     const paymentProviders = await firestore.readAllPaymentProviders();
     expect(paymentProviders.length).toBeGreaterThan(0);
   });
-} );
+});
 
-describe.only('readAllMachines', async () => {
+describe('readAllMachines', async () => {
   test('invoking function', async () => {
     const machines = await firestore.readAllMachines();
     expect(machines.length).toBeGreaterThan(0);
+  });
+});
+
+describe('testRetailTransactionPlaceOrder', async () => {
+  test('Setup test', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+  });
+  test('test retail items in transactionPlaceOrder', async () => {
+    const oldPpb1 = await firestore.readSelectedDataFromCollection('Products', 'PPB#1');
+    const ppb1OldStocks = oldPpb1.stocksAvailable;
+    const oldPpb2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#2');
+    const ppb2OldStocks = oldPpb2.stocksAvailable;
+
+    await cloudfirestore.transactionPlaceOrder({
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10 },
+      itemstotal: 1100,
+      vat: 0,
+      shippingtotal: 100,
+      grandTotal: 1200,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+    });
+
+    await delay(200);
+
+    const user = await cloudfirestore.readSelectedUserById(userTestId);
+    const order = user.orders;
+    expect(order.length).toEqual(1);
   });
 });

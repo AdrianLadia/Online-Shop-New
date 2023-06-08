@@ -19,7 +19,9 @@ class firestoredb extends firestorefunctions {
     const { error } = schema.validate(data);
 
     if (error) {
+
       alert(error);
+      throw new Error(error);
       return
     }
 

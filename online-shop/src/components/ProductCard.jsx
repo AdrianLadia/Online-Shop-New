@@ -110,12 +110,12 @@ const ProductCard = (props) => {
         return;
       }
     } else {
-      console.log('ran this')
-      console.log(totalOrder)
-      console.log(calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay()))
+      // console.log('ran this')
+      // console.log(totalOrder)
+      console.log(calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true))
       if (
         totalOrder >
-        calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())
+        calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
       ) {
         setQuantity('');
         alert('Not enough stocks available');
