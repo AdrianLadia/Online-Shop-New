@@ -11,6 +11,8 @@ import UseWindowDimensions from './useWindowDimensions';
 
 const AccountStatement = () => {
   const { orders, payments, userdata } = useContext(AppContext);
+  console.log(orders);
+  console.log(payments);
   const navigateTo = useNavigate();
   const datamanipulation = new dataManipulation();
   const [orderInfoData, setOrderInfoData] = useState(null);

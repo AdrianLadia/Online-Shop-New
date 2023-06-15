@@ -940,6 +940,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
         reference: referenceNumber,
         paymentprovider: paymentprovider,
         userName: fullName,
+        date: new Date(),
       };
 
       const db = admin.firestore();

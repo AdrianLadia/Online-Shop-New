@@ -93,9 +93,12 @@ function App() {
   const [changeCard, setChangeCard] = useState(false);
   const [allUserData, setAllUserData] = useState(null);
 
+  console.log(userdata)
+
   useEffect(() => {
-    if (userdata) {
-      if (userdata.userRole == 'admin' || userdata.userRole == 'superadmin') {
+    if (userdata != null) {
+      if (userdata.userRole == 'admin' || userdata.userRole == 'superAdmin') {
+        console.log('IS ADMIN')
         firestore.readAllDataFromCollection('Users').then((users) => {
           console.log(users)
           setAllUserData(users)

@@ -2668,7 +2668,7 @@ describe('readAllMachines', async () => {
   });
 });
 
-describe('testRetailTransactionPlaceOrder', async () => {
+describe.only('testRetailTransactionPlaceOrder', async () => {
   test('Setup test', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
   });

@@ -53,6 +53,8 @@ const AdminCreatePayment = (props) => {
     });
   }, []);
 
+  console.log(users)
+
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
     setAllUserNames(customers);

@@ -90,6 +90,8 @@ class dataManipulation {
       });
     }
 
+    console.log(data)
+
     data.sort((a, b) => {
       if (forTesting) {
         return b.date - a.date;
@@ -271,6 +273,8 @@ class dataManipulation {
 
   getAllCustomerNamesFromUsers(users) {
     const schemaUsers = Joi.array();
+
+    console.log(users)
 
     const { error } = schemaUsers.validate(users);
     if (error) {

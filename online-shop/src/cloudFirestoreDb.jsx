@@ -141,9 +141,14 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       needAssistance: Joi.boolean().required(),
       eMail: Joi.string().required(),
       sendEmail: Joi.boolean().required(),
+      testing : Joi.boolean().required(),
     }).unknown(false);
 
     const { error } = schema.validate(data);
+
+    if (data['testing'] == null) {
+      data['testing'] = false;
+    }
 
     const encodedData = encodeURIComponent(JSON.stringify(data));
 
@@ -151,6 +156,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       alert(error.message);
       throw new Error(error.message);
     }
+
+    console.log('encodedData', encodedData);
 
     try {
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
