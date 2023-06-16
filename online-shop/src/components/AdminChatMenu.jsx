@@ -29,6 +29,7 @@ const AdminChatMenu = () => {
         querySnapshot.forEach((doc) => {
           if (doc.exists()) {
             const data = doc.data();
+            console.log(data)
             const referenceNumber = data.referenceNumber
             const customerName = data.ownerName
             const messages = data.messages
@@ -54,31 +55,6 @@ const AdminChatMenu = () => {
           }
           setChatData(chats)
         })
-      // });
-      //   firestore.readAllOrderMessages().then((res) => {
-      //       let chatData = []
-      //       res.forEach((chat) => {
-      //         const referenceNumber = chat.referenceNumber
-      //         const customerName = chat.ownerName
-      //         const messages = chat.messages
-      //         let unreadCount = 0
-      //         let latestMessage
-      //         if (messages.length === 0) {
-      //             return null
-      //         }
-      //         latestMessage = messages[messages.length - 1].message
-      //         messages.forEach((message) => {
-      //           const userRole = message.userRole
-      //           if (userRole === "member") {
-      //             if (message.read === false) {
-      //                 unreadCount += 1
-      //             }
-      //           }
-      //          })
-      //         if (unreadCount >= 1) {
-      //           chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
-      //         }
-      //       }) 
         })
     }, [chatSwitch]);
   
@@ -105,6 +81,7 @@ const AdminChatMenu = () => {
   function handleBoth(ref, toggle){
     setChatSwitch(toggle)
     setOpenChat(toggle)
+    console.log('A')
     setSelectedChatOrderId(ref)
   }
 

@@ -41,8 +41,11 @@ const DisplayMessagesAdmin = (props) => {
   async function updateMessages() {
  
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
+    console.log(selectedChatOrderId)
+
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
+    console.log(data);
     const messages = data.messages;
     
     let unreadOwner = 0;
@@ -87,7 +90,7 @@ const DisplayMessagesAdmin = (props) => {
   }
 
   function handleMessageClick() {
-
+    console.log('clicked')
     setShowDetails(!showDetails);
     updateMessages();
   }

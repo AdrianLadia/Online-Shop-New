@@ -36,7 +36,6 @@ const DisplayMessagesUser = (props) => {
   return (
     
     <div className="flex flex-row-reverse items-start h-max mr-0.5">
-      
       <div className="flex items-center justify-center w-2/12 rounded-full h-full lg:w-1/12 mt-3">
         <div className="w-16 h-16 sm:h-20 sm:w-20 bg-gradient-to-tr from-color10c to-color60 border-4 border-color60 rounded-full">
           <div className="flex items-center justify-center h-full text-2xl font-bold text-white uppercase">

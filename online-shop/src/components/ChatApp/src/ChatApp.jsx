@@ -17,29 +17,33 @@ const ChatApp = (props) => {
   const [isInquiryMessage, setIsInquiryMessage] = useState(null);
   // Checks if message is an inquiry message or not
 
-  console.log(userstate);
-  console.log(userdata)
-
+  console.log(selectedChatOrderId)
 
   function getNameById(id) {
-    allUserData.map((user) => {
-      if (user.uid == id) {
-        return user.name
-      }
-    })
+    console.log(id);
+    if (allUserData == null) {
+      return 'me';
+    }
+    const user = allUserData.find((user) => user.uid === id);
+    if (user) {
+      console.log(user.name);
+      return user.name;
+    }
+    return 'new customer'; // or any default value you want to return if the user is not found
   }
+  
 
   useEffect(() => {
     try {
       const { orderReference, isInquiry } = location.state;
       setOrderRef(orderReference)
-      setIsInquiryMessage(isInquiry)
+      setIsInquiryMessage(true)
     } catch {
       setOrderRef(selectedChatOrderId)
       setIsInquiryMessage(false)
     }
 
-  }, []);
+  }, [selectedChatOrderId]);
 
   const [messageDetails, setMessageDetails] = useState({});
   const [userName, setUserName] = useState('');
@@ -52,13 +56,16 @@ const ChatApp = (props) => {
   }, []);
 
   useEffect(() => {
-    if (userdata) {
+    
+    if (userdata && userdata.userRole === 'member') {
       setUser(userdata.name);
+      console.log('C')
       setSelectedChatOrderId(userId)
     }
   }, [userdata]);
 
   useEffect(() => {
+   
     if (isInquiryMessage == false) {
       if (orderRef != null) {
         const docRef = doc(db, 'ordersMessages', orderRef);
@@ -66,9 +73,11 @@ const ChatApp = (props) => {
           if (doc.exists()) {
             let username 
             username = doc.data().ownerName;
+            
             if (username == null) {
               username = getNameById(orderRef)
             }
+
             setMessageDetails(doc.data());
             setUserName(username);
             
@@ -87,7 +96,6 @@ const ChatApp = (props) => {
               const username = userdata.name;
               setMessageDetails(doc.data());
               setUserName(username);
-              console.log(username)
               setOrderRef(selectedChatOrderId)
             } else {
               console.log('No such document!');
@@ -96,7 +104,7 @@ const ChatApp = (props) => {
       }
     }
 
-  }, [selectedChatOrderId,userdata]);
+  }, [orderRef,userdata]);
 
 
   return (

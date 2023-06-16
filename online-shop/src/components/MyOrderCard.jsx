@@ -76,6 +76,7 @@ function MyOrderCard(props) {
   function onMessageClick() {
     readMessages();
     firestore.updateOrderMessagesAsReadForUser(order.reference);
+    console.log('B')
     setSelectedChatOrderId(order.reference);
     navigateTo('/orderChat', { state: { orderReference: order.reference } });
   }
