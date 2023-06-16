@@ -706,7 +706,6 @@ class businessCalculations {
       date.getMonth().toString() +
       date.getDate().toString() +
       date.getFullYear().toString() +
-      '-' +
       randomNumber
     );
   }

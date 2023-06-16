@@ -345,11 +345,14 @@ const CheckoutPage = () => {
         /> */}
         <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
         <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
+        <Typography>
+            • <strong>Click on the map</strong> to change the delivery point.
+          </Typography>
           <Typography>
             • Please <strong>pinpoint</strong> your delivery address below.
           </Typography>
           <Typography>
-            • Use the <strong>search button</strong> to easily find your address and adjust the pin to your address.
+            • Use the <strong>search button</strong> to easily find your address and <strong>adjust the pin</strong> to your address.
           </Typography>
         </div>
         
@@ -360,7 +363,7 @@ const CheckoutPage = () => {
           <TextField
             // disabled
             id="address search"
-            label="Search Address And Pinpoint In Google Maps"
+            label="Search for a landmark"
             InputLabelProps={labelStyle}
             variant="filled"
             className="w-full self-center bg-white"

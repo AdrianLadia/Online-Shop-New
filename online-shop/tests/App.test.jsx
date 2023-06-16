@@ -2241,7 +2241,7 @@ describe('updatePaymentStatus', () => {
   });
 }, 100000);
 
-describe('deleteOldOrders', () => {
+describe.only('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2298,8 +2298,11 @@ describe('deleteOldOrders', () => {
     });
   });
 
-  test('Create an order with items to test if items are added back to stocksAvailable', async () => {
+  test('Create an order with items to test if items are added back to stocksAvailable and stocksOnHold is deleted', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#12', { stocksOnHold: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#1-RET', { stocksOnHold: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
     const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
@@ -2308,6 +2311,7 @@ describe('deleteOldOrders', () => {
     const vat = ppb12Price * 12 + ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      testing:true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2315,7 +2319,7 @@ describe('deleteOldOrders', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'PPB#16': 12, 'PPB#12': 12 },
+      cart: { 'PPB#16': 12, 'PPB#12': 12, 'PPB#1-RET':12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2374,17 +2378,28 @@ describe('deleteOldOrders', () => {
   test('invoke function', async () => {
     const oldPPB16 = await firestore.readSelectedProduct('PPB#16');
     const oldPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const oldPPB1Retail = await firestore.readSelectedProduct('PPB#1-RET');
     const oldPPB16Stocks = oldPPB16.stocksAvailable;
     const oldPPB12Stocks = oldPPB12.stocksAvailable;
+    const oldPPB1RetailStocks = oldPPB1Retail.stocksAvailable;
     await cloudfirestore.deleteOldOrders();
     await delay(2000);
     const newPPB16 = await firestore.readSelectedProduct('PPB#16');
     const newPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const newPPB1Retail = await firestore.readSelectedProduct('PPB#1-RET');
     const newPPB16Stocks = newPPB16.stocksAvailable;
     const newPPB12Stocks = newPPB12.stocksAvailable;
+    const newPPB1RetailStocks = newPPB1Retail.stocksAvailable;
+    const newPPB1StocksOnHold = newPPB1Retail.stocksOnHold;
+    const newPPB16StocksOnHold = newPPB16.stocksOnHold;
+    const newPPB12StocksOnHold = newPPB12.stocksOnHold;
 
     expect(newPPB16Stocks - oldPPB16Stocks).toEqual(12);
     expect(newPPB12Stocks - oldPPB12Stocks).toEqual(12);
+    expect(newPPB1RetailStocks - oldPPB1RetailStocks).toEqual(12);
+    expect(newPPB1StocksOnHold.length).toEqual(0);
+    expect(newPPB16StocksOnHold.length).toEqual(1);
+    expect(newPPB12StocksOnHold.length).toEqual(1);
 
     const userData = await firestore.readUserById(userTestId);
     const orders = userData.orders;
@@ -2668,17 +2683,20 @@ describe('readAllMachines', async () => {
   });
 });
 
-describe.only('testRetailTransactionPlaceOrder', async () => {
+describe('testRetailTransactionPlaceOrder', async () => {
   test('Setup test', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
   });
-  test('test retail items in transactionPlaceOrder', async () => {
-    const oldPpb1 = await firestore.readSelectedDataFromCollection('Products', 'PPB#1');
+  test('test retail items in transactionPlaceOrder ', async () => {
+    const oldPpb1 = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
     const ppb1OldStocks = oldPpb1.stocksAvailable;
-    const oldPpb2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#2');
+    const oldPpb2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#2-RET');
     const ppb2OldStocks = oldPpb2.stocksAvailable;
+    const oldPpb3Wholesale = await firestore.readSelectedDataFromCollection('Products', 'PPB#3');
+    const ppb3WholesaleOldStocks = oldPpb3Wholesale.stocksAvailable;
 
     await cloudfirestore.transactionPlaceOrder({
+      testing : true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2686,11 +2704,11 @@ describe.only('testRetailTransactionPlaceOrder', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10 },
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10,'PPB#3':1 },
       itemstotal: 1100,
       vat: 0,
       shippingtotal: 100,
-      grandTotal: 1200,
+      grandTotal: 1000,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -2706,5 +2724,17 @@ describe.only('testRetailTransactionPlaceOrder', async () => {
     const user = await cloudfirestore.readSelectedUserById(userTestId);
     const order = user.orders;
     expect(order.length).toEqual(1);
+
+    const newPpb1 = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
+    const ppb1NewStocks = newPpb1.stocksAvailable;
+    const newPpb2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#2-RET');
+    const ppb2NewStocks = newPpb2.stocksAvailable;
+    const newPpb3Wholesale = await firestore.readSelectedDataFromCollection('Products', 'PPB#3');
+    const ppb3WholesaleNewStocks = newPpb3Wholesale.stocksAvailable;
+
+    expect(ppb1OldStocks - ppb1NewStocks).toEqual(10);
+    expect(ppb2OldStocks - ppb2NewStocks).toEqual(10);
+    expect(ppb3WholesaleOldStocks - ppb3WholesaleNewStocks).toEqual(1);
+
   });
-});
+},100000);

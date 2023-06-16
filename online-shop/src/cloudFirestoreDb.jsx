@@ -144,11 +144,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       testing : Joi.boolean().required(),
     }).unknown(false);
 
-    const { error } = schema.validate(data);
-
     if (data['testing'] == null) {
       data['testing'] = false;
     }
+    const { error } = schema.validate(data);
+
 
     const encodedData = encodeURIComponent(JSON.stringify(data));
 
