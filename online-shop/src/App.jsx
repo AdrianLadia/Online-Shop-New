@@ -92,6 +92,7 @@ function App() {
   const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
   const [changeCard, setChangeCard] = useState(false);
   const [allUserData, setAllUserData] = useState(null);
+  const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
 
   
 
@@ -169,13 +170,11 @@ function App() {
     onAuthStateChanged(auth, (user) => {
 
       if (user) {
-
         setUserState('userloading');
         setUser(user);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
 
           if (userExists) {
-
             setUserId(user.uid);
           } else {
 
@@ -361,7 +360,9 @@ function App() {
     setUpdateCartInfo:setUpdateCartInfo,
     isAppleDevice : isAppleDevice,
     allUserData : allUserData,
-    setAllUserData:setAllUserData
+    setAllUserData:setAllUserData,
+    inquiryMessageSwitch : inquiryMessageSwitch,
+    setInquiryMessageSwitch : setInquiryMessageSwitch,
   };
 
   return (

@@ -9,25 +9,37 @@ import LoginButton from '../../LoginButton';
 import { Typography } from '@mui/material';
 
 const ChatApp = (props) => {
-  const { db, selectedChatOrderId, userId, userdata, setRefreshUser, refreshUser, firestore, userstate } =
+  const { db, selectedChatOrderId, setSelectedChatOrderId, userId, userdata, setRefreshUser, refreshUser, userstate,allUserData} =
     useContext(AppContext);
   const loggedInUserId = userId;
   const location = useLocation();
-  let orderRef;
+  const [orderRef, setOrderRef] = useState(null);
+  const [isInquiryMessage, setIsInquiryMessage] = useState(null);
   // Checks if message is an inquiry message or not
-  let isInquiryMessage;
 
   console.log(userstate);
   console.log(userdata)
 
-  try {
-    const { orderReference, isInquiry } = location.state;
-    orderRef = orderReference;
-    isInquiryMessage = isInquiry;
-  } catch {
-    orderRef = selectedChatOrderId;
-    isInquiryMessage = false;
+
+  function getNameById(id) {
+    allUserData.map((user) => {
+      if (user.uid == id) {
+        return user.name
+      }
+    });
   }
+
+  useEffect(() => {
+    try {
+      const { orderReference, isInquiry } = location.state;
+      setOrderRef(orderReference)
+      setIsInquiryMessage(isInquiry)
+    } catch {
+      setOrderRef(selectedChatOrderId)
+      setIsInquiryMessage(false)
+    }
+
+  }, []);
 
   const [messageDetails, setMessageDetails] = useState({});
   const [userName, setUserName] = useState('');
@@ -42,6 +54,7 @@ const ChatApp = (props) => {
   useEffect(() => {
     if (userdata) {
       setUser(userdata.name);
+      setSelectedChatOrderId(userId)
     }
   }, [userdata]);
 
@@ -51,9 +64,14 @@ const ChatApp = (props) => {
         const docRef = doc(db, 'ordersMessages', orderRef);
         onSnapshot(docRef, (doc) => {
           if (doc.exists()) {
-            const username = doc.data().ownerName;
+            let username 
+            username = doc.data().ownerName;
+            if (username == null) {
+              username = getNameById(orderRef)
+            }
             setMessageDetails(doc.data());
             setUserName(username);
+            
           } else {
             console.log('No such document!');
           }
@@ -66,17 +84,20 @@ const ChatApp = (props) => {
         const docRef = doc(db, 'ordersMessages', userId);
           onSnapshot(docRef, (doc) => {
             if (doc.exists()) {
-              const username = doc.data().ownerName;
+              const username = userdata.name;
               setMessageDetails(doc.data());
               setUserName(username);
+              console.log(username)
+              setOrderRef(selectedChatOrderId)
             } else {
               console.log('No such document!');
             }
           });
-
       }
     }
-  }, [selectedChatOrderId]);
+
+  }, [selectedChatOrderId,userdata]);
+
 
   return (
     <>

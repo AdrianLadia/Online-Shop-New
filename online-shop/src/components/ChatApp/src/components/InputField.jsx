@@ -9,7 +9,7 @@ import ImageUploadButton from '../../../ImageComponents/ImageUploadButton';
 
 const InputField = (props) => {
   const orderReferenceId = props.orderReferenceId;
-  const loggedInUserId = props.loggedInUserId;
+  const loggedInUserId = props.stloggedInUserId;
   const [message, setMessage] = useState(null);
   const [newMessage, setNewMessage] = useState(null);
   const [imageLink, setImageLink] = useState(null);
@@ -99,7 +99,7 @@ const InputField = (props) => {
       }),
     })
       .then(() => {
-        console.log('Message is sent Successfuly: ', newMessage);
+        console.log('Message is sent Successfuly: ', message);
         setMessage('');
         setNewMessage('');
       })

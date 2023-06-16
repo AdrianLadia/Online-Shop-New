@@ -9,8 +9,7 @@ import AppContext from './AppContext';
 import GoogleMaps from './components/GoogleMaps'
 
 const HomePage = () => {
-  
-  const {  products, trendyItems } = useContext(AppContext);
+
   const navigateTo = useNavigate()
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
@@ -214,6 +213,7 @@ const HomePage = () => {
     }
 
     function handleMessageClick(){
+      
       navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true } })
     }
     
