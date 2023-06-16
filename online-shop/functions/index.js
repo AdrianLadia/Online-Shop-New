@@ -32,14 +32,14 @@ async function sendmail(to, subject, htmlContent) {
     });
 
     // send the email using the transporter object
-    console.log('ran');
+
     await transporter.sendMail({
       from: 'starpackph@gmail.com',
       to: to,
       subject: subject,
       html: htmlContent,
     });
-    console.log('ran2');
+
   } catch (error) {
     console.log(error);
   }
@@ -184,11 +184,11 @@ exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async
   corsHandler(req, res, async () => {
     try {
       const userid = req.query.data;
-      console.log(userid);
+     
       const db = admin.firestore();
       const user = await db.collection('Users').doc(userid).get();
       const userRole = user.data().userRole;
-      console.log(userRole);
+   
       res.send(userRole);
     } catch (error) {
       console.log(error);
@@ -207,7 +207,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
 
       // Fetch and process the documents
       const querySnapshot = await forOnlineStoreQuery.get();
-      console.log('querySnapshot', querySnapshot);
+   
       const products = [];
       querySnapshot.forEach((doc) => {
         // Add each product to the products array along with its document ID
@@ -235,7 +235,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
         products.push(productObject);
       });
 
-      console.log('products', products);
+   
 
       // Send the products array as a JSON response
       res.status(200).send(products);
@@ -382,7 +382,7 @@ exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.
 
 exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    console.log('running transactionPlaceOrder');
+    
     const data = parseData(req.query.data);
     const userid = data.userid;
     const username = data.username;
@@ -508,7 +508,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
 
-        console.log(cartUniqueItems);
+       
         await Promise.all(
           cartUniqueItems.map(async (itemId) => {
             const prodref = db.collection('Products').doc(itemId);
@@ -525,7 +525,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
             const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
             const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
 
-            console.log(itemId);
+    
             console.log('orderQuantity', orderQuantity);
             console.log('newStocksAvailable', newStocksAvailable);
             console.log('oldOrdersOnHold', oldOrdersOnHold);
@@ -636,6 +636,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
           ownerUserId: userid,
           ownerName: username,
           referenceNumber: reference,
+          isInquiry : false,
         });
         orderMessagesRef.collection('messages');
 
@@ -845,7 +846,6 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
-    // console.log(data)
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
     const db = admin.firestore();
@@ -853,9 +853,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const paymentsRef = db.collection('Payments');
     console.log(proofOfPaymentLink);
     const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
-    const paymentSnapshot = await paymentQuery.get();
-    // console.log('paymentSnapshot',paymentSnapshot)
-    // console.log('running')
+    const paymentSnapshot = await paymentQuery.get(); 
     let documentID;
     let paymentsData;
     paymentSnapshot.forEach((doc) => {
@@ -864,7 +862,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
       paymentsData.status = 'approved';
       documentID = doc.id;
     });
-    console.log('ending');
+
 
     try {
       db.runTransaction(async (transaction) => {
@@ -902,8 +900,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         });
 
         // WRITE
-        console.log(paymentsData);
-        console.log(documentID);
+
 
         if (paymentsData) {
           transaction.update(db.collection('Payments').doc(documentID), paymentsData);
@@ -982,7 +979,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           }
         });
 
-        console.log(userData);
+      
 
         // WRITE
         transaction.set(paymentsRef, {

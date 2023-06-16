@@ -212,6 +212,10 @@ const HomePage = () => {
     function footerCardStyle(){
       return " hover:bg-green1 hover:bg-opacity-20 hover:border-none w-full h-full p-2 gap-1 flex flex-col justify-center items-center border border-color60 rounded-t-xl"
     }
+
+    function handleMessageClick(){
+      navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true } })
+    }
     
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
@@ -240,6 +244,7 @@ const HomePage = () => {
                     <button onClick={()=>{scroll("page2")}} className={"text-xl  " + menuButtonStyle("page2")}>About</button>
                     <button onClick={()=>{scroll("page3")}} className={"text-xl  " + menuButtonStyle("page3")}>Products</button>
                     <button onClick={()=>{scroll("page4")}} className={"text-xl  " + menuButtonStyle("page4")}>Affiliate</button>
+                    <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page4")}>Message Us</button>
                   </ul>
                 </div> : null
               }
@@ -250,6 +255,7 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page2")}} className={buttonStyle("page2")}>About</button>
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
+              <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page4")}>Message Us</button>
             </div>
             {/* Shop Button */}
             <div className='w-3/12 sm:w-2/12 xl:w-1/12 flex justify-end sm:justify-center items-center mr-1 ' 

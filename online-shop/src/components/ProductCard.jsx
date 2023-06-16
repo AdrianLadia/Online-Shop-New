@@ -110,10 +110,7 @@ const ProductCard = (props) => {
         return;
       }
     } else {
-      // console.log('ran this')
-      // console.log(totalOrder)
-      console.log(calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true))
-      if (
+       if (
         totalOrder >
         calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
       ) {

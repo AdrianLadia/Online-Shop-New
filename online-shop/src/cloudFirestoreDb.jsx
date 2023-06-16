@@ -90,6 +90,13 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       await this.createDocument(data, userId, 'Users');
+      await this.createDocument({
+        messages: [],
+        ownerUserId: userId,
+        ownerName: null,
+        referenceNumber: userId,
+        isInquiry : true,
+      },userId,'ordersMessages')
     } catch (error) {
       // Handle the 400 error messages
       const errorMessage = error.response.data;
@@ -212,8 +219,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     try {
       const response = await axios.request(`${this.url}readAllProductsForOnlineStore`);
       const toReturn = response.data;
-
-      console.log(response.data)
 
       const toReturnSchema = Joi.array().items(
         Joi.object({
@@ -421,8 +426,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const jsonData = JSON.stringify(data);
 
     try {
-      console.log(data);
-      console.log(this.functions);
 
       const res = await axios.post(`${this.url}sendEmail`, jsonData, {
         headers: {
@@ -480,6 +483,17 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return { status: 'error' };
     }
   }
+
+  // async createOrderMessagesInquiry(data) {
+
+  //   const dataSchema = Joi.object({
+  //     messages: Joi.array().required(),
+  //     ownerUserId: Joi.string().required(),
+  //     ownerName: Joi.string().required(),
+  //     referenceNumber: Joi.string().required(),
+  //     isInquiry : true,
+  //   })
+  // }
   
 }
 

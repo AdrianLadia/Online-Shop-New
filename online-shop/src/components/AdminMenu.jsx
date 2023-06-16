@@ -68,7 +68,7 @@ const AdminMenu = () => {
   }
 
   const handleBack = () => {
-    navigateTo('/shop');
+    navigateTo('/');
   };
 
   useEffect(() => {

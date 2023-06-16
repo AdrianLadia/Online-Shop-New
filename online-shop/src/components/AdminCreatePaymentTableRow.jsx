@@ -13,15 +13,13 @@ const AdminCreatePaymentTableRow = (props) => {
   const { cloudfirestore, firestore } = useContext(AppContext);
   const paymentsData = props.paymentsData;
 
-  console.log(paymentsData);
-
   const handleNewTab = (link) => {
     window.open(link, '_blank');
   };
 
   async function updatePaymentStatus(status) {
     if (status === 'approved') {
-      console.log(amount);
+
       const data = {
         userId: userId,
         amount: amount,
@@ -31,7 +29,7 @@ const AdminCreatePaymentTableRow = (props) => {
       };
       await cloudfirestore.transactionCreatePayment(data);
       const customerEmail = await firestore.readEmailAddressByUserId(userId);
-      console.log(customerEmail);
+  
       await cloudfirestore.sendEmail({
         to: customerEmail,
         subject: 'Payment Accepted',
@@ -43,7 +41,7 @@ const AdminCreatePaymentTableRow = (props) => {
     if (status === 'declined') {
       await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink);
       const customerEmail = await firestore.readEmailAddressByUserId(userId);
-      console.log(customerEmail);
+     
       await cloudfirestore.sendEmail({
         to: customerEmail,
         subject: 'Payment Denied',
@@ -55,7 +53,7 @@ const AdminCreatePaymentTableRow = (props) => {
     setPaymentsData(newPaymentsData);
   }
 
-  console.log(amount);
+
 
   return (
     <TableRow>

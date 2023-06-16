@@ -16,7 +16,6 @@ const InputFieldBox = (props) => {
       sendMessage()
       setMessage('')
       
-      console.log('send function here! ')
     }
   }
 

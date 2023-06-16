@@ -18,8 +18,6 @@ const AccountStatementTable = (props) => {
   const setOpen = props.setOpen;
   const datamanipulation = new dataManipulation();
 
-  console.log(tableData);
-
   useEffect(() => {
     const rowsdata = datamanipulation.accountStatementTable(tableData);
 

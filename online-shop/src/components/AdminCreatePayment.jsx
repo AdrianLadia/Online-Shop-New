@@ -44,16 +44,11 @@ const AdminCreatePayment = (props) => {
 
   useEffect(() => {
     firestore.readAllPaymentProviders().then((result) => {
-      console.log(result);
-
       const ids = result.map((data) => {return(data.id)});
-      console.log(ids);
-
       setAllPaymentProviders(ids);
     });
   }, []);
 
-  console.log(users)
 
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
@@ -62,7 +57,6 @@ const AdminCreatePayment = (props) => {
 
   async function onCreatePayment() {
     const userid = datamanipulation.getUserUidFromUsers(users, selectedName);
-    console.log(paymentProvider);
     const data = {
       userId: userid,
       amount: parseFloat(amount),

@@ -34,7 +34,7 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
     firestore.deleteAddress(userId, savedlatitude, savedlongitude, address)
     setDeliveryAddresses(filtered)
 
-    console.log(filtered)
+
 
   }
 
@@ -42,7 +42,6 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
     Geocode.fromLatLng(savedlatitude, savedlongitude)
       .then(response => {
         const address = response.results[0].formatted_address;
-        console.log(`Address: ${address}`);
         setRealAddress(address)
       })
       .catch(error => {

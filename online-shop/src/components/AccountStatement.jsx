@@ -11,8 +11,6 @@ import UseWindowDimensions from './useWindowDimensions';
 
 const AccountStatement = () => {
   const { orders, payments, userdata } = useContext(AppContext);
-  console.log(orders);
-  console.log(payments);
   const navigateTo = useNavigate();
   const datamanipulation = new dataManipulation();
   const [orderInfoData, setOrderInfoData] = useState(null);
@@ -94,7 +92,7 @@ const AccountStatement = () => {
     }
   }
 
-  console.log(tableData)
+
 
   return (
     <div className="overflow-x-hidden flex flex-col justify-center items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">

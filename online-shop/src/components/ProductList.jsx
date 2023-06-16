@@ -98,7 +98,7 @@ const ProductList = (props) => {
             if (product.unit == 'Pack') {
               products.map((p, index) => {
                 stocksAvailable = p.stocksAvailable;
-                // console.log(p)
+              
                 if (p.itemId == product.parentProductID) {
                   console.log(p.itemId)
                   console.log(p.averageSalesPerDay)

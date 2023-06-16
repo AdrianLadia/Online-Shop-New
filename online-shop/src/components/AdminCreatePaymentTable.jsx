@@ -33,7 +33,6 @@ const AdminCreatePaymentTable = () => {
         const reference = data.orderReference;
         const userId = data.userId;
         const userName = data.userName
-        console.log(data)
         
 
         if (data.status === 'pending') {
@@ -53,9 +52,6 @@ const AdminCreatePaymentTable = () => {
       alert('Reference: ' + reference + ' is ' + status );
     }
   }, [selectedChatOrderId]);
-
-
-  console.log(paymentsData)
 
   return (
     <div>

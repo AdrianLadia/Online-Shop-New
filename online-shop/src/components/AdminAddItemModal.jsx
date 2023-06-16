@@ -77,7 +77,7 @@ const AdminAddItemModal = (props) => {
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
-      console.log(machines);
+
       setMachines(machines);
     });
   }, []);
@@ -101,9 +101,6 @@ const AdminAddItemModal = (props) => {
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
-    console.log(piecesPerPack);
-    console.log(packsPerBox);
-    console.log(pieces);
     if (piecesPerPack * packsPerBox !== pieces) {
       alert('Pieces per pack * Packs per box must be equal to total pieces');
       return;
@@ -144,7 +141,7 @@ const AdminAddItemModal = (props) => {
     );
 
     if (isThisRetail) {
-      console.log('is retail');
+
       await firestore.createProduct(
         {
           itemId: itemID + '-RET',
@@ -188,12 +185,10 @@ const AdminAddItemModal = (props) => {
   function createMachineFormat(checked,machine) {
     if (checked) {
       const newMachineFormat = machineFormat + machine.machineCode + '-'
-      console.log(newMachineFormat)
       setMachineFormat(newMachineFormat)
     }
     else {
       const newMachineFormat = machineFormat.replace('-' + machine.machineCode, '')
-      console.log(newMachineFormat)
       setMachineFormat(newMachineFormat)
     }
   }

@@ -22,7 +22,7 @@ const DisplayMessagesAdmin = (props) => {
   const chatData = props.chatData;
   const setChatData = props.setChatData;
 
-  console.log(chatData)
+
 
 
   const dummy = useRef(null);
@@ -39,8 +39,7 @@ const DisplayMessagesAdmin = (props) => {
   }, []);
   
   async function updateMessages() {
-    console.log('clicked')
-    console.log(dateTime)
+ 
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
@@ -51,8 +50,7 @@ const DisplayMessagesAdmin = (props) => {
     
     messages.map((mess) => {
       if (mess.userRole === 'member' && loggedInUserId !== mess.userId) {
-        console.log(mess.dateTime)
-        console.log(dateTime)
+
         if (datamanipulation.convertDateTimeStampToDateString(mess.dateTime) == datamanipulation.convertDateTimeStampToDateString(dateTime)) {
           mess.read = true;
         }
@@ -82,14 +80,14 @@ const DisplayMessagesAdmin = (props) => {
       setChatData(newChatData)
     }
 
-    console.log(messages)
+  
     firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
     firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, data.ownerReadAll);
     firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll);
   }
 
   function handleMessageClick() {
-    console.log('clicked')
+
     setShowDetails(!showDetails);
     updateMessages();
   }

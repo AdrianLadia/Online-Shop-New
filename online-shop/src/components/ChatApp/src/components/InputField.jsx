@@ -57,7 +57,7 @@ const InputField = (props) => {
   }
 
   async function sendImage(url) {
-    console.log(orderReferenceId);
+
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     // Add data to the array field
     updateDoc(docRef, {
@@ -84,7 +84,7 @@ const InputField = (props) => {
   }
 
   async function sendMessage() {
-    console.log(orderReferenceId);
+  
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     // Add data to the array field
     updateDoc(docRef, {
@@ -111,7 +111,7 @@ const InputField = (props) => {
   }
 
   function inputMessage(option1, option2) {
-    console.log('a');
+
     setMessage(option1);
     setSend(option2);
     if (option2 === true) {

@@ -31,7 +31,7 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
     secretKey = 'sk-D71LGkjBHoUU3yKLkPYHaS4PkfSgv3z5VPQN0oytUCE'
   }
 
-  console.log(phoneNumber)
+ 
 
   const req = {
     "totalAmount": {

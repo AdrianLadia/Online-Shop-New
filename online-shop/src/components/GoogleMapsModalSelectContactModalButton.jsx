@@ -24,17 +24,13 @@ const GoogleMapsModalSelectContactModalButton = (props) => {
   async function handleDeleteClick() {
     setRefreshUser(!refreshUser);
     const filtered = props.contactPerson.filter((c) => {
-      console.log(c.name)
-      console.log(name)
-      console.log(c.phoneNumber)
-      console.log(phonenumber)
       if (c.name !== name || c.phoneNumber !== phonenumber) {
-        console.log('true')
+
         return true
       }
     });
     
-    console.log(filtered);
+
     await firestore.deleteUserContactPersons(userId, name, phonenumber);
     setContactPerson(filtered);
 

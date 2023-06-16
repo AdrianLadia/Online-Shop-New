@@ -140,8 +140,8 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
       setCart({});
-      console.log('success');
-      console.log(area);
+  
+
       businesscalculations.afterCheckoutRedirectLogic({
         paymentMethodSelected: paymentMethodSelected,
         referenceNumber: referenceNumber,
@@ -205,7 +205,7 @@ const CheckoutPage = () => {
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   async function onPlaceOrder() {
-    console.log(paymentMethodSelected);
+    
     if (paymentMethodSelected == null) {
       alert('Please select a payment method');
       setPlaceOrderLoading(false);
@@ -225,7 +225,6 @@ const CheckoutPage = () => {
       try {
         const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
-        console.log('running');
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
