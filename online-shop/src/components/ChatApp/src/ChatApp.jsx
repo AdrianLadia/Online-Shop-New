@@ -26,7 +26,7 @@ const ChatApp = (props) => {
       if (user.uid == id) {
         return user.name
       }
-    });
+    })
   }
 
   useEffect(() => {
