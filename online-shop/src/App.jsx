@@ -91,6 +91,21 @@ function App() {
   const [cardSelected,setCardSelected] = useState(null)
   const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
   const [changeCard, setChangeCard] = useState(false);
+  const [allUserData, setAllUserData] = useState(null);
+  const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
+
+  
+
+  useEffect(() => {
+    if (userdata != null) {
+      if (userdata.userRole == 'admin' || userdata.userRole == 'superAdmin') {
+        console.log('IS ADMIN')
+        firestore.readAllDataFromCollection('Users').then((users) => {
+          setAllUserData(users)
+        });
+      }
+    }
+  }, [userdata]);
 
   useEffect(() => {
     let paymentState = {}
@@ -155,13 +170,11 @@ function App() {
     onAuthStateChanged(auth, (user) => {
 
       if (user) {
-
         setUserState('userloading');
         setUser(user);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
 
           if (userExists) {
-
             setUserId(user.uid);
           } else {
 
@@ -225,6 +238,7 @@ function App() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
+        console.log(data.favoriteItems)
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -345,6 +359,10 @@ function App() {
     updateCartInfo:updateCartInfo,
     setUpdateCartInfo:setUpdateCartInfo,
     isAppleDevice : isAppleDevice,
+    allUserData : allUserData,
+    setAllUserData:setAllUserData,
+    inquiryMessageSwitch : inquiryMessageSwitch,
+    setInquiryMessageSwitch : setInquiryMessageSwitch,
   };
 
   return (

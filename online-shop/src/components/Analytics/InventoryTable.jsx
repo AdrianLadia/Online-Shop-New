@@ -26,7 +26,7 @@ export function InventoryTable({name, category, customized, callback}) {
   const [productsData, setProductsData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [dataUsedForTable, setDataUsedForTable] = useState([]);
-  const { firestore } = useContext(AppContext);
+  const { firestore,allUserData } = useContext(AppContext);
 
   const { ref: p1, inView: p1inView } = useInView();
   const [loading, setLoading] = useState(false);
@@ -41,22 +41,34 @@ export function InventoryTable({name, category, customized, callback}) {
   const [trendingItems, setTrendingItems] = useState({});
   
   useEffect(() => {
-    firestore.readAllDataFromCollection("Users").then((data) => {
-      const favoriteItems = datamanipulation.readUsersFavoriteItems(data);
+      const favoriteItems = datamanipulation.readUsersFavoriteItems(allUserData);
+      console.log(favoriteItems)
       setFavorites(favoriteItems);
-    });
   }, [refreshData]);
 
   useEffect(()=>{
     const trending = [];
     const itemname = favorites.filter((item, index) => favorites.indexOf(item) === index);
-    const count = favorites.reduce((count, item) => {count[item] = (count[item] || 0) + 1; return count;}, {});
-    itemname.map((s)=>{
-       trending.push({
-            itemname: s,
-            score: count[s]
-        })
+    
+    const itemCount = []
+    favorites.forEach((item) => {
+      if (item.endsWith("-RET")) {
+        itemCount.push(item.slice(0, -4))
+      }
+      else {
+        itemCount.push(item)
+      }
     })
+    
+    const count = itemCount.reduce((count, item) => {count[item] = (count[item] || 0) + 1; return count;}, {});
+
+    Object.keys(count).forEach((key,value) => {
+      trending.push({
+        itemname: key,
+        score: value
+      })
+    })
+
     setTrendingItems(trending)
   },[favorites])
   
@@ -1062,7 +1074,7 @@ export function InventoryTable({name, category, customized, callback}) {
             fontWeight: "500",
           }}
         >
-          <Favorites items={filteredTableData.row.name} favorites={trendingItems} />
+          <Favorites items={filteredTableData.row.itemId} favorites={trendingItems} />
         </div>
       ),
     },

@@ -48,6 +48,7 @@ const userTestId = 'TESTUSER';
 const testconfig = new testConfig();
 const testid = testconfig.getTestUserId();
 const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', userTestId);
+const allProducts = await firestore.readAllProducts()
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -612,7 +613,7 @@ describe('firestoredb', async () => {
         emailVerified: true,
         phoneNumber: '09178927206',
         deliveryAddress: [{ address: 'Paper Boy', latitude: 1, longitude: 0 }],
-        contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
+        contactPerson: [{ name: 'testname', phoneNumber: '09178927206' }],
         isAnonymous: false,
         orders: [],
         cart: {},
@@ -631,7 +632,7 @@ describe('firestoredb', async () => {
         emailVerified: true,
         phoneNumber: '09178927206',
         deliveryAddress: [{ address: 'Paper Boy', latitude: 1, longitude: 0 }],
-        contactPerson: [{ name: 'testname', phonenumber: '09178927206' }],
+        contactPerson: [{ name: 'testname', phoneNumber: '09178927206' }],
         isAnonymous: false,
         orders: [],
         cart: {},
@@ -650,6 +651,7 @@ describe('firestoredb', async () => {
     await delay(100);
   });
   test('createProduct and readAll Products', async () => {
+    
     await firestore.createProduct(
       {
         itemId: 'test',
@@ -675,12 +677,19 @@ describe('firestoredb', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
-      'test'
+      'test',allProducts
     );
-    await delay(100);
+    await delay(200);
     const products = await firestore.readAllProducts();
-    await delay(100);
+    await delay(200);
     let found = false;
     products.map((product) => {
       if (product.itemId === 'test') {
@@ -1552,8 +1561,15 @@ describe('cloudfirestoredb', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
-      'test'
+      'test',allProducts
     );
     await firestore.createProduct(
       {
@@ -1580,8 +1596,15 @@ describe('cloudfirestoredb', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
-      'test2'
+      'test2',allProducts
     );
 
     await firestore.createNewUser(
@@ -2081,31 +2104,14 @@ describe('sendEmail', async () => {
 describe('afterCheckoutRedirectLogic', () => {
   class testCheckout {
     constructor() {
-      this.bdoselected = false;
-      this.mayaselected = false;
-      this.unionbankselected = false;
-      this.gcashselected = false;
-      this.visaselected = false;
-      this.mastercardselected = false;
-      this.bitcoinselected = false;
-      this.ethereumselected = false;
-      this.solanaselected = false;
     }
 
     mockFunction() {}
 
-    runFunction() {
+    runFunction(paymentMethodSelected) {
       const res = businesscalculations.afterCheckoutRedirectLogic(
         {
-          bdoselected: this.bdoselected,
-          unionbankselected: this.unionbankselected,
-          gcashselected: this.gcashselected,
-          mayaselected: this.mayaselected,
-          visaselected: this.visaselected,
-          mastercardselected: this.mastercardselected,
-          bitcoinselected: this.bitcoinselected,
-          ethereumselected: this.ethereumselected,
-          solanaselected: this.solanaselected,
+          paymentMethodSelected: paymentMethodSelected,
           referenceNumber: 'testref1234',
           grandTotal: 10000,
           deliveryFee: 100,
@@ -2133,26 +2139,44 @@ describe('afterCheckoutRedirectLogic', () => {
 
   test('Test BDO', async () => {
     let res;
-    testRedirect.bdoselected = true;
-    res = testRedirect.runFunction();
-    expect(res).toEqual('bankDeposit');
-    testRedirect.bdoselected = false;
+    res = testRedirect.runFunction('bdo');
+    expect(res).toEqual('bdo');
+
   });
 
   test('Test Unionbank', async () => {
     let res;
-    testRedirect.unionbankselected = true;
-    res = testRedirect.runFunction();
-    expect(res).toEqual('bankDeposit');
-    testRedirect.unionbankselected = false;
+    res = testRedirect.runFunction('unionbank');
+    expect(res).toEqual('unionbank');
+
   });
 
   test('Test Maya', async () => {
     let res;
-    testRedirect.mayaselected = true;
-    res = testRedirect.runFunction();
+    res = testRedirect.runFunction('maya');
     expect(res).toEqual('maya');
-    testRedirect.mayaselected = false;
+
+  });
+
+  test('Test Maya', async () => {
+    let res;
+    res = testRedirect.runFunction('gcash');
+    expect(res).toEqual('gcash');
+
+  });
+
+  test('Test Maya', async () => {
+    let res;
+    res = testRedirect.runFunction('visa');
+    expect(res).toEqual('visa');
+
+  });
+
+  test('Test Maya', async () => {
+    let res;
+    res = testRedirect.runFunction('mastercard');
+    expect(res).toEqual('mastercard');
+
   });
 
   // test('should return false if user has orders', async () => {
@@ -2217,7 +2241,7 @@ describe('updatePaymentStatus', () => {
   });
 }, 100000);
 
-describe('deleteOldOrders', () => {
+describe.only('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2274,8 +2298,11 @@ describe('deleteOldOrders', () => {
     });
   });
 
-  test('Create an order with items to test if items are added back to stocksAvailable', async () => {
+  test('Create an order with items to test if items are added back to stocksAvailable and stocksOnHold is deleted', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#12', { stocksOnHold: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#1-RET', { stocksOnHold: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
     const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
@@ -2284,6 +2311,7 @@ describe('deleteOldOrders', () => {
     const vat = ppb12Price * 12 + ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      testing:true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2291,7 +2319,7 @@ describe('deleteOldOrders', () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'PPB#16': 12, 'PPB#12': 12 },
+      cart: { 'PPB#16': 12, 'PPB#12': 12, 'PPB#1-RET':12 },
       itemstotal: itemsTotal,
       vat: vat,
       shippingtotal: 2002,
@@ -2350,17 +2378,28 @@ describe('deleteOldOrders', () => {
   test('invoke function', async () => {
     const oldPPB16 = await firestore.readSelectedProduct('PPB#16');
     const oldPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const oldPPB1Retail = await firestore.readSelectedProduct('PPB#1-RET');
     const oldPPB16Stocks = oldPPB16.stocksAvailable;
     const oldPPB12Stocks = oldPPB12.stocksAvailable;
+    const oldPPB1RetailStocks = oldPPB1Retail.stocksAvailable;
     await cloudfirestore.deleteOldOrders();
     await delay(2000);
     const newPPB16 = await firestore.readSelectedProduct('PPB#16');
     const newPPB12 = await firestore.readSelectedProduct('PPB#12');
+    const newPPB1Retail = await firestore.readSelectedProduct('PPB#1-RET');
     const newPPB16Stocks = newPPB16.stocksAvailable;
     const newPPB12Stocks = newPPB12.stocksAvailable;
+    const newPPB1RetailStocks = newPPB1Retail.stocksAvailable;
+    const newPPB1StocksOnHold = newPPB1Retail.stocksOnHold;
+    const newPPB16StocksOnHold = newPPB16.stocksOnHold;
+    const newPPB12StocksOnHold = newPPB12.stocksOnHold;
 
     expect(newPPB16Stocks - oldPPB16Stocks).toEqual(12);
     expect(newPPB12Stocks - oldPPB12Stocks).toEqual(12);
+    expect(newPPB1RetailStocks - oldPPB1RetailStocks).toEqual(12);
+    expect(newPPB1StocksOnHold.length).toEqual(0);
+    expect(newPPB16StocksOnHold.length).toEqual(1);
+    expect(newPPB12StocksOnHold.length).toEqual(1);
 
     const userData = await firestore.readUserById(userTestId);
     const orders = userData.orders;
@@ -2425,6 +2464,10 @@ describe('transactionPlaceOrder test retail', async () => {
 
 describe('deleteDeclinedPayments', () => {
   test('Setup test', async () => {
+    const paymentIds = await firestore.readAllIdsFromCollection('Payments')
+    paymentIds.map(async (paymentId) => {
+      await firestore.deleteDocumentFromCollection('Payments', paymentId)
+    })
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -2500,9 +2543,12 @@ describe('deleteDeclinedPayments', () => {
 
     let found2 = false;
     payments.map((payment) => {
-      if (payment.orderReference == 'testref1234') {
+      if (payment.orderReference == 'testref1234' && payment.proofOfPaymentLink == 'https://testlink.com') {
         found2 = true;
         expect(payment.status).toEqual('declined');
+      }
+      if (['https://testlink2.com', 'https://testlink3.com'].includes(payment.proofOfPaymentLink)) {
+        expect(payment.status).toEqual('pending');
       }
     });
 
@@ -2567,10 +2613,7 @@ describe('testCancelOrder', () => {
 
     expect(stocksAvailableNew - stocksAvailableOld).toEqual(12);
   });
-
-  
 }, 100000);
-
 
 describe('updateProductClicks', async () => {
   test('Create test product', async () => {
@@ -2599,17 +2642,23 @@ describe('updateProductClicks', async () => {
         isCustomized: false,
         salesPerMonth: [],
         stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
       },
-      'test'
+      'test',allProducts
     );
-
   });
   test('invoking function', async () => {
-    await delay(200)
+    await delay(200);
     await firestore.updateProductClicks('test', userTestId);
-    await delay(200)
+    await delay(200);
     const products = await firestore.readAllDataFromCollection('Products');
-  
+
     const testProduct = products.filter((product) => product.itemId == 'test')[0];
     expect(testProduct.clicks.length).toEqual(1);
   });
@@ -2625,4 +2674,67 @@ describe('readPaymentProviders', async () => {
     const paymentProviders = await firestore.readAllPaymentProviders();
     expect(paymentProviders.length).toBeGreaterThan(0);
   });
-} );
+});
+
+describe('readAllMachines', async () => {
+  test('invoking function', async () => {
+    const machines = await firestore.readAllMachines();
+    expect(machines.length).toBeGreaterThan(0);
+  });
+});
+
+describe('testRetailTransactionPlaceOrder', async () => {
+  test('Setup test', async () => {
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+  });
+  test('test retail items in transactionPlaceOrder ', async () => {
+    const oldPpb1 = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
+    const ppb1OldStocks = oldPpb1.stocksAvailable;
+    const oldPpb2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#2-RET');
+    const ppb2OldStocks = oldPpb2.stocksAvailable;
+    const oldPpb3Wholesale = await firestore.readSelectedDataFromCollection('Products', 'PPB#3');
+    const ppb3WholesaleOldStocks = oldPpb3Wholesale.stocksAvailable;
+
+    await cloudfirestore.transactionPlaceOrder({
+      testing : true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10,'PPB#3':1 },
+      itemstotal: 1100,
+      vat: 0,
+      shippingtotal: 100,
+      grandTotal: 1000,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+    });
+
+    await delay(200);
+
+    const user = await cloudfirestore.readSelectedUserById(userTestId);
+    const order = user.orders;
+    expect(order.length).toEqual(1);
+
+    const newPpb1 = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
+    const ppb1NewStocks = newPpb1.stocksAvailable;
+    const newPpb2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#2-RET');
+    const ppb2NewStocks = newPpb2.stocksAvailable;
+    const newPpb3Wholesale = await firestore.readSelectedDataFromCollection('Products', 'PPB#3');
+    const ppb3WholesaleNewStocks = newPpb3Wholesale.stocksAvailable;
+
+    expect(ppb1OldStocks - ppb1NewStocks).toEqual(10);
+    expect(ppb2OldStocks - ppb2NewStocks).toEqual(10);
+    expect(ppb3WholesaleOldStocks - ppb3WholesaleNewStocks).toEqual(1);
+
+  });
+},100000);

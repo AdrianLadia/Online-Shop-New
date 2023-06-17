@@ -75,7 +75,13 @@ class schemas {
       isCustomized: Joi.boolean().required().invalid('', null),
       salesPerMonth: Joi.array(),
       stocksIns: Joi.array().allow(null),
-      clicks: Joi.array()
+      clicks: Joi.array(),
+      piecesPerPack: Joi.number().allow(null),
+      packsPerBox: Joi.number().allow(null),
+      cbm: Joi.number().allow('',null),
+      manufactured: Joi.boolean().required(),
+      machinesThatCanProduce: Joi.string().allow(''),
+      stocksLowestPoint: Joi.array(),
     }).unknown(false);
   }
 }

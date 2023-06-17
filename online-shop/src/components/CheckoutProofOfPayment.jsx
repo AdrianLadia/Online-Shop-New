@@ -38,7 +38,7 @@ const CheckoutProofOfPayment = (props) => {
 
   useEffect(() => {
       firestore.readAllPaymentProviders().then((providers) => {
-        console.log(providers)
+    
         setPaymentMethods(providers)
       })
   }, []);
@@ -47,7 +47,7 @@ const CheckoutProofOfPayment = (props) => {
   let accountName;
   let accountNumber;
 
-  console.log(date);
+
 
   if (paymentMethodSelected == 'bdo') {
     bankName = 'BDO';
@@ -144,7 +144,7 @@ const CheckoutProofOfPayment = (props) => {
             </div>
             <div className="flex justify-center mt-5">
               <Button
-                onClick={() => navigateTo('/orderChat', { state: { orderReference: referenceNumber } })}
+                onClick={() => navigateTo('/orderChat', { state: { orderReference: referenceNumber, isInquiry : false,backButtonRedirect:'/myorders/orderList' } })}
                 variant="contained"
                 color="success"
               >

@@ -9,7 +9,7 @@ import ImageUploadButton from '../../../ImageComponents/ImageUploadButton';
 
 const InputField = (props) => {
   const orderReferenceId = props.orderReferenceId;
-  const loggedInUserId = props.loggedInUserId;
+  const loggedInUserId = props.stloggedInUserId;
   const [message, setMessage] = useState(null);
   const [newMessage, setNewMessage] = useState(null);
   const [imageLink, setImageLink] = useState(null);
@@ -57,7 +57,7 @@ const InputField = (props) => {
   }
 
   async function sendImage(url) {
-    console.log(orderReferenceId);
+
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     // Add data to the array field
     updateDoc(docRef, {
@@ -84,7 +84,7 @@ const InputField = (props) => {
   }
 
   async function sendMessage() {
-    console.log(orderReferenceId);
+  
     const docRef = doc(db, 'ordersMessages', orderReferenceId);
     // Add data to the array field
     updateDoc(docRef, {
@@ -99,7 +99,7 @@ const InputField = (props) => {
       }),
     })
       .then(() => {
-        console.log('Message is sent Successfuly: ', newMessage);
+        console.log('Message is sent Successfuly: ', message);
         setMessage('');
         setNewMessage('');
       })
@@ -111,7 +111,7 @@ const InputField = (props) => {
   }
 
   function inputMessage(option1, option2) {
-    console.log('a');
+
     setMessage(option1);
     setSend(option2);
     if (option2 === true) {

@@ -6,29 +6,36 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper,
-  Typography,
-  Button,
+  Paper
 } from '@material-ui/core';
 import ChatApp from './ChatApp/src/ChatApp';
 import AppContext from '../AppContext';
 import { HiOutlineChatAlt, HiChatAlt } from "react-icons/hi";
 import { doc, onSnapshot,collection } from 'firebase/firestore';
 import { set } from 'date-fns';
+import AdminChatMenuOpenButton from './AdminChatMenuOpenButton';
 
 const AdminChatMenu = () => {
     const dummy = useRef(null);
     const [openChat, setOpenChat] = useState(false);
     const {firestore,width,selectedChatOrderId, setSelectedChatOrderId, chatSwitch, setChatSwitch, isadmin,db} = useContext(AppContext);
     const [chatData, setChatData] = useState([])
+    const [chatButtonState, setChatButtonState] = useState(null)
+    const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false)
+
+    useEffect(() => {
+      console.log('selectedChatOrderId', selectedChatOrderId)
+    }, [selectedChatOrderId]);
 
     useEffect(() => {
       const docRef = collection(db, 'ordersMessages')
       onSnapshot(docRef, (querySnapshot) => {
+        
+        console.log('running snapshot')
         const chats = []
         querySnapshot.forEach((doc) => {
           if (doc.exists()) {
-            const data = doc.data();
+            const data = doc.data(); 
             const referenceNumber = data.referenceNumber
             const customerName = data.ownerName
             const messages = data.messages
@@ -52,61 +59,21 @@ const AdminChatMenu = () => {
           } else {
             console.log('No such document!');
           }
-          setChatData(chats)
         })
-      // });
-      //   firestore.readAllOrderMessages().then((res) => {
-      //       let chatData = []
-      //       res.forEach((chat) => {
-      //         const referenceNumber = chat.referenceNumber
-      //         const customerName = chat.ownerName
-      //         const messages = chat.messages
-      //         let unreadCount = 0
-      //         let latestMessage
-      //         if (messages.length === 0) {
-      //             return null
-      //         }
-      //         latestMessage = messages[messages.length - 1].message
-      //         messages.forEach((message) => {
-      //           const userRole = message.userRole
-      //           if (userRole === "member") {
-      //             if (message.read === false) {
-      //                 unreadCount += 1
-      //             }
-      //           }
-      //          })
-      //         if (unreadCount >= 1) {
-      //           chatData.push({id:referenceNumber,customerName:customerName,latestMessage:latestMessage,unreadCount:unreadCount})
-      //         }
-      //       }) 
-        })
-    }, [chatSwitch]);
-  
-  function convertChatMessageToFitTable(message) {
-    let messageLength;
-    if (width <= 390) {
-      messageLength = 20;
-    } else if (width <= 640) {
-      messageLength = 30;
-    } else if (width <= 768) {
-      messageLength = 40;
-    } else if (width <= 1024) {
-      messageLength = 50;
-    } else {
-      messageLength = 100;
-    }
+        setChatData(chats)
+      })
+    }, []);
 
-    if (message.length > messageLength) {
-      return message.substring(0, messageLength) + '...';
-    }
-    return message;
-  }
 
-  function handleBoth(ref, toggle){
-    setChatSwitch(toggle)
-    setOpenChat(toggle)
-    setSelectedChatOrderId(ref)
-  }
+    useEffect(()=>{
+      const chatButtonState = {}
+      chatData.map((chat)=>{
+        {chatButtonState[chat.id] = false}
+      })
+      console.log(chatButtonState)
+      setChatButtonState(chatButtonState)
+    },[chatData])
+
 
   useEffect(()=>{
     if(chatSwitch === false){
@@ -116,9 +83,9 @@ const AdminChatMenu = () => {
   },[chatSwitch])
 
   return (
-    <div className="flex justify-center flex-col lg:flex-row overflow-x-auto">
+    <div className="flex justify-center flex-col lg:flex-row overflow-x-auto h-full">
       <div ref={dummy}/>
-      {openChat ? <ChatApp setChatData={setChatData} chatData={chatData} /> : null}
+      {selectedChatOrderId != null ? <ChatApp setChatData={setChatData} chatData={chatData}  /> : null}
       <TableContainer 
           className="flex justify-center items-start w-full lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1 " 
           component={Paper}>
@@ -133,28 +100,7 @@ const AdminChatMenu = () => {
           </TableHead>
           <TableBody>
             {chatData.map((chat) => (
-              <TableRow key={chat.id} >
-                <TableCell component="th">
-                  {selectedChatOrderId === chat.id && openChat ? 
-                    <Button 
-                      onClick={() => handleBoth(chat.id, false)} 
-                      className=" rounded-full bg-red1 hover:bg-red-400 text-white"
-                      >X
-                    </Button>
-                  :
-                    <Button 
-                      onClick={() => handleBoth(chat.id, true)} 
-                      className=" bg-color60 hover:bg-color10c text-white "
-                      >Open
-                    </Button>
-                  }
-                </TableCell>
-                <TableCell  scope="row">
-                  <Typography className="font-semibold text-slate-500">{chat.customerName}</Typography>
-                </TableCell>
-                <TableCell>{chat.id}</TableCell>
-                <TableCell>{chat.unreadCount? (<p className='text-red-500 font-bold'>{chat.unreadCount}</p>): (<>{chat.unreadCount}</>) }</TableCell>
-              </TableRow>
+              <AdminChatMenuOpenButton chat={chat} chatButtonState={chatButtonState} setChatButtonState={setChatButtonState} chatButtonStateTrigger={chatButtonStateTrigger} setChatButtonStateTrigger={setChatButtonStateTrigger} />
             ))}
           </TableBody>
         </Table>

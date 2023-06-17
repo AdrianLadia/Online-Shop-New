@@ -140,8 +140,8 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
       setCart({});
-      console.log('success');
-      console.log(area);
+  
+
       businesscalculations.afterCheckoutRedirectLogic({
         paymentMethodSelected: paymentMethodSelected,
         referenceNumber: referenceNumber,
@@ -205,7 +205,7 @@ const CheckoutPage = () => {
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   async function onPlaceOrder() {
-    console.log(paymentMethodSelected);
+    
     if (paymentMethodSelected == null) {
       alert('Please select a payment method');
       setPlaceOrderLoading(false);
@@ -225,7 +225,6 @@ const CheckoutPage = () => {
       try {
         const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
-        console.log('running');
         const res = await cloudfirestoredb.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
@@ -303,6 +302,7 @@ const CheckoutPage = () => {
         setLocalLongitude(lng);
         setZoom(15);
         setAddressGeocodeSearch('');
+        setLocalDeliveryAddress('')
       },
       (error) => {
         alert('Address not found. Be more specific.')
@@ -344,11 +344,14 @@ const CheckoutPage = () => {
         /> */}
         <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
         <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
+        <Typography>
+            • <strong>Click on the map</strong> to change the delivery point.
+          </Typography>
           <Typography>
             • Please <strong>pinpoint</strong> your delivery address below.
           </Typography>
           <Typography>
-            • Use the <strong>search button</strong> to easily find your address and adjust the pin to your address.
+            • Use the <strong>search button</strong> to easily find your address and <strong>adjust the pin</strong> to your address.
           </Typography>
         </div>
         
@@ -359,7 +362,7 @@ const CheckoutPage = () => {
           <TextField
             // disabled
             id="address search"
-            label="Search Address And Pinpoint In Google Maps"
+            label="Search for a landmark"
             InputLabelProps={labelStyle}
             variant="filled"
             className="w-full self-center bg-white"

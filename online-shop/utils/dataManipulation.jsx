@@ -90,6 +90,8 @@ class dataManipulation {
       });
     }
 
+ 
+
     data.sort((a, b) => {
       if (forTesting) {
         return b.date - a.date;
@@ -178,7 +180,7 @@ class dataManipulation {
       rowsdata.push(createData(date, item[1], item[2], item[3], item[4], item[5], proofOfPaymentLink));
     });
 
-    console.log(rowsdata)
+
     return rowsdata;
   }
 
@@ -499,9 +501,9 @@ class dataManipulation {
     Object.entries(cart).map(([key, quantity]) => {
       product_list.map((product) => {
         if (product.itemId === key) {
-          console.log(product);
+      
           let productPrice;
-          console.log(cartItemPrice);
+    
           if (cartItemPrice === null) {
             productPrice = product.price;
           } else {
@@ -511,7 +513,7 @@ class dataManipulation {
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
 
-          console.log(total_non_state);
+        
 
           let row = createData(
             product.imageLinks[0],
@@ -580,12 +582,14 @@ class dataManipulation {
     }
 
     if (categorySelected === 'Favorites') {
+
       let selected_products = [];
       products.map((product) => {
         if (favorites.includes(product.itemName)) {
           selected_products.push(product);
         }
       });
+    
       return selected_products;
     }
 

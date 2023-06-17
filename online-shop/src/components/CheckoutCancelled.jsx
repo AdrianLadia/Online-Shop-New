@@ -6,7 +6,7 @@ function CheckoutCancelled() {
   const navigateTo = useNavigate();
 
   function handleHome(){
-    navigateTo("/");
+    navigateTo("/shop");
   };
   
   return (

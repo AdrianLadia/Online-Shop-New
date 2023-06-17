@@ -23,8 +23,9 @@ const ProductList = (props) => {
 
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
-  const favorites = favoriteitems;
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
+
+  console.log(favoriteitems)
 
   const { width } = UseWindowDimensions();
 
@@ -39,8 +40,9 @@ const ProductList = (props) => {
       product_category,
       wholesale,
       retail,
-      favorites
+      favoriteitems
     );
+
     return selected_products;
   }
 
@@ -74,6 +76,7 @@ const ProductList = (props) => {
     }
   }
 
+
   return (
     <div className='mb-16 mt-5'>
       <div id='productList' className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
@@ -96,9 +99,12 @@ const ProductList = (props) => {
             if (product.unit !== 'Bale') {
               product_chosen = product
               products.map((p, index) => {
+                stocksAvailable = p.stocksAvailable;
+              
                 if (p.itemId == product.parentProductID) {
-                  stocksAvailable = p.stocksAvailable;
-                  averageSalesPerDay = p.averageSalesPerDay;
+                  console.log(p.itemId)
+                  console.log(p.averageSalesPerDay)
+                  averageSalesPerDay = p.averageSalesPerDay
                 }
               });
             }

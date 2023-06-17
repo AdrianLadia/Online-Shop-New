@@ -22,20 +22,25 @@ function a11yProps(index) {
 }
 
 const CategorySelector = (props) => {
-  
-  const [value, setValue] = React.useState(3);
+  const featuredCategory = 'Meal Box';
+  const [value, setValue] = React.useState(null);
   const setSelectedCategory = props.setSelectedCategory;
   const { firestore, categories, setCategories } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
-  const featured_category = 'Paper Bag';
-  const hiddenCategories = [
-    'Bowls',
-    'Plastic Containers',
-    'Plates',
-    'Sauce Cups',
-    'Tissue Paper',
-    'Utensils'
+  const hiddenCategories = [ 
   ]
+
+ 
+
+  useEffect(() => {
+    if (categories != null) {
+      categories.forEach((category, index) => {
+        if (category === featuredCategory) {
+          setValue(index);
+        }
+      })
+    }
+  }, [categories]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -56,7 +61,6 @@ const CategorySelector = (props) => {
     }
   }, [value, categories]);
 
-  console.log(categories)
 
   return (
   <ThemeProvider theme={theme}>

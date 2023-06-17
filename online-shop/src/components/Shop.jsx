@@ -12,7 +12,7 @@ const Shop = () => {
 
   const [wholesale, setWholesale] = useState(false);
   const [retail, setRetail] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('Paper Bag');
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const {isSupportedBrowser} = useContext(AppContext);
 
   return (

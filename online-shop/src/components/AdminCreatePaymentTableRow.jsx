@@ -1,6 +1,6 @@
 import React from 'react';
 import { TableRow, TableCell } from '@mui/material';
-import { useState,useContext } from 'react';
+import { useState, useContext } from 'react';
 import AppContext from '../AppContext';
 
 const AdminCreatePaymentTableRow = (props) => {
@@ -10,18 +10,16 @@ const AdminCreatePaymentTableRow = (props) => {
   const userName = props.userName;
   const setPaymentsData = props.setPaymentsData;
   const [amount, setAmount] = useState('');
-  const { cloudfirestore,firestore } = useContext(AppContext);
+  const { cloudfirestore, firestore } = useContext(AppContext);
   const paymentsData = props.paymentsData;
-
-  console.log(paymentsData)
 
   const handleNewTab = (link) => {
     window.open(link, '_blank');
   };
-  
+
   async function updatePaymentStatus(status) {
     if (status === 'approved') {
-      console.log(amount)
+
       const data = {
         userId: userId,
         amount: amount,
@@ -29,20 +27,33 @@ const AdminCreatePaymentTableRow = (props) => {
         paymentprovider: 'TEST',
         proofOfPaymentLink: proofOfPaymentLink,
       };
-      cloudfirestore.transactionCreatePayment(data);
+      await cloudfirestore.transactionCreatePayment(data);
+      const customerEmail = await firestore.readEmailAddressByUserId(userId);
+  
+      await cloudfirestore.sendEmail({
+        to: customerEmail,
+        subject: 'Payment Accepted',
+        text: `Your payment of PHP ${amount} has been accepted. Thank you for shopping with us!`,
+      });
       alert('Reference: ' + data.reference + ' is ' + status);
       setAmount('');
     }
     if (status === 'declined') {
-      await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink)
+      await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink);
+      const customerEmail = await firestore.readEmailAddressByUserId(userId);
+     
+      await cloudfirestore.sendEmail({
+        to: customerEmail,
+        subject: 'Payment Denied',
+        text: 'Your payment has been denied. For customer support please go to our website www.starpack.ph... Chat us in My Orders - Message',
+      });
     }
 
-    const newPaymentsData = paymentsData.filter((data) => data.reference != orderReference)
-    setPaymentsData(newPaymentsData)
-   
+    const newPaymentsData = paymentsData.filter((data) => data.link != proofOfPaymentLink);
+    setPaymentsData(newPaymentsData);
   }
 
-  console.log(amount);
+
 
   return (
     <TableRow>

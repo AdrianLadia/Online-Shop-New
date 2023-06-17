@@ -21,15 +21,13 @@ const ProductCardModalTable = (props) => {
      
     })
 
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
   return (
     <TableContainer sx={{justifyContent:'center'}} className='bg-colorbackground '>
       <Table aria-label="simple table" className='w-full bg-color10c'>
-        <TableHead>
-          <TableRow >
-            <TableCell>Key</TableCell>
-            <TableCell align="right">Value</TableCell>
-          </TableRow>
-        </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow
@@ -38,7 +36,7 @@ const ProductCardModalTable = (props) => {
               className='bg-white'
             >
               <TableCell component="th" scope="row">
-                {row.key}
+                {capitalizeFirstLetter(row.key)}
               </TableCell>
               <TableCell align="right">{row.value}</TableCell>
             </TableRow>

@@ -11,8 +11,10 @@ import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
 import { AiOutlineFileSearch, AiOutlineSearch } from 'react-icons/ai';
 import { date } from 'joi';
+import { useLocation } from 'react-router-dom';
 
 function MyOrderCard(props) {
+  const {pathname} = useLocation();
   const datamanipulation = new dataManipulation();
   const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata } =
     React.useContext(AppContext);
@@ -76,8 +78,9 @@ function MyOrderCard(props) {
   function onMessageClick() {
     readMessages();
     firestore.updateOrderMessagesAsReadForUser(order.reference);
+    console.log('B')
     setSelectedChatOrderId(order.reference);
-    navigateTo('/orderChat', { state: { orderReference: order.reference } });
+    navigateTo('/orderChat', { state: { orderReference: order.reference, isInquiry: false,backButtonRedirect:pathname } });
   }
 
   function handleCancel() {

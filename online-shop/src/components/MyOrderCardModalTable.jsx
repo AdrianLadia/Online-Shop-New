@@ -23,11 +23,11 @@ const MyOrderCardModalTable = (props) => {
   const cart = order.cart;
   const cartItemsPrice = order.cartItemsPrice;
   const datamanipulation = new dataManipulation();
-  console.log(cartItemsPrice)
+
 
   const [rows, setRows] = React.useState([]);
 
-  console.log(order)
+
 
   useEffect(() => {
     async function getTableData() {

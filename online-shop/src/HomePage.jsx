@@ -7,10 +7,10 @@ import { FaFacebookF, FaViber, FaInstagram, FaGoogle, FaPhoneAlt, FaMapMarkerAlt
 import { FaPlay, FaPause, FaPenSquare, FaForward, FaBackward } from "react-icons/fa";
 import AppContext from './AppContext';
 import GoogleMaps from './components/GoogleMaps'
+import { useLocation } from 'react-router-dom';
 
 const HomePage = () => {
-  
-  const {  products, trendyItems } = useContext(AppContext);
+
   const navigateTo = useNavigate()
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
@@ -50,7 +50,9 @@ const HomePage = () => {
   const { width } = useWindowDimensions();
   const [showMenu, setShowMenu] = useState(false);
   const [showToolTip, setShowToolTip] = useState(false);
-    
+  const {pathname} = useLocation();
+ 
+
     function handleCategory(item){
       if(item === "Paper Bags"){
         setSelectedCategoryImage("./vids/PPB.png")
@@ -213,6 +215,11 @@ const HomePage = () => {
     function footerCardStyle(){
       return " hover:bg-green1 hover:bg-opacity-20 hover:border-none w-full h-full p-2 gap-1 flex flex-col justify-center items-center border border-color60 rounded-t-xl"
     }
+
+    function handleMessageClick(){
+      
+      navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true,backButtonRedirect:pathname } })
+    }
     
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
@@ -241,6 +248,7 @@ const HomePage = () => {
                     <button onClick={()=>{scroll("page2")}} className={"text-xl  " + menuButtonStyle("page2")}>About</button>
                     <button onClick={()=>{scroll("page3")}} className={"text-xl  " + menuButtonStyle("page3")}>Products</button>
                     <button onClick={()=>{scroll("page4")}} className={"text-xl  " + menuButtonStyle("page4")}>Affiliate</button>
+                    <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page5")}>Message Us</button>
                   </ul>
                 </div> : null
               }
@@ -251,6 +259,7 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page2")}} className={buttonStyle("page2")}>About</button>
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
+              <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page4")}>Message Us</button>
             </div>
             {/* Shop Button */}
             <div className='w-3/12 sm:w-2/12 xl:w-1/12 flex justify-end sm:justify-center items-center mr-1 ' 

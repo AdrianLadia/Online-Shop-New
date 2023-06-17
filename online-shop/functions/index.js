@@ -32,14 +32,14 @@ async function sendmail(to, subject, htmlContent) {
     });
 
     // send the email using the transporter object
-    console.log('ran');
+
     await transporter.sendMail({
       from: 'starpackph@gmail.com',
       to: to,
       subject: subject,
       html: htmlContent,
     });
-    console.log('ran2');
+
   } catch (error) {
     console.log(error);
   }
@@ -184,11 +184,11 @@ exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async
   corsHandler(req, res, async () => {
     try {
       const userid = req.query.data;
-      console.log(userid);
+     
       const db = admin.firestore();
       const user = await db.collection('Users').doc(userid).get();
       const userRole = user.data().userRole;
-      console.log(userRole);
+   
       res.send(userRole);
     } catch (error) {
       console.log(error);
@@ -207,7 +207,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
 
       // Fetch and process the documents
       const querySnapshot = await forOnlineStoreQuery.get();
-      console.log('querySnapshot', querySnapshot);
+   
       const products = [];
       querySnapshot.forEach((doc) => {
         // Add each product to the products array along with its document ID
@@ -235,7 +235,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
         products.push(productObject);
       });
 
-      console.log('products', products);
+   
 
       // Send the products array as a JSON response
       res.status(200).send(products);
@@ -382,7 +382,7 @@ exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.
 
 exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    console.log('running transactionPlaceOrder');
+    
     const data = parseData(req.query.data);
     const userid = data.userid;
     const username = data.username;
@@ -411,8 +411,8 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cart);
-    
-    const cartItemsPrice = {}
+
+    const cartItemsPrice = {};
 
     for (const key of itemKeys) {
       const itemId = key;
@@ -425,64 +425,63 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
       cartItemsPrice[itemId] = price;
     }
 
-    console.log(itemsTotalBackEnd);
-    console.log(itemstotal + vat);
+    if (data.testing == false) {
+      if (itemsTotalBackEnd != itemstotal + vat) {
+        console.log('itemsTotalBackEnd != itemstotal');
+        res.status(400).send('Invalid data submitted. Please try again later');
+        return;
+      }
 
-    if (itemsTotalBackEnd != itemstotal + vat) {
-      console.log('itemsTotalBackEnd != itemstotal');
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
+      if (vat + itemstotal + shippingtotal != grandTotal) {
+        console.log('vat + itemstotal + shippingtotal != grandTotal');
+        res.status(400).send('Invalid data submitted. Please try again later');
+        return;
+      }
 
-    if (vat + itemstotal + shippingtotal != grandTotal) {
-      console.log('vat + itemstotal + shippingtotal != grandTotal');
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
+      if (shippingtotal < 0) {
+        res.status(400).send('Invalid data submitted. Please try again later');
+        return;
+      }
 
-    if (shippingtotal < 0) {
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
+      if (cart.length <= 0) {
+        res.status(400).send('You need to have items in your cart');
+        return;
+      }
 
-    if (cart.length <= 0) {
-      res.status(400).send('You need to have items in your cart');
-      return;
-    }
+      if (itemstotal <= 0) {
+        res.status(400).send('Invalid data submitted. Please try again later');
+        return;
+      }
 
-    if (itemstotal <= 0) {
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
+      if (vat < 0) {
+        res.status(400).send('Invalid data submitted. Please try again later');
+        return;
+      }
 
-    if (vat < 0) {
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
+      if (grandTotal < 0) {
+        res.status(400).send('Invalid data submitted. Please try again later');
+        return;
+      }
 
-    if (grandTotal < 0) {
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
+      if (totalWeight < 0) {
+        res.status(400).send('Invalid data submitted. Please try again later');
+        return;
+      }
 
-    if (totalWeight < 0) {
-      res.status(400).send('Invalid data submitted. Please try again later');
-      return;
-    }
+      if (localDeliveryAddress == '') {
+        res.status(400).send('Please Enter Delivery Address');
+        return;
+      }
 
-    if (localDeliveryAddress == '') {
-      res.status(400).send('Please Enter Delivery Address');
-      return;
-    }
+      if (localphonenumber == '') {
+        res.status(400).send('Please Enter Phone Number');
+        return;
+      }
 
-    if (localphonenumber == '') {
-      res.status(400).send('Please Enter Phone Number');
-      return;
-    }
-
-    if (localname == '') {
-      res.status(400).send('Please Enter Contact Name');
-      return;
+      if (localname == '') {
+        res.status(400).send('Please Enter Contact Name');
+        return;
+      }
     }
 
     db.runTransaction(async (transaction) => {
@@ -509,19 +508,24 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         // WRITE
         // WRITE TO PRODUCTS ON HOLD
 
-        console.log(cartUniqueItems);
+       
         await Promise.all(
           cartUniqueItems.map(async (itemId) => {
-            if (itemId.slice(-4) === '-RET') {
-              return; // skip processing for items ending with "-RET"
-            }
             const prodref = db.collection('Products').doc(itemId);
             const orderQuantity = data.cart[itemId];
             const newStocksAvailable = currentInventory[itemId] - orderQuantity;
-            const oldOrdersOnHold = ordersOnHold[itemId];
+            let oldOrdersOnHold = ordersOnHold[itemId];
+
+            oldOrdersOnHold = ordersOnHold[itemId];
+
+            if (oldOrdersOnHold == undefined) {
+              oldOrdersOnHold = [];
+            }
+
             const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
             const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
 
+    
             console.log('orderQuantity', orderQuantity);
             console.log('newStocksAvailable', newStocksAvailable);
             console.log('oldOrdersOnHold', oldOrdersOnHold);
@@ -632,6 +636,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
           ownerUserId: userid,
           ownerName: username,
           referenceNumber: reference,
+          isInquiry : false,
         });
         orderMessagesRef.collection('messages');
 
@@ -840,28 +845,25 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const data = req.body
-    // console.log(data)
+    const data = req.body;
     data['date'] = new Date();
-    const proofOfPaymentLink = data.proofOfPaymentLink
+    const proofOfPaymentLink = data.proofOfPaymentLink;
     const db = admin.firestore();
     const userId = data.userId;
-    const paymentsRef = db.collection('Payments')
-    console.log(proofOfPaymentLink)
-    const paymentQuery = paymentsRef.where("proofOfPaymentLink" ,'==', proofOfPaymentLink)
-    const paymentSnapshot = await paymentQuery.get()
-    // console.log('paymentSnapshot',paymentSnapshot)
-    // console.log('running')
-    let documentID
-    let paymentsData 
+    const paymentsRef = db.collection('Payments');
+    console.log(proofOfPaymentLink);
+    const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
+    const paymentSnapshot = await paymentQuery.get(); 
+    let documentID;
+    let paymentsData;
     paymentSnapshot.forEach((doc) => {
-      paymentsData = doc.data()
-      console.log('paymentsData',paymentsData)
-      paymentsData.status = 'approved'
-      documentID = doc.id
-    })
-    console.log('ending')
-    
+      paymentsData = doc.data();
+      console.log('paymentsData', paymentsData);
+      paymentsData.status = 'approved';
+      documentID = doc.id;
+    });
+
+
     try {
       db.runTransaction(async (transaction) => {
         // READ
@@ -886,7 +888,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         });
 
         orders.forEach((order) => {
-          
           totalPayments -= order.grandTotal;
           if (totalPayments >= 0) {
             order.paid = true;
@@ -899,9 +900,8 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         });
 
         // WRITE
-        console.log(paymentsData)
-        console.log(documentID)
-        
+
+
         if (paymentsData) {
           transaction.update(db.collection('Payments').doc(documentID), paymentsData);
         }
@@ -940,6 +940,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
         reference: referenceNumber,
         paymentprovider: paymentprovider,
         userName: fullName,
+        date: new Date(),
       };
 
       const db = admin.firestore();
@@ -978,7 +979,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           }
         });
 
-        console.log(userData);
+      
 
         // WRITE
         transaction.set(paymentsRef, {
@@ -1040,7 +1041,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
       const orderReference = data.orderReference;
       const userId = data.userId;
       const proofOfPaymentLink = data.proofOfPaymentLink;
-      const forTesting = data.forTesting
+      const forTesting = data.forTesting;
 
       console.log(proofOfPaymentLink);
 
@@ -1051,8 +1052,8 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         proofOfPaymentLink: Joi.string().required(),
         paymentMethod: Joi.string().required().allow(''),
         userName: Joi.string().required(),
-        forTesting : Joi.boolean()
-      })
+        forTesting: Joi.boolean(),
+      });
 
       const { error } = dataSchema.validate(data);
 
@@ -1081,16 +1082,17 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const oldMessages = orderMessagesData.messages;
           const newMessage = {
             dateTime: new Date(),
-            image : proofOfPaymentLink,
+            image: proofOfPaymentLink,
             message: '',
-            read : false,
-            userId : userId,
-            userRole : 'member' }
-          const newMessageHistory = [...oldMessages,newMessage]
+            read: false,
+            userId: userId,
+            userRole: 'member',
+          };
+          const newMessageHistory = [...oldMessages, newMessage];
 
           // WRITE
 
-          transaction.update(orderMessagesRef,{messages:newMessageHistory})
+          transaction.update(orderMessagesRef, { messages: newMessageHistory });
 
           transaction.update(userRef, {
             orders: orders,
@@ -1113,8 +1115,10 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           console.log(paymentId);
 
           if (forTesting == false) {
-            await sendmail('ladiaadrian@gmail.com','Payment Uploaded',
-            `<h2>Payment Uploaded</h2>
+            await sendmail(
+              'ladiaadrian@gmail.com',
+              'Payment Uploaded',
+              `<h2>Payment Uploaded</h2>
             
             <p>Order Reference Number: <strong>${orderReference}</strong></p>
             <p>Proof of Payment: <a href=${proofOfPaymentLink}>Click here</a></p>
@@ -1126,7 +1130,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
   
             <p>Best regards,</p>
             <p>Your Company</p>`
-            )
+            );
           }
           res.status(200).send(paymentId);
         } catch (error) {
@@ -1235,13 +1239,11 @@ async function deleteOldOrders() {
       console.log('cart', cart);
       const cartItems = Object.keys(cart);
       cartItems.map(async (itemId) => {
-        if (itemId.slice(-4) != '-RET') {
-          const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
-          deletedOrderData.quantity = cart[itemId];
-          dataNeededToUpdateProductValue.push(deletedOrderData);
-          if (!allCartItems.includes(itemId)) {
-            allCartItems.push(itemId);
-          }
+        const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
+        deletedOrderData.quantity = cart[itemId];
+        dataNeededToUpdateProductValue.push(deletedOrderData);
+        if (!allCartItems.includes(itemId)) {
+          allCartItems.push(itemId);
         }
       });
     });
@@ -1368,10 +1370,6 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
         await Promise.all(
           Object.entries(cancelledDataCart).map(async ([itemId, quantity]) => {
             const productRef = db.collection('Products').doc(itemId);
-            if (itemId.slice(-4) === '-RET') {
-              console.log('Skipped retail');
-              return Promise.resolve(); // skip processing for items ending with "-RET"
-            }
 
             const prodSnap = await transaction.get(productRef);
             const prodData = prodSnap.data();
@@ -1392,10 +1390,6 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
         // WRITE
         Object.entries(cancelledDataCart).map(([itemId, quantity]) => {
           console.log(itemId);
-          if (itemId.slice(-4) === '-RET') {
-            console.log('Skipped retail');
-            return; // skip processing for items ending with "-RET"
-          }
           const productRef = db.collection('Products').doc(itemId);
           const newStocksAvailable = oldStocksAvailable[itemId] + quantity;
           const newStocksOnHold = newStocksOnHoldData[itemId];

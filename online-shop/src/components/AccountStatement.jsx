@@ -92,7 +92,7 @@ const AccountStatement = () => {
     }
   }
 
-  console.log(tableData)
+
 
   return (
     <div className="overflow-x-hidden flex flex-col justify-center items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
