@@ -222,6 +222,15 @@ const HomePage = () => {
       
       navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true,backButtonRedirect:pathname } })
     }
+
+    function responsiveMessageText() {
+      if (width <= 767) {
+        return 'Message'
+      }
+      else {
+        return 'Message Us'
+      }
+    }
     
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
@@ -250,7 +259,7 @@ const HomePage = () => {
                     <button onClick={()=>{scroll("page2")}} className={"text-xl  " + menuButtonStyle("page2")}>About</button>
                     <button onClick={()=>{scroll("page3")}} className={"text-xl  " + menuButtonStyle("page3")}>Products</button>
                     <button onClick={()=>{scroll("page4")}} className={"text-xl  " + menuButtonStyle("page4")}>Affiliate</button>
-                    {/* <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page5")}>Message Us</button> */}
+           
                   </ul>
                 </div> : null
               }
@@ -261,7 +270,7 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page2")}} className={buttonStyle("page2")}>About</button>
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
-              {/* <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page4")}>Message Us</button> */}
+      
             </div>
             <div className='gap-3 flex justify-end w-1/2 '>
               <div className='w-3/12 sm:w-2/12 xl:w-1/12 flex justify-end sm:justify-center items-center mr-1 '>
@@ -324,7 +333,7 @@ const HomePage = () => {
                         <button 
                           className='w-32 md:w-36 h-10 md:h-14 text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-2 flex justify-start items-center font-semibold border-2 rounded-r-full ease-in-out duration-300'
                           onClick={handleMessageClick}
-                            ><AiFillMessage className='text-xl '/> Message Us!
+                            ><AiFillMessage className='text-xl '/> {responsiveMessageText()}
                         </button>
                       </span>
                     </div>
