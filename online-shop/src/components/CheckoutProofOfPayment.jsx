@@ -144,7 +144,7 @@ const CheckoutProofOfPayment = (props) => {
             </div>
             <div className="flex justify-center mt-5">
               <Button
-                onClick={() => navigateTo('/orderChat', { state: { orderReference: referenceNumber } })}
+                onClick={() => navigateTo('/orderChat', { state: { orderReference: referenceNumber, isInquiry : false,backButtonRedirect:'/myorders/orderList' } })}
                 variant="contained"
                 color="success"
               >

@@ -15,9 +15,12 @@ const ChatApp = (props) => {
   const location = useLocation();
   const [orderRef, setOrderRef] = useState(null);
   const [isInquiryMessage, setIsInquiryMessage] = useState(null);
+  const [backButtonRedirect, setBackButtonRedirect] = useState(null);
   // Checks if message is an inquiry message or not
 
-  console.log(selectedChatOrderId)
+  useEffect(() => {
+    console.log('selectedChatOrderId', selectedChatOrderId)
+  }, [selectedChatOrderId]);
 
   function getNameById(id) {
     if (allUserData == null) {
@@ -30,15 +33,15 @@ const ChatApp = (props) => {
     return 'new customer'; // or any default value you want to return if the user is not found
   }
   
-
   useEffect(() => {
     try {
-      const { orderReference, isInquiry } = location.state;
+      const { orderReference, isInquiry,backButtonRedirect } = location.state;
       console.log(orderReference)
       setOrderRef(orderReference)
-      setIsInquiryMessage(true)
+      setIsInquiryMessage(isInquiry)
+      setBackButtonRedirect(backButtonRedirect)
     } catch {
-      console.log(selectedChatOrderId)
+      console.log('no location state')
       setOrderRef(selectedChatOrderId)
       setIsInquiryMessage(false)
     }
@@ -56,10 +59,13 @@ const ChatApp = (props) => {
   }, []);
 
   useEffect(() => {
+    console.log(orderRef)
+  }, [orderRef]);
+
+  useEffect(() => {
     
     if (userdata && userdata.userRole === 'member') {
       setUser(userdata.name);
-      console.log('C')
       setSelectedChatOrderId(userId)
     }
   }, [userdata]);
@@ -68,10 +74,9 @@ const ChatApp = (props) => {
    
     if (isInquiryMessage == false) {
       if (orderRef != null) {
+        console.log('selectedChatOrderId',selectedChatOrderId)
         const docRef = doc(db, 'ordersMessages', orderRef);
         onSnapshot(docRef, (doc) => {
-          console.log('ran onSnapshot')
-          console.log(orderRef)
           if (doc.exists()) {
             let username 
             username = doc.data().ownerName;
@@ -79,9 +84,10 @@ const ChatApp = (props) => {
             if (username == null) {
               username = getNameById(orderRef)
             }
-
+            
             setMessageDetails(doc.data());
             setUserName(username);
+            console.log(doc.data())
             
           } else {
             console.log('No such document!');
@@ -116,7 +122,7 @@ const ChatApp = (props) => {
         // IF USER IS LOGGED IN
         <div className="flex justify-center w-screen h-screen  ">
           <div className="flex flex-col w-full h-full justify-evenly bg-color60 overflow-hidden">
-            <NavBar messages={messageDetails} orderReferenceId={orderRef} />
+            <NavBar messages={messageDetails} orderReferenceId={orderRef} isInquiryMessage={isInquiryMessage} backButtonRedirect={backButtonRedirect} />
             {messageDetails != {} ? (
               <DisplayMessages
                 chatData={chatData}

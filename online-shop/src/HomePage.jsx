@@ -7,6 +7,7 @@ import { FaFacebookF, FaViber, FaInstagram, FaGoogle, FaPhoneAlt, FaMapMarkerAlt
 import { FaPlay, FaPause, FaPenSquare, FaForward, FaBackward } from "react-icons/fa";
 import AppContext from './AppContext';
 import GoogleMaps from './components/GoogleMaps'
+import { useLocation } from 'react-router-dom';
 
 const HomePage = () => {
 
@@ -48,7 +49,9 @@ const HomePage = () => {
   const { width } = useWindowDimensions();
   const [showMenu, setShowMenu] = useState(false);
   const [showToolTip, setShowToolTip] = useState(false);
-    
+  const {pathname} = useLocation();
+ 
+
     function handleCategory(item){
       if(item === "Paper Bags"){
         setSelectedCategoryImage("./vids/PPB.png")
@@ -214,7 +217,7 @@ const HomePage = () => {
 
     function handleMessageClick(){
       
-      navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true } })
+      navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true,backButtonRedirect:pathname } })
     }
     
     return (
@@ -244,7 +247,7 @@ const HomePage = () => {
                     <button onClick={()=>{scroll("page2")}} className={"text-xl  " + menuButtonStyle("page2")}>About</button>
                     <button onClick={()=>{scroll("page3")}} className={"text-xl  " + menuButtonStyle("page3")}>Products</button>
                     <button onClick={()=>{scroll("page4")}} className={"text-xl  " + menuButtonStyle("page4")}>Affiliate</button>
-                    <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page4")}>Message Us</button>
+                    <button onClick={handleMessageClick} className={"text-xl  " + menuButtonStyle("page5")}>Message Us</button>
                   </ul>
                 </div> : null
               }

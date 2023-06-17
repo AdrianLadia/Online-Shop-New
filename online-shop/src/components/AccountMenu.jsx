@@ -18,8 +18,11 @@ import { BsBook } from "react-icons/bs";
 import { RiAdminLine } from "react-icons/ri";
 import { Typography } from "@mui/material";
 import ClipLoader from 'react-spinners/ClipLoader';
+import {AiOutlineMessage} from 'react-icons/ai';
+import { useLocation } from "react-router-dom";
 
 const AccountMenu = (props) => {
+  const {pathname} = useLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const {
     userdata,
@@ -27,7 +30,8 @@ const AccountMenu = (props) => {
     refreshUser,
     setRefreshUser,
     setUserState,
-    userstate
+    userstate,
+    userId
    } = useContext(AppContext);
 
   const open = Boolean(anchorEl);
@@ -65,6 +69,10 @@ const AccountMenu = (props) => {
     setUserState("userloading");
     setRefreshUser(!refreshUser);
     navigateTo("/accountstatement");
+  }
+
+  function customerServiceClick() {
+    navigateTo("/orderChat", {state: {orderReference: userId, isInquiry: true,backButtonRedirect:pathname}});
   }
 
   return (
@@ -132,10 +140,10 @@ const AccountMenu = (props) => {
         </MenuItem>
         <Divider />
         {/* PROFILE MENU */}
-        <MenuItem id='profileMenu' onClick={profileClick} className='hover:bg-color10b'>
+        {/* <MenuItem id='profileMenu' onClick={profileClick} className='hover:bg-color10b'>
           <CgProfile size={17} />
           <span className="ml-5">Profile</span>
-        </MenuItem>
+        </MenuItem> */}
         {/* Order History  */}
         <MenuItem id='myOrdersMenu' onClick={myOrdersClick} className='hover:bg-color10b'>
           <AiOutlineHistory size={17} />
@@ -161,6 +169,11 @@ const AccountMenu = (props) => {
           </ListItemIcon>
           <span>Logout</span>
         </MenuItem>
+        <Divider className="mt-1 mb-1"/>
+        <MenuItem id='adminMenu' onClick={customerServiceClick} className='hover:bg-slate-300'>
+              <AiOutlineMessage size={21} className="-ml-.5 font-bold text-blue1" />
+              <span className="ml-3.5 text-blue1">Customer Service</span>
+            </MenuItem>
         {isadmin ? (
           <div>
             <Divider className="mt-1 mb-1"/>

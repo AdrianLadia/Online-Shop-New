@@ -3,22 +3,22 @@ import { TiArrowLeftThick } from "react-icons/ti";
 import { useNavigate } from 'react-router-dom';
 import AppContext from '../../../../AppContext';
 
-const NavBarBackButton = () => {
-
+const NavBarBackButton = (props) => {
+  const backButtonRedirect = props.backButtonRedirect
   const navigateTo = useNavigate()
   const { isadmin, setChatSwitch} = useContext(AppContext);
 
   function onBackClick() {
     if(isadmin){
       setChatSwitch(false)
-      // navigateTo("/myorders/orderList")
     }else{  
-      navigateTo("/myorders/orderList")
+      navigateTo(backButtonRedirect)
     }
   }
 
   return (
     <div className='flex items-center justify-start w-full h-full rounded-full'>
+        {backButtonRedirect != null ?  
         <button
             onClick={onBackClick}
             className='flex items-center justify-center p-1 
@@ -27,6 +27,7 @@ const NavBarBackButton = () => {
             >
             <TiArrowLeftThick/>
         </button>
+        : null}
     </div>
   )
 }
