@@ -24,12 +24,12 @@ const AdminChatMenu = () => {
 
     useEffect(() => {
       const docRef = collection(db, 'ordersMessages')
+      console.log('ran this effect')
       onSnapshot(docRef, (querySnapshot) => {
         const chats = []
         querySnapshot.forEach((doc) => {
           if (doc.exists()) {
-            const data = doc.data();
-            console.log(data)
+            const data = doc.data(); 
             const referenceNumber = data.referenceNumber
             const customerName = data.ownerName
             const messages = data.messages
@@ -53,35 +53,34 @@ const AdminChatMenu = () => {
           } else {
             console.log('No such document!');
           }
-          setChatData(chats)
         })
-        })
-    }, [chatSwitch]);
+        setChatData(chats)
+      })
+    }, []);
   
-  function convertChatMessageToFitTable(message) {
-    let messageLength;
-    if (width <= 390) {
-      messageLength = 20;
-    } else if (width <= 640) {
-      messageLength = 30;
-    } else if (width <= 768) {
-      messageLength = 40;
-    } else if (width <= 1024) {
-      messageLength = 50;
-    } else {
-      messageLength = 100;
-    }
+  // function convertChatMessageToFitTable(message) {
+  //   let messageLength;
+  //   if (width <= 390) {
+  //     messageLength = 20;
+  //   } else if (width <= 640) {
+  //     messageLength = 30;
+  //   } else if (width <= 768) {
+  //     messageLength = 40;
+  //   } else if (width <= 1024) {
+  //     messageLength = 50;
+  //   } else {
+  //     messageLength = 100;
+  //   }
 
-    if (message.length > messageLength) {
-      return message.substring(0, messageLength) + '...';
-    }
-    return message;
-  }
+  //   if (message.length > messageLength) {
+  //     return message.substring(0, messageLength) + '...';
+  //   }
+  //   return message;
+  // }
 
   function handleBoth(ref, toggle){
     setChatSwitch(toggle)
     setOpenChat(toggle)
-    console.log('A')
     setSelectedChatOrderId(ref)
   }
 
