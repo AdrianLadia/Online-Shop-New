@@ -222,7 +222,7 @@ const HomePage = () => {
           {/* Logo */}
           <div className='w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 '>
             <img src={logo} alt="logo"
-                className=" h-14 w-14 sm:h-16 sm:w-16 xl:h-20 xl:w-20 rounded-full border-2 border-color30 cursor-pointer"
+                className=" h-14 w-14 sm:h-16 sm:w-16 2xl:h-20 2xl:w-20 rounded-full border-2 border-color30 cursor-pointer"
                 onClick={()=>{scroll("page1")}}
                 />
           </div>
