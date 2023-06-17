@@ -20,13 +20,11 @@ const ChatApp = (props) => {
   console.log(selectedChatOrderId)
 
   function getNameById(id) {
-    console.log(id);
     if (allUserData == null) {
       return 'me';
     }
     const user = allUserData.find((user) => user.uid === id);
     if (user) {
-      console.log(user.name);
       return user.name;
     }
     return 'new customer'; // or any default value you want to return if the user is not found
@@ -36,9 +34,11 @@ const ChatApp = (props) => {
   useEffect(() => {
     try {
       const { orderReference, isInquiry } = location.state;
+      console.log(orderReference)
       setOrderRef(orderReference)
       setIsInquiryMessage(true)
     } catch {
+      console.log(selectedChatOrderId)
       setOrderRef(selectedChatOrderId)
       setIsInquiryMessage(false)
     }
@@ -70,6 +70,8 @@ const ChatApp = (props) => {
       if (orderRef != null) {
         const docRef = doc(db, 'ordersMessages', orderRef);
         onSnapshot(docRef, (doc) => {
+          console.log('ran onSnapshot')
+          console.log(orderRef)
           if (doc.exists()) {
             let username 
             username = doc.data().ownerName;
@@ -96,6 +98,7 @@ const ChatApp = (props) => {
               const username = userdata.name;
               setMessageDetails(doc.data());
               setUserName(username);
+              console.log(selectedChatOrderId)
               setOrderRef(selectedChatOrderId)
             } else {
               console.log('No such document!');

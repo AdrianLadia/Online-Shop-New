@@ -24,8 +24,8 @@ const AdminChatMenu = () => {
 
     useEffect(() => {
       const docRef = collection(db, 'ordersMessages')
-      console.log('ran this effect')
       onSnapshot(docRef, (querySnapshot) => {
+        
         const chats = []
         querySnapshot.forEach((doc) => {
           if (doc.exists()) {
