@@ -180,13 +180,13 @@ const ProductCard = (props) => {
     if (width < 300) {
       return '13px';
     } else if (width < 768) {
-      return '13px';
+      return '16px';
     } else if (width < 1024) {
-      return '13px';
+      return '16px';
     } else if (width < 1536) {
-      return '14px';
+      return '18px';
     } else {
-      return '15px';
+      return '20px';
     }
   }
 
@@ -228,7 +228,7 @@ const ProductCard = (props) => {
 
   if (product.imageLinks.length === 0) {
     return (
-      <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>
+      <div className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 ' + responsiveWidth()}>
         {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
           elevation={10}
@@ -250,7 +250,7 @@ const ProductCard = (props) => {
   } else {
     return (
       <ThemeProvider theme={theme}>
-        <div className={' flex justify-center h-80 w-11/12 2xs:w-96' + responsiveWidth()}>
+        <div className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 hover:mb-5' + responsiveWidth()}>
           {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
           <Paper
             elevation={10}
@@ -283,7 +283,7 @@ const ProductCard = (props) => {
                   <img
                     src={imageSrc}
                     alt={props.product.itemName}
-                    className={'h-full object-cover rounded-4xl 3xs:w-60 border-color60 '}
+                    className={'h-full object-cover rounded-4xl 3xs:w-60 border-color60'}
                     onClick={showModal}
                     onLoad={() => setImageLoading(false)}
                   />
@@ -340,7 +340,10 @@ const ProductCard = (props) => {
 
               <div className="h-1/6 flex items-center">
                 <Typography sx={{ fontSize: responsivePrice(), mb: 1, cursor: 'text' }} className="tracking-tight">
-                  Price: {'₱ ' + props.product.price}
+                  Price : 
+                </Typography>
+                <Typography sx={{ fontSize: responsivePrice(), mb: 1,ml:1, cursor: 'text' }} className="tracking-tight">
+                  {'₱ ' + props.product.price}
                 </Typography>
               </div>
 
