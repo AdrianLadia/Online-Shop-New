@@ -31,12 +31,22 @@ const AccountStatementPayment = (props) => {
     }
   }
 
+  console.log(date)
+
   useEffect(() => {
     if (mayaRedirectUrl != null) {
       window.location.href = mayaRedirectUrl;
       setMayaRedirectUrl(null);
     }
   }, [mayaRedirectUrl]);
+
+  function checkIfDateExists() {
+    if (date != null) {
+      return date;
+    } else {
+      return new Date();
+    }
+  }
 
   function payTotal() {
     businesscalculations.afterCheckoutRedirectLogic({
@@ -57,7 +67,7 @@ const AccountStatementPayment = (props) => {
       userId: userId,
       navigateTo: navigateTo,
       itemsTotal: null,
-      date: new Date(),
+      date: checkIfDateExists(),
     });
   }
 

@@ -33,6 +33,8 @@ const DisplayMessagesUser = (props) => {
     }
   }, []);
 
+  console.log(message)
+
   return (
     
     <div className="flex flex-row-reverse items-start h-max mr-0.5">

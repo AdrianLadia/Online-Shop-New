@@ -43,6 +43,8 @@ const ProductList = (props) => {
       favoriteitems
     );
 
+    console.log(selected_products)
+
     return selected_products;
   }
 

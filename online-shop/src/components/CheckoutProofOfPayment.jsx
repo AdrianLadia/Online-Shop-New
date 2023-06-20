@@ -36,6 +36,8 @@ const CheckoutProofOfPayment = (props) => {
   const navigateTo = useNavigate();
   const [paymentMethods,setPaymentMethods] = useState([])
 
+  console.log(date)
+
   useEffect(() => {
       firestore.readAllPaymentProviders().then((providers) => {
     
@@ -103,7 +105,7 @@ const CheckoutProofOfPayment = (props) => {
             </div>
             <p>Once you have completed the payment, please submit proof of payment using the button below.</p>
 
-            <Divider className="mt-5"></Divider>
+            <Divider className="mt-5 mb-5"></Divider>
             {/* <CheckoutSummary/> */}
             {rows != null ? (
               <CheckoutSummary
@@ -121,7 +123,7 @@ const CheckoutProofOfPayment = (props) => {
             )}
 
             <div className="flex flex-col justify-center">
-              <div className="flex flex-row justify-center">
+              <div className="flex flex-row justify-center mt-5">
                 <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
                   Order will expire in :
                 </Typography>
@@ -143,14 +145,14 @@ const CheckoutProofOfPayment = (props) => {
               />
             </div>
             <div className="flex justify-center mt-5">
-              <Button
+              <button
                 onClick={() => navigateTo('/orderChat', { state: { orderReference: referenceNumber, isInquiry : false,backButtonRedirect:'/myorders/orderList' } })}
                 variant="contained"
-                color="success"
+                className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
               >
                 <HiChatBubbleLeftEllipsis />
                 <Typography sx={{marginLeft:1}} >Message us</Typography>
-              </Button>
+              </button>
             </div>
           </div>
         </div>

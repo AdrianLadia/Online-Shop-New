@@ -584,8 +584,12 @@ class dataManipulation {
     if (categorySelected === 'Favorites') {
 
       let selected_products = [];
+
+      console.log(favorites)
+
       products.map((product) => {
-        if (favorites.includes(product.itemName)) {
+        console.log(product)
+        if (favorites.includes(product.itemId)) {
           selected_products.push(product);
         }
       });

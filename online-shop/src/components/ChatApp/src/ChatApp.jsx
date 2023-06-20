@@ -7,6 +7,7 @@ import AppContext from '../../../AppContext';
 import { useLocation } from 'react-router-dom';
 import LoginButton from '../../LoginButton';
 import { Typography } from '@mui/material';
+import { is } from 'date-fns/locale';
 
 const ChatApp = (props) => {
   const { db, selectedChatOrderId, setSelectedChatOrderId, userId, userdata, setRefreshUser, refreshUser, userstate,allUserData} =
@@ -17,6 +18,8 @@ const ChatApp = (props) => {
   const [isInquiryMessage, setIsInquiryMessage] = useState(null);
   const [backButtonRedirect, setBackButtonRedirect] = useState(null);
   // Checks if message is an inquiry message or not
+
+  console.log('selectedChatOrderId', selectedChatOrderId);
 
   useEffect(() => {
     console.log('selectedChatOrderId', selectedChatOrderId)
@@ -63,8 +66,7 @@ const ChatApp = (props) => {
   }, [orderRef]);
 
   useEffect(() => {
-    
-    if (userdata && userdata.userRole === 'member') {
+    if (userdata && userdata.userRole === 'member' && isInquiryMessage == true) {
       setUser(userdata.name);
       setSelectedChatOrderId(userId)
     }

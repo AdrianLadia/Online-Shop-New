@@ -7,7 +7,7 @@ import { BiCircle, BiCheckCircle, BiXCircle } from 'react-icons/bi';
 import dataManipulation from '../../../../../utils/dataManipulation';
 import Image from '../../../ImageComponents/Image';
 
-const DisplayMessagesAdmin = (props) => {
+const DisplayMessagesLeft = (props) => {
   const { selectedChatOrderId, firestore, isadmin, chatSwitch } = useContext(AppContext);
   const message = props.message;
   const dateTime = props.dateTime;
@@ -22,12 +22,9 @@ const DisplayMessagesAdmin = (props) => {
   const chatData = props.chatData;
   const setChatData = props.setChatData;
 
-
-
-
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(''); 
 
   useEffect(() => {
     if (isadmin === false) {
@@ -37,6 +34,7 @@ const DisplayMessagesAdmin = (props) => {
       setName(userName);
     }
   }, []);
+
   
   async function updateMessages() {
  
@@ -53,9 +51,8 @@ const DisplayMessagesAdmin = (props) => {
     
     messages.map((mess) => {
       if (mess.userRole === 'member' && loggedInUserId !== mess.userId) {
-
         if (datamanipulation.convertDateTimeStampToDateString(mess.dateTime) == datamanipulation.convertDateTimeStampToDateString(dateTime)) {
-          mess.read = true;
+            mess.read = true;
         }
       }
       
@@ -83,10 +80,9 @@ const DisplayMessagesAdmin = (props) => {
       setChatData(newChatData)
     }
 
-  
     firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
     firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, data.ownerReadAll);
-    firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll);
+    // firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll);
   }
 
   function handleMessageClick() {
@@ -109,10 +105,10 @@ const DisplayMessagesAdmin = (props) => {
     }
   }
 
-
+  console.log(message)
 
   return (
-    <div className="flex items-start h-max ml-0.5">
+    <div className="flex items-start h-max ml-0.5" id={convertedDate}>
       
       <div className="flex items-center justify-center w-2/12 h-full rounded-full lg:w-1/12 mt-3">
         <div className="w-16 h-16 bg-gradient-to-tl from-green2 to-green1 border-4 border-green1 rounded-full sm:h-20 sm:w-20 ">
@@ -167,4 +163,4 @@ const DisplayMessagesAdmin = (props) => {
   );
 };
 
-export default DisplayMessagesAdmin;
+export default DisplayMessagesLeft;

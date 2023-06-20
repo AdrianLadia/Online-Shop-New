@@ -281,6 +281,7 @@ const ProductCard = (props) => {
                   </div>
                 ) : (
                   <img
+                    id={props.product.itemId}
                     src={imageSrc}
                     alt={props.product.itemName}
                     className={'h-full object-cover rounded-4xl 3xs:w-60 border-color60 '}
