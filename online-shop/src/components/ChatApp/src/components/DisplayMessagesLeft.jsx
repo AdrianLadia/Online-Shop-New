@@ -8,30 +8,33 @@ import dataManipulation from '../../../../../utils/dataManipulation';
 import Image from '../../../ImageComponents/Image';
 
 const DisplayMessagesLeft = (props) => {
-  const { selectedChatOrderId, firestore, isadmin, chatSwitch } = useContext(AppContext);
+  const { selectedChatOrderId, firestore, isadmin, allUserData,userdata } = useContext(AppContext);
   const message = props.message;
   const dateTime = props.dateTime;
   const datamanipulation = new dataManipulation();
   const convertedDate = datamanipulation.convertDateTimeStampToDateString(dateTime);
   const userName = props.userName;
-  const loggedInUserId = props.loggedInUserId;
   const userRole = props.userRole;
   const read = props.read;
-  const user = props.user;
   const image = props.image;
   const chatData = props.chatData;
   const setChatData = props.setChatData;
+  const recipientId = props.recipientId;
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
   const [name, setName] = useState(''); 
 
   useEffect(() => {
+    dummy.current.scrollIntoView({ behavior: 'smooth' });
     if (isadmin === false) {
-      dummy.current.scrollIntoView({ behavior: 'smooth' });
       setName('Admin');
     } else {
-      setName(userName);
+      console.log(allUserData);
+      console.log(recipientId);
+      const user = allUserData.filter((user) => user.uid === recipientId);
+      console.log(user[0].name)
+      setName(user[0].name);
     }
   }, []);
 
@@ -50,7 +53,7 @@ const DisplayMessagesLeft = (props) => {
     let unreadAdmin = 0;
     
     messages.map((mess) => {
-      if (mess.userRole === 'member' && loggedInUserId !== mess.userId) {
+      if (mess.userRole === 'member' && userdata.uid !== mess.userId) {
         if (datamanipulation.convertDateTimeStampToDateString(mess.dateTime) == datamanipulation.convertDateTimeStampToDateString(dateTime)) {
             mess.read = true;
         }
@@ -152,7 +155,7 @@ const DisplayMessagesLeft = (props) => {
               </p>
             </div>
             <div className={'mb-2 -ml-5 text-green3 ' + adminTextColor()}>
-              {read ? <BiCheckCircle /> : <BiXCircle />}
+              {/* {read ? <BiCheckCircle /> : <BiXCircle />} */}
             </div>
           </div>
 

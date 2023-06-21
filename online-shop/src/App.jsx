@@ -94,8 +94,6 @@ function App() {
   const [allUserData, setAllUserData] = useState(null);
   const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
 
-  
-
   useEffect(() => {
     if (userdata != null) {
       if (userdata.userRole == 'admin' || userdata.userRole == 'superAdmin') {

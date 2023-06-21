@@ -14,7 +14,7 @@ import { date } from 'joi';
 import { useLocation } from 'react-router-dom';
 
 function MyOrderCard(props) {
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
   const datamanipulation = new dataManipulation();
   const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata } =
     React.useContext(AppContext);
@@ -39,23 +39,15 @@ function MyOrderCard(props) {
   const timestamp = Timestamp.fromDate(dateNow);
   const timestampString = timestamp.toDate().toLocaleString();
 
-  async function readMessages(){
-    firestore.readOrderMessageByReference(order.reference).then((s)=>{
-      const messages = s.messages;
-      let unReadCount = 0;
-      try {
-        messages &&
-          messages.map((q) => {
-            if ((q.userRole === 'superAdmin') && q.read === false) {
-              unReadCount += 1;
-            }
-          });
-      } catch (e) {
-        console.log(e);
-      }
-      setUnRead(unReadCount);
+  async function readMessages() {
+    firestore.readOrderMessageByReference(order.reference).then((s) => {
+      setUnRead(!s.adminReadAll);
     });
   }
+
+  useEffect(() => {
+    readMessages();
+  }, []);
 
   function getPaymentStatus(x, y, z) {
     if (order.paid) {
@@ -76,11 +68,13 @@ function MyOrderCard(props) {
   }
 
   function onMessageClick() {
-    readMessages();
+    setUnRead(false)
     firestore.updateOrderMessagesAsReadForUser(order.reference);
-    console.log('B')
+    console.log('B');
     setSelectedChatOrderId(order.reference);
-    navigateTo('/orderChat', { state: { orderReference: order.reference, isInquiry: false,backButtonRedirect:pathname } });
+    navigateTo('/orderChat', {
+      state: { orderReference: order.reference, isInquiry: false, backButtonRedirect: pathname },
+    });
   }
 
   function handleCancel() {
@@ -172,10 +166,6 @@ function MyOrderCard(props) {
       return true;
     }
   }
-
-  useEffect(() => {
-    readMessages();
-  }, [firestore]);
 
   useEffect(() => {
     disableButton();

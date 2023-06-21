@@ -220,7 +220,7 @@ const HomePage = () => {
 
     function handleMessageClick(){
       
-      navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true,backButtonRedirect:pathname } })
+      navigateTo('/orderChat',{ state: { orderReference: null,isInquiry: true,backButtonRedirect:pathname,fromHomePage:true } })
     }
 
     function responsiveMessageText() {

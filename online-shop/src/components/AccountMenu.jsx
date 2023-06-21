@@ -72,6 +72,7 @@ const AccountMenu = (props) => {
   }
 
   function customerServiceClick() {
+    console.log(userId)
     navigateTo("/orderChat", {state: {orderReference: userId, isInquiry: true,backButtonRedirect:pathname}});
   }
 

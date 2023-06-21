@@ -93,9 +93,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       await this.createDocument({
         messages: [],
         ownerUserId: userId,
-        ownerName: null,
+        ownerName: data.name,
         referenceNumber: userId,
         isInquiry : true,
+        adminReadAll : false,
+        ownerReadAll : false,
       },userId,'ordersMessages')
     } catch (error) {
       // Handle the 400 error messages

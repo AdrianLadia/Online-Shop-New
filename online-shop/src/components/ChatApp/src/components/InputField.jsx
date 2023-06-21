@@ -8,7 +8,6 @@ import db from '../firebase';
 import ImageUploadButton from '../../../ImageComponents/ImageUploadButton';
 
 const InputField = (props) => {
-  const orderReferenceId = props.orderReferenceId;
   const loggedInUserId = props.stloggedInUserId;
   const [message, setMessage] = useState(null);
   const [newMessage, setNewMessage] = useState(null);
@@ -20,7 +19,7 @@ const InputField = (props) => {
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
 
   async function updateMessages() {
-    const docRef = doc(db, 'ordersMessages', orderReferenceId);
+    const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
     const messages = data.messages;
@@ -51,14 +50,14 @@ const InputField = (props) => {
     } else {
       data.ownerReadAll = false;
     }
-    firestore.updateOrderMessageMarkAsOwnerReadAll(orderReferenceId, data.ownerReadAll);
-    firestore.updateOrderMessageMarkAsAdminReadAll(orderReferenceId, data.adminReadAll);
-    firestore.updateOrderMessageAsRead(orderReferenceId, messages);
+    firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, data.ownerReadAll);
+    firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, data.adminReadAll);
+    firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
   }
 
   async function sendImage(url) {
 
-    const docRef = doc(db, 'ordersMessages', orderReferenceId);
+    const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     // Add data to the array field
     updateDoc(docRef, {
       messages: arrayUnion({
@@ -85,7 +84,7 @@ const InputField = (props) => {
 
   async function sendMessage() {
   
-    const docRef = doc(db, 'ordersMessages', orderReferenceId);
+    const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     // Add data to the array field
     updateDoc(docRef, {
       messages: arrayUnion({
@@ -131,7 +130,7 @@ const InputField = (props) => {
         <div className="flex items-center gap-1 w-full h-full rounded-lg">
           <ImageUploadButton
             id={'userUploadPhotoButton'}
-            folderName={'Orders/' + userId + '/' + orderReferenceId}
+            folderName={'Orders/' + userId + '/' + selectedChatOrderId}
             buttonTitle={''}
             storage={storage}
             onUploadFunction={getUploadedImageUrl}

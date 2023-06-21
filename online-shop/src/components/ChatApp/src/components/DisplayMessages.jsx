@@ -9,10 +9,7 @@ import dataManipulation from '../../../../../utils/dataManipulation';
 
 const DisplayMessages = (props) => {
   const { chatSwitch, selectedChatOrderId,userdata,firestore } = useContext(AppContext);
-  const messages = props.messages.messages;
-  const userName = props.userName;
-  const loggedInUserId = props.loggedInUserId;
-  const user = props.user;
+  const messages = props.messageDetails.messages;
   const chatData = props.chatData;
   const setChatData = props.setChatData;
   const datamanipulation = new dataManipulation();
@@ -46,7 +43,8 @@ const DisplayMessages = (props) => {
   }
  
 
-  async function markMessagesAsReadAsOwner() {
+  async function markMessagesAsRead() {
+    console.log(selectedChatOrderId)
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     console.log(selectedChatOrderId);
 
@@ -59,9 +57,7 @@ const DisplayMessages = (props) => {
     let unreadAdmin = 0;
 
     messages.map((mess) => {
-      // console.log(mess);
-      if (mess.userRole != 'member' && loggedInUserId !== mess.userId) {
-        // console.log(mess.dateTime)
+      if (mess.userRole != 'member' && userdata.uid !== mess.userId) {
         const id = datamanipulation.convertDateTimeStampToDateString(mess.dateTime)
         console.log(id)
         if (isElementInView(id)) {
@@ -78,9 +74,6 @@ const DisplayMessages = (props) => {
         unreadAdmin += 1;
       }
     });
-    if (unreadAdmin === 0) {
-      await firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, true);
-    } 
 
     if (userdata.userRole != 'member') {
       if (data.adminReadAll === true) {
@@ -88,10 +81,32 @@ const DisplayMessages = (props) => {
         setChatData(newChatData);
       }
     }    
-
-    console.log(messages)
-
     firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
+
+    console.log('unreadOwner',unreadOwner);
+    console.log('unreadAdmin',unreadAdmin);
+
+    if (unreadOwner === 0) {
+      
+        firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, true);
+      
+    }
+    else {
+      
+        firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, false);
+      
+    }
+
+    if (unreadAdmin === 0) {
+
+        firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, true);
+      
+    }
+    else {
+     
+        firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, false);
+      
+    }
   }
 
   useEffect(() => {
@@ -100,7 +115,7 @@ const DisplayMessages = (props) => {
 
   useEffect(() => {
     console.log('triggered');
-    markMessagesAsReadAsOwner();
+    markMessagesAsRead();
   }, [messages]);
 
   return (
@@ -112,21 +127,19 @@ const DisplayMessages = (props) => {
         >
           {messages
             ? messages.map((m, index) => {
+                console.log(m.userId);
                 const message = m.message;
                 const dateTime = m.dateTime;
                 const userRole = m.userRole;
                 const read = m.read;
                 const image = m.image;
 
-                if (m.userId === loggedInUserId) {
+                if (m.userId === userdata.uid) {
                   return (
                     <DisplayMessagesRight
                       message={message}
                       dateTime={dateTime}
-                      user={user}
-                      userName={userName}
-                      read={read}
-                      loggedInUserId={loggedInUserId}
+                      read={read}          
                       image={image}
                     />
                   );
@@ -137,12 +150,10 @@ const DisplayMessages = (props) => {
                       setChatData={setChatData}
                       message={message}
                       dateTime={dateTime}
-                      userName={userName}
-                      user={user}
                       read={read}
                       userRole={userRole}
-                      loggedInUserId={loggedInUserId}
                       image={image}
+                      recipientId={m.userId}
                     />
                   );
                 }

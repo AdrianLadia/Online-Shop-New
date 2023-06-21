@@ -1,13 +1,14 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { TiArrowBack } from 'react-icons/ti';
 import AppContext from '../../../../AppContext';
-import { BiCheckCircle, BiXCircle } from "react-icons/bi";
+import { BiXCircle } from "react-icons/bi";
 import dataManipulation from '../../../../../utils/dataManipulation';
 import Image from '../../../ImageComponents/Image';
+import {AiFillCheckCircle} from 'react-icons/ai';
 
-const DisplayMessagesUser = (props) => {
+const DisplayMessagesRight = (props) => {
 
-  const { isadmin } = useContext(AppContext);
+  const { isadmin,userdata } = useContext(AppContext);
   const message = props.message;
   let dateTime = props.dateTime;
   const datamanipulation = new dataManipulation(); 
@@ -33,7 +34,6 @@ const DisplayMessagesUser = (props) => {
     }
   }, []);
 
-  console.log(message)
 
   return (
     
@@ -41,7 +41,7 @@ const DisplayMessagesUser = (props) => {
       <div className="flex items-center justify-center w-2/12 rounded-full h-full lg:w-1/12 mt-3">
         <div className="w-16 h-16 sm:h-20 sm:w-20 bg-gradient-to-tr from-color10c to-color60 border-4 border-color60 rounded-full">
           <div className="flex items-center justify-center h-full text-2xl font-bold text-white uppercase">
-            {user[0]}
+            {userdata.name[0]}
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@ const DisplayMessagesUser = (props) => {
               </p>
             </div>
             <div className='mb-2 -mr-2.5 text-color60'>
-              {read? (<BiCheckCircle/>) : (<BiXCircle/>)}
+              {read? (<AiFillCheckCircle/>) : (<BiXCircle/>)}
             </div>
           </div>
         </>
@@ -81,4 +81,4 @@ const DisplayMessagesUser = (props) => {
   );
 };
 
-export default DisplayMessagesUser;
+export default DisplayMessagesRight;
