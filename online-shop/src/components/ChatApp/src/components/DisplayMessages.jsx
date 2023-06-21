@@ -120,7 +120,7 @@ const DisplayMessages = (props) => {
   }, [messages]);
 
   return (
-    <div className="w-full bg-green4 border-color60 rounded-xl border-x-4 h-5/6">
+    <div key={leftNameIfMemberIsOnRight} className="w-full bg-green4 border-color60 rounded-xl border-x-4 h-5/6">
       <div className="h-full ">
         <div
           ref={messagesRef}

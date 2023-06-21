@@ -30,6 +30,7 @@ const ChatApp = (props) => {
   const [isInquiryMessage, setIsInquiryMessage] = useState(false);
   const [backButtonRedirect, setBackButtonRedirect] = useState(null);
   const [fromHomePage, setFromHomePage] = useState(false);
+  let unsubscribe = null;
   // There are 2 states of mounting this component one is using navigateTo and
   // other is using the component ChatApp directly
   useEffect(() => {
@@ -58,9 +59,11 @@ const ChatApp = (props) => {
         const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
       }
       catch {
-        setSelectedChatOrderId(userdata.uid);
-        setIsInquiryMessage(true);
-        setBackButtonRedirect('/');
+        if (userdata.userRole == 'member') {
+          setSelectedChatOrderId(userdata.uid);
+          setIsInquiryMessage(true);
+          setBackButtonRedirect('/');
+        }
       }
     }
   }, [userdata]);
@@ -69,13 +72,16 @@ const ChatApp = (props) => {
     console.log(selectedChatOrderId);
     if (selectedChatOrderId != null) {
       const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
-      const unsubscribe = onSnapshot(docRef, (doc) => {
+      unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
+          
           setMessageDetails(doc.data());
+          setSelectedChatOrderId(doc.id);
         } else {
           console.log('No such document!');
         }
       });
+   
     }
   }, [selectedChatOrderId]);
 
