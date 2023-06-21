@@ -637,8 +637,8 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
           ownerName: username,
           referenceNumber: reference,
           isInquiry : false,
-          ownerReadAll : false,
-          adminReadAll : false,
+          ownerReadAll : true,
+          adminReadAll : true,
         });
         orderMessagesRef.collection('messages');
 

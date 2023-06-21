@@ -96,8 +96,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         ownerName: data.name,
         referenceNumber: userId,
         isInquiry : true,
-        adminReadAll : false,
-        ownerReadAll : false,
+        adminReadAll : true,
+        ownerReadAll : true,
       },userId,'ordersMessages')
     } catch (error) {
       // Handle the 400 error messages

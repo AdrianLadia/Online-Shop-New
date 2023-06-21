@@ -93,6 +93,42 @@ function App() {
   const [changeCard, setChangeCard] = useState(false);
   const [allUserData, setAllUserData] = useState(null);
   const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
+  const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
+  const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
+
+  useEffect(() => {
+    if (userdata != null ) {
+      let unreadCustomerServiceMessages = 0;
+      firestore.readOrderMessageByReference(userdata.uid).then((messages) => {
+        messages.messages.forEach((message) => {
+          if (message.userId != userdata.uid) {
+            if (message.read === false) {
+              unreadCustomerServiceMessages += 1
+            }
+          }
+        });
+        console.log('unreadCustomerServiceMessages', unreadCustomerServiceMessages)
+        setUnreadCustomerServiceMessages(unreadCustomerServiceMessages)
+      });
+      
+      let unreadOrderMessages = 0;
+      orders.map((order) => {
+        console.log('order', order)
+        firestore.readOrderMessageByReference(order.reference).then((messages) => {
+          messages.messages.forEach((message) => {
+            if (message.userId != userdata.uid) {
+              if (message.read === false) {
+                unreadOrderMessages += 1
+              }
+            }
+          });
+          console.log('unreadOrderMessages', unreadOrderMessages)
+          setUnreadOrderMessages(unreadOrderMessages)
+        });
+      })
+    
+    }
+  }, [userdata,orders]);
 
   useEffect(() => {
     if (userdata != null) {
@@ -361,6 +397,10 @@ function App() {
     setAllUserData:setAllUserData,
     inquiryMessageSwitch : inquiryMessageSwitch,
     setInquiryMessageSwitch : setInquiryMessageSwitch,
+    unreadOrderMessages : unreadOrderMessages,
+    setUnreadOrderMessages : setUnreadOrderMessages,
+    unreadCustomerServiceMessages : unreadCustomerServiceMessages,
+    setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
   };
 
   return (
