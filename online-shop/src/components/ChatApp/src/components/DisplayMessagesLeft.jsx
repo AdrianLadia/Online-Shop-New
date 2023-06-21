@@ -20,6 +20,7 @@ const DisplayMessagesLeft = (props) => {
   const chatData = props.chatData;
   const setChatData = props.setChatData;
   const recipientId = props.recipientId;
+  const leftNameIfMemberIsOnRight = props.leftNameIfMemberIsOnRight;
 
   const dummy = useRef(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -30,11 +31,7 @@ const DisplayMessagesLeft = (props) => {
     if (isadmin === false) {
       setName('Admin');
     } else {
-      console.log(allUserData);
-      console.log(recipientId);
-      const user = allUserData.filter((user) => user.uid === recipientId);
-      console.log(user[0].name)
-      setName(user[0].name);
+      setName(leftNameIfMemberIsOnRight);
     }
   }, []);
 

@@ -10,6 +10,7 @@ import dataManipulation from '../../../../../utils/dataManipulation';
 const DisplayMessages = (props) => {
   const { chatSwitch, selectedChatOrderId,userdata,firestore } = useContext(AppContext);
   const messages = props.messageDetails.messages;
+  const leftNameIfMemberIsOnRight = props.messageDetails.ownerName;
   const chatData = props.chatData;
   const setChatData = props.setChatData;
   const datamanipulation = new dataManipulation();
@@ -76,7 +77,7 @@ const DisplayMessages = (props) => {
     });
 
     if (userdata.userRole != 'member') {
-      if (data.adminReadAll === true) {
+      if (data.ownerReadAll === true) {
         const newChatData = chatData.filter((chat) => chat.id != selectedChatOrderId);
         setChatData(newChatData);
       }
@@ -127,7 +128,7 @@ const DisplayMessages = (props) => {
         >
           {messages
             ? messages.map((m, index) => {
-                console.log(m.userId);
+                
                 const message = m.message;
                 const dateTime = m.dateTime;
                 const userRole = m.userRole;
@@ -146,6 +147,7 @@ const DisplayMessages = (props) => {
                 } else {
                   return (
                     <DisplayMessagesLeft
+                      leftNameIfMemberIsOnRight={leftNameIfMemberIsOnRight}
                       chatData={chatData}
                       setChatData={setChatData}
                       message={message}

@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import LoginButton from '../../LoginButton';
 import { Typography } from '@mui/material';
 import { is } from 'date-fns/locale';
+import { set } from 'date-fns';
 
 const ChatApp = (props) => {
   const {
@@ -33,32 +34,35 @@ const ChatApp = (props) => {
   // other is using the component ChatApp directly
   useEffect(() => {
     try {
-      const { orderReference, isInquiry, backButtonRedirect,fromHomePage } = location.state;
-      console.log(fromHomePage)
+      const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
+      console.log(fromHomePage);
       if (fromHomePage) {
         setIsInquiryMessage(isInquiry);
         setBackButtonRedirect(backButtonRedirect);
         setFromHomePage(true);
-        
-      }
-      else {
+      } else {
         console.log(orderReference);
         setSelectedChatOrderId(orderReference);
         setIsInquiryMessage(isInquiry);
         setBackButtonRedirect(backButtonRedirect);
       }
     } catch {
-     
       setIsInquiryMessage(false);
     }
   }, []);
 
   useEffect(() => {
-    // if (fromHomePage) {
-    if(userdata) {
-      setSelectedChatOrderId(userdata.uid)
+
+    if (userdata) {
+      try {
+        const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
+      }
+      catch {
+        setSelectedChatOrderId(userdata.uid);
+        setIsInquiryMessage(true);
+        setBackButtonRedirect('/');
+      }
     }
-    // }
   }, [userdata]);
 
   useEffect(() => {

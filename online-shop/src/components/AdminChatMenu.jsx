@@ -75,6 +75,10 @@ const AdminChatMenu = () => {
     },[chatData])
 
 
+    useEffect(()=>{
+      console.log('chatButtonState',chatButtonState)
+    },[chatButtonState])
+
   useEffect(()=>{
     if(chatSwitch === false){
       setOpenChat(false)
