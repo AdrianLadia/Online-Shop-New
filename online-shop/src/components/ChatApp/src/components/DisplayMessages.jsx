@@ -10,6 +10,7 @@ import dataManipulation from '../../../../../utils/dataManipulation';
 const DisplayMessages = (props) => {
   const { chatSwitch, selectedChatOrderId,userdata,firestore } = useContext(AppContext);
   const messages = props.messageDetails.messages;
+  const ownerReadAll = props.messageDetails.ownerReadAll;
   const leftNameIfMemberIsOnRight = props.messageDetails.ownerName;
   const chatData = props.chatData;
   const setChatData = props.setChatData;
@@ -45,19 +46,10 @@ const DisplayMessages = (props) => {
  
 
   async function markMessagesAsRead() {
-    console.log(selectedChatOrderId)
-    const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
-    console.log(selectedChatOrderId);
-
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    console.log(data);
-    const messages = data.messages;
-
     let unreadOwner = 0;
     let unreadAdmin = 0;
-
     messages.map((mess) => {
+      console.log(mess);
       if (mess.userRole != 'member' && userdata.uid !== mess.userId) {
         const id = datamanipulation.convertDateTimeStampToDateString(mess.dateTime)
         console.log(id)
@@ -77,36 +69,29 @@ const DisplayMessages = (props) => {
     });
 
     if (userdata.userRole != 'member') {
-      if (data.ownerReadAll === true) {
+      if (ownerReadAll === true) {
         const newChatData = chatData.filter((chat) => chat.id != selectedChatOrderId);
         setChatData(newChatData);
       }
     }    
-    firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
+    console.log('RUNNING');
+    await firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
 
     console.log('unreadOwner',unreadOwner);
     console.log('unreadAdmin',unreadAdmin);
 
     if (unreadOwner === 0) {
-      
-        firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, true);
-      
+        firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, true); 
     }
     else {
-      
         firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, false);
-      
     }
 
     if (unreadAdmin === 0) {
-
         firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, true);
-      
     }
     else {
-     
         firestore.updateOrderMessageMarkAsAdminReadAll(selectedChatOrderId, false);
-      
     }
   }
 
