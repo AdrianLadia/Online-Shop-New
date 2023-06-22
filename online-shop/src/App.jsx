@@ -28,6 +28,7 @@ import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
+import {doc, getDoc} from 'firebase/firestore';
 
 const devEnvironment = true;
 
@@ -88,6 +89,7 @@ function App() {
   const [updateCartInfo,setUpdateCartInfo]  = useState(false)
   const [isAffiliate, setIsAffiliate] = useState(false)
   const [isAppleDevice, setIsAppleDevice] = useState(false)
+  const [isAndroidDevice, setIsAndroidDevice] = useState(false)
   const [cardSelected,setCardSelected] = useState(null)
   const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
   const [changeCard, setChangeCard] = useState(false);
@@ -95,6 +97,7 @@ function App() {
   const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
+
 
   useEffect(() => {
     if (userdata != null ) {
@@ -162,6 +165,7 @@ function App() {
   useEffect(() => {
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
+    setIsAndroidDevice(/android/.test(userAgent));
   }, []);
 
   // GET USER BROWSER
@@ -401,6 +405,7 @@ function App() {
     setUnreadOrderMessages : setUnreadOrderMessages,
     unreadCustomerServiceMessages : unreadCustomerServiceMessages,
     setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
+    isAndroidDevice : isAndroidDevice,
   };
 
   return (
