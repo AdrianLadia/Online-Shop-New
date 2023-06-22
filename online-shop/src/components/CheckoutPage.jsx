@@ -26,6 +26,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import Geocode from 'react-geocode';
 import Button from '@mui/material/Button';
 
+
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
 
@@ -648,10 +649,16 @@ const CheckoutPage = () => {
                   <button
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
-                    className="hover:bg-blue1 bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 w-40 "
+                    className="hover:bg-blue1 bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 "
                     disabled={placeOrderLoading}
                   >
-                    {placeOrderLoading ? <ClipLoader size={50} color="#ffffff" /> : 'Place Order'}
+                    {placeOrderLoading ?                     <div className='flex flex-col items-center justify-center h-full'>
+                      This may take up to 1 minute
+                      <CircularProgress size={50} style={{'color': 'blue'}} sx={{marginTop:1}}  />
+                    </div> : 
+                    'Place Order'
+
+                    }
                   </button>
                 </div>
               </>

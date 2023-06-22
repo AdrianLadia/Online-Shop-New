@@ -42,7 +42,7 @@ const AdminCreatePaymentTableRow = (props) => {
       await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink);
       const customerEmail = await firestore.readEmailAddressByUserId(userId);
      
-      await cloudfirestore.sendEmail({
+      cloudfirestore.sendEmail({
         to: customerEmail,
         subject: 'Payment Denied',
         text: 'Your payment has been denied. For customer support please go to our website www.starpack.ph... Chat us in My Orders - Message',

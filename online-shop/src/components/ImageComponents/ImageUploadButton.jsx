@@ -6,6 +6,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { FaImage } from 'react-icons/fa';
 import AppContext from '../../AppContext';
 import Joi from 'joi';
+import { v4 as uuidv4 } from 'uuid';
 
 const ImageUploadButton = (props) => {
   const { selectedChatOrderId, payments } = useContext(AppContext);
@@ -38,9 +39,10 @@ const ImageUploadButton = (props) => {
         fileName = file.name;
       }
 
-      const ordersRefStorage = ref(storage, folderName + '/' + fileName);
+      const ordersRefStorage = ref(storage, folderName + '/' + uuidv4() + fileName);
 
       try {
+        
         uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
           setButtonColor(true);
           setButtonText('Uploaded Successfuly');

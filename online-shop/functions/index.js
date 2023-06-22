@@ -380,7 +380,7 @@ exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.
 
 // ##############
 
-exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ memory: '2GB' }).https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     
     const data = parseData(req.query.data);
@@ -645,39 +645,44 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').https.onRequ
         console.log(newOrder.eMail);
 
         if (sendMail == true) {
-          await sendmail(
-            newOrder.eMail,
-            'Order Confirmation',
-            `<p>Dear Customer,</p>
-          
-          <p>We are pleased to inform you that your order has been confirmed.</p>
-          
-          <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
-          
-          <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
-          
-          <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
-          
-          <p>Thank you for choosing Star Pack!</p>
-          
-          <p>Best Regards,<br>
-          The Star Pack Team</p>`
-          );
-
-          await sendmail(
-            'ladiaadrian@gmail.com',
-            'Order Received',
-            `<p>Order received,</p>
-          
-          <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
-          <p><strong>Customer:</strong> ${newOrder.userName}</p>
-          <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
+          try{
+             sendmail(
+              newOrder.eMail,
+              'Order Confirmation',
+              `<p>Dear Customer,</p>
+            
+            <p>We are pleased to inform you that your order has been confirmed.</p>
+            
+            <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+            
+            <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
+            
+            <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
+            
+            <p>Thank you for choosing Star Pack!</p>
+            
+            <p>Best Regards,<br>
+            The Star Pack Team</p>`
+            );
   
-          <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
-          
-          <p>Best Regards,<br>
-          Star Pack Head</p>`
-          );
+             sendmail(
+              'ladiaadrian@gmail.com',
+              'Order Received',
+              `<p>Order received,</p>
+            
+            <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+            <p><strong>Customer:</strong> ${newOrder.userName}</p>
+            <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
+    
+            <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
+            
+            <p>Best Regards,<br>
+            Star Pack Head</p>`
+            );
+          }
+          catch{
+            console.log('error sending email')
+          }
         }
 
         res.send('SUCCESS');
