@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
-import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, connectAuthEmulator, RecaptchaVerifier } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
@@ -38,6 +38,15 @@ function App() {
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
+  // add captcha for phone auth
+  // window.recaptchaVerifier = new RecaptchaVerifier('sign-in-button-phone', {
+  //   'size': 'invisible',
+  //   'callback': (response) => {
+  //     // reCAPTCHA solved, allow signInWithPhoneNumber.
+  //     onSignInSubmit();
+  //   }
+  // }, auth);
+
   // Get Storage
   const storage = getStorage(app);
 
@@ -90,6 +99,7 @@ function App() {
   const [isAffiliate, setIsAffiliate] = useState(false)
   const [isAppleDevice, setIsAppleDevice] = useState(false)
   const [isAndroidDevice, setIsAndroidDevice] = useState(false)
+  const [isGoogleChrome,setIsGoogleChrome] = useState(false)
   const [cardSelected,setCardSelected] = useState(null)
   const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
   const [changeCard, setChangeCard] = useState(false);
@@ -166,6 +176,7 @@ function App() {
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
     setIsAndroidDevice(/android/.test(userAgent));
+    setIsGoogleChrome(/chrome/.test(userAgent));
   }, []);
 
   // GET USER BROWSER
@@ -406,6 +417,7 @@ function App() {
     unreadCustomerServiceMessages : unreadCustomerServiceMessages,
     setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
     isAndroidDevice : isAndroidDevice,
+    isGoogleChrome : isGoogleChrome,
   };
 
   return (
