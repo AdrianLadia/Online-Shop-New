@@ -1122,7 +1122,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           console.log(paymentId);
 
           if (forTesting == false) {
-            await sendmail(
+             sendmail(
               'ladiaadrian@gmail.com',
               'Payment Uploaded',
               `<h2>Payment Uploaded</h2>

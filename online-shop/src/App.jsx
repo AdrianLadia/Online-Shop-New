@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
-import { getAuth, onAuthStateChanged, connectAuthEmulator, RecaptchaVerifier } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, connectAuthEmulator} from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
@@ -29,6 +29,7 @@ import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import {doc, getDoc} from 'firebase/firestore';
+import ProfileUpdaterModal from './components/ProfileUpdaterModal';
 
 const devEnvironment = true;
 
@@ -39,13 +40,7 @@ function App() {
   // Get Authentication
   const auth = getAuth(app);
   // add captcha for phone auth
-  // window.recaptchaVerifier = new RecaptchaVerifier('sign-in-button-phone', {
-  //   'size': 'invisible',
-  //   'callback': (response) => {
-  //     // reCAPTCHA solved, allow signInWithPhoneNumber.
-  //     onSignInSubmit();
-  //   }
-  // }, auth);
+
 
   // Get Storage
   const storage = getStorage(app);
@@ -107,7 +102,7 @@ function App() {
   const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
-
+  const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(true);
 
   useEffect(() => {
     if (userdata != null ) {
@@ -282,6 +277,18 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (userdata) {
+      if (userdata.name == null) {
+
+      } 
+      if (userdata.name != null) {
+        setUserLoaded(true);
+        setUserState('user');
+      }
+    }
+  }, [userdata]);
+
+  useEffect(() => {
     // FLOW FOR GUEST LOGIN
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
@@ -437,6 +444,7 @@ function App() {
             <AppContext.Provider value={appContextValue}>
               <NavBar />
               <Shop />
+              <ProfileUpdaterModal openProfileUpdaterModal={openProfileUpdaterModal} setOpenProfileUpdaterModal={setOpenProfileUpdaterModal} />
             </AppContext.Provider>
           }
         />

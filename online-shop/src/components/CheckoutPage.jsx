@@ -26,7 +26,6 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import Geocode from 'react-geocode';
 import Button from '@mui/material/Button';
 
-
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
 
@@ -141,7 +140,6 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (transactionStatus === 'SUCCESS') {
       setCart({});
-  
 
       businesscalculations.afterCheckoutRedirectLogic({
         paymentMethodSelected: paymentMethodSelected,
@@ -206,7 +204,6 @@ const CheckoutPage = () => {
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   async function onPlaceOrder() {
-    
     if (paymentMethodSelected == null) {
       alert('Please select a payment method');
       setPlaceOrderLoading(false);
@@ -303,10 +300,10 @@ const CheckoutPage = () => {
         setLocalLongitude(lng);
         setZoom(15);
         setAddressGeocodeSearch('');
-        setLocalDeliveryAddress('')
+        setLocalDeliveryAddress('');
       },
       (error) => {
-        alert('Address not found. Be more specific.')
+        alert('Address not found. Be more specific.');
       }
     );
   }
@@ -345,19 +342,23 @@ const CheckoutPage = () => {
         /> */}
         <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
         <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
-        <Typography>
+          <Typography>
             • <strong>Click on the map</strong> to change the delivery point.
           </Typography>
           <Typography>
             • Please <strong>pinpoint</strong> your delivery address below.
           </Typography>
           <Typography>
-            • Use the <strong>search button</strong> to easily find your address and <strong>adjust the pin</strong> to your address.
+            • Use the <strong>search button</strong> to easily find your address and <strong>adjust the pin</strong> to
+            your address.
           </Typography>
         </div>
-        
+
         <div className="gap-2 p-2 flex flex-row-reverse justify-between w-11/12 self-center">
-          <button onClick={searchAddress} className="p-4 text-white font-bold bg-color10b hover:bg-blue1 rounded-lg mr-2 lg:mr-5">
+          <button
+            onClick={searchAddress}
+            className="p-4 text-white font-bold bg-color10b hover:bg-blue1 rounded-lg mr-2 lg:mr-5"
+          >
             Search
           </button>
           <TextField
@@ -652,13 +653,14 @@ const CheckoutPage = () => {
                     className="hover:bg-blue1 bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 "
                     disabled={placeOrderLoading}
                   >
-                    {placeOrderLoading ?                     <div className='flex flex-col items-center justify-center h-full'>
-                      This may take up to 1 minute
-                      <CircularProgress size={50} style={{'color': 'blue'}} sx={{marginTop:1}}  />
-                    </div> : 
-                    'Place Order'
-
-                    }
+                    {placeOrderLoading ? (
+                      <div className="flex flex-col items-center justify-center h-full">
+                        This may take up to 1 minute
+                        <CircularProgress size={50} style={{ color: 'blue' }} sx={{ marginTop: 1 }} />
+                      </div>
+                    ) : (
+                      'Place Order'
+                    )}
                   </button>
                 </div>
               </>
