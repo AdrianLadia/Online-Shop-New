@@ -38,7 +38,7 @@ class schemas {
       name: Joi.string().allow(null, ''),
       email: Joi.string().allow(null, ''),
       emailVerified: Joi.boolean(),
-      phoneNumber: Joi.string().allow(''),
+      phoneNumber: Joi.string().allow(null,''),
       deliveryAddress: Joi.array(),
       contactPerson: Joi.array(),
       isAnonymous: Joi.boolean(),

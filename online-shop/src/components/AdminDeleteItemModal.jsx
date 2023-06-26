@@ -74,7 +74,7 @@ const AdminDeleteItemModal = (props) => {
                 </FormControl>
               </Box>
               <div>
-                <button onClick={deleteButtonClick} className="bg-red-300 hover:bg-red-500 rounded-lg p-3 mt-5">
+                <button onClick={deleteButtonClick} className="bg-red1 hover:bg-red-500 rounded-lg p-3 mt-5">
                   Delete Item
                 </button>
               </div>

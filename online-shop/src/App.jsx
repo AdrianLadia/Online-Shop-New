@@ -102,7 +102,7 @@ function App() {
   const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
-  const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(true);
+  const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
 
   useEffect(() => {
     if (userdata != null ) {
@@ -222,7 +222,7 @@ function App() {
             setUserId(user.uid);
           } else {
 
-
+            console.log('user', user);
             async function createNewUser() {
               await cloudfirestore.createNewUser(
                 {
@@ -230,7 +230,7 @@ function App() {
                   name: user.displayName,
                   email: user.email,
                   emailVerified: user.emailVerified,
-                  phoneNumber: '',
+                  phoneNumber: user.phoneNumber,
                   deliveryAddress: [],
                   contactPerson: [],
                   isAnonymous: user.isAnonymous,
@@ -351,6 +351,22 @@ function App() {
     }
   }, [goToCheckoutPage]);
 
+  // Checks if userdata is incomplete if it is show update profile modal
+  useEffect(() => {
+    if (userdata) {
+      console.log(userdata);
+      if (userdata.name == null) {
+        setOpenProfileUpdaterModal(true);
+      }
+      if (userdata.email == null) {
+        setOpenProfileUpdaterModal(true);
+      }
+      if (userdata.phoneNumber == null || userdata.phoneNumber == '') {
+        setOpenProfileUpdaterModal(true);
+      }
+    }
+  }, [userdata]);
+
   const appContextValue = {
     cardSelected : cardSelected,
     setCardSelected : setCardSelected,
@@ -444,7 +460,8 @@ function App() {
             <AppContext.Provider value={appContextValue}>
               <NavBar />
               <Shop />
-              <ProfileUpdaterModal openProfileUpdaterModal={openProfileUpdaterModal} setOpenProfileUpdaterModal={setOpenProfileUpdaterModal} />
+              {userdata ? <ProfileUpdaterModal userdata={userdata} openProfileUpdaterModal={openProfileUpdaterModal} setOpenProfileUpdaterModal={setOpenProfileUpdaterModal} /> : null}
+              
             </AppContext.Provider>
           }
         />

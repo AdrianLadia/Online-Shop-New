@@ -18,26 +18,11 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { set } from 'date-fns';
 import TextField from '@mui/material/TextField';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+import {GiSmartphone} from 'react-icons/gi'
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  height: '20%',
-  transform: 'translate(-50%, -50%)',
-  width: '95%',
-  overflow: 'scroll',
-
-  '@media (min-width: 1024px)': {
-    width: '20%',
-  },
-
-  bgcolor: 'background.paper',
-  border: '2px solid #69b05c',
-  borderRadius: 3,
-  boxShadow: 24,
-  p: 4,
-};
+const ReactPhoneInput = PhoneInput.default ? PhoneInput.default : PhoneInput;
 
 const LoginButton = (props) => {
   const position = props.position;
@@ -45,8 +30,30 @@ const LoginButton = (props) => {
   const [openPhoneNumberModal, setOpenPhoneNumberModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showOTPInput, setShowOTPInput] = useState(false);
-  const [confirmObject, setConfirmObject] = useState(null); 
+  const [confirmObject, setConfirmObject] = useState(null);
   const [OTP, setOTP] = useState('');
+  const [height, setHeight] = useState('20%');
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    height: height,
+    transform: 'translate(-50%, -50%)',
+    width: '95%',
+    overflow: 'scroll',
+  
+    '@media (min-width: 1024px)': {
+      width: '20%',
+    },
+  
+    bgcolor: 'background.paper',
+    border: '2px solid #69b05c',
+    borderRadius: 3,
+    boxShadow: 24,
+    p: 4,
+  };
+
   let recaptchaVerifier = null;
   let handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
 
@@ -58,26 +65,8 @@ const LoginButton = (props) => {
 
   const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser } = useContext(AppContext);
 
-  // useEffect(() => {
-  //   if (captchaSolved) {
-  //     console.log('signInWithPhoneNumber')
-  //     signInWithPhoneNumber(auth, '+639178927206', recaptchaVerifier).then((confirmationResult) => {
-  //       // SMS sent. Prompt user to type the code from the message, then sign the
-  //       // user in with confirmationResult.confirm(code).
-  //       console.log('sms sent')
-  //       window.confirmationResult = confirmationResult;
-  //       console.log(confirmationResult)
-  //       // ...
-  //     }).catch((error) => {
-  //       console.log(error)
-  //       // ...
-  //     });
-  //   }
-  // }, [captchaSolved]);
-
   async function setUpRecaptcha(number) {
-    const recaptchaVerifier = new RecaptchaVerifier(
-      
+     recaptchaVerifier = new RecaptchaVerifier(
       'captcha',
       {
         callback: (response) => {
@@ -90,17 +79,43 @@ const LoginButton = (props) => {
     recaptchaVerifier.render();
     return signInWithPhoneNumber(auth, number, recaptchaVerifier);
   }
- 
+
+  function onPhoneNumberLogin() {
+    setAnchorEl(false);
+    setOpenPhoneNumberModal(true);
+  }
+
   async function getOTP() {
-    const response = await setUpRecaptcha('+639178927206');
+    setAnchorEl(false);
+    if (phoneNumber == '') {
+      alert('Please enter a valid phone number');
+      return;
+    }
+
+    if (phoneNumber.length < 10) {
+      alert('Please enter a valid phone number');
+      return;
+    }
+
+    console.log('+' + phoneNumber)
+    setHeight('40%')
+    const response = await setUpRecaptcha('+' + phoneNumber);
     if (response.verificationId) {
       setConfirmObject(response);
       setShowOTPInput(true);
+      
+      recaptchaVerifier.clear();
     }
   }
 
   async function verifyOTP() {
-    await confirmObject.confirm(OTP);
+    try {
+      await confirmObject.confirm(OTP);
+      setOpenPhoneNumberModal(false);
+    }
+    catch {
+      alert ('Invalid OTP')
+    }
   }
 
   async function signIn(signInProvider) {
@@ -109,13 +124,14 @@ const LoginButton = (props) => {
     let result;
     if (isGoogleChrome) {
       result = await signInWithPopup(auth, signInProvider);
+      return;
     }
     if (isAppleDevice) {
       result = await signInWithPopup(auth, signInProvider);
-    } else {
-      result = await signInWithRedirect(auth, signInProvider);
+      return;
     }
-    const user = result.user;
+
+    result = await signInWithRedirect(auth, signInProvider);
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -200,7 +216,7 @@ const LoginButton = (props) => {
           }}
           className="hover:bg-color10c"
         >
-          <FcGoogle className="mr-2" />
+          <FcGoogle className="mr-3 ml-0.5" />
           Login With Google
         </MenuItem>
         <MenuItem
@@ -209,16 +225,14 @@ const LoginButton = (props) => {
           }}
           className="hover:bg-color10c"
         >
-          <FaFacebook className="mr-2" />
+          <FaFacebook className="mr-3 ml-0.5" />
           Login With Facebook
         </MenuItem>
         <MenuItem
-          onClick={() => {
-            setOpenPhoneNumberModal(true);
-          }}
+          onClick={onPhoneNumberLogin}
           className="hover:bg-color10c"
         >
-          <FaFacebook className="mr-2" />
+          <GiSmartphone size={21} className="mr-2" />
           Login With Phone Number
         </MenuItem>
       </Menu>
@@ -232,24 +246,25 @@ const LoginButton = (props) => {
         >
           <Box sx={style}>
             {showOTPInput ? (
-              <div className='flex flex-col'>
-                <TextField
-                  onChange={(event) => setOTP(event.target.value)}
-                  label="Input OTP"
-                  variant="outlined"
-                />
-                <Button sx={{marginTop:2}} onClick={verifyOTP}>Submit OTP</Button>
+              <div className="flex flex-col">
+                <Typography id="modal-modal-title" variant="h8" component="h8" sx={{marginBottom:1.5}}>
+                  We have sent an OTP to your phone number. Check and input the OTP below.
+                </Typography>
+                <TextField onChange={(event) => setOTP(event.target.value)} label="Input OTP" variant="outlined" />
+                <div className='mt-5 flex justify-center'>
+                  <button className='rounded-lg p-3 bg-color10b text-white ml-2' onClick={verifyOTP}>
+                    Submit OTP
+                  </button>
+                </div>
               </div>
             ) : (
-              <>
-                <TextField
-                  onChange={(event) => setPhoneNumber(event.target.value)}
-                  label="Outlined"
-                  variant="outlined"
-                />
-                <Button onClick={getOTP}>Sign In</Button>
+              <div className='flex flex-col'>
+                <ReactPhoneInput country={'ph'} value={phoneNumber} onChange={setPhoneNumber} />
+                <div className='flex justify-center mt-5 mb-5'>
+                  <button className='rounded-lg p-3 bg-color10b text-white ml-2' onClick={getOTP}>Sign In</button>
+                </div>
                 <div id="captcha" />
-              </>
+              </div>
             )}
           </Box>
         </Modal>

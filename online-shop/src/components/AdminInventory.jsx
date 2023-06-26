@@ -193,7 +193,7 @@ const AdminInventory = (props) => {
       <div className="flex flex-col gap-2 2xs:flex-row w-6/12 md:w-2/4 justify-evenly 2xs:mt-8 m-5 ">
         <button
           onClick={handleOpenDeleteItem}
-          className="bg-red-600 hover:bg-red-400 text-white rounded-lg p-3 font-bold"
+          className="bg-red1 hover:bg-red-400 text-white rounded-lg p-3 font-bold"
         >
           Delete Item
         </button>
