@@ -13,6 +13,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
 import { FaHandPointDown } from 'react-icons/fa';
 import { Card, CardContent } from '@material-ui/core';
+import AppConfig from '../AppConfig';
 
 const ProductCard = (props) => {
   const [quantity, setQuantity] = useState('');
@@ -29,13 +30,12 @@ const ProductCard = (props) => {
   const ref = useRef(null);
   const showTutorial = props.showTutorial;
   const setShakeCartAnimation = props.setShakeCartAnimation;
-  const retailStocksAvailable = props.stocksAvailable;
+  const stocksAvailable = props.stocksAvailable;
   const retailAverageSalesPerDay = props.averageSalesPerDay;
   const isWholesale = props.isWholesale;
   const [imageLoading, setImageLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState('');
-
-  
+  const retailSafetyStock = new AppConfig().getRetailSafetyStock()
 
   useEffect(() => {
     setImageLoading(true);
@@ -86,7 +86,8 @@ const ProductCard = (props) => {
 
     function getStocksAvailable() {
       if (props.product.unit === 'Pack') {
-        return retailStocksAvailable;
+        console.log('retail stocks available', stocksAvailable)
+        return stocksAvailable;
       }
       if (props.product.unit != 'Pack') {
         return props.product.stocksAvailable;
@@ -109,6 +110,10 @@ const ProductCard = (props) => {
         return;
       }
     } else {
+      console.log('total order', totalOrder)
+      console.log('stocks available', getStocksAvailable())
+      console.log('average sales per day', getAverageSalesPerDay())
+      console.log(calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true))
        if (
         totalOrder >
         calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
@@ -147,7 +152,7 @@ const ProductCard = (props) => {
 
   React.useEffect(() => {
     if (product.unit === 'Pack') {
-      if (retailStocksAvailable <= safetyStock) {
+      if (stocksAvailable <= retailSafetyStock) {
         setOutOfStock(true);
       }
     }
@@ -156,8 +161,17 @@ const ProductCard = (props) => {
         setOutOfStock(true);
       }
     }
-    if (product.stocksAvailable <= 50 + safetyStock && product.unit != 'pack') {
-      setLowStock(true);
+    if (product.unit == 'Pack') {
+      console.log(stocksAvailable)
+      if (stocksAvailable <= 50) {
+        setLowStock(true);
+        console.log('low stock')
+      }
+    }
+    else {
+      if (product.stocksAvailable <= 50 + safetyStock && product.unit) {
+        setLowStock(true);
+      }
     }
   }, [product.stocksAvailable]);
 
@@ -306,14 +320,14 @@ const ProductCard = (props) => {
                 </div>
               ) : (
                 <>
-                  {lowstock === true && product.unit != 'Pack' ? (
+                  {lowstock === true ? (
                     <div className="flex flex-row h-1/12">
                       <Typography fontSize={responsiveFont()} color="red">
                         Stocks left
                       </Typography>
                       <span className="flex h-3 w-3 ml-1 ">
                         <span className="inline-flex items-center justify-center mt-0 2xl:mt-1 py-2 px-1.5 text-xs font-semibold text-white bg-red-600 rounded-full">
-                          {props.product.stocksAvailable - safetyStock}
+                          {(product.unit == 'Pack') ? product.stocksAvailable - retailSafetyStock : product.stocksAvailable - safetyStock}
                         </span>
                       </span>
                     </div>

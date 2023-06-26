@@ -5,6 +5,7 @@ class AppConfig {
         this.isDevEnvironment = false
         this.isPaymentSandBox = true
         this.noVat = true
+        this.retailSafetyStock = 2
     }
 
     getIsDevEnvironment() {
@@ -17,6 +18,10 @@ class AppConfig {
 
     getNoVat() {
         return this.noVat
+    }
+
+    getRetailSafetyStock() {
+        return this.retailSafetyStock
     }
 }
 

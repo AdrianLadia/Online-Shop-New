@@ -100,19 +100,18 @@ const ProductList = (props) => {
             let product_chosen = null
             if (product.unit !== 'Bale') {
               product_chosen = product
-              products.map((p, index) => {
+              products.map((p, index) => {    
                 stocksAvailable = p.stocksAvailable;
               
                 if (p.itemId == product.parentProductID) {
-                  console.log(p.itemId)
-                  console.log(p.averageSalesPerDay)
+
                   averageSalesPerDay = p.averageSalesPerDay
                 }
               });
             }
             return (
               <div className='flex justify-evenly'>
-                <ProductCard id={product.itemId} addtocart={AddToCart} product={product} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
+                <ProductCard id={product.itemId} addtocart={AddToCart} product={product} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={product.stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
               </div>
             );
           })

@@ -60,7 +60,7 @@ class businessCalculations {
     // FUNCTION
     let stocksAvailableLessSafetyStock
     if (isRetail) {
-      stocksAvailableLessSafetyStock = stocksAvailable - 10
+      stocksAvailableLessSafetyStock = stocksAvailable - new AppConfig().getRetailSafetyStock()
     }
     else {
       stocksAvailableLessSafetyStock = stocksAvailable - this.getSafetyStock(averageSalesPerDay);
