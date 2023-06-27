@@ -14,6 +14,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import AppContext from '../AppContext';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import businessCalculations from '../../utils/businessCalculations';
+import ImageUploadButton from './ImageComponents/ImageUploadButton';
 
 // Style for Modal
 const style = {
@@ -35,7 +36,7 @@ const style = {
 };
 
 const AdminAddItemModal = (props) => {
-  const { firestore, products } = React.useContext(AppContext);
+  const { firestore, products, storage,categories } = React.useContext(AppContext);
   const { width, height } = useWindowDimensions();
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
@@ -73,17 +74,17 @@ const AdminAddItemModal = (props) => {
   const [manufactured, setManufactured] = React.useState(false);
   const [cbm, setCbm] = React.useState('');
   const [machines, setMachines] = React.useState([]);
-  const [machineFormat,setMachineFormat] = React.useState('');
+  const [machineFormat, setMachineFormat] = React.useState('');
+
+  console.log('categories', categories);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
-
       setMachines(machines);
     });
   }, []);
 
   const cloudfirestore = new cloudFirestoreDb();
-  const categories = props.categories;
   const businesscalculations = new businessCalculations();
 
   async function addItem() {
@@ -141,7 +142,6 @@ const AdminAddItemModal = (props) => {
     );
 
     if (isThisRetail) {
-
       await firestore.createProduct(
         {
           itemId: itemID + '-RET',
@@ -182,14 +182,13 @@ const AdminAddItemModal = (props) => {
     setOpenAddCategoryModal(true);
   }
 
-  function createMachineFormat(checked,machine) {
+  function createMachineFormat(checked, machine) {
     if (checked) {
-      const newMachineFormat = machineFormat + machine.machineCode + '-'
-      setMachineFormat(newMachineFormat)
-    }
-    else {
-      const newMachineFormat = machineFormat.replace('-' + machine.machineCode, '')
-      setMachineFormat(newMachineFormat)
+      const newMachineFormat = machineFormat + machine.machineCode + '-';
+      setMachineFormat(newMachineFormat);
+    } else {
+      const newMachineFormat = machineFormat.replace('-' + machine.machineCode, '');
+      setMachineFormat(newMachineFormat);
     }
   }
 
@@ -201,361 +200,441 @@ const AdminAddItemModal = (props) => {
   function onRetailCheckBoxClick(result) {
     if (result) {
       setIsThisRetail(true);
-    }
-    else {
+    } else {
       setIsThisRetail(false);
     }
   }
 
+  function setImageURL1(imageLink) {
+    setImageLink1(imageLink);
+  }
+
   return (
-    <div>
-      <Modal
-        open={props.open}
-        onClose={props.handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <div className="flex flex-col space-y-5 overflow-y-auto h-full w-full">
-            <TextField
-              required
-              id="outlined-basic123"
-              label="Item ID"
-              variant="outlined"
-              sx={{ width: '90%', marginTop: 3 }}
-              onChange={(event) => setItemID(event.target.value)}
-            />
-            <TextField
-              required
-              id="outlined-basic"
-              label="Item Name"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setItemName(event.target.value)}
-            />
-            <TextField
-              required
-              id="outlined-basic"
-              label="Price"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setPrice(event.target.value)}
-            />
-            <TextField
-              required
-              id="outlined-basic"
-              label="Weight"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setWeight(event.target.value)}
-            />
-            <TextField
-              required
-              id="outlined-basic"
-              label="Starting Inventory"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setStartingInventory(event.target.value)}
-            />
+    <div className="flex justify-center">
+      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl::w-1/2 ">
+        <TextField
+          required
+          id="outlined-basic123"
+          label="Item ID"
+          variant="outlined"
+          sx={{ marginTop: 3 }}
+          onChange={(event) => setItemID(event.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-basic"
+          label="Item Name"
+          variant="outlined"
+          onChange={(event) => setItemName(event.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-basic"
+          label="Price"
+          variant="outlined"
+          onChange={(event) => setPrice(event.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-basic"
+          label="Weight"
+          variant="outlined"
+          onChange={(event) => setWeight(event.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-basic"
+          label="Starting Inventory"
+          variant="outlined"
+          onChange={(event) => setStartingInventory(event.target.value)}
+        />
 
-            <TextField
-              required
-              id="outlined-basic"
-              label="Pieces"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setPieces(parseFloat(event.target.value))}
-            />
+        <TextField
+          required
+          id="outlined-basic"
+          label="Pieces"
+          variant="outlined"
+          onChange={(event) => setPieces(parseFloat(event.target.value))}
+        />
 
-            <TextField
-              required
-              id="outlined-basic"
-              label="Packs Per Box"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setPacksPerBox(parseFloat(event.target.value))}
-              typeof="number"
-            />
-            <TextField
-              required
-              id="outlined-basic"
-              label="Pieces Per Pack"
-              variant="outlined"
-              sx={{ width: '90%', mt: 3 }}
-              onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
-              typeof="number"
-            />
+        <TextField
+          required
+          id="outlined-basic"
+          label="Packs Per Box"
+          variant="outlined"
+          onChange={(event) => setPacksPerBox(parseFloat(event.target.value))}
+          typeof="number"
+        />
+        <TextField
+          required
+          id="outlined-basic"
+          label="Pieces Per Pack"
+          variant="outlined"
+          sx={{ mt: 3 }}
+          onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
+          typeof="number"
+        />
 
-            {/* <TextField
+        {/* <TextField
               id="outlined-basic"
               label="Unit"
               variant="outlined"
-              sx={{ width: '90%' }}
+              
               onChange={(event) => setUnit(event.target.value)}
               
             /> */}
-            <Box sx={{ width: 550 }}>
-              <FormControl fullWidth>
-                <InputLabel required={true} id="demo-simple-select-label">
-                  Unit
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={unit}
-                  label="Unit"
-                  onChange={(event) => setUnit(event.target.value)}
-                >
-                  <MenuItem value={'Bale'}>Bale</MenuItem>
-                  <MenuItem value={'Box'}>Box</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+        <Box sx={{ width: '100%' }}>
+          <FormControl fullWidth>
+            <InputLabel required={true} id="demo-simple-select-label">
+              Unit
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={unit}
+              label="Unit"
+              onChange={(event) => setUnit(event.target.value)}
+            >
+              <MenuItem value={'Bale'}>Bale</MenuItem>
+              <MenuItem value={'Box'}>Box</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth>
-                <InputLabel required={true} id="demo-simple-select-label">
-                  Did we manufacture this product?
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={manufactured}
-                  label="manufactured"
-                  onChange={(event) => setManufactured(event.target.value)}
-                >
-                  <MenuItem value={true}>Yes</MenuItem>
-                  <MenuItem value={false}>No</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+        <Box sx={{ minWidth: 120 }}>
+          <FormControl fullWidth>
+            <InputLabel required={true} id="demo-simple-select-label">
+              Did we manufacture this product?
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={manufactured}
+              label="manufactured"
+              onChange={(event) => setManufactured(event.target.value)}
+            >
+              <MenuItem value={true}>Yes</MenuItem>
+              <MenuItem value={false}>No</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
-            {manufactured ? (
-              <>
-                Which machines can produce this product?
-                {machines.map((machine) => {
+        {manufactured ? (
+          <>
+            Which machines can produce this product?
+            {machines.map((machine) => {
+              return (
+                <div className="flex flex-row">
+                  <Checkbox
+                    onClick={() => {
+                      createMachineFormat(event.target.checked, machine);
+                    }}
+                  />
+                  <Typography sx={{ marginTop: 1 }}> {machine.machineName}</Typography>
+                </div>
+              );
+            })}
+          </>
+        ) : null}
+
+        <TextField
+          id="outlined-basic"
+          label="Cubic Meter"
+          variant="outlined"
+          sx={{ mt: 3 }}
+          onChange={(event) => setCbm(parseFloat(event.target.value))}
+          typeof="number"
+        />
+
+        <TextField
+          id="outlined-basic"
+          label="Color"
+          variant="outlined"
+          onChange={(event) => setColor(event.target.value)}
+        />
+        <TextField
+          id="outlined-basic"
+          label="Material"
+          variant="outlined"
+          onChange={(event) => setMaterial(event.target.value)}
+        />
+        <TextField
+          id="outlined-basic"
+          label="Size"
+          variant="outlined"
+          onChange={(event) => setSize(event.target.value)}
+        />
+        <TextField
+          id="outlined-basic"
+          label="Brand"
+          variant="outlined"
+          onChange={(event) => setBrand(event.target.value)}
+        />
+        <TextField
+          id="outlined-basic"
+          label="Box Dimensions"
+          variant="outlined"
+          onChange={(event) => setDimensions(event.target.value)}
+        />
+        <TextField
+          id="outlined-basic"
+          label="Description"
+          variant="outlined"
+          onChange={(event) => setDescription(event.target.value)}
+        />
+
+        <div className="flex flex-row">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel required={true} id="demo-simple-select-label">
+                Category
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={category}
+                label="Category"
+                onChange={(event) => setCategory(event.target.value)}
+              >
+                {categories.map((c) => {
+                  if (c != 'Favorites') {
+                    return <MenuItem value={c}>{c}</MenuItem>;
+                  }
+                }
                   
-                  return (
-                    <div className='flex flex-row'>
-
-                      <Checkbox
-                        onClick={() => {
-                          createMachineFormat(event.target.checked,machine);
-                        }}
-                      />
-                      <Typography sx={{ marginTop: 1 }}> {machine.machineName}</Typography>
-                    </div>
-                  );
-                })}
-              </>
-            ) : null}
-
-            <TextField
-              id="outlined-basic"
-              label="Cubic Meter"
-              variant="outlined"
-              sx={{ width: '90%', mt: 3 }}
-              onChange={(event) => setCbm(parseFloat(event.target.value))}
-              typeof="number"
-            />
-
-            <TextField
-              id="outlined-basic"
-              label="Color"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setColor(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Material"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setMaterial(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Size"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setSize(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Brand"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setBrand(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Box Dimensions"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setDimensions(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Description"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setDescription(event.target.value)}
-            />
-
-            <div className="flex flex-row">
-              <Box sx={{ minWidth: 120 }}>
-                <FormControl fullWidth>
-                  <InputLabel required={true} id="demo-simple-select-label">
-                    Category
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={category}
-                    label="Category"
-                    onChange={(event) => setCategory(event.target.value)}
-                  >
-                    {categories.map((c) => (
-                      <MenuItem value={c.category}>{c.category}</MenuItem>
-                    ))}
-                    {/* <MenuItem value={10}>Ten</MenuItem>
+                )}
+                {/* <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem> */}
-                  </Select>
-                </FormControl>
-              </Box>
-              <button onClick={onAddCategoryClick} className="ml-5 bg-blue-500 text-white px-2 rounded-lg h-full">
-                Add Category
-              </button>
-            </div>
-            <AddCategoryModal
-              openAddCategoryModal={openAddCategoryModal}
-              setOpenAddCategoryModal={setOpenAddCategoryModal}
-              setRefresh={props.setRefresh}
-              refresh={props.refresh}
-            />
+              </Select>
+            </FormControl>
+          </Box>
+          <button onClick={onAddCategoryClick} className="ml-5 bg-blue-500 text-white px-2 rounded-lg h-full">
+            Add Category
+          </button>
+        </div>
+        <AddCategoryModal
+          openAddCategoryModal={openAddCategoryModal}
+          setOpenAddCategoryModal={setOpenAddCategoryModal}
+          setRefresh={props.setRefresh}
+          refresh={props.refresh}
+        />
 
-            <div className="flex flex-row">
-              <Checkbox
-                onChange={(event) => onRetailCheckBoxClick(event.target.checked)}
-              />
-              <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
-            </div>
+        <div className="flex flex-row">
+          <Checkbox onChange={(event) => onRetailCheckBoxClick(event.target.checked)} />
+          <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
+        </div>
 
-            {isThisRetail ? (
-              // <TextField
-              //   id="outlined-basic"
-              //   label="Parent Product ID (if for retail)"
-              //   variant="outlined"
-              //   sx={{ width: "90%" }}
-              //   onChange={(event) => setParentProductID(event.target.value)}
-              // />
-              <div>
-               
-                <TextField
-                  required
-                  id="outlined-basic"
-                  label="Retail Price"
-                  variant="outlined"
-                  sx={{ width: '90%', mt: 1 }}
-                  onChange={(event) => setRetailPrice(parseFloat(event.target.value))}
-                />
-                <TextField
-                  required
-                  id="outlined-basic"
-                  label="Pack Weight"
-                  variant="outlined"
-                  sx={{ width: '90%', mt: 3 }}
-                  onChange={(event) => setPackWeight(parseFloat(event.target.value))}
-                />
-              </div>
-            ) : null}
-
-            <div className="flex flex-row">
-              <Checkbox
-                onClick={() => {
-                  setIsCustomized(!isCustomized);
-                }}
-              />
-              <Typography sx={{ marginTop: 1 }}> Is this Customized?</Typography>
-            </div>
-
+        {isThisRetail ? (
+          // <TextField
+          //   id="outlined-basic"
+          //   label="Parent Product ID (if for retail)"
+          //   variant="outlined"
+          //   sx={{ width: "90%" }}
+          //   onChange={(event) => setParentProductID(event.target.value)}
+          // />
+          <div>
             <TextField
+              required
               id="outlined-basic"
-              label="Image Link 1"
+              label="Retail Price"
               variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink1(event.target.value)}
+              sx={{ mt: 1 }}
+              onChange={(event) => setRetailPrice(parseFloat(event.target.value))}
             />
             <TextField
+              required
               id="outlined-basic"
-              label="Image Link 2"
+              label="Pack Weight"
               variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink2(event.target.value)}
+              sx={{ mt: 3 }}
+              onChange={(event) => setPackWeight(parseFloat(event.target.value))}
             />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 3"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink3(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 4"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink4(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 5"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink5(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 6"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink6(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 7"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink7(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 8"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink8(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 9"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink9(event.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Image Link 10"
-              variant="outlined"
-              sx={{ width: '90%' }}
-              onChange={(event) => setImageLink10(event.target.value)}
-            />
-            <Button className="w-2/5 lg:w-1/5" sx={{ height: 100 }} variant="contained" onClick={addItem}>
-              Add Item
-            </Button>
           </div>
-        </Box>
-      </Modal>
+        ) : null}
+
+        <div className="flex flex-row">
+          <Checkbox
+            onClick={() => {
+              setIsCustomized(!isCustomized);
+            }}
+          />
+          <Typography sx={{ marginTop: 1 }}> Is this Customized?</Typography>
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink1'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink1}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 1"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink1}
+            onChange={(event) => setImageLink1(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink2'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink2}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 2"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink2}
+            onChange={(event) => setImageLink2(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink3'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink3}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 3"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink3}
+            onChange={(event) => setImageLink3(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink4'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink4}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 4"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink4}
+            onChange={(event) => setImageLink4(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink5'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink5}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 5"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink5}
+            onChange={(event) => setImageLink5(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink6'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink6}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 6"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink6}
+            onChange={(event) => setImageLink6(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink7'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink7}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 7"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink7}
+            onChange={(event) => setImageLink7(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink8'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink8}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 8"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink8}
+            onChange={(event) => setImageLink8(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink9'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink9}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 9"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink9}
+            onChange={(event) => setImageLink9(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'imageLink10'}
+            folderName={'ProductImages'}
+            storage={storage}
+            onUploadFunction={setImageLink10}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 10"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink10}
+            onChange={(event) => setImageLink10(event.target.value)}
+          />
+        </div>
+        <Button className="w-2/5 lg:w-1/5" sx={{ height: 50,marginBottom:10 }} variant="contained" onClick={addItem}>
+          Add Item
+        </Button>
+      </div>
     </div>
   );
 };

@@ -33,15 +33,17 @@ const AdminCreatePaymentTable = () => {
         const reference = data.orderReference;
         const userId = data.userId;
         const userName = data.userName
+        const paymentMethod = data.paymentMethod;
         
 
         if (data.status === 'pending') {
-          paymentData.push({ link: link, reference: reference, userId: userId,userName:userName });
+          paymentData.push({ link: link, reference: reference, userId: userId,userName:userName, paymentMethod: paymentMethod });
           photoLink.push({link: link})
         }
       });
       setPaymentsData(paymentData);
       setLink(photoLink)
+     
     });
   }
 
@@ -77,6 +79,9 @@ const AdminCreatePaymentTable = () => {
               <TableCell align="right" className="text-white">
                 Customer Name
               </TableCell>
+              <TableCell align="right" className="text-white">
+                Payment Method
+              </TableCell>
               <TableCell align="center" className="text-white">
                 Actions
               </TableCell>
@@ -87,7 +92,7 @@ const AdminCreatePaymentTable = () => {
           </TableHead>
           <TableBody>
             {paymentsData.map((data) => (
-              <AdminCreatePaymentTableRow paymentsData={paymentsData} setPaymentsData={setPaymentsData} proofOfPaymentLink={data.link} orderReference={data.reference} userId={data.userId} userName={data.userName}/>
+              <AdminCreatePaymentTableRow paymentsData={paymentsData} setPaymentsData={setPaymentsData} proofOfPaymentLink={data.link} orderReference={data.reference} userId={data.userId} userName={data.userName} paymentMethod={data.paymentMethod}/>
             ))}
           </TableBody>
         </Table>

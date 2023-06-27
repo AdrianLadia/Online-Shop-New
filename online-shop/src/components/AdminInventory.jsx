@@ -52,7 +52,7 @@ function createData(
 const AdminInventory = (props) => {
   const { width, height } = useWindowDimensions();
   const [openAddItem, setOpenAddItem] = React.useState(false);
-  const handleOpenAddItem = () => setOpenAddItem(true);
+  const handleOpenAddItem = () => setSelectedMenu('Add Item');
   const handleCloseAddItem = () => setOpenAddItem(false);
 
   const [openDeleteItem, setOpenDeleteItem] = React.useState(false);
@@ -62,6 +62,7 @@ const AdminInventory = (props) => {
   const [openEditItem, setOpenEditItem] = React.useState(false);
   const handleOpenEditItem = () => setOpenEditItem(true);
   const handleCloseEditItem = () => setOpenEditItem(false);
+  const setSelectedMenu = props.setSelectedMenu;
   const rows = [];
 
   const refresh = props.refresh;
@@ -211,13 +212,13 @@ const AdminInventory = (props) => {
         </button>
       </div>
       {/* ADD ITEM MODAL */}
-      <AdminAddItemModal
+      {/* <AdminAddItemModal
         open={openAddItem}
         handleClose={handleCloseAddItem}
         categories={categories}
         refresh={refresh}
         setRefresh={setRefresh}
-      />
+      /> */}
       {/* DELETE ITEM MODAL */}
       <AdminDeleteItemModal
         open={openDeleteItem}
