@@ -42,6 +42,7 @@ function App() {
   // add captcha for phone auth
 
 
+
   // Get Storage
   const storage = getStorage(app);
 
@@ -103,6 +104,12 @@ function App() {
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
+
+  const averageTotalSales = firestore.readAllDataFromCollection('Analytics').then((data) => {
+    console.log(data)
+  }
+  );
+
 
   useEffect(() => {
     if (userdata != null ) {
