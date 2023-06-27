@@ -101,7 +101,7 @@ const CartModal = (props) => {
                   <button
                   id='clearCartButton'
                     onClick={clearCart}
-                    className="bg-red1h-10 mt-5 hover:bg-red-400 p-2 rounded-lg text-white "
+                    className="bg-red1h-10 mt-5 hover:bg-red-400 bg-red1 p-2 rounded-lg text-white "
                   >
                     Clear Cart
                   </button>

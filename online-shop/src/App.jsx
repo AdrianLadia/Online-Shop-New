@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
-import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, connectAuthEmulator} from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
@@ -29,6 +29,7 @@ import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import {doc, getDoc} from 'firebase/firestore';
+import ProfileUpdaterModal from './components/ProfileUpdaterModal';
 
 const devEnvironment = true;
 
@@ -38,6 +39,9 @@ function App() {
   const app = firebase.initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
+  // add captcha for phone auth
+
+
   // Get Storage
   const storage = getStorage(app);
 
@@ -90,6 +94,7 @@ function App() {
   const [isAffiliate, setIsAffiliate] = useState(false)
   const [isAppleDevice, setIsAppleDevice] = useState(false)
   const [isAndroidDevice, setIsAndroidDevice] = useState(false)
+  const [isGoogleChrome,setIsGoogleChrome] = useState(false)
   const [cardSelected,setCardSelected] = useState(null)
   const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
   const [changeCard, setChangeCard] = useState(false);
@@ -97,7 +102,7 @@ function App() {
   const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
-
+  const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
 
   useEffect(() => {
     if (userdata != null ) {
@@ -166,6 +171,7 @@ function App() {
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
     setIsAndroidDevice(/android/.test(userAgent));
+    setIsGoogleChrome(/chrome/.test(userAgent));
   }, []);
 
   // GET USER BROWSER
@@ -216,7 +222,7 @@ function App() {
             setUserId(user.uid);
           } else {
 
-
+            console.log('user', user);
             async function createNewUser() {
               await cloudfirestore.createNewUser(
                 {
@@ -224,7 +230,7 @@ function App() {
                   name: user.displayName,
                   email: user.email,
                   emailVerified: user.emailVerified,
-                  phoneNumber: '',
+                  phoneNumber: user.phoneNumber,
                   deliveryAddress: [],
                   contactPerson: [],
                   isAnonymous: user.isAnonymous,
@@ -269,6 +275,18 @@ function App() {
     }
     readAllProductsForOnlineStore();
   }, []);
+
+  useEffect(() => {
+    if (userdata) {
+      if (userdata.name == null) {
+
+      } 
+      if (userdata.name != null) {
+        setUserLoaded(true);
+        setUserState('user');
+      }
+    }
+  }, [userdata]);
 
   useEffect(() => {
     // FLOW FOR GUEST LOGIN
@@ -332,6 +350,22 @@ function App() {
       });
     }
   }, [goToCheckoutPage]);
+
+  // Checks if userdata is incomplete if it is show update profile modal
+  useEffect(() => {
+    if (userdata) {
+      console.log(userdata);
+      if (userdata.name == null) {
+        setOpenProfileUpdaterModal(true);
+      }
+      if (userdata.email == null) {
+        setOpenProfileUpdaterModal(true);
+      }
+      if (userdata.phoneNumber == null || userdata.phoneNumber == '') {
+        setOpenProfileUpdaterModal(true);
+      }
+    }
+  }, [userdata]);
 
   const appContextValue = {
     cardSelected : cardSelected,
@@ -406,6 +440,7 @@ function App() {
     unreadCustomerServiceMessages : unreadCustomerServiceMessages,
     setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
     isAndroidDevice : isAndroidDevice,
+    isGoogleChrome : isGoogleChrome,
   };
 
   return (
@@ -425,6 +460,8 @@ function App() {
             <AppContext.Provider value={appContextValue}>
               <NavBar />
               <Shop />
+              {userdata ? <ProfileUpdaterModal userdata={userdata} openProfileUpdaterModal={openProfileUpdaterModal} setOpenProfileUpdaterModal={setOpenProfileUpdaterModal} /> : null}
+              
             </AppContext.Provider>
           }
         />

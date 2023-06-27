@@ -4,9 +4,12 @@
     "chart.js": "^4.3.0",
     "force": "^0.0.3",
     "google-fonts-loader": "^1.0.2",
+    "install": "^0.13.0",
+    "npm": "^9.7.2",
     "react-chartjs-2": "^5.2.0",
     "react-custom-scrollbars": "^4.2.1",
     "react-geocode": "^0.2.3",
+    "react-phone-input-2": "^2.15.1",
     "react-spinners": "^0.13.8",
     "typeface-poppins": "^1.1.13"
   }

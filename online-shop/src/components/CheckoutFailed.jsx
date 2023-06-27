@@ -23,7 +23,7 @@ const CheckoutFailed = () => {
           <p className="mt-2 text-gray-600">Please try again or contact our support team for assistance.</p>
         </div>
         <button
-          className="mt-6 bg-red-500 text-white w-full py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+          className="mt-6 bg-red1 text-white w-full py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           onClick={() => navigateTo('/')}
         >
           Back to Shop

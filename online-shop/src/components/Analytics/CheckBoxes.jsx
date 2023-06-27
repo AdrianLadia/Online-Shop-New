@@ -104,7 +104,7 @@ export const CheckBoxes = ({name, callback}) => {
                 <div className="col-span-2 grid gap-1 justify-items-center mt-2 ">
                   {customized === ""  && selectedOption === "" ?  <div> </div>  : 
                     <div className="flex"> 
-                        <button className="p-1  bg-red-400 border-2 text-xs border-red-600 rounded-lg hover:bg-red-300 " 
+                        <button className="p-1  bg-red1 border-2 text-xs border-red-600 rounded-lg hover:bg-red-300 " 
                         onClick={handleClear}>Clear All</button>    
                     </div>
                   }  

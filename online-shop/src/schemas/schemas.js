@@ -35,10 +35,10 @@ class schemas {
   static userSchema() {
     return Joi.object({
       uid: Joi.string().required(),
-      name: Joi.string(),
-      email: Joi.string(),
+      name: Joi.string().allow(null, ''),
+      email: Joi.string().allow(null, ''),
       emailVerified: Joi.boolean(),
-      phoneNumber: Joi.string().allow(''),
+      phoneNumber: Joi.string().allow(null,''),
       deliveryAddress: Joi.array(),
       contactPerson: Joi.array(),
       isAnonymous: Joi.boolean(),

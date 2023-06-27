@@ -90,7 +90,7 @@ const AccountMenu = (props) => {
               <Avatar sx={{ width: 36, height: 36, bgcolor: '#6bd0ff', justifyItems: 'end' }}>
                 <Typography color="white" sx={{ fontWeight: 600 }} className="flex justify-center items-center">
                   {userstate == 'userloaded' ? (
-                    <p className="mt-0.5">{userdata.name[0].toUpperCase()}</p>
+                    <p className="mt-0.5">{userdata.name ? userdata.name[0].toUpperCase() : '?'}</p>
                   ) : (
                     <ClipLoader size={20} color="#ffffff" />
                   )}
@@ -169,7 +169,7 @@ const AccountMenu = (props) => {
           </ListItemIcon>
           <span>Settings</span>
         </MenuItem>
-        <MenuItem id="logoutMenu" onClick={props.signout} className="hover:bg-red-400">
+        <MenuItem id="logoutMenu" onClick={props.signout} className="hover:bg-red1">
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

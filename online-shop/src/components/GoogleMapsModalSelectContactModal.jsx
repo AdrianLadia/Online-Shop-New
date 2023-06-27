@@ -44,7 +44,7 @@ const GoogleMapsModalSelectContactModal = (props) => {
               <button
                   id="closeModalButton"
                   onClick={props.handleClose}
-                  className="bg-red-500 hover:bg-red-800 p-2 rounded-full w-10 text-white"
+                  className="bg-red1 hover:bg-red-800 p-2 rounded-full w-10 text-white"
                   >X
               </button>
             </div>

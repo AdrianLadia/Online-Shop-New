@@ -199,7 +199,7 @@ const ProductCardModal = (props) => {
               {/* X BUTTON */}
               <button
                 onClick={props.closeModal}
-                className=" bg-red-500 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
+                className=" bg-red1 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
               >
                 X
               </button>
