@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import Divider from '@mui/material/Divider';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Timestamp } from 'firebase/firestore';
+import ImageSlider from "./ImageSlider";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -219,7 +220,8 @@ const ProductCardModal = (props) => {
                   </Typography>):null} 
                   
                 {/* IMAGE */}
-                  <ImageList
+                  <ImageSlider id={itemId} imageLinks={props.product.imageLinks}/>
+                  {/* <ImageList
                     className={classes.imageList}
                     cols={responsiveimagemodal()}
                     rowHeight="auto"
@@ -232,7 +234,7 @@ const ProductCardModal = (props) => {
                         </Paper>
                       </ImageListItem>
                     ))}
-                  </ImageList>
+                  </ImageList> */}
 
                   <Divider sx={{border:"1px solid lightgray"}} className="w-full mb-8 "/> 
 
