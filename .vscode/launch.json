@@ -11,7 +11,10 @@
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:5173",
             "webRoot": "${workspaceFolder}",
-            "debug.openDebug": "never"
+            "sourceMapPathOverrides": {
+                "webpack:///./src/*": "${workspaceFolder}/src/*"
+              }
+     
         }
 
     ]
