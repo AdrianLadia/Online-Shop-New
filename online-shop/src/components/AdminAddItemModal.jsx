@@ -158,7 +158,7 @@ const AdminAddItemModal = (props) => {
           color: color,
           material: material,
           size: size,
-          stocksAvailable: null,
+          stocksAvailable: 0,
           stocksOnHold: null,
           averageSalesPerDay: 0,
           parentProductID: itemID,
