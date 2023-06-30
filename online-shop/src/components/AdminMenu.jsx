@@ -21,7 +21,7 @@ import Divider from "@mui/material/Divider";
 import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
-import AdminAddItemModal from "./AdminAddItemModal";
+import AdminAddOrEditItem from "./AdminAddOrEditItem";
 
 const AdminMenu = () => {
   const {products, firestore,allUserData,setAllUserData,categories } = React.useContext(AppContext);
@@ -163,13 +163,13 @@ const AdminMenu = () => {
       <div>
         {/* {selectedMenu === 'Dashboard' && <AdminOrders users={users} />} */}
         {selectedMenu === 'Inventory' && (
-          <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} setSelectedMenu={setSelectedMenu}/>
+          <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} setSelectedMenu={setSelectedMenu} />
         )}
         {selectedMenu === 'Add Item' && (
-          <AdminAddItemModal products={products} categories={categories} refresh={refresh} setRefresh={setRefresh}/>
+          <AdminAddOrEditItem products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} addOrEditItem={'Add'} />
         )}
         {selectedMenu === 'Edit Item' && (
-          <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh}/>
+          <AdminAddOrEditItem products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} addOrEditItem={'Edit'}/>
         )}
 
         {selectedMenu === 'Create Payment' && <AdminCreatePayment users={allUserData} setUsers={setAllUserData} />}

@@ -91,6 +91,8 @@ const ProductCardModal = (props) => {
   const weight = props.product.weight;
   const unit = props.product.unit;
   const lengthOfImageList = props.product.imageLinks.length;
+  const piecesPerPack = props.product.piecesPerPack;
+  const packsPerBox = props.product.packsPerBox;
   const centerImage = lengthOfImageList === 1;
 
   const specs = {
@@ -102,6 +104,8 @@ const ProductCardModal = (props) => {
     dimensions: dimensions,
     weight: weight,
     unit: unit,
+    piecesPerPack: piecesPerPack,
+    packsPerBox: packsPerBox,
   };
 
   function onHeartClick() {

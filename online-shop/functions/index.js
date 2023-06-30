@@ -231,6 +231,8 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
           stocksAvailable: data.stocksAvailable,
           unit: data.unit,
           weight: data.weight,
+          packsPerBox: data.packsPerBox,
+          piecesPerPack: data.piecesPerPack,
         };
         products.push(productObject);
       });

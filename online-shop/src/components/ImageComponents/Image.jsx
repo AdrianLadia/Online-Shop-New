@@ -22,11 +22,15 @@ const Image = (props) => {
     const [isFullScreen, setIsFullScreen] = useState(false);
     const imageUrl = props.imageUrl;
     const className = props.className;
+    const onLoad = props.onLoad;
+    const divClassName = props.divClassName
   
     const handleClose = () => setIsFullScreen(false);
 
+    console.log(imageUrl)
+
     return (
-    <div>
+    <div className={divClassName}>
       {imageUrl && (
         <img
           onClick={() => {
@@ -35,6 +39,7 @@ const Image = (props) => {
           src={imageUrl}
           alt="Uploaded preview"
           className={className}
+          onLoad={onLoad}
         />
       )}
         <Modal

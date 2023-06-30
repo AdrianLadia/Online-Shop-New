@@ -221,7 +221,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     try {
       const response = await axios.request(`${this.url}readAllProductsForOnlineStore`);
       const toReturn = response.data;
-
       const toReturnSchema = Joi.array().items(
         Joi.object({
           averageSalesPerDay: Joi.number().required().allow(null),
@@ -242,6 +241,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           stocksAvailable: Joi.number().required().allow(null),
           unit: Joi.string().required(),
           weight: Joi.number().required(),
+          packsPerBox: Joi.number().allow(null),
+          piecesPerPack: Joi.number().allow(null),
         }).unknown(false)
       );
 
