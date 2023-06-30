@@ -645,33 +645,35 @@ class businessCalculations {
 
     const paymentMethodSelected = data.paymentMethodSelected;
 
-    if (['maya','visa','mastercard','gcash'].includes(paymentMethodSelected)) {
-      const fullName = data.fullName;
-      const firstName = fullName.split(' ')[0];
-      const lastName = fullName.split(' ')[1];
-      const eMail = data.eMail;
-      const phoneNumber = data.phoneNumber;
-      const totalPrice = data.grandTotal;
-      if (testing === false) {
-        PaymayaSdk(
-          data.setMayaRedirectUrl,
-          data.setMayaCheckoutId,
-          firstName,
-          lastName,
-          eMail,
-          phoneNumber,
-          totalPrice,
-          data.localDeliveryAddress,
-          data.addressText,
-          data.referenceNumber,
-          data.userId
-        );
-      }
-      else {
-        return paymentMethodSelected
-      } 
-    }
-    if (['bdo','unionbank','gcash'].includes(paymentMethodSelected)) {
+    // FOR MAYA WITH WEBHOOK
+    // I DISABLED THIS FEATURE BECAUSE MAYA TAKES SO LONG TO GIVE ME AN API KEY I WILL USE ANOTHER MAYA FEATURE INSTEAD
+    // if (['maya','visa','mastercard','gcash'].includes(paymentMethodSelected)) {
+    //   const fullName = data.fullName;
+    //   const firstName = fullName.split(' ')[0];
+    //   const lastName = fullName.split(' ')[1];
+    //   const eMail = data.eMail;
+    //   const phoneNumber = data.phoneNumber;
+    //   const totalPrice = data.grandTotal;
+    //   if (testing === false) {
+    //     PaymayaSdk(
+    //       data.setMayaRedirectUrl,
+    //       data.setMayaCheckoutId,
+    //       firstName,
+    //       lastName,
+    //       eMail,
+    //       phoneNumber,
+    //       totalPrice,
+    //       data.localDeliveryAddress,
+    //       data.addressText,
+    //       data.referenceNumber,
+    //       data.userId
+    //     );
+    //   }
+    //   else {
+    //     return paymentMethodSelected
+    //   } 
+    // }
+    if (['bdo','unionbank','maya','visa','mastercard','gcash'].includes(paymentMethodSelected)) {
       if (testing === false) {
         data.navigateTo('/checkout/proofOfPayment', {
           state: {

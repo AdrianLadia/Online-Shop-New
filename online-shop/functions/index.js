@@ -233,6 +233,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
           weight: data.weight,
           packsPerBox: data.packsPerBox,
           piecesPerPack: data.piecesPerPack,
+          boxImage : data.boxImage,
         };
         products.push(productObject);
       });

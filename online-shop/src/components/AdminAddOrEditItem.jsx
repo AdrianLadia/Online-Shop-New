@@ -15,6 +15,7 @@ import AppContext from '../AppContext';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import businessCalculations from '../../utils/businessCalculations';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
+import {CircularProgress} from '@mui/material';
 
 // Style for Modal
 const style = {
@@ -86,6 +87,8 @@ const AdminAddOrEditItem = (props) => {
   const [machines, setMachines] = React.useState([]);
   const [machineFormat, setMachineFormat] = React.useState('');
   const [selectedItemToEdit, setSelectedItemToEdit] = React.useState(null);
+  const [boxImage, setBoxImage] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   console.log('categories', categories);
 
@@ -99,6 +102,7 @@ const AdminAddOrEditItem = (props) => {
   const businesscalculations = new businessCalculations();
 
   async function addItem() {
+    setLoading(true);
     let imageLinks = [
       imageLink1,
       imageLink2,
@@ -147,6 +151,7 @@ const AdminAddOrEditItem = (props) => {
         cbm: cbm,
         manufactured: manufactured,
         machinesThatCanProduce: machineFormat,
+        boxImage: boxImage,
       },
       itemID,
       products
@@ -180,16 +185,18 @@ const AdminAddOrEditItem = (props) => {
           cbm: null,
           manufactured: manufactured,
           machinesThatCanProduce: machineFormat,
+          boxImage: boxImage,
         },
         itemID + '-RET',
         products
       );
     }
-
+    setLoading(false);
     props.setRefresh(!props.refresh);
   }
 
   async function editItem() {
+    setLoading(true);
     let imageLinks = [
       imageLink1,
       imageLink2,
@@ -228,10 +235,11 @@ const AdminAddOrEditItem = (props) => {
       piecesPerPack: piecesPerPack,
       packsPerBox: packsPerBox,
       cbm: cbm,
+      boxImage: boxImage,
     });
     await firestore.updateProduct(selectedItemToEdit + '-RET', {
       itemName: itemName,
-      unit: unit,
+      unit: 'Pack',
       price: retailPrice,
       description: description,
       weight: weight,
@@ -246,7 +254,12 @@ const AdminAddOrEditItem = (props) => {
       parentProductID: parentProductID,
       isCustomized: isCustomized,
       cbm: cbm,
+      boxImage: boxImage,
     });
+
+    props.setRefresh(!props.refresh);
+    setLoading(false);
+    alert(`${itemName} successfully updated`);
   }
 
   function onAddCategoryClick() {
@@ -311,8 +324,9 @@ const AdminAddOrEditItem = (props) => {
       setIsThisRetail(hasRetailVersion);
       setPacksPerBox(selectedItemDetails.packsPerBox);
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
+      setBoxImage(selectedItemDetails.boxImage);
 
-      console.log('selectedItemDetails.imageLinks', selectedItemDetails.imageLinks);
+      console.log('selectedItemDetails.imageLinks', selectedItemDetails);
 
       if (selectedItemDetails.imageLinks[0]) {
         setImageLink1(selectedItemDetails.imageLinks[0]);
@@ -679,7 +693,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink1'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink1}
           />
@@ -696,7 +710,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink2'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink2}
           />
@@ -713,7 +727,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink3'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink3}
           />
@@ -730,7 +744,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink4'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink4}
           />
@@ -747,7 +761,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink5'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink5}
           />
@@ -764,7 +778,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink6'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink6}
           />
@@ -781,7 +795,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink7'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink7}
           />
@@ -798,7 +812,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink8'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink8}
           />
@@ -815,7 +829,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink9'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink9}
           />
@@ -832,7 +846,7 @@ const AdminAddOrEditItem = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink10'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink10}
           />
@@ -845,14 +859,45 @@ const AdminAddOrEditItem = (props) => {
             onChange={(event) => setImageLink10(event.target.value)}
           />
         </div>
-        <Button
-          className="w-2/5 lg:w-1/5"
-          sx={{ height: 50, marginBottom: 10 }}
-          variant="contained"
-          onClick={addOrEditItem == 'Add Item' ? addItem : editItem}
-        >
-          Add Item
-        </Button>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'boxImage'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setBoxImage}
+          />
+          <TextField
+            id="outlined-basic"
+            label="boxImage"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={boxImage}
+            onChange={(event) => setBoxImage(event.target.value)}
+          />
+        </div>
+
+        {addOrEditItem == 'Add' ? (
+          <Button
+            className="w-2/5 lg:w-1/5"
+            sx={{ height: 50, marginBottom: 10 }}
+            variant="contained"
+            onClick={addItem}
+          >
+            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Add Item</> }
+          </Button>
+        ) : null}
+        {addOrEditItem == 'Edit' ? (
+          <Button
+            className="w-2/5 lg:w-1/5"
+            sx={{ height: 50, marginBottom: 10 }}
+            variant="contained"
+            onClick={editItem}
+            
+          >
+            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
+          </Button>
+        ) : null}
       </div>
     </div>
   );

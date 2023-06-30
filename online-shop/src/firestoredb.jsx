@@ -96,6 +96,7 @@ class firestoredb extends firestorefunctions {
       piecesPerPack : Joi.number(),
       packsPerBox : Joi.number(),
       cbm : Joi.number().allow('',null),
+      boxImage : Joi.string().uri().allow(null,''),
     }).unknown(false);
 
     try {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext,useState,useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import { Button, Divider, Typography } from '@mui/material';
 import CheckoutSummary from './CheckoutSummary';
@@ -18,38 +18,27 @@ const CheckoutProofOfPayment = (props) => {
   const datamanipulation = new dataManipulation();
   const { storage, cloudfirestore, userId, userdata, firestore } = useContext(AppContext);
   const location = useLocation();
-  const {
-    referenceNumber,
-    itemsTotal,
-    deliveryFee,
-    grandTotal,
-    vat,
-    rows,
-    area,
-    paymentMethodSelected,
-    date,
-  } = location.state;
+  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area, paymentMethodSelected, date } =
+    location.state;
   const orderDateObject = new Date(date);
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
   const dateNow = new Date();
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
   const navigateTo = useNavigate();
-  const [paymentMethods,setPaymentMethods] = useState([])
+  const [paymentMethods, setPaymentMethods] = useState([]);
 
-  console.log(date)
+  console.log(date);
 
   useEffect(() => {
-      firestore.readAllPaymentProviders().then((providers) => {
-    
-        setPaymentMethods(providers)
-      })
+    firestore.readAllPaymentProviders().then((providers) => {
+      setPaymentMethods(providers);
+    });
   }, []);
 
   let bankName;
   let accountName;
   let accountNumber;
-
-
+  let qrLink;
 
   if (paymentMethodSelected == 'bdo') {
     bankName = 'BDO';
@@ -65,6 +54,10 @@ const CheckoutProofOfPayment = (props) => {
     bankName = 'GCASH';
     accountName = 'ADRIAN LADIA';
     accountNumber = '0917-892-7206';
+  }
+
+  if (['maya', 'visa', 'mastercard', 'gcash'].includes(paymentMethodSelected)) {
+    qrLink = 'https://paymaya.me/starpack';
   }
 
   function onUpload(url) {
@@ -97,13 +90,26 @@ const CheckoutProofOfPayment = (props) => {
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
 
-            <p>Please send your payment to the following bank account:</p>
-            <div className="bg-gray-200 rounded p-4 my-4">
-              <Typography>Bank Name: {bankName}</Typography>
-              <Typography>Account Name: {accountName}</Typography>
-              <Typography>Account Number: {accountNumber}</Typography>
-            </div>
-            <p>Once you have completed the payment, please submit proof of payment using the button below.</p>
+            {bankName == null && qrLink != null ? (
+              <div className='mb-8'>
+              <p>Please scan QR code or click the payment link to send us a payment:</p>
+              <img src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55'></img>
+              <a  className=" ml-11 text-blue-600 underline hover:text-blue-800 visited:text-purple-600 " href={qrLink} target="_blank" rel="noopener noreferrer">{qrLink}</a>
+
+              </div>
+
+            ) : (
+              <>
+                <p>Please send your payment to the following bank account:</p>
+                <div className="bg-gray-200 rounded p-4 my-4">
+                  <Typography>Bank Name: {bankName}</Typography>
+                  <Typography>Account Name: {accountName}</Typography>
+                  <Typography>Account Number: {accountNumber}</Typography>
+                </div>
+              </>
+            )}
+
+            <p>Once you have completed the payment, please <strong>submit proof of payment using the button below or in My Orders Menu</strong>.</p>
 
             <Divider className="mt-5 mb-5"></Divider>
             {/* <CheckoutSummary/> */}
@@ -130,8 +136,8 @@ const CheckoutProofOfPayment = (props) => {
                 <CountdownTimer initialTime={dateDifference} />
               </div>
               <div className="flex justify-center mt-2">
-                <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
-                  Please upload your proof of payment within 24 hours.
+                <Typography variant="h7" sx={{ marginRight: 1 }}>
+                  If payment is not received within the time frame, your order will be cancelled.
                 </Typography>
               </div>
             </div>
@@ -146,12 +152,20 @@ const CheckoutProofOfPayment = (props) => {
             </div>
             <div className="flex justify-center mt-5">
               <button
-                onClick={() => navigateTo('/orderChat', { state: { orderReference: referenceNumber, isInquiry : false,backButtonRedirect:'/myorders/orderList' } })}
+                onClick={() =>
+                  navigateTo('/orderChat', {
+                    state: {
+                      orderReference: referenceNumber,
+                      isInquiry: false,
+                      backButtonRedirect: '/myorders/orderList',
+                    },
+                  })
+                }
                 variant="contained"
                 className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
               >
                 <HiChatBubbleLeftEllipsis />
-                <Typography sx={{marginLeft:1}} >Message us</Typography>
+                <Typography sx={{ marginLeft: 1 }}>Message us</Typography>
               </button>
             </div>
           </div>

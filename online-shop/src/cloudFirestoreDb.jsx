@@ -243,6 +243,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           weight: Joi.number().required(),
           packsPerBox: Joi.number().allow(null),
           piecesPerPack: Joi.number().allow(null),
+          boxImage: Joi.string().uri().allow('',null),
         }).unknown(false)
       );
 

@@ -82,6 +82,7 @@ class schemas {
       manufactured: Joi.boolean().required(),
       machinesThatCanProduce: Joi.string().allow(''),
       stocksLowestPoint: Joi.array(),
+      boxImage: Joi.string().allow('',null),
     }).unknown(false);
   }
 }
