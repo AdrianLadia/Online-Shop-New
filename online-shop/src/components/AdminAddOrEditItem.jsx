@@ -117,7 +117,7 @@ const AdminAddOrEditItem = (props) => {
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
-    if (piecesPerPack * packsPerBox !== pieces) {
+    if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
       alert('Pieces per pack * Packs per box must be equal to total pieces');
       return;
     }
@@ -127,14 +127,14 @@ const AdminAddOrEditItem = (props) => {
         itemId: itemID,
         itemName: itemName,
         unit: unit,
-        price: price,
+        price: parseFloat(price),
         description: description,
-        weight: weight,
+        weight: parseFloat(weight),
         dimensions: dimensions,
         category: category,
         imageLinks: filteredimageLinks,
         brand: brand,
-        pieces: pieces,
+        pieces: parseInt(pieces),
         color: color,
         material: material,
         size: size,
@@ -146,8 +146,8 @@ const AdminAddOrEditItem = (props) => {
         forOnlineStore: true,
         isCustomized: isCustomized,
         stocksIns: [],
-        piecesPerPack: piecesPerPack,
-        packsPerBox: packsPerBox,
+        piecesPerPack: parseInt(piecesPerPack),
+        packsPerBox: parseInt(packsPerBox),
         cbm: cbm,
         manufactured: manufactured,
         machinesThatCanProduce: machineFormat,
@@ -163,14 +163,14 @@ const AdminAddOrEditItem = (props) => {
           itemId: itemID + '-RET',
           itemName: itemName,
           unit: 'Pack',
-          price: retailPrice,
+          price: parseFloat(retailPrice),
           description: description,
-          weight: packWeight,
+          weight: parseFloat(packWeight),
           dimensions: dimensions,
           category: category,
           imageLinks: filteredimageLinks,
           brand: brand,
-          pieces: piecesPerPack,
+          pieces: parseInt(piecesPerPack),
           color: color,
           material: material,
           size: size,
@@ -219,41 +219,41 @@ const AdminAddOrEditItem = (props) => {
     await firestore.updateProduct(selectedItemToEdit, {
       itemName: itemName,
       unit: unit,
-      price: price,
+      price: parseFloat(price),
       description: description,
-      weight: weight,
+      weight: parseFloat(weight),
       dimensions: dimensions,
       category: category,
       imageLinks: filteredimageLinks,
       brand: brand,
-      pieces: pieces,
+      pieces: parseInt(pieces),
       color: color,
       material: material,
       size: size,
       parentProductID: parentProductID,
       isCustomized: isCustomized,
-      piecesPerPack: piecesPerPack,
-      packsPerBox: packsPerBox,
-      cbm: cbm,
+      piecesPerPack: parseInt(piecesPerPack),
+      packsPerBox: parseInt(packsPerBox),
+      cbm: parseFloat(cbm),
       boxImage: boxImage,
     });
     await firestore.updateProduct(selectedItemToEdit + '-RET', {
       itemName: itemName,
       unit: 'Pack',
-      price: retailPrice,
+      price: parseFloat(retailPrice),
       description: description,
-      weight: weight,
+      weight: parseFloat(packWeight),
       dimensions: dimensions,
       category: category,
       imageLinks: filteredimageLinks,
       brand: brand,
-      pieces: piecesPerPack,
+      pieces: parseInt(piecesPerPack),
       color: color,
       material: material,
       size: size,
       parentProductID: parentProductID,
       isCustomized: isCustomized,
-      cbm: cbm,
+      cbm: null,
       boxImage: boxImage,
     });
 
@@ -472,7 +472,7 @@ const AdminAddOrEditItem = (props) => {
           label="Pieces"
           variant="outlined"
           value={pieces}
-          onChange={(event) => setPieces(parseFloat(event.target.value))}
+          onChange={(event) => setPieces(event.target.value)}
         />
 
         <TextField
@@ -481,8 +481,8 @@ const AdminAddOrEditItem = (props) => {
           label="Packs Per Box"
           variant="outlined"
           value={packsPerBox}
-          onChange={(event) => setPacksPerBox(parseFloat(event.target.value))}
-          typeof="number"
+          onChange={(event) => setPacksPerBox(event.target.value)}
+          
         />
         <TextField
           required
@@ -491,18 +491,10 @@ const AdminAddOrEditItem = (props) => {
           variant="outlined"
           sx={{ mt: 3 }}
           value={piecesPerPack}
-          onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
-          typeof="number"
+          onChange={(event) => setPiecesPerPack(event.target.value)}
+        
         />
 
-        {/* <TextField
-              id="outlined-basic"
-              label="Unit"
-              variant="outlined"
-              
-              onChange={(event) => setUnit(event.target.value)}
-              
-            /> */}
         <Box sx={{ width: '100%' }}>
           <FormControl fullWidth>
             <InputLabel required={true} id="demo-simple-select-label">
@@ -563,8 +555,7 @@ const AdminAddOrEditItem = (props) => {
           label="Cubic Meter"
           variant="outlined"
           sx={{ mt: 3 }}
-          onChange={(event) => setCbm(parseFloat(event.target.value))}
-          typeof="number"
+          onChange={(event) => setCbm(event.target.value)}
           value={cbm}
         />
 
@@ -659,7 +650,7 @@ const AdminAddOrEditItem = (props) => {
           //   sx={{ width: "90%" }}
           //   onChange={(event) => setParentProductID(event.target.value)}
           // />
-          <div>
+          <div className='flex flex-col'>
             <TextField
               required
               id="outlined-basic"
@@ -667,7 +658,7 @@ const AdminAddOrEditItem = (props) => {
               variant="outlined"
               sx={{ mt: 1 }}
               value={retailPrice}
-              onChange={(event) => setRetailPrice(parseFloat(event.target.value))}
+              onChange={(event) => setRetailPrice(event.target.value)}
             />
             <TextField
               required
@@ -676,7 +667,7 @@ const AdminAddOrEditItem = (props) => {
               variant="outlined"
               sx={{ mt: 3 }}
               value={packWeight}
-              onChange={(event) => setPackWeight(parseFloat(event.target.value))}
+              onChange={(event) => setPackWeight(event.target.value)}
             />
           </div>
         ) : null}
