@@ -9,6 +9,9 @@ class businessLogic {
 
     getTotalStocksOnHold(productData) {
         let quantity = 0
+        if (productData.stocksOnHold == null) {
+            return 0
+        }
         productData.stocksOnHold.map((stocksOnHold) => {
             quantity += stocksOnHold.quantity
         }
