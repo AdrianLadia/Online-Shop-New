@@ -24,7 +24,8 @@ import { HiOutlineChatAlt } from "react-icons/hi";
 import AdminAddOrEditItem from "./AdminAddOrEditItem";
 
 const AdminMenu = () => {
-  const {products, firestore,allUserData,setAllUserData,categories } = React.useContext(AppContext);
+  
+  const { firestore,allUserData,setAllUserData,categories } = React.useContext(AppContext);
 
   const {width } = UseWindowDimensions();
   const [refresh, setRefresh] = useState(false);
@@ -32,6 +33,15 @@ const AdminMenu = () => {
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
   const [selectedMenu, setSelectedMenu] = React.useState('Admin Chat');
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    firestore.readAllProducts().then((data) => {
+      setProducts(data);
+    });
+  }, [refresh]);
+  console.log(products) 
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

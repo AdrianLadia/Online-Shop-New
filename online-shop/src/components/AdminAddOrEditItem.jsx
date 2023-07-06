@@ -38,16 +38,16 @@ const style = {
 
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
-  const { firestore, products, storage, categories } = React.useContext(AppContext);
+  const { firestore, storage, categories } = React.useContext(AppContext);
   const { width, height } = useWindowDimensions();
+  const products = props.products;
   const productNames = [];
+
   products.map((product) => {
     if (product.unit != 'Pack') {
-      productNames.push([product.itemName, product.itemId]);
+      productNames.push(product.itemName);
     }
   });
-
-  console.log(productNames);
 
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
@@ -90,7 +90,6 @@ const AdminAddOrEditItem = (props) => {
   const [boxImage, setBoxImage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  console.log('categories', categories);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
@@ -98,7 +97,7 @@ const AdminAddOrEditItem = (props) => {
     });
   }, []);
 
-  const cloudfirestore = new cloudFirestoreDb();
+
   const businesscalculations = new businessCalculations();
 
   async function addItem() {
@@ -116,6 +115,11 @@ const AdminAddOrEditItem = (props) => {
       imageLink10,
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
+
+    if (itemID.length > 10) {
+      alert('Item ID must not exceed 10 characters');
+      return;
+    }  
 
     if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
       alert('Pieces per pack * Packs per box must be equal to total pieces');
@@ -234,7 +238,7 @@ const AdminAddOrEditItem = (props) => {
       isCustomized: isCustomized,
       piecesPerPack: parseInt(piecesPerPack),
       packsPerBox: parseInt(packsPerBox),
-      cbm: parseFloat(cbm),
+      cbm: cbm,
       boxImage: boxImage,
     });
     await firestore.updateProduct(selectedItemToEdit + '-RET', {
@@ -293,6 +297,7 @@ const AdminAddOrEditItem = (props) => {
     if (addOrEditItem == 'Edit' && selectedItemToEdit !== null) {
       function checkIfItemHasRetailVersion() {
         const filter = products.filter((product) => product.itemId == selectedItemToEdit + '-RET');
+        console.log(filter)
         if (filter.length > 0) {
           return true;
         } else {
@@ -301,6 +306,7 @@ const AdminAddOrEditItem = (props) => {
       }
 
       const hasRetailVersion = checkIfItemHasRetailVersion();
+      console.log('hasRetailVersion', hasRetailVersion);
       const selectedItemDetails = products.filter((product) => product.itemId == selectedItemToEdit)[0];
       let selectedItemDetailsRetail = null;
       if (hasRetailVersion) {
@@ -324,7 +330,16 @@ const AdminAddOrEditItem = (props) => {
       setIsThisRetail(hasRetailVersion);
       setPacksPerBox(selectedItemDetails.packsPerBox);
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
-      setBoxImage(selectedItemDetails.boxImage);
+
+
+      if (selectedItemDetails.boxImage == null) {
+        setBoxImage('');;
+      }
+      else {
+        setBoxImage(selectedItemDetails.boxImage);
+      }
+
+      
 
       console.log('selectedItemDetails.imageLinks', selectedItemDetails);
 
@@ -397,29 +412,41 @@ const AdminAddOrEditItem = (props) => {
 
   return (
     <div className="flex justify-center">
-      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl::w-1/2 ">
+      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl::w-1/2 mt-5 ">
+       
         {addOrEditItem == 'Edit' ? (
-          <Box sx={{ width: '100%' }}>
-            <FormControl fullWidth>
-              <InputLabel required={true} id="demo-simple-select-label">
-                Select Item
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={selectedItemToEdit}
-                label="Unit"
-                onChange={(event) => {
-                  console.log('event.target.value', event.target.value);
-                  setSelectedItemToEdit(event.target.value);
-                }}
-              >
-                {productNames.map((product) => {
-                  return <MenuItem value={product[1]}>{product[0]}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-          </Box>
+          <Autocomplete
+          onChange={(event, newValue) => { 
+            const selectedProduct = products.filter((product) => product.itemName == newValue && product.unit != 'Pack')
+            const id = selectedProduct[0].itemId
+            setSelectedItemToEdit(id);}}
+          disablePortal
+          id="combo-box-demo"
+          options={productNames.sort()}
+          sx={{ width: 'fullWidth' }}
+          renderInput={(params) => <TextField {...params} label="Item Name" />}
+        />
+          // <Box sx={{ width: '100%' }}>
+          //   <FormControl fullWidth>
+          //     <InputLabel required={true} id="demo-simple-select-label">
+          //       Select Item
+          //     </InputLabel>
+          //     <Select
+          //       labelId="demo-simple-select-label"
+          //       id="demo-simple-select"
+          //       value={selectedItemToEdit}
+          //       label="Unit"
+          //       onChange={(event) => {
+          //         console.log('event.target.value', event.target.value);
+          //         setSelectedItemToEdit(event.target.value);
+          //       }}
+          //     >
+          //       {productNames.map((product) => {
+          //         return <MenuItem value={product[1]}>{product[0]}</MenuItem>;
+          //       })}
+          //     </Select>
+          //   </FormControl>
+          // </Box>
         ) : null}
         <TextField
           required
