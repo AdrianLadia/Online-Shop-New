@@ -13,8 +13,9 @@ const App = () => {
     const [ purchaseFrequencyAndTimeBetweenPurchases, setPurchaseFrequencyAndTimeBetweenPurchases] = useState({})
     const [ totalValueOfOrder, setTotalValueOfOrder ] = useState({})
     const [ chosenCustomer, setChosenCustomer ] = useState('')
+    const [customerTotalValueRanking,setCustomerTotalValueRanking] = useState([])
 
-    console.log(totalValueOfOrder)
+    
 
     useEffect(()=>{
         firestore.readAllDataFromCollection('Analytics').then((data) => {
@@ -23,6 +24,29 @@ const App = () => {
             setTotalValueOfOrder(data[2])
         });
     },[])
+
+    useEffect(()=>{
+        console.log(totalValueOfOrder)
+        if (totalValueOfOrder != {}){
+            const customerAndTotalValue = []
+            Object.keys(totalValueOfOrder).forEach((key)=>{
+                const customer = key
+                const value = totalValueOfOrder[key];
+                let totalValue = 0
+                Object.keys(value).forEach((key)=>{
+                    const orderValue = value[key] 
+                    // console.log(orderValue)
+                    totalValue += parseFloat(orderValue)
+                })
+                customerAndTotalValue.push({customer,totalValue})
+            })
+            console.log(customerAndTotalValue)
+
+            customerAndTotalValue.sort((a, b) => b.totalValue - a.totalValue);
+            
+            console.log(customerAndTotalValue)
+        }
+    },[totalValueOfOrder])
  
     return (
         <div className=' w-full flex flex-col '>
