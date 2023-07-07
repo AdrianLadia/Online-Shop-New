@@ -22,8 +22,6 @@ import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
 import AdminAddItemModal from "./AdminAddItemModal";
-import CustomerAnalytics from './customerAnalytics/App';
-import { LuBarChart4 } from "react-icons/lu";
 
 const AdminMenu = () => {
   const {products, firestore,allUserData,setAllUserData,categories } = React.useContext(AppContext);
@@ -33,7 +31,7 @@ const AdminMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Customer Analytics');
+  const [selectedMenu, setSelectedMenu] = React.useState('Admin Chat');
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -62,18 +60,13 @@ const AdminMenu = () => {
     setSelectedMenu('Analytics');
   }
 
-  const handleClickCustomerAnalytics = () => {
-    setAnchorEl(null);
-    setSelectedMenu('Customer Analytics');
-  }
-
   const handleClickAdminChat = () => {
     setAnchorEl(null);
     setSelectedMenu('Admin Chat');
   }
 
   const handleBack = () => {
-    navigateTo('/shop');
+    navigateTo('/');
   };
 
   function responsiveSize(){
@@ -98,9 +91,9 @@ const AdminMenu = () => {
     <div className="flex flex-col">
       <div className="flex flex-row w-full justify-between bg-gradient-to-r from-color60 via-color10c to-color60 py-3">
         {/* Back Button */}
-        <IoArrowBackCircle id='backToStoreButton' size={40} className=" mt-1 2xs:ml-6 text-white hover:text-red-300 cursor-pointer" onClick={handleBack} />
+        <IoArrowBackCircle id='backToStoreButton' size={40} className=" mt-1 2xs:ml-6 text-white hover:text-color10b cursor-pointer" onClick={handleBack} />
           
-        <div className='flex '>
+        <div className='flex sm:mr-14'>
             <RiAdminFill size={responsiveSize()} className={responsiveIcon()}/>
           {/* <span className='mt-2 text-blue1 text-2xl font-semibold first-letter:text-3xl t'>Admin</span> */}
         </div>
@@ -162,13 +155,10 @@ const AdminMenu = () => {
             {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickCustomerAnalytics}> <LuBarChart4 size={18}/>     <span>Customer Analytics</span></MenuItem>
-            {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Admin Chat' onClick={handleClickAdminChat}> <HiOutlineChatAlt size={20}/>     <span>Admin Chat</span></MenuItem>
           </Menu>
         </div>
       </div>
-      {/* handleClickCustomerAnalytics */}
       {/* HERO */}
       <div>
         {/* {selectedMenu === 'Dashboard' && <AdminOrders users={users} />} */}
@@ -185,7 +175,6 @@ const AdminMenu = () => {
         {selectedMenu === 'Create Payment' && <AdminCreatePayment users={allUserData} setUsers={setAllUserData} />}
         {selectedMenu === 'Customer Orders' && <AdminOrders users={allUserData} />}
         {selectedMenu === 'Analytics' && <App />}
-        {selectedMenu === 'Customer Analytics' && <CustomerAnalytics />}
         {selectedMenu === 'Admin Chat' && <AdminChatMenu />}
       </div>
     </div>

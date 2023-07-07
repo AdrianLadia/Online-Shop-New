@@ -19,7 +19,6 @@ const HomePage = () => {
   const contactsImage = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123"
   const logo = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fstarpack.png?alt=media&token=e108388d-74f7-45a1-8344-9c6af612f053"
   const videoAd = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed.mp4?alt=media&token=bc6b257e-7ba9-4568-b843-b32c4927a5fb&_gl=1*1pcfpf3*_ga*MTk5NDU4NTY2OC4xNjc4NDI0NDg0*_ga_CW55HF8NVT*MTY4NjE5NjY5Ny4xOC4xLjE2ODYxOTY3NjguMC4wLjA"
-  
   const page1 = useRef();
   const page2 = useRef();
   const page3 = useRef();
@@ -172,6 +171,22 @@ const HomePage = () => {
     function spanFooterStyle(){
       return 'p-1 xs:p-2 rounded-full bg-color60 hover:bg-green1 cursor-pointer'
     }
+
+        // function autoPlaySlide(){
+    //   if(changedSlide === false && selectedSlide < 3){
+    //       setSelectedSlide(selectedSlide + 1) 
+    //   }
+    //   if(changedSlide === false && selectedSlide === 3){
+    //       setSelectedSlide(selectedSlide * 0) 
+    //   }
+    // }
+
+    // useEffect(()=>{
+    //   setSelectedSlide(selectedSlide)
+    //   if(changedSlide === false && p4inView === true){
+    //     setTimeout(()=>{autoPlaySlide();},[1000])
+    //   }
+    // },[selectedSlide, changedSlide, p4inView])
     
     function menuStyle(){
       if(showMenu == false ){
@@ -382,7 +397,7 @@ const HomePage = () => {
               {/* Image */}
               <div className='w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center'>
                 <img className='w-full h-full rounded-3xl border border-white text-white'  
-                   alt='About Image' src='./vids/aboutus.png'
+                   alt='About Image' //src='./vids/pexel.jpg'
                 />
               </div>
             </div>
@@ -589,10 +604,9 @@ const HomePage = () => {
                 <div className='flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch '>
                   <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
                   <div className='flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs'>
-                    <ul className='h-19/20 w-11/12 grid grid-cols-2 justify-evenly gap-1 md:gap-2'>
+                    <ul className='h-19/20 w-11/12 flex flex-col justify-evenly items- gap-1 md:gap-2'>
                       <li onClick={()=>{scroll("page1")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Home</li>
                       <li onClick={()=>{scroll("page2")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>About Us</li>
-                      <li onClick={handleMessageClick} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Message Us</li>
                       <li onClick={()=>{scroll("page3")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Products</li>
                       <li onClick={()=>{scroll("page4")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Affiliate Program</li>
                     </ul>

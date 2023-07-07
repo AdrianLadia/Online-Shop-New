@@ -4,7 +4,7 @@ import { useEffect, useState, useContext, useRef } from "react";
 import useWindowDimensions from "./utils/UseWindowDimensions";
 import { MenuBar } from "./MenuBar";
 import { MenuBarMobile } from "./MenuBarMobile";
-import { FaRegListAlt } from 'react-icons/fa' 
+import {FaRegListAlt} from 'react-icons/fa' 
 import AppContext from "../../AppContext";
 
 const App = () => {
@@ -59,6 +59,17 @@ const App = () => {
       setCategories(category)
     })
   },[])
+
+
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     if (user.email === "ladiaadrian@gmail.com" || "valletigio54@gmail.com") {
+  //       setAuthorized(true);
+  //     } else {
+  //       setAuthorized(false);
+  //     }
+  //   }
+  // }, [loggedIn]);
 
   return (
     <div>
