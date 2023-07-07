@@ -75,20 +75,28 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProduct(id, data) {
+
+    console.log(data)
     const schema = Joi.object({
       itemName: Joi.string().required(),
       unit: Joi.string().required(),
       price: Joi.number().required(),
-      description: Joi.string().required(),
+      description: Joi.string().required().allow(''),
       weight: Joi.number().required(),
-      dimensions: Joi.string(),
+      dimensions: Joi.string().allow(null,''),
       category: Joi.string().required(),
       imageLinks: Joi.array(),
-      brand: Joi.string(),
+      brand: Joi.string().allow(null,''),
       pieces: Joi.number().required(),
-      color: Joi.string(),
-      material: Joi.string(),
-      size: Joi.string(),
+      color: Joi.string().allow(null,''),
+      material: Joi.string().allow(null,''),
+      size: Joi.string().allow(null,''),
+      parentProductID: Joi.string().allow(null,''),
+      isCustomized : Joi.boolean().required(),
+      piecesPerPack : Joi.number(),
+      packsPerBox : Joi.number(),
+      cbm : Joi.number().allow('',null),
+      boxImage : Joi.string().uri().allow(null,''),
     }).unknown(false);
 
     try {

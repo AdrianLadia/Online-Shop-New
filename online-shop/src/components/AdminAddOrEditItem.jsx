@@ -15,6 +15,7 @@ import AppContext from '../AppContext';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import businessCalculations from '../../utils/businessCalculations';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
+import {CircularProgress} from '@mui/material';
 
 // Style for Modal
 const style = {
@@ -35,9 +36,19 @@ const style = {
   p: 4,
 };
 
-const AdminAddItemModal = (props) => {
-  const { firestore, products, storage,categories } = React.useContext(AppContext);
+const AdminAddOrEditItem = (props) => {
+  const addOrEditItem = props.addOrEditItem;
+  const { firestore, storage, categories } = React.useContext(AppContext);
   const { width, height } = useWindowDimensions();
+  const products = props.products;
+  const productNames = [];
+
+  products.map((product) => {
+    if (product.unit != 'Pack') {
+      productNames.push(product.itemName);
+    }
+  });
+
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -75,8 +86,10 @@ const AdminAddItemModal = (props) => {
   const [cbm, setCbm] = React.useState('');
   const [machines, setMachines] = React.useState([]);
   const [machineFormat, setMachineFormat] = React.useState('');
+  const [selectedItemToEdit, setSelectedItemToEdit] = React.useState(null);
+  const [boxImage, setBoxImage] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
-  console.log('categories', categories);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
@@ -84,10 +97,110 @@ const AdminAddItemModal = (props) => {
     });
   }, []);
 
-  const cloudfirestore = new cloudFirestoreDb();
+
   const businesscalculations = new businessCalculations();
 
   async function addItem() {
+    setLoading(true);
+    let imageLinks = [
+      imageLink1,
+      imageLink2,
+      imageLink3,
+      imageLink4,
+      imageLink5,
+      imageLink6,
+      imageLink7,
+      imageLink8,
+      imageLink9,
+      imageLink10,
+    ];
+    const filteredimageLinks = imageLinks.filter((link) => link !== '');
+
+    if (itemID.length > 10) {
+      alert('Item ID must not exceed 10 characters');
+      return;
+    }  
+
+    if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
+      alert('Pieces per pack * Packs per box must be equal to total pieces');
+      return;
+    }
+
+    await firestore.createProduct(
+      {
+        itemId: itemID,
+        itemName: itemName,
+        unit: unit,
+        price: parseFloat(price),
+        description: description,
+        weight: parseFloat(weight),
+        dimensions: dimensions,
+        category: category,
+        imageLinks: filteredimageLinks,
+        brand: brand,
+        pieces: parseInt(pieces),
+        color: color,
+        material: material,
+        size: size,
+        stocksAvailable: parseInt(startingInventory),
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: parentProductID,
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: isCustomized,
+        stocksIns: [],
+        piecesPerPack: parseInt(piecesPerPack),
+        packsPerBox: parseInt(packsPerBox),
+        cbm: cbm,
+        manufactured: manufactured,
+        machinesThatCanProduce: machineFormat,
+        boxImage: boxImage,
+      },
+      itemID,
+      products
+    );
+
+    if (isThisRetail) {
+      await firestore.createProduct(
+        {
+          itemId: itemID + '-RET',
+          itemName: itemName,
+          unit: 'Pack',
+          price: parseFloat(retailPrice),
+          description: description,
+          weight: parseFloat(packWeight),
+          dimensions: dimensions,
+          category: category,
+          imageLinks: filteredimageLinks,
+          brand: brand,
+          pieces: parseInt(piecesPerPack),
+          color: color,
+          material: material,
+          size: size,
+          stocksAvailable: 0,
+          stocksOnHold: null,
+          averageSalesPerDay: 0,
+          parentProductID: itemID,
+          stocksOnHoldCompleted: null,
+          forOnlineStore: true,
+          isCustomized: isCustomized,
+          stocksIns: null,
+          cbm: null,
+          manufactured: manufactured,
+          machinesThatCanProduce: machineFormat,
+          boxImage: boxImage,
+        },
+        itemID + '-RET',
+        products
+      );
+    }
+    setLoading(false);
+    props.setRefresh(!props.refresh);
+  }
+
+  async function editItem() {
+    setLoading(true);
     let imageLinks = [
       imageLink1,
       imageLink2,
@@ -107,75 +220,50 @@ const AdminAddItemModal = (props) => {
       return;
     }
 
-    await firestore.createProduct(
-      {
-        itemId: itemID,
-        itemName: itemName,
-        unit: unit,
-        price: price,
-        description: description,
-        weight: weight,
-        dimensions: dimensions,
-        category: category,
-        imageLinks: filteredimageLinks,
-        brand: brand,
-        pieces: pieces,
-        color: color,
-        material: material,
-        size: size,
-        stocksAvailable: parseInt(startingInventory),
-        stocksOnHold: [],
-        averageSalesPerDay: 0,
-        parentProductID: parentProductID,
-        stocksOnHoldCompleted: [],
-        forOnlineStore: true,
-        isCustomized: isCustomized,
-        stocksIns: [],
-        piecesPerPack: piecesPerPack,
-        packsPerBox: packsPerBox,
-        cbm: cbm,
-        manufactured: manufactured,
-        machinesThatCanProduce: machineFormat,
-      },
-      itemID,
-      products
-    );
-
-    if (isThisRetail) {
-      await firestore.createProduct(
-        {
-          itemId: itemID + '-RET',
-          itemName: itemName,
-          unit: 'Pack',
-          price: retailPrice,
-          description: description,
-          weight: packWeight,
-          dimensions: dimensions,
-          category: category,
-          imageLinks: filteredimageLinks,
-          brand: brand,
-          pieces: piecesPerPack,
-          color: color,
-          material: material,
-          size: size,
-          stocksAvailable: null,
-          stocksOnHold: null,
-          averageSalesPerDay: 0,
-          parentProductID: itemID,
-          stocksOnHoldCompleted: null,
-          forOnlineStore: true,
-          isCustomized: isCustomized,
-          stocksIns: null,
-          cbm: null,
-          manufactured: manufactured,
-          machinesThatCanProduce: machineFormat,
-        },
-        itemID + '-RET',
-        products
-      );
-    }
+    await firestore.updateProduct(selectedItemToEdit, {
+      itemName: itemName,
+      unit: unit,
+      price: parseFloat(price),
+      description: description,
+      weight: parseFloat(weight),
+      dimensions: dimensions,
+      category: category,
+      imageLinks: filteredimageLinks,
+      brand: brand,
+      pieces: parseInt(pieces),
+      color: color,
+      material: material,
+      size: size,
+      parentProductID: parentProductID,
+      isCustomized: isCustomized,
+      piecesPerPack: parseInt(piecesPerPack),
+      packsPerBox: parseInt(packsPerBox),
+      cbm: cbm,
+      boxImage: boxImage,
+    });
+    await firestore.updateProduct(selectedItemToEdit + '-RET', {
+      itemName: itemName,
+      unit: 'Pack',
+      price: parseFloat(retailPrice),
+      description: description,
+      weight: parseFloat(packWeight),
+      dimensions: dimensions,
+      category: category,
+      imageLinks: filteredimageLinks,
+      brand: brand,
+      pieces: parseInt(piecesPerPack),
+      color: color,
+      material: material,
+      size: size,
+      parentProductID: parentProductID,
+      isCustomized: isCustomized,
+      cbm: null,
+      boxImage: boxImage,
+    });
 
     props.setRefresh(!props.refresh);
+    setLoading(false);
+    alert(`${itemName} successfully updated`);
   }
 
   function onAddCategoryClick() {
@@ -205,19 +293,169 @@ const AdminAddItemModal = (props) => {
     }
   }
 
-  function setImageURL1(imageLink) {
-    setImageLink1(imageLink);
-  }
+  useEffect(() => {
+    if (addOrEditItem == 'Edit' && selectedItemToEdit !== null) {
+      function checkIfItemHasRetailVersion() {
+        const filter = products.filter((product) => product.itemId == selectedItemToEdit + '-RET');
+        console.log(filter)
+        if (filter.length > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      const hasRetailVersion = checkIfItemHasRetailVersion();
+      console.log('hasRetailVersion', hasRetailVersion);
+      const selectedItemDetails = products.filter((product) => product.itemId == selectedItemToEdit)[0];
+      let selectedItemDetailsRetail = null;
+      if (hasRetailVersion) {
+        selectedItemDetailsRetail = products.filter((product) => product.itemId == selectedItemToEdit + '-RET')[0];
+      }
+      console.log('selectedItemDetails', selectedItemDetails);
+      console.log('selectedItemDetailsRetail', selectedItemDetailsRetail);
+      setItemID(selectedItemDetails.itemId);
+      setItemName(selectedItemDetails.itemName);
+      setUnit(selectedItemDetails.unit);
+      setPrice(selectedItemDetails.price);
+      setDescription(selectedItemDetails.description);
+      setWeight(selectedItemDetails.weight);
+      setDimensions(selectedItemDetails.dimensions);
+      setCategory(selectedItemDetails.category);
+      setBrand(selectedItemDetails.brand);
+      setPieces(selectedItemDetails.pieces);
+      setColor(selectedItemDetails.color);
+      setMaterial(selectedItemDetails.material);
+      setSize(selectedItemDetails.size);
+      setIsThisRetail(hasRetailVersion);
+      setPacksPerBox(selectedItemDetails.packsPerBox);
+      setPiecesPerPack(selectedItemDetails.piecesPerPack);
+
+
+      if (selectedItemDetails.boxImage == null) {
+        setBoxImage('');;
+      }
+      else {
+        setBoxImage(selectedItemDetails.boxImage);
+      }
+
+      
+
+      console.log('selectedItemDetails.imageLinks', selectedItemDetails);
+
+      if (selectedItemDetails.imageLinks[0]) {
+        setImageLink1(selectedItemDetails.imageLinks[0]);
+      } else {
+        setImageLink1('');
+      }
+
+      if (selectedItemDetails.imageLinks[1]) {
+        setImageLink2(selectedItemDetails.imageLinks[1]);
+      } else {
+        setImageLink2('');
+      }
+
+      if (selectedItemDetails.imageLinks[2]) {
+        setImageLink3(selectedItemDetails.imageLinks[2]);
+      } else {
+        setImageLink3('');
+      }
+
+      if (selectedItemDetails.imageLinks[3]) {
+        setImageLink4(selectedItemDetails.imageLinks[3]);
+      } else {
+        setImageLink4('');
+      }
+
+      if (selectedItemDetails.imageLinks[4]) {
+        setImageLink5(selectedItemDetails.imageLinks[4]);
+      } else {
+        setImageLink5('');
+      }
+
+      if (selectedItemDetails.imageLinks[5]) {
+        setImageLink6(selectedItemDetails.imageLinks[5]);
+      } else {
+        setImageLink6('');
+      }
+
+      if (selectedItemDetails.imageLinks[6]) {
+        setImageLink7(selectedItemDetails.imageLinks[6]);
+      } else {
+        setImageLink7('');
+      }
+
+      if (selectedItemDetails.imageLinks[7]) {
+        setImageLink8(selectedItemDetails.imageLinks[7]);
+      } else {
+        setImageLink8('');
+      }
+
+      if (selectedItemDetails.imageLinks[8]) {
+        setImageLink9(selectedItemDetails.imageLinks[8]);
+      } else {
+        setImageLink9('');
+      }
+
+      if (selectedItemDetails.imageLinks[9]) {
+        setImageLink10(selectedItemDetails.imageLinks[9]);
+      } else {
+        setImageLink10('');
+      }
+
+      if (hasRetailVersion) {
+        setRetailPrice(selectedItemDetailsRetail.price);
+        setPackWeight(selectedItemDetailsRetail.weight);
+      }
+    }
+  }, [selectedItemToEdit]);
 
   return (
     <div className="flex justify-center">
-      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl::w-1/2 ">
+      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl::w-1/2 mt-5 ">
+       
+        {addOrEditItem == 'Edit' ? (
+          <Autocomplete
+          onChange={(event, newValue) => { 
+            const selectedProduct = products.filter((product) => product.itemName == newValue && product.unit != 'Pack')
+            const id = selectedProduct[0].itemId
+            setSelectedItemToEdit(id);}}
+          disablePortal
+          id="combo-box-demo"
+          options={productNames.sort()}
+          sx={{ width: 'fullWidth' }}
+          renderInput={(params) => <TextField {...params} label="Item Name" />}
+        />
+          // <Box sx={{ width: '100%' }}>
+          //   <FormControl fullWidth>
+          //     <InputLabel required={true} id="demo-simple-select-label">
+          //       Select Item
+          //     </InputLabel>
+          //     <Select
+          //       labelId="demo-simple-select-label"
+          //       id="demo-simple-select"
+          //       value={selectedItemToEdit}
+          //       label="Unit"
+          //       onChange={(event) => {
+          //         console.log('event.target.value', event.target.value);
+          //         setSelectedItemToEdit(event.target.value);
+          //       }}
+          //     >
+          //       {productNames.map((product) => {
+          //         return <MenuItem value={product[1]}>{product[0]}</MenuItem>;
+          //       })}
+          //     </Select>
+          //   </FormControl>
+          // </Box>
+        ) : null}
         <TextField
           required
+          disabled={addOrEditItem == 'Edit' ? true : false}
           id="outlined-basic123"
           label="Item ID"
           variant="outlined"
           sx={{ marginTop: 3 }}
+          value={itemID}
           onChange={(event) => setItemID(event.target.value)}
         />
         <TextField
@@ -225,6 +463,7 @@ const AdminAddItemModal = (props) => {
           id="outlined-basic"
           label="Item Name"
           variant="outlined"
+          value={itemName}
           onChange={(event) => setItemName(event.target.value)}
         />
         <TextField
@@ -232,6 +471,7 @@ const AdminAddItemModal = (props) => {
           id="outlined-basic"
           label="Price"
           variant="outlined"
+          value={price}
           onChange={(event) => setPrice(event.target.value)}
         />
         <TextField
@@ -239,22 +479,27 @@ const AdminAddItemModal = (props) => {
           id="outlined-basic"
           label="Weight"
           variant="outlined"
+          value={weight}
           onChange={(event) => setWeight(event.target.value)}
         />
-        <TextField
-          required
-          id="outlined-basic"
-          label="Starting Inventory"
-          variant="outlined"
-          onChange={(event) => setStartingInventory(event.target.value)}
-        />
+        {addOrEditItem == 'Add' ? (
+          <TextField
+            required
+            id="outlined-basic"
+            label="Starting Inventory"
+            variant="outlined"
+            value={startingInventory}
+            onChange={(event) => setStartingInventory(event.target.value)}
+          />
+        ) : null}
 
         <TextField
           required
           id="outlined-basic"
           label="Pieces"
           variant="outlined"
-          onChange={(event) => setPieces(parseFloat(event.target.value))}
+          value={pieces}
+          onChange={(event) => setPieces(event.target.value)}
         />
 
         <TextField
@@ -262,8 +507,9 @@ const AdminAddItemModal = (props) => {
           id="outlined-basic"
           label="Packs Per Box"
           variant="outlined"
-          onChange={(event) => setPacksPerBox(parseFloat(event.target.value))}
-          typeof="number"
+          value={packsPerBox}
+          onChange={(event) => setPacksPerBox(event.target.value)}
+          
         />
         <TextField
           required
@@ -271,18 +517,11 @@ const AdminAddItemModal = (props) => {
           label="Pieces Per Pack"
           variant="outlined"
           sx={{ mt: 3 }}
-          onChange={(event) => setPiecesPerPack(parseFloat(event.target.value))}
-          typeof="number"
+          value={piecesPerPack}
+          onChange={(event) => setPiecesPerPack(event.target.value)}
+        
         />
 
-        {/* <TextField
-              id="outlined-basic"
-              label="Unit"
-              variant="outlined"
-              
-              onChange={(event) => setUnit(event.target.value)}
-              
-            /> */}
         <Box sx={{ width: '100%' }}>
           <FormControl fullWidth>
             <InputLabel required={true} id="demo-simple-select-label">
@@ -300,24 +539,25 @@ const AdminAddItemModal = (props) => {
             </Select>
           </FormControl>
         </Box>
-
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl fullWidth>
-            <InputLabel required={true} id="demo-simple-select-label">
-              Did we manufacture this product?
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={manufactured}
-              label="manufactured"
-              onChange={(event) => setManufactured(event.target.value)}
-            >
-              <MenuItem value={true}>Yes</MenuItem>
-              <MenuItem value={false}>No</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+        {addOrEditItem == 'Add' ? (
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel required={true} id="demo-simple-select-label">
+                Did we manufacture this product?
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={manufactured}
+                label="manufactured"
+                onChange={(event) => setManufactured(event.target.value)}
+              >
+                <MenuItem value={true}>Yes</MenuItem>
+                <MenuItem value={false}>No</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        ) : null}
 
         {manufactured ? (
           <>
@@ -342,44 +582,50 @@ const AdminAddItemModal = (props) => {
           label="Cubic Meter"
           variant="outlined"
           sx={{ mt: 3 }}
-          onChange={(event) => setCbm(parseFloat(event.target.value))}
-          typeof="number"
+          onChange={(event) => setCbm(event.target.value)}
+          value={cbm}
         />
 
         <TextField
           id="outlined-basic"
           label="Color"
           variant="outlined"
+          value={color}
           onChange={(event) => setColor(event.target.value)}
         />
         <TextField
           id="outlined-basic"
           label="Material"
           variant="outlined"
+          value={material}
           onChange={(event) => setMaterial(event.target.value)}
         />
         <TextField
           id="outlined-basic"
           label="Size"
           variant="outlined"
+          value={size}
           onChange={(event) => setSize(event.target.value)}
         />
         <TextField
           id="outlined-basic"
           label="Brand"
           variant="outlined"
+          value={brand}
           onChange={(event) => setBrand(event.target.value)}
         />
         <TextField
           id="outlined-basic"
           label="Box Dimensions"
           variant="outlined"
+          value={dimensions}
           onChange={(event) => setDimensions(event.target.value)}
         />
         <TextField
           id="outlined-basic"
           label="Description"
           variant="outlined"
+          value={description}
           onChange={(event) => setDescription(event.target.value)}
         />
 
@@ -400,9 +646,7 @@ const AdminAddItemModal = (props) => {
                   if (c != 'Favorites') {
                     return <MenuItem value={c}>{c}</MenuItem>;
                   }
-                }
-                  
-                )}
+                })}
                 {/* <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem> */}
@@ -421,7 +665,7 @@ const AdminAddItemModal = (props) => {
         />
 
         <div className="flex flex-row">
-          <Checkbox onChange={(event) => onRetailCheckBoxClick(event.target.checked)} />
+          <Checkbox defaultChecked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} />
           <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
         </div>
 
@@ -433,14 +677,15 @@ const AdminAddItemModal = (props) => {
           //   sx={{ width: "90%" }}
           //   onChange={(event) => setParentProductID(event.target.value)}
           // />
-          <div>
+          <div className='flex flex-col'>
             <TextField
               required
               id="outlined-basic"
               label="Retail Price"
               variant="outlined"
               sx={{ mt: 1 }}
-              onChange={(event) => setRetailPrice(parseFloat(event.target.value))}
+              value={retailPrice}
+              onChange={(event) => setRetailPrice(event.target.value)}
             />
             <TextField
               required
@@ -448,7 +693,8 @@ const AdminAddItemModal = (props) => {
               label="Pack Weight"
               variant="outlined"
               sx={{ mt: 3 }}
-              onChange={(event) => setPackWeight(parseFloat(event.target.value))}
+              value={packWeight}
+              onChange={(event) => setPackWeight(event.target.value)}
             />
           </div>
         ) : null}
@@ -465,7 +711,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink1'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink1}
           />
@@ -482,7 +728,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink2'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink2}
           />
@@ -499,7 +745,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink3'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink3}
           />
@@ -516,7 +762,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink4'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink4}
           />
@@ -533,7 +779,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink5'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink5}
           />
@@ -550,7 +796,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink6'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink6}
           />
@@ -567,7 +813,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink7'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink7}
           />
@@ -584,7 +830,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink8'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink8}
           />
@@ -601,7 +847,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink9'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink9}
           />
@@ -618,7 +864,7 @@ const AdminAddItemModal = (props) => {
         <div className="flex flex-row ">
           <ImageUploadButton
             id={'imageLink10'}
-            folderName={'ProductImages'}
+            folderName={'ProductImages/' + itemID}
             storage={storage}
             onUploadFunction={setImageLink10}
           />
@@ -631,12 +877,48 @@ const AdminAddItemModal = (props) => {
             onChange={(event) => setImageLink10(event.target.value)}
           />
         </div>
-        <Button className="w-2/5 lg:w-1/5" sx={{ height: 50,marginBottom:10 }} variant="contained" onClick={addItem}>
-          Add Item
-        </Button>
+
+        <div className="flex flex-row ">
+          <ImageUploadButton
+            id={'boxImage'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setBoxImage}
+          />
+          <TextField
+            id="outlined-basic"
+            label="boxImage"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={boxImage}
+            onChange={(event) => setBoxImage(event.target.value)}
+          />
+        </div>
+
+        {addOrEditItem == 'Add' ? (
+          <Button
+            className="w-2/5 lg:w-1/5"
+            sx={{ height: 50, marginBottom: 10 }}
+            variant="contained"
+            onClick={addItem}
+          >
+            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Add Item</> }
+          </Button>
+        ) : null}
+        {addOrEditItem == 'Edit' ? (
+          <Button
+            className="w-2/5 lg:w-1/5"
+            sx={{ height: 50, marginBottom: 10 }}
+            variant="contained"
+            onClick={editItem}
+            
+          >
+            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
+          </Button>
+        ) : null}
       </div>
     </div>
   );
 };
 
-export default AdminAddItemModal;
+export default AdminAddOrEditItem;

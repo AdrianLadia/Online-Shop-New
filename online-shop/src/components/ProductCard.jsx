@@ -37,6 +37,8 @@ const ProductCard = (props) => {
   const [imageSrc, setImageSrc] = useState('');
   const retailSafetyStock = new AppConfig().getRetailSafetyStock()
 
+  console.log(product)
+
   useEffect(() => {
     setImageLoading(true);
     setQuantity('');
@@ -264,7 +266,7 @@ const ProductCard = (props) => {
   } else {
     return (
       <ThemeProvider theme={theme}>
-        <div className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 hover:mb-5' + responsiveWidth()}>
+        <div id={product.itemId} className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 hover:mb-5' + responsiveWidth()}>
           {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
           <Paper
             elevation={10}

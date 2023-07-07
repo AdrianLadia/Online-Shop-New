@@ -466,7 +466,7 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <NavBar />
-              <Shop />
+              {(products != [] || categories != null) ? <Shop /> : <div className='flex w-full h-96 justify-center mt-80'><CircularProgress size={150} /></div>}
               {userdata ? <ProfileUpdaterModal userdata={userdata} openProfileUpdaterModal={openProfileUpdaterModal} setOpenProfileUpdaterModal={setOpenProfileUpdaterModal} /> : null}
               
             </AppContext.Provider>

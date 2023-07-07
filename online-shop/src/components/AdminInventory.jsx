@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import useWindowDimensions from "./UseWindowDimensions";
-import AdminAddItemModal from "./AdminAddItemModal";
+import AdminAddItemModal from "./AdminAddOrEditItem";
 import firestoredb from "../firestoredb";
 import AdminDeleteItemModal from "./AdminDeleteItemModal";
 import AdminEditItemModal from "./AdminEditItemModal";
@@ -60,7 +60,7 @@ const AdminInventory = (props) => {
   const handleCloseDeleteItem = () => setOpenDeleteItem(false);
 
   const [openEditItem, setOpenEditItem] = React.useState(false);
-  const handleOpenEditItem = () => setOpenEditItem(true);
+  const handleOpenEditItem = () => setSelectedMenu('Edit Item');
   const handleCloseEditItem = () => setOpenEditItem(false);
   const setSelectedMenu = props.setSelectedMenu;
   const rows = [];
@@ -228,14 +228,14 @@ const AdminInventory = (props) => {
         setRefresh={setRefresh}
       />
       {/* EDIT ITEM MODAL */}
-      <AdminEditItemModal
+      {/* <AdminEditItemModal
         open={openEditItem}
         handleClose={handleCloseEditItem}
         categories={categories}
         products={productlist}
         refresh={refresh}
         setRefresh={setRefresh}
-      />
+      /> */}
     </div>
   );
 };

@@ -82,6 +82,7 @@ export function InventoryTable({name, category, customized, callback}) {
   useEffect(() => {
     const tableData = [];
     productsData.map((product, index) => {
+      console.log(product)
       const productName = product.itemName;
       const totalStocks = businesslogic.getTotalStocks(product);
       const type = product.category;
