@@ -7,7 +7,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const CustomerGraph = ({data, firestore}) => {
     const datamanipulation = new dataManipulation();
     const [ productData, setProductData ] = useState([])
-
+    
     useEffect(()=>{
         firestore.readAllDataFromCollection("Products").then((info) => {
             const filteredData = datamanipulation.appRemovePacksFromProducts(info);
@@ -36,6 +36,7 @@ const CustomerGraph = ({data, firestore}) => {
         totalSalesPerMonth.push(sale[2])
       }
     })
+
     const barDates = [];
     const stocksLowestPoint = productData.stocksLowestPoint;
     stocksLowestPoint && stocksLowestPoint.map((s) => {
@@ -49,12 +50,14 @@ const CustomerGraph = ({data, firestore}) => {
       barDates.push({date: s.year.toString() + newMonth, barPoints: s.lowestPoint});
     });
     // const labels = productData.stocksLowestPoint && productData.stocksLowestPoint.map((item)=>monthNames[item.month - 1] + item.year );
+    
 
     const labels = dates.map((date)=>monthNames[parseInt(date.slice(4, 6)) - 1] + date.slice(0, 4))
     const filteredStocks = dates.map((date) => {
       const barPoint = barDates.find((s) => s.date === date);
       return barPoint ? barPoint.barPoints : 0;
     });
+
 
     const graphData = {
         labels,

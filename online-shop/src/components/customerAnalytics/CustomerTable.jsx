@@ -95,7 +95,7 @@ const CustomerTable = ({ data, chosenCustomer, firestore }) => {
   ];
   
   return (
-    <div className="flex justify-center items-center w-full h-full">
+    <div className="flex justify-center items-center w-full h-full bg-red-100">
       <Box className='overflow-y-auto w-full xs:w-11/12 h-full bg-gradient-to-t from-stone-100 to-green-100 border-b-0 border-2 border-green-700 rounded-t-lg' 
         sx={{ height: '100%', "& .header-theme": {borderBottom:2 , backgroundImage: "linear-gradient(to bottom, #95E8D7, #ADF7D1)"}}}>
         <DataGrid

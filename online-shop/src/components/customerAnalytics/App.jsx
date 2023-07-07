@@ -70,7 +70,7 @@ const App = () => {
                 <div className='h-1/10 w-full mt-4'>
                     <CustomerDropdown data={customerMonthlySales} setChosen={setChosenCustomer} customerTotalValueRanking={customerTotalValueRanking}/>
                 </div>
-                <div className='h-mid w-full '>
+                <div className='h-full w-full '>
                     <CustomerTable data={customerMonthlySales} chosenCustomer={chosenCustomer} firestore={firestore}/>
                 </div>
                 <div className='h-mid w-full flex justify-center'>

@@ -40,7 +40,7 @@ const CustomerDropdown = ({ data, setChosen,customerTotalValueRanking }) => {
           options={customerTotalValueRanking}
           sx={{ width: '100vh' }}
           value={chosenCustomer}
-          renderInput={(params) => <TextField {...params} label="Item Name" />}
+          renderInput={(params) => <TextField {...params} label="Customer Name" />}
         />
         </div>
     </div>
