@@ -105,10 +105,10 @@ function App() {
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
 
-  const averageTotalSales = firestore.readAllDataFromCollection('Analytics').then((data) => {
-    console.log(data)
-  }
-  );
+  // const averageTotalSales = firestore.readAllDataFromCollection('Analytics').then((data) => {
+  //   console.log(data)
+  // }
+  // );
 
 
   useEffect(() => {
