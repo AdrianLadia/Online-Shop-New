@@ -8,7 +8,7 @@ export default function Graph(props) {
   const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
   const labels = productData.salesPerMonth && productData.salesPerMonth.map((sale)=> (monthNames[(sale.month - 1 )] + sale.year));
   const totalSalesPerMonth = productData.salesPerMonth && productData.salesPerMonth.map((sale) => sale.totalSalesPerMonth);
-  const barLowestPoint = productData.stocksLowestPoint && productData.stocksLowestPoint.map((bar) => bar.lowestPoint)
+  const barLowestPoint = productData.stocksLowestPoint && productData.stocksLowestPoint.map((bar) => bar.lowestPoint);
 
   const data = {
     labels,

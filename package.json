@@ -8,7 +8,9 @@
     "npm": "^9.7.2",
     "react-chartjs-2": "^5.2.0",
     "react-custom-scrollbars": "^4.2.1",
+    "react-datepicker": "^4.15.0",
     "react-geocode": "^0.2.3",
+    "react-icons": "^4.10.1",
     "react-phone-input-2": "^2.15.1",
     "react-spinners": "^0.13.8",
     "typeface-poppins": "^1.1.13"

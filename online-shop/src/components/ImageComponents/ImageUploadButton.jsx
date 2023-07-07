@@ -42,7 +42,6 @@ const ImageUploadButton = (props) => {
       const ordersRefStorage = ref(storage, folderName + '/' + uuidv4() + fileName);
 
       try {
-        
         uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
           setButtonColor(true);
           setButtonText('Uploaded Successfuly');
