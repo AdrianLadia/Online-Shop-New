@@ -21,7 +21,7 @@ import Divider from "@mui/material/Divider";
 import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
-import AdminAddItemModal from "./AdminAddItemModal";
+import AdminAddOrEditItem from "./AdminAddOrEditItem";
 import CustomerAnalytics from './customerAnalytics/App';
 import { LuBarChart4 } from "react-icons/lu";
 
@@ -34,7 +34,7 @@ const AdminMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Admin Chat');
+  const [selectedMenu, setSelectedMenu] = React.useState('Customer Analytics');
   const [products, setProducts] = useState([]);
 
   useEffect(() => {

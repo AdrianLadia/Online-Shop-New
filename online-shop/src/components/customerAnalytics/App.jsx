@@ -14,6 +14,8 @@ const App = () => {
     const [ totalValueOfOrder, setTotalValueOfOrder ] = useState({})
     const [ chosenCustomer, setChosenCustomer ] = useState('')
 
+    console.log(totalValueOfOrder)
+
     useEffect(()=>{
         firestore.readAllDataFromCollection('Analytics').then((data) => {
             setCustomerMonthlySales(data[0])
