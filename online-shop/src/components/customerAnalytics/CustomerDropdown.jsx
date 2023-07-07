@@ -3,7 +3,7 @@ import dataManipulation from './dataManipulation';
 import Autocomplete from '@mui/material/Autocomplete';
 import { TextField } from '@mui/material';
 
-const CustomerDropdown = ({ data, setChosen }) => {
+const CustomerDropdown = ({ data, setChosen,customerTotalValueRanking }) => {
   // const data = props.data
   const datamanipulation = new dataManipulation();
   const [customers, setCustomers] = useState([]);
@@ -33,45 +33,16 @@ const CustomerDropdown = ({ data, setChosen }) => {
       <div className="h-9/10 w-full flex justify-center items-end p-1">
         <Autocomplete
           onChange={(event, newValue) => {
-            setChosenCustomer(newValue), setChosen(newValue), handleInputText(event);
+            setChosenCustomer(newValue), setChosen(newValue)
           }}
           disablePortal
           id="combo-box-demo"
-          options={customers}
-          sx={{ width: 'fullWidth' }}
+          options={customerTotalValueRanking}
+          sx={{ width: '100vh' }}
+          value={chosenCustomer}
           renderInput={(params) => <TextField {...params} label="Item Name" />}
         />
-        <input
-          className="w-1/10 md:w-3/10 p-3 text-center border-2 text-blue1 border-color10b hover:border-blue1 focus:border-blue1 outline-none placeholder:text-color10b rounded-lg relative"
-          placeholder="Select Customer First"
-          value={chosenCustomer}
-          onChange={(e) => {
-            setChosenCustomer(e.target.value), setChosen(e.target.value), handleInputText(e);
-          }}
-        />
-      </div>
-      {inputText.length != 0 && (
-        <div className="absolute left-0 top-25 h-32 w-full flex flex-col items-center z-50 ">
-          <div className="overflow-auto w-1/10 border-y border-color10b bg-white rounded-lg px-1">
-            {inputText.slice(0, 10).map((data, index) => {
-              return (
-                <div className="border-b border-color10b z-50">
-                  <button
-                    className="z-50 border-color10b  w-64 p-3 hover:bg-color10b hover:text-white"
-                    onClick={() => {
-                      setChosenCustomer(data), setChosen(data), setInputText([]);
-                    }}
-                    key={index}
-                  >
-                    {' '}
-                    {data}{' '}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
         </div>
-      )}
     </div>
   );
 };

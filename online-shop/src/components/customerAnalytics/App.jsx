@@ -20,8 +20,8 @@ const App = () => {
     useEffect(()=>{
         firestore.readAllDataFromCollection('Analytics').then((data) => {
             setCustomerMonthlySales(data[0])
-            setPurchaseFrequencyAndTimeBetweenPurchases(data[1])
-            setTotalValueOfOrder(data[2])
+            setPurchaseFrequencyAndTimeBetweenPurchases(data[2])
+            setTotalValueOfOrder(data[3])
         });
     },[])
 
@@ -31,12 +31,19 @@ const App = () => {
             const customerAndTotalValue = []
             Object.keys(totalValueOfOrder).forEach((key)=>{
                 const customer = key
+                if (customer == 'bejin'){
+                    console.log(totalValueOfOrder[key])
+                }
                 const value = totalValueOfOrder[key];
                 let totalValue = 0
                 Object.keys(value).forEach((key)=>{
                     const orderValue = value[key] 
                     // console.log(orderValue)
-                    totalValue += parseFloat(orderValue)
+                    Object.keys(orderValue).forEach((key)=>{
+                        const orderAmount = orderValue[key]
+                        // console.log(order)
+                        totalValue += orderAmount
+                    })
                 })
                 customerAndTotalValue.push({customer,totalValue})
             })
@@ -45,6 +52,15 @@ const App = () => {
             customerAndTotalValue.sort((a, b) => b.totalValue - a.totalValue);
             
             console.log(customerAndTotalValue)
+
+            const ranking = []
+            customerAndTotalValue.forEach((customer,index)=>{
+                ranking.push(customer['customer'])
+            })
+
+            console.log(ranking)
+
+            setCustomerTotalValueRanking(ranking)
         }
     },[totalValueOfOrder])
  
@@ -52,7 +68,7 @@ const App = () => {
         <div className=' w-full flex flex-col '>
             <div className=' w-full flex flex-col items-start justify-start gap-2'>
                 <div className='h-1/10 w-full mt-4'>
-                    <CustomerDropdown data={customerMonthlySales} setChosen={setChosenCustomer}/>
+                    <CustomerDropdown data={customerMonthlySales} setChosen={setChosenCustomer} customerTotalValueRanking={customerTotalValueRanking}/>
                 </div>
                 <div className='h-mid w-full '>
                     <CustomerTable data={customerMonthlySales} chosenCustomer={chosenCustomer} firestore={firestore}/>

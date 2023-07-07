@@ -83,6 +83,7 @@ class schemas {
       machinesThatCanProduce: Joi.string().allow(''),
       stocksLowestPoint: Joi.array(),
       boxImage: Joi.string().allow('',null),
+      costPrice: Joi.number().allow('',null),
     }).unknown(false);
   }
 }
