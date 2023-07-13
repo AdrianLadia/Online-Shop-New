@@ -275,9 +275,6 @@ const AdminAddOrEditItem = (props) => {
     setOpenAddCategoryModal(true);
   }
 
-  useEffect(() => {
-    console.log('costPrice', costPrice);
-  }, [costPrice]);
 
   function createMachineFormat(checked, machine) {
     if (checked) {
@@ -306,7 +303,7 @@ const AdminAddOrEditItem = (props) => {
     if (addOrEditItem == 'Edit' && selectedItemToEdit !== null) {
       function checkIfItemHasRetailVersion() {
         const filter = products.filter((product) => product.itemId == selectedItemToEdit + '-RET');
-        console.log(filter)
+    
         if (filter.length > 0) {
           return true;
         } else {
@@ -315,14 +312,13 @@ const AdminAddOrEditItem = (props) => {
       }
 
       const hasRetailVersion = checkIfItemHasRetailVersion();
-      console.log('hasRetailVersion', hasRetailVersion);
+  
       const selectedItemDetails = products.filter((product) => product.itemId == selectedItemToEdit)[0];
       let selectedItemDetailsRetail = null;
       if (hasRetailVersion) {
         selectedItemDetailsRetail = products.filter((product) => product.itemId == selectedItemToEdit + '-RET')[0];
       }
-      console.log('selectedItemDetails', selectedItemDetails);
-      console.log('selectedItemDetailsRetail', selectedItemDetailsRetail);
+
       setItemID(selectedItemDetails.itemId);
       setItemName(selectedItemDetails.itemName);
       setUnit(selectedItemDetails.unit);
@@ -351,7 +347,7 @@ const AdminAddOrEditItem = (props) => {
 
       
 
-      console.log('selectedItemDetails.imageLinks', selectedItemDetails);
+   
 
       if (selectedItemDetails.imageLinks[0]) {
         setImageLink1(selectedItemDetails.imageLinks[0]);

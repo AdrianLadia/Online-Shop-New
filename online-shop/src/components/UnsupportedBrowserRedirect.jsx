@@ -27,7 +27,7 @@ function UnsupportedBrowserRedirect(props) {
   const open = props.open;
   const setOpen = props.setOpen;
 
-  console.log(open)
+
 
   // useEffect(() => {
   //   if (isSupportedBrowser == false) {

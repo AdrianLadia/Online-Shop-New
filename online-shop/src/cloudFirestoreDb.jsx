@@ -166,7 +166,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
-    console.log('encodedData', encodedData);
+   
 
     try {
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
@@ -247,7 +247,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         }).unknown(false)
       );
 
-      console.log(toReturn)
+     
 
       const { error } = toReturnSchema.validate(toReturn);
 

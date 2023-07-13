@@ -45,9 +45,7 @@ class dataManipulation {
     // Create a new Date object
     const currentDate = new Date();
 
-
     let monthToday = String(currentDate.getMonth() + 1);
-    console.log(monthToday);
 
     if (monthToday.length == 1) {
       monthToday = '0' + monthToday;
@@ -80,7 +78,7 @@ class dataManipulation {
         });
       }
     });
-    console.log(toReturn);
+
     return toReturn;
   }
 

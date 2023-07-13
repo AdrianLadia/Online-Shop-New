@@ -27,8 +27,6 @@ const Image = (props) => {
   
     const handleClose = () => setIsFullScreen(false);
 
-    console.log(imageUrl)
-
     return (
     <div className={divClassName}>
       {imageUrl && (

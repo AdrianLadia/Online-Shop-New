@@ -5,7 +5,7 @@ ChartJS.register( LinearScale, CategoryScale, BarElement, PointElement, LineElem
 
 export default function Graph(props) {
   const productData = props.data;
-  console.log(productData);
+
   const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
 
   const updatedStocksLowestPoint = []

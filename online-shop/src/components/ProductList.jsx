@@ -25,7 +25,7 @@ const ProductList = (props) => {
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
 
-  console.log(favoriteitems)
+ 
 
   const { width } = UseWindowDimensions();
 
@@ -43,7 +43,7 @@ const ProductList = (props) => {
       favoriteitems
     );
 
-    console.log(selected_products)
+
 
     return selected_products;
   }

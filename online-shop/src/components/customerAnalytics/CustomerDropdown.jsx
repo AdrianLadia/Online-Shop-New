@@ -26,7 +26,7 @@ const CustomerDropdown = ({ data, setChosen,customerTotalValueRanking }) => {
   //   }
   // };
 
-  console.log(customers)
+
 
   return (
     <div className="h-full w-full ">
