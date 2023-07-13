@@ -12,6 +12,7 @@ import dataManipulation from '../../utils/dataManipulation';
 import businessCalculations from '../../utils/businessCalculations';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import UseWindowDimensions from './UseWindowDimensions';
+import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
 
 const ProductList = (props) => {
   const wholesale = props.wholesale
@@ -43,9 +44,11 @@ const ProductList = (props) => {
       favoriteitems
     );
 
+    const spo = new storeProductsOrganizer(selected_products)
+    const organizedProducts = spo.runMain()
 
 
-    return selected_products;
+    return organizedProducts;
   }
 
   function AddToCart(item, quantity) {

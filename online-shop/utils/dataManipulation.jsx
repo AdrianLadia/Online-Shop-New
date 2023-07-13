@@ -655,6 +655,11 @@ class dataManipulation {
       throw new Error(error6);
     }
 
+    // SET ORDER OF PRODUCTS BY CATEGORY
+    if (categorySelected == 'Paper Bag') {
+      
+    }
+    console.log(selected_products)
     return selected_products;
   }
 
