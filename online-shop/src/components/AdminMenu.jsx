@@ -42,7 +42,6 @@ const AdminMenu = () => {
       setProducts(data);
     });
   }, [refresh]);
-  console.log(products) 
 
 
   const handleClick = (event) => {

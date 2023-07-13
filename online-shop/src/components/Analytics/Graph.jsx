@@ -11,16 +11,18 @@ export default function Graph(props) {
   const updatedStocksLowestPoint = []
 
   let latestStocksLowestPoint = 0
-  productData.stocksLowestPoint.forEach((stock) => {
-    if (stock.lowestPoint == null) {
-      stock.lowestPoint = latestStocksLowestPoint
-    }
-    else {
-      latestStocksLowestPoint = stock.lowestPoint
-    }
-    
-    updatedStocksLowestPoint.push({lowestPoint: stock.lowestPoint, month: stock.month, year: stock.year})
-  });
+  if (productData.stocksLowestPoint) {
+    productData.stocksLowestPoint.forEach((stock) => {
+     if (stock.lowestPoint == null) {
+       stock.lowestPoint = latestStocksLowestPoint
+     }
+     else {
+       latestStocksLowestPoint = stock.lowestPoint
+     }
+     
+     updatedStocksLowestPoint.push({lowestPoint: stock.lowestPoint, month: stock.month, year: stock.year})
+   });
+  }
 
 
   const labels = productData.salesPerMonth && productData.salesPerMonth.map((sale)=> (monthNames[(sale.month - 1 )] + sale.year));
