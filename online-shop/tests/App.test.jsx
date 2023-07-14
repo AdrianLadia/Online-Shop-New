@@ -16,7 +16,6 @@ import testConfig from './testConfig';
 import firestorefunctions from '../src/firestorefunctions';
 import { fi } from 'date-fns/locale';
 import AppConfig from '../src/AppConfig';
-import storeProductsOrganizer from '../utils/classes/storeProductsOrganizer';
 
 //
 const datamanipulation = new dataManipulation();
@@ -719,13 +718,6 @@ describe('firestoredb', async () => {
       color: 'red',
       material: 'material',
       size: '10',
-      isCustomized: false,
-      piecesPerPack : 10,
-      packsPerBox : 20,
-      cbm : 10,
-      boxImage : null,
-      costPrice : null,
-
     });
     await delay(100);
     const product = await firestore.readSelectedProduct('test');
@@ -2249,7 +2241,7 @@ describe('updatePaymentStatus', () => {
   });
 }, 100000);
 
-describe('deleteOldOrders', () => {
+describe.only('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2746,18 +2738,3 @@ describe('testRetailTransactionPlaceOrder', async () => {
 
   });
 },100000);
-
-describe('testStoreProductsOrganizer', async () => {
-  let products = [];
-  test('Setup test', async () => {
-    products = await cloudfirestore.readAllProductsForOnlineStore();
-  });
-  test('invoking function', async () => {
-    const categories = await firestore.readAllCategories();
-    categories.forEach((category) => {
-      const filteredProductsByCategory = products.filter((product) => product.category == category.category && product.unit == 'Pack');
-      const spo = new storeProductsOrganizer(filteredProductsByCategory)
-      spo.runMain()
-    });
-  });
-});

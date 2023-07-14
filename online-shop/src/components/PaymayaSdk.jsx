@@ -27,8 +27,8 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
   }
   else {
     url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
-    publicKey = 'pk-FmPLGj9c19bHptc5Am0DnKMgzmARrH7fUn6GlHrGedf'
-    secretKey = 'sk-XMouqWJRSYr4CuNkFRQ5DcJaLSPhA0lJLX3A7YQ7LSj'
+    publicKey = 'pk-cyzLaDfHBeFIP5TIINQKUbQh9Kq6Wt726FdzTpuSt7T'
+    secretKey = 'sk-D71LGkjBHoUU3yKLkPYHaS4PkfSgv3z5VPQN0oytUCE'
   }
 
  

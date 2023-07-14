@@ -13,7 +13,7 @@ function PaymentMethods() {
 
   useEffect(() => {
      firestore.readAllPaymentProviders().then((providers) => {
-   
+      console.log(providers)
       setPaymentMethods(providers)
      })
   },[])

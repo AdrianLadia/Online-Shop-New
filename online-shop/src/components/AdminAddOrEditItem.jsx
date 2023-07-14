@@ -89,7 +89,6 @@ const AdminAddOrEditItem = (props) => {
   const [selectedItemToEdit, setSelectedItemToEdit] = React.useState(null);
   const [boxImage, setBoxImage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
-  const [costPrice,setCostPrice] = React.useState(0);
 
 
   useEffect(() => {
@@ -157,7 +156,6 @@ const AdminAddOrEditItem = (props) => {
         manufactured: manufactured,
         machinesThatCanProduce: machineFormat,
         boxImage: boxImage,
-        costPrice: parseFloat(costPrice)
       },
       itemID,
       products
@@ -192,7 +190,6 @@ const AdminAddOrEditItem = (props) => {
           manufactured: manufactured,
           machinesThatCanProduce: machineFormat,
           boxImage: boxImage,
-          costPrice: null
         },
         itemID + '-RET',
         products
@@ -243,7 +240,6 @@ const AdminAddOrEditItem = (props) => {
       packsPerBox: parseInt(packsPerBox),
       cbm: cbm,
       boxImage: boxImage,
-      costPrice:parseFloat(costPrice)
     });
     await firestore.updateProduct(selectedItemToEdit + '-RET', {
       itemName: itemName,
@@ -263,7 +259,6 @@ const AdminAddOrEditItem = (props) => {
       isCustomized: isCustomized,
       cbm: null,
       boxImage: boxImage,
-      costPrice:null
     });
 
     props.setRefresh(!props.refresh);
@@ -274,7 +269,6 @@ const AdminAddOrEditItem = (props) => {
   function onAddCategoryClick() {
     setOpenAddCategoryModal(true);
   }
-
 
   function createMachineFormat(checked, machine) {
     if (checked) {
@@ -303,7 +297,7 @@ const AdminAddOrEditItem = (props) => {
     if (addOrEditItem == 'Edit' && selectedItemToEdit !== null) {
       function checkIfItemHasRetailVersion() {
         const filter = products.filter((product) => product.itemId == selectedItemToEdit + '-RET');
-    
+        console.log(filter)
         if (filter.length > 0) {
           return true;
         } else {
@@ -312,13 +306,14 @@ const AdminAddOrEditItem = (props) => {
       }
 
       const hasRetailVersion = checkIfItemHasRetailVersion();
-  
+      console.log('hasRetailVersion', hasRetailVersion);
       const selectedItemDetails = products.filter((product) => product.itemId == selectedItemToEdit)[0];
       let selectedItemDetailsRetail = null;
       if (hasRetailVersion) {
         selectedItemDetailsRetail = products.filter((product) => product.itemId == selectedItemToEdit + '-RET')[0];
       }
-
+      console.log('selectedItemDetails', selectedItemDetails);
+      console.log('selectedItemDetailsRetail', selectedItemDetailsRetail);
       setItemID(selectedItemDetails.itemId);
       setItemName(selectedItemDetails.itemName);
       setUnit(selectedItemDetails.unit);
@@ -335,7 +330,6 @@ const AdminAddOrEditItem = (props) => {
       setIsThisRetail(hasRetailVersion);
       setPacksPerBox(selectedItemDetails.packsPerBox);
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
-      setCostPrice(selectedItemDetails.costPrice);
 
 
       if (selectedItemDetails.boxImage == null) {
@@ -347,7 +341,7 @@ const AdminAddOrEditItem = (props) => {
 
       
 
-   
+      console.log('selectedItemDetails.imageLinks', selectedItemDetails);
 
       if (selectedItemDetails.imageLinks[0]) {
         setImageLink1(selectedItemDetails.imageLinks[0]);
@@ -480,15 +474,6 @@ const AdminAddOrEditItem = (props) => {
           value={price}
           onChange={(event) => setPrice(event.target.value)}
         />
-        <TextField
-          required
-          id="outlined-basic"
-          label="Cost Price"
-          variant="outlined"
-          value={costPrice}
-          onChange={(event) => setCostPrice(event.target.value)}
-        />
-  
         <TextField
           required
           id="outlined-basic"

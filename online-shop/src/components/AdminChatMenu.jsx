@@ -23,12 +23,15 @@ const AdminChatMenu = () => {
     const [chatButtonState, setChatButtonState] = useState(null)
     const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false)
 
-
+    useEffect(() => {
+      console.log('selectedChatOrderId', selectedChatOrderId)
+    }, [selectedChatOrderId]);
 
     useEffect(() => {
       const docRef = collection(db, 'ordersMessages')
       onSnapshot(docRef, (querySnapshot) => {
         
+        console.log('running snapshot')
         const chats = []
         querySnapshot.forEach((doc) => {
           if (doc.exists()) {
@@ -67,9 +70,14 @@ const AdminChatMenu = () => {
       chatData.map((chat)=>{
         {chatButtonState[chat.id] = false}
       })
+      console.log(chatButtonState)
       setChatButtonState(chatButtonState)
     },[chatData])
 
+
+    useEffect(()=>{
+      console.log('chatButtonState',chatButtonState)
+    },[chatButtonState])
 
   useEffect(()=>{
     if(chatSwitch === false){

@@ -22,8 +22,6 @@ import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
 import AdminAddOrEditItem from "./AdminAddOrEditItem";
-import CustomerAnalytics from './customerAnalytics/App';
-// import { LuBarChart4 } from "react-icons/lu";
 
 const AdminMenu = () => {
   
@@ -34,7 +32,7 @@ const AdminMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Customer Analytics');
+  const [selectedMenu, setSelectedMenu] = React.useState('Admin Chat');
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -42,6 +40,7 @@ const AdminMenu = () => {
       setProducts(data);
     });
   }, [refresh]);
+  console.log(products) 
 
 
   const handleClick = (event) => {
@@ -165,8 +164,6 @@ const AdminMenu = () => {
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
-            {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickCustomerAnalytics}>      <span>Customer Analytics</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Admin Chat' onClick={handleClickAdminChat}> <HiOutlineChatAlt size={20}/>     <span>Admin Chat</span></MenuItem>
           </Menu>

@@ -13,7 +13,7 @@ class firestoredb extends firestorefunctions {
 
   // USED FOR ADMIN INVENTORY
   async createProduct(data, id, products) {
-   
+    console.log(data);
     const schema = schemas.productSchema();
 
     const { error } = schema.validate(data);
@@ -25,7 +25,7 @@ class firestoredb extends firestorefunctions {
       return
     }
 
-
+    console.log(products)
 
     let foundSimilarProductId = false;
     products.map((product) => {
@@ -76,7 +76,7 @@ class firestoredb extends firestorefunctions {
 
   async updateProduct(id, data) {
 
-  
+    console.log(data)
     const schema = Joi.object({
       itemName: Joi.string().required(),
       unit: Joi.string().required(),
@@ -97,7 +97,6 @@ class firestoredb extends firestorefunctions {
       packsPerBox : Joi.number(),
       cbm : Joi.number().allow('',null),
       boxImage : Joi.string().uri().allow(null,''),
-      costPrice : Joi.number().allow('',null),
     }).unknown(false);
 
     try {
@@ -235,7 +234,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteUserContactPersons(userid, name, phoneNumber) {
-  
+    console.log(userid, name, phoneNumber);
     await retryApi(async () => {
       await super.deleteDocumentFromCollectionArray(
         'Users',

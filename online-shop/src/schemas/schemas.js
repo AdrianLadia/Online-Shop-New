@@ -76,14 +76,13 @@ class schemas {
       salesPerMonth: Joi.array(),
       stocksIns: Joi.array().allow(null),
       clicks: Joi.array(),
-      piecesPerPack: Joi.number().allow(null,''),
-      packsPerBox: Joi.number().allow(null,''),
+      piecesPerPack: Joi.number().allow(null),
+      packsPerBox: Joi.number().allow(null),
       cbm: Joi.number().allow('',null),
       manufactured: Joi.boolean().required(),
       machinesThatCanProduce: Joi.string().allow(''),
       stocksLowestPoint: Joi.array(),
       boxImage: Joi.string().allow('',null),
-      costPrice: Joi.number().allow('',null),
     }).unknown(false);
   }
 }

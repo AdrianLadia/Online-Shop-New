@@ -34,7 +34,7 @@ const AdminChatMenuOpenButton = (props) => {
     }
 
     useEffect(() => {
-    
+        console.log(chatButtonState);
         if (chatButtonState[chat.id] === true) {
             setOpenButton(true);
             setSelectedChatOrderId(chat.id);

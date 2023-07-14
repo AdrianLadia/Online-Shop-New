@@ -47,7 +47,7 @@ const MyOrderCardModal = (props) => {
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
 
-
+  console.log(order);
 
   const { width } = UseWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);

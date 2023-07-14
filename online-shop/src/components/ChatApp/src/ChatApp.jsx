@@ -36,13 +36,13 @@ const ChatApp = (props) => {
   useEffect(() => {
     try {
       const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
-  
+      console.log(fromHomePage);
       if (fromHomePage) {
         setIsInquiryMessage(isInquiry);
         setBackButtonRedirect(backButtonRedirect);
         setFromHomePage(true);
       } else {
-
+        console.log(orderReference);
         setSelectedChatOrderId(orderReference);
         setIsInquiryMessage(isInquiry);
         setBackButtonRedirect(backButtonRedirect);
@@ -69,7 +69,7 @@ const ChatApp = (props) => {
   }, [userdata]);
 
   useEffect(() => {
-
+    console.log(selectedChatOrderId);
     if (selectedChatOrderId != null) {
       const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
       unsubscribe = onSnapshot(docRef, (doc) => {

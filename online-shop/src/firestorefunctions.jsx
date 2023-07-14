@@ -400,7 +400,7 @@ class firestorefunctions {
   }
 
   async updateOrderMessagesAsReadForUser(reference) {
-    
+    console.log(reference)
     try {
       await runTransaction(this.db, async (transaction) => {
         // READ ORDER MESSAGES

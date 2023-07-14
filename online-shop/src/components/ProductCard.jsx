@@ -37,7 +37,7 @@ const ProductCard = (props) => {
   const [imageSrc, setImageSrc] = useState('');
   const retailSafetyStock = new AppConfig().getRetailSafetyStock()
 
-
+  console.log(product)
 
   useEffect(() => {
     setImageLoading(true);
@@ -88,7 +88,7 @@ const ProductCard = (props) => {
 
     function getStocksAvailable() {
       if (props.product.unit === 'Pack') {
-     
+        console.log('retail stocks available', stocksAvailable)
         return stocksAvailable;
       }
       if (props.product.unit != 'Pack') {
@@ -112,7 +112,10 @@ const ProductCard = (props) => {
         return;
       }
     } else {
-  
+      console.log('total order', totalOrder)
+      console.log('stocks available', getStocksAvailable())
+      console.log('average sales per day', getAverageSalesPerDay())
+      console.log(calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true))
        if (
         totalOrder >
         calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
@@ -161,10 +164,10 @@ const ProductCard = (props) => {
       }
     }
     if (product.unit == 'Pack') {
-  
+      console.log(stocksAvailable)
       if (stocksAvailable <= 50) {
         setLowStock(true);
-     
+        console.log('low stock')
       }
     }
     else {
@@ -237,6 +240,7 @@ const ProductCard = (props) => {
     return 'max-w-lg';
   }
 
+  console.log("showTutorial" + showTutorial)
 
   if (product.imageLinks.length === 0) {
     return (

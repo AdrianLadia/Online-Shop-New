@@ -27,7 +27,7 @@ const CheckoutProofOfPayment = (props) => {
   const navigateTo = useNavigate();
   const [paymentMethods, setPaymentMethods] = useState([]);
 
-
+  console.log(date);
 
   useEffect(() => {
     firestore.readAllPaymentProviders().then((providers) => {

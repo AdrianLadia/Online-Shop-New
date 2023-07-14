@@ -49,12 +49,12 @@ const DisplayMessages = (props) => {
     let unreadOwner = 0;
     let unreadAdmin = 0;
     messages.map((mess) => {
-  
+      console.log(mess);
       if (mess.userRole != 'member' && userdata.uid !== mess.userId) {
         const id = datamanipulation.convertDateTimeStampToDateString(mess.dateTime)
-    
+        console.log(id)
         if (isElementInView(id)) {
-
+          console.log('found');
           mess.read = true;
         }
       }
@@ -74,9 +74,11 @@ const DisplayMessages = (props) => {
         setChatData(newChatData);
       }
     }    
-
+    console.log('RUNNING');
     await firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
 
+    console.log('unreadOwner',unreadOwner);
+    console.log('unreadAdmin',unreadAdmin);
 
     if (unreadOwner === 0) {
         firestore.updateOrderMessageMarkAsOwnerReadAll(selectedChatOrderId, true); 
@@ -98,7 +100,7 @@ const DisplayMessages = (props) => {
   }, [messages]);
 
   useEffect(() => {
-  
+    console.log('triggered');
     markMessagesAsRead();
   }, [messages]);
 
