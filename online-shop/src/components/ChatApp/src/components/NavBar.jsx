@@ -6,8 +6,6 @@ const NavBar = (props) => {
     const {selectedChatOrderId} = useContext(AppContext);
     const isInquiryMessage = props.isInquiryMessage;
     const backButtonRedirect = props.backButtonRedirect;
-    console.log(backButtonRedirect)
-    console.log(isInquiryMessage)
 
   return (
     <div className='flex justify-center mx-1 h-1/10'>

@@ -105,10 +105,10 @@ function App() {
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
 
-  const averageTotalSales = firestore.readAllDataFromCollection('Analytics').then((data) => {
-    console.log(data)
-  }
-  );
+  // const averageTotalSales = firestore.readAllDataFromCollection('Analytics').then((data) => {
+  //   console.log(data)
+  // }
+  // );
 
 
   useEffect(() => {
@@ -122,13 +122,13 @@ function App() {
             }
           }
         });
-        console.log('unreadCustomerServiceMessages', unreadCustomerServiceMessages)
+  
         setUnreadCustomerServiceMessages(unreadCustomerServiceMessages)
       });
       
       let unreadOrderMessages = 0;
       orders.map((order) => {
-        console.log('order', order)
+    
         firestore.readOrderMessageByReference(order.reference).then((messages) => {
           messages.messages.forEach((message) => {
             if (message.userId != userdata.uid) {
@@ -137,7 +137,7 @@ function App() {
               }
             }
           });
-          console.log('unreadOrderMessages', unreadOrderMessages)
+      
           setUnreadOrderMessages(unreadOrderMessages)
         });
       })
@@ -148,7 +148,7 @@ function App() {
   useEffect(() => {
     if (userdata != null) {
       if (userdata.userRole == 'admin' || userdata.userRole == 'superAdmin') {
-        console.log('IS ADMIN')
+    
         firestore.readAllDataFromCollection('Users').then((users) => {
           setAllUserData(users)
         });
@@ -229,7 +229,7 @@ function App() {
             setUserId(user.uid);
           } else {
 
-            console.log('user', user);
+      
             async function createNewUser() {
               await cloudfirestore.createNewUser(
                 {
@@ -301,7 +301,7 @@ function App() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
-        console.log(data.favoriteItems)
+  
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -361,7 +361,7 @@ function App() {
   // Checks if userdata is incomplete if it is show update profile modal
   useEffect(() => {
     if (userdata) {
-      console.log(userdata);
+     
       if (userdata.name == null) {
         setOpenProfileUpdaterModal(true);
       }

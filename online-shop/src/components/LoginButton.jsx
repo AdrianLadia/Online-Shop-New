@@ -71,7 +71,7 @@ const LoginButton = (props) => {
       {
         callback: (response) => {
           // reCAPTCHA solved, allow signInWithPhoneNumber.
-          console.log(response);
+    
         },
       },
       auth
@@ -97,7 +97,7 @@ const LoginButton = (props) => {
       return;
     }
 
-    console.log('+' + phoneNumber)
+
     setHeight('40%')
     const response = await setUpRecaptcha('+' + phoneNumber);
     if (response.verificationId) {

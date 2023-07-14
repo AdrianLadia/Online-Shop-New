@@ -42,7 +42,7 @@ export function InventoryTable({name, category, customized, callback}) {
   
   useEffect(() => {
       const favoriteItems = datamanipulation.readUsersFavoriteItems(allUserData);
-      console.log(favoriteItems)
+  
       setFavorites(favoriteItems);
   }, [refreshData]);
 
@@ -82,7 +82,7 @@ export function InventoryTable({name, category, customized, callback}) {
   useEffect(() => {
     const tableData = [];
     productsData.map((product, index) => {
-      console.log(product)
+
       const productName = product.itemName;
       const totalStocks = businesslogic.getTotalStocks(product);
       const type = product.category;
@@ -1148,6 +1148,8 @@ export function InventoryTable({name, category, customized, callback}) {
   ];
 
   const ROW_HEIGHT = 230;
+
+
 
   return (
     <div ref={p1} className=" w-11/12 2lg:w-9/12 ml-1 mr-3 mt-10 2lg:mt-0 bg-gradient-to-t from-stone-100 to-green-100 border-2 border-green-700 rounded-md">

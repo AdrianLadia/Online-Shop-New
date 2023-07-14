@@ -5,22 +5,24 @@ ChartJS.register( LinearScale, CategoryScale, BarElement, PointElement, LineElem
 
 export default function Graph(props) {
   const productData = props.data;
-  console.log(productData);
+
   const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
 
   const updatedStocksLowestPoint = []
 
   let latestStocksLowestPoint = 0
-  productData.stocksLowestPoint.forEach((stock) => {
-    if (stock.lowestPoint == null) {
-      stock.lowestPoint = latestStocksLowestPoint
-    }
-    else {
-      latestStocksLowestPoint = stock.lowestPoint
-    }
-    
-    updatedStocksLowestPoint.push({lowestPoint: stock.lowestPoint, month: stock.month, year: stock.year})
-  });
+  if (productData.stocksLowestPoint) {
+    productData.stocksLowestPoint.forEach((stock) => {
+     if (stock.lowestPoint == null) {
+       stock.lowestPoint = latestStocksLowestPoint
+     }
+     else {
+       latestStocksLowestPoint = stock.lowestPoint
+     }
+     
+     updatedStocksLowestPoint.push({lowestPoint: stock.lowestPoint, month: stock.month, year: stock.year})
+   });
+  }
 
 
   const labels = productData.salesPerMonth && productData.salesPerMonth.map((sale)=> (monthNames[(sale.month - 1 )] + sale.year));

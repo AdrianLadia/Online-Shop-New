@@ -166,7 +166,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
-    console.log('encodedData', encodedData);
+   
 
     try {
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
@@ -223,29 +223,31 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const toReturn = response.data;
       const toReturnSchema = Joi.array().items(
         Joi.object({
-          averageSalesPerDay: Joi.number().required().allow(null),
-          brand: Joi.string().allow('').required(),
+          averageSalesPerDay: Joi.number().required().allow(null,''),
+          brand: Joi.string().allow('',null).required(),
           category: Joi.string().required(),
-          color: Joi.string().required().allow(''),
-          description: Joi.string().required().allow(''),
-          dimensions: Joi.string().required().allow(''),
+          color: Joi.string().required().allow('',null),
+          description: Joi.string().required().allow('',null),
+          dimensions: Joi.string().required().allow('',null),
           imageLinks: Joi.array(),
           itemId: Joi.string().required(),
           isCustomized: Joi.boolean().required(),
           itemName: Joi.string().required(),
-          material: Joi.string().required().allow(''),
-          parentProductID: Joi.string().required().allow(''),
+          material: Joi.string().required().allow('',null),
+          parentProductID: Joi.string().required().allow('',null),
           pieces: Joi.number().required(),
           price: Joi.number().required(),
-          size: Joi.string().required().allow(''),
-          stocksAvailable: Joi.number().required().allow(null),
+          size: Joi.string().required().allow('',null),
+          stocksAvailable: Joi.number().required().allow(null,''),
           unit: Joi.string().required(),
           weight: Joi.number().required(),
-          packsPerBox: Joi.number().allow(null),
-          piecesPerPack: Joi.number().allow(null),
+          packsPerBox: Joi.number().allow(null,''),
+          piecesPerPack: Joi.number().allow(null,''),
           boxImage: Joi.string().uri().allow('',null),
         }).unknown(false)
       );
+
+     
 
       const { error } = toReturnSchema.validate(toReturn);
 
