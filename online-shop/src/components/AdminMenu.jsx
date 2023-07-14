@@ -71,13 +71,18 @@ const AdminMenu = () => {
     setSelectedMenu('Analytics');
   }
 
+  const handleClickCustomerAnalytics = () => {
+    setAnchorEl(null);
+    setSelectedMenu('Customer Analytics');
+  }
+
   const handleClickAdminChat = () => {
     setAnchorEl(null);
     setSelectedMenu('Admin Chat');
   }
 
   const handleBack = () => {
-    navigateTo('/');
+    navigateTo('/shop');
   };
 
   function responsiveSize(){
@@ -102,9 +107,9 @@ const AdminMenu = () => {
     <div className="flex flex-col">
       <div className="flex flex-row w-full justify-between bg-gradient-to-r from-color60 via-color10c to-color60 py-3">
         {/* Back Button */}
-        <IoArrowBackCircle id='backToStoreButton' size={40} className=" mt-1 2xs:ml-6 text-white hover:text-color10b cursor-pointer" onClick={handleBack} />
+        <IoArrowBackCircle id='backToStoreButton' size={40} className=" mt-1 2xs:ml-6 text-white hover:text-red-300 cursor-pointer" onClick={handleBack} />
           
-        <div className='flex sm:mr-14'>
+        <div className='flex '>
             <RiAdminFill size={responsiveSize()} className={responsiveIcon()}/>
           {/* <span className='mt-2 text-blue1 text-2xl font-semibold first-letter:text-3xl t'>Admin</span> */}
         </div>
@@ -172,6 +177,7 @@ const AdminMenu = () => {
           </Menu>
         </div>
       </div>
+      {/* handleClickCustomerAnalytics */}
       {/* HERO */}
       <div>
         {/* {selectedMenu === 'Dashboard' && <AdminOrders users={users} />} */}
@@ -188,6 +194,7 @@ const AdminMenu = () => {
         {selectedMenu === 'Create Payment' && <AdminCreatePayment users={allUserData} setUsers={setAllUserData} />}
         {selectedMenu === 'Customer Orders' && <AdminOrders users={allUserData} />}
         {selectedMenu === 'Analytics' && <App />}
+        {selectedMenu === 'Customer Analytics' && <CustomerAnalytics />}
         {selectedMenu === 'Admin Chat' && <AdminChatMenu />}
       </div>
     </div>
