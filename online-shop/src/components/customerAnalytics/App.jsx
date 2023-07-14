@@ -5,7 +5,7 @@ import CustomerTable from './CustomerTable';
 import PurchaseFrequency from './PurchaseFrequency';
 import TimeBetweenPurchases from './TimeBetweenPurchases';
 import TotalValueGraph from './TotalValueGraph';
-import "./index.css"
+
 
 const App = () => {
     const { firestore } = useContext(AppContext)
