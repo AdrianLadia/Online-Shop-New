@@ -12,6 +12,7 @@ import dataManipulation from '../../utils/dataManipulation';
 import businessCalculations from '../../utils/businessCalculations';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import UseWindowDimensions from './UseWindowDimensions';
+import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
 
 const ProductList = (props) => {
   const wholesale = props.wholesale
@@ -25,7 +26,7 @@ const ProductList = (props) => {
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
 
-  console.log(favoriteitems)
+ 
 
   const { width } = UseWindowDimensions();
 
@@ -43,9 +44,11 @@ const ProductList = (props) => {
       favoriteitems
     );
 
-    console.log(selected_products)
+    const spo = new storeProductsOrganizer(selected_products)
+    const organizedProducts = spo.runMain()
 
-    return selected_products;
+
+    return organizedProducts;
   }
 
   function AddToCart(item, quantity) {

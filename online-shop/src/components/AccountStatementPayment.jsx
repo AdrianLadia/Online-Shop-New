@@ -31,7 +31,7 @@ const AccountStatementPayment = (props) => {
     }
   }
 
-  console.log(date)
+
 
   useEffect(() => {
     if (mayaRedirectUrl != null) {

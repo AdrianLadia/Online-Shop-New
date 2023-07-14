@@ -70,7 +70,7 @@ function MyOrderCard(props) {
   function onMessageClick() {
     setUnRead(false)
     firestore.updateOrderMessagesAsReadForUser(order.reference);
-    console.log('B');
+
     setSelectedChatOrderId(order.reference);
     navigateTo('/orderChat', {
       state: { orderReference: order.reference, isInquiry: false, backButtonRedirect: pathname },

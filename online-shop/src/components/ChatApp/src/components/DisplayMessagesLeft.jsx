@@ -39,11 +39,9 @@ const DisplayMessagesLeft = (props) => {
   async function updateMessages() {
  
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
-    console.log(selectedChatOrderId)
 
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
-    console.log(data);
     const messages = data.messages;
     
     let unreadOwner = 0;
@@ -86,7 +84,7 @@ const DisplayMessagesLeft = (props) => {
   }
 
   function handleMessageClick() {
-    console.log('clicked')
+
     setShowDetails(!showDetails);
     updateMessages();
   }
@@ -105,7 +103,7 @@ const DisplayMessagesLeft = (props) => {
     }
   }
 
-  console.log(message)
+
 
   return (
     <div key={convertedDate} className="flex items-start h-max ml-0.5" id={convertedDate}>
