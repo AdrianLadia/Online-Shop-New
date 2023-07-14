@@ -26,39 +26,31 @@ const App = () => {
     },[])
 
     useEffect(()=>{
-        console.log(totalValueOfOrder)
+
         if (totalValueOfOrder != {}){
             const customerAndTotalValue = []
             Object.keys(totalValueOfOrder).forEach((key)=>{
                 const customer = key
-                if (customer == 'bejin'){
-                    console.log(totalValueOfOrder[key])
-                }
                 const value = totalValueOfOrder[key];
                 let totalValue = 0
                 Object.keys(value).forEach((key)=>{
                     const orderValue = value[key] 
-                    // console.log(orderValue)
+
                     Object.keys(orderValue).forEach((key)=>{
                         const orderAmount = orderValue[key]
-                        // console.log(order)
+   
                         totalValue += orderAmount
                     })
                 })
                 customerAndTotalValue.push({customer,totalValue})
             })
-            console.log(customerAndTotalValue)
 
             customerAndTotalValue.sort((a, b) => b.totalValue - a.totalValue);
-            
-            console.log(customerAndTotalValue)
 
             const ranking = []
             customerAndTotalValue.forEach((customer,index)=>{
                 ranking.push(customer['customer'])
             })
-
-            console.log(ranking)
 
             setCustomerTotalValueRanking(ranking)
         }

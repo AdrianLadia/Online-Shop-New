@@ -23,7 +23,7 @@ import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
 import AdminAddOrEditItem from "./AdminAddOrEditItem";
 import CustomerAnalytics from './customerAnalytics/App';
-import { LuBarChart4 } from "react-icons/lu";
+// import { LuBarChart4 } from "react-icons/lu";
 
 const AdminMenu = () => {
   
@@ -42,7 +42,6 @@ const AdminMenu = () => {
       setProducts(data);
     });
   }, [refresh]);
-  console.log(products) 
 
 
   const handleClick = (event) => {
@@ -172,7 +171,7 @@ const AdminMenu = () => {
             {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickCustomerAnalytics}> <LuBarChart4 size={18}/>     <span>Customer Analytics</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickCustomerAnalytics}>      <span>Customer Analytics</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Admin Chat' onClick={handleClickAdminChat}> <HiOutlineChatAlt size={20}/>     <span>Admin Chat</span></MenuItem>
           </Menu>

@@ -3,8 +3,8 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({
-  // origin: ['https://starpack.ph', 'http://localhost:5173','http://localhost:3000'],
-  origin: true,
+  origin: ['https://starpack.ph', 'http://localhost:5173','http://localhost:3000', 'http://localhost:5174','https://pg.maya.ph','https://payments.maya.ph','https://payments.paymaya.com',"http://127.0.0.1:5173","http://127.0.0.1:5174","https://127.0.0.1:5173","https://127.0.0.1:5174"]
+  // origin: true
 });
 
 const express = require('express');

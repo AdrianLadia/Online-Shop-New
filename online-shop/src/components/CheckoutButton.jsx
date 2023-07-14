@@ -31,7 +31,7 @@ const CheckoutButton = (props) => {
     // if(totalCredit < 50000){
 
       if (!isSupportedBrowser) {
-        console.log('Setting to open unsupported')
+   
         setIsSupportedBrowserModalOpen(true);
         return;
       }

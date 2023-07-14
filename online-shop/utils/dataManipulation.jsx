@@ -585,10 +585,8 @@ class dataManipulation {
 
       let selected_products = [];
 
-      console.log(favorites)
-
       products.map((product) => {
-        console.log(product)
+
         if (favorites.includes(product.itemId)) {
           selected_products.push(product);
         }
@@ -657,6 +655,11 @@ class dataManipulation {
       throw new Error(error6);
     }
 
+    // SET ORDER OF PRODUCTS BY CATEGORY
+    if (categorySelected == 'Paper Bag') {
+      
+    }
+    console.log(selected_products)
     return selected_products;
   }
 
