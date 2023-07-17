@@ -659,7 +659,7 @@ class dataManipulation {
     if (categorySelected == 'Paper Bag') {
       
     }
-    console.log(selected_products)
+    // console.log(selected_products)
     return selected_products;
   }
 

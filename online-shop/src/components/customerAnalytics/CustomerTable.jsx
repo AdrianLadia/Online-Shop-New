@@ -79,7 +79,7 @@ const CustomerTable = ({ data, chosenCustomer, firestore }) => {
     {
       field: 'graph',
       width: graphWidth(),
-      headerName: ( <div style={headerStyle()}>ANALYTICS</div> ),
+      headerName: ( <div style={headerStyle()}>{chosenCustomer? chosenCustomer.toUpperCase() + ", SALES & STOCKS" : "SALES & STOCKS"}</div> ),
       headerClassName: 'header-theme', align: "center", headerAlign: "center",
       editable: false, sortable: false, disableColumnMenu: true,
       renderCell: (customerData) => (<CustomerGraph data={customerData.row} firestore={firestore}/>),
@@ -89,7 +89,7 @@ const CustomerTable = ({ data, chosenCustomer, firestore }) => {
       headerName: ( <div style={headerStyle()} > TOTAL VALUE </div> ),
       headerClassName: 'header-theme', align: "center", headerAlign: "center",
       width: headerWidth(),
-      disableColumnMenu: true, sortable: true,
+      disableColumnMenu: true, sortable: false,
       renderCell: (customerData) => (<div>{customerData.row.totalSales}</div>),
     },
   ];
@@ -103,11 +103,11 @@ const CustomerTable = ({ data, chosenCustomer, firestore }) => {
           columns={columns}
           rowHeight={rowHeight()}
           hideFooter={true}
-          sortingOrder={['desc', 'asc']}
+          // sortingOrder={['desc', 'asc']}
           disableColumnSelector={true}
           disableRowSelectionOnClick={true}
-          disableCellSelectionOnClick={true}
           disableDensitySelector={true}
+          sortModel={[{field: 'totalSales', sort: 'desc'}]}
         />
       </Box>
     </div>

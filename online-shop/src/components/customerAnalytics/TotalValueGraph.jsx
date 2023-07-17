@@ -16,8 +16,8 @@ const TotalValueGraph = ({data, chosenCustomer}) => {
     },[chosenCustomer])
 
     const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
-    let labels = []
-    const forGraphValues = []
+    let labels = [];
+    const forGraphValues = [];
     tableData&&tableData.map((item)=>{
       const date = item.date.slice(0,7)
       if(labels.some(item => item.includes(date))){
@@ -35,7 +35,7 @@ const TotalValueGraph = ({data, chosenCustomer}) => {
       labels,
       datasets: [
         {
-          type: 'bar' , label: chosenCustomer, data: forGraphValues,
+          type: 'bar' , label: chosenCustomer ? chosenCustomer + " total sales" : "Select a Customer" , data: forGraphValues,
           borderWidth: 1, pointRadius: 4, pointHoverRadius: 6, pointHitRadius: 6,
           borderColor: 'black',
           backgroundColor: 'rgba(0, 223, 162, 0.3)',
@@ -45,8 +45,8 @@ const TotalValueGraph = ({data, chosenCustomer}) => {
 
   return (
     <div className='w-full h-full flex justify-center '>
-      <div className='w-full xs:w-11/12 rounded-b-lg border-t-0 border-green-700 h-full flex flex-col justify-center items-center border-2 bg-gradient-to-t from-stone-100 to-green-100'>
-        <Chart data={graphData} className='flex '/>
+      <div className='p-2 overflow-auto w-full xs:w-11/12 rounded-b-lg border-t-0 border-green-700 h-full flex flex-col justify-center items-center border-2 bg-gradient-to-t from-stone-100 to-green-100'>
+        <Chart data={graphData} />
       </div>  
     </div>
   )

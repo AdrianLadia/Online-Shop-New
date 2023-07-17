@@ -21,6 +21,10 @@ module.exports = {
         '8/10': "80%",
         '9/10': "90%",
         '19/20': "95%",
+        'quar': '25vh',
+        'mid': '50vh',
+        '80per': '80vh',
+        '90per': '90vh',
       },
       minHeight: {
         '3/10': '30vh',
@@ -67,6 +71,9 @@ module.exports = {
         '2lg' : '1145px',
         '3xl' : '1751px'
       },
+      // fontWeight: {
+      //   custom: '400', 
+      // },
       borderRadius: {
         '4xl': '2rem',
         'semifull': '20rem'

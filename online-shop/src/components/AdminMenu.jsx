@@ -22,8 +22,8 @@ import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
 import AdminAddOrEditItem from "./AdminAddOrEditItem";
-import CustomerAnalytics from './customerAnalytics/App';
-// import { LuBarChart4 } from "react-icons/lu";
+import CustomerAnalytics from './customerAnalytics/App';VscGraph
+import { VscGraph } from "react-icons/vsc";
 
 const AdminMenu = () => {
   
@@ -121,9 +121,8 @@ const AdminMenu = () => {
             aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}
           >          
-            <GiHamburgerMenu id='hamburgerAdmin' size={36} className='-mr-4 2xs:mr-6 text-white hover:text-color10b '/>
+            <GiHamburgerMenu onClick={handleClick} id='hamburgerAdmin' size={36} className='-mr-4 2xs:mr-6 text-white hover:text-color10b '/>
           </Button>
           <Menu
             id="basic-menu"
@@ -169,9 +168,9 @@ const AdminMenu = () => {
             {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='customerOrdersMenu' onClick={handleClickCustomerOrders}> <BsBagCheck size={19}/>     <span>Customer Orders</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickAnalytics}> <BsGraphUp size={18}/>     <span>Analytics</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickAnalytics}> <VscGraph size={20}/>     <span>Analytics</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
-            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickCustomerAnalytics}>      <span>Customer Analytics</span></MenuItem>
+            <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Analytics' onClick={handleClickCustomerAnalytics}> <BsGraphUp size={17}/>     <span>Customer Analytics</span></MenuItem>
             {/* <Divider className="mt-0.5"/>   */}
             <MenuItem className='hover:bg-color10b w-11/12 justify-start p-2 ml-2' id='Admin Chat' onClick={handleClickAdminChat}> <HiOutlineChatAlt size={20}/>     <span>Admin Chat</span></MenuItem>
           </Menu>
@@ -185,10 +184,10 @@ const AdminMenu = () => {
           <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} setSelectedMenu={setSelectedMenu} />
         )}
         {selectedMenu === 'Add Item' && (
-          <AdminAddOrEditItem products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} addOrEditItem={'Add'} />
+          <AdminAddOrEditItem products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} addOrEditItem={'Add'} setSelectedMenu={setSelectedMenu}/>
         )}
         {selectedMenu === 'Edit Item' && (
-          <AdminAddOrEditItem products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} addOrEditItem={'Edit'}/>
+          <AdminAddOrEditItem products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} addOrEditItem={'Edit'} setSelectedMenu={setSelectedMenu}/>
         )}
 
         {selectedMenu === 'Create Payment' && <AdminCreatePayment users={allUserData} setUsers={setAllUserData} />}

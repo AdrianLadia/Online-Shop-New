@@ -1,14 +1,26 @@
 import React, {useState, useEffect} from 'react'
 import businessCalculation from './businessCalculation'
 
-const TimeBetweenPurchases = ({data, chosenCustomer}) => {
+const TimeBetweenPurchases = ({data, chosenCustomer, start, end}) => {
   const businesscalculation = new businessCalculation()
-  const [ averageInterval, setAverageInterval ] = useState('0 day(s)')
+  const [ averageInterval, setAverageInterval ] = useState("Click Submit")
   const [ startDate, setStartDate ] = useState('')
   const [ endDate, setEndDate ] = useState('')
 
+  useEffect(()=>{
+    if(chosenCustomer){
+        setStartDate(start)
+        setEndDate(end)
+        setAverageInterval(businesscalculation.getAverageTimeBetweenPurchases(data, chosenCustomer, start, end))
+    }else{
+        setStartDate('')
+        setEndDate('')
+        setAverageInterval('Select a Customer')
+    }
+  },[start, end, chosenCustomer])
+
   function handleClick(){
-    if(chosenCustomer == ''){
+    if(chosenCustomer == '' || chosenCustomer == null){
         setAverageInterval('Select a Customer')
     }else if(endDate == '' && startDate == ''){
         setAverageInterval('Enter Start & End Date')
@@ -19,7 +31,7 @@ const TimeBetweenPurchases = ({data, chosenCustomer}) => {
     }else if(chosenCustomer != '' && startDate.length == 10 && endDate.length == 10){
         const averageTime = businesscalculation.getAverageTimeBetweenPurchases(data, chosenCustomer, startDate, endDate)
         if(averageTime == undefined){
-            setAverageInterval('No Result')
+            setAverageInterval('No Interval')
         }else{
             setAverageInterval(averageTime)
         }
@@ -29,16 +41,16 @@ const TimeBetweenPurchases = ({data, chosenCustomer}) => {
   }
 
   function inputStyle(){
-    return 'w-11/12 lg:w-full focus:border-red-400 border border-red-100 outline-none p-2 rounded-lg font-normal'
+    return 'w-11/12 lg:w-full focus:border-red-200 border border-red-300 outline-none p-2 rounded-lg font-normal '
   }
 
 return (
   <div className='h-full w-full'>
       <div className='h-full w-full rounded-xl  '>
           <div className='h-6/10 lg:h-4/10 '>
-              <div className=' flex-col lg:flex-row h-3/4 flex items-center justify-evenly text-slate-500 font-semibold'>
-                  <div className='ml-2 lg:ml-0'><h1>Start Date:</h1> <input value={startDate} className={inputStyle()} onChange={(e)=>{setStartDate(e.target.value)}} type='text' placeholder='yyyy-mm-dd'/></div>
-                  <div className='ml-2 lg:ml-0'><h1>End Date:</h1> <input value={endDate} className={inputStyle()} onChange={(e)=>{setEndDate(e.target.value)}} type='text' placeholder='yyyy-mm-dd'/></div>
+              <div className='p-5 flex-col lg:flex-row h-3/4 flex items-center justify-evenly text-slate-500 font-semibold'>
+                  <div className='ml-2 lg:ml-0'><label for="tstart">Start Date:</label> <input value={startDate} id='tstart' className={inputStyle()} onChange={(e)=>{setStartDate(e.target.value)}} type='date' /></div>
+                  <div className='ml-2 lg:ml-0'><label for="tend">End Date:</label> <input value={endDate} id='tend' className={inputStyle()} onChange={(e)=>{setEndDate(e.target.value)}} type='date' /></div>
               </div>
               <div className='mt-1 lg:mt-0 h-1/4 flex justify-center items-start '>
                   <button onClick={handleClick} type='button' className='p-1 md:p-2 px-3 border border-white text-white rounded-xl  bg-red-500 hover:bg-red-300'> Submit </button>

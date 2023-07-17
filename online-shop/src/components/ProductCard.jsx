@@ -66,13 +66,6 @@ const ProductCard = (props) => {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
 
-  const customStyles = {
-    content: {
-      height: '50%',
-      width: '80%',
-    },
-  };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -305,7 +298,6 @@ const ProductCard = (props) => {
                 <div className="w-60"> </div>
               )}
             </div>
-
             {/* IMAGE */}
             {/* DETAILS */}
             <div className="flex flex-col ml-3 w-5/12 m-1 ">
@@ -334,7 +326,6 @@ const ProductCard = (props) => {
                   )}
                 </>
               )}
-
               <div className="h-2/6 ">
                 <Typography sx={{ fontSize: responsiveStyle(), mr: 1, cursor: 'help' }} onClick={showModal}>
                   {props.product.itemName}
@@ -415,8 +406,7 @@ const ProductCard = (props) => {
               message={DisplayItem()}
               action={
                 <Button color="success" size="small" onClick={handleClose}>
-                  {' '}
-                  Close{' '}
+                  {' '}Close{' '}
                 </Button>
               }
             />

@@ -9,7 +9,6 @@ export const RateOfChange = ({data, number}) => {
     useEffect(()=>{
       if(number){ 
           const sales = businesscalculation.getRateOfChange(data.salesPerMonth, number);
-
           if(sales === null){
             setAverageSales(0)
           }else if (typeof sales === "number"){

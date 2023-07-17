@@ -65,6 +65,8 @@ const AdminInventory = (props) => {
   const setSelectedMenu = props.setSelectedMenu;
   const rows = [];
 
+  
+
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
   const categories = props.categories;
@@ -110,10 +112,12 @@ const AdminInventory = (props) => {
     }
   }
 
+  // weight and dimensions are H and I
+
   return (
     <div className="flex flex-col items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
       {/* TABLE */}
-      <div className="flex mt-8 mb-4 w-11/12 md:w-9/12 border-2 border-color60 rounded-lg">
+      <div className="flex mt-8 mb-4 w-full xs:w-11/12 md:w-9/12 border-2 border-color60 rounded-lg">
         <TableContainer component={Paper} sx={{ maxHeight: height - 250 }}>
           <Table
             style={{ tableLayout: "auto"}}
@@ -191,22 +195,22 @@ const AdminInventory = (props) => {
         </TableContainer>
       </div>
       {/* BUTTONS */}
-      <div className="flex flex-col gap-2 2xs:flex-row w-6/12 md:w-2/4 justify-evenly 2xs:mt-8 m-5 ">
-        <button
+      <div className="flex flex-col gap-2 2xs:flex-row w-11/12 xs:w-6/12 md:w-2/4 justify-evenly 2xs:mt-8 m-5">
+        <button 
           onClick={handleOpenDeleteItem}
-          className="bg-red1 hover:bg-red-400 text-white rounded-lg p-3 font-bold"
+          className="bg-red1 hover:bg-rose-500 text-white rounded-lg p-3 font-semibold"
         >
           Delete Item
         </button>
         <button
           onClick={handleOpenAddItem}
-          className="bg-color60 hover:bg-green-400 text-white rounded-lg p-3 font-bold cursor-copy"
+          className="bg-color60 hover:bg-lime-500 text-white rounded-lg p-3 font-semibold cursor-copy"
         >
           Add Item
         </button>
         <button
           onClick={handleOpenEditItem}
-          className="bg-yellow-500 hover:bg-yellow-400 text-white rounded-lg p-3 font-bold"
+          className="bg-yellow-500 hover:bg-yellow-400 text-white rounded-lg p-3 font-semibold"
         >
           Edit Item
         </button>

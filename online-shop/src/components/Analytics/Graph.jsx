@@ -24,7 +24,6 @@ export default function Graph(props) {
    });
   }
 
-
   const labels = productData.salesPerMonth && productData.salesPerMonth.map((sale)=> (monthNames[(sale.month - 1 )] + sale.year));
   const totalSalesPerMonth = productData.salesPerMonth && productData.salesPerMonth.map((sale) => sale.totalSalesPerMonth);
   const barLowestPoint = updatedStocksLowestPoint && updatedStocksLowestPoint.map((bar) => bar.lowestPoint)

@@ -29,7 +29,6 @@ const ProfileUpdaterModal = (props) => {
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
  
-
   function updateProfile() {
     setOpenProfileUpdaterModal(false);
     if (phoneNumber != '') {

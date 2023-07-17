@@ -56,7 +56,6 @@ const InputField = (props) => {
   }
 
   async function sendImage(url) {
-
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     // Add data to the array field
     updateDoc(docRef, {
@@ -110,7 +109,6 @@ const InputField = (props) => {
   }
 
   function inputMessage(option1, option2) {
-
     setMessage(option1);
     setSend(option2);
     if (option2 === true) {

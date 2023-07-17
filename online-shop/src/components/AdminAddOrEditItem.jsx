@@ -49,6 +49,10 @@ const AdminAddOrEditItem = (props) => {
     }
   });
 
+  const setSelectedMenu = props.setSelectedMenu;
+
+  const handleCancel = () => setSelectedMenu("Inventory");
+
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -417,8 +421,8 @@ const AdminAddOrEditItem = (props) => {
   }, [selectedItemToEdit]);
 
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl::w-1/2 mt-5 ">
+    <div className="flex justify-center py-5 ">
+      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl:w-1/2 mt-5 ">
        
         {addOrEditItem == 'Edit' ? (
           <Autocomplete
@@ -644,7 +648,7 @@ const AdminAddOrEditItem = (props) => {
           onChange={(event) => setDescription(event.target.value)}
         />
 
-        <div className="flex flex-row">
+        <div className="pt-5 gap-3 flex flex-row items-center">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel required={true} id="demo-simple-select-label">
@@ -668,10 +672,11 @@ const AdminAddOrEditItem = (props) => {
               </Select>
             </FormControl>
           </Box>
-          <button onClick={onAddCategoryClick} className="ml-5 bg-blue-500 text-white px-2 rounded-lg h-full">
+          <button onClick={onAddCategoryClick} className=" hover:bg-color10b bg-blue-500 text-white px-2 rounded-lg h-full">
             Add Category
           </button>
         </div>
+
         <AddCategoryModal
           openAddCategoryModal={openAddCategoryModal}
           setOpenAddCategoryModal={setOpenAddCategoryModal}
@@ -714,16 +719,16 @@ const AdminAddOrEditItem = (props) => {
           </div>
         ) : null}
 
-        <div className="flex flex-row">
+        <div className="flex flex-row ">
           <Checkbox
             onClick={() => {
               setIsCustomized(!isCustomized);
             }}
           />
-          <Typography sx={{ marginTop: 1 }}> Is this Customized?</Typography>
+          <Typography sx={{ marginTop: 1.2 }}> Is this Customized?</Typography>
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink1'}
             folderName={'ProductImages/' + itemID}
@@ -740,7 +745,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink2'}
             folderName={'ProductImages/' + itemID}
@@ -757,7 +762,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink3'}
             folderName={'ProductImages/' + itemID}
@@ -774,7 +779,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink4'}
             folderName={'ProductImages/' + itemID}
@@ -791,7 +796,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink5'}
             folderName={'ProductImages/' + itemID}
@@ -808,7 +813,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink6'}
             folderName={'ProductImages/' + itemID}
@@ -825,7 +830,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink7'}
             folderName={'ProductImages/' + itemID}
@@ -842,7 +847,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink8'}
             folderName={'ProductImages/' + itemID}
@@ -859,7 +864,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink9'}
             folderName={'ProductImages/' + itemID}
@@ -876,7 +881,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'imageLink10'}
             folderName={'ProductImages/' + itemID}
@@ -893,7 +898,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2">
           <ImageUploadButton
             id={'boxImage'}
             folderName={'ProductImages/' + itemID}
@@ -909,28 +914,37 @@ const AdminAddOrEditItem = (props) => {
             onChange={(event) => setBoxImage(event.target.value)}
           />
         </div>
+        <div className='flex justify-between items-center '>
+          {addOrEditItem == 'Add' ? (
+            <Button
+              className="w-2/5 lg:w-1/5  hover:bg-color10b"
+              sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
+              variant="contained"
+              onClick={addItem}
+            >
+              {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Add Item</> }
+            </Button>
+          ) : null}
+          {addOrEditItem == 'Edit' ? (
+            <Button
+              className="w-2/5 lg:w-1/5 hover:bg-color10b"
+              sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
+              variant="contained"
+              onClick={editItem}
+              
+            >
+              {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
+            </Button>
+          ) : null}
 
-        {addOrEditItem == 'Add' ? (
-          <Button
-            className="w-2/5 lg:w-1/5"
-            sx={{ height: 50, marginBottom: 10 }}
-            variant="contained"
-            onClick={addItem}
-          >
-            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Add Item</> }
+          <Button variant="contained" 
+            sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
+            className="w-2/5 lg:w-1/5 hover:bg-red-400"
+            color='error'
+            onClick={handleCancel}
+            > Cancel
           </Button>
-        ) : null}
-        {addOrEditItem == 'Edit' ? (
-          <Button
-            className="w-2/5 lg:w-1/5"
-            sx={{ height: 50, marginBottom: 10 }}
-            variant="contained"
-            onClick={editItem}
-            
-          >
-            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
-          </Button>
-        ) : null}
+        </div>
       </div>
     </div>
   );

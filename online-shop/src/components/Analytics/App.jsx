@@ -45,12 +45,11 @@ const App = () => {
   useEffect(()=>{
     if (width < 1146) {
       return setScreenSizeMobile(true);
-     }else {
+     } else {
       if(showMenu === true){
         setShowMenu(!showMenu);
       } 
       return setScreenSizeMobile(false);
-      
      }
   },[width])
 
@@ -60,47 +59,30 @@ const App = () => {
     })
   },[])
 
-
-  // useEffect(() => {
-  //   if (loggedIn) {
-  //     if (user.email === "ladiaadrian@gmail.com" || "valletigio54@gmail.com") {
-  //       setAuthorized(true);
-  //     } else {
-  //       setAuthorized(false);
-  //     }
-  //   }
-  // }, [loggedIn]);
-
   return (
     <div>
       <div ref={dummy}/>  
       <div className=" overflow-hidden bg-gradient-to-r h-screen from-green-200 via-cyan-200 to-emerald-200">
-
                         {screenSizeMobile === true ?(
                           <div className="flex justify-start absolute top-13 left-1 ml-0 xs:ml-4 ">
                               <button className=" mt-2 mr-2 p-3 text-3xl 2xs:text-4xl rounded-lg text-green-700 hover:text-emerald-500 " onClick={handleToggle}><FaRegListAlt/></button>
                           </div>)
                         :
                          (null)} 
-
               <div className="h-5/6 w-screen flex mt-16 justify-center">           
                   <>
-                   
                         <>  
                           {screenSizeMobile === false ? 
                               (<MenuBar callback={handleTableContent} products={products}/>)
                               : null
                             }
                         </>
-                    
                   </>
-                  
                         <>
                           {showMenu === false ?  
                             (<>
                                 <InventoryTable callback={handleProducts} name={selectedName} category={selectedOption} customized={customized}/>
-                            </>
-                            )
+                            </>)
                           :
                             (<> 
                                 {screenSizeMobile === true ?
@@ -108,8 +90,7 @@ const App = () => {
                                 :
                                   (null)
                                 }
-                            </>
-                            )
+                            </>)
                           }
                         </>
                 </div>
