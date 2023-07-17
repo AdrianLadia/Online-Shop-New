@@ -5,7 +5,7 @@ import Shop from './components/Shop';
 import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
-import firebase from 'firebase/compat/app';
+import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, connectAuthEmulator} from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
@@ -36,7 +36,7 @@ const devEnvironment = true;
 function App() {
   const appConfig = new AppConfig();
   // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
   // add captcha for phone auth
