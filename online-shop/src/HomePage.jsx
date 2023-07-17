@@ -259,7 +259,7 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
             </div>
-            <div className=' flex items-center '><LoginButton/></div>
+            {/* <div className=' flex items-center '><LoginButton/></div> */}
             {p1inView == true && p2inView == false && width >= 768 ? null 
             : p1inView == false && p2inView || p3inView || p4inView ?
             <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>
@@ -315,16 +315,16 @@ const HomePage = () => {
                       </ul>
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
                         <button 
-                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border md:border-2 rounded-r-full ease-in-out duration-300'
                           onClick={handleShop}
-                            ><FaShoppingBag className='text-xl '/> Shop Now!
+                            ><FaShoppingBag className='text-xl '/> Shop Now
                         </button>
                       </span>
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
                         <button 
-                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border md:border-2 rounded-r-full ease-in-out duration-300'
                           onClick={handleMessageClick}
-                            ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
+                            ><AiFillMessage className='text-xl '/> {responsiveMessageText()}
                         </button>
                       </span>
                     </div>
@@ -374,7 +374,7 @@ const HomePage = () => {
                 <div className='h-2/10 flex justify-start'>
                   <span className='w-28 xs:w-32 md:w-32 h-10 md:h-12 hover:w-0 ease-in-out duration-300 rounded-r-full bg-black'>
                     <button className='w-28 xs:w-32 md:w-32 h-10 md:h-12 text-xs sm:text-md text-white hover:text-black border-black border font-normal md:font-semibold ease-in-out duration-300 rounded-r-full flex items-center p-3 '>
-                      <BsBookHalf className='text-xl'/>  Read More
+                      <BsBookHalf className='text-xl mr-1'/>Read More
                     </button>
                   </span>
                 </div>
@@ -492,7 +492,7 @@ const HomePage = () => {
                   <span className='w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300'> 
                     <button 
                       className='w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300'
-                      ><FaPenSquare className='ml-1 text-xl'/> <a className=' ml-2'>Register</a>
+                      ><FaPenSquare className='md:ml-1 text-lg'/> <a className=' ml-2 pr-2'>Register</a>
                     </button>
                   </span>
                 </div>
