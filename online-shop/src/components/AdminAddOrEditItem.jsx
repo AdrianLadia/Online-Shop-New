@@ -38,7 +38,30 @@ const style = {
 
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
-  const { firestore, storage, categories } = React.useContext(AppContext);
+  const { firestore, storage, categories: initialCategories } = React.useContext(AppContext);
+  const [categories, setCategories] = React.useState(initialCategories);
+
+  useEffect(() => {
+    if (categories == null) {
+      const categoryList = []
+      firestore.readAllCategories().then((categories) => {
+   
+        categories.map((c) => {
+          categoryList.push(c.category) 
+        });
+
+      setCategories(categoryList);
+        
+      });
+  
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(categories);
+  }, [categories]);
+
+
   const { width, height } = useWindowDimensions();
   const products = props.products;
   const productNames = [];
@@ -99,6 +122,7 @@ const AdminAddOrEditItem = (props) => {
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
       setMachines(machines);
+      
     });
   }, []);
 
@@ -661,11 +685,11 @@ const AdminAddOrEditItem = (props) => {
                 label="Category"
                 onChange={(event) => setCategory(event.target.value)}
               >
-                {categories.map((c) => {
+                {categories ? (categories.map((c) => {
                   if (c != 'Favorites') {
                     return <MenuItem value={c}>{c}</MenuItem>;
                   }
-                })}
+                })) : null}
                 {/* <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem> */}

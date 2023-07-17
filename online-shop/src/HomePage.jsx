@@ -10,6 +10,7 @@ import GoogleMaps from './components/GoogleMaps'
 import { useLocation } from 'react-router-dom';
 import { AiFillMessage } from "react-icons/ai";
 import LoginButton from './components/LoginButton';
+import AccountMenu from './components/AccountMenu';
 
 const HomePage = () => {
 
@@ -221,6 +222,10 @@ const HomePage = () => {
       }
     }
     
+    useEffect(() => {
+      console.log('userdata',userdata)
+    }, [userdata]);
+
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
       style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}>
@@ -259,7 +264,7 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
             </div>
-            <div className=' flex items-center '><LoginButton/></div>
+            {(userdata == null) ? <div className=' flex items-center '><LoginButton/></div> : <AccountMenu />} 
             {p1inView == true && p2inView == false && width >= 768 ? null 
             : p1inView == false && p2inView || p3inView || p4inView ?
             <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>
@@ -588,6 +593,7 @@ const HomePage = () => {
                     </div>
                 </div>
                 {/* Menu */}
+                {(userdata == null) ? 
                 <div className='flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch '>
                   <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
                   <div className='flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs'>
@@ -599,6 +605,7 @@ const HomePage = () => {
                     </ul>
                   </div>
                 </div>
+                : null}
                 {/* Call Us */}
                 <div className=' flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch '>
                   <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Call Us</h1>

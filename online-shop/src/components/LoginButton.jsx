@@ -5,7 +5,7 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import {
   GoogleAuthProvider,
   signInWithPopup,
-  FacebookAuthProvider,
+  FacebookAuthProvider ,
   signInWithRedirect,
   signInWithPhoneNumber,
   RecaptchaVerifier,
