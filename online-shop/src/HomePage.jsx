@@ -264,12 +264,12 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
             </div>
-            {/* {(userdata == null) ? <div className='flex items-center '> <LoginButton/></div> : <AccountMenu />}  */}
+            {/* {(userdata == null) ? <div className='flex items-center '> <LoginButton/></div> : }  */}
             {p1inView == true && p2inView == false && width >= 768 ? 
               (userdata == null) ? 
                 <div className=' px-2 flex items-center'>
                   <LoginButton />
-                </div> : null  
+                </div> : <AccountMenu />
             : p1inView == false && p2inView || p3inView || p4inView ?
             <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>
               {/* Message Button */}
