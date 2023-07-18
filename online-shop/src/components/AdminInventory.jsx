@@ -76,6 +76,7 @@ const AdminInventory = (props) => {
   // REFRESH IF NO PRODUCTS
   useEffect(() => {
     if (productlist.length == 0) {
+      console.log('length is 0')
       setRefresh(!refresh);
     }
   }, [productlist]);

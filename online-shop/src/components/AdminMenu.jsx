@@ -41,7 +41,7 @@ const AdminMenu = () => {
     firestore.readAllProducts().then((data) => {
       setProducts(data);
     });
-  }, [refresh]);
+  }, []);
 
 
   const handleClick = (event) => {
