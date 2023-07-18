@@ -58,7 +58,7 @@ class schemas {
       price: Joi.number().required().invalid('', null, 0),
       description: Joi.string().required().allow(''),
       weight: Joi.number().required().invalid('', null, 0),
-      dimensions: Joi.string().allow(''),
+      dimensions: Joi.string().allow('',null),
       category: Joi.string().required().invalid('', null),
       imageLinks: Joi.array(),
       brand: Joi.string().allow('',null),
