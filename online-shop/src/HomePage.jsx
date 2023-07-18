@@ -11,11 +11,12 @@ import { useLocation } from 'react-router-dom';
 import { AiFillMessage } from "react-icons/ai";
 import LoginButton from './components/LoginButton';
 import AccountMenu from './components/AccountMenu';
+import onLogoutClick from '../utils/classes/onLogoutClick';
 
 const HomePage = () => {
 
   const navigateTo = useNavigate()
-  const {userdata} = useContext(AppContext)
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart} = useContext(AppContext)
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
   const contactsImage = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123"
@@ -264,7 +265,7 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
             </div>
-            {(userdata == null) ? <div className=' flex items-center '><LoginButton/></div> : <AccountMenu />} 
+            {(userdata == null) ? <div className=' flex items-center '><LoginButton/></div> : <AccountMenu userdata={userdata} signout={() => {new onLogoutClick(setUserId, setUserData, setUserLoaded, setUserState, setCart, navigateTo, auth).runMain()}} />} 
             {p1inView == true && p2inView == false && width >= 768 ? null 
             : p1inView == false && p2inView || p3inView || p4inView ?
             <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>

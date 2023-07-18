@@ -411,7 +411,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ me
     const sendMail = data.sendEmail;
     const isInvoiceNeeded = data.isInvoiceNeeded;
     const urlOfBir2303 = data.urlOfBir2303;
-    
+
     let cartUniqueItems = [];
 
     const db = admin.firestore();
