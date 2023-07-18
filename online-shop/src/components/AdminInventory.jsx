@@ -72,6 +72,13 @@ const AdminInventory = (props) => {
   const categories = props.categories;
 
   let productlist = props.products;
+
+  // REFRESH IF NO PRODUCTS
+  useEffect(() => {
+    if (productlist.length == 0) {
+      setRefresh(!refresh);
+    }
+  }, [productlist]);
   
   productlist.map((product) => {
     rows.push(

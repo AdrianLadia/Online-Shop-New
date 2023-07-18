@@ -89,6 +89,22 @@ const LoginButton = (props) => {
   }
 
 
+  async function signIn(signInProvider) {
+    handleCloseGuestSignInModal();
+    setAnchorEl(null);
+    let result;
+    if (isGoogleChrome) {
+      result = await signInWithPopup(auth, signInProvider);
+      return;
+    }
+    if (isAppleDevice) {
+      result = await signInWithPopup(auth, signInProvider);
+      return;
+    }
+
+    result = await signInWithRedirect(auth, signInProvider);
+  }
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {

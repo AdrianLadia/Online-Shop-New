@@ -1,4 +1,7 @@
+import { blue, green, red, yellow } from "@mui/material/colors";
 import { signOut } from "firebase/auth";
+import { FaBlackTie } from "react-icons/fa";
+import { GiWhiteBook } from "react-icons/gi";
 
 class onLogoutClick {
     constructor(setUserId,setUserdata,setUserLoaded,setUserState,setCart,navigateTo,auth) {
@@ -22,3 +25,11 @@ class onLogoutClick {
 }
 
 export default onLogoutClick
+
+// clear
+// // white
+// red
+// blue
+// // black
+// green
+// yellow

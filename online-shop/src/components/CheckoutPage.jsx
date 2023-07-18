@@ -282,6 +282,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (userdata) {
+      // console.log(userdata)
       setLocalEmail(userdata.email);
 
       if (userdata.contactPerson.length > 0) {
@@ -293,6 +294,11 @@ const CheckoutPage = () => {
         setLocalLatitude(userdata.deliveryAddress[0].latitude);
         setLocalLongitude(userdata.deliveryAddress[0].longitude);
         setZoom(15);
+      }
+      if (userdata.contactPerson.length == 0) {
+        console.log(userdata)
+        
+        setLocalPhoneNumber(userdata.phoneNumber);
       }
     }
   }, [userdata]);

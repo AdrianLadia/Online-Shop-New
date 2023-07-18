@@ -41,7 +41,7 @@ const NavBar = () => {
           <AiFillHome size={35} color='#6bd0ff'/>
         </div>
         <div className="flex flex-row 2xs:mr-5 ">
-          {userdata ? <AccountMenu userdata={userdata} signout={() => {new onLogoutClick(setUserId,setUserData,setUserLoaded,setUserState,setCart,navigateTo,auth)} } /> : <LoginButton position={'left'} />}
+          {userdata ? <AccountMenu userdata={userdata} signout={() => {new onLogoutClick(setUserId,setUserData,setUserLoaded,setUserState,setCart,navigateTo,auth).runMain()} } /> : <LoginButton position={'left'} />}
         </div>
       </div>
     </div>
