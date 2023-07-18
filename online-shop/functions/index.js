@@ -239,8 +239,6 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
         products.push(productObject);
       });
 
-   
-
       // Send the products array as a JSON response
       res.status(200).send(products);
     } catch (error) {
