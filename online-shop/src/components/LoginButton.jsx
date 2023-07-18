@@ -64,6 +64,7 @@ const LoginButton = (props) => {
   }
 
   const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser } = useContext(AppContext);
+  
 
   async function setUpRecaptcha(number) {
      recaptchaVerifier = new RecaptchaVerifier(
@@ -145,6 +146,7 @@ const LoginButton = (props) => {
 
     setAnchorEl(event.currentTarget);
   };
+  
   const handleClose = () => {
     setAnchorEl(null);
   };

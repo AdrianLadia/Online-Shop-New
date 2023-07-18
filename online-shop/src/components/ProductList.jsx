@@ -43,11 +43,10 @@ const ProductList = (props) => {
       retail,
       favoriteitems
     );
-
     const spo = new storeProductsOrganizer(selected_products)
     const organizedProducts = spo.runMain()
-
-
+    
+    
     return organizedProducts;
   }
 

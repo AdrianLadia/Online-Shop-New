@@ -7,17 +7,13 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 import AdminInventory from './AdminInventory';
 import { useEffect, useState } from 'react';
-import firestoredb from '../firestoredb';
 import AdminCreatePayment from './AdminCreatePayment';
 import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';
-import {ThemeProvider } from '@mui/material/styles';
-import theme from "../colorPalette/MaterialUITheme";
 import { BsBoxes, BsBagCheck, BsGraphUp } from "react-icons/bs";
 import { HiOutlineCash } from "react-icons/hi";
 import App from './Analytics/App';
 import { RiAdminFill } from "react-icons/ri";
-import Divider from "@mui/material/Divider";
 import UseWindowDimensions from "./UseWindowDimensions";
 import AdminChatMenu from "./AdminChatMenu";
 import { HiOutlineChatAlt } from "react-icons/hi";
@@ -27,22 +23,22 @@ import { VscGraph } from "react-icons/vsc";
 
 const AdminMenu = () => {
   
-  const { firestore,allUserData,setAllUserData,categories } = React.useContext(AppContext);
+  const { firestore, allUserData ,setAllUserData ,categories } = React.useContext(AppContext);
 
   const {width } = UseWindowDimensions();
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Customer Analytics');
+  const [selectedMenu, setSelectedMenu] = React.useState('Inventory');
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     firestore.readAllProducts().then((data) => {
+      console.log(data)
       setProducts(data);
     });
   }, [refresh]);
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -100,6 +96,9 @@ const AdminMenu = () => {
       return "mt-2 text-blue1"
     }
   }
+
+  
+  {console.log(products)}
 
   return (
     // NAV BAR

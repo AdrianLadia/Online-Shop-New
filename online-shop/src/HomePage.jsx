@@ -16,6 +16,9 @@ const HomePage = () => {
 
   const navigateTo = useNavigate()
   const {userdata} = useContext(AppContext)
+  const favorites = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F0590b1d4-7351-40e2-b012-a1f408d9dc93customerchat-1.png?alt=media&token=5f77540f-f0cb-4d61-81a2-e61f2394f9ba";
+  const pinpoint = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F1f812257-6879-4bbb-b534-2bd83e254f12customerchat-2.png?alt=media&token=14f9a6cb-c643-49c0-a985-332dae1f040b";
+  const customerChat = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F10621e7b-77ae-461b-a6d4-314ccff59d55customerchat-3.png?alt=media&token=2711c910-92c5-4257-ade1-4e94c7489f71";
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
   const contactsImage = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123"
@@ -221,10 +224,6 @@ const HomePage = () => {
         return 'Message Us'
       }
     }
-    
-    useEffect(() => {
-      console.log('userdata',userdata)
-    }, [userdata]);
 
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
@@ -264,8 +263,12 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
             </div>
-            {(userdata == null) ? <div className=' flex items-center '><LoginButton/></div> : <AccountMenu />} 
-            {p1inView == true && p2inView == false && width >= 768 ? null 
+            {/* {(userdata == null) ? <div className='flex items-center '> <LoginButton/></div> : <AccountMenu />}  */}
+            {p1inView == true && p2inView == false && width >= 768 ? 
+              (userdata == null) ? 
+                <div className=' px-2 flex items-center'>
+                  <LoginButton />
+                </div> : null  
             : p1inView == false && p2inView || p3inView || p4inView ?
             <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>
               {/* Message Button */}
@@ -482,7 +485,7 @@ const HomePage = () => {
                               rounded-b-4xl md:rounded-r-3xl lg:rounded-l-none lg:rounded-r-semifull bg-cover bg-center '
               // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
               >
-                <h1 className='w-full lg:w-11/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-white p-1 font-bold 
+                <h1 className='w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-white p-1 font-bold 
                                tracking-tight md:tracking-wide underline underline-offset-8 decoration-color60'
                   >Become an Affiliate
                 </h1>
@@ -522,10 +525,10 @@ const HomePage = () => {
                 <div className='md:grid-cols-2 lg:grid-cols-3 2lg:grid-cols-4 xl:grid-cols-5 grid h-full gap-2 justify-evenly items-stretch overflow-y-auto'>
                   <div className={footerCardStyle()} >
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample.png"/>
                       </div>
                       <div className=' w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Favorite Items</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Favorite Items</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'
                           >Adding your favorite items to your 'Favorites' list for quick and convenient access.
                         </h2>
@@ -533,28 +536,28 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample2.png"/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Pinpoint Location</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30'>Pinpoint Location</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'>Who needs big signs or landmarks when you can pinpoint your exact location!</h2>
                       </div>
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample3.png"/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Chat with Customer Service</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Chat with Customer Service</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'>Any questions or concerns? There is a chat customer service available to help you out.</h2>
                       </div>
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src='./vids/saved.png'/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Save Location and Contact Details</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Save Location and Contacts</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'
                           >This makes it quicker and easier to fill in the details for your next order.
                         </h2>
@@ -565,7 +568,7 @@ const HomePage = () => {
                         <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Multiple Payment Methods</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Multiple Payment Methods</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'
                           >Gives you the flexibility to choose the option that is most convenient and suits your preferences.
                         </h2>
@@ -593,7 +596,6 @@ const HomePage = () => {
                     </div>
                 </div>
                 {/* Menu */}
-                {(userdata == null) ? 
                 <div className='flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch '>
                   <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
                   <div className='flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs'>
@@ -605,7 +607,6 @@ const HomePage = () => {
                     </ul>
                   </div>
                 </div>
-                : null}
                 {/* Call Us */}
                 <div className=' flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch '>
                   <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Call Us</h1>
@@ -637,6 +638,7 @@ const HomePage = () => {
           </div>
         </div>
 
+        {/* Copyright */}
         <div className=' h-1/10 w-full flex flex-col justify-start items-center gap-2 bg-color60 bg-opacity-50'>
           <div className='w-11/12 border-b-2 border-black'/>
           <div className='flex h-full justify-center items-center gap-2'>
