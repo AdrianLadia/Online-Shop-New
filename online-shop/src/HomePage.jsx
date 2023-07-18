@@ -17,7 +17,6 @@ const HomePage = () => {
 
   const navigateTo = useNavigate()
   const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart} = useContext(AppContext)
-  const {userdata} = useContext(AppContext)
   const favorites = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F0590b1d4-7351-40e2-b012-a1f408d9dc93customerchat-1.png?alt=media&token=5f77540f-f0cb-4d61-81a2-e61f2394f9ba";
   const pinpoint = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F1f812257-6879-4bbb-b534-2bd83e254f12customerchat-2.png?alt=media&token=14f9a6cb-c643-49c0-a985-332dae1f040b";
   const customerChat = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F10621e7b-77ae-461b-a6d4-314ccff59d55customerchat-3.png?alt=media&token=2711c910-92c5-4257-ade1-4e94c7489f71";
