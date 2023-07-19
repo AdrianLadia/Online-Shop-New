@@ -10,7 +10,6 @@ const TotalValueGraph = ({data, chosenCustomer}) => {
     const datamanipulation = new dataManipulation();
     const [ tableData, setTableData ] = useState([])
     const dateToday = new Date().toISOString().slice(0,10)
-    console.log(dateToday)
     
     const yearToday = dateToday.slice(0,4)
     const monthToday = dateToday.slice(5,7)
@@ -29,9 +28,6 @@ const TotalValueGraph = ({data, chosenCustomer}) => {
       const date = item.date.slice(0,7)
       const dataDateMonth = date.slice(5,7)
       const dataDateYear = date.slice(0,4)
-
-      console.log(dataDateMonth, dataDateYear)
-      console.log(monthToday, yearToday)
 
       if (dataDateMonth == monthToday && dataDateYear == yearToday) {
         return
