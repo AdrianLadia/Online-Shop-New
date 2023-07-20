@@ -226,8 +226,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const toReturn = response.data;
       const schema = Joi.array().items(schemas.productSchema());
 
-     
-      console.log(toReturn)
       const { error } = schema.validate(toReturn);
 
       if (error) {

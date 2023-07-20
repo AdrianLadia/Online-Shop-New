@@ -18,11 +18,21 @@ const App = () => {
     const dummy = useRef(null)
 
     useEffect(()=>{
-        firestore.readAllDataFromCollection('Analytics').then((data) => {
-            setCustomerMonthlySales(data[0])
-            setPurchaseFrequencyAndTimeBetweenPurchases(data[2])
-            setTotalValueOfOrder(data[3])
+        firestore.readSelectedDataFromCollection('Analytics','CustomerMonthlySales').then((data) => {
+            console.log(data)
+            setCustomerMonthlySales(data)
         });
+        firestore.readSelectedDataFromCollection('Analytics','PurchaseFrequencyAndTimeBetweenPurchases').then((data) => {
+            console.log(data)
+            setPurchaseFrequencyAndTimeBetweenPurchases(data)
+        
+        });
+
+        firestore.readSelectedDataFromCollection('Analytics','TotalValueOfOrder').then((data) => {
+            console.log(data)
+            setTotalValueOfOrder(data)
+        });
+
         
     },[])
 
