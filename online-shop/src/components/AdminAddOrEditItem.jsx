@@ -709,8 +709,8 @@ const AdminAddOrEditItem = (props) => {
         />
 
         <div className="flex flex-row">
-          <Checkbox defaultChecked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} />
-          <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
+          <Checkbox id='isret' defaultChecked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} />
+          <label htmlFor='isret' className='mt-2.5'> Is this also for retail?</label>
         </div>
 
         {isThisRetail ? (
@@ -745,11 +745,30 @@ const AdminAddOrEditItem = (props) => {
 
         <div className="flex flex-row ">
           <Checkbox
+            id='iscustom'
             onClick={() => {
               setIsCustomized(!isCustomized);
             }}
+            className='mb-8'
           />
-          <Typography sx={{ marginTop: 1.2 }}> Is this Customized?</Typography>
+          <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label>
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'boxImage'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setBoxImage}
+          />
+          <TextField
+            id="outlined-basic"
+            label="boxImage"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={boxImage}
+            onChange={(event) => setBoxImage(event.target.value)}
+          />
         </div>
 
         <div className="flex flex-row items-center gap-2">
@@ -922,23 +941,14 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row items-center gap-2">
-          <ImageUploadButton
-            id={'boxImage'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setBoxImage}
-          />
-          <TextField
-            id="outlined-basic"
-            label="boxImage"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={boxImage}
-            onChange={(event) => setBoxImage(event.target.value)}
-          />
-        </div>
         <div className='flex justify-between items-center '>
+          <Button variant="contained" 
+            sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
+            className="w-2/5 lg:w-1/5 hover:bg-red-400"
+            color='error'
+            onClick={handleCancel}
+            > Cancel
+          </Button>
           {addOrEditItem == 'Add' ? (
             <Button
               className="w-2/5 lg:w-1/5  hover:bg-color10b"
@@ -960,14 +970,6 @@ const AdminAddOrEditItem = (props) => {
               {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
             </Button>
           ) : null}
-
-          <Button variant="contained" 
-            sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
-            className="w-2/5 lg:w-1/5 hover:bg-red-400"
-            color='error'
-            onClick={handleCancel}
-            > Cancel
-          </Button>
         </div>
       </div>
     </div>
