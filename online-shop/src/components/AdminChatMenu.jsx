@@ -23,8 +23,6 @@ const AdminChatMenu = () => {
     const [chatButtonState, setChatButtonState] = useState(null)
     const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false)
 
-
-
     useEffect(() => {
       const docRef = collection(db, 'ordersMessages')
       onSnapshot(docRef, (querySnapshot) => {
@@ -61,7 +59,6 @@ const AdminChatMenu = () => {
       })
     }, []);
 
-
     useEffect(()=>{
       const chatButtonState = {}
       chatData.map((chat)=>{
@@ -69,7 +66,6 @@ const AdminChatMenu = () => {
       })
       setChatButtonState(chatButtonState)
     },[chatData])
-
 
   useEffect(()=>{
     if(chatSwitch === false){

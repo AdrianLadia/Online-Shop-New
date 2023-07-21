@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { AiFillMessage } from "react-icons/ai";
 import LoginButton from './components/LoginButton';
 import AccountMenu from './components/AccountMenu';
-import onLogoutClick from '../utils/classes/onLogoutClick';
+import { Tooltip } from '@mui/material';
 
 const HomePage = () => {
 
@@ -186,8 +186,8 @@ const HomePage = () => {
 
     function togglePlay(toDo) {
       const video = videoRef.current;
-      const forward = video.currentTime + 1.5;
-      const back = video.currentTime - 1.5;
+      const forward = video.currentTime + 2;
+      const back = video.currentTime - 2;
 
       if(toDo == 3){
         video.currentTime = forward;
@@ -229,6 +229,7 @@ const HomePage = () => {
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
       style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}>
+
         {/* Navigation Bar */}
         <div className={ navStyle() }>
           {/* Logo */}
@@ -329,6 +330,15 @@ const HomePage = () => {
                             ><FaShoppingBag className='text-xl '/> Shop Now!
                         </button>
                       </span>
+                      {/* <Tooltip title="Shop">
+                        <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
+                          <button 
+                            className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                            onClick={handleShop}
+                              ><FaShoppingBag className='text-xl '/> Shop Now!
+                          </button>
+                        </span>
+                      </Tooltip> */}
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
                         <button 
                           className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
@@ -336,6 +346,15 @@ const HomePage = () => {
                             ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
                         </button>
                       </span>
+                      {/* <Tooltip title="Message">
+                        <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
+                          <button 
+                            className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                            onClick={handleMessageClick}
+                              ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
+                          </button>
+                        </span>
+                      </Tooltip> */}
                     </div>
                 </div>
               </div>
@@ -383,7 +402,7 @@ const HomePage = () => {
                 <div className='h-2/10 flex justify-start'>
                   <span className='w-28 xs:w-32 md:w-32 h-10 md:h-12 hover:w-0 ease-in-out duration-300 rounded-r-full bg-black'>
                     <button className='w-28 xs:w-32 md:w-32 h-10 md:h-12 text-xs sm:text-md text-white hover:text-black border-black border font-normal md:font-semibold ease-in-out duration-300 rounded-r-full flex items-center p-3 '>
-                      <BsBookHalf className='text-xl'/>  Read More
+                      <BsBookHalf className='text-xl mr-1 sm:mr-2'/>Read More
                     </button>
                   </span>
                 </div>
@@ -464,7 +483,7 @@ const HomePage = () => {
                         ><p className=' decoration-color60'>Step {index + 1} - {state.step[0]}</p> <div className='border-color60 border-b w-11/12'></div>
                         {/* <p className='underline underline-offset-4 decoration-color60'>{state.step[0]}</p> */}
                       </h1>
-                      <p className='text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-gray-200 '
+                      <p className='text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-white '
                         >{state.step[1]}
                       </p>
                     </div>
@@ -490,7 +509,7 @@ const HomePage = () => {
                                tracking-tight md:tracking-wide underline underline-offset-8 decoration-color60'
                   >Become an Affiliate
                 </h1>
-                <div className='font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-gray-200 tracking-tight indent-5 ml-0.5 overflow-y-auto'>
+                <div className='font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-white tracking-tight indent-5 ml-0.5 overflow-y-auto'>
                     An affiliate is someone who helps sell or promote a product or service. 
                     They are like a partner to the company that makes the product. 
                     When the affiliate tells others about the product and those people buy it because of the affiliate's recommendation,
@@ -566,7 +585,7 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src='./vids/multiple.svg'/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
                         <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Multiple Payment Methods</h1>

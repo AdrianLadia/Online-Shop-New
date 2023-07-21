@@ -23,7 +23,6 @@ const TotalValueGraph = ({data, chosenCustomer}) => {
     let labels = [];
     const forGraphValues = [];
     tableData&&tableData.map((item)=>{
-      
       // WE REMOVE DATA OF THIS MONTH BECAUSE IT IS INCOMPLETE
       const date = item.date.slice(0,7)
       const dataDateMonth = date.slice(5,7)
@@ -43,16 +42,43 @@ const TotalValueGraph = ({data, chosenCustomer}) => {
       }
     })
 
-    console.log(labels)
-    console.log(forGraphValues)
 
-    labels = labels.map((date)=>monthNames[parseInt(date.slice(5, 7))- 1] + date.slice(0,4))
+    const newBarData = []
+
+    try{
+      labels = labels.map((item)=>item.replace(/-/g, ''))
+
+      const newData = []
+
+      for(let i = 0; i < labels.length; i++){
+        newData.push({date:labels[i], value:forGraphValues[i]})
+      }
+
+      labels = datamanipulation.fillMissingMonths(labels)
+
+      labels.map((month)=>{
+        let value = 0
+        
+        newData.map((bar)=>{
+          if(month == bar.date){
+            value = bar.value
+          }
+        })
+        if(value > 0){
+          newBarData.push(value)
+        }else{
+          newBarData.push(0)
+        }
+      })
+
+      labels = labels.map((date)=>monthNames[parseInt(date.slice(4, 6)) - 1] + date.slice(0, 4))
+    }catch(e){}
 
     const graphData = {
       labels,
       datasets: [
         {
-          type: 'bar' , label: chosenCustomer ? chosenCustomer + " total sales" : "Select a Customer" , data: forGraphValues,
+          type: 'bar' , label: chosenCustomer ? chosenCustomer + " total sales" : "Select a Customer" , data: newBarData,
           borderWidth: 1, pointRadius: 4, pointHoverRadius: 6, pointHitRadius: 6,
           borderColor: 'black',
           backgroundColor: 'rgba(0, 223, 162, 0.3)',

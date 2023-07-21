@@ -5,13 +5,14 @@ import Box from "@mui/material/Box";
 import dataManipulation from './dataManipulation';
 import CustomerGraph from './CustomerGraph';
 
-const CustomerTable = ({ data, chosenCustomer, firestore }) => {
+const CustomerTable = ({ data, chosenCustomer, firestore, products }) => {
   const datamanipulation = new dataManipulation()
   const { width } = useWindowDimensions();
   const [ customerData, setCustomerData ] = useState([])
 
   useEffect(()=>{
-    setCustomerData(datamanipulation.getDataOfChosenCustomer( data, chosenCustomer ))
+    const info = datamanipulation.getDataOfChosenCustomer( data, chosenCustomer, products )
+    setCustomerData(info)
   },[chosenCustomer])
 
   function headerStyle(){
@@ -82,7 +83,7 @@ const CustomerTable = ({ data, chosenCustomer, firestore }) => {
       headerName: ( <div style={headerStyle()}>{chosenCustomer? chosenCustomer.toUpperCase() + ", SALES & STOCKS" : "SALES & STOCKS"}</div> ),
       headerClassName: 'header-theme', align: "center", headerAlign: "center",
       editable: false, sortable: false, disableColumnMenu: true,
-      renderCell: (customerData) => (<CustomerGraph data={customerData.row} firestore={firestore}/>),
+      renderCell: (customerData) => (<CustomerGraph data={customerData.row} firestore={firestore} products={products}/>),
     },
     { 
       field: 'totalSales', 

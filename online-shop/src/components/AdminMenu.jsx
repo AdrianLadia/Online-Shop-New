@@ -22,6 +22,8 @@ import CustomerAnalytics from './customerAnalytics/App';
 VscGraph;
 import { VscGraph } from 'react-icons/vsc';
 import CompanyDashboard from './CompanyDashboard/CompanyDashboard';
+import { RiDashboard2Line } from "react-icons/ri";
+import Tooltip from '@mui/material/Tooltip';
 
 const AdminMenu = () => {
   const { firestore, allUserData, setAllUserData, categories } = React.useContext(AppContext);
@@ -31,10 +33,8 @@ const AdminMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Company Dashboard');
+  const [selectedMenu, setSelectedMenu] = React.useState('Admin Chat');
   const [products, setProducts] = useState([]);
-
-
 
   useEffect(() => {
     firestore.readAllProducts().then((data) => {
@@ -98,12 +98,11 @@ const AdminMenu = () => {
 
   function responsiveIcon() {
     if (width < 650) {
-      return 'mt-3 text-blue1';
+      return 'mt-5 text-blue1';
     } else {
-      return 'mt-2 text-blue1';
+      return 'mt-3 text-blue1';
     }
   }
-
 
   return (
     // NAV BAR
@@ -111,12 +110,16 @@ const AdminMenu = () => {
     <div className="flex flex-col">
       <div className="flex flex-row w-full justify-between bg-gradient-to-r from-color60 via-color10c to-color60 py-3">
         {/* Back Button */}
-        <IoArrowBackCircle
-          id="backToStoreButton"
-          size={40}
-          className=" mt-1 2xs:ml-6 text-white hover:text-red-300 cursor-pointer"
-          onClick={handleBack}
-        />
+        <Tooltip title="Back" placement="bottom-end">
+          <Button>
+            <IoArrowBackCircle
+              id="backToStoreButton"
+              size={40}
+              className=" mt-1 2xs:ml-6 text-white hover:text-red-300 cursor-pointer"
+              onClick={handleBack}
+            />
+          </Button>
+        </Tooltip>
 
         <div className="flex ">
           <RiAdminFill size={responsiveSize()} className={responsiveIcon()} />
@@ -124,20 +127,23 @@ const AdminMenu = () => {
         </div>
 
         {/* Menu Button */}
-        <div className="flex-row">
-          <Button
-            id="basic-button"
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-          >
-            <GiHamburgerMenu
-              onClick={handleClick}
-              id="hamburgerAdmin"
-              size={36}
-              className="-mr-4 2xs:mr-6 text-white hover:text-color10b "
-            />
-          </Button>
+        <div className="flex ">
+          <Tooltip title="Menu" placement="bottom-start">
+            <Button
+              className='mt-1'
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+            >
+              <GiHamburgerMenu
+                onClick={handleClick}
+                id="hamburgerAdmin"
+                size={36}
+                className="-mr-4 2xs:mr-6 text-white hover:text-color10b "
+              />
+            </Button>
+          </Tooltip>
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
@@ -158,18 +164,18 @@ const AdminMenu = () => {
                   ml: -0.5,
                   mr: 1,
                 },
-                '&:before': {
-                  content: '""',
-                  display: 'block',
-                  position: 'absolute',
-                  top: 0,
-                  right: 30,
-                  width: 10,
-                  height: 10,
-                  bgcolor: 'background.paper',
-                  transform: 'translateY(-50%) rotate(45deg)',
-                  zIndex: 0,
-                },
+                // '&:before': {
+                //   content: '""',
+                //   display: 'block',
+                //   position: 'absolute',
+                //   top: 0,
+                //   right: 32,
+                //   width: 10,
+                //   height: 10,
+                //   bgcolor: 'background.paper',
+                //   transform: 'translateY(-50%) rotate(50deg)',
+                //   zIndex: 0,
+                // },
               },
             }}
             MenuListProps={{
@@ -182,7 +188,7 @@ const AdminMenu = () => {
               onClick={handleClickCompanyDashboard}
             >
               {' '}
-              <BsBoxes size={19} />     <span>Company Dashboard</span>
+              <RiDashboard2Line size={20} />    <span>  Company Dashboard</span>
             </MenuItem>
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
