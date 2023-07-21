@@ -8,11 +8,16 @@ const CompanyDashboard = () => {
 
     const { firestore } = useContext(AppContext);
     const [overallTotalSalesValue, setOverallTotalSalesValue] = useState(0);
+    const [customersLastOrderDate, setCustomersLastOrderDate] = useState({});
     const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
 
     useEffect(() => {
         firestore.readSelectedDataFromCollection('Analytics','overallTotalSalesValue').then((data) => {
             setOverallTotalSalesValue(data.data);
+        });
+        firestore.readSelectedDataFromCollection('Analytics','CustomerLastOrderDate').then((data) => {
+          console.log(data)
+          setCustomersLastOrderDate(data)
         });
     }, []);
 
