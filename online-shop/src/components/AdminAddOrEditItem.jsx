@@ -815,7 +815,9 @@ const AdminAddOrEditItem = (props) => {
           <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label> */}
         </div>
 
-        <div className="flex flex-row items-center gap-2">
+        <div className=' w-full border-b border-dashed border-gray-400'></div>
+
+        <div className="flex flex-row items-center gap-2 py-4 border-y border-dotted border-gray-400">
           <ImageUploadButton
             id={'boxImage'}
             folderName={'ProductImages/' + itemID}
@@ -832,7 +834,9 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className="flex flex-row items-center gap-2">
+        <div className=' w-full border-b border-dashed border-gray-400'></div>
+
+        <div className="flex flex-row items-center gap-2 pt-4">
           <ImageUploadButton
             id={'imageLink1'}
             folderName={'ProductImages/' + itemID}

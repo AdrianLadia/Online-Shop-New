@@ -9,14 +9,19 @@ class dataManipulation {
     return customers;
   }
 
-  getDataOfChosenCustomer(data, chosenCustomer) {
+  getDataOfChosenCustomer(data, chosenCustomer, products) {
     const toReturn = [];
     Object.keys(data).map((customer, index) => {
       if (customer == chosenCustomer) {
         Object.keys(data[customer]).map((itemID, index) => {
-          const productID = itemID;
+          let productID = itemID;
           const salesPerMonth = [];
           let totalSales = 0;
+          products.map((product)=>{
+            if(product.itemId === itemID){
+              productID = product.itemName
+            }
+          })
           Object.keys(data[customer][itemID]).map((date, index) => {
             const dateString = date.slice(5, 7);
             const yearString = date.slice(0, 4);
@@ -74,12 +79,34 @@ class dataManipulation {
             if (year == yearToday && month < monthToday) {
                 toReturn.push([year, month, quantity]);
             }
-            
         });
       }
     });
 
     return toReturn;
+  }
+
+  fillMissingMonths(array) {
+    try{
+      const filledArray = [];
+
+      const startYear = parseInt(array[0].slice(0, 4), 10);
+      const startMonth = parseInt(array[0].slice(4), 10);
+    
+      for (let year = startYear; year <= parseInt(array[array.length - 1].slice(0, 4), 10); year++) {
+        const endMonth = (year === parseInt(array[array.length - 1].slice(0, 4), 10)) ? parseInt(array[array.length - 1].slice(4), 10) : 12;
+        const monthStart = (year === startYear) ? startMonth : 1;
+    
+        for (let month = monthStart; month <= endMonth; month++) {
+          const filledMonth = month.toString().padStart(2, '0');
+          filledArray.push(`${year}${filledMonth}`);
+        }
+      }
+    
+      return filledArray;
+    }catch(e){
+      // console.log(e)
+    }
   }
 
   appRemovePacksFromProducts(products) {

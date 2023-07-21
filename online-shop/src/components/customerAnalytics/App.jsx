@@ -5,7 +5,7 @@ import CustomerTable from './CustomerTable';
 import PurchaseFrequency from './PurchaseFrequency';
 import TimeBetweenPurchases from './TimeBetweenPurchases';
 import TotalValueGraph from './TotalValueGraph';
-
+import dataManipulation from './dataManipulation';
 const App = () => {
     const { firestore } = useContext(AppContext)
     const [ customerMonthlySales, setCustomerMonthlySales ] = useState({})
@@ -15,6 +15,8 @@ const App = () => {
     const [ customerTotalValueRanking, setCustomerTotalValueRanking ] = useState([])
     const [ startDate, setStartDate ] = useState('')
     const [ endDate, setEndDate ] = useState('')
+    const [ productsData, setProductsData ] = useState([])
+    const datamanipulation = new dataManipulation()
     const dummy = useRef(null)
 
     useEffect(()=>{
@@ -23,16 +25,16 @@ const App = () => {
         });
         firestore.readSelectedDataFromCollection('Analytics','PurchaseFrequencyAndTimeBetweenPurchases').then((data) => {
             setPurchaseFrequencyAndTimeBetweenPurchases(data)
-        
         });
-
         firestore.readSelectedDataFromCollection('Analytics','TotalValueOfOrder').then((data) => {
             setTotalValueOfOrder(data)
         });
-
-        
+        firestore.readAllDataFromCollection("Products").then((data) => {
+            const filteredData = datamanipulation.appRemovePacksFromProducts(data);
+            setProductsData(filteredData);
+          });
     },[])
-
+    
     useEffect(()=>{
         if (totalValueOfOrder != {}){
             const customerAndTotalValue = []
@@ -78,7 +80,7 @@ const App = () => {
                     <CustomerDropdown data={customerMonthlySales} setChosen={setChosenCustomer} customerTotalValueRanking={customerTotalValueRanking}/>
                 </div>
                 <div className='h-80per w-full '>
-                    <CustomerTable data={customerMonthlySales} chosenCustomer={chosenCustomer} firestore={firestore} />
+                    <CustomerTable data={customerMonthlySales} chosenCustomer={chosenCustomer} firestore={firestore} products={productsData}/>
                 </div>
                 <div className='h-80per 3xs:h-mid w-full flex justify-center'>
                     <div className='flex-col 3xs:flex-row flex w-full xs:w-11/12 p-2 border-y-0 items-center justify-evenly bg-gradient-to-t from-stone-100 to-green-100 border-2 border-green-700 divide-y 3xs:divide-y-0 3xs:divide-x divide-green1'>
