@@ -41,7 +41,7 @@ class firestoredb extends firestorefunctions {
     }
 
     await retryApi(async () => await super.createDocument(data, id, 'Products'));
-    alert('Product created successfully');
+    alert(data.itemId + ' created successfully');
   }
 
   async readAllProducts() {
@@ -104,7 +104,7 @@ class firestoredb extends firestorefunctions {
     try {
       await schema.validateAsync(data);
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error)
     }
 
     await retryApi(async () => await super.updateDocumentFromCollection('Products', id, data));

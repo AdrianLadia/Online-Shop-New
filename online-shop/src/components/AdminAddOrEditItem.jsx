@@ -16,6 +16,9 @@ import cloudFirestoreDb from '../cloudFirestoreDb';
 import businessCalculations from '../../utils/businessCalculations';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import {CircularProgress} from '@mui/material';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 // Style for Modal
 const style = {
@@ -147,11 +150,14 @@ const AdminAddOrEditItem = (props) => {
 
     if (itemID.length > 10) {
       alert('Item ID must not exceed 10 characters');
+      setLoading(false)
       return;
     }  
 
     if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
+      console.log(piecesPerPack, packsPerBox, pieces)
       alert('Pieces per pack * Packs per box must be equal to total pieces');
+      setLoading(false)
       return;
     }
 
@@ -246,8 +252,10 @@ const AdminAddOrEditItem = (props) => {
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
-    if (piecesPerPack * packsPerBox !== pieces) {
+    if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
+      console.log(piecesPerPack, packsPerBox, pieces)
       alert('Pieces per pack * Packs per box must be equal to total pieces');
+      setLoading(false)
       return;
     }
 
@@ -273,26 +281,68 @@ const AdminAddOrEditItem = (props) => {
       boxImage: boxImage,
       costPrice:parseFloat(costPrice)
     });
-    await firestore.updateProduct(selectedItemToEdit + '-RET', {
-      itemName: itemName,
-      unit: 'Pack',
-      price: parseFloat(retailPrice),
-      description: description,
-      weight: parseFloat(packWeight),
-      dimensions: dimensions,
-      category: category,
-      imageLinks: filteredimageLinks,
-      brand: brand,
-      pieces: parseInt(piecesPerPack),
-      color: color,
-      material: material,
-      size: size,
-      parentProductID: parentProductID,
-      isCustomized: isCustomized,
-      cbm: null,
-      boxImage: boxImage,
-      costPrice:null
-    });
+
+
+    try{
+      if (isThisRetail) {
+        await firestore.updateProduct(selectedItemToEdit + '-RET', {
+          itemName: itemName,
+          unit: 'Pack',
+          price: parseFloat(retailPrice),
+          description: description,
+          weight: parseFloat(packWeight),
+          dimensions: dimensions,
+          category: category,
+          imageLinks: filteredimageLinks,
+          brand: brand,
+          pieces: parseInt(piecesPerPack),
+          color: color,
+          material: material,
+          size: size,
+          parentProductID: parentProductID,
+          isCustomized: isCustomized,
+          cbm: null,
+          boxImage: boxImage,
+          costPrice:null
+        });
+      }
+    }
+    catch (error) {
+      await firestore.createProduct(
+        {
+          itemId: itemID + '-RET',
+          itemName: itemName,
+          unit: 'Pack',
+          price: parseFloat(retailPrice),
+          description: description,
+          weight: parseFloat(packWeight),
+          dimensions: dimensions,
+          category: category,
+          imageLinks: filteredimageLinks,
+          brand: brand,
+          pieces: parseInt(piecesPerPack),
+          color: color,
+          material: material,
+          size: size,
+          stocksAvailable: 0,
+          stocksOnHold: null,
+          averageSalesPerDay: 0,
+          parentProductID: itemID,
+          stocksOnHoldCompleted: null,
+          forOnlineStore: true,
+          isCustomized: isCustomized,
+          stocksIns: null,
+          cbm: null,
+          manufactured: manufactured,
+          machinesThatCanProduce: machineFormat,
+          boxImage: boxImage,
+          costPrice: null
+        },
+        itemID + '-RET',
+        products
+      );
+    }
+
 
     props.setRefresh(!props.refresh);
     setLoading(false);
@@ -360,6 +410,7 @@ const AdminAddOrEditItem = (props) => {
       setColor(selectedItemDetails.color);
       setMaterial(selectedItemDetails.material);
       setSize(selectedItemDetails.size);
+      console.log('hasRetailVersion', hasRetailVersion);
       setIsThisRetail(hasRetailVersion);
       setPacksPerBox(selectedItemDetails.packsPerBox);
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
@@ -606,6 +657,11 @@ const AdminAddOrEditItem = (props) => {
           <>
             Which machines can produce this product?
             {machines.map((machine) => {
+
+              if (machine.machineName == '') {
+                return ;
+              }
+
               return (
                 <div className="flex flex-row">
                   <Checkbox
@@ -709,8 +765,9 @@ const AdminAddOrEditItem = (props) => {
         />
 
         <div className="flex flex-row">
-          <Checkbox id='isret' defaultChecked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} />
-          <label htmlFor='isret' className='mt-2.5'> Is this also for retail?</label>
+          <FormControlLabel control={<Switch onChange={(event) => onRetailCheckBoxClick(event.target.checked)} checked={isThisRetail} />} label="Is this also for retail?" />
+          {/* <Checkbox id='isret' checked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} /> */}
+          {/* <label htmlFor='isret' className='mt-2.5'> Is this also for retail?</label> */}
         </div>
 
         {isThisRetail ? (
@@ -744,14 +801,18 @@ const AdminAddOrEditItem = (props) => {
         ) : null}
 
         <div className="flex flex-row ">
-          <Checkbox
+        <FormControlLabel control={<Switch onClick={() => {
+              setIsCustomized(!isCustomized);
+            }} checked={isCustomized} />} label="Is this Customized?" />
+        
+          {/* <Checkbox
             id='iscustom'
             onClick={() => {
               setIsCustomized(!isCustomized);
             }}
             className='mb-8'
           />
-          <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label>
+          <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label> */}
         </div>
 
         <div className="flex flex-row items-center gap-2">

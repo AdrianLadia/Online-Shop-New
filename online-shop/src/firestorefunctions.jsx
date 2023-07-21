@@ -119,7 +119,9 @@ class firestorefunctions {
         }
       })
       .catch((error) => {
+
         console.error('Error updating document: ', error);
+        throw new Error(error);
       });
   }
 

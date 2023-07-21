@@ -228,6 +228,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
       const { error } = schema.validate(toReturn);
 
+      console.log(toReturn)
       if (error) {
         alert(error.message);
         throw new Error(error.message);

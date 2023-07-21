@@ -19,17 +19,14 @@ const App = () => {
 
     useEffect(()=>{
         firestore.readSelectedDataFromCollection('Analytics','CustomerMonthlySales').then((data) => {
-            console.log(data)
             setCustomerMonthlySales(data)
         });
         firestore.readSelectedDataFromCollection('Analytics','PurchaseFrequencyAndTimeBetweenPurchases').then((data) => {
-            console.log(data)
             setPurchaseFrequencyAndTimeBetweenPurchases(data)
         
         });
 
         firestore.readSelectedDataFromCollection('Analytics','TotalValueOfOrder').then((data) => {
-            console.log(data)
             setTotalValueOfOrder(data)
         });
 
