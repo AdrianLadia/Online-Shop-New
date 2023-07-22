@@ -26,9 +26,9 @@ const ProductCard = (props) => {
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
   const calculations = new businessCalculations();
   const { cart, updateCartInfo, setUpdateCartInfo, firestore, userId } = useContext(AppContext);
-  const [iconVisible, setIconVisible] = useState(true);
+  const [iconVisible, setIconVisible] = useState(false);
   const ref = useRef(null);
-  const showTutorial = props.showTutorial;
+  const showTutorial = false
   const setShakeCartAnimation = props.setShakeCartAnimation;
   const stocksAvailable = props.stocksAvailable;
   const retailAverageSalesPerDay = props.averageSalesPerDay;
