@@ -63,15 +63,11 @@ const RecentOrdersButton = (props) => {
         aria-labelledby="modal-title"
         aria-describedby="modal-description">
                 <Box sx={{...style, ...mobileStyle}}>
-
                     <Box sx = {buttonContainerStyle}>
                         <Button variant="outlined" color='error' style={{  margin: '20px' }} onClick={() => setOpen(false)} >X</Button>
                     </Box>
-
                         <Typography sx={styles} id="modal-modal-title" variant="h3" component="h2" align='center'><br/>{name}<br/><br/></Typography>
-                      
                         <Typography id="modal-modal-title" variant="h4" component="h2" align='left' style={{ margin: '40px' }}><FaCalendarCheck/> Recent Orders:</Typography>
-
                         {info && info.stocksOnHoldCompleted.slice().reverse().map((completed) => {
                             return(
                                 <Typography id="modal-modal-description" variant="h6" component="h2" align='left' key={name}>Date : {completed.date}<br/>Name : {completed.userId}<br/>Quantity : {completed.quantity}<br/>Reference : {completed.reference}<br/><br/></Typography>               

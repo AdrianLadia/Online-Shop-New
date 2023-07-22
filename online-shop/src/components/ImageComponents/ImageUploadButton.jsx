@@ -42,6 +42,7 @@ const ImageUploadButton = (props) => {
       const ordersRefStorage = ref(storage, folderName + '/' + uuidv4() + fileName);
 
       try {
+        
         uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
           setButtonColor(true);
           setButtonText('Uploaded Successfuly');
@@ -62,6 +63,7 @@ const ImageUploadButton = (props) => {
           }
           else {
             alert('Image uploaded successfully.');
+            console.log(downloadURL)
           }
 
           
@@ -117,7 +119,7 @@ const ImageUploadButton = (props) => {
               <CloudUploadIcon /> {buttonText}
             </span>
           ) : (
-            <FaImage className="text-2xl xl:text-4xl 2xl:text-6xl" />
+            <FaImage className="text-2xl xl:text-4xl 2xl:text-5xl" />
           )}
         </label>
       </Button>

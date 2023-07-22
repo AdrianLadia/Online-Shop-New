@@ -31,8 +31,6 @@ const AccountStatementPayment = (props) => {
     }
   }
 
-
-
   useEffect(() => {
     if (mayaRedirectUrl != null) {
       window.location.href = mayaRedirectUrl;
@@ -80,9 +78,7 @@ const AccountStatementPayment = (props) => {
           </Typography>
           <HiCash size={25} />
         </div>
-
         <PaymentMethods />
-
         <Button
           onClick={payTotal}
           className="self-center mt-10 w-2/5 p-5 bg-blue1 hover:bg-color10b rounded-lg text-white font-semibold text-xl"

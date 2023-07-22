@@ -3,8 +3,7 @@ import businessCalculation from './bussinessCalculation/businessCalculation';
 
 export const Clicks = ({data, number}) => {
  
-    const businesscalculation = new businessCalculation(); 
-    // const [totalClicks, setTotalClicks] = useState(0);
+    const businesscalculation = new businessCalculation();
     const [averageClicks, setAverageClicks] = useState(0);
 
     useEffect(()=>{

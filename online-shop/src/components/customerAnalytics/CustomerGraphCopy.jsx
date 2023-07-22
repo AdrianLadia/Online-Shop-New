@@ -20,7 +20,7 @@ const CustomerGraph = ({data, firestore, products}) => {
     try{
       barLowestPoint&&barLowestPoint.sort((a, b) => {if (a[1] !== b[1]) {return a[1] - b[1]; } });
     }catch(e){
-      // console.log(e)
+      console.log(e)
     }
 
     const dates = []
@@ -64,11 +64,10 @@ const CustomerGraph = ({data, firestore, products}) => {
     try{
       labels = newD.map((date)=>monthNames[parseInt(date.slice(4, 6)) - 1] + date.slice(0, 4))
     }catch(e){
-      // console.log(e)
+      console.log(e)
     }
 
     const newSalesData = []
-    const newBarData = []
 
     try{
       let index = 0
@@ -76,28 +75,14 @@ const CustomerGraph = ({data, firestore, products}) => {
         if(salesData[index]){
           if(salesData[index].date === newD[i] ){
             newSalesData.push(salesData[index].sale)
-            index += 1
+            index+=1
           }else{
             newSalesData.push(0)
           }
         }
       }
-
-      newD.map((month)=>{
-        let value = 0
-        barDates.map((bar)=>{
-          if(month == bar.date){
-            value = bar.barPoints
-          }
-        })
-        if(value > 0){
-          newBarData.push(value)
-        }else{
-          newBarData.push(0)
-        }
-      })
     }catch(e){
-      // console.log(e)
+      console.log(e)
     }
 
     const graphData = {
@@ -119,20 +104,20 @@ const CustomerGraph = ({data, firestore, products}) => {
               }
             },
           },
-          {
-            type: 'bar' , label: 'Stocks', data: newBarData,
-            borderColor: 'black',
-            borderWidth: 0.5,
-            backgroundColor:
-            (context) => {
-              const value = context.dataset.data[context.dataIndex];
-              const average = context.dataset.average;
-              return value >= average && value <= average + 10 ? ('rgba(255, 255, 0, 0.2)') :
-                     value > average ? ('rgba(0, 255, 0, 0.1)') : 
-                     value < average ? ('rgba(255, 0, 0, 0.2)') : ('gray');
-            },
-            hidden: true,
-          },
+          // {
+          //   type: 'bar' , label: 'Stocks', data: newStocksData,
+          //   borderColor: 'black',
+          //   borderWidth: 0.5,
+          //   backgroundColor:
+          //   (context) => {
+          //     const value = context.dataset.data[context.dataIndex];
+          //     const average = context.dataset.average;
+          //     return value >= average && value <= average + 10 ? ('rgba(255, 255, 0, 0.2)') :
+          //            value > average ? ('rgba(0, 255, 0, 0.1)') : 
+          //            value < average ? ('rgba(255, 0, 0, 0.2)') : ('gray');
+          //   },
+          //   hidden: true,
+          // },
         ],
       };
 
@@ -144,27 +129,27 @@ const CustomerGraph = ({data, firestore, products}) => {
         graphData.datasets[0].average = average;
     }
 
-    const baraverage = graphData && graphData.datasets && graphData.datasets[1] && graphData.datasets[1].data
-    ? graphData.datasets[1].data.reduce((acc, val) => acc + val, 0) / graphData.datasets[1].data.length
-    : 0;
+    // const baraverage = graphData && graphData.datasets && graphData.datasets[1] && graphData.datasets[1].data
+    // ? graphData.datasets[1].data.reduce((acc, val) => acc + val, 0) / graphData.datasets[1].data.length
+    // : 0;
 
-    if (graphData && graphData.datasets && graphData.datasets[1]) {
-        graphData.datasets[1].average = baraverage;
-        graphData.datasets[1].baraverage = 50;
-    }
+    // if (graphData && graphData.datasets && graphData.datasets[1]) {
+    //     graphData.datasets[1].average = baraverage;
+    //     graphData.datasets[1].baraverage = 50;
+    // }
 
     const options = {
         plugins: {
           tooltip: {
             callbacks: {
-              afterBody: function(context) {
-                if(context[0].datasetIndex == 0){
-                  return( "    Stocks: " + graphData.datasets[1].data[context[0].dataIndex])
-                }else if (context[0].datasetIndex == 1){
-                  return( "    Sales: " + graphData.datasets[0].data[context[0].dataIndex])
-                }else{
-                  console.log("Error")
-                }
+              afterFooter: function(context) {
+                // if(context[0].datasetIndex == 0){
+                //   return( "Stocks: " + graphData.datasets[1].data[context[0].dataIndex])
+                // }else if (context[0].datasetIndex == 1){
+                //   return( "Sales: " + graphData.datasets[0].data[context[0].dataIndex])
+                // }else{
+                //   console.log("Error")
+                // }
               }
             }
           }

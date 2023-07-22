@@ -234,11 +234,10 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
           packsPerBox: data.packsPerBox,
           piecesPerPack: data.piecesPerPack,
           boxImage : data.boxImage,
+
         };
         products.push(productObject);
       });
-
-   
 
       // Send the products array as a JSON response
       res.status(200).send(products);
@@ -408,6 +407,9 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ me
     const needAssistance = data.needAssistance;
     const eMail = data.eMail;
     const sendMail = data.sendEmail;
+    const isInvoiceNeeded = data.isInvoiceNeeded;
+    const urlOfBir2303 = data.urlOfBir2303;
+
     let cartUniqueItems = [];
 
     const db = admin.firestore();
@@ -624,6 +626,8 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ me
           proofOfPaymentLink: [],
           eMail: eMail,
           cartItemsPrice: cartItemsPrice,
+          isInvoiceNeeded: isInvoiceNeeded,
+          urlOfBir2303: urlOfBir2303,
         };
 
         const updatedOrders = [newOrder, ...oldOrders];

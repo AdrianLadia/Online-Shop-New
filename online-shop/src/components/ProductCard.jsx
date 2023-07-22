@@ -66,13 +66,6 @@ const ProductCard = (props) => {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
 
-  const customStyles = {
-    content: {
-      height: '50%',
-      width: '80%',
-    },
-  };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -240,7 +233,7 @@ const ProductCard = (props) => {
 
   if (product.imageLinks.length === 0) {
     return (
-      <div className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 ' + responsiveWidth()}>
+      <div id={product.itemId} key={product.itemId} className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 ' + responsiveWidth()}>
         {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
           elevation={10}
@@ -262,7 +255,7 @@ const ProductCard = (props) => {
   } else {
     return (
       <ThemeProvider theme={theme}>
-        <div id={product.itemId} className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 hover:mb-5' + responsiveWidth()}>
+        <div id={product.itemId} key={product.itemId}  className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 hover:mb-5' + responsiveWidth()}>
           {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
           <Paper
             elevation={10}
@@ -305,7 +298,6 @@ const ProductCard = (props) => {
                 <div className="w-60"> </div>
               )}
             </div>
-
             {/* IMAGE */}
             {/* DETAILS */}
             <div className="flex flex-col ml-3 w-5/12 m-1 ">
@@ -334,7 +326,6 @@ const ProductCard = (props) => {
                   )}
                 </>
               )}
-
               <div className="h-2/6 ">
                 <Typography sx={{ fontSize: responsiveStyle(), mr: 1, cursor: 'help' }} onClick={showModal}>
                   {props.product.itemName}
@@ -363,7 +354,7 @@ const ProductCard = (props) => {
               <div className="flex flex-row items-center">
                 <button
                   id="addtocartbutton"
-                  className=" h-max w-5/12 2xs:w-5/12 py-3 2xs:px-2 rounded-lg text-xs text-black border-2 border-color60 bg-color10c hover:bg-color1"
+                  className=" h-max w-5/12 2xs:w-5/12 py-3 2xs:px-2 rounded-lg text-xs text-black border-2 border-color60 bg-color10b hover:bg-color1"
                   // className=" h-max w-5/12 2xs:w-1/3 py-3 2xs:px-2 rounded text-xs text-black border-2 border-color10a bg-color10a hover:bg-color10c hover:border-4 hover:border-double"
                   type="button"
                   onClick={AddToCart}
@@ -415,8 +406,7 @@ const ProductCard = (props) => {
               message={DisplayItem()}
               action={
                 <Button color="success" size="small" onClick={handleClose}>
-                  {' '}
-                  Close{' '}
+                  {' '}Close{' '}
                 </Button>
               }
             />

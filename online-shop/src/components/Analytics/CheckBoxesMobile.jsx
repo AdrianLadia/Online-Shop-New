@@ -52,7 +52,6 @@ export const CheckBoxesMobile = ({name, callback}) => {
   return (
     
     <div className="grid grid-cols-2 justify-center gap-2 w-full rounded-lg ">
-     
         {categories && categories.map((type)=>{
             if(type){
               return(
@@ -68,7 +67,6 @@ export const CheckBoxesMobile = ({name, callback}) => {
                   )
               }
           })}     
-         
               <div className="rounded-lg col-span-2 grid gap-1 justify-items-center mt-1 border-2 border-emerald-200 w-full 
                                 bg-emerald-100 hover:bg-green-200">
                   <input 
@@ -81,7 +79,6 @@ export const CheckBoxesMobile = ({name, callback}) => {
                   <label className="text-xs font-bold text-transparent bg-clip-text 
                                     bg-gradient-to-r from-indigo-600 via-yellow-400 to-red-500" htmlFor="isCustomized"> Customized</label>
               </div>
-
               <div className="col-span-2 grid gap-1 justify-items-center ">
                 {customized === ""  && selectedOption === "" ?  null  : 
                     <div className="flex"> 
@@ -89,10 +86,7 @@ export const CheckBoxesMobile = ({name, callback}) => {
                              onClick={handleClear}>Clear</button>    
                     </div>
                 }  
-               
               </div>   
-
         </div>
-    
 );
 }

@@ -129,6 +129,8 @@ export function InventoryTable({name, category, customized, callback}) {
     const data = [];
     tableData.map((s, index)=>{
       const n = s.name;
+
+
       data.push(n)
     })
       setproductNames(data)

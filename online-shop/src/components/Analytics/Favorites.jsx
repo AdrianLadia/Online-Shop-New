@@ -4,10 +4,7 @@ const Favorites = (props) => {
 
     const items = props.items;
     const favorites = props.favorites;
-
     const [toShow, setToShow] = useState(0) 
-
-
     
     useEffect(()=>{
      favorites.map((s)=>{

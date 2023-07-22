@@ -171,15 +171,15 @@ const AdminCreatePayment = (props) => {
             /> */}
           </div>
 
-          <div className="flex justify-evenly">
+          <div className="flex-col gap-10 md:gap-0 md:flex-row flex justify-evenly items-center">
             <button
               id="createPaymentButton"
               onClick={onCreatePayment}
-              className="w-4/12 sm:w-3/12 lg:p-5 p-3 bg-color10b hover:bg-blue-400 border-2 border-blue1 rounded-lg text-md uppercase"
+              className="flex justify-center py-2 sm:py-2.5 w-6/12 sm:w-4/12 md:w-3/12 2md:w-4/12 uppercase text-sm sm:text-medium shadow-xl tracking-wide bg-color10b hover:bg-blue-400 rounded-lg ease-in-out duration-300"
             >
-              {''}Create Payment{''}
+              <HiCash className='mr-1.5' size={25} /> <a className='mt-0.5'>Create Payment</a>
             </button>
-            <div className="mt-5">
+            <div className="">
               <ImageUploadButton
                 onUploadFunction={onUploadFunction}
                 folderName={'Payments/' + selectedName + '/' + reference}

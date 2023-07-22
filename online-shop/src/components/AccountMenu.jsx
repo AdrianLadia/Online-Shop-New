@@ -153,7 +153,7 @@ const AccountMenu = (props) => {
             <AiOutlineHistory  size={17} />
             </div>
           </Badge>
-          <span className="ml-5">My Orders</span>
+          <span className="ml-3">My Orders</span>
         </MenuItem>
         {/* Account Statement */}
         <MenuItem id="accountStatementMenu" onClick={accountStatementCLick} className="hover:bg-color10b">
@@ -169,7 +169,7 @@ const AccountMenu = (props) => {
           </ListItemIcon>
           <span>Settings</span>
         </MenuItem>
-        <MenuItem id="logoutMenu" onClick={props.signout} className="hover:bg-red-400">
+        <MenuItem id="logoutMenu" onClick={props.signout} className="hover:bg-red-400 ">
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -179,10 +179,10 @@ const AccountMenu = (props) => {
         <MenuItem id="adminMenu" onClick={customerServiceClick} className="hover:bg-slate-300">
           <Badge badgeContent={unreadCustomerServiceMessages} color="error">
             <div className='mr-1'>
-              <AiOutlineMessage size={21} className="-ml-.5 font-bold text-blue1" />
+              <AiOutlineMessage size={21} className=" font-bold text-color60" />
             </div>
           </Badge>
-          <span className="ml-3.5 text-blue1">Customer Service</span>
+          <span className="ml-3 mt-0.5 text-color60">Customer Service</span>
         </MenuItem>
         {isadmin ? (
           <div>

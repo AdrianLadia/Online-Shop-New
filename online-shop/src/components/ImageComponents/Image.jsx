@@ -24,6 +24,7 @@ const Image = (props) => {
     const className = props.className;
     const onLoad = props.onLoad;
     const divClassName = props.divClassName
+   
   
     const handleClose = () => setIsFullScreen(false);
 

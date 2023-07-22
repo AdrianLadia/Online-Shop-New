@@ -8,6 +8,7 @@ import retryApi from '../utils/retryApi';
 import { httpsCallable, getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import businessCalculations from '../utils/businessCalculations';
 
+
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false) {
     super();
@@ -151,6 +152,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       eMail: Joi.string().required(),
       sendEmail: Joi.boolean().required(),
       testing : Joi.boolean().required(),
+      isInvoiceNeeded : Joi.boolean().required(),
+      urlOfBir2303 : Joi.string().allow('',null),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -221,36 +224,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     try {
       const response = await axios.request(`${this.url}readAllProductsForOnlineStore`);
       const toReturn = response.data;
-      const toReturnSchema = Joi.array().items(
-        Joi.object({
-          averageSalesPerDay: Joi.number().required().allow(null,''),
-          brand: Joi.string().allow('',null).required(),
-          category: Joi.string().required(),
-          color: Joi.string().required().allow('',null),
-          description: Joi.string().required().allow('',null),
-          dimensions: Joi.string().required().allow('',null),
-          imageLinks: Joi.array(),
-          itemId: Joi.string().required(),
-          isCustomized: Joi.boolean().required(),
-          itemName: Joi.string().required(),
-          material: Joi.string().required().allow('',null),
-          parentProductID: Joi.string().required().allow('',null),
-          pieces: Joi.number().required(),
-          price: Joi.number().required(),
-          size: Joi.string().required().allow('',null),
-          stocksAvailable: Joi.number().required().allow(null,''),
-          unit: Joi.string().required(),
-          weight: Joi.number().required(),
-          packsPerBox: Joi.number().allow(null,''),
-          piecesPerPack: Joi.number().allow(null,''),
-          boxImage: Joi.string().uri().allow('',null),
-        }).unknown(false)
-      );
+      const schema = Joi.array().items(schemas.productSchema());
 
-     
+      const { error } = schema.validate(toReturn);
 
-      const { error } = toReturnSchema.validate(toReturn);
-
+      console.log(toReturn)
       if (error) {
         alert(error.message);
         throw new Error(error.message);

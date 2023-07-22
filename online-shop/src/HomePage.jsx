@@ -9,17 +9,22 @@ import AppContext from './AppContext';
 import GoogleMaps from './components/GoogleMaps'
 import { useLocation } from 'react-router-dom';
 import { AiFillMessage } from "react-icons/ai";
+import LoginButton from './components/LoginButton';
+import AccountMenu from './components/AccountMenu';
+import { Tooltip } from '@mui/material';
 
 const HomePage = () => {
 
   const navigateTo = useNavigate()
-  const {userdata} = useContext(AppContext)
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart} = useContext(AppContext)
+  const favorites = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F0590b1d4-7351-40e2-b012-a1f408d9dc93customerchat-1.png?alt=media&token=5f77540f-f0cb-4d61-81a2-e61f2394f9ba";
+  const pinpoint = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F1f812257-6879-4bbb-b534-2bd83e254f12customerchat-2.png?alt=media&token=14f9a6cb-c643-49c0-a985-332dae1f040b";
+  const customerChat = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F10621e7b-77ae-461b-a6d4-314ccff59d55customerchat-3.png?alt=media&token=2711c910-92c5-4257-ade1-4e94c7489f71";
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
   const contactsImage = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123"
   const logo = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fstarpack.png?alt=media&token=e108388d-74f7-45a1-8344-9c6af612f053"
   const videoAd = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed.mp4?alt=media&token=bc6b257e-7ba9-4568-b843-b32c4927a5fb&_gl=1*1pcfpf3*_ga*MTk5NDU4NTY2OC4xNjc4NDI0NDg0*_ga_CW55HF8NVT*MTY4NjE5NjY5Ny4xOC4xLjE2ODYxOTY3NjguMC4wLjA"
-  
   const page1 = useRef();
   const page2 = useRef();
   const page3 = useRef();
@@ -35,7 +40,7 @@ const HomePage = () => {
     {step:["Share the Affiliate Link:", "Affiliates share their special link through their website, social media, or other online channels."]},
     {step:["People Click and Make Purchases:", "When someone clicks on the affiliate link and buys a product or service, the company tracks the sale back to the affiliate."]},
     {step:["Earn Commissions:", "Based on the program's terms, the affiliate receives a commission or a percentage of the sale as their reward for driving customers to the company."]}
-  ]
+  ];
   const categories = ["Paper Bags", "Food Wrappers", "Roll Bags", "Meal Boxes", "Sando Bags"];
   const [selectedCategory, setSelectedCategory] = useState("Paper Bags")
   const [selectedSlide, setSelectedSlide] = useState(0);
@@ -46,7 +51,6 @@ const HomePage = () => {
   const [localDeliveryAddress, setLocalDeliveryAddress] = useState('');
   const [zoom, setZoom] = useState(18);
   const [addressText, setAddressText] = useState('');
-  // const [changedSlide, setChangedSlide] = useState(false); 
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showButton, setShowButton] = useState(false);
@@ -55,7 +59,6 @@ const HomePage = () => {
   const [showShopToolTip, setShowShopToolTip] = useState(false);
   const [showMessageToolTip, setShowMessageToolTip] = useState(false);
   const {pathname} = useLocation();
- 
 
     function handleCategory(item){
       if(item === "Paper Bags"){
@@ -117,17 +120,17 @@ const HomePage = () => {
 
     function buttonStyle(page){
       if(p1inView == true && p2inView == false && page == "page1"){
-        return ' w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
+        return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
       }else if (p2inView == true && p3inView == false && page == "page2"){
-        return ' w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold '
+        return 'w-28 lg:lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold '
       }else if (p3inView == true && p4inView == false && page == "page3"){
-        return ' w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
+        return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
       }else if (p4inView == true && p5inView == false && page == "page4"){
-        return ' w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
+        return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
       }else if (p5inView == true && p4inView == false && page == "page5"){
-        return ' w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
+        return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold'
       }else{
-        return ' w-32 h-20 hover:text-white ease-in-out duration-50 font-semibold '
+        return 'w-28 lg:w-32 h-20 hover:text-white ease-in-out duration-50 font-semibold '
       }
     }
 
@@ -175,16 +178,16 @@ const HomePage = () => {
     
     function menuStyle(){
       if(showMenu == false ){
-        return 'h-12 w-12 sm:h-14 sm:w-14 bg-black text-white hover:text-color60 mt-1 p-1 rounded-lg'
+        return 'h-12 w-10 sm:h-14 sm:w-12 bg-black text-white hover:text-color60 mt-1 p-1 rounded-sm'
       }else{
-        return 'h-12 w-12 sm:h-14 sm:w-14 bg-black text-white hover:text-red-300 mt-1 p-1 rounded-lg'
+        return 'h-12 w-10 sm:h-14 sm:w-12 bg-black text-color60 hover:text-red-300 mt-1 p-1 rounded-sm'
       }
     }
 
     function togglePlay(toDo) {
       const video = videoRef.current;
-      const forward = video.currentTime + 1.5;
-      const back = video.currentTime - 1.5;
+      const forward = video.currentTime + 2;
+      const back = video.currentTime - 2;
 
       if(toDo == 3){
         video.currentTime = forward;
@@ -222,10 +225,11 @@ const HomePage = () => {
         return 'Message Us'
       }
     }
-    
+
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
-    style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}>
+      style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}>
+
         {/* Navigation Bar */}
         <div className={ navStyle() }>
           {/* Logo */}
@@ -250,7 +254,6 @@ const HomePage = () => {
                     <button onClick={()=>{scroll("page2")}} className={"text-xl  " + menuButtonStyle("page2")}>About</button>
                     <button onClick={()=>{scroll("page3")}} className={"text-xl  " + menuButtonStyle("page3")}>Products</button>
                     <button onClick={()=>{scroll("page4")}} className={"text-xl  " + menuButtonStyle("page4")}>Affiliate</button>
-           
                   </ul>
                 </div> : null
               }
@@ -261,13 +264,20 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page2")}} className={buttonStyle("page2")}>About</button>
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
               <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
-      
             </div>
-            <div className='gap-3 flex justify-end w-1/2 '>
-              <div className='w-3/12 sm:w-2/12 xl:w-1/12 flex justify-end sm:justify-center items-center mr-1 '>
+
+            {p1inView == true && p2inView == false && width >= 768 ? 
+              (userdata == null) ? 
+                <div className=' px-2 flex items-center'>
+                  <LoginButton />
+                </div> : <AccountMenu />
+            : p1inView == false && p2inView || p3inView || p4inView ?
+            <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>
+              {/* Message Button */}
+              <div className='w-1/2 sm:w-4/12 xl:w-2/12 flex justify-end sm:justify-center items-center mr-1 '>
                 <button
                   onClick={handleMessageClick}
-                  className="text-3xl lg:text-4xl xl:text-5xl h-12 w-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mt-1 rounded-full 
+                  className="text-3xl lg:text-4xl h-12 w-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mt-1 rounded-full 
                                 relative flex justify-center items-center bg-black text-color10b hover:text-blue1"
                   onMouseEnter={()=>{setShowMessageToolTip(true)}} onMouseLeave={()=>{setShowMessageToolTip(false)}}
                 >
@@ -279,7 +289,7 @@ const HomePage = () => {
                                 >Message Us!</div> : null}
               </div> 
               {/* Shop Button */}
-              <div className='w-3/12 sm:w-2/12 xl:w-1/12 flex justify-end sm:justify-center items-center mr-1 ' 
+              <div className='w-1/2 sm:w-4/12 xl:w-2/12 flex justify-end sm:justify-center items-center mr-1 ' 
                 >
                 <button onClick={()=>{handleShop()}} 
                     className="text-2xl lg:text-3xl xl:text-4xl h-12 w-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mt-1 rounded-full 
@@ -292,7 +302,7 @@ const HomePage = () => {
                                 bg-opacity-75 bg-black text-white ease-in-out duration-300'
                                 >Shop Now!</div> : null}
               </div>
-            </div>
+            </div> : null}
           </div> 
         </div>
 
@@ -301,13 +311,13 @@ const HomePage = () => {
           style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + `url(${backgroundImageUrl})`}}
           >
             <div className='h-1/10 p-10 w-full flex'/>
-            <div ref={p1} className='w-screen h-9/10 flex flex-col md:flex-row '>
+            <div ref={p1} className='w-screen h-9/10 flex flex-col my-6 md:mt-0 md:flex-row '>
               {/* Header */}
               <div className='h-1/2 md:h-full w-full md:w-4/10 items-start xs:items-center gap-5 flex flex-col justify-center '>
                 <div className='mt-2 md:mt-0 justify-end md:justify-center items-center md:items-end h-full w-5/6 flex flex-col '>
                     <div className='w-full sm:w-11/12 md:w-full lg:w-5/6 2xl:w-8/12 gap-2 ml-16 md:ml-0 p-3  flex flex-col '>
-                      <h1 className='text-4xl 2xs:text-6xl md:text-7xl text-color60 font-bold'>Star Pack</h1>
-                      <h2 className='text-lg 2xs:text-2xl md:text-3xl text-color30 tracking-tighter md:tracking-normal'>Cebu's Leading Online Packaging Supplier.</h2>
+                      <h1 className='text-4xl 2xs:text-5xl sm:text-6xl md:text-7xl text-color60 font-bold'>Star Pack</h1>
+                      <h2 className='text-lg 2xs:text-xl sm:text-2xl md:text-3xl text-color30 tracking-tighter md:tracking-normal'>Cebu's Leading Online Packaging Supplier.</h2>
                       <ul className='text-xs 2xs:text-md text-gray-400 mt-2 ml-2'>
                         <li><a className=' text-color60'>✓</a> High Quality Products.</li>
                         <li><a className=' text-color60'>✓</a> Unparalleled Service.</li>
@@ -315,23 +325,41 @@ const HomePage = () => {
                       </ul>
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
                         <button 
-                          className='w-32 md:w-36 h-10 md:h-14 text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center font-semibold border-2 rounded-r-full ease-in-out duration-300'
+                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
                           onClick={handleShop}
                             ><FaShoppingBag className='text-xl '/> Shop Now!
                         </button>
                       </span>
+                      {/* <Tooltip title="Shop">
+                        <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
+                          <button 
+                            className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                            onClick={handleShop}
+                              ><FaShoppingBag className='text-xl '/> Shop Now!
+                          </button>
+                        </span>
+                      </Tooltip> */}
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
                         <button 
-                          className='w-32 md:w-36 h-10 md:h-14 text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-2 flex justify-start items-center font-semibold border-2 rounded-r-full ease-in-out duration-300'
+                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
                           onClick={handleMessageClick}
-                            ><AiFillMessage className='text-xl '/> {responsiveMessageText()}
+                            ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
                         </button>
                       </span>
+                      {/* <Tooltip title="Message">
+                        <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
+                          <button 
+                            className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                            onClick={handleMessageClick}
+                              ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
+                          </button>
+                        </span>
+                      </Tooltip> */}
                     </div>
                 </div>
               </div>
               {/* Video  */}
-              <div className='h-1/2 md:h-full w-full md:w-6/10 items-start 2xs:items-center flex justify-center '>
+              <div className='h-1/2 md:h-full w-full md:w-6/10 items-start xs:items-center flex justify-center '>
                   <div className='h-7/10 w-full flex justify-center items-center relative' >
                     <video ref={videoRef} autoPlay loop muted plays-inline="true" onClick={()=>{setShowButton(!showButton)}}
                           className='h-full w-11/12 xl:w-10/12 flex justify-center items-center'>
@@ -356,12 +384,12 @@ const HomePage = () => {
         </div>
 
         {/* Page 2 About*/}
-        <div ref={page2} className="snap-start w-screen h-screen bg-cover bg-center"
+        <div ref={page2} className="mt-10 snap-start w-screen h-screen bg-cover bg-center"
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
          >
           <div className='h-1/10 w-full flex'/>
           <div ref={p2} className='flex h-9/10 w-full justify-center items-center '>
-            <div className=' w-11/12 h-9/10 flex-col md:flex-row p-5 sm:p-16 md:p-5 gap-2 sm:gap-4 border border-white flex items-center justify-evenly rounded-3xl bg-local bg-cover bg-center'
+            <div className=' w-11/12 h-9/10 flex-col md:flex-row p-5 sm:p-16 md:p-5 gap-2 sm:gap-4 flex items-center justify-evenly rounded-3xl bg-local bg-cover bg-center'
               //  style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + "url('./vids/pexel.jpg')"}}
                >
               {/* Header */}
@@ -373,16 +401,18 @@ const HomePage = () => {
                 </p>
                 <div className='h-2/10 flex justify-start'>
                   <span className='w-28 xs:w-32 md:w-32 h-10 md:h-12 hover:w-0 ease-in-out duration-300 rounded-r-full bg-black'>
-                    <button className='w-28 xs:w-32 md:w-32 h-10 md:h-12 text-xs sm:text-md text-white hover:text-black border-black border font-semibold ease-in-out duration-300 rounded-r-full flex items-center p-3 '>
-                      <BsBookHalf/>  Read More
+                    <button className='w-28 xs:w-32 md:w-32 h-10 md:h-12 text-xs sm:text-md text-white hover:text-black border-black border font-normal md:font-semibold ease-in-out duration-300 rounded-r-full flex items-center p-3 '>
+                      <BsBookHalf className='text-xl mr-1 sm:mr-2'/>Read More
                     </button>
                   </span>
                 </div>
               </div>
               {/* Image */}
               <div className='w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center'>
-                <img className='w-full h-full rounded-3xl border border-white text-white'  
-                   alt='About Image' src='./vids/aboutus.png'
+                <img className='w-full h-full rounded-3xl  text-white'  
+                   alt='About Image' 
+                  //  src='./vids/STAR-DELIVERY.png'
+                  src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F24f9d0f1-529e-45ce-8830-4bfcfc4f2aa1STAR-DELIVERY.png?alt=media&token=5bdefdfe-8c25-4260-aa75-f753adb5e74f'
                 />
               </div>
             </div>
@@ -415,9 +445,9 @@ const HomePage = () => {
                   <div className='w-32 md:w-36 lg:w-48 flex justify-start '>
                     <span className='w-32 md:w-36 lg:w-48 h-10 md:h-14 hover:w-0 bg-blue1 hover:bg-color10b mt-3 rounded-full ease-in-out duration-300'> 
                       <button 
-                        className=' w-32 md:w-36 lg:w-48 h-10 md:h-14 p-3 text-xs sm:text-sm flex items-center font-semibold rounded-full border border-blue1 text-white hover:text-color10b hover:border-color10b ease-in-out duration-300'
+                        className=' w-32 md:w-36 lg:w-48 h-10 md:h-14 p-3 text-xs sm:text-sm flex justify-center items-center font-normal md:font-semibold rounded-full border border-blue1 text-white hover:text-color10b hover:border-color10b ease-in-out duration-300'
                         onClick={handleShop}
-                        ><FaShoppingBag className='ml-0 md:ml-1 lg:ml-3 text-xl mt-0.5'/>  Shop Now!
+                        ><FaShoppingBag className=' text-xl '/> Shop Now!
                       </button>
                     </span>
                   </div>
@@ -453,7 +483,7 @@ const HomePage = () => {
                         ><p className=' decoration-color60'>Step {index + 1} - {state.step[0]}</p> <div className='border-color60 border-b w-11/12'></div>
                         {/* <p className='underline underline-offset-4 decoration-color60'>{state.step[0]}</p> */}
                       </h1>
-                      <p className='text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-gray-200 '
+                      <p className='text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-white '
                         >{state.step[1]}
                       </p>
                     </div>
@@ -475,11 +505,11 @@ const HomePage = () => {
                               rounded-b-4xl md:rounded-r-3xl lg:rounded-l-none lg:rounded-r-semifull bg-cover bg-center '
               // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
               >
-                <h1 className='w-full lg:w-11/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-white p-1 font-bold 
+                <h1 className='w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-white p-1 font-bold 
                                tracking-tight md:tracking-wide underline underline-offset-8 decoration-color60'
                   >Become an Affiliate
                 </h1>
-                <div className='w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-xl text-gray-200 tracking-tight indent-5 ml-0.5 overflow-y-auto'>
+                <div className='font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-white tracking-tight indent-5 ml-0.5 overflow-y-auto'>
                     An affiliate is someone who helps sell or promote a product or service. 
                     They are like a partner to the company that makes the product. 
                     When the affiliate tells others about the product and those people buy it because of the affiliate's recommendation,
@@ -489,8 +519,8 @@ const HomePage = () => {
                 <div className='flex justify-start items-center h-1/10 md:h-2/6 w-full '>
                   <span className='w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300'> 
                     <button 
-                      className='w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm md:text-base p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal text-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300'
-                      ><FaPenSquare/> Register Now!
+                      className='w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300'
+                      ><FaPenSquare className='ml-1 text-xl'/> <a className=' ml-2'>Register</a>
                     </button>
                   </span>
                 </div>
@@ -515,10 +545,10 @@ const HomePage = () => {
                 <div className='md:grid-cols-2 lg:grid-cols-3 2lg:grid-cols-4 xl:grid-cols-5 grid h-full gap-2 justify-evenly items-stretch overflow-y-auto'>
                   <div className={footerCardStyle()} >
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample.png"/>
                       </div>
                       <div className=' w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Favorite Items</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Favorite Items</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'
                           >Adding your favorite items to your 'Favorites' list for quick and convenient access.
                         </h2>
@@ -526,28 +556,28 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample2.png"/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Pinpoint Location</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30'>Pinpoint Location</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'>Who needs big signs or landmarks when you can pinpoint your exact location!</h2>
                       </div>
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample3.png"/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Chat with Customer Service</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Chat with Customer Service</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'>Any questions or concerns? There is a chat customer service available to help you out.</h2>
                       </div>
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src='./vids/saved.png'/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Save Location and Contact Details</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Save Location and Contacts</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'
                           >This makes it quicker and easier to fill in the details for your next order.
                         </h2>
@@ -555,10 +585,10 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/image-icon.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src='./vids/multiple.svg'/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
-                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline'>Multiple Payment Methods</h1>
+                        <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Multiple Payment Methods</h1>
                         <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'
                           >Gives you the flexibility to choose the option that is most convenient and suits your preferences.
                         </h2>
@@ -586,13 +616,13 @@ const HomePage = () => {
                     </div>
                 </div>
                 {/* Menu */}
+                
                 <div className='flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch '>
                   <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
                   <div className='flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs'>
-                    <ul className='h-19/20 w-11/12 grid grid-cols-2 justify-evenly gap-1 md:gap-2'>
+                    <ul className='h-19/20 w-11/12 flex flex-col justify-evenly items- gap-1 md:gap-2'>
                       <li onClick={()=>{scroll("page1")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Home</li>
                       <li onClick={()=>{scroll("page2")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>About Us</li>
-                      <li onClick={handleMessageClick} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Message Us</li>
                       <li onClick={()=>{scroll("page3")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Products</li>
                       <li onClick={()=>{scroll("page4")}} className='text-blue1 hover:text-color10b hover:underline cursor-pointer'>Affiliate Program</li>
                     </ul>
@@ -628,6 +658,8 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+
+        {/* Copyright */}
         <div className=' h-1/10 w-full flex flex-col justify-start items-center gap-2 bg-color60 bg-opacity-50'>
           <div className='w-11/12 border-b-2 border-black'/>
           <div className='flex h-full justify-center items-center gap-2'>

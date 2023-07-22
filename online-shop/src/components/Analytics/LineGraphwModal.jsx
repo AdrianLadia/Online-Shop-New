@@ -4,27 +4,8 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Line } from 'react-chartjs-2';
 import Button from '@mui/material/Button';
-import ChartJS from 'chart.js/auto';
-// import {
-//   Chart as ChartJS,
-//   LineElement,
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-//   scales
-// } from 'chart.js'
-
-  
-
-// ChartJS.register(
-//   LineElement,
-//   CategoryScale,
-//   LinearScale,
-//   PointElement
-// )
 
 const LineGraph = () => {
-
   const data = {
     labels: ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July'],
     datasets: [

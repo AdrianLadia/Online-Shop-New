@@ -16,6 +16,9 @@ import cloudFirestoreDb from '../cloudFirestoreDb';
 import businessCalculations from '../../utils/businessCalculations';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import {CircularProgress} from '@mui/material';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 // Style for Modal
 const style = {
@@ -38,7 +41,30 @@ const style = {
 
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
-  const { firestore, storage, categories } = React.useContext(AppContext);
+  const { firestore, storage, categories: initialCategories } = React.useContext(AppContext);
+  const [categories, setCategories] = React.useState(initialCategories);
+
+  useEffect(() => {
+    if (categories == null) {
+      const categoryList = []
+      firestore.readAllCategories().then((categories) => {
+   
+        categories.map((c) => {
+          categoryList.push(c.category) 
+        });
+
+      setCategories(categoryList);
+        
+      });
+  
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(categories);
+  }, [categories]);
+
+
   const { width, height } = useWindowDimensions();
   const products = props.products;
   const productNames = [];
@@ -48,6 +74,10 @@ const AdminAddOrEditItem = (props) => {
       productNames.push(product.itemName);
     }
   });
+
+  const setSelectedMenu = props.setSelectedMenu;
+
+  const handleCancel = () => setSelectedMenu("Inventory");
 
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
@@ -95,6 +125,7 @@ const AdminAddOrEditItem = (props) => {
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
       setMachines(machines);
+      
     });
   }, []);
 
@@ -119,11 +150,14 @@ const AdminAddOrEditItem = (props) => {
 
     if (itemID.length > 10) {
       alert('Item ID must not exceed 10 characters');
+      setLoading(false)
       return;
     }  
 
     if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
+      console.log(piecesPerPack, packsPerBox, pieces)
       alert('Pieces per pack * Packs per box must be equal to total pieces');
+      setLoading(false)
       return;
     }
 
@@ -218,8 +252,10 @@ const AdminAddOrEditItem = (props) => {
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
-    if (piecesPerPack * packsPerBox !== pieces) {
+    if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
+      console.log(piecesPerPack, packsPerBox, pieces)
       alert('Pieces per pack * Packs per box must be equal to total pieces');
+      setLoading(false)
       return;
     }
 
@@ -245,26 +281,68 @@ const AdminAddOrEditItem = (props) => {
       boxImage: boxImage,
       costPrice:parseFloat(costPrice)
     });
-    await firestore.updateProduct(selectedItemToEdit + '-RET', {
-      itemName: itemName,
-      unit: 'Pack',
-      price: parseFloat(retailPrice),
-      description: description,
-      weight: parseFloat(packWeight),
-      dimensions: dimensions,
-      category: category,
-      imageLinks: filteredimageLinks,
-      brand: brand,
-      pieces: parseInt(piecesPerPack),
-      color: color,
-      material: material,
-      size: size,
-      parentProductID: parentProductID,
-      isCustomized: isCustomized,
-      cbm: null,
-      boxImage: boxImage,
-      costPrice:null
-    });
+
+
+    try{
+      if (isThisRetail) {
+        await firestore.updateProduct(selectedItemToEdit + '-RET', {
+          itemName: itemName,
+          unit: 'Pack',
+          price: parseFloat(retailPrice),
+          description: description,
+          weight: parseFloat(packWeight),
+          dimensions: dimensions,
+          category: category,
+          imageLinks: filteredimageLinks,
+          brand: brand,
+          pieces: parseInt(piecesPerPack),
+          color: color,
+          material: material,
+          size: size,
+          parentProductID: parentProductID,
+          isCustomized: isCustomized,
+          cbm: null,
+          boxImage: boxImage,
+          costPrice:null
+        });
+      }
+    }
+    catch (error) {
+      await firestore.createProduct(
+        {
+          itemId: itemID + '-RET',
+          itemName: itemName,
+          unit: 'Pack',
+          price: parseFloat(retailPrice),
+          description: description,
+          weight: parseFloat(packWeight),
+          dimensions: dimensions,
+          category: category,
+          imageLinks: filteredimageLinks,
+          brand: brand,
+          pieces: parseInt(piecesPerPack),
+          color: color,
+          material: material,
+          size: size,
+          stocksAvailable: 0,
+          stocksOnHold: null,
+          averageSalesPerDay: 0,
+          parentProductID: itemID,
+          stocksOnHoldCompleted: null,
+          forOnlineStore: true,
+          isCustomized: isCustomized,
+          stocksIns: null,
+          cbm: null,
+          manufactured: manufactured,
+          machinesThatCanProduce: machineFormat,
+          boxImage: boxImage,
+          costPrice: null
+        },
+        itemID + '-RET',
+        products
+      );
+    }
+
 
     props.setRefresh(!props.refresh);
     setLoading(false);
@@ -332,6 +410,7 @@ const AdminAddOrEditItem = (props) => {
       setColor(selectedItemDetails.color);
       setMaterial(selectedItemDetails.material);
       setSize(selectedItemDetails.size);
+      console.log('hasRetailVersion', hasRetailVersion);
       setIsThisRetail(hasRetailVersion);
       setPacksPerBox(selectedItemDetails.packsPerBox);
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
@@ -417,8 +496,8 @@ const AdminAddOrEditItem = (props) => {
   }, [selectedItemToEdit]);
 
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl::w-1/2 mt-5 ">
+    <div className="flex justify-center py-5 ">
+      <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl:w-1/2 mt-5 ">
        
         {addOrEditItem == 'Edit' ? (
           <Autocomplete
@@ -578,6 +657,11 @@ const AdminAddOrEditItem = (props) => {
           <>
             Which machines can produce this product?
             {machines.map((machine) => {
+
+              if (machine.machineName == '') {
+                return ;
+              }
+
               return (
                 <div className="flex flex-row">
                   <Checkbox
@@ -644,7 +728,7 @@ const AdminAddOrEditItem = (props) => {
           onChange={(event) => setDescription(event.target.value)}
         />
 
-        <div className="flex flex-row">
+        <div className="pt-5 gap-3 flex flex-row items-center">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel required={true} id="demo-simple-select-label">
@@ -657,21 +741,22 @@ const AdminAddOrEditItem = (props) => {
                 label="Category"
                 onChange={(event) => setCategory(event.target.value)}
               >
-                {categories.map((c) => {
+                {categories ? (categories.map((c) => {
                   if (c != 'Favorites') {
                     return <MenuItem value={c}>{c}</MenuItem>;
                   }
-                })}
+                })) : null}
                 {/* <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem> */}
               </Select>
             </FormControl>
           </Box>
-          <button onClick={onAddCategoryClick} className="ml-5 bg-blue-500 text-white px-2 rounded-lg h-full">
+          <button onClick={onAddCategoryClick} className=" hover:bg-color10b bg-blue-500 text-white px-2 rounded-lg h-full">
             Add Category
           </button>
         </div>
+
         <AddCategoryModal
           openAddCategoryModal={openAddCategoryModal}
           setOpenAddCategoryModal={setOpenAddCategoryModal}
@@ -680,8 +765,9 @@ const AdminAddOrEditItem = (props) => {
         />
 
         <div className="flex flex-row">
-          <Checkbox defaultChecked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} />
-          <Typography sx={{ marginTop: 1 }}> Is this also for retail?</Typography>
+          <FormControlLabel control={<Switch onChange={(event) => onRetailCheckBoxClick(event.target.checked)} checked={isThisRetail} />} label="Is this also for retail?" />
+          {/* <Checkbox id='isret' checked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} /> */}
+          {/* <label htmlFor='isret' className='mt-2.5'> Is this also for retail?</label> */}
         </div>
 
         {isThisRetail ? (
@@ -714,186 +800,24 @@ const AdminAddOrEditItem = (props) => {
           </div>
         ) : null}
 
-        <div className="flex flex-row">
-          <Checkbox
+        <div className="flex flex-row ">
+        <FormControlLabel control={<Switch onClick={() => {
+              setIsCustomized(!isCustomized);
+            }} checked={isCustomized} />} label="Is this Customized?" />
+        
+          {/* <Checkbox
+            id='iscustom'
             onClick={() => {
               setIsCustomized(!isCustomized);
             }}
+            className='mb-8'
           />
-          <Typography sx={{ marginTop: 1 }}> Is this Customized?</Typography>
+          <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label> */}
         </div>
 
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink1'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink1}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 1"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink1}
-            onChange={(event) => setImageLink1(event.target.value)}
-          />
-        </div>
+        <div className=' w-full border-b border-dashed border-gray-400'></div>
 
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink2'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink2}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 2"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink2}
-            onChange={(event) => setImageLink2(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink3'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink3}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 3"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink3}
-            onChange={(event) => setImageLink3(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink4'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink4}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 4"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink4}
-            onChange={(event) => setImageLink4(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink5'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink5}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 5"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink5}
-            onChange={(event) => setImageLink5(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink6'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink6}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 6"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink6}
-            onChange={(event) => setImageLink6(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink7'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink7}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 7"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink7}
-            onChange={(event) => setImageLink7(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink8'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink8}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 8"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink8}
-            onChange={(event) => setImageLink8(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink9'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink9}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 9"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink9}
-            onChange={(event) => setImageLink9(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
-          <ImageUploadButton
-            id={'imageLink10'}
-            folderName={'ProductImages/' + itemID}
-            storage={storage}
-            onUploadFunction={setImageLink10}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Image Link 10"
-            variant="outlined"
-            sx={{ width: '90%' }}
-            value={imageLink10}
-            onChange={(event) => setImageLink10(event.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row ">
+        <div className="flex flex-row items-center gap-2 py-4 border-y border-dotted border-gray-400">
           <ImageUploadButton
             id={'boxImage'}
             folderName={'ProductImages/' + itemID}
@@ -910,27 +834,208 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        {addOrEditItem == 'Add' ? (
-          <Button
-            className="w-2/5 lg:w-1/5"
-            sx={{ height: 50, marginBottom: 10 }}
-            variant="contained"
-            onClick={addItem}
-          >
-            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Add Item</> }
+        <div className=' w-full border-b border-dashed border-gray-400'></div>
+
+        <div className="flex flex-row items-center gap-2 pt-4">
+          <ImageUploadButton
+            id={'imageLink1'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink1}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 1"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink1}
+            onChange={(event) => setImageLink1(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink2'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink2}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 2"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink2}
+            onChange={(event) => setImageLink2(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink3'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink3}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 3"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink3}
+            onChange={(event) => setImageLink3(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink4'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink4}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 4"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink4}
+            onChange={(event) => setImageLink4(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink5'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink5}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 5"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink5}
+            onChange={(event) => setImageLink5(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink6'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink6}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 6"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink6}
+            onChange={(event) => setImageLink6(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink7'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink7}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 7"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink7}
+            onChange={(event) => setImageLink7(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink8'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink8}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 8"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink8}
+            onChange={(event) => setImageLink8(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink9'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink9}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 9"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink9}
+            onChange={(event) => setImageLink9(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <ImageUploadButton
+            id={'imageLink10'}
+            folderName={'ProductImages/' + itemID}
+            storage={storage}
+            onUploadFunction={setImageLink10}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Image Link 10"
+            variant="outlined"
+            sx={{ width: '90%' }}
+            value={imageLink10}
+            onChange={(event) => setImageLink10(event.target.value)}
+          />
+        </div>
+
+        <div className='flex justify-between items-center '>
+          <Button variant="contained" 
+            sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
+            className="w-2/5 lg:w-1/5 hover:bg-red-400"
+            color='error'
+            onClick={handleCancel}
+            > Cancel
           </Button>
-        ) : null}
-        {addOrEditItem == 'Edit' ? (
-          <Button
-            className="w-2/5 lg:w-1/5"
-            sx={{ height: 50, marginBottom: 10 }}
-            variant="contained"
-            onClick={editItem}
-            
-          >
-            {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
-          </Button>
-        ) : null}
+          {addOrEditItem == 'Add' ? (
+            <Button
+              className="w-2/5 lg:w-1/5  hover:bg-color10b"
+              sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
+              variant="contained"
+              onClick={addItem}
+            >
+              {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Add Item</> }
+            </Button>
+          ) : null}
+          {addOrEditItem == 'Edit' ? (
+            <Button
+              className="w-2/5 lg:w-1/5 hover:bg-color10b"
+              sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
+              variant="contained"
+              onClick={editItem}
+              
+            >
+              {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
+            </Button>
+          ) : null}
+        </div>
       </div>
     </div>
   );

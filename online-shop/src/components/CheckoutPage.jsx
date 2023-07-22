@@ -25,6 +25,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ClipLoader from 'react-spinners/ClipLoader';
 import Geocode from 'react-geocode';
 import Button from '@mui/material/Button';
+import ImageUploadButton from './ImageComponents/ImageUploadButton';
+import Image from './ImageComponents/Image';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -54,7 +56,6 @@ const CheckoutPage = () => {
   const datamanipulation = new dataManipulation();
   const {
     userdata,
-    firestore,
     cart,
     setCart,
     refreshUser,
@@ -65,9 +66,7 @@ const CheckoutPage = () => {
     setMayaRedirectUrl,
     setMayaCheckoutId,
     paymentMethodSelected,
-    setPaymentMethodSelected,
-    cardSelected,
-    setCardSelected,
+    storage,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -113,6 +112,26 @@ const CheckoutPage = () => {
   const [addressGeocodeSearch, setAddressGeocodeSearch] = useState('');
 
   const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
+
+  const [isInvoiceNeeded, setIsInvoiceNeeded] = useState(false);
+
+  const [rowsMountCount, setRowsMountCount] = useState(0);
+
+  const [urlOfBir2303, setUrlOfBir2303] = useState('');
+
+  // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
+  useEffect(() => {
+    setRowsMountCount(rowsMountCount + 1);
+    console.log(rows);
+  }, [rows]);
+
+  useEffect(() => {
+    if (rowsMountCount >= 2) {
+      if (rows.length === 0) {
+        navigateTo('/shop');
+      }
+    }
+  }, [rowsMountCount]);
 
   // GEO CODE
 
@@ -244,6 +263,8 @@ const CheckoutPage = () => {
           needAssistance: needAssistance,
           eMail: localemail,
           sendEmail: true,
+          isInvoiceNeeded: isInvoiceNeeded,
+          urlOfBir2303: urlOfBir2303,
         });
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
@@ -261,6 +282,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (userdata) {
+      // console.log(userdata)
       setLocalEmail(userdata.email);
 
       if (userdata.contactPerson.length > 0) {
@@ -272,6 +294,11 @@ const CheckoutPage = () => {
         setLocalLatitude(userdata.deliveryAddress[0].latitude);
         setLocalLongitude(userdata.deliveryAddress[0].longitude);
         setZoom(15);
+      }
+      if (userdata.contactPerson.length == 0) {
+        console.log(userdata)
+        
+        setLocalPhoneNumber(userdata.phoneNumber);
       }
     }
   }, [userdata]);
@@ -306,6 +333,10 @@ const CheckoutPage = () => {
         alert('Address not found. Be more specific.');
       }
     );
+  }
+
+  function on2303Upload(url) {
+    setUrlOfBir2303(url)
   }
 
   return (
@@ -620,7 +651,39 @@ const CheckoutPage = () => {
                     rows={rows}
                   />
                 )}
-                <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+                <div className="flex flex-row justify-center">
+                  <div className="flex justify-center m-5">
+                    <Typography variant="h6">Do you need an invoice?</Typography>
+                  </div>
+                  <div className="flex mt-4">
+                    <Switch
+                      {...label}
+                      checked={isInvoiceNeeded}
+                      color="secondary"
+                      onClick={() => setIsInvoiceNeeded(!isInvoiceNeeded)}
+                    />
+                  </div>
+                </div>
+
+                {isInvoiceNeeded ? (
+                  <div>
+                    <Typography variant="h7" className="flex justify-center mb-5 mx-5">
+                      We need to get your BIR 2303 Form to process your invoice. Please upload a photo below.
+                    </Typography>
+                    <ImageUploadButton
+                      buttonTitle={'Upload BIR 2303 Form'}
+                      storage={storage}
+                      folderName={`2303Forms/${userdata.uid}`}
+                      onUploadFunction={on2303Upload}
+
+                    />
+                    <div className="flex justify-center mt-5 mx-5">
+                      <Image imageUrl={urlOfBir2303} />
+                    </div>
+                  </div>
+                ) : null}
+
+                <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
 
                 <div className="flex justify-center m-5">
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>

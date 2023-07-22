@@ -21,7 +21,7 @@ const Shop = () => {
       
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
       {/* WHOLESALE RETAIL */}
-      {/* <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/> */}
+      <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail}/>
       {/* CATEGORY */}
       <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory}/>
       {/* PRODUCTS */}
