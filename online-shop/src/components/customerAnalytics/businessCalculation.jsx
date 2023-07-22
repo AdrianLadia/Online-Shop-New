@@ -80,6 +80,8 @@ class businessCalculation {
         const averageIntervalInDays = averageIntervalInMilliseconds / (1000 * 60 * 60 * 24);
         if(averageIntervalInDays > 0 ){
             return (averageIntervalInDays.toFixed(2) + " day(s)")
+        }else{
+            return "No Interval"
         }
     }
 
