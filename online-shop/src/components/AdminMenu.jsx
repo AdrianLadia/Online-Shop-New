@@ -33,7 +33,7 @@ const AdminMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Company Dashboard');
+  const [selectedMenu, setSelectedMenu] = React.useState('Inventory');
   const [products, setProducts] = useState([]);
 
   useEffect(() => {

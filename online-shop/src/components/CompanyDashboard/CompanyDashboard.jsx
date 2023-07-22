@@ -137,7 +137,7 @@ const CompanyDashboard = () => {
 
   return (
     <div className=' w-full gap-3 flex flex-col justify-center items-center '>
-      <div className='h-80per w-11/12 flex flex-col justify-center items-center font-serif tracking-wider border border-green-400 rounded-lg p-3 mt-4'>Company Dashboard
+      <div className='h-80per w-full xs:w-11/12 flex flex-col justify-center items-center font-serif tracking-wider border border-green-400 rounded-lg p-3 mt-4'>Company Dashboard
         <Chart type='bar' data={graphData} options={options}/>
       </div>
       <div className=' mb-8 w-full flex justify-center items-center'>

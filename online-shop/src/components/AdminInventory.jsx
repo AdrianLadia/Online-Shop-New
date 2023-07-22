@@ -65,8 +65,6 @@ const AdminInventory = (props) => {
   const setSelectedMenu = props.setSelectedMenu;
   const rows = [];
 
-  
-
   const refresh = props.refresh;
   const setRefresh = props.setRefresh;
   const categories = props.categories;
@@ -102,7 +100,6 @@ const AdminInventory = (props) => {
       )
     );
   });
-
 
   function responsiveimage() {
     if (width < 1024) {

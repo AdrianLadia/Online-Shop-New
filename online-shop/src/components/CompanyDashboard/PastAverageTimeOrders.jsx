@@ -74,13 +74,13 @@ const PastAverageTimeOrders = ({customerData, lastOrderDate, customerRanking}) =
         },
         {
             field:"averageInterval",
-            headerName: ( <div style={headerStyle()}>Average Purchase Interval</div> ),
+            headerName: ( <div style={headerStyle()}>{width <= 768?"Average Interval":"Average Purchase Interval"}</div> ),
             width: headerWidth(),
             disableColumnMenu: true, sortable: false,
         },
         {
             field:"differenceInDays",
-            headerName: ( <div style={headerStyle()}>Days Since Last Order</div> ),
+            headerName: ( <div style={headerStyle()}>{width <= 768? "Since Last Order" : "Days Since Last Order"}</div> ),
             width: headerWidth(),
             disableColumnMenu: true, sortable: false,
         }
