@@ -30,6 +30,7 @@ import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import {doc, getDoc} from 'firebase/firestore';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
+import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 
 const devEnvironment = true;
 
@@ -104,6 +105,7 @@ function App() {
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
+  const [affiliate,setAffiliate] = useState(null)
 
   useEffect(() => {
     if (userdata != null ) {
@@ -213,7 +215,6 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-
       if (user) {
         setUserState('userloading');
         setUser(user);
@@ -240,6 +241,7 @@ function App() {
                   favoriteItems: [],
                   payments: [],
                   userRole: 'member',
+                  affiliate: affiliate
                 },
                 user.uid
               );
@@ -265,7 +267,7 @@ function App() {
         setUserState('guest');
       }
     });
-  }, []);
+  }, [affiliate]);
 
   useEffect(() => {
     // GET ALL PRODUCTS
@@ -442,6 +444,9 @@ function App() {
     setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
     isAndroidDevice : isAndroidDevice,
     isGoogleChrome : isGoogleChrome,
+    affiliate : affiliate,
+    setAffiliate : setAffiliate,
+
   };
 
   return (
@@ -605,6 +610,14 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <CheckoutCancelled />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/signUp"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <AffiliateSignUpPage setAffiliate={setAffiliate} />
             </AppContext.Provider>
           }
         />

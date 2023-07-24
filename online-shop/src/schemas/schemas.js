@@ -46,7 +46,8 @@ class schemas {
       cart: Joi.object(),
       favoriteItems: Joi.array(),
       payments: Joi.array(),
-      userRole: Joi.string().required()
+      userRole: Joi.string().required(),
+      affiliate : Joi.string().allow(null,''),
     }).unknown(false);
   }
 

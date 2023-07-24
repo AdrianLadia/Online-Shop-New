@@ -83,6 +83,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async createNewUser(data, userId) {
     const schema = schemas.userSchema();
+    console.log(data);
 
     const { error } = schema.validate(data);
     if (error) {
