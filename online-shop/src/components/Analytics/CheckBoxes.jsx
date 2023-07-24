@@ -69,14 +69,15 @@ export const CheckBoxes = ({name, callback}) => {
     <div className=" justify-center ">
       <button onClick={toggleDiv} className="lg:text-4xl md:text-lg mt-2 mb-3 ml-2 text-green-700 hover:text-emerald-500"><FaList/></button>
     {showDiv && <div className="absolute grid h-max w-full border-2 border-indigo-800 bg-gradient-to-b from-violet-100 to-indigo-100 rounded-lg overflow-auto">
-      <div className="grid w-full gap-1 justify-items-center p-3">
+      <div className="grid w-full gap-0.5 p-3">
           {categories && categories.map((type)=>{
               if(type){
-                return(
-                  <div className="rounded-lg flex flex-col-reverse justify-center gap-1 w-full border-2 border-indigo-300 bg-slate-50 hover:bg-purple-100">
+                return (
+                  <div className="pb-1 rounded-lg flex flex-col-reverse justify-center gap-0.5 w-full border-2 border-indigo-300 bg-slate-50 hover:bg-purple-100">
                     <input className="accent-indigo-500 flex cursor-pointer w-full "
                         type="checkbox"
                         name= {type}
+                        id={type}
                         checked={selectedOption.includes(type)}
                         onChange={handleCheckboxChange}
                     />
@@ -84,12 +85,13 @@ export const CheckBoxes = ({name, callback}) => {
                   </div>    
                     )
                 }
-            })}     
-                <div className="rounded-lg col-span-2 grid gap-1 justify-items-center mt-1 mb-2 border-2 border-indigo-300 w-full bg-slate-50 hover:bg-indigo-100 ">
+            })}
+                <div className="rounded-lg col-span-2 grid pt-1 justify-items-center mt-1 mb-2 border-2 border-indigo-300 w-full bg-slate-50 hover:bg-indigo-100 ">
                     <input 
                         type="checkbox"
-                        name="true"
-                        checked={customized === "true"}
+                        name="isCustomized"
+                        id="isCustomized"
+                        checked={customized === "isCustomized"}
                         onChange={handleCustomized}
                         className="cursor-pointer accent-pink-500"
                     />
@@ -98,7 +100,7 @@ export const CheckBoxes = ({name, callback}) => {
                 <div className="col-span-2 grid gap-1 justify-items-center mt-2 ">
                   {customized === ""  && selectedOption === "" ?  <div> </div>  : 
                     <div className="flex"> 
-                        <button className="p-1  bg-red1 border-2 text-xs border-red-600 rounded-lg hover:bg-red-300 " 
+                        <button className="p-1 bg-red1 border-2 text-xs border-red-600 rounded-lg hover:bg-red-300 " 
                         onClick={handleClear}>Clear All</button>    
                     </div>
                   }  
