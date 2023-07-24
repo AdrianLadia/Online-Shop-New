@@ -15,7 +15,7 @@ import AppContext from '../AppContext';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import businessCalculations from '../../utils/businessCalculations';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
-import {CircularProgress} from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
@@ -46,24 +46,20 @@ const AdminAddOrEditItem = (props) => {
 
   useEffect(() => {
     if (categories == null) {
-      const categoryList = []
+      const categoryList = [];
       firestore.readAllCategories().then((categories) => {
-   
         categories.map((c) => {
-          categoryList.push(c.category) 
+          categoryList.push(c.category);
         });
 
-      setCategories(categoryList);
-        
+        setCategories(categoryList);
       });
-  
     }
   }, []);
 
   useEffect(() => {
     console.log(categories);
   }, [categories]);
-
 
   const { width, height } = useWindowDimensions();
   const products = props.products;
@@ -77,7 +73,7 @@ const AdminAddOrEditItem = (props) => {
 
   const setSelectedMenu = props.setSelectedMenu;
 
-  const handleCancel = () => setSelectedMenu("Inventory");
+  const handleCancel = () => setSelectedMenu('Inventory');
 
   const [itemID, setItemID] = React.useState('');
   const [itemName, setItemName] = React.useState('');
@@ -119,18 +115,59 @@ const AdminAddOrEditItem = (props) => {
   const [selectedItemToEdit, setSelectedItemToEdit] = React.useState(null);
   const [boxImage, setBoxImage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
-  const [costPrice,setCostPrice] = React.useState(0);
-
+  const [costPrice, setCostPrice] = React.useState(0);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
       setMachines(machines);
-      
     });
   }, []);
 
-
   const businesscalculations = new businessCalculations();
+
+  function checkDimensions(throwError = true) {
+    if ([null,''].includes(dimensions) == false) {
+      let count = 0;
+      console.log(dimensions);
+      for (let character of dimensions) {
+        if (character == 'x' || character == 'X') {
+          count += 1;
+        }
+      }
+      if (count != 2) {
+        if (throwError) {
+          setLoading(false);
+          alert('Invalid Dimensions Format');
+          throw new Error('Invalid Dimensions Format');
+        } else {
+          return false;
+        }
+      }
+    }
+    else{
+      return false
+    }
+    return true;
+  }
+
+  useEffect(() => {
+    const dimensionsCorrect = checkDimensions(false);
+    console.log(dimensionsCorrect)
+    // Split the string by 'x' to get an array of dimensions
+    if (dimensionsCorrect) {
+      console.log(dimensions)
+      const dimensionsArray = dimensions.split(/x|X/).map((item) => Number(item.trim()));
+      console.log(dimensionsArray);
+      const metersPerInch = 0.0254;
+      const metersLength = dimensionsArray[0] * metersPerInch;
+      const metersWidth = dimensionsArray[1] * metersPerInch;
+      const metersHeight = dimensionsArray[2] * metersPerInch;
+      const cbm = metersLength * metersWidth * metersHeight;
+      setCbm(cbm);
+    }
+
+    // Convert inches to cbm
+  }, [dimensions]);
 
   async function addItem() {
     setLoading(true);
@@ -150,16 +187,18 @@ const AdminAddOrEditItem = (props) => {
 
     if (itemID.length > 10) {
       alert('Item ID must not exceed 10 characters');
-      setLoading(false)
-      return;
-    }  
-
-    if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
-      console.log(piecesPerPack, packsPerBox, pieces)
-      alert('Pieces per pack * Packs per box must be equal to total pieces');
-      setLoading(false)
+      setLoading(false);
       return;
     }
+
+    if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
+      console.log(piecesPerPack, packsPerBox, pieces);
+      alert('Pieces per pack * Packs per box must be equal to total pieces');
+      setLoading(false);
+      return;
+    }
+
+    checkDimensions();
 
     await firestore.createProduct(
       {
@@ -191,7 +230,7 @@ const AdminAddOrEditItem = (props) => {
         manufactured: manufactured,
         machinesThatCanProduce: machineFormat,
         boxImage: boxImage,
-        costPrice: parseFloat(costPrice)
+        costPrice: parseFloat(costPrice),
       },
       itemID,
       products
@@ -226,7 +265,7 @@ const AdminAddOrEditItem = (props) => {
           manufactured: manufactured,
           machinesThatCanProduce: machineFormat,
           boxImage: boxImage,
-          costPrice: null
+          costPrice: null,
         },
         itemID + '-RET',
         products
@@ -253,11 +292,13 @@ const AdminAddOrEditItem = (props) => {
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
     if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
-      console.log(piecesPerPack, packsPerBox, pieces)
+      console.log(piecesPerPack, packsPerBox, pieces);
       alert('Pieces per pack * Packs per box must be equal to total pieces');
-      setLoading(false)
+      setLoading(false);
       return;
     }
+
+    checkDimensions();
 
     await firestore.updateProduct(selectedItemToEdit, {
       itemName: itemName,
@@ -279,11 +320,10 @@ const AdminAddOrEditItem = (props) => {
       packsPerBox: parseInt(packsPerBox),
       cbm: cbm,
       boxImage: boxImage,
-      costPrice:parseFloat(costPrice)
+      costPrice: parseFloat(costPrice),
     });
 
-
-    try{
+    try {
       if (isThisRetail) {
         await firestore.updateProduct(selectedItemToEdit + '-RET', {
           itemName: itemName,
@@ -303,11 +343,10 @@ const AdminAddOrEditItem = (props) => {
           isCustomized: isCustomized,
           cbm: null,
           boxImage: boxImage,
-          costPrice:null
+          costPrice: null,
         });
       }
-    }
-    catch (error) {
+    } catch (error) {
       await firestore.createProduct(
         {
           itemId: itemID + '-RET',
@@ -336,13 +375,12 @@ const AdminAddOrEditItem = (props) => {
           manufactured: manufactured,
           machinesThatCanProduce: machineFormat,
           boxImage: boxImage,
-          costPrice: null
+          costPrice: null,
         },
         itemID + '-RET',
         products
       );
     }
-
 
     props.setRefresh(!props.refresh);
     setLoading(false);
@@ -352,7 +390,6 @@ const AdminAddOrEditItem = (props) => {
   function onAddCategoryClick() {
     setOpenAddCategoryModal(true);
   }
-
 
   function createMachineFormat(checked, machine) {
     if (checked) {
@@ -381,7 +418,7 @@ const AdminAddOrEditItem = (props) => {
     if (addOrEditItem == 'Edit' && selectedItemToEdit !== null) {
       function checkIfItemHasRetailVersion() {
         const filter = products.filter((product) => product.itemId == selectedItemToEdit + '-RET');
-    
+
         if (filter.length > 0) {
           return true;
         } else {
@@ -390,7 +427,7 @@ const AdminAddOrEditItem = (props) => {
       }
 
       const hasRetailVersion = checkIfItemHasRetailVersion();
-  
+
       const selectedItemDetails = products.filter((product) => product.itemId == selectedItemToEdit)[0];
       let selectedItemDetailsRetail = null;
       if (hasRetailVersion) {
@@ -416,17 +453,11 @@ const AdminAddOrEditItem = (props) => {
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
       setCostPrice(selectedItemDetails.costPrice);
 
-
       if (selectedItemDetails.boxImage == null) {
-        setBoxImage('');;
-      }
-      else {
+        setBoxImage('');
+      } else {
         setBoxImage(selectedItemDetails.boxImage);
       }
-
-      
-
-   
 
       if (selectedItemDetails.imageLinks[0]) {
         setImageLink1(selectedItemDetails.imageLinks[0]);
@@ -498,41 +529,43 @@ const AdminAddOrEditItem = (props) => {
   return (
     <div className="flex justify-center py-5 ">
       <div className="flex flex-col space-y-5 w-9/10 lg:w-1/2 xl:w-1/2 2xl:w-1/2 mt-5 ">
-       
         {addOrEditItem == 'Edit' ? (
           <Autocomplete
-          onChange={(event, newValue) => { 
-            const selectedProduct = products.filter((product) => product.itemName == newValue && product.unit != 'Pack')
-            const id = selectedProduct[0].itemId
-            setSelectedItemToEdit(id);}}
-          disablePortal
-          id="combo-box-demo"
-          options={productNames.sort()}
-          sx={{ width: 'fullWidth' }}
-          renderInput={(params) => <TextField {...params} label="Item Name" />}
-        />
-          // <Box sx={{ width: '100%' }}>
-          //   <FormControl fullWidth>
-          //     <InputLabel required={true} id="demo-simple-select-label">
-          //       Select Item
-          //     </InputLabel>
-          //     <Select
-          //       labelId="demo-simple-select-label"
-          //       id="demo-simple-select"
-          //       value={selectedItemToEdit}
-          //       label="Unit"
-          //       onChange={(event) => {
-          //         console.log('event.target.value', event.target.value);
-          //         setSelectedItemToEdit(event.target.value);
-          //       }}
-          //     >
-          //       {productNames.map((product) => {
-          //         return <MenuItem value={product[1]}>{product[0]}</MenuItem>;
-          //       })}
-          //     </Select>
-          //   </FormControl>
-          // </Box>
-        ) : null}
+            onChange={(event, newValue) => {
+              const selectedProduct = products.filter(
+                (product) => product.itemName == newValue && product.unit != 'Pack'
+              );
+              const id = selectedProduct[0].itemId;
+              setSelectedItemToEdit(id);
+            }}
+            disablePortal
+            id="combo-box-demo"
+            options={productNames.sort()}
+            sx={{ width: 'fullWidth' }}
+            renderInput={(params) => <TextField {...params} label="Item Name" />}
+          />
+        ) : // <Box sx={{ width: '100%' }}>
+        //   <FormControl fullWidth>
+        //     <InputLabel required={true} id="demo-simple-select-label">
+        //       Select Item
+        //     </InputLabel>
+        //     <Select
+        //       labelId="demo-simple-select-label"
+        //       id="demo-simple-select"
+        //       value={selectedItemToEdit}
+        //       label="Unit"
+        //       onChange={(event) => {
+        //         console.log('event.target.value', event.target.value);
+        //         setSelectedItemToEdit(event.target.value);
+        //       }}
+        //     >
+        //       {productNames.map((product) => {
+        //         return <MenuItem value={product[1]}>{product[0]}</MenuItem>;
+        //       })}
+        //     </Select>
+        //   </FormControl>
+        // </Box>
+        null}
         <TextField
           required
           disabled={addOrEditItem == 'Edit' ? true : false}
@@ -567,7 +600,7 @@ const AdminAddOrEditItem = (props) => {
           value={costPrice}
           onChange={(event) => setCostPrice(event.target.value)}
         />
-  
+
         <TextField
           required
           id="outlined-basic"
@@ -603,7 +636,6 @@ const AdminAddOrEditItem = (props) => {
           variant="outlined"
           value={packsPerBox}
           onChange={(event) => setPacksPerBox(event.target.value)}
-          
         />
         <TextField
           required
@@ -613,7 +645,6 @@ const AdminAddOrEditItem = (props) => {
           sx={{ mt: 3 }}
           value={piecesPerPack}
           onChange={(event) => setPiecesPerPack(event.target.value)}
-        
         />
 
         <Box sx={{ width: '100%' }}>
@@ -657,9 +688,8 @@ const AdminAddOrEditItem = (props) => {
           <>
             Which machines can produce this product?
             {machines.map((machine) => {
-
               if (machine.machineName == '') {
-                return ;
+                return;
               }
 
               return (
@@ -741,18 +771,23 @@ const AdminAddOrEditItem = (props) => {
                 label="Category"
                 onChange={(event) => setCategory(event.target.value)}
               >
-                {categories ? (categories.map((c) => {
-                  if (c != 'Favorites') {
-                    return <MenuItem value={c}>{c}</MenuItem>;
-                  }
-                })) : null}
+                {categories
+                  ? categories.map((c) => {
+                      if (c != 'Favorites') {
+                        return <MenuItem value={c}>{c}</MenuItem>;
+                      }
+                    })
+                  : null}
                 {/* <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem> */}
               </Select>
             </FormControl>
           </Box>
-          <button onClick={onAddCategoryClick} className=" hover:bg-color10b bg-blue-500 text-white px-2 rounded-lg h-full">
+          <button
+            onClick={onAddCategoryClick}
+            className=" hover:bg-color10b bg-blue-500 text-white px-2 rounded-lg h-full"
+          >
             Add Category
           </button>
         </div>
@@ -765,7 +800,12 @@ const AdminAddOrEditItem = (props) => {
         />
 
         <div className="flex flex-row">
-          <FormControlLabel control={<Switch onChange={(event) => onRetailCheckBoxClick(event.target.checked)} checked={isThisRetail} />} label="Is this also for retail?" />
+          <FormControlLabel
+            control={
+              <Switch onChange={(event) => onRetailCheckBoxClick(event.target.checked)} checked={isThisRetail} />
+            }
+            label="Is this also for retail?"
+          />
           {/* <Checkbox id='isret' checked={isThisRetail} onChange={(event) => onRetailCheckBoxClick(event.target.checked)} /> */}
           {/* <label htmlFor='isret' className='mt-2.5'> Is this also for retail?</label> */}
         </div>
@@ -778,7 +818,7 @@ const AdminAddOrEditItem = (props) => {
           //   sx={{ width: "90%" }}
           //   onChange={(event) => setParentProductID(event.target.value)}
           // />
-          <div className='flex flex-col'>
+          <div className="flex flex-col">
             <TextField
               required
               id="outlined-basic"
@@ -801,10 +841,18 @@ const AdminAddOrEditItem = (props) => {
         ) : null}
 
         <div className="flex flex-row ">
-        <FormControlLabel control={<Switch onClick={() => {
-              setIsCustomized(!isCustomized);
-            }} checked={isCustomized} />} label="Is this Customized?" />
-        
+          <FormControlLabel
+            control={
+              <Switch
+                onClick={() => {
+                  setIsCustomized(!isCustomized);
+                }}
+                checked={isCustomized}
+              />
+            }
+            label="Is this Customized?"
+          />
+
           {/* <Checkbox
             id='iscustom'
             onClick={() => {
@@ -815,7 +863,7 @@ const AdminAddOrEditItem = (props) => {
           <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label> */}
         </div>
 
-        <div className=' w-full border-b border-dashed border-gray-400'></div>
+        <div className=" w-full border-b border-dashed border-gray-400"></div>
 
         <div className="flex flex-row items-center gap-2 py-4 border-y border-dotted border-gray-400">
           <ImageUploadButton
@@ -834,7 +882,7 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className=' w-full border-b border-dashed border-gray-400'></div>
+        <div className=" w-full border-b border-dashed border-gray-400"></div>
 
         <div className="flex flex-row items-center gap-2 pt-4">
           <ImageUploadButton
@@ -1006,13 +1054,16 @@ const AdminAddOrEditItem = (props) => {
           />
         </div>
 
-        <div className='flex justify-between items-center '>
-          <Button variant="contained" 
+        <div className="flex justify-between items-center ">
+          <Button
+            variant="contained"
             sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
             className="w-2/5 lg:w-1/5 hover:bg-red-400"
-            color='error'
+            color="error"
             onClick={handleCancel}
-            > Cancel
+          >
+            {' '}
+            Cancel
           </Button>
           {addOrEditItem == 'Add' ? (
             <Button
@@ -1021,7 +1072,7 @@ const AdminAddOrEditItem = (props) => {
               variant="contained"
               onClick={addItem}
             >
-              {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Add Item</> }
+              {loading ? <CircularProgress size={30} style={{ color: 'white' }} /> : <>Add Item</>}
             </Button>
           ) : null}
           {addOrEditItem == 'Edit' ? (
@@ -1030,9 +1081,8 @@ const AdminAddOrEditItem = (props) => {
               sx={{ height: 50, marginTop: 5, marginBottom: 10 }}
               variant="contained"
               onClick={editItem}
-              
             >
-              {loading ? <CircularProgress size={30} style={{'color':'white'}} /> :<>Edit Item</> }
+              {loading ? <CircularProgress size={30} style={{ color: 'white' }} /> : <>Edit Item</>}
             </Button>
           ) : null}
         </div>
