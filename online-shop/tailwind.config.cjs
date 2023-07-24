@@ -23,6 +23,7 @@ module.exports = {
         '19/20': "95%",
         'quar': '25vh',
         'mid': '50vh',
+        '70per': '70vh',
         '80per': '80vh',
         '90per': '90vh',
       },

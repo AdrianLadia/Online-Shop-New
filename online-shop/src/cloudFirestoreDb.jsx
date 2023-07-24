@@ -208,7 +208,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
       if (error2) {
         alert(error2.message);
-        throw new Error(error.message);
+        throw new Error(error2.message);
       }
 
       return toReturn;
@@ -228,7 +228,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
       const { error } = schema.validate(toReturn);
 
-      console.log(toReturn)
+      // console.log(toReturn)
       if (error) {
         alert(error.message);
         throw new Error(error.message);

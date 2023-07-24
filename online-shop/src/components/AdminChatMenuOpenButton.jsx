@@ -52,7 +52,7 @@ const AdminChatMenuOpenButton = (props) => {
           // >
           //   X
           // </Button>
-          <Button>...</Button>
+          <Button className=" rounded-full bg-color10b text-white">...</Button>
         ) : (
           <Button onClick={() => handleOpenButton(chat.id)} className=" bg-color60 hover:bg-color10c text-white ">
             Open
