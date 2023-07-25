@@ -452,6 +452,7 @@ const AdminAddOrEditItem = (props) => {
       setPacksPerBox(selectedItemDetails.packsPerBox);
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
       setCostPrice(selectedItemDetails.costPrice);
+      setCbm(selectedItemDetails.cbm);
 
       if (selectedItemDetails.boxImage == null) {
         setBoxImage('');
@@ -707,12 +708,20 @@ const AdminAddOrEditItem = (props) => {
         ) : null}
 
         <TextField
+          disabled
           id="outlined-basic"
           label="Cubic Meter"
           variant="outlined"
           sx={{ mt: 3 }}
           onChange={(event) => setCbm(event.target.value)}
           value={cbm}
+        />
+        <TextField
+          id="outlined-basic"
+          label="Box Dimensions"
+          variant="outlined"
+          value={dimensions}
+          onChange={(event) => setDimensions(event.target.value)}
         />
 
         <TextField
@@ -742,13 +751,6 @@ const AdminAddOrEditItem = (props) => {
           variant="outlined"
           value={brand}
           onChange={(event) => setBrand(event.target.value)}
-        />
-        <TextField
-          id="outlined-basic"
-          label="Box Dimensions"
-          variant="outlined"
-          value={dimensions}
-          onChange={(event) => setDimensions(event.target.value)}
         />
         <TextField
           id="outlined-basic"

@@ -23,7 +23,7 @@ const AffiliateSignUpPage = (props) => {
 
   return (
     <div>
-        {affiliateId}
+        
         <LoginButton />
     </div>
   )
