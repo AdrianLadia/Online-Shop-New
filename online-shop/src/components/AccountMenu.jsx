@@ -11,7 +11,7 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AppContext from '../AppContext';
 import { useNavigate } from 'react-router-dom';
-import { FaStore } from 'react-icons/fa';
+import { FaStore, TbAffiliate } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { AiOutlineHistory } from 'react-icons/ai';
 import { BsBook } from 'react-icons/bs';
@@ -184,15 +184,19 @@ const AccountMenu = (props) => {
           </Badge>
           <span className="ml-3 mt-0.5 text-color60">Customer Service</span>
         </MenuItem>
-        {isadmin ? (
+        <Divider className="mt-1 mb-1" />
+        {isadmin !=true? (
           <div>
-            <Divider className="mt-1 mb-1" />
             <MenuItem id="adminMenu" onClick={adminClick} className="hover:bg-slate-300">
               <RiAdminLine size={21} className="-ml-.5 font-bold text-blue1" />
               <span className="ml-5 mt-1 text-blue1">Admin</span>
             </MenuItem>
           </div>
-        ) : null}
+        ) : 
+          <MenuItem id="adminMenu" onClick={adminClick} className="hover:bg-slate-300">
+            <TbAffiliate size={21} className="-ml-.5 font-bold text-blue1" />
+            <span className="ml-5 mt-1 text-blue1">Affiliate</span>
+          </MenuItem>}
       </Menu>
     </React.Fragment>
   );

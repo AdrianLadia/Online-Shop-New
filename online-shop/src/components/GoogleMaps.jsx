@@ -42,7 +42,7 @@ const GoogleMaps = (props) => {
 
   useEffect(()=>{
     if(props.forFooter){
-      setContainerClassName("w-full h-[calc(45vh-200px)]") 
+      setContainerClassName("w-full h-[calc(28vh)]") 
     }
   },[props.forFooter])
 

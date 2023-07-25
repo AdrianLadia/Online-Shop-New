@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import AppContext from '../AppContext';
 import LoginButton from './LoginButton';
 import { useNavigate } from 'react-router-dom';
+import HomePage from '../HomePage';
 
 const AffiliateSignUpPage = (props) => {
     const setAffiliate = props.setAffiliate
@@ -23,8 +24,7 @@ const AffiliateSignUpPage = (props) => {
 
   return (
     <div>
-        {affiliateId}
-        <LoginButton />
+        <HomePage isAffiliateLink={true}/>
     </div>
   )
 }
