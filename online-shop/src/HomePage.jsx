@@ -14,13 +14,15 @@ import AccountMenu from './components/AccountMenu';
 import onLogoutClick from '../utils/classes/onLogoutClick';
 import { Tooltip } from '@mui/material';
 
-const HomePage = () => {
+const HomePage = ({isAffiliateLink}) => {
 
   const navigateTo = useNavigate()
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart} = useContext(AppContext)
-  const favorites = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F0590b1d4-7351-40e2-b012-a1f408d9dc93customerchat-1.png?alt=media&token=5f77540f-f0cb-4d61-81a2-e61f2394f9ba";
-  const pinpoint = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F1f812257-6879-4bbb-b534-2bd83e254f12customerchat-2.png?alt=media&token=14f9a6cb-c643-49c0-a985-332dae1f040b";
-  const customerChat = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F10621e7b-77ae-461b-a6d4-314ccff59d55customerchat-3.png?alt=media&token=2711c910-92c5-4257-ade1-4e94c7489f71";
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart } = useContext(AppContext)
+  const favorites = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c";
+  const pinpoint = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Flocation_icon-star-copy-02.svg?alt=media&token=0cc4139c-4e2f-4e24-abe4-b4f34e9a9a8d";
+  const customerChat = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fchaticon-star-copy-03.svg?alt=media&token=51a46c08-a673-4d16-ba73-56c5c1f931a0";
+  const saved = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FSave-Map_icon-star-copy-04.svg?alt=media&token=2fa494fc-5387-4e49-9f49-1e2166fe67f3";
+  const multiple = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fmultiplepayment-05%20(1).svg?alt=media&token=3cd6fdfd-9d71-4ce4-afc2-3feec5891d93";
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
   const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
   const contactsImage = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123"
@@ -87,6 +89,10 @@ const HomePage = () => {
       navigateTo("/shop")
     }
 
+    function handleAff(){
+      navigateTo("/signUp")
+    }
+
     function previousSlide(){
       if(selectedSlide > 0){
         setSelectedSlide(selectedSlide - 1);
@@ -145,7 +151,7 @@ const HomePage = () => {
       }else if(page === "page4"){
         page4.current.scrollIntoView({ behavior: 'instant' })
       }else if(page === "page5"){
-        page5.current.scrollIntoView({ behavior: 'instant' })
+        page5.current.scrollIntoView({ behavior: 'smooth' })
       }
     }
 
@@ -167,6 +173,8 @@ const HomePage = () => {
       }else if (p3inView == true && p4inView == false && page == "page3"){
         return ' w-full h-14 text-green2 bg-black'
       }else if (p4inView == true && p5inView == false && page == "page4"){
+        return ' w-full h-14 text-green2 bg-black rounded-b-xl'
+      }else if (p5inView == true && p4inView == false && page == "page5"){
         return ' w-full h-14 text-green2 bg-black rounded-b-xl'
       }else{
         return ' w-full h-14 hover:text-white hover:bg-green2'
@@ -237,7 +245,8 @@ const HomePage = () => {
           <div className='w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 '>
             <img src={logo} alt="logo"
                 className=" h-14 w-14 sm:h-16 sm:w-16 2xl:h-20 2xl:w-20 rounded-full border-2 border-color30 cursor-pointer"
-                onClick={()=>{scroll("page1")}}
+                // onClick={()=>{scroll("page1")}}
+                onClick={()=>{isAffiliateLink?navigateTo("/"):scroll("page1")}}
                 />
           </div>
           {/* Menu */}
@@ -254,7 +263,10 @@ const HomePage = () => {
                     <button onClick={()=>{scroll("page1")}} className={"text-xl  " + menuButtonStyle("page1")}>Home</button>
                     <button onClick={()=>{scroll("page2")}} className={"text-xl  " + menuButtonStyle("page2")}>About</button>
                     <button onClick={()=>{scroll("page3")}} className={"text-xl  " + menuButtonStyle("page3")}>Products</button>
-                    <button onClick={()=>{scroll("page4")}} className={"text-xl  " + menuButtonStyle("page4")}>Affiliate</button>
+                    {isAffiliateLink ? 
+                    <button onClick={()=>{scroll("page5")}} className={"text-xl  " + menuButtonStyle("page5")}>Why Us?</button>
+                    :
+                    <button onClick={()=>{scroll("page4")}} className={"text-xl  " + menuButtonStyle("page4")}>Affiliate</button>}
                   </ul>
                 </div> : null
               }
@@ -264,11 +276,14 @@ const HomePage = () => {
               <button onClick={()=>{scroll("page1")}} className={buttonStyle("page1")}>Home</button>
               <button onClick={()=>{scroll("page2")}} className={buttonStyle("page2")}>About</button>
               <button onClick={()=>{scroll("page3")}} className={buttonStyle("page3")}>Products</button>
-              <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>
+              {isAffiliateLink ? 
+              <button onClick={()=>{scroll("page5")}} className={buttonStyle("page5")}>Why Us?</button>
+              :
+              <button onClick={()=>{scroll("page4")}} className={buttonStyle("page4")}>Affiliate</button>}
             </div>
 
-            {p1inView == true && p2inView == false && width >= 768 ? 
-              (userdata == null) ? 
+            {p1inView == false && isAffiliateLink?<div className=' px-2 flex items-center'><LoginButton isAffiliateLink={isAffiliateLink}/></div>:p1inView == true && p2inView == false && width >= 768 ?
+              isAffiliateLink != true && userdata == null ? 
                 <div className=' px-2 flex items-center'>
                   <LoginButton />
                 </div> : <AccountMenu signout={() => {new onLogoutClick(setUserId,setUserData,setUserLoaded,setUserState,setCart,navigateTo,auth).runMain()} } />
@@ -324,6 +339,11 @@ const HomePage = () => {
                         <li><a className=' text-color60'>✓</a> Unparalleled Service.</li>
                         <li><a className=' text-color60'>✓</a> Reasonable Price Points.</li>
                       </ul>
+                      {isAffiliateLink ? 
+                      <div className='ml-2 mt-2 xs:mt-3 w-full sm:w-11/12'>
+                        <LoginButton isAffiliateLink={isAffiliateLink}/>
+                      </div>
+                      :<>
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
                         <button 
                           className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
@@ -331,31 +351,13 @@ const HomePage = () => {
                             ><FaShoppingBag className='text-xl '/> Shop Now!
                         </button>
                       </span>
-                      {/* <Tooltip title="Shop">
-                        <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
-                          <button 
-                            className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
-                            onClick={handleShop}
-                              ><FaShoppingBag className='text-xl '/> Shop Now!
-                          </button>
-                        </span>
-                      </Tooltip> */}
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
                         <button 
                           className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
                           onClick={handleMessageClick}
                             ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
                         </button>
-                      </span>
-                      {/* <Tooltip title="Message">
-                        <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
-                          <button 
-                            className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
-                            onClick={handleMessageClick}
-                              ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
-                          </button>
-                        </span>
-                      </Tooltip> */}
+                      </span></>}
                     </div>
                 </div>
               </div>
@@ -459,6 +461,7 @@ const HomePage = () => {
         </div>
 
         {/* Page 4 Affiliate*/}
+        {isAffiliateLink?null:
         <div ref={page4} className="snap-start w-screen h-screen bg-cover bg-center "
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
          >
@@ -467,7 +470,7 @@ const HomePage = () => {
           {tutorial.map((state, index)=>{
            if(selectedSlide === index){
             return (
-              <div key={index} className='h-1/2 md:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative '>
+              <div key={index} className='h-1/2 md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative '>
                    <button className='absolute top-30 left-9 md:left-10 lg:left-12 xl:left-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300 '
                     onClick={previousSlide} ><BsArrowLeftShort className='text-lg md:text-2xl text-white'/>
                   </button>
@@ -500,10 +503,10 @@ const HomePage = () => {
               </div>
             )}})}
             {/* Affiliate Description */}
-            <div className='h-1/2 md:h-5/6 w-full md:w-5/12 flex flex-col justify-center items-center md:items-start p-5 gap-5 '>
+            <div className='h-1/2 md:h-full xl:h-5/6 w-full md:w-5/12 flex flex-col justify-center items-center md:items-start p-5 gap-5 '>
               <div className='h-full md:h-full w-19/20 md:w-11/12 p-5 md:p-10 gap-8 md:gap-5 flex flex-col 
                               justify-evenly md:justify-center items-center md:items-start border border-color60 
-                              rounded-b-4xl md:rounded-r-3xl lg:rounded-l-none lg:rounded-r-semifull bg-cover bg-center '
+                              rounded-b-4xl md:rounded-r-3xl lg:rounded-l-none xl:rounded-r-semifull bg-cover bg-center '
               // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
               >
                 <h1 className='w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-white p-1 font-bold 
@@ -528,8 +531,10 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div>}
+
         <> </>
+
         {/* Last Page*/}
         <div ref={page5} className="snap-start w-screen h-screen flex flex-col justify-center items-center bg-cover bg-center"
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0)),' + `url(${contactsImage})`}}
@@ -539,14 +544,14 @@ const HomePage = () => {
               <img src={logo} className=" h-14 w-14 rounded-full border-2 border-color30"/>
             </div>
           </div> */}
-          <div ref={p5} className='flex flex-col justify-evenly items-end h-screen w-screen mb-2'>
+          <div ref={p5} className='flex flex-col justify-evenly items-end h-screen w-screen mb-2 text-white'>
             {/* Why Us */}
             <div className='w-full h-full flex flex-col justify-end items-center gap-3'>
               <div className='h-11/20 w-19/20 md:w-10/12 mt-2.5 rounded-t-3xl p-2 2xs:p-3 bg-opacity-10 bg-color30 border border-color30'>
                 <div className='md:grid-cols-2 lg:grid-cols-3 2lg:grid-cols-4 xl:grid-cols-5 grid h-full gap-2 justify-evenly items-stretch overflow-y-auto'>
                   <div className={footerCardStyle()} >
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample.png"/>
+                        <img className='w-full h-full' alt='This should render an image' src={favorites}/>
                       </div>
                       <div className=' w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
                         <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Favorite Items</h1>
@@ -557,7 +562,7 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample2.png"/>
+                        <img className='w-full h-full' alt='This should render an image' src={pinpoint}/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
                         <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30'>Pinpoint Location</h1>
@@ -566,7 +571,7 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src="./vids/sample3.png"/>
+                        <img className='w-full h-full' alt='This should render an image' src={customerChat}/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
                         <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Chat with Customer Service</h1>
@@ -575,7 +580,7 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/saved.png'/>
+                        <img className='w-full h-full' alt='This should render an image' src={saved}/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
                         <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Save Location and Contacts</h1>
@@ -586,11 +591,11 @@ const HomePage = () => {
                   </div>
                   <div className={footerCardStyle()}>
                       <div className='w-full h-6/10 flex justify-center items-center '>
-                        <img className='w-full h-full' alt='This should render an image' src='./vids/multiple.svg'/>
+                        <img className='w-full h-full' alt='This should render an image' src={multiple}/>
                       </div>
                       <div className='w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 '>
                         <h1 className='h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30'>Multiple Payment Methods</h1>
-                        <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter'
+                        <h2 className='h-1/2 text-sm flex text-center p-1 tracking-tighter '
                           >Gives you the flexibility to choose the option that is most convenient and suits your preferences.
                         </h2>
                       </div>

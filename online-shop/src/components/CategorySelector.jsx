@@ -30,8 +30,6 @@ const CategorySelector = (props) => {
   const hiddenCategories = [ 
   ]
 
- 
-
   useEffect(() => {
     if (categories != null) {
       categories.forEach((category, index) => {
