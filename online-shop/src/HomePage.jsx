@@ -12,7 +12,7 @@ import { AiFillMessage } from "react-icons/ai";
 import LoginButton from './components/LoginButton';
 import AccountMenu from './components/AccountMenu';
 import onLogoutClick from '../utils/classes/onLogoutClick';
-// import { Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 
 const HomePage = ({isAffiliateLink}) => {
 
@@ -286,7 +286,7 @@ const HomePage = ({isAffiliateLink}) => {
               isAffiliateLink != true && userdata == null ? 
                 <div className=' px-2 flex items-center'>
                   <LoginButton />
-                </div> : userdata ?<AccountMenu userdata={userdata} signout={() => {new onLogoutClick(setUserId,setUserData,setUserLoaded,setUserState,setCart,navigateTo,auth).runMain()} }/>:null
+                </div> : <AccountMenu signout={() => {new onLogoutClick(setUserId,setUserData,setUserLoaded,setUserState,setCart,navigateTo,auth).runMain()} } />
             : p1inView == false && p2inView || p3inView || p4inView ?
             <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>
               {/* Message Button */}
