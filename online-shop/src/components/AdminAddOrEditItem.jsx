@@ -116,6 +116,7 @@ const AdminAddOrEditItem = (props) => {
   const [boxImage, setBoxImage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [costPrice, setCostPrice] = React.useState(0);
+  const [freightCost, setFreightCost] = React.useState(0);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
@@ -231,6 +232,7 @@ const AdminAddOrEditItem = (props) => {
         machinesThatCanProduce: machineFormat,
         boxImage: boxImage,
         costPrice: parseFloat(costPrice),
+        freightCost: parseFloat(freightCost),
       },
       itemID,
       products
@@ -266,6 +268,7 @@ const AdminAddOrEditItem = (props) => {
           machinesThatCanProduce: machineFormat,
           boxImage: boxImage,
           costPrice: null,
+          freightCost: null,
         },
         itemID + '-RET',
         products
@@ -321,6 +324,7 @@ const AdminAddOrEditItem = (props) => {
       cbm: cbm,
       boxImage: boxImage,
       costPrice: parseFloat(costPrice),
+      freightCost: parseFloat(freightCost),
     });
 
     try {
@@ -344,6 +348,7 @@ const AdminAddOrEditItem = (props) => {
           cbm: null,
           boxImage: boxImage,
           costPrice: null,
+          freightCost: null,
         });
       }
     } catch (error) {
@@ -376,6 +381,8 @@ const AdminAddOrEditItem = (props) => {
           machinesThatCanProduce: machineFormat,
           boxImage: boxImage,
           costPrice: null,
+          freightCost: null,
+          
         },
         itemID + '-RET',
         products
@@ -708,6 +715,13 @@ const AdminAddOrEditItem = (props) => {
         ) : null}
 
         <TextField
+          id="outlined-basic"
+          label="Box Dimensions"
+          variant="outlined"
+          value={dimensions}
+          onChange={(event) => setDimensions(event.target.value)}
+        />
+        <TextField
           disabled
           id="outlined-basic"
           label="Cubic Meter"
@@ -717,12 +731,15 @@ const AdminAddOrEditItem = (props) => {
           value={cbm}
         />
         <TextField
+
           id="outlined-basic"
-          label="Box Dimensions"
+          label="Freight Cost"
           variant="outlined"
-          value={dimensions}
-          onChange={(event) => setDimensions(event.target.value)}
+          sx={{ mt: 3 }}
+          onChange={(event) => setFreightCost(event.target.value)}
+          value={freightCost}
         />
+        
 
         <TextField
           id="outlined-basic"
