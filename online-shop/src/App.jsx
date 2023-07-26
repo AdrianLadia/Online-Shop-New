@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, connectAuthEmulator} from 'firebase/auth';
+import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
@@ -28,9 +28,10 @@ import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
-import {doc, getDoc} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
 import AffiliateSignUpPage from './components/AffiliateSignUpPage';
+import AffiliateForm from './components/AffiliateForm';
 
 const devEnvironment = true;
 
@@ -41,8 +42,6 @@ function App() {
   // Get Authentication
   const auth = getAuth(app);
   // add captcha for phone auth
-
-
 
   // Get Storage
   const storage = getStorage(app);
@@ -92,83 +91,80 @@ function App() {
   const { width, height } = useWindowDimensions;
   const [chatSwitch, setChatSwitch] = useState(false);
   const [isSupportedBrowser, setIsSupportedBrowser] = useState(null);
-  const [updateCartInfo,setUpdateCartInfo]  = useState(false)
-  const [isAffiliate, setIsAffiliate] = useState(false)
-  const [isAppleDevice, setIsAppleDevice] = useState(false)
-  const [isAndroidDevice, setIsAndroidDevice] = useState(false)
-  const [isGoogleChrome,setIsGoogleChrome] = useState(false)
-  const [cardSelected,setCardSelected] = useState(null)
-  const [paymentMethodSelected,setPaymentMethodSelected] = useState(null)
+  const [updateCartInfo, setUpdateCartInfo] = useState(false);
+  const [isAffiliate, setIsAffiliate] = useState(false);
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [isAndroidDevice, setIsAndroidDevice] = useState(false);
+  const [isGoogleChrome, setIsGoogleChrome] = useState(false);
+  const [cardSelected, setCardSelected] = useState(null);
+  const [paymentMethodSelected, setPaymentMethodSelected] = useState(null);
   const [changeCard, setChangeCard] = useState(false);
   const [allUserData, setAllUserData] = useState(null);
   const [inquiryMessageSwitch, setInquiryMessageSwitch] = useState(false);
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
-  const [affiliate,setAffiliate] = useState(null)
+  const [affiliate, setAffiliate] = useState(null);
 
   useEffect(() => {
-    if (userdata != null ) {
+    if (userdata != null) {
       let unreadCustomerServiceMessages = 0;
       firestore.readOrderMessageByReference(userdata.uid).then((messages) => {
         messages.messages.forEach((message) => {
           if (message.userId != userdata.uid) {
             if (message.read === false) {
-              unreadCustomerServiceMessages += 1
+              unreadCustomerServiceMessages += 1;
             }
           }
         });
-  
-        setUnreadCustomerServiceMessages(unreadCustomerServiceMessages)
+
+        setUnreadCustomerServiceMessages(unreadCustomerServiceMessages);
       });
-      
+
       let unreadOrderMessages = 0;
       orders.map((order) => {
-    
         firestore.readOrderMessageByReference(order.reference).then((messages) => {
           messages.messages.forEach((message) => {
             if (message.userId != userdata.uid) {
               if (message.read === false) {
-                unreadOrderMessages += 1
+                unreadOrderMessages += 1;
               }
             }
           });
-      
-          setUnreadOrderMessages(unreadOrderMessages)
+
+          setUnreadOrderMessages(unreadOrderMessages);
         });
-      })
-    
+      });
     }
-  }, [userdata,orders]);
+  }, [userdata, orders]);
 
   useEffect(() => {
     if (userdata != null) {
       if (userdata.userRole == 'admin' || userdata.userRole == 'superAdmin') {
-    
         firestore.readAllDataFromCollection('Users').then((users) => {
-          setAllUserData(users)
+          setAllUserData(users);
         });
       }
     }
   }, [userdata]);
 
   useEffect(() => {
-    let paymentState = {}
+    let paymentState = {};
     firestore.readAllPaymentProviders().then((providers) => {
       providers.map((provider) => {
         if (provider.enabled === true) {
-          paymentState[provider.id] = false 
+          paymentState[provider.id] = false;
         }
-      })
+      });
     });
-    setCardSelected(paymentState)
+    setCardSelected(paymentState);
   }, []);
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  // GET IF APPLE USER 
+  // GET IF APPLE USER
   // IF APPLE USER USE AUTH POP UP IF NOT USE REDIRECT
   useEffect(() => {
     const userAgent = window.navigator.userAgent.toLowerCase();
@@ -179,10 +175,9 @@ function App() {
 
   // GET USER BROWSER
   function checkIfBrowserSupported() {
-
     let userAgent = navigator.userAgent;
     if (document.documentElement.classList.contains('in-app-browser')) {
-      return false
+      return false;
     }
     if (typeof FB_IAB !== 'undefined') {
       return false;
@@ -219,12 +214,9 @@ function App() {
         setUserState('userloading');
         setUser(user);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
-
           if (userExists) {
             setUserId(user.uid);
           } else {
-
-      
             async function createNewUser() {
               await cloudfirestore.createNewUser(
                 {
@@ -241,7 +233,7 @@ function App() {
                   favoriteItems: [],
                   payments: [],
                   userRole: 'member',
-                  affiliate: affiliate
+                  affiliate: affiliate,
                 },
                 user.uid
               );
@@ -282,8 +274,7 @@ function App() {
   useEffect(() => {
     if (userdata) {
       if (userdata.name == null) {
-
-      } 
+      }
       if (userdata.name != null) {
         setUserLoaded(true);
         setUserState('user');
@@ -297,12 +288,11 @@ function App() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
-  
+
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
         if (guestLoginClicked === true) {
-
           setCart(localStorageCart);
           firestore.createUserCart(localStorageCart, userId).then(() => {
             localStorage.removeItem('cart');
@@ -311,13 +301,11 @@ function App() {
           });
         }
         if (guestLoginClicked === false) {
-
           setCart(data.cart);
         }
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
         const adminRoles = ['admin', 'superAdmin'];
-        
 
         const userRole = await cloudfirestore.readUserRole(data.uid);
         if (adminRoles.includes(userRole)) {
@@ -326,9 +314,9 @@ function App() {
           setIsAdmin(false);
         }
         if (userRole === 'affiliate') {
-          setIsAffiliate(true)
+          setIsAffiliate(true);
         } else {
-          setIsAffiliate(false)
+          setIsAffiliate(false);
         }
         // ADMIN CHECK
 
@@ -357,7 +345,6 @@ function App() {
   // Checks if userdata is incomplete if it is show update profile modal
   useEffect(() => {
     if (userdata) {
-     
       if (userdata.name == null) {
         setOpenProfileUpdaterModal(true);
       }
@@ -371,12 +358,12 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
-    cardSelected : cardSelected,
-    setCardSelected : setCardSelected,
-    changeCard : changeCard,
-    setChangeCard : setChangeCard,
-    paymentMethodSelected : paymentMethodSelected,
-    setPaymentMethodSelected : setPaymentMethodSelected,
+    cardSelected: cardSelected,
+    setCardSelected: setCardSelected,
+    changeCard: changeCard,
+    setChangeCard: setChangeCard,
+    paymentMethodSelected: paymentMethodSelected,
+    setPaymentMethodSelected: setPaymentMethodSelected,
     categories: categories,
     setCategories: setCategories,
     firebaseApp: app,
@@ -431,22 +418,21 @@ function App() {
     chatSwitch: chatSwitch,
     setChatSwitch: setChatSwitch,
     isSupportedBrowser: isSupportedBrowser,
-    updateCartInfo:updateCartInfo,
-    setUpdateCartInfo:setUpdateCartInfo,
-    isAppleDevice : isAppleDevice,
-    allUserData : allUserData,
-    setAllUserData:setAllUserData,
-    inquiryMessageSwitch : inquiryMessageSwitch,
-    setInquiryMessageSwitch : setInquiryMessageSwitch,
-    unreadOrderMessages : unreadOrderMessages,
-    setUnreadOrderMessages : setUnreadOrderMessages,
-    unreadCustomerServiceMessages : unreadCustomerServiceMessages,
-    setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
-    isAndroidDevice : isAndroidDevice,
-    isGoogleChrome : isGoogleChrome,
-    affiliate : affiliate,
-    setAffiliate : setAffiliate,
-
+    updateCartInfo: updateCartInfo,
+    setUpdateCartInfo: setUpdateCartInfo,
+    isAppleDevice: isAppleDevice,
+    allUserData: allUserData,
+    setAllUserData: setAllUserData,
+    inquiryMessageSwitch: inquiryMessageSwitch,
+    setInquiryMessageSwitch: setInquiryMessageSwitch,
+    unreadOrderMessages: unreadOrderMessages,
+    setUnreadOrderMessages: setUnreadOrderMessages,
+    unreadCustomerServiceMessages: unreadCustomerServiceMessages,
+    setUnreadCustomerServiceMessages: setUnreadCustomerServiceMessages,
+    isAndroidDevice: isAndroidDevice,
+    isGoogleChrome: isGoogleChrome,
+    affiliate: affiliate,
+    setAffiliate: setAffiliate,
   };
 
   return (
@@ -465,9 +451,20 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <NavBar />
-              {(products != [] || categories != null) ? <Shop /> : <div className='flex w-full h-96 justify-center mt-80'><CircularProgress size={150} /></div>}
-              {userdata ? <ProfileUpdaterModal userdata={userdata} openProfileUpdaterModal={openProfileUpdaterModal} setOpenProfileUpdaterModal={setOpenProfileUpdaterModal} /> : null}
-              
+              {products != [] || categories != null ? (
+                <Shop />
+              ) : (
+                <div className="flex w-full h-96 justify-center mt-80">
+                  <CircularProgress size={150} />
+                </div>
+              )}
+              {userdata ? (
+                <ProfileUpdaterModal
+                  userdata={userdata}
+                  openProfileUpdaterModal={openProfileUpdaterModal}
+                  setOpenProfileUpdaterModal={setOpenProfileUpdaterModal}
+                />
+              ) : null}
             </AppContext.Provider>
           }
         />
@@ -618,6 +615,14 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <AffiliateSignUpPage setAffiliate={setAffiliate} />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/affiliateForm"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <AffiliateForm />
             </AppContext.Provider>
           }
         />
