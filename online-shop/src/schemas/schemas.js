@@ -85,7 +85,7 @@ class schemas {
       stocksLowestPoint: Joi.array(),
       boxImage: Joi.string().allow('',null),
       costPrice: Joi.number().allow('',null),
-      freightCost: Joi.number().allow('',null),
+      freightCost: Joi.number().allow('',null,'?'),
     }).unknown(false);
   }
 }
