@@ -98,6 +98,7 @@ class firestoredb extends firestorefunctions {
       cbm : Joi.number().allow('',null),
       boxImage : Joi.string().uri().allow(null,''),
       costPrice : Joi.number().allow('',null),
+      freightCost : Joi.number().allow('',null),
     }).unknown(false);
 
     try {
