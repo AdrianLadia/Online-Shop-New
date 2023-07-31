@@ -3,10 +3,8 @@ import axios from 'axios';
 import Joi from 'joi';
 import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
-import { th } from 'date-fns/locale';
-import retryApi from '../utils/retryApi';
-import { httpsCallable, getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-import businessCalculations from '../utils/businessCalculations';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+
 
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
