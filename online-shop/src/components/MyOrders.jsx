@@ -6,13 +6,12 @@ import MyOrderCard from './MyOrderCard';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import { Routes,Route } from 'react-router-dom';
 import ChatApp from './ChatApp/src/ChatApp'
-import { useLocation } from 'react-router-dom';
+
 
 function MyOrders() {
   const { orders } = useContext(AppContext);
   const [reversedOrders, setReversedOrders] = useState([]);
-  const location = useLocation();
-  const currentRoute = location.pathname;
+
 
 
   useEffect(() => {
@@ -44,7 +43,7 @@ function MyOrders() {
         path="orderChat"
         element={
           <div>
-            <ChatApp pastRoute={currentRoute}/>
+            <ChatApp/>
           </div>
         }
       />
