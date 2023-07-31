@@ -24,10 +24,10 @@ const HomePage = ({isAffiliateLink}) => {
   const saved = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FSave-Map_icon-star-copy-04.svg?alt=media&token=2fa494fc-5387-4e49-9f49-1e2166fe67f3";
   const multiple = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fmultiplepayment-05%20(1).svg?alt=media&token=3cd6fdfd-9d71-4ce4-afc2-3feec5891d93";
   const backgroundImageUrl = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
-  const affiliateImg = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F9544222023-173230%2Fpexels-anna-shvets-3986993.jpg?alt=media&token=6966d658-0d0f-45ed-bfb8-61f78c3988a0"
   const contactsImage = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123"
   const logo = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fstarpack.png?alt=media&token=e108388d-74f7-45a1-8344-9c6af612f053"
   const videoAd = "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed.mp4?alt=media&token=bc6b257e-7ba9-4568-b843-b32c4927a5fb&_gl=1*1pcfpf3*_ga*MTk5NDU4NTY2OC4xNjc4NDI0NDg0*_ga_CW55HF8NVT*MTY4NjE5NjY5Ny4xOC4xLjE2ODYxOTY3NjguMC4wLjA"
+  const about = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/affiliateDeposits%2Faffiliate_user_2%2Ff4b3d1ee-cd04-4b70-8255-e4a4594d5aabhome-page-01.svg?alt=media&token=1ee55a4e-4d5f-4035-b907-651d998b774b'
   const page1 = useRef();
   const page2 = useRef();
   const page3 = useRef();
@@ -235,6 +235,8 @@ const HomePage = ({isAffiliateLink}) => {
       }
     }
 
+    // console.log(userdata == null)
+
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
       style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}>
@@ -286,7 +288,7 @@ const HomePage = ({isAffiliateLink}) => {
               isAffiliateLink != true && userdata == null ? 
                 <div className=' px-2 flex items-center'>
                   <LoginButton />
-                </div> : <AccountMenu signout={() => {new onLogoutClick(setUserId,setUserData,setUserLoaded,setUserState,setCart,navigateTo,auth).runMain()} } />
+                </div> : isAffiliateLink != true ? <AccountMenu signout={() => {new onLogoutClick(setUserId,setUserData,setUserLoaded,setUserState,setCart,navigateTo,auth).runMain()} } />:null
             : p1inView == false && p2inView || p3inView || p4inView ?
             <div className=' gap-3 flex justify-end w-1/3 sm:w-1/4'>
               {/* Message Button */}
@@ -415,7 +417,7 @@ const HomePage = ({isAffiliateLink}) => {
                 <img className='w-full h-full rounded-3xl  text-white'  
                    alt='About Image' 
                   //  src='./vids/STAR-DELIVERY.png'
-                  src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F24f9d0f1-529e-45ce-8830-4bfcfc4f2aa1STAR-DELIVERY.png?alt=media&token=5bdefdfe-8c25-4260-aa75-f753adb5e74f'
+                  src={about}
                 />
               </div>
             </div>
@@ -510,7 +512,8 @@ const HomePage = ({isAffiliateLink}) => {
               // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
               >
                 <h1 className='w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-white p-1 font-bold 
-                               tracking-tight md:tracking-wide underline underline-offset-8 decoration-color60'
+                               tracking-tight md:tracking-wide '
+                              //  underline underline-offset-8 decoration-color60
                   >Become an Affiliate
                 </h1>
                 <div className='font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-white tracking-tight indent-5 ml-0.5 overflow-y-auto'>

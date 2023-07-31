@@ -37,6 +37,7 @@ const AdminCreatePaymentTableRow = (props) => {
         reference: orderReference,
         paymentprovider: paymentMethod,
         proofOfPaymentLink: proofOfPaymentLink,
+        affiliateUserId : 'm3XqOfwYVchb1jwe9Jpat5ZrzJYJ'
       };
       await cloudfirestore.transactionCreatePayment(data);
       const customerEmail = await firestore.readEmailAddressByUserId(userId);

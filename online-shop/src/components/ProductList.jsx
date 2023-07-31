@@ -26,8 +26,6 @@ const ProductList = (props) => {
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
 
- 
-
   const { width } = UseWindowDimensions();
 
   useEffect(() => {
@@ -80,9 +78,8 @@ const ProductList = (props) => {
     }
   }
 
-
   return (
-    <div className='mb-16 mt-5'>
+    <div className='mb-16 mt-5 '>
       <div id='productList' className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">

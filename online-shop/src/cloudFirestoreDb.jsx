@@ -336,6 +336,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
       proofOfPaymentLink: Joi.string(),
+      affiliateUserId: Joi.string().allow(null,'')
     });
 
     const { error } = dataSchema.validate(data);
@@ -469,17 +470,56 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  // async createOrderMessagesInquiry(data) {
+  async addDepositToAffiliate(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}addDepositToAffiliate`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
 
-  //   const dataSchema = Joi.object({
-  //     messages: Joi.array().required(),
-  //     ownerUserId: Joi.string().required(),
-  //     ownerName: Joi.string().required(),
-  //     referenceNumber: Joi.string().required(),
-  //     isInquiry : true,
-  //   })
-  // }
-  
+  async addClaimsToAffiliate(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}addClaimsToAffiliate`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
+
+  async changeCommissionStatusToPending(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}changeCommissionStatusToPending`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
+
+  async addDepositToAffiliateDeposits(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}addDepositToAffiliateDeposits`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
+
+  async markAffiliateClaimDone(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}markAffiliateClaimDone`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
+
 }
 
 export default cloudFirestoreDb;

@@ -31,6 +31,7 @@ import businessCalculations from '../utils/businessCalculations';
 import {doc, getDoc} from 'firebase/firestore';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
 import AffiliateSignUpPage from './components/AffiliateSignUpPage';
+import AffiliatePage from './components/AffiliatePage';
 
 const devEnvironment = true;
 
@@ -215,6 +216,7 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      
       if (user) {
         setUserState('userloading');
         setUser(user);
@@ -297,7 +299,6 @@ function App() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
-  
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -446,7 +447,7 @@ function App() {
     isGoogleChrome : isGoogleChrome,
     affiliate : affiliate,
     setAffiliate : setAffiliate,
-
+    isAffiliate: isAffiliate
   };
 
   return (
@@ -485,6 +486,15 @@ function App() {
             <AppContext.Provider value={appContextValue}>
               <NavBar />
               <PersonalInfoForm />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/affiliate"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <NavBar />
+              <AffiliatePage />
             </AppContext.Provider>
           }
         />
