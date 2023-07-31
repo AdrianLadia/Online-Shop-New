@@ -12,7 +12,6 @@ import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
 import firestoredb from './firestoredb';
 import PersonalInfoForm from './components/PersonalInfoForm';
-import CheckoutPage from './components/CheckoutPage';
 import { CircularProgress, Typography } from '@mui/material';
 import MyOrders from './components/MyOrders';
 import AccountStatement from './components/AccountStatement';
@@ -28,10 +27,10 @@ import AccountStatementPayment from './components/AccountStatementPayment';
 import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
-import { doc, getDoc } from 'firebase/firestore';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
 import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 import AffiliateForm from './components/AffiliateForm';
+
 
 const devEnvironment = true;
 

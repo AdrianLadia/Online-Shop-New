@@ -54,8 +54,6 @@ const CategorySelector = (props) => {
           categoryToUse = featuredCategory
         }
 
-        console.log('categoryToUse ',categoryToUse)
-
         if (category === categoryToUse) {
           setValue(index);
         }

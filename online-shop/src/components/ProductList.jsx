@@ -14,13 +14,15 @@ import cloudFirestoreDb from '../cloudFirestoreDb';
 import UseWindowDimensions from './UseWindowDimensions';
 import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
 
+
 const ProductList = (props) => {
   const wholesale = props.wholesale
   const retail = props.retail;
   const selectedCategory = props.selectedCategory;
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
-  const cloudfirestoredb = new cloudFirestoreDb();
+
+
 
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);

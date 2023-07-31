@@ -6,9 +6,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../AppContext';
 import { useLocation } from 'react-router-dom';
 import LoginButton from '../../LoginButton';
-import { Typography } from '@mui/material';
-import { is } from 'date-fns/locale';
-import { set } from 'date-fns';
+
 
 const ChatApp = (props) => {
   const {
@@ -24,6 +22,7 @@ const ChatApp = (props) => {
     firestore,
   } = useContext(AppContext);
   const location = useLocation();
+  const pastRoute = props.pastRoute;
   const setChatData = props.setChatData;
   const chatData = props.chatData;
   const [messageDetails, setMessageDetails] = useState({});
@@ -95,6 +94,7 @@ const ChatApp = (props) => {
               messages={messageDetails}
               isInquiryMessage={isInquiryMessage}
               backButtonRedirect={backButtonRedirect}
+              pastRoute={pastRoute}
             />
             {messageDetails != {} ? (
               <DisplayMessages chatData={chatData} setChatData={setChatData} messageDetails={messageDetails} />
