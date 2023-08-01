@@ -126,7 +126,7 @@ const AdminInventory = (props) => {
         <TableContainer component={Paper} sx={{ maxHeight: height - 250 }}>
           <Table
             style={{ tableLayout: "auto"}}
-            fixedHeader={false}
+            fixedHeader={true}
             aria-label="simple table"
           >
             <TableHead className="bg-color10c border-b-2 border-color60 h-16">

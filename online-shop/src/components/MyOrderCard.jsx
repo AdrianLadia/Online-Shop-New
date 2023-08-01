@@ -22,6 +22,7 @@ function MyOrderCard(props) {
   const paid = order.paid;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
+  console.log(order)
 
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
@@ -62,10 +63,6 @@ function MyOrderCard(props) {
     }
   }
 
-  function onUpload(proofOfPaymentLink) {
-    cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink, userdata.name, '');
-    setProofOfPaymentLinkCount(1);
-  }
 
   function onMessageClick() {
     setUnRead(false)
@@ -290,7 +287,7 @@ function MyOrderCard(props) {
               </p>
             </button>
 
-            <ImageUploadButton
+            {/* <ImageUploadButton
               id={`order-${order.reference}`}
               onUploadFunction={onUpload}
               storage={storage}
@@ -298,7 +295,7 @@ function MyOrderCard(props) {
               buttonTitle={'Upload Proof of Payment'}
               variant="outlined"
               disabled={disableButton()}
-            />
+            /> */}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import InputBox from './InputFieldBox';
 import InputSendButton from './InputFieldButton';
 import { doc, updateDoc, arrayUnion, Timestamp, getDoc, getDocs } from 'firebase/firestore';
@@ -17,6 +17,11 @@ const InputField = (props) => {
   const date = new Date();
   const { userId, selectedChatOrderId, userdata, firestore, storage } = useContext(AppContext);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+  const dummy = useRef(null)
+
+  useEffect(()=>{
+    dummy.current.scrollIntoView({ behavior: 'smooth' });
+  })
 
   async function updateMessages() {
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
@@ -125,7 +130,7 @@ const InputField = (props) => {
   return (
     <div className="flex flex-col justify-end w-full h-1/10 ml-0.5 md:ml-2">
       <div className="w-full h-full">
-        <div className="flex items-center gap-1 w-full h-full rounded-lg">
+        <div ref={dummy} className="flex items-center gap-1 w-full h-full rounded-lg">
           <ImageUploadButton
             id={'userUploadPhotoButton'}
             folderName={'Orders/' + userId + '/' + selectedChatOrderId}

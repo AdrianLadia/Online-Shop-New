@@ -29,6 +29,7 @@ import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
 import AffiliateSignUpPage from './components/AffiliateSignUpPage';
+import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
 
 
@@ -209,6 +210,7 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      
       if (user) {
         setUserState('userloading');
         setUser(user);
@@ -287,7 +289,6 @@ function App() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
-
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -432,6 +433,22 @@ function App() {
     isGoogleChrome: isGoogleChrome,
     affiliate: affiliate,
     setAffiliate: setAffiliate,
+    updateCartInfo:updateCartInfo,
+    setUpdateCartInfo:setUpdateCartInfo,
+    isAppleDevice : isAppleDevice,
+    allUserData : allUserData,
+    setAllUserData:setAllUserData,
+    inquiryMessageSwitch : inquiryMessageSwitch,
+    setInquiryMessageSwitch : setInquiryMessageSwitch,
+    unreadOrderMessages : unreadOrderMessages,
+    setUnreadOrderMessages : setUnreadOrderMessages,
+    unreadCustomerServiceMessages : unreadCustomerServiceMessages,
+    setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
+    isAndroidDevice : isAndroidDevice,
+    isGoogleChrome : isGoogleChrome,
+    affiliate : affiliate,
+    setAffiliate : setAffiliate,
+    isAffiliate: isAffiliate
   };
 
   return (
@@ -481,6 +498,15 @@ function App() {
             <AppContext.Provider value={appContextValue}>
               <NavBar />
               <PersonalInfoForm />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/affiliate"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <NavBar />
+              <AffiliatePage />
             </AppContext.Provider>
           }
         />

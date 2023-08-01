@@ -12,26 +12,28 @@ const PastAverageTimeOrders = ({customerData, lastOrderDate, customerRanking}) =
     const customerDataForTable = []
     // const customerNotLate = []
 
-    Object.keys(lastOrderDate).map((customer, index)=>{
-        const dates = []
-        let startOrderDate = ""
-        let endOrderDate = lastOrderDate[customer]
-        if(customerData[customer]){
-            Object.keys(customerData[customer]).map((key)=>{
-                dates.push(key)
-            })
-            const sortedDates = dates.sort((a, b) => new Date(a) - new Date(b));
-            startOrderDate = sortedDates[0]
-        }
-        const averageInterval = businesscalculation.getAverageTimeBetweenPurchases(customerData, customer, startOrderDate, endOrderDate)
-        const differenceInDays = (new Date(today) - new Date(endOrderDate)) / (24 * 60 * 60 * 1000) ;
-        if(differenceInDays >= parseInt(averageInterval.slice(0,averageInterval.length - 7) - 2) || averageInterval=="No Interval"){
-            customerDataForTable.push({name:customer, averageInterval:averageInterval, differenceInDays: differenceInDays , id:index})
-        }
-        // else{
-        //     customerNotLate.push({name:customer, averageInterval:averageInterval, differenceInDays: differenceInDays , id:index})
-        // }
-    })
+    if(lastOrderDate){
+        Object.keys(lastOrderDate).map((customer, index)=>{
+            const dates = []
+            let startOrderDate = ""
+            let endOrderDate = lastOrderDate[customer]
+            if(customerData[customer]){
+                Object.keys(customerData[customer]).map((key)=>{
+                    dates.push(key)
+                })
+                const sortedDates = dates.sort((a, b) => new Date(a) - new Date(b));
+                startOrderDate = sortedDates[0]
+            }
+            const averageInterval = businesscalculation.getAverageTimeBetweenPurchases(customerData, customer, startOrderDate, endOrderDate)
+            const differenceInDays = (new Date(today) - new Date(endOrderDate)) / (24 * 60 * 60 * 1000) ;
+            if(differenceInDays >= parseInt(averageInterval.slice(0,averageInterval.length - 7) - 2) || averageInterval=="No Interval"){
+                customerDataForTable.push({name:customer, averageInterval:averageInterval, differenceInDays: differenceInDays , id:index})
+            }
+            // else{
+            //     customerNotLate.push({name:customer, averageInterval:averageInterval, differenceInDays: differenceInDays , id:index})
+            // }
+        })
+    }
 
     const sortedDataForTable = []
 

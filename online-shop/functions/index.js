@@ -3,8 +3,9 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({
-  origin: ['https://starpack.ph', 'http://localhost:5173','http://localhost:3000', 'http://localhost:5174','https://pg.maya.ph','https://payments.maya.ph','https://payments.paymaya.com',"http://127.0.0.1:5173","http://127.0.0.1:5174","https://127.0.0.1:5173","https://127.0.0.1:5174"]
+  origin: ['https://starpack.ph', 'http://localhost:9099', 'http://localhost:5173','http://localhost:3000', 'http://localhost:5174','https://pg.maya.ph','https://payments.maya.ph','https://payments.paymaya.com',"http://127.0.0.1:5173","http://127.0.0.1:5174","https://127.0.0.1:5173","https://127.0.0.1:5174"]
   // origin: true
+  // origin: ['http://localhost:9099']
 });
 
 const express = require('express');
@@ -860,6 +861,10 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
+    const depositAmount = data.amount
+    const affiliateUserId = data.affiliateUserId
+    console.log('affiliateUserId',affiliateUserId)
+    const commissionPercentage = 0.05
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
     const db = admin.firestore();
@@ -877,12 +882,24 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
       documentID = doc.id;
     });
 
-
     try {
       db.runTransaction(async (transaction) => {
         // READ
-        const paymentsRef = db.collection('Payments').doc();
+        // const paymentsRef = db.collection('Payments').doc();
         const userRef = db.collection('Users').doc(userId);
+        const affiliateUserRef = db.collection('Users').doc(affiliateUserId)
+        const affiliateUserSnap = await transaction.get(affiliateUserRef)
+
+        const affiliateUserData = affiliateUserSnap.data()
+        const oldAffiliateCommissions = affiliateUserData.affiliateCommissions
+        console.log('oldAffiliateCommissions',oldAffiliateCommissions)
+        const newAffiliateCommissions = [...oldAffiliateCommissions,{
+          customer : 'test',
+          dateOrdered : new Date().toDateString(),
+          commission : parseFloat(depositAmount) * commissionPercentage,
+          status: 'claimable',
+          claimCode: ''
+        }]
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
 
@@ -914,7 +931,9 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         });
 
         // WRITE
-
+        if (affiliateUserId != null) {
+          transaction.update(affiliateUserRef,{affiliateCommissions : newAffiliateCommissions})
+        }
 
         if (paymentsData) {
           transaction.update(db.collection('Payments').doc(documentID), paymentsData);
@@ -1338,10 +1357,22 @@ async function deleteOldOrders() {
   }
 }
 
+
 exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       deleteOldOrders();
+      res.status(200).send('successfully deleted all orders');
+    } catch (error) {
+      res.status(400).send('failed to delete old orders');
+    }
+  });
+});
+
+exports.giveAffiliateCommission = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
       res.status(400).send('failed to delete old orders');
@@ -1420,3 +1451,159 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
     });
   });
 });
+
+exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const data = req.body
+    const affiliateUserId = data.affiliateUserId
+    const depositorUserRole = data.depositorUserRole
+    const amountDeposited = data.amountDeposited
+    const claimId = data.affiliateClaimId
+    try{
+      // Check if user logged in is admin or superAdmin if not res.status(401)
+      if(depositorUserRole == 'admin' || depositorUserRole == 'superAdmin'){
+        // Add data to affiliates account affiliateDeposits
+        const db = admin.firestore();
+        const docRef = await db.collection('Users').doc(affiliateUserId).get();
+        const affiliateUserData = docRef.data()
+        const oldAffiliateDeposits = affiliateUserData.affiliateDeposits
+        const oldAffiliateClaims = affiliateUserData.affiliateClaims
+        const updatedClaimData = []
+        oldAffiliateClaims.map((claims)=>{
+          if(claims.affiliateClaimId == claimId){
+            claims.totalDeposited += amountDeposited
+            updatedClaimData.push(claims)
+          }else{
+            updatedClaimData.push(claims)
+          }
+        })
+        const updatedData = []
+        oldAffiliateDeposits.map((oldDeposits)=>{
+          updatedData.push(oldDeposits)
+        })
+        updatedData.push(data)
+        const userRef = db.collection('Users').doc(affiliateUserId)
+        await userRef.update({affiliateClaims:updatedClaimData});
+        await userRef.update({affiliateDeposits:updatedData});
+      }else{
+        res.status(401)
+      }
+    }catch(e){
+      console.log(e)
+    }
+    res.status(200).send(data)
+  })
+})
+
+exports.onAffiliateClaim = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const db = admin.firestore()
+    const data = req.body
+    try{
+      db.runTransaction(async (transaction) => {
+        const forStatus = data.data1
+        const commDate = forStatus.date
+        const commData = forStatus.data
+        const commId = forStatus.id
+        const claimCode = forStatus.claimCode
+        const userRef = db.collection('Users').doc(commId)
+        const forClaims = data.data2
+        const affiliateUserId = forClaims.affiliateUserId
+        const affiliateRef = await db.collection('Users').doc(affiliateUserId).get()
+        const affiliateUserData = affiliateRef.data()
+        const oldAffiliateClaims = affiliateUserData.affiliateClaims
+
+        const updatedClaimData = []
+        oldAffiliateClaims.map((oldClaims)=>{
+          updatedClaimData.push(oldClaims)
+        })
+        updatedClaimData.push(forClaims)
+        
+        const updatedCommData = []
+        commData.map((commissions)=>{
+          if(new Date(commissions.dateOrdered) <= new Date(commDate) && commissions.status == 'claimable' && commissions.claimCode == ''){
+            commissions.status = 'pending'
+            commissions.claimCode = claimCode
+            updatedCommData.push(commissions)
+          }else{
+            updatedCommData.push(commissions)
+          }
+        })
+        transaction.update(userRef, {affiliateClaims:updatedClaimData})
+        transaction.update(userRef, {affiliateCommissions:updatedCommData})
+        res.status(200).send(data)
+      })
+    }catch(e){
+      console.log(e)
+    }
+  })
+})
+
+exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const info = req.body
+    const amountDeposited = info.amountDeposited
+    const userId = info.userId
+    const claimId = info.claimId
+    const db = admin.firestore()
+    try{
+      const docRef = await db.collection('Users').doc(userId).get()
+      const affiliateUserData = docRef.data()
+      const affiliateClaims = affiliateUserData.affiliateClaims
+      const updatedData = []
+
+      affiliateClaims.map((claim)=>{
+        if(claim.affiliateClaimId == claimId){
+          claim.totalDeposited += amountDeposited
+          updatedData.push(claim)
+        }else{
+          updatedData.push(claim)
+        }
+      })
+      const userRef = db.collection('Users').doc(userId)
+      await userRef.update({affiliateClaims:updatedData})
+      res.status(200).send(data)
+    }catch(e){}
+  })
+})
+
+exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const data = req.body
+    const claimId = data.claimId
+    const userId = data.userId
+    const date = data.date
+    const db = admin.firestore()
+    try{
+      const docRef = await db.collection('Users').doc(userId).get()
+      const affiliateUserData = docRef.data()
+      const affiliateClaims = affiliateUserData.affiliateClaims
+      const affiliateCommissions = affiliateUserData.affiliateCommissions
+      const updatedData1 = []
+      affiliateCommissions.map((commissions)=>{
+        if(new Date(commissions.dateOrdered) <= new Date(date) && commissions.status == 'pending' && commissions.claimCode == claimId){
+          commissions.status = 'claimed'
+          updatedData1.push(commissions)
+        }else{
+          updatedData1.push(commissions)
+        }
+      })
+      const userRef = db.collection('Users').doc(userId)
+      await userRef.update({affiliateCommissions:updatedData1});
+
+      const updatedData = []
+      affiliateClaims.map((claim)=>{
+        if(claim.affiliateClaimId == claimId){
+          claim.isDone = true
+          updatedData.push(claim)
+        }else{
+          updatedData.push(claim)
+        }
+      })
+      await userRef.update({affiliateClaims:updatedData});
+      res.status(200).send(data)
+    }catch(e){}
+  })
+})
+
+

@@ -63,6 +63,7 @@ const AdminCreatePayment = (props) => {
       reference: reference,
       paymentprovider: paymentProvider,
       proofOfPaymentLink: paymentLink,
+      affiliateUserId : 'm3XqOfwYVchb1jwe9Jpat5ZrzJYJ'
     };
 
     const customerEmail = await firestore.readEmailAddressByUserId(userid);
@@ -73,6 +74,7 @@ const AdminCreatePayment = (props) => {
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
       proofOfPaymentLink: Joi.string().uri().required(),
+      affiliateUserId : Joi.string().allow('',null)
     });
 
     const { error } = paymentSchema.validate(data);
