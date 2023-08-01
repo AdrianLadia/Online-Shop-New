@@ -39,7 +39,7 @@ const GoogleMapsModalSelectContactModalButton = (props) => {
   return (
     <React.Fragment>
       <div className="flex flex-row w-full mt-5 justify-center">
-        <button id='savedContactButton'onClick={handleContactClick} className="border-2 border-blue1 tracking-tighter xs:tracking-normal bg-color10b hover:bg-blue1 text-white text-lg p-3 rounded-lg w-3/5 mr-1 xs:mr-5">
+        <button id='savedContactButton'onClick={handleContactClick} className="border-2 border-color10b hover:border-blue1 tracking-tighter xs:tracking-normal bg-color10b hover:bg-blue1 text-white text-lg p-3 rounded-lg w-3/5 mr-1 xs:mr-5">
           {phonenumber + ' , ' + name}
         </button>
         <button onClick={handleDeleteClick} className="border-red-600 text-red-600 hover:border-red-400 hover:text-red-400 border-2 p-3 rounded-lg w-1/5">

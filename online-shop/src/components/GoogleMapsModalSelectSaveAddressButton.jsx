@@ -52,7 +52,7 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
   return (
     <React.Fragment>
       <div className="flex flex-row w-full justify-center mt-5">
-          <button id='savedAddressButton' onClick={handleAddressClick} className="border-2 border-blue1 bg-color10b hover:bg-blue1 font-semibold text-lg text-white p-3 rounded-lg w-full mr-3">
+          <button id='savedAddressButton' onClick={handleAddressClick} className="border-2 border-color10b bg-color10b hover:border-blue1 hover:bg-blue1 font-semibold text-lg text-white p-3 rounded-lg w-full mr-3">
             {' '}
             {address}{' '}
           </button>
