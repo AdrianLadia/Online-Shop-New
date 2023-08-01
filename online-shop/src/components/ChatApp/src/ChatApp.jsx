@@ -22,7 +22,6 @@ const ChatApp = (props) => {
     firestore,
   } = useContext(AppContext);
   const location = useLocation();
-  const pastRoute = props.pastRoute;
   const setChatData = props.setChatData;
   const chatData = props.chatData;
   const [messageDetails, setMessageDetails] = useState({});
@@ -94,7 +93,7 @@ const ChatApp = (props) => {
               messages={messageDetails}
               isInquiryMessage={isInquiryMessage}
               backButtonRedirect={backButtonRedirect}
-              pastRoute={pastRoute}
+      
             />
             {messageDetails != {} ? (
               <DisplayMessages chatData={chatData} setChatData={setChatData} messageDetails={messageDetails} />
