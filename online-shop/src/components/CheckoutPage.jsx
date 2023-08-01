@@ -719,7 +719,7 @@ const CheckoutPage = () => {
                     {placeOrderLoading ? (
                       <div className="flex flex-col items-center justify-center h-full">
                         This may take up to 1 minute
-                        <CircularProgress size={50} style={{ color: 'blue' }} sx={{ marginTop: 1 }} />
+                        <CircularProgress size={50} style={{ color: 'white' }} sx={{ marginTop: 1 }} />
                       </div>
                     ) : (
                       'Place Order'

@@ -480,9 +480,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     return res
   }
 
-  async addClaimsToAffiliate(data) {
+  async onAffiliateClaim(data) {
     const jsonData = JSON.stringify(data);
-    const res = await axios.post(`${this.url}addClaimsToAffiliate`, jsonData, {
+    const res = await axios.post(`${this.url}onAffiliateClaim`, jsonData, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -490,15 +490,25 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     return res
   }
 
-  async changeCommissionStatusToPending(data) {
-    const jsonData = JSON.stringify(data);
-    const res = await axios.post(`${this.url}changeCommissionStatusToPending`, jsonData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return res
-  }
+  // async addClaimsToAffiliate(data) {
+  //   const jsonData = JSON.stringify(data);
+  //   const res = await axios.post(`${this.url}addClaimsToAffiliate`, jsonData, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
+  //   return res
+  // }
+
+  // async changeCommissionStatusToPending(data) {
+  //   const jsonData = JSON.stringify(data);
+  //   const res = await axios.post(`${this.url}changeCommissionStatusToPending`, jsonData, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
+  //   return res
+  // }
 
   async addDepositToAffiliateDeposits(data) {
     const jsonData = JSON.stringify(data);

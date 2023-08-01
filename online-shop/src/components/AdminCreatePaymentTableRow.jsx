@@ -91,13 +91,13 @@ const AdminCreatePaymentTableRow = (props) => {
             // onClick={() => data.link === data.link? (deleteDeclinedProofOfPaymentLink(data.reference, 'declined',data.userId, data.link)) : null}
             onClick={() => updatePaymentStatus('declined')}
           >
-            {loading ? <CircularProgress/> : <>Deny</> }
+            {loading ? <CircularProgress size={20} className=' text-red mt-1'/> : <>Deny</> }
           </button>
           <button
-            className="bg-blue1 hover:bg-color10b border border-blue1 text-white px-4 py-3 rounded-xl"
+            className="bg-blue1 hover:bg-color10b hover:border-color10b border border-blue1 text-white px-4 py-3 rounded-xl"
             onClick={() => updatePaymentStatus('approved')}
           >
-            {loading ? <CircularProgress/> : <>Approve</> }
+            {loading ? <CircularProgress size={20} className='text-white mt-1'/> : <>Approve</> }
           </button>
         </div>
       </TableCell>

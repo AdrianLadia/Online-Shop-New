@@ -7,25 +7,24 @@ import { TextField, Table, TableHead, TableBody, TableRow, TableCell, TableConta
 const AdminAffiliatePage = () => {
 
     const { userdata, cloudfirestore, refreshUser } = useContext(AppContext);
-    const {width, height} = useWindowDimensions()
+    const { height} = useWindowDimensions()
     const paymentMethods = ['GCASH','MAYA','BDO','UNIONBANK'];
-    const [isClaimInProcess, setIsClaimInProcess] = useState(false);
     const affiliateClaimId = [...Array(20)].map(() => Math.random().toString(36)[2]).join('');
     const [chosenMethod, setChosenMethod] = useState(null);
     const [total, setTotal] = useState(0);
     const accountNumber = '152512'
     const accountName = 'John Doe';
     const currentDate = new Date().toDateString()
-    
+
     function onClaimClick(){
       if(chosenMethod && total > 0 && userdata){
         const data1 = {
           date: new Date().toDateString(),
           data: affiliateCommissions,
-          id: userdata.uid
+          id: userdata.uid,
+          claimCode: affiliateClaimId,
         }
-        cloudfirestore.changeCommissionStatusToPending(data1)
-        const data = {
+        const data2 = {
           affiliateUserId: userdata.uid,
           affiliateClaimId: affiliateClaimId,
           method: chosenMethod,
@@ -36,7 +35,11 @@ const AdminAffiliatePage = () => {
           totalDeposited:0,
           isDone: false
         }
-        cloudfirestore.addClaimsToAffiliate(data).then(res=>{
+        const data = {
+          data1:data1,
+          data2:data2
+        }
+        cloudfirestore.onAffiliateClaim(data).then(res=>{
           if(res.request.status==200){
             alert("Your Claim Request is Submitted Successfully.")
             window.location.reload()
@@ -47,7 +50,7 @@ const AdminAffiliatePage = () => {
       }
     }
 
-    let affiliateCommissions = userdata? userdata.affiliateCommissions:null;
+    let affiliateCommissions = userdata ? userdata.affiliateCommissions:null;
 
     useEffect(() => {
       if(userdata){
@@ -68,7 +71,7 @@ const AdminAffiliatePage = () => {
     <div className='flex flex-col justify-center items-center tracking-widest font-sans'>
       <div className='flex flex-col justify-evenly h-40per w-full p-5 '>
         <div className='flex flex-col gap-1.5 items-center justify-center '>
-          <div className='text-color30'>{isClaimInProcess?'Claim In Process':'Commission'}</div>
+          <div className='text-color30'>{'Commission'}</div>
           <div className='text-blue1 tracking-wider text-6xl font-semibold p-3.5 px-16 rounded-lg border-t border-x border-color30 shadow-md shadow-color30'>₱ {total.toLocaleString()}</div>
         </div>
         <div className='flex flex-col xs:flex-row justify-center items-center gap-8 divide-x-2'>
@@ -91,7 +94,7 @@ const AdminAffiliatePage = () => {
           </div>
         </div>
       </div>
-      <div className=' h-60per w-full flex justify-center items-start'>
+      {userdata?<div className=' h-60per w-full flex justify-center items-start'>
         <div className='h-9/10 w-9/10 rounded-lg '>
           <TableContainer className="border-2 border-color30" component={Paper} sx={{ maxHeight: height - 250 }}>
             <Table style={{ tableLayout: "auto" }} fixedHeader={true} aria-label="simple table">
@@ -102,7 +105,7 @@ const AdminAffiliatePage = () => {
                 <TableCell className="font-sans text-lg tracking-wider text-white">Commission</TableCell>
               </TableHead>
               <TableBody >
-                {affiliateCommissions?affiliateCommissions.map((data, index)=>(
+                {affiliateCommissions != 0 ? affiliateCommissions.map((data, index)=>(
                   <TableRow key={index}>
                     <TableCell>{data.customer}</TableCell>
                     <TableCell>{data.dateOrdered}</TableCell>
@@ -114,7 +117,7 @@ const AdminAffiliatePage = () => {
             </Table>
           </TableContainer>
         </div>
-      </div>
+      </div>:"login"}
     </div>
   )
 }

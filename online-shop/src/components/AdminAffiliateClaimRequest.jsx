@@ -46,17 +46,6 @@ const AffiliateClaimRequest = () => {
   }
 
   function handleModalDepositClick() {
-    const data1 = {
-      claimId: affiliateClaimId,
-      userId: affiliateUserId,
-      amountDeposited : parseInt(amountDeposited)
-    }
-    // cloudfirestore.addDepositToAffiliateDeposits(data1).then(res=>{
-    //   if(res.request.status==200){
-    //     done = true
-    //     console.log("You have successfully made a deposit.")
-    //   }
-    // })
     const data = {
       depositImageUrl : imageProof,
       amountDeposited : parseInt(amountDeposited),
@@ -94,7 +83,7 @@ const AffiliateClaimRequest = () => {
     readAllClaims()
   },[])
 
-  const transactionData = allClaims? allClaims : null
+  const transactionData = allClaims ? allClaims : null
 
   function onDoneClick(claimId, userId, date){
     const data = {
@@ -132,7 +121,7 @@ const AffiliateClaimRequest = () => {
               <TableCell className="font-sans text-center text-lg tracking-wider text-white">--</TableCell>
             </TableHead>
             <TableBody >
-              {transactionData?transactionData.map((data, index)=>(
+              {transactionData != 0 ? transactionData.map((data, index)=>(
                 <TableRow key={index}>
                   <TableCell>{data.affiliateUserId}</TableCell>
                   <TableCell>{data.affiliateClaimId}</TableCell>
@@ -146,10 +135,10 @@ const AffiliateClaimRequest = () => {
                     <Button onClick={() => {handleOpen(data)}} disabled={data.amount <= data.totalDeposited?true:false} className={data.amount <= data.totalDeposited?'bg-gray-200' : 'bg-color10b hover:bg-blue1'} variant='contained'>Deposit</Button>
                   </TableCell>
                   <TableCell>
-                    <Button onClick={()=> {onDoneClick(data.affiliateClaimId, data.affiliateUserId, data.transactionDate)}} disabled={data.amount == data.totalDeposited?false:true} variant='outlined'>Done</Button>
+                    <Button onClick={() => {onDoneClick(data.affiliateClaimId, data.affiliateUserId, data.transactionDate)}} disabled={data.amount == data.totalDeposited?false:true} variant='outlined'>Done</Button>
                   </TableCell>
                 </TableRow>
-                )):'No Claim Request'}
+                )):'No Claim Requests'}
             </TableBody>
           </Table>
         </TableContainer>

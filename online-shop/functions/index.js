@@ -882,7 +882,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
       documentID = doc.id;
     });
 
-
     try {
       db.runTransaction(async (transaction) => {
         // READ
@@ -898,11 +897,11 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           customer : 'test',
           dateOrdered : new Date().toDateString(),
           commission : parseFloat(depositAmount) * commissionPercentage,
-          status: 'claimable'
+          status: 'claimable',
+          claimCode: ''
         }]
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
-
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
@@ -932,7 +931,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         });
 
         // WRITE
-
         if (affiliateUserId != null) {
           transaction.update(affiliateUserRef,{affiliateCommissions : newAffiliateCommissions})
         }
@@ -1359,10 +1357,22 @@ async function deleteOldOrders() {
   }
 }
 
+
 exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       deleteOldOrders();
+      res.status(200).send('successfully deleted all orders');
+    } catch (error) {
+      res.status(400).send('failed to delete old orders');
+    }
+  });
+});
+
+exports.giveAffiliateCommission = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
       res.status(400).send('failed to delete old orders');
@@ -1485,84 +1495,49 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
   })
 })
 
-exports.addClaimsToAffiliate = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+exports.onAffiliateClaim = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    try{
-      const data = req.body
-      const affiliateUserId = data.affiliateUserId
-      const db = admin.firestore()
-      const docRef = await db.collection('Users').doc(affiliateUserId).get()
-      const affiliateUserData = docRef.data()
-      const oldAffiliateClaims = affiliateUserData.affiliateClaims
-      const updatedData = []
-      oldAffiliateClaims.map((oldClaims)=>{
-        updatedData.push(oldClaims)
-      })
-      updatedData.push(data)
-      const userRef = db.collection('Users').doc(affiliateUserId)
-      await userRef.update({affiliateClaims:updatedData});
-      res.status(200).send(data)
-    }catch(e){
-      console.log(e)
-    }
-  })
-})
-
-exports.changeCommissionStatusToPending = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
-  corsHandler(req, res, async () => {
-    const info = req.body
-    const data = info.data
-    const date = info.date
-    const id = info.id
     const db = admin.firestore()
+    const data = req.body
     try{
-      const updatedData = []
-      data.map((commissions)=>{
-        if(new Date(commissions.dateOrdered) <= new Date(date) && commissions.status == 'claimable'){
-          commissions.status = 'pending'
-          updatedData.push(commissions)
-        }else{
-          updatedData.push(commissions)
-        }
+      db.runTransaction(async (transaction) => {
+        const forStatus = data.data1
+        const commDate = forStatus.date
+        const commData = forStatus.data
+        const commId = forStatus.id
+        const claimCode = forStatus.claimCode
+        const userRef = db.collection('Users').doc(commId)
+        const forClaims = data.data2
+        const affiliateUserId = forClaims.affiliateUserId
+        const affiliateRef = await db.collection('Users').doc(affiliateUserId).get()
+        const affiliateUserData = affiliateRef.data()
+        const oldAffiliateClaims = affiliateUserData.affiliateClaims
+
+        const updatedClaimData = []
+        oldAffiliateClaims.map((oldClaims)=>{
+          updatedClaimData.push(oldClaims)
+        })
+        updatedClaimData.push(forClaims)
+        
+        const updatedCommData = []
+        commData.map((commissions)=>{
+          if(new Date(commissions.dateOrdered) <= new Date(commDate) && commissions.status == 'claimable' && commissions.claimCode == ''){
+            commissions.status = 'pending'
+            commissions.claimCode = claimCode
+            updatedCommData.push(commissions)
+          }else{
+            updatedCommData.push(commissions)
+          }
+        })
+        transaction.update(userRef, {affiliateClaims:updatedClaimData})
+        transaction.update(userRef, {affiliateCommissions:updatedCommData})
+        res.status(200).send(data)
       })
-      const userRef = db.collection('Users').doc(id)
-      await userRef.update({affiliateCommissions:updatedData});
-      res.status(200).send(data)
     }catch(e){
       console.log(e)
     }
   })
 })
-
-// exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
-//   corsHandler(req, res, async () => {
-//     const info = req.body
-//     const amountDeposited = info.amountDeposited
-//     const userId = info.userId
-//     const claimId = info.claimId
-//     const db = admin.firestore()
-//     try{
-//       const docRef = await db.collection('Users').doc(userId).get()
-//       const affiliateUserData = docRef.data()
-//       const affiliateClaims = affiliateUserData.affiliateClaims
-//       const updatedData = []
-
-//       affiliateClaims.map((claim)=>{
-//         if(claim.affiliateClaimId == claimId){
-//           claim.totalDeposited += amountDeposited
-//           updatedData.push(claim)
-//         }else{
-//           updatedData.push(claim)
-//         }
-//       })
-
-//       const userRef = db.collection('Users').doc(userId)
-//       await userRef.update({affiliateClaims:updatedData})
-
-//       res.status(200).send(data)
-//     }catch(e){}
-//   })
-// })
 
 exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -1585,10 +1560,8 @@ exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').http
           updatedData.push(claim)
         }
       })
-
       const userRef = db.collection('Users').doc(userId)
       await userRef.update({affiliateClaims:updatedData})
-
       res.status(200).send(data)
     }catch(e){}
   })
@@ -1608,7 +1581,7 @@ exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onReq
       const affiliateCommissions = affiliateUserData.affiliateCommissions
       const updatedData1 = []
       affiliateCommissions.map((commissions)=>{
-        if(new Date(commissions.dateOrdered) <= new Date(date) && commissions.status == 'pending'){
+        if(new Date(commissions.dateOrdered) <= new Date(date) && commissions.status == 'pending' && commissions.claimCode == claimId){
           commissions.status = 'claimed'
           updatedData1.push(commissions)
         }else{
@@ -1633,42 +1606,4 @@ exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onReq
   })
 })
 
-// exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
-//   corsHandler(req, res, async () => {
-//     const data = req.body
-//     const claimId = data.claimId
-//     const userId = data.userId
-//     const date = data.date
-//     const db = admin.firestore()
-//     try{
-//       const docRef = await db.collection('Users').doc(userId).get()
-//       const affiliateUserData = docRef.data()
-//       const affiliateClaims = affiliateUserData.affiliateClaims
-//       const affiliateCommissions = affiliateUserData.affiliateCommissions
-//       const updatedData1 = []
-//       affiliateCommissions.map((commissions)=>{
-//         if(new Date(commissions.dateOrdered) <= new Date(date) && commissions.status == 'pending'){
-//           commissions.status = 'claimed'
-//           updatedData1.push(commissions)
-//         }else{
-//           updatedData1.push(commissions)
-//         }
-//       })
-//       const userRef = db.collection('Users').doc(userId)
-//       await userRef.update({affiliateCommissions:updatedData1});
-
-//       const updatedData = []
-//       affiliateClaims.map((claim)=>{
-//         if(claim.affiliateClaimId == claimId){
-//           claim.isDone = true
-//           updatedData.push(claim)
-//         }else{
-//           updatedData.push(claim)
-//         }
-//       })
-//       await userRef.update({affiliateClaims:updatedData});
-//       res.status(200).send(data)
-//     }catch(e){}
-//   })
-// })
 
