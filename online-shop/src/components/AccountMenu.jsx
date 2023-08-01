@@ -11,7 +11,7 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AppContext from '../AppContext';
 import { useNavigate } from 'react-router-dom';
-import { FaStore, TbAffiliate } from 'react-icons/fa';
+import { FaStore } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { AiOutlineHistory } from 'react-icons/ai';
 import { BsBook } from 'react-icons/bs';
@@ -20,7 +20,7 @@ import { Typography } from '@mui/material';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { useLocation } from 'react-router-dom';
-import Badge from '@mui/material/Badge';TbAffiliate
+import Badge from '@mui/material/Badge';
 import { TbAffiliate } from "react-icons/tb";
 
 const AccountMenu = (props) => {
