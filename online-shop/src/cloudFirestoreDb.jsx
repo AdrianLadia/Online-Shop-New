@@ -3,10 +3,8 @@ import axios from 'axios';
 import Joi from 'joi';
 import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
-import { th } from 'date-fns/locale';
-import retryApi from '../utils/retryApi';
-import { httpsCallable, getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-import businessCalculations from '../utils/businessCalculations';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+
 
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
@@ -83,6 +81,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async createNewUser(data, userId) {
     const schema = schemas.userSchema();
+    console.log(data);
 
     const { error } = schema.validate(data);
     if (error) {
@@ -335,6 +334,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
       proofOfPaymentLink: Joi.string(),
+      affiliateUserId: Joi.string().allow(null,'')
     });
 
     const { error } = dataSchema.validate(data);
@@ -468,17 +468,66 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  // async createOrderMessagesInquiry(data) {
+  async addDepositToAffiliate(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}addDepositToAffiliate`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
 
-  //   const dataSchema = Joi.object({
-  //     messages: Joi.array().required(),
-  //     ownerUserId: Joi.string().required(),
-  //     ownerName: Joi.string().required(),
-  //     referenceNumber: Joi.string().required(),
-  //     isInquiry : true,
-  //   })
+  async onAffiliateClaim(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}onAffiliateClaim`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
+
+  // async addClaimsToAffiliate(data) {
+  //   const jsonData = JSON.stringify(data);
+  //   const res = await axios.post(`${this.url}addClaimsToAffiliate`, jsonData, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
+  //   return res
   // }
-  
+
+  // async changeCommissionStatusToPending(data) {
+  //   const jsonData = JSON.stringify(data);
+  //   const res = await axios.post(`${this.url}changeCommissionStatusToPending`, jsonData, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
+  //   return res
+  // }
+
+  async addDepositToAffiliateDeposits(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}addDepositToAffiliateDeposits`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
+
+  async markAffiliateClaimDone(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}markAffiliateClaimDone`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res
+  }
+
 }
 
 export default cloudFirestoreDb;

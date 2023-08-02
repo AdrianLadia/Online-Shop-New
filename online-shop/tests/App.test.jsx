@@ -1149,6 +1149,9 @@ describe('cloudfirestoredb', async () => {
     });
   }, 100000);
   test('transactionCreatePayment', async () => {
+
+    throw new Error('Create a test for commissions added to affiliate, test if commission is added to affiliate')
+
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await delay(100);
     const data = {

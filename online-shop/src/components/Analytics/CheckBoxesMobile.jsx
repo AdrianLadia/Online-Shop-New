@@ -59,6 +59,7 @@ export const CheckBoxesMobile = ({name, callback}) => {
                   <input className="accent-red-500 flex place-self-center cursor-pointer "
                         type="checkbox"
                         name= {type}
+                        id={type}
                         checked={selectedOption.includes(type)}
                         onChange={handleCheckboxChange}
                   />
@@ -67,24 +68,22 @@ export const CheckBoxesMobile = ({name, callback}) => {
                   )
               }
           })}     
-              <div className="rounded-lg col-span-2 grid gap-1 justify-items-center mt-1 border-2 border-emerald-200 w-full 
-                                bg-emerald-100 hover:bg-green-200">
+              <div className="rounded-lg col-span-2 grid gap-1 justify-items-center mt-1 border-2 border-emerald-200 w-full bg-emerald-100 hover:bg-green-200">
                   <input 
                         type="checkbox"
-                        name="true"
+                        name="isCustomized"
+                        id="isCustomized"
                         checked={customized === "true"}
                         onChange={handleCustomized}
                         className="cursor-pointer accent-pink-500 "
                   />
-                  <label className="text-xs font-bold text-transparent bg-clip-text 
-                                    bg-gradient-to-r from-indigo-600 via-yellow-400 to-red-500" htmlFor="isCustomized"> Customized</label>
+                  <label className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-yellow-400 to-red-500" htmlFor="isCustomized"> Customized</label>
               </div>
               <div className="col-span-2 grid gap-1 justify-items-center ">
                 {customized === ""  && selectedOption === "" ?  null  : 
-                    <div className="flex"> 
-                        <button className="p-1 text-white bg-red1 border-2 text-xs border-red-700 rounded-lg hover:bg-red-400 " 
-                             onClick={handleClear}>Clear</button>    
-                    </div>
+                  <div className="flex"> 
+                    <button className="p-1 text-white bg-red1 border-2 text-xs border-red-700 rounded-lg hover:bg-red-400 " onClick={handleClear}>Clear</button>    
+                  </div>
                 }  
               </div>   
         </div>

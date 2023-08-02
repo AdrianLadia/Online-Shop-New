@@ -7,6 +7,7 @@ const NavBar = (props) => {
     const isInquiryMessage = props.isInquiryMessage;
     const backButtonRedirect = props.backButtonRedirect;
 
+
   return (
     <div className='flex justify-center mx-1 h-1/10'>
         <div className='flex justify-start w-full h-full'>

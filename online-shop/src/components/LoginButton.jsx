@@ -28,6 +28,7 @@ const ReactPhoneInput = PhoneInput.default ? PhoneInput.default : PhoneInput;
 
 const LoginButton = (props) => {
   const position = props.position;
+  const isAffiliateLink = props.isAffiliateLink;
   const [openUnsupportedBrowserModal, setOpenUnsupportedBrowserModal] = useState(false);
   const [openPhoneNumberModal, setOpenPhoneNumberModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -108,6 +109,7 @@ const LoginButton = (props) => {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  
   const handleClick = (event) => {
     if (!isSupportedBrowser) {
       console.log('Setting to open unsupported modal');
@@ -121,7 +123,27 @@ const LoginButton = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
+  function isLink(){
+    if(isAffiliateLink){
+      return ''
+    }else if(isAffiliateLink == false){
+      return ''
+    }else{
+      return 'visible'
+    }
+  }
+
+  function isAffLink(){
+    if(isAffiliateLink){
+      return 'left'
+    }if(isAffiliateLink == false){
+      return 'center'
+    }else{
+      return 'right'
+    }
+  }
+
 
   return (
     <div>
@@ -136,9 +158,9 @@ const LoginButton = (props) => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        className="bg-color10b text-slate-800 font-bold hover:bg-color10c rounded-lg"
+        className={"bg-color10b p-1 sm:p-2 text-slate-800 xs:font-bold hover:bg-color10c rounded-r-lg sm:rounded-lg mr-1 2xs:ml-0"}
       >
-        Login
+        {isAffiliateLink? "Sign up":'Login'}
       </Button>
       <Menu
         id="demo-positioned-menu"
@@ -148,18 +170,18 @@ const LoginButton = (props) => {
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right',
+          horizontal: isAffLink(),
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: isAffLink(),
         }}
-        arrow={true}
-        arrowSize={35}
+        // arrow={true}
+        // arrowSize={35}
         PaperProps={{
           elevation: 0,
           sx: {
-            overflow: 'visible',
+            overflow: isLink(),
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
             '& .MuiAvatar-root': {

@@ -48,32 +48,35 @@ const DisplayMessages = (props) => {
   async function markMessagesAsRead() {
     let unreadOwner = 0;
     let unreadAdmin = 0;
-    messages.map((mess) => {
-  
-      if (mess.userRole != 'member' && userdata.uid !== mess.userId) {
-        const id = datamanipulation.convertDateTimeStampToDateString(mess.dateTime)
+    console.log('messages', messages);
+    if (messages != null) {
+      messages.map((mess) => {
     
-        if (isElementInView(id)) {
-
-          mess.read = true;
+        if (mess.userRole != 'member' && userdata.uid !== mess.userId) {
+          const id = datamanipulation.convertDateTimeStampToDateString(mess.dateTime)
+      
+          if (isElementInView(id)) {
+  
+            mess.read = true;
+          }
         }
-      }
-
-      if (mess.userRole === 'member' && mess.read === false) {
-        unreadOwner += 1;
-      }
-
-      if (mess.userRole != 'member' && mess.read === false) {
-        unreadAdmin += 1;
-      }
-    });
-
-    if (userdata.userRole != 'member') {
-      if (ownerReadAll === true) {
-        const newChatData = chatData.filter((chat) => chat.id != selectedChatOrderId);
-        setChatData(newChatData);
-      }
-    }    
+  
+        if (mess.userRole === 'member' && mess.read === false) {
+          unreadOwner += 1;
+        }
+  
+        if (mess.userRole != 'member' && mess.read === false) {
+          unreadAdmin += 1;
+        }
+      });
+  
+      if (userdata.userRole != 'member') {
+        if (ownerReadAll === true) {
+          const newChatData = chatData.filter((chat) => chat.id != selectedChatOrderId);
+          setChatData(newChatData);
+        }
+      }    
+    } 
 
     await firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
 

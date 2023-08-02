@@ -19,21 +19,21 @@ import AdminChatMenu from './AdminChatMenu';
 import { HiOutlineChatAlt } from 'react-icons/hi';
 import AdminAddOrEditItem from './AdminAddOrEditItem';
 import CustomerAnalytics from './customerAnalytics/App';
-VscGraph;
 import { VscGraph } from 'react-icons/vsc';
 import CompanyDashboard from './CompanyDashboard/CompanyDashboard';
 import { RiDashboard2Line } from "react-icons/ri";
 import Tooltip from '@mui/material/Tooltip';
+import AffiliateClaimRequest from './AdminAffiliateClaimRequest';
+import { TbAffiliate } from "react-icons/tb";
 
 const AdminMenu = () => {
   const { firestore, allUserData, setAllUserData, categories } = React.useContext(AppContext);
-
   const { width } = UseWindowDimensions();
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigateTo = useNavigate();
-  const [selectedMenu, setSelectedMenu] = React.useState('Inventory');
+  const [selectedMenu, setSelectedMenu] = React.useState('Claim Request');
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -82,6 +82,11 @@ const AdminMenu = () => {
   const handleClickAdminChat = () => {
     setAnchorEl(null);
     setSelectedMenu('Admin Chat');
+  };
+
+  const handleClickClaimRequest = () => {
+    setAnchorEl(null);
+    setSelectedMenu('Claim Request');
   };
 
   const handleBack = () => {
@@ -243,6 +248,14 @@ const AdminMenu = () => {
               {' '}
               <HiOutlineChatAlt size={20} />     <span>Admin Chat</span>
             </MenuItem>
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="Admin Chat"
+              onClick={handleClickClaimRequest}
+            >
+              {' '}
+              <TbAffiliate size={20} />     <span>Claim Requests</span>
+            </MenuItem>
           </Menu>
         </div>
       </div>
@@ -286,6 +299,7 @@ const AdminMenu = () => {
         {selectedMenu === 'Customer Analytics' && <CustomerAnalytics />}
         {selectedMenu === 'Admin Chat' && <AdminChatMenu />}
         {selectedMenu === 'Company Dashboard' && <CompanyDashboard />}
+        {selectedMenu === 'Claim Request' && <AffiliateClaimRequest />}
       </div>
     </div>
   );

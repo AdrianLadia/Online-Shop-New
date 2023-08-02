@@ -8,21 +8,28 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const CompanyDashboard = () => {
 
-    const { firestore } = useContext(AppContext);
+    const { firestore,categories } = useContext(AppContext);
     const businesscalculation = new businessCalculation();
     const [overallTotalSalesValue, setOverallTotalSalesValue] = useState(0);
+    const [overallSalesPerItem, setOverallSalesPerItem] = useState([]);
     const [customersLastOrderDate, setCustomersLastOrderDate] = useState({});
     const [ totalValueOfOrder, setTotalValueOfOrder ] = useState({})
     const [customerData, setCustomerData] = useState([])
     const [ customerTotalValueRanking, setCustomerTotalValueRanking ] = useState([])
+    const [allowedCategories, setAllowedCategories] = useState(['Paper Bag','Meal Box'])
     const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
     
+    useEffect(() => {
+      console.log('categories', categories);
+    }, [categories]);
+
+
     useEffect(() => {
         firestore.readSelectedDataFromCollection('Analytics','PurchaseFrequencyAndTimeBetweenPurchases').then((data) => {
           setCustomerData(data)
         });
         firestore.readSelectedDataFromCollection('Analytics','overallTotalSalesValue').then((data) => {
-          setOverallTotalSalesValue(data.data);
+          setOverallSalesPerItem(data.data);
         });
         firestore.readSelectedDataFromCollection('Analytics','CustomerLastOrderDate').then((data) => {
           setCustomersLastOrderDate(data)
@@ -57,7 +64,43 @@ const CompanyDashboard = () => {
       }
   },[totalValueOfOrder])
 
+    useEffect(() => {
+      console.log('overallSalesPerItem', overallSalesPerItem);
+
+      let overallSalesPerItemData = {}
+
+      Object.keys(overallSalesPerItem).map((date)=>{
+        const data = overallSalesPerItem[date]
+        overallSalesPerItemData[date] = 0
+        let totalSales = 0
+    
+        Object.keys(data).map((key)=>{
+          const value = data[key]
+          const category = value.category
+          const totalValue = value.totalValue
+
+          
+          if (allowedCategories.includes(category)){
+            totalSales += totalValue
+          }
+
+
+        })
+
+        overallSalesPerItemData[date] = totalSales
+
+      })
+
+      console.log('overallSalesPerItemData', overallSalesPerItemData);
+
+      setOverallTotalSalesValue(overallSalesPerItemData);
+
+    }, [overallSalesPerItem]);
+
     const newData = []
+
+
+
 
     Object.keys(overallTotalSalesValue).map((date)=>{
       if(date.length == 6){
@@ -84,7 +127,7 @@ const CompanyDashboard = () => {
       labels,
       datasets: [
         {
-          type: 'bar' , label: 'Total Sales', data: values,
+          type: 'bar' , label: 'Company Total Sales', data: values,
           borderWidth: 0.5,
           borderColor:(context) => {
             const value = context.dataset.data[context.dataIndex];
@@ -137,8 +180,10 @@ const CompanyDashboard = () => {
 
   return (
     <div className=' w-full gap-3 flex flex-col justify-center items-center '>
-      <div className='h-80per w-full xs:w-11/12 flex flex-col justify-center items-center font-serif tracking-wider border border-green-400 rounded-lg p-3 mt-4'>Company Dashboard
-        <Chart type='bar' data={graphData} options={options}/>
+
+        <div className='flex justify-center items-end h-10per font-serif text-xl md:text-2xl tracking-wider'>Company Dashboard</div>
+      <div className='h-80per w-full xs:w-11/12 flex flex-col justify-center items-center font-serif tracking-wider border border-green-400 rounded-lg mt-4'>
+        <Chart type='bar' id='chart' data={graphData} options={options}/>
       </div>
       <div className=' mb-8 w-full flex justify-center items-center'>
         <PastAverageTimeOrders customerData={customerData} lastOrderDate={customersLastOrderDate} customerRanking={customerTotalValueRanking}/>

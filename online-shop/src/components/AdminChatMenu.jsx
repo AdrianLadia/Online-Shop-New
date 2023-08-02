@@ -22,6 +22,8 @@ const AdminChatMenu = () => {
     const [chatData, setChatData] = useState([])
     const [chatButtonState, setChatButtonState] = useState(null)
     const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false)
+    
+
 
     useEffect(() => {
       const docRef = collection(db, 'ordersMessages')
@@ -77,7 +79,7 @@ const AdminChatMenu = () => {
   return (
     <div className="flex justify-center flex-col lg:flex-row overflow-x-auto h-full">
       <div ref={dummy}/>
-      {selectedChatOrderId != null ? <ChatApp setChatData={setChatData} chatData={chatData} chatButtonState={chatButtonState} setChatButtonState={setChatButtonState} chatButtonStateTrigger={chatButtonStateTrigger} setChatButtonStateTrigger={setChatButtonStateTrigger} /> : null}
+      {selectedChatOrderId != null ? <ChatApp setChatData={setChatData} chatData={chatData} chatButtonState={chatButtonState} setChatButtonState={setChatButtonState} chatButtonStateTrigger={chatButtonStateTrigger} setChatButtonStateTrigger={setChatButtonStateTrigger}/> : null}
       <TableContainer 
           className="flex justify-center items-start w-full lg:w-10/12 h-screen bg-gradient-to-r from-colorbackground via-color2 to-color1 " 
           component={Paper}>

@@ -6,9 +6,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../AppContext';
 import { useLocation } from 'react-router-dom';
 import LoginButton from '../../LoginButton';
-import { Typography } from '@mui/material';
-import { is } from 'date-fns/locale';
-import { set } from 'date-fns';
+
 
 const ChatApp = (props) => {
   const {
@@ -95,6 +93,7 @@ const ChatApp = (props) => {
               messages={messageDetails}
               isInquiryMessage={isInquiryMessage}
               backButtonRedirect={backButtonRedirect}
+      
             />
             {messageDetails != {} ? (
               <DisplayMessages chatData={chatData} setChatData={setChatData} messageDetails={messageDetails} />
@@ -112,7 +111,7 @@ const ChatApp = (props) => {
             <p className="text-xl">We are always here to help you. Log in now to start the conversation.</p>
           </div>
           <div className="mt-10">
-            <LoginButton className="py-2 px-4 rounded bg-white text-blue-500 hover:bg-blue-500 hover:text-white transition-colors duration-200" />
+            <LoginButton isAffiliateLink={false} className="py-2 px-4 rounded bg-white text-blue-500 hover:bg-blue-500 hover:text-white transition-colors duration-200" />
           </div>
         </div>
       )}

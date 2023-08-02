@@ -237,11 +237,11 @@ const ProductCard = (props) => {
         {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
           elevation={10}
-          className="flex flex-row rounded-4xl w-11/12 justify-center my-5 
+          className="flex flex-row rounded-4xl w-11/12 p-5 justify-center my-5 
                       bg-gradient-to-r from-color60 via-color60 to-color10c shadow-lg shadow-slate-500"
         >
-          <div className="flex flex-col justify-center items-center">
-            <Typography className="flex justify-center items-center text-2xl font-bold text-color10c">
+          <div className="w-full flex flex-col justify-center items-center">
+            <Typography className="flex justify-center items-center text-2xl font-bold text-color10c text-center">
               {product.itemName}
             </Typography>
 

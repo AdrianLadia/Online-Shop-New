@@ -1,0 +1,125 @@
+import React,{useContext, useEffect, useState} from 'react'
+import AppContext from '../AppContext'
+import useWindowDimensions from "./UseWindowDimensions";
+import Autocomplete from '@mui/material/Autocomplete';
+import { TextField, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Button } from '@mui/material';
+
+const AdminAffiliatePage = () => {
+
+    const { userdata, cloudfirestore, refreshUser } = useContext(AppContext);
+    const { height} = useWindowDimensions()
+    const paymentMethods = ['GCASH','MAYA','BDO','UNIONBANK'];
+    const affiliateClaimId = [...Array(20)].map(() => Math.random().toString(36)[2]).join('');
+    const [chosenMethod, setChosenMethod] = useState(null);
+    const [total, setTotal] = useState(0);
+    const accountNumber = '152512'
+    const accountName = 'John Doe';
+    const currentDate = new Date().toDateString()
+
+    function onClaimClick(){
+      if(chosenMethod && total > 0 && userdata){
+        const data1 = {
+          date: new Date().toDateString(),
+          data: affiliateCommissions,
+          id: userdata.uid,
+          claimCode: affiliateClaimId,
+        }
+        const data2 = {
+          affiliateUserId: userdata.uid,
+          affiliateClaimId: affiliateClaimId,
+          method: chosenMethod,
+          accountNumber: accountNumber,
+          accountName: accountName,
+          transactionDate: currentDate,
+          amount: total,
+          totalDeposited:0,
+          isDone: false
+        }
+        const data = {
+          data1:data1,
+          data2:data2
+        }
+        cloudfirestore.onAffiliateClaim(data).then(res=>{
+          if(res.request.status==200){
+            alert("Your Claim Request is Submitted Successfully.")
+            window.location.reload()
+          }else{
+            console.log(res)
+          }
+        })
+      }
+    }
+
+    let affiliateCommissions = userdata ? userdata.affiliateCommissions:null;
+
+    useEffect(() => {
+      if(userdata){
+        const claimables = affiliateCommissions.filter((item)=>item.status == 'claimable')
+        setTotal(claimables.reduce((total, data) => total + data.commission, 0))
+      }
+    }, [affiliateCommissions, refreshUser]);
+
+    function disableColor(){
+      if(chosenMethod && total != 0){
+        return ' bg-color10b hover:bg-blue1'
+      }else{
+        return ' bg-gray-300 cursor-not-allowed'
+      }
+    }
+
+  return (  
+    <div className='flex flex-col justify-center items-center tracking-widest font-sans'>
+      <div className='flex flex-col justify-evenly h-40per w-full p-5 '>
+        <div className='flex flex-col gap-1.5 items-center justify-center '>
+          <div className='text-color30'>{'Commission'}</div>
+          <div className='text-blue1 tracking-wider text-6xl font-semibold p-3.5 px-16 rounded-lg border-t border-x border-color30 shadow-md shadow-color30'>₱ {total.toLocaleString()}</div>
+        </div>
+        <div className='flex flex-col xs:flex-row justify-center items-center gap-8 divide-x-2'>
+          <div className='h-1/2 items-center w-full flex justify-end'>
+            <Autocomplete value={chosenMethod} options={paymentMethods}
+              className='w-3/12' disablePortal id="combo-box-demo"
+              onChange={(event, newValue) => { setChosenMethod(newValue) }}
+              sx={{ backgroundColor: '#D6EFC7', borderRadius: 2, color: '#bb9541',
+                '& .MuiOutlinedInput-notchedOutline': { border: 2, color: '#bb9541', borderRadius: 2, },
+                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { color: '#bb9541', border: 2, },
+                '& .MuiOutlinedInput-root:after .MuiOutlinedInput-notchedOutline': { color: '#bb9541', border: 2, },
+              }}
+              renderInput={(params) => <TextField required {...params} label="Method" />}
+            />
+          </div>
+          <div className='h-full w-full flex justify-'>
+            <Button disabled={chosenMethod && total != 0? false:true} onClick={onClaimClick} 
+              className={'tracking-widest rounded-lg mb-0.5 w-3/12 ' + disableColor()} variant='contained'>Claim
+            </Button>
+          </div>
+        </div>
+      </div>
+      {userdata?<div className=' h-60per w-full flex justify-center items-start'>
+        <div className='h-9/10 w-9/10 rounded-lg '>
+          <TableContainer className="border-2 border-color30" component={Paper} sx={{ maxHeight: height - 250 }}>
+            <Table style={{ tableLayout: "auto" }} fixedHeader={true} aria-label="simple table">
+              <TableHead className="bg-color30 bg-opacity-100 h-16">
+                <TableCell className="font-sans text-lg tracking-wider text-white">Customer</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Date Ordered</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Status</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Commission</TableCell>
+              </TableHead>
+              <TableBody >
+                {affiliateCommissions != 0 ? affiliateCommissions.map((data, index)=>(
+                  <TableRow key={index}>
+                    <TableCell>{data.customer}</TableCell>
+                    <TableCell>{data.dateOrdered}</TableCell>
+                    <TableCell style={{color:data.status == 'claimable'? 'limegreen':data.status=='claimed'?"#429eff":'orange'}}>{data.status}</TableCell>
+                    <TableCell className="text-green-500">₱ {data.commission.toLocaleString()}</TableCell>
+                  </TableRow>
+                )):'No Commissions'}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      </div>:"login"}
+    </div>
+  )
+}
+
+export default AdminAffiliatePage

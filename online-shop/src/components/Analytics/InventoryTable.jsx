@@ -82,7 +82,6 @@ export function InventoryTable({name, category, customized, callback}) {
   useEffect(() => {
     const tableData = [];
     productsData.map((product, index) => {
-
       const productName = product.itemName;
       const totalStocks = businesslogic.getTotalStocks(product);
       const type = product.category;
@@ -1170,6 +1169,8 @@ export function InventoryTable({name, category, customized, callback}) {
             rows={filtered}
             columns={columns}
             rowHeight={ROW_HEIGHT}
+            sortingOrder={['desc', 'asc']}
+            // sortModel={[{field: 'totalStocks', sort: 'asc'}]}
           />
         </Box>
       {/* )} */}

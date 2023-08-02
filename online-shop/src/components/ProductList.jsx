@@ -14,19 +14,19 @@ import cloudFirestoreDb from '../cloudFirestoreDb';
 import UseWindowDimensions from './UseWindowDimensions';
 import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
 
+
 const ProductList = (props) => {
   const wholesale = props.wholesale
   const retail = props.retail;
   const selectedCategory = props.selectedCategory;
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
-  const cloudfirestoredb = new cloudFirestoreDb();
+
+
 
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
-
- 
 
   const { width } = UseWindowDimensions();
 
@@ -43,6 +43,7 @@ const ProductList = (props) => {
       retail,
       favoriteitems
     );
+    console.log(selected_products)
     const spo = new storeProductsOrganizer(selected_products)
     const organizedProducts = spo.runMain()
     
@@ -80,9 +81,8 @@ const ProductList = (props) => {
     }
   }
 
-
   return (
-    <div className='mb-16 mt-5'>
+    <div className='mb-16 mt-5 '>
       <div id='productList' className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
