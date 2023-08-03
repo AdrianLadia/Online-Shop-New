@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -72,48 +72,49 @@ const AdminAddOrEditItem = (props) => {
 
   const handleCancel = () => setSelectedMenu('Inventory');
 
-  const [itemID, setItemID] = React.useState('');
-  const [itemName, setItemName] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const [category, setCategory] = React.useState('');
-  const [weight, setWeight] = React.useState('');
-  const [dimensions, setDimensions] = React.useState('');
-  const [color, setColor] = React.useState('');
-  const [material, setMaterial] = React.useState('');
-  const [size, setSize] = React.useState('');
-  const [price, setPrice] = React.useState('');
-  const [brand, setBrand] = React.useState('');
-  const [pieces, setPieces] = React.useState('');
-  const [unit, setUnit] = React.useState('');
-  const [imageLink1, setImageLink1] = React.useState('');
-  const [imageLink2, setImageLink2] = React.useState('');
-  const [imageLink3, setImageLink3] = React.useState('');
-  const [imageLink4, setImageLink4] = React.useState('');
-  const [imageLink5, setImageLink5] = React.useState('');
-  const [imageLink6, setImageLink6] = React.useState('');
-  const [imageLink7, setImageLink7] = React.useState('');
-  const [imageLink8, setImageLink8] = React.useState('');
-  const [imageLink9, setImageLink9] = React.useState('');
-  const [imageLink10, setImageLink10] = React.useState('');
-  const [startingInventory, setStartingInventory] = React.useState('');
-  const [isThisRetail, setIsThisRetail] = React.useState(false);
-  const [parentProductID, setParentProductID] = React.useState('');
-  const [openAddCategoryModal, setOpenAddCategoryModal] = React.useState(false);
-  const [parentProducts, setParentProducts] = React.useState([]);
-  const [isCustomized, setIsCustomized] = React.useState(false);
-  const [retailPrice, setRetailPrice] = React.useState(0);
-  const [packWeight, setPackWeight] = React.useState(0);
-  const [piecesPerPack, setPiecesPerPack] = React.useState(0);
-  const [packsPerBox, setPacksPerBox] = React.useState(0);
-  const [manufactured, setManufactured] = React.useState(false);
-  const [cbm, setCbm] = React.useState('');
-  const [machines, setMachines] = React.useState([]);
-  const [machineFormat, setMachineFormat] = React.useState('');
-  const [selectedItemToEdit, setSelectedItemToEdit] = React.useState(null);
-  const [boxImage, setBoxImage] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  const [costPrice, setCostPrice] = React.useState(0);
-  const [freightCost, setFreightCost] = React.useState(0);
+  const [itemID, setItemID] = useState('');
+  const [itemName, setItemName] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const [weight, setWeight] = useState('');
+  const [dimensions, setDimensions] = useState('');
+  const [color, setColor] = useState('');
+  const [material, setMaterial] = useState('');
+  const [size, setSize] = useState('');
+  const [price, setPrice] = useState('');
+  const [brand, setBrand] = useState('');
+  const [pieces, setPieces] = useState('');
+  const [unit, setUnit] = useState('');
+  const [imageLink1, setImageLink1] = useState('');
+  const [imageLink2, setImageLink2] = useState('');
+  const [imageLink3, setImageLink3] = useState('');
+  const [imageLink4, setImageLink4] = useState('');
+  const [imageLink5, setImageLink5] = useState('');
+  const [imageLink6, setImageLink6] = useState('');
+  const [imageLink7, setImageLink7] = useState('');
+  const [imageLink8, setImageLink8] = useState('');
+  const [imageLink9, setImageLink9] = useState('');
+  const [imageLink10, setImageLink10] = useState('');
+  const [startingInventory, setStartingInventory] = useState('');
+  const [isThisRetail, setIsThisRetail] = useState(false);
+  const [parentProductID, setParentProductID] = useState('');
+  const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false);
+  const [parentProducts, setParentProducts] = useState([]);
+  const [isCustomized, setIsCustomized] = useState(false);
+  const [retailPrice, setRetailPrice] = useState(0);
+  const [packWeight, setPackWeight] = useState(0);
+  const [piecesPerPack, setPiecesPerPack] = useState(0);
+  const [packsPerBox, setPacksPerBox] = useState(0);
+  const [manufactured, setManufactured] = useState(false);
+  const [cbm, setCbm] = useState('');
+  const [machines, setMachines] = useState([]);
+  const [machineFormat, setMachineFormat] = useState('');
+  const [selectedItemToEdit, setSelectedItemToEdit] = useState(null);
+  const [boxImage, setBoxImage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [costPrice, setCostPrice] = useState(0);
+  const [freightCost, setFreightCost] = useState(0);
+  const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
@@ -571,6 +572,7 @@ const AdminAddOrEditItem = (props) => {
         //   </FormControl>
         // </Box>
         null}
+        
         <TextField
           required
           disabled={addOrEditItem == 'Edit' ? true : false}
@@ -579,23 +581,16 @@ const AdminAddOrEditItem = (props) => {
           variant="outlined"
           sx={{ marginTop: 3 }}
           value={itemID}
-          onChange={(event) => setItemID(event.target.value)}
+          onChange={(event) => {setItemID(event.target.value)}}
         />
-        <TextField
-          required
-          id="outlined-basic"
-          label="Item Name"
-          variant="outlined"
-          value={itemName}
-          onChange={(event) => setItemName(event.target.value)}
-        />
+
         <TextField
           required
           id="outlined-basic"
           label="Price"
           variant="outlined"
           value={price}
-          onChange={(event) => setPrice(event.target.value)}
+          onChange={(event) => {setPrice(event.target.value)}}
         />
         <TextField
           required

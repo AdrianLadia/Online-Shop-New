@@ -120,7 +120,7 @@ const Admin = () => {
           }
         />
         <Route
-          path="AffiliateClaimRequest"
+          path="affiliateClaimRequest"
           element={
             <div>
               <AdminNavBar />
