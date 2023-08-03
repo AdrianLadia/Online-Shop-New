@@ -2,6 +2,8 @@ import React from 'react'
 import { useState,useEffect,useContext } from 'react'
 import AppContext from '../AppContext'
 import AdminMenu from './AdminMenu'
+import Admin from './Admin'
+
 
 
 const AdminSecurity = () => {
@@ -16,7 +18,7 @@ const AdminSecurity = () => {
             ? 
         <div className='flex flex-col'>
             {/* AdminNavBar */}
-            <AdminMenu />
+            <Admin />
         </div> 
             : 
         'Cannot Access this page without admin rights'

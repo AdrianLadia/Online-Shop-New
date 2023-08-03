@@ -57,9 +57,6 @@ const AdminAddOrEditItem = (props) => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log(categories);
-  }, [categories]);
 
   const { width, height } = useWindowDimensions();
   const products = props.products;
