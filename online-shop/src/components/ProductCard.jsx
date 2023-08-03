@@ -394,7 +394,7 @@ const ProductCard = (props) => {
             </div>
           </Paper>
           <div>
-            <ProductCardModal modal={modal} closeModal={closeModal} product={product} />
+            <ProductCardModal modal={modal} setModal={setModal} product={product} />
           </div>
           <div>
             <Snackbar
