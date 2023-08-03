@@ -44,11 +44,11 @@ class firestoredb extends firestorefunctions {
   async readAllProducts() {
     const products = await retryApi(async () => await super.readAllDataFromCollection('Products'));
     const productsSchema = Joi.array().items(schemas.productSchema());
-
+    
     try {
       await productsSchema.validateAsync(products);
     } catch (error) {
-      // console.log(error)
+      console.log(products)
       throw new Error(error);
     }
 
