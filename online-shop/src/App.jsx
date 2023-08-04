@@ -84,7 +84,6 @@ function App() {
   const [products, setProducts] = useState([]);
   const [goToCheckoutPage, setGoToCheckoutPage] = useState(false);
   const [categories, setCategories] = useState(null);
-  const [initialStartup, setInitialStartup] = useState(true);
   const [selectedChatOrderId, setSelectedChatOrderId] = useState(null);
   const [mayaRedirectUrl, setMayaRedirectUrl] = useState(null);
   const [mayaCheckoutId, setMayaCheckoutId] = useState(null);
@@ -235,6 +234,9 @@ function App() {
                   payments: [],
                   userRole: 'member',
                   affiliate: affiliate,
+                  affiliateClaims : [],
+                  affiliateDeposits : [],
+                  affiliateCommissions : [],
                 },
                 user.uid
               );
@@ -485,7 +487,7 @@ function App() {
           }
         />
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <AppContext.Provider value={appContextValue}>
               <AdminSecurity />

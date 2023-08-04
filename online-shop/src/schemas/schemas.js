@@ -48,6 +48,9 @@ class schemas {
       payments: Joi.array(),
       userRole: Joi.string().required(),
       affiliate : Joi.string().allow(null,''),
+      affiliateClaims: Joi.array(),
+      affiliateDeposits: Joi.array(),
+      affiliateCommissions: Joi.array(),
     }).unknown(false);
   }
 

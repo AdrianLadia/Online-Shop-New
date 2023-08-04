@@ -72,11 +72,10 @@ const style = {
 };
 
 const ProductCardModal = (props) => {
-  const { height, width } = UseWindowDimensions();
+  const { width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
   const { userdata, firestore, favoriteitems, setFavoriteItems, userId } = React.useContext(AppContext);
-  const [onInitialize, setOninitialize] = useState(true);
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const date = new Date();
 
@@ -107,6 +106,10 @@ const ProductCardModal = (props) => {
     piecesPerPack: piecesPerPack,
     packsPerBox: packsPerBox,
   };
+
+  function closeModal() {
+    props.setModal(false);
+  }
 
   function onHeartClick() {
     if (userId === null) return alert('Login to add items to favorites');
@@ -174,8 +177,7 @@ const ProductCardModal = (props) => {
   }, [props.modal]);
 
   return (
-    <Modal open={props.modal} onClose={props.closeModal}>
-      <Scrollbars sx={{ width: 500, height: 300 }}>
+    <Modal open={props.modal} onClose={closeModal} >
         <Fade in={props.modal}>
           <Box sx={style} className="bg-colorbackground border-color60 overflow-x-hidden overflow-y-auto">
             <div className="flex flex-col">
@@ -189,7 +191,7 @@ const ProductCardModal = (props) => {
                 )}
                 {/* X BUTTON */}
                 <button
-                  onClick={props.closeModal}
+                  onClick={closeModal}
                   className=" bg-red1 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
                 >
                   X
@@ -264,7 +266,6 @@ const ProductCardModal = (props) => {
             </div>
           </Box>
         </Fade>
-      </Scrollbars>
     </Modal>
   );
 };

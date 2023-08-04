@@ -41,7 +41,7 @@ const AccountMenu = (props) => {
   };
 
   function adminClick() {
-    navigateTo('/admin');
+    navigateTo('/admin/companyDashboard');
   }
 
   function profileClick() {
