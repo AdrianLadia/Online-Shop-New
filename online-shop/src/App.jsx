@@ -234,6 +234,9 @@ function App() {
                   payments: [],
                   userRole: 'member',
                   affiliate: affiliate,
+                  affiliateClaims : [],
+                  affiliateDeposits : [],
+                  affiliateCommissions : [],
                 },
                 user.uid
               );

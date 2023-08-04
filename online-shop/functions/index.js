@@ -860,10 +860,9 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+
     const data = req.body;
     const depositAmount = data.amount
-    const affiliateUserId = data.affiliateUserId
-    console.log('affiliateUserId',affiliateUserId)
     const commissionPercentage = 0.05
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
@@ -887,7 +886,11 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         // READ
         // const paymentsRef = db.collection('Payments').doc();
         const userRef = db.collection('Users').doc(userId);
-        const affiliateUserRef = db.collection('Users').doc(affiliateUserId)
+        const userSnap = await transaction.get(userRef);
+        const userData = userSnap.data();
+        const affiliateIdOfCustomer = userData.affiliate 
+
+        const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer)
         const affiliateUserSnap = await transaction.get(affiliateUserRef)
 
         const affiliateUserData = affiliateUserSnap.data()
@@ -900,8 +903,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           status: 'claimable',
           claimCode: ''
         }]
-        const userSnap = await transaction.get(userRef);
-        const userData = userSnap.data();
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
@@ -931,7 +932,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         });
 
         // WRITE
-        if (affiliateUserId != null) {
+        if (affiliateIdOfCustomer != null) {
           transaction.update(affiliateUserRef,{affiliateCommissions : newAffiliateCommissions})
         }
 
