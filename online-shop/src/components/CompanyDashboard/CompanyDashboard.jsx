@@ -2,13 +2,14 @@ import React, { useEffect,useContext,useState } from 'react'
 import AppContext from '../../AppContext'
 import businessCalculation from '../customerAnalytics/businessCalculation';
 import PastAverageTimeOrders from './PastAverageTimeOrders';
+import CategoryCheckboxes from './CategoryCheckboxes';
 import { Chart } from 'react-chartjs-2';
 import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend} from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const CompanyDashboard = () => {
 
-    const { firestore,categories } = useContext(AppContext);
+    const { firestore, categories } = useContext(AppContext);
     const businesscalculation = new businessCalculation();
     const [overallTotalSalesValue, setOverallTotalSalesValue] = useState(0);
     const [overallSalesPerItem, setOverallSalesPerItem] = useState([]);
@@ -16,13 +17,14 @@ const CompanyDashboard = () => {
     const [ totalValueOfOrder, setTotalValueOfOrder ] = useState({})
     const [customerData, setCustomerData] = useState([])
     const [ customerTotalValueRanking, setCustomerTotalValueRanking ] = useState([])
-    const [allowedCategories, setAllowedCategories] = useState(['Paper Bag','Meal Box'])
     const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
-    
-    useEffect(() => {
-      console.log('categories', categories);
-    }, [categories]);
+    const [allowedCategories, setAllowedCategories] = useState([])
 
+    useEffect(()=>{
+      if(categories){
+        setAllowedCategories(categories.filter((item)=>item!='Favorites'))
+      }
+    },[categories])
 
     useEffect(() => {
         firestore.readSelectedDataFromCollection('Analytics','PurchaseFrequencyAndTimeBetweenPurchases').then((data) => {
@@ -65,8 +67,6 @@ const CompanyDashboard = () => {
   },[totalValueOfOrder])
 
     useEffect(() => {
-      console.log('overallSalesPerItem', overallSalesPerItem);
-
       let overallSalesPerItemData = {}
 
       Object.keys(overallSalesPerItem).map((date)=>{
@@ -78,29 +78,19 @@ const CompanyDashboard = () => {
           const value = data[key]
           const category = value.category
           const totalValue = value.totalValue
-
           
           if (allowedCategories.includes(category)){
             totalSales += totalValue
           }
-
-
         })
-
         overallSalesPerItemData[date] = totalSales
-
       })
-
-      console.log('overallSalesPerItemData', overallSalesPerItemData);
 
       setOverallTotalSalesValue(overallSalesPerItemData);
 
-    }, [overallSalesPerItem]);
+    }, [overallSalesPerItem, allowedCategories]);
 
     const newData = []
-
-
-
 
     Object.keys(overallTotalSalesValue).map((date)=>{
       if(date.length == 6){
@@ -180,8 +170,11 @@ const CompanyDashboard = () => {
 
   return (
     <div className=' w-full gap-3 flex flex-col justify-center items-center '>
-
-        <div className='flex justify-center items-end h-10per font-serif text-xl md:text-2xl tracking-wider'>Company Dashboard</div>
+      <div className='flex justify-center items-end h-10per font-serif text-xl md:text-2xl tracking-wider'>Company Dashboard</div>
+      {/* {categories} */}
+      <div className='h-quar w-full justify-center xs:w-11/12'>
+        <CategoryCheckboxes categories={categories} setAllowedCategories={setAllowedCategories} allowedCategories={allowedCategories}/>
+      </div>
       <div className='h-80per w-full xs:w-11/12 flex flex-col justify-center items-center font-serif tracking-wider border border-green-400 rounded-lg mt-4'>
         <Chart type='bar' id='chart' data={graphData} options={options}/>
       </div>
