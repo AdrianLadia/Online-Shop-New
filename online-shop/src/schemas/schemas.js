@@ -47,10 +47,10 @@ class schemas {
       favoriteItems: Joi.array(),
       payments: Joi.array(),
       userRole: Joi.string().required(),
-      affiliate : Joi.string().allow(null,''),
-      affiliateClaims: Joi.array(),
-      affiliateDeposits: Joi.array(),
-      affiliateCommissions: Joi.array(),
+      affiliate : Joi.string().required().allow(null,''),
+      affiliateClaims: Joi.array().required(),
+      affiliateDeposits: Joi.array().required(),
+      affiliateCommissions: Joi.array().required(),
     }).unknown(false);
   }
 

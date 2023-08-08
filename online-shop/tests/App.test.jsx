@@ -39,6 +39,10 @@ await cloudfirestore.createNewUser(
     favoriteItems: [],
     payments: [],
     userRole: 'member',
+    affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
   },
   'TESTUSER'
 );
@@ -202,7 +206,7 @@ describe('Business Calcualtions', () => {
       'PPB#1-RET',
     ]);
   });
-  test.only('getValueAddedTax', () => {
+  test('getValueAddedTax', () => {
     const subtotal = 100;
     let expected;
     if (new AppConfig().getNoVat()) {
@@ -214,7 +218,7 @@ describe('Business Calcualtions', () => {
     const vat = businesscalculations.getValueAddedTax(subtotal,'www.imageurl.com', false);
     expect(vat).toBe(expected);
   });
-  test.only('getValueAddedTaxNoVat', () => {
+  test('getValueAddedTaxNoVat', () => {
     const subtotal = 100;
     const expected = 0;
     const vat = businesscalculations.getValueAddedTax(subtotal,'', true);
@@ -251,7 +255,7 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe.only('Data Manipulation', async () => {
+describe('Data Manipulation', async () => {
   test('getSecondsDifferenceBetweentTwoDates', async () => {
     const date1 = new Date(2023, 1, 1);
     const date2 = new Date(2023, 1, 2);
@@ -266,6 +270,7 @@ describe.only('Data Manipulation', async () => {
     const ppb16Price = ppb16.price;
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
+    
 
     await cloudfirestore.transactionPlaceOrder({
       userid: userTestId,
@@ -289,6 +294,7 @@ describe.only('Data Manipulation', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       isInvoiceNeeded: true,
+      urlOfBir2303: '',
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -302,7 +308,7 @@ describe.only('Data Manipulation', async () => {
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
-      amount: 62002,
+      amount: itemsTotal + vat + 2002,
       reference: 'testref1234',
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
@@ -330,6 +336,7 @@ describe.only('Data Manipulation', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -343,7 +350,7 @@ describe.only('Data Manipulation', async () => {
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
-      amount: 62002,
+      amount: itemsTotal + vat + 2002,
       reference: 'testref1234',
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink2',
@@ -429,6 +436,7 @@ describe.only('Data Manipulation', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     const orders = await firestore.readUserById(userTestId);
@@ -585,6 +593,10 @@ describe('Transaction Create Payment', async () => {
         favoriteItems: [],
         payments: [],
         userRole: 'member',
+        affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
       },
       'testuser'
     );
@@ -625,6 +637,10 @@ describe('firestoredb', async () => {
         favoriteItems: [],
         payments: [],
         userRole: 'member',
+        affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
       },
       'test'
     );
@@ -644,6 +660,10 @@ describe('firestoredb', async () => {
         favoriteItems: [],
         payments: [],
         userRole: 'member',
+        affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
       },
       'testuser'
     );
@@ -985,6 +1005,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(200);
 
@@ -1076,6 +1097,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(200);
 
@@ -1101,6 +1123,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await delay(200);
@@ -1127,15 +1150,17 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await delay(200);
 
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
-      amount: 150000,
+      amount: (itemsTotal + vat + 2002) * 2,
       reference: 'testref1234',
       paymentprovider: 'Maya',
+      proofOfPaymentLink: 'www.testlink.com',
     });
 
     await delay(200);
@@ -1157,8 +1182,6 @@ describe('cloudfirestoredb', async () => {
     });
   }, 100000);
   test('transactionCreatePayment', async () => {
-
-    throw new Error('Create a test for commissions added to affiliate, test if commission is added to affiliate')
 
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await delay(100);
@@ -1212,13 +1235,14 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await delay(300);
 
     const req = {
       totalAmount: {
-        value: 62002,
+        value: itemsTotal + vat + 2002,
         currency: 'PHP',
       },
       buyer: {
@@ -1291,6 +1315,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(300);
 
@@ -1305,7 +1330,7 @@ describe('cloudfirestoredb', async () => {
 
     const req2 = {
       totalAmount: {
-        value: 62002,
+        value: itemsTotal + vat + 2002,
         currency: 'PHP',
       },
       buyer: {
@@ -1380,6 +1405,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1404,6 +1430,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1428,11 +1455,12 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     const req3 = {
       totalAmount: {
-        value: 62002,
+        value: itemsTotal + vat + 2002,
         currency: 'PHP',
       },
       buyer: {
@@ -1525,6 +1553,10 @@ describe('cloudfirestoredb', async () => {
         favoriteItems: [],
         payments: [],
         userRole: 'member',
+        affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
       },
       'testuser'
     );
@@ -1646,6 +1678,10 @@ describe('cloudfirestoredb', async () => {
         favoriteItems: [],
         payments: [],
         userRole: 'member',
+        affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
       },
       'testuser'
     );
@@ -1679,6 +1715,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(500);
 
@@ -1713,6 +1750,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(500);
 
@@ -1747,6 +1785,7 @@ describe('cloudfirestoredb', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(300);
 
@@ -1780,6 +1819,10 @@ describe('cloudfirestoredb', async () => {
         favoriteItems: [],
         payments: [],
         userRole: 'member',
+        affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
       },
       'testuser'
     );
@@ -1807,6 +1850,10 @@ describe('cloudfirestoredb', async () => {
         favoriteItems: [],
         payments: [],
         userRole: 'member',
+        affiliate : 'TESTAFFILIATE',
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
       },
       'testuser2'
     );
@@ -1825,7 +1872,7 @@ describe('cloudfirestoredb', async () => {
       return await cloudfirestore.readUserRole(userId);
     });
     const userRoles = await Promise.all(userRolesPromises);
-    const roles = ['member', 'admin', 'superAdmin'];
+    const roles = ['member', 'admin', 'superAdmin','affiliate'];
     userRoles.map((userRole) => {
       expect(roles.includes(userRole)).toEqual(true);
     });
@@ -1856,9 +1903,9 @@ describe('retryApiCall', () => {
   }, 10000000);
 });
 
-describe('deleteOrderFromUserFirestore', () => {
+describe.only('deleteOrderFromUserFirestore', () => {
   test('clean Orders first', async () => {
-    await firestore.updateDocumentFromCollection('Users', 'testuser', { orders: [] });
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
   });
 
   test('creating three orders from testUser', async () => {
@@ -1891,6 +1938,7 @@ describe('deleteOrderFromUserFirestore', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1915,6 +1963,7 @@ describe('deleteOrderFromUserFirestore', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1939,6 +1988,7 @@ describe('deleteOrderFromUserFirestore', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     test('check if reference is added to orderMessages collection', async () => {
@@ -2036,6 +2086,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(300);
   }, 100000);
@@ -2248,6 +2299,7 @@ describe('updatePaymentStatus', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
   });
   test('create Test Payment Proof Upload', async () => {
@@ -2365,6 +2417,7 @@ describe('deleteOldOrders', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await delay(300);
@@ -2406,6 +2459,7 @@ describe('deleteOldOrders', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(2000);
   }, 100000);
@@ -2452,7 +2506,7 @@ describe('deleteOldOrders', () => {
   }, 100000);
 });
 
-describe('transactionPlaceOrder test retail', async () => {
+describe.only('transactionPlaceOrder test retail', async () => {
   test('retail items', async () => {
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
     await delay(300);
@@ -2486,6 +2540,7 @@ describe('transactionPlaceOrder test retail', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
     await delay(300);
     const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2531,6 +2586,7 @@ describe('deleteDeclinedPayments', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -2624,6 +2680,7 @@ describe('testCancelOrder', () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
   });
 
@@ -2755,6 +2812,7 @@ describe('testRetailTransactionPlaceOrder', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      urlOfBir2303: '',
     });
 
     await delay(200);

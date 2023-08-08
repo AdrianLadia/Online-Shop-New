@@ -632,7 +632,7 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ me
         };
 
         const updatedOrders = [newOrder, ...oldOrders];
-
+        console.log(updatedOrders)
         transaction.update(userRef, { orders: updatedOrders });
         // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
         transaction.update(userRef, { cart: {} });
@@ -869,7 +869,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const db = admin.firestore();
     const userId = data.userId;
     const paymentsRef = db.collection('Payments');
-    console.log(proofOfPaymentLink);
+    console.log('proofOfPaymentLink',proofOfPaymentLink);
     const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
     const paymentSnapshot = await paymentQuery.get(); 
     let documentID;
@@ -889,7 +889,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
         const affiliateIdOfCustomer = userData.affiliate 
-
+        console.log(userData)
         const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer)
         const affiliateUserSnap = await transaction.get(affiliateUserRef)
 
