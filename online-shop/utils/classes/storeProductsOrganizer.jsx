@@ -30,8 +30,7 @@ class storeProductsOrganizer {
     if (this.productCategory == 'Meal Box') {
       this.orderOfProducts = ['SPAG500PPB', 'SPAG600PPB', 'MB750TG', 'MB880TG', 'MB1300TG', 'MB1500PPB'];
     }
-      this.orderOfProducts = ['SPAG500PPB', 'SPAG600PPB', 'MB750TG', 'MB880TG', 'MB1300TG', 'MB1500PPB'];
-    }
+
     if (this.productCategory == 'Aluminum Tray') {
       this.orderOfProducts = [
         'ATRE650J','LATRE650J','ATRE2300JK','LATRE2300J','ATRE3100J','LATRE3100J','ATRE4300J','LATRE4300J','ATRO8','LATRO8'

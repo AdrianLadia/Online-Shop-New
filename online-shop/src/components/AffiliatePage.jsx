@@ -9,6 +9,7 @@ const AdminAffiliatePage = () => {
     const { userdata, cloudfirestore, refreshUser } = useContext(AppContext);
     const { height} = useWindowDimensions()
     const paymentMethods = ['GCASH','MAYA','BDO','UNIONBANK'];
+    // affiliate claim Id should be handled by backend
     const affiliateClaimId = [...Array(20)].map(() => Math.random().toString(36)[2]).join('');
     const [chosenMethod, setChosenMethod] = useState(null);
     const [total, setTotal] = useState(0);

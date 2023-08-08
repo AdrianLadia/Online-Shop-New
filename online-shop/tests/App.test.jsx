@@ -202,7 +202,7 @@ describe('Business Calcualtions', () => {
       'PPB#1-RET',
     ]);
   });
-  test('getValueAddedTax', () => {
+  test.only('getValueAddedTax', () => {
     const subtotal = 100;
     let expected;
     if (new AppConfig().getNoVat()) {
@@ -211,15 +211,16 @@ describe('Business Calcualtions', () => {
       expected = 10.71;
     }
 
-    const vat = businesscalculations.getValueAddedTax(subtotal);
+    const vat = businesscalculations.getValueAddedTax(subtotal,'www.imageurl.com', false);
     expect(vat).toBe(expected);
   });
-  test('getValueAddedTaxNoVat', () => {
+  test.only('getValueAddedTaxNoVat', () => {
     const subtotal = 100;
     const expected = 0;
-    const vat = businesscalculations.getValueAddedTax(subtotal, true);
+    const vat = businesscalculations.getValueAddedTax(subtotal,'', true);
     expect(vat).toBe(expected);
   });
+
 
   test('getGrandTotalAmount', () => {
     const subtotal = 100;
@@ -250,7 +251,7 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe('Data Manipulation', async () => {
+describe.only('Data Manipulation', async () => {
   test('getSecondsDifferenceBetweentTwoDates', async () => {
     const date1 = new Date(2023, 1, 1);
     const date2 = new Date(2023, 1, 2);

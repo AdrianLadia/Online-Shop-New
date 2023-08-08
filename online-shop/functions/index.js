@@ -1068,7 +1068,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
   corsHandler(req, res, async () => {
     try {
       // Get the user document
-      const data = req.body;
+      const data = parseData(req.query.data)
       console.log(data);
       const userName = data.userName;
       const paymentMethod = data.paymentMethod;
@@ -1107,6 +1107,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const userDoc = await transaction.get(userRef);
           const userData = userDoc.data();
           const orders = userData.orders;
+          console.log('orders', orders)
           const orderIndex = orders.findIndex((order) => order.reference === orderReference);
           const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
           const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];

@@ -152,7 +152,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       sendEmail: Joi.boolean().required(),
       testing : Joi.boolean().required(),
       isInvoiceNeeded : Joi.boolean().required(),
-      urlOfBir2303 : Joi.string().allow('',null),
+      urlOfBir2303 : Joi.string().required().allow('',null),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -382,9 +382,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         paymentMethod: paymentMethod,
         forTesting: forTesting,
       };
-      // const encodedData = encodeURIComponent(JSON.stringify({ orderReference,userId}));
-      const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, json);
-      // const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}&proofOfPaymentLink=${proofOfPaymentLink}`)
+
+      const encodedData = encodeURIComponent(JSON.stringify(json));
+      const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}`)
       const data = res.data;
       return data;
     } catch (error) {
