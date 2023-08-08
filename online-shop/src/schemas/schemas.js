@@ -48,6 +48,9 @@ class schemas {
       payments: Joi.array(),
       userRole: Joi.string().required(),
       affiliate : Joi.string().allow(null,''),
+      affiliateClaims: Joi.array(),
+      affiliateDeposits: Joi.array(),
+      affiliateCommissions: Joi.array(),
     }).unknown(false);
   }
 
@@ -68,10 +71,10 @@ class schemas {
       material: Joi.string().allow('',null),
       size: Joi.string().allow('',null),
       stocksAvailable: Joi.number().required().invalid('').allow(null),
-      stocksOnHold: Joi.array().allow(null),
+      stocksOnHold: Joi.array(),
       averageSalesPerDay: Joi.number().required().allow(null),
       parentProductID: Joi.string().allow('',null),
-      stocksOnHoldCompleted: Joi.array().allow(null),
+      stocksOnHoldCompleted: Joi.array(),
       forOnlineStore: Joi.boolean().invalid('', null),
       isCustomized: Joi.boolean().required().invalid('', null),
       salesPerMonth: Joi.array(),

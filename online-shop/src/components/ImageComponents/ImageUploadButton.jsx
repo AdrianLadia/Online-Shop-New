@@ -18,6 +18,7 @@ const ImageUploadButton = (props) => {
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
   const disableButton = props.disabled;
+  const setImageProof = props.setImageProof
 
   const [buttonColor, setButtonColor] = useState(false);
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -65,8 +66,6 @@ const ImageUploadButton = (props) => {
             alert('Image uploaded successfully.');
             console.log(downloadURL)
           }
-
-          
         });
       }
       catch {
@@ -91,6 +90,8 @@ const ImageUploadButton = (props) => {
       return ' bg-color10b';
     }
   }
+
+  // setImageProof("https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c")
 
   return (
     <div className="flex justify-center h-3/4 ml-0.5">

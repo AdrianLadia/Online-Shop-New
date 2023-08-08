@@ -24,8 +24,6 @@ class firestoredb extends firestorefunctions {
       return
     }
 
-
-
     let foundSimilarProductId = false;
     products.map((product) => {
       if (product.itemId === data.itemId) {
@@ -46,11 +44,11 @@ class firestoredb extends firestorefunctions {
   async readAllProducts() {
     const products = await retryApi(async () => await super.readAllDataFromCollection('Products'));
     const productsSchema = Joi.array().items(schemas.productSchema());
-
+    
     try {
       await productsSchema.validateAsync(products);
     } catch (error) {
-      // console.log(error)
+      console.log(products)
       throw new Error(error);
     }
 
@@ -75,8 +73,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async updateProduct(id, data) {
-
-  
     const schema = Joi.object({
       itemName: Joi.string().required(),
       unit: Joi.string().required(),
@@ -480,6 +476,36 @@ class firestoredb extends firestorefunctions {
   async readAllMachines() {
     return await super.readAllDataFromCollection('Machines');
   }
+
+  async readAllClaims(ids){
+    try {
+      const userDataArray = await Promise.all(ids.map(async (id) => {
+        const userData = await this.readUserById(id);
+        if(userData.userRole == 'affiliate'){
+          return userData.affiliateClaims
+        }
+      }));
+      const affiliateUserData = userDataArray.filter(userData => userData !== undefined );
+      return affiliateUserData;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  // async markCommissionPending(data, date, id){
+  //   const updatedData = []
+  //   data.map((commissions)=>{
+  //     if(commissions.dateOrdered == date && commissions.status == 'claimable'){
+  //       commissions.status = 'pending'
+  //       updatedData.push(commissions)
+  //     }else{
+  //       updatedData.push(commissions)
+  //     }
+  //   })
+  //   this.updateDocumentFromCollection('users', id, { ['affiliateCommissions']: updatedData });
+  // }
+
 
 }
 

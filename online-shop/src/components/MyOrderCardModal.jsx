@@ -8,10 +8,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api';
-import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
-import UseWindowDimensions from './useWindowDimensions';
+import useWindowDimensions from './UseWindowDimensions';
 import Image from './ImageComponents/Image';
 
 const MyOrderCardModal = (props) => {
@@ -47,9 +46,7 @@ const MyOrderCardModal = (props) => {
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
 
-
-
-  const { width } = UseWindowDimensions();
+  const { width } = useWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
 
   useEffect(() => {

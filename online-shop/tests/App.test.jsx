@@ -1123,7 +1123,7 @@ describe('cloudfirestoredb', async () => {
 
     await delay(200);
 
-    await cloudfirestore.createPayment({
+    await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
       amount: 150000,
       reference: 'testref1234',
@@ -1149,6 +1149,9 @@ describe('cloudfirestoredb', async () => {
     });
   }, 100000);
   test('transactionCreatePayment', async () => {
+
+    throw new Error('Create a test for commissions added to affiliate, test if commission is added to affiliate')
+
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await delay(100);
     const data = {
@@ -1157,7 +1160,7 @@ describe('cloudfirestoredb', async () => {
       reference: 'testref123456789',
       paymentprovider: 'Maya',
     };
-    await cloudfirestore.createPayment(data);
+    await cloudfirestore.transactionCreatePayment(data);
 
     const user = await firestore.readUserById(userTestId);
     const payments = user.payments;
@@ -2761,3 +2764,160 @@ describe('testStoreProductsOrganizer', async () => {
     });
   });
 });
+
+describe.only('test commission system', async () => {
+  test('Setup test', async () => {
+    await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE')
+    await firestore.deleteDocumentFromCollection('Users', 'TESTUSER')
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'TESTAFFILIATE',
+        name: 'affiliate user',
+        email: 'affiliate@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'affiliate',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+      },
+      'TESTAFFILIATE'
+    );
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'TESTUSER',
+        name: 'test user2',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+        affiliate: 'TESTAFFILIATE',
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+      },
+      'TESTUSER'
+    );
+    await cloudfirestore.transactionCreatePayment({
+      userId: 'TESTUSER',
+      amount: 50000,
+      reference: 'testref88',
+      paymentprovider: 'gcash',
+      proofOfPaymentLink: 'www.test.com',
+  
+    })
+    await cloudfirestore.transactionCreatePayment({
+      userId: 'TESTUSER',
+      amount: 100000,
+      reference: 'testref888',
+      paymentprovider: 'gcash',
+      proofOfPaymentLink: 'www.test.com',
+
+    })
+    await cloudfirestore.transactionCreatePayment({
+      userId: 'TESTUSER',
+      amount: 200000,
+      reference: 'testref8888',
+      paymentprovider: 'gcash',
+      proofOfPaymentLink: 'www.test.com',
+
+    })
+
+  });
+  test('check if transaction create payment added commissions to affiliate', async () => {
+    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateCommissions = affiliateData.affiliateCommissions
+    expect(affiliateCommissions.length).toBeGreaterThan(0);
+  });
+  test('affiliate claims commission', async () => {
+    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateCommissions = affiliateData.affiliateCommissions
+    const data1 = {
+      date: new Date().toDateString(),
+      data: affiliateCommissions,
+      id: 'TESTAFFILIATE',
+      claimCode: 'testcode',
+    }
+    const data2 = {
+      affiliateUserId: 'TESTAFFILIATE',
+      affiliateClaimId: 'testcode',
+      method: 'gcash',
+      accountNumber: '0123456789',
+      accountName: 'affiliate user',
+      transactionDate: new Date().toDateString(),
+      amount: 17500,
+      totalDeposited: 0,
+      isDone: false
+    }
+    const data = {
+      data1:data1,
+      data2:data2
+    }
+    await cloudfirestore.onAffiliateClaim(data)
+    await delay(300)
+  });
+  test('check if affiliate claims commission added to affiliate claims', async () => {
+    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateClaims = affiliateData.affiliateClaims
+    const affiliateCommissions = affiliateData.affiliateCommissions
+    expect(affiliateClaims.length).toBeGreaterThan(0);
+    affiliateCommissions.forEach((claim) => {
+      expect(claim.status).toEqual('pending')
+    })
+  });
+  test('admin deposits to affiliate', async () => {
+    
+    await cloudfirestore.addDepositToAffiliate({
+      depositImageUrl : 'www.testlink.com',
+      amountDeposited : parseInt(10000),
+      affiliateClaimId : 'testcode',
+      affiliateUserId: 'TESTAFFILIATE',
+      depositMethod : 'gcash',
+      depositorUserId : 'ADMIN',
+      depositorUserRole : 'admin',
+      transactionDate : new Date().toDateString()
+    })
+    await delay(300)
+    // cloudfirestore.markAffiliateClaimDone(
+    //   {
+    //     claimId: 'testcode',
+    //     userId: 'TESTAFFILIATE',
+    //     date: new Date().toDateString(),
+    //   }
+    // )
+  });
+  test('check if deposited amount is added to affiliate deposits and status is pending', async () => {
+    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateDeposits = affiliateData.affiliateDeposits
+    const affiliateCommissions = affiliateData.affiliateCommissions
+    const affiliateClaims = affiliateData.affiliateClaims
+    expect(affiliateDeposits.length).toBeGreaterThan(0);
+    affiliateCommissions.forEach((commission) => {
+      expect(commission.status).toEqual('pending')
+    })
+
+    affiliateClaims.forEach((claim) => {
+      if (claim.affiliateClaimId == 'testcode') {
+        expect(claim.isDone).toEqual(false)
+      }
+    })
+
+  })
+
+
+})

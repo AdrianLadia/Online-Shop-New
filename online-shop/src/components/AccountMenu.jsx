@@ -21,11 +21,12 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { useLocation } from 'react-router-dom';
 import Badge from '@mui/material/Badge';
+import { TbAffiliate } from "react-icons/tb";
 
 const AccountMenu = (props) => {
   const { pathname } = useLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const { userdata, isadmin, refreshUser, setRefreshUser, setUserState, userstate, userId,unreadOrderMessages, unreadCustomerServiceMessages } = useContext(AppContext);
+  const { userdata, isAffiliate, isadmin, refreshUser, setRefreshUser, setUserState, userstate, userId,unreadOrderMessages, unreadCustomerServiceMessages } = useContext(AppContext);
   const totalUnreadMessages = unreadOrderMessages + unreadCustomerServiceMessages;
 
   const open = Boolean(anchorEl);
@@ -40,7 +41,7 @@ const AccountMenu = (props) => {
   };
 
   function adminClick() {
-    navigateTo('/admin');
+    navigateTo('/admin/companyDashboard');
   }
 
   function profileClick() {
@@ -66,8 +67,11 @@ const AccountMenu = (props) => {
   }
 
   function customerServiceClick() {
-  
     navigateTo('/orderChat', { state: { orderReference: userId, isInquiry: true, backButtonRedirect: pathname } });
+  }
+
+  function affiliateClick(){
+    navigateTo('/affiliate')
   }
 
   return (
@@ -148,7 +152,7 @@ const AccountMenu = (props) => {
         {/* Order History  */}
 
         <MenuItem id="myOrdersMenu" onClick={myOrdersClick} className="hover:bg-color10b">
-          <Badge  badgeContent={unreadOrderMessages} color="error">
+          <Badge badgeContent={unreadOrderMessages} color="error">
             <div className='mr-2'>
             <AiOutlineHistory  size={17} />
             </div>
@@ -184,15 +188,24 @@ const AccountMenu = (props) => {
           </Badge>
           <span className="ml-3 mt-0.5 text-color60">Customer Service</span>
         </MenuItem>
-        <Divider className="mt-1 mb-1" />
-        {isadmin == true? (
+        
+        {isadmin? (
           <div>
+            <Divider className="mt-1 mb-1" />
             <MenuItem id="adminMenu" onClick={adminClick} className="hover:bg-slate-300">
               <RiAdminLine size={21} className="-ml-.5 font-bold text-blue1" />
               <span className="ml-5 mt-1 text-blue1">Admin</span>
             </MenuItem>
           </div>
-        ) : null}
+        ) : isAffiliate ?
+          <div>
+            <Divider className="mt-1 mb-1" />
+            <MenuItem id="adminMenu" onClick={affiliateClick} className="hover:bg-slate-300">
+              <TbAffiliate size={21} className="-ml-.5 font-bold text-color30" />
+              <span className="ml-5 mt-1 text-color30">Affiliate</span>
+            </MenuItem>
+          </div>
+          :null}
       </Menu>
     </React.Fragment>
   );
