@@ -1496,6 +1496,7 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
             updatedClaimData.forEach((claim)=>{
               if (claim.amount == claim.totalDeposited){
                 filledClaimIds.push(claim.affiliateClaimId) 
+                claim.isDone = true
               }
             })
 

@@ -1903,7 +1903,7 @@ describe('retryApiCall', () => {
   }, 10000000);
 });
 
-describe.only('deleteOrderFromUserFirestore', () => {
+describe('deleteOrderFromUserFirestore', () => {
   test('clean Orders first', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
   });
@@ -2506,14 +2506,16 @@ describe('deleteOldOrders', () => {
   }, 100000);
 });
 
-describe.only('transactionPlaceOrder test retail', async () => {
+describe('transactionPlaceOrder test retail', async () => {
   test('retail items', async () => {
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
     await delay(300);
     const ppb1RET = await firestore.readSelectedDataFromCollection('Products', 'PPB#1-RET');
+    const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb1RETPrice = ppb1RET.price;
-    const itemsTotal = (ppb1RETPrice * 11 + 5000) / 1.12;
-    const vat = ppb1RETPrice * 11 + 5000 - itemsTotal;
+    const ppb16Price = ppb16.price;
+    const itemsTotal = (ppb1RETPrice * 11) + (ppb16Price * 1)
+    const vat = 0;
 
     const data = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const stocksAvailable = data.stocksAvailable;
