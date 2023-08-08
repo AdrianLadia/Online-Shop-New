@@ -479,7 +479,7 @@ class dataManipulation {
     return categoryWithFavorites;
   }
 
-  getCheckoutPageTableDate(product_list, cart, cartItemPrice) {
+  getCheckoutPageTableDate(product_list, cart, cartItemPrice,urlOfBir2303) {
     const productListSchema = Joi.array();
     const productListCart = Joi.object();
 
@@ -513,11 +513,12 @@ class dataManipulation {
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
 
-        
+
+            
 
           let row = createData(
             product.imageLinks[0],
-            product.itemName,
+            `${product.itemName} (${product.pieces} pieces)`,
             quantity.toLocaleString(),
             (product.pieces * quantity).toLocaleString(),
             parseInt(productPrice).toLocaleString(),
@@ -532,7 +533,7 @@ class dataManipulation {
     });
 
     const businesscalculations = new businessCalculations();
-    const vat = businesscalculations.getValueAddedTax(total_non_state);
+    const vat = businesscalculations.getValueAddedTax(total_non_state,urlOfBir2303);
     const items_total = total_non_state - vat;
 
     const toReturn = [rows_non_state, items_total, total_weight_non_state, vat];

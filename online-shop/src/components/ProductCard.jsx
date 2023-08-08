@@ -147,10 +147,16 @@ const ProductCard = (props) => {
       if (stocksAvailable <= retailSafetyStock) {
         setOutOfStock(true);
       }
+      else {
+        setOutOfStock(false);
+      }
     }
     if (product.unit != 'Pack') {
       if (product.stocksAvailable <= safetyStock) {
         setOutOfStock(true);
+      }
+      else {
+        setOutOfStock(false);
       }
     }
     if (product.unit == 'Pack') {

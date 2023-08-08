@@ -474,7 +474,12 @@ class businessCalculations {
     }
   }
 
-  getValueAddedTax(totalPrice,noVat = new AppConfig().getNoVat()) {
+  getValueAddedTax(totalPrice,urlOfBir2303,noVat = new AppConfig().getNoVat()) {
+    console.log(urlOfBir2303)
+    if (urlOfBir2303 == '') {
+      return 0
+    }
+
     const totalPriceSchema = Joi.number().required();
     const { error } = totalPriceSchema.validate(totalPrice);
     if (error) {

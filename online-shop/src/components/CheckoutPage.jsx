@@ -27,6 +27,7 @@ import Geocode from 'react-geocode';
 import Button from '@mui/material/Button';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import Image from './ImageComponents/Image';
+import AppConfig from '../AppConfig';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -67,6 +68,7 @@ const CheckoutPage = () => {
     setMayaCheckoutId,
     paymentMethodSelected,
     storage,
+    openProfileUpdaterModal
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -119,6 +121,13 @@ const CheckoutPage = () => {
 
   const [urlOfBir2303, setUrlOfBir2303] = useState('');
 
+  // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
+  useEffect(() => {
+    if (openProfileUpdaterModal || userdata === null) {
+      navigateTo('/shop');
+    }
+  }, [openProfileUpdaterModal,userdata]);
+
   // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
   useEffect(() => {
     setRowsMountCount(rowsMountCount + 1);
@@ -133,7 +142,7 @@ const CheckoutPage = () => {
     }
   }, [rowsMountCount]);
 
-  // GEO CODE
+  // freeDelivery Checker
 
   // PAYMENT METHODS
 
@@ -142,18 +151,18 @@ const CheckoutPage = () => {
       const [rows_non_state, total_non_state, total_weight_non_state, vat] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart,
-        null
+        null,
+        urlOfBir2303
       );
 
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
-
       setTotal(total_non_state);
       setTotalWeight(total_weight_non_state);
     }
     getTableData();
-  }, []);
+  }, [urlOfBir2303]);
 
   // PAYMENT METHODS
   useEffect(() => {
@@ -210,11 +219,17 @@ const CheckoutPage = () => {
     setArea(areasInsideDeliveryLocation);
     const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
-      setDeliveryFee(deliveryFee);
+      if (total >= new AppConfig().getFreeDeliveryThreshold()) {
+        setDeliveryFee(0);
+      }
+      else {
+        setDeliveryFee(deliveryFee);
+      }
       setDeliveryVehicle(vehicleObject);
     }
 
     if (!areasInsideDeliveryLocation.includes('lalamoveServiceArea') && area.length > 0) {
+      
       setDeliveryFee(500);
       setDeliveryVehicle(vehicleObject);
       setUseShippingLine(true);
@@ -223,6 +238,14 @@ const CheckoutPage = () => {
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   async function onPlaceOrder() {
+
+    if (isInvoiceNeeded) {
+      if (urlOfBir2303 === '') {
+        alert('Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.');
+        return;
+      }
+    }
+
     if (paymentMethodSelected == null) {
       alert('Please select a payment method');
       setPlaceOrderLoading(false);
@@ -325,7 +348,7 @@ const CheckoutPage = () => {
         const { lat, lng } = response.results[0].geometry.location;
         setLocalLatitude(lat);
         setLocalLongitude(lng);
-        setZoom(15);
+        setZoom(18);
         setAddressGeocodeSearch('');
         setLocalDeliveryAddress('');
       },
@@ -338,6 +361,8 @@ const CheckoutPage = () => {
   function on2303Upload(url) {
     setUrlOfBir2303(url)
   }
+
+
 
   return (
     <ThemeProvider theme={theme}>

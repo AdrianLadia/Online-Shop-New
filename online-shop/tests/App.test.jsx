@@ -2837,6 +2837,7 @@ describe.only('test commission system', async () => {
       proofOfPaymentLink: 'www.test.com',
 
     })
+    await delay(300)
 
   });
   test('check if transaction create payment added commissions to affiliate', async () => {
@@ -2880,7 +2881,7 @@ describe.only('test commission system', async () => {
       expect(claim.status).toEqual('pending')
     })
   });
-  test('admin deposits to affiliate', async () => {
+  test('admin deposits to affiliate 10000 / 17500 only', async () => {
     
     await cloudfirestore.addDepositToAffiliate({
       depositImageUrl : 'www.testlink.com',
@@ -2893,13 +2894,6 @@ describe.only('test commission system', async () => {
       transactionDate : new Date().toDateString()
     })
     await delay(300)
-    // cloudfirestore.markAffiliateClaimDone(
-    //   {
-    //     claimId: 'testcode',
-    //     userId: 'TESTAFFILIATE',
-    //     date: new Date().toDateString(),
-    //   }
-    // )
   });
   test('check if deposited amount is added to affiliate deposits and status is pending', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
@@ -2916,7 +2910,35 @@ describe.only('test commission system', async () => {
         expect(claim.isDone).toEqual(false)
       }
     })
+  })
+  test('admin deposits to affiliate 7500 to fully pay claim', async () => {
+    await cloudfirestore.addDepositToAffiliate({
+      depositImageUrl : 'www.testlink.com',
+      amountDeposited : parseInt(7500),
+      affiliateClaimId : 'testcode',
+      affiliateUserId: 'TESTAFFILIATE',
+      depositMethod : 'gcash',
+      depositorUserId : 'ADMIN',
+      depositorUserRole : 'admin',
+      transactionDate : new Date().toDateString()
+    })
+    await delay(300)
+  });
+  test('check if deposited amount is added to affiliate deposits and status is done', async () => {
+    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateDeposits = affiliateData.affiliateDeposits
+    const affiliateCommissions = affiliateData.affiliateCommissions
+    const affiliateClaims = affiliateData.affiliateClaims
+    expect(affiliateDeposits.length).toBeGreaterThan(1);
+    affiliateCommissions.forEach((commission) => {
+      expect(commission.status).toEqual('claimed')
+    })
 
+    affiliateClaims.forEach((claim) => {
+      if (claim.affiliateClaimId == 'testcode') {
+        expect(claim.isDone).toEqual(true)
+      }
+    })
   })
 
 

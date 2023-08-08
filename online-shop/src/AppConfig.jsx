@@ -4,8 +4,14 @@ class AppConfig {
     constructor() {
         this.isDevEnvironment = true
         this.isPaymentSandBox = true
-        this.noVat = true
+        this.noVat = false
         this.retailSafetyStock = 2
+        this.freeDeliveryThreshold = 10000
+
+    }
+
+    getFreeDeliveryThreshold() {
+        return this.freeDeliveryThreshold
     }
 
     getIsDevEnvironment() {
