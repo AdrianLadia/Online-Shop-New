@@ -110,6 +110,7 @@ const CheckoutProofOfPayment = (props) => {
             )}
 
             <p>Once you have completed the payment, please <strong>submit proof of payment using the button below or in My Orders Menu</strong>.</p>
+            <p>We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time frame, your order will be cancelled.</p>
 
             <Divider className="mt-5 mb-5"></Divider>
             {/* <CheckoutSummary/> */}
@@ -137,7 +138,7 @@ const CheckoutProofOfPayment = (props) => {
               </div>
               <div className="flex justify-center mt-2">
                 <Typography variant="h7" sx={{ marginRight: 1 }}>
-                  If payment is not received within the time frame, your order will be cancelled.
+                  
                 </Typography>
               </div>
             </div>

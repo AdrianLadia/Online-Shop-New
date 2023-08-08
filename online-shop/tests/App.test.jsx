@@ -287,6 +287,7 @@ describe('Data Manipulation', async () => {
       needAssistance: true,
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
+      isInvoiceNeeded: true,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -307,6 +308,7 @@ describe('Data Manipulation', async () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -405,6 +407,7 @@ describe('Data Manipulation', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -960,6 +963,7 @@ describe('cloudfirestoredb', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1050,6 +1054,7 @@ describe('cloudfirestoredb', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1074,6 +1079,7 @@ describe('cloudfirestoredb', async () => {
     await delay(200);
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1099,6 +1105,7 @@ describe('cloudfirestoredb', async () => {
     await delay(200);
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1183,6 +1190,7 @@ describe('cloudfirestoredb', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     const result = await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1261,6 +1269,7 @@ describe('cloudfirestoredb', async () => {
     expect(found1).toEqual(true);
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1349,6 +1358,7 @@ describe('cloudfirestoredb', async () => {
     expect(user3orders.length).toEqual(2);
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1372,6 +1382,7 @@ describe('cloudfirestoredb', async () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1395,6 +1406,7 @@ describe('cloudfirestoredb', async () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1645,6 +1657,7 @@ describe('cloudfirestoredb', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: 'testuser',
       username: 'testname',
       localDeliveryAddress: 'Test City',
@@ -1678,6 +1691,7 @@ describe('cloudfirestoredb', async () => {
     expect(orders).length(1);
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: 'testuser',
       username: 'testname',
       localDeliveryAddress: 'Test City',
@@ -1711,6 +1725,7 @@ describe('cloudfirestoredb', async () => {
     expect(orders2).length(2);
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: 'testuser',
       username: 'testname',
       localDeliveryAddress: 'Test City 2',
@@ -1854,6 +1869,7 @@ describe('deleteOrderFromUserFirestore', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1877,6 +1893,7 @@ describe('deleteOrderFromUserFirestore', () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1900,6 +1917,7 @@ describe('deleteOrderFromUserFirestore', () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -1996,6 +2014,7 @@ describe('updateOrderProofOfPaymentLink', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2207,6 +2226,7 @@ describe('updatePaymentStatus', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2322,6 +2342,7 @@ describe('deleteOldOrders', () => {
     const vat = ppb12Price * 12 + ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       testing:true,
       userid: userTestId,
       username: 'Adrian',
@@ -2363,6 +2384,7 @@ describe('deleteOldOrders', () => {
     await delay(300);
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2442,6 +2464,7 @@ describe('transactionPlaceOrder test retail', async () => {
     const stocksAvailable = data.stocksAvailable;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2486,6 +2509,7 @@ describe('deleteDeclinedPayments', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2578,6 +2602,7 @@ describe('testCancelOrder', () => {
     const vat = ppb16Price * 12 + ppb16RetPrice * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -2707,6 +2732,7 @@ describe('testRetailTransactionPlaceOrder', async () => {
     const ppb3WholesaleOldStocks = oldPpb3Wholesale.stocksAvailable;
 
     await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
       testing : true,
       userid: userTestId,
       username: 'Adrian',
@@ -2765,7 +2791,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe.only('test commission system', async () => {
+describe('test commission system', async () => {
   test('Setup test', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE')
     await firestore.deleteDocumentFromCollection('Users', 'TESTUSER')
@@ -2837,6 +2863,7 @@ describe.only('test commission system', async () => {
       proofOfPaymentLink: 'www.test.com',
 
     })
+    await delay(300)
 
   });
   test('check if transaction create payment added commissions to affiliate', async () => {
@@ -2880,7 +2907,7 @@ describe.only('test commission system', async () => {
       expect(claim.status).toEqual('pending')
     })
   });
-  test('admin deposits to affiliate', async () => {
+  test('admin deposits to affiliate 10000 / 17500 only', async () => {
     
     await cloudfirestore.addDepositToAffiliate({
       depositImageUrl : 'www.testlink.com',
@@ -2893,13 +2920,6 @@ describe.only('test commission system', async () => {
       transactionDate : new Date().toDateString()
     })
     await delay(300)
-    // cloudfirestore.markAffiliateClaimDone(
-    //   {
-    //     claimId: 'testcode',
-    //     userId: 'TESTAFFILIATE',
-    //     date: new Date().toDateString(),
-    //   }
-    // )
   });
   test('check if deposited amount is added to affiliate deposits and status is pending', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
@@ -2916,8 +2936,34 @@ describe.only('test commission system', async () => {
         expect(claim.isDone).toEqual(false)
       }
     })
-
   })
+  test('admin deposits to affiliate 7500 to fully pay claim', async () => {
+    await cloudfirestore.addDepositToAffiliate({
+      depositImageUrl : 'www.testlink.com',
+      amountDeposited : parseInt(7500),
+      affiliateClaimId : 'testcode',
+      affiliateUserId: 'TESTAFFILIATE',
+      depositMethod : 'gcash',
+      depositorUserId : 'ADMIN',
+      depositorUserRole : 'admin',
+      transactionDate : new Date().toDateString()
+    })
+    await delay(300)
+  });
+  test('check if deposited amount is added to affiliate deposits and status is done', async () => {
+    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateDeposits = affiliateData.affiliateDeposits
+    const affiliateCommissions = affiliateData.affiliateCommissions
+    const affiliateClaims = affiliateData.affiliateClaims
+    expect(affiliateDeposits.length).toBeGreaterThan(1);
+    affiliateCommissions.forEach((commission) => {
+      expect(commission.status).toEqual('paid')
+    })
 
-
+    affiliateClaims.forEach((claim) => {
+      if (claim.affiliateClaimId == 'testcode') {
+        expect(claim.isDone).toEqual(true)
+      }
+    })
+  })
 })

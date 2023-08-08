@@ -1465,27 +1465,56 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
       if(depositorUserRole == 'admin' || depositorUserRole == 'superAdmin'){
         // Add data to affiliates account affiliateDeposits
         const db = admin.firestore();
-        const docRef = await db.collection('Users').doc(affiliateUserId).get();
-        const affiliateUserData = docRef.data()
-        const oldAffiliateDeposits = affiliateUserData.affiliateDeposits
-        const oldAffiliateClaims = affiliateUserData.affiliateClaims
-        const updatedClaimData = []
-        oldAffiliateClaims.map((claims)=>{
-          if(claims.affiliateClaimId == claimId){
-            claims.totalDeposited += amountDeposited
-            updatedClaimData.push(claims)
-          }else{
-            updatedClaimData.push(claims)
-          }
-        })
-        const updatedData = []
-        oldAffiliateDeposits.map((oldDeposits)=>{
-          updatedData.push(oldDeposits)
-        })
-        updatedData.push(data)
-        const userRef = db.collection('Users').doc(affiliateUserId)
-        await userRef.update({affiliateClaims:updatedClaimData});
-        await userRef.update({affiliateDeposits:updatedData});
+        try{
+          db.runTransaction(async (transaction) => {
+            const userRef = db.collection('Users').doc(affiliateUserId)
+            const docRef = await userRef.get();
+            const affiliateUserData = docRef.data()
+            const oldAffiliateDeposits = affiliateUserData.affiliateDeposits
+            const oldAffiliateClaims = affiliateUserData.affiliateClaims
+            const oldAffiliateCommissions = affiliateUserData.affiliateCommissions
+            // UPDATE AFFILIATE CLAIMS
+            const updatedClaimData = []
+            oldAffiliateClaims.map((claims)=>{
+              if(claims.affiliateClaimId == claimId){
+                claims.totalDeposited += amountDeposited
+                updatedClaimData.push(claims)
+              }else{
+                updatedClaimData.push(claims)
+              }
+            })
+            // UPDATE AFFILIATE DEPOSITS
+            const updatedData = []
+            oldAffiliateDeposits.map((oldDeposits)=>{
+              updatedData.push(oldDeposits)
+            })
+            updatedData.push(data)
+            // UPDATE AFFILIATE COMMISSIONS
+            const updatedCommissionData = []
+            const filledClaimIds = []
+            updatedClaimData.forEach((claim)=>{
+              if (claim.amount == claim.totalDeposited){
+                filledClaimIds.push(claim.affiliateClaimId) 
+              }
+            })
+
+            oldAffiliateCommissions.forEach((commission)=>{
+              if (filledClaimIds.includes(commission.claimCode)){
+                commission.status = 'paid'
+              }
+              updatedCommissionData.push(commission)
+            })
+            
+
+            transaction.update(userRef, {affiliateClaims:updatedClaimData});
+            transaction.update(userRef, {affiliateDeposits:updatedData});
+            transaction.update(userRef, {affiliateCommissions:updatedCommissionData})
+
+          });
+        }
+        catch(e) {
+          res.status(400).send('Error adding deposit to affiliate.');
+        }
       }else{
         res.status(401)
       }

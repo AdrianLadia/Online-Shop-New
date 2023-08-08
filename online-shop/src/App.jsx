@@ -450,7 +450,8 @@ function App() {
     isGoogleChrome : isGoogleChrome,
     affiliate : affiliate,
     setAffiliate : setAffiliate,
-    isAffiliate: isAffiliate
+    isAffiliate: isAffiliate,
+    openProfileUpdaterModal: openProfileUpdaterModal,
   };
 
   return (
