@@ -2931,7 +2931,7 @@ describe.only('test commission system', async () => {
     const affiliateClaims = affiliateData.affiliateClaims
     expect(affiliateDeposits.length).toBeGreaterThan(1);
     affiliateCommissions.forEach((commission) => {
-      expect(commission.status).toEqual('claimed')
+      expect(commission.status).toEqual('paid')
     })
 
     affiliateClaims.forEach((claim) => {
