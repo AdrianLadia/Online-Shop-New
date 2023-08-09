@@ -51,6 +51,8 @@ class schemas {
       affiliateClaims: Joi.array().required(),
       affiliateDeposits: Joi.array().required(),
       affiliateCommissions: Joi.array().required(),
+      bir2303Link: Joi.string().required().allow(null,''),
+      affiliateId : Joi.string().required().allow(null,''),
     }).unknown(false);
   }
 

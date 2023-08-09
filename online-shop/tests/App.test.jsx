@@ -43,6 +43,8 @@ await cloudfirestore.createNewUser(
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
   },
   'TESTUSER'
 );
@@ -597,6 +599,8 @@ describe('Transaction Create Payment', async () => {
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
       },
       'testuser'
     );
@@ -641,6 +645,8 @@ describe('firestoredb', async () => {
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
       },
       'test'
     );
@@ -664,6 +670,8 @@ describe('firestoredb', async () => {
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
       },
       'testuser'
     );
@@ -944,7 +952,7 @@ describe('cloudfirestorefunctions', async () => {
 
 describe('getCartCount', () => {
   test('getCartCount', () => {
-    const { getCartCount } = require('../functions/index.js');
+    const { getCartCount, transactionPlaceOrder } = require('../functions/index.js');
     const getCartCountBusinessCalculations = businesscalculations.getCartCount;
 
     const count = getCartCountBusinessCalculations(['PPB#1']);
@@ -1557,6 +1565,8 @@ describe('cloudfirestoredb', async () => {
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
       },
       'testuser'
     );
@@ -1663,7 +1673,7 @@ describe('cloudfirestoredb', async () => {
       'test2',allProducts
     );
 
-    await firestore.createNewUser(
+    await cloudfirestore.createNewUser(
       {
         uid: 'testuser',
         name: 'test',
@@ -1682,6 +1692,8 @@ describe('cloudfirestoredb', async () => {
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
       },
       'testuser'
     );
@@ -1823,6 +1835,8 @@ describe('cloudfirestoredb', async () => {
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
       },
       'testuser'
     );
@@ -1854,6 +1868,8 @@ describe('cloudfirestoredb', async () => {
     affiliateClaims: [],
     affiliateDeposits: [],
     affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
       },
       'testuser2'
     );
@@ -2852,7 +2868,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe('test commission system', async () => {
+describe.only('test commission system', async () => {
   test('Setup test', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE')
     await firestore.deleteDocumentFromCollection('Users', 'TESTUSER')
@@ -2875,6 +2891,8 @@ describe('test commission system', async () => {
         affiliateClaims: [],
         affiliateDeposits: [],
         affiliateCommissions: [],
+        bir2303Link : null,
+        affiliateId : null,
       },
       'TESTAFFILIATE'
     );
@@ -2897,13 +2915,40 @@ describe('test commission system', async () => {
         affiliateClaims: [],
         affiliateDeposits: [],
         affiliateCommissions: [],
+        bir2303Link : null,
+        affiliateId : null,
       },
       'TESTUSER'
     );
+    await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
+      testing : true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10,'PPB#3':1 },
+      itemstotal: 350000,
+      vat: 0,
+      shippingtotal: 100,
+      grandTotal: 1000,
+      reference: 'testref12',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+    })
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
       amount: 50000,
-      reference: 'testref88',
+      reference: 'testref12',
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
   
@@ -2911,7 +2956,7 @@ describe('test commission system', async () => {
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
       amount: 100000,
-      reference: 'testref888',
+      reference: 'testref12',
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
 
@@ -2919,7 +2964,7 @@ describe('test commission system', async () => {
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
       amount: 200000,
-      reference: 'testref8888',
+      reference: 'testref12',
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
 
@@ -3026,5 +3071,79 @@ describe('test commission system', async () => {
         expect(claim.isDone).toEqual(true)
       }
     })
+  })
+  test('create another order with vat and pay' , async () => {
+    await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
+      testing : true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10,'PPB#3':1 },
+      itemstotal: 8928.57,
+      vat: 1071.43,
+      shippingtotal: 1000,
+      grandTotal: 11000,
+      reference: 'testref1234567',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+    })
+  })
+  test('pay order with vat', async () => {
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 11000,
+      reference: 'testref1234567',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    })
+    const affiliateData = await cloudfirestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const commissions = affiliateData.affiliateCommissions
+    let found = false
+    commissions.forEach((commission) => {
+      if (commission.commission == 261.64281528) {
+        found = true
+      }
+    })
+    expect(found).toEqual(true)
+  })
+
+})
+
+
+describe('test bir2303Link functions', () => {
+  test('setup test', async () => {
+    await firestore.updateDocumentFromCollection('Users', 'TESTUSER', {
+      bir2303Link: null
+    })
+  })
+  test('add link', async () => {
+    await firestore.addBir2303Link('TESTUSER','www.testlink.com')
+    await delay(300)
+    const userdata = await firestore.readSelectedDataFromCollection('Users', 'TESTUSER')
+    expect(userdata.bir2303Link).toEqual('www.testlink.com')
+  })
+  test('delete link', async () => {
+    await firestore.deleteBir2303Link('TESTUSER')
+    await delay(300)
+    const userdata = await firestore.readSelectedDataFromCollection('Users', 'TESTUSER')
+    expect(userdata.bir2303Link).toEqual(null)
+  })
+})
+
+describe('get all affiliates', () => {
+  test('invoke function', async () => {
+    const users = await cloudfirestore.getAllAffiliateUsers()
+    expect(users.length).toBeGreaterThan(0)
   })
 })

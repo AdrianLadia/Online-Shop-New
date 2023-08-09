@@ -287,15 +287,7 @@ function MyOrderCard(props) {
               </p>
             </button>
 
-            {/* <ImageUploadButton
-              id={`order-${order.reference}`}
-              onUploadFunction={onUpload}
-              storage={storage}
-              folderName={'Orders/' + userId + '/' + order.reference}
-              buttonTitle={'Upload Proof of Payment'}
-              variant="outlined"
-              disabled={disableButton()}
-            /> */}
+
           </div>
         </div>
       </div>

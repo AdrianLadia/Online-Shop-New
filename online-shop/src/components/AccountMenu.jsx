@@ -27,7 +27,10 @@ const AccountMenu = (props) => {
   const { pathname } = useLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const { userdata, isAffiliate, isadmin, refreshUser, setRefreshUser, setUserState, userstate, userId,unreadOrderMessages, unreadCustomerServiceMessages } = useContext(AppContext);
+  
   const totalUnreadMessages = unreadOrderMessages + unreadCustomerServiceMessages;
+  
+
 
   const open = Boolean(anchorEl);
 

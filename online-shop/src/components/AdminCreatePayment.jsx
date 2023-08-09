@@ -41,6 +41,9 @@ const AdminCreatePayment = (props) => {
   const dummy = useRef(null);
   const [paymentLink, setPaymentLink] = React.useState('');
   const [allPaymentProviders, setAllPaymentProviders] = React.useState([])
+  const [userid, setUserid] = React.useState('');
+  const [unpaidOrdersReference, setUnpaidOrdersReference] = React.useState([]);
+  
 
   useEffect(() => {
     firestore.readAllPaymentProviders().then((result) => {
@@ -50,20 +53,39 @@ const AdminCreatePayment = (props) => {
   }, []);
 
 
+
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
     setAllUserNames(customers);
   }, [users]);
 
+  useEffect(() => {
+    setReference('');
+    if (selectedName != '') {
+      const userId = datamanipulation.getUserUidFromUsers(users, selectedName);
+      setUserid(userId);
+      firestore.readAllOrdersByUserId(userId).then((result) => {
+        const unpaidOrdersReference = []        
+        result.forEach((data) => {
+          if (data.paid == false) {
+            unpaidOrdersReference.push(data.reference);
+          }
+        });
+        setUnpaidOrdersReference(unpaidOrdersReference);
+      });
+
+    }
+
+  }, [selectedName]);
+
   async function onCreatePayment() {
-    const userid = datamanipulation.getUserUidFromUsers(users, selectedName);
+    
     const data = {
       userId: userid,
       amount: parseFloat(amount),
       reference: reference,
       paymentprovider: paymentProvider,
       proofOfPaymentLink: paymentLink,
-      affiliateUserId : 'm3XqOfwYVchb1jwe9Jpat5ZrzJYJ'
     };
 
     const customerEmail = await firestore.readEmailAddressByUserId(userid);
@@ -74,7 +96,6 @@ const AdminCreatePayment = (props) => {
       reference: Joi.string().required(),
       paymentprovider: Joi.string().required(),
       proofOfPaymentLink: Joi.string().uri().required(),
-      affiliateUserId : Joi.string().allow('',null)
     });
 
     const { error } = paymentSchema.validate(data);
@@ -131,6 +152,7 @@ const AdminCreatePayment = (props) => {
               sx={style}
             />
 
+
             <TextField
               id="amountPayment"
               onChange={(event) => setAmount(event.target.value)}
@@ -141,7 +163,17 @@ const AdminCreatePayment = (props) => {
               value={amount}
               typeof="number"
             />
-
+            <Autocomplete
+              value={reference}
+              onChange={(event, value) => setReference(value)}
+              disablePortal
+              id="referencePayment"
+              options={unpaidOrdersReference}
+              renderInput={(params) => <TextField {...params} label="Reference" InputLabelProps={labelStyle} />}
+              className="flex w-full"
+              sx={style}
+            />
+{/* 
             <TextField
               id="referencePayment"
               onChange={(event) => setReference(event.target.value)}
@@ -150,7 +182,7 @@ const AdminCreatePayment = (props) => {
               InputLabelProps={labelStyle}
               sx={style}
               value={reference}
-            />
+            /> */}
 
             <Autocomplete
               onChange={(event, value) => setPaymentProvider(value)}

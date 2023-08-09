@@ -105,8 +105,20 @@ function App() {
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
   const [affiliate, setAffiliate] = useState(null);
 
+
   useEffect(() => {
-    if (userdata != null) {
+    cloudfirestore.getIpAddress().then((ipAddress) => {
+      const data = {
+        ipAddress: ipAddress,
+        dateTime : new Date(),
+        pageOpened : window.location.href
+      }
+      firestore.addDataToPageOpens(data)
+    });
+  }, []);
+
+  useEffect(() => {
+    if (userdata != null ) {
       let unreadCustomerServiceMessages = 0;
       firestore.readOrderMessageByReference(userdata.uid).then((messages) => {
         messages.messages.forEach((message) => {
@@ -116,21 +128,23 @@ function App() {
             }
           }
         });
-
+        console.log(unreadCustomerServiceMessages)
         setUnreadCustomerServiceMessages(unreadCustomerServiceMessages);
       });
 
       let unreadOrderMessages = 0;
+      
       orders.map((order) => {
         firestore.readOrderMessageByReference(order.reference).then((messages) => {
           messages.messages.forEach((message) => {
             if (message.userId != userdata.uid) {
+              
               if (message.read === false) {
                 unreadOrderMessages += 1;
               }
             }
           });
-
+          console.log('setting')
           setUnreadOrderMessages(unreadOrderMessages);
         });
       });
@@ -237,6 +251,8 @@ function App() {
                   affiliateClaims : [],
                   affiliateDeposits : [],
                   affiliateCommissions : [],
+                  bir2303Link : null,
+                  affiliateId : null,
                 },
                 user.uid
               );
@@ -433,8 +449,6 @@ function App() {
     setUnreadCustomerServiceMessages: setUnreadCustomerServiceMessages,
     isAndroidDevice: isAndroidDevice,
     isGoogleChrome: isGoogleChrome,
-    affiliate: affiliate,
-    setAffiliate: setAffiliate,
     updateCartInfo:updateCartInfo,
     setUpdateCartInfo:setUpdateCartInfo,
     isAppleDevice : isAppleDevice,
@@ -442,8 +456,6 @@ function App() {
     setAllUserData:setAllUserData,
     inquiryMessageSwitch : inquiryMessageSwitch,
     setInquiryMessageSwitch : setInquiryMessageSwitch,
-    unreadOrderMessages : unreadOrderMessages,
-    setUnreadOrderMessages : setUnreadOrderMessages,
     unreadCustomerServiceMessages : unreadCustomerServiceMessages,
     setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
     isAndroidDevice : isAndroidDevice,

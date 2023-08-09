@@ -68,7 +68,8 @@ const CheckoutPage = () => {
     setMayaCheckoutId,
     paymentMethodSelected,
     storage,
-    openProfileUpdaterModal
+    openProfileUpdaterModal,
+    firestore,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -121,12 +122,20 @@ const CheckoutPage = () => {
 
   const [urlOfBir2303, setUrlOfBir2303] = useState('');
 
+  // Get url of bir2303
+  useEffect(() => {
+    const userDataUrlOfBir2303 = userdata?.bir2303Link;
+    if (userDataUrlOfBir2303) {
+      setUrlOfBir2303(userDataUrlOfBir2303);
+    }
+  }, [userdata]);
+
   // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
   useEffect(() => {
     if (openProfileUpdaterModal || userdata === null) {
       navigateTo('/shop');
     }
-  }, [openProfileUpdaterModal,userdata]);
+  }, [openProfileUpdaterModal, userdata]);
 
   // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
   useEffect(() => {
@@ -221,15 +230,13 @@ const CheckoutPage = () => {
     if (inLalamoveSericeArea) {
       if (total >= new AppConfig().getFreeDeliveryThreshold()) {
         setDeliveryFee(0);
-      }
-      else {
+      } else {
         setDeliveryFee(deliveryFee);
       }
       setDeliveryVehicle(vehicleObject);
     }
 
     if (!areasInsideDeliveryLocation.includes('lalamoveServiceArea') && area.length > 0) {
-      
       setDeliveryFee(500);
       setDeliveryVehicle(vehicleObject);
       setUseShippingLine(true);
@@ -238,10 +245,11 @@ const CheckoutPage = () => {
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   async function onPlaceOrder() {
-
     if (isInvoiceNeeded) {
       if (urlOfBir2303 === '') {
-        alert('Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.');
+        alert(
+          'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
+        );
         return;
       }
     }
@@ -319,8 +327,8 @@ const CheckoutPage = () => {
         setZoom(15);
       }
       if (userdata.contactPerson.length == 0) {
-        console.log(userdata)
-        
+        console.log(userdata);
+
         setLocalPhoneNumber(userdata.phoneNumber);
       }
     }
@@ -358,11 +366,15 @@ const CheckoutPage = () => {
     );
   }
 
-  function on2303Upload(url) {
-    setUrlOfBir2303(url)
+  async function on2303Upload(url) {
+    await firestore.addBir2303Link(userdata.uid, url);
+    setUrlOfBir2303(url);
   }
 
-
+  async function removeBir2303() {
+    await firestore.deleteBir2303Link(userdata.uid);
+    setUrlOfBir2303('');
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -691,21 +703,39 @@ const CheckoutPage = () => {
                 </div>
 
                 {isInvoiceNeeded ? (
-                  <div>
-                    <Typography variant="h7" className="flex justify-center mb-5 mx-5">
-                      We need to get your BIR 2303 Form to process your invoice. Please upload a photo below.
-                    </Typography>
-                    <ImageUploadButton
-                      buttonTitle={'Upload BIR 2303 Form'}
-                      storage={storage}
-                      folderName={`2303Forms/${userdata.uid}`}
-                      onUploadFunction={on2303Upload}
-
-                    />
-                    <div className="flex justify-center mt-5 mx-5">
-                      <Image imageUrl={urlOfBir2303} />
+                  urlOfBir2303 != '' ? (
+                    <>
+                      <div className="flex justify-center m-5">
+                        <Image imageUrl={urlOfBir2303} />
+                      </div>
+                      <div className="flex justify-center m-5">
+                        <ImageUploadButton
+                          buttonTitle={'Update BIR 2303 Form'}
+                          storage={storage}
+                          folderName={`2303Forms/${userdata.uid}`}
+                          onUploadFunction={on2303Upload}
+                        >
+                          update BIR 2303
+                        </ImageUploadButton>
+                        <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">Remove BIR 2303</button>
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <Typography variant="h7" className="flex justify-center mb-5 mx-5">
+                        We need to get your BIR 2303 Form to process your invoice. Please upload a photo below.
+                      </Typography>
+                      <ImageUploadButton
+                        buttonTitle={'Upload BIR 2303 Form'}
+                        storage={storage}
+                        folderName={`2303Forms/${userdata.uid}`}
+                        onUploadFunction={on2303Upload}
+                      />
+                      <div className="flex justify-center mt-5 mx-5">
+                        <Image imageUrl={urlOfBir2303} />
+                      </div>
                     </div>
-                  </div>
+                  )
                 ) : null}
 
                 <Divider sx={{ marginTop: 1, marginBottom: 3 }} />

@@ -493,6 +493,25 @@ class firestoredb extends firestorefunctions {
     }
   }
 
+  async addBir2303Link(userId, url) {
+    await this.updateDocumentFromCollection('Users', userId, { bir2303Link: url });
+  }
+
+  async deleteBir2303Link(userId) {
+    await this.updateDocumentFromCollection('Users', userId, { bir2303Link: null });
+  }
+
+  async addDataToPageOpens(data) {
+    await this.addDocumentArrayFromCollection('Security','pageOpens',{ipAddress: data.ipAddress, dateTime: data.dateTime, pageOpened: data.pageOpened}, 'data');
+
+  }
+
+  async readAllOrdersByUserId(userId) {
+    const userData = await this.readUserById(userId);
+    return userData.orders;
+  }
+
+
   // async markCommissionPending(data, date, id){
   //   const updatedData = []
   //   data.map((commissions)=>{

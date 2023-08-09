@@ -50,7 +50,16 @@ const PaymentCheckoutCard = (props) => {
     logoLink =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fvisa.png?alt=media&token=5a8ab580-4b00-477a-86cd-08f5c6b12c31';
     cardStyle = 'mt-10 ';
+  } else if (paymentOption === 'wechatpay') {
+    logoLink =
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fwechat%20pay.png?alt=media&token=6df3a09e-0a10-4f64-b49a-b0aa46a592d6';
+    cardStyle = 'mt-5';
+  } else if (paymentOption === 'shoppeepay') {
+    logoLink =
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fshopeepay-img1.png?alt=media&token=a43e3b67-0e85-47bb-a5bb-f425af9b2662';
+    cardStyle = 'mt-4';
   }
+
   
   const cardSelected = props.cardSelected;
   const setCardSelected = props.setCardSelected;
@@ -69,8 +78,15 @@ const PaymentCheckoutCard = (props) => {
   }, [changeCard]);
   
   function onClick() {
+    if (paymentOption === 'bitcoin') {
+      alert('Bitcoin is not yet available. Please choose another payment option.');
+      return
+    }
 
     Object.keys(cardSelected).forEach((key) => {
+
+    
+
       if (key == paymentOption) {
         cardSelected[key] = true;
       }

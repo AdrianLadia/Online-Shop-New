@@ -14,10 +14,8 @@ class businessCalculations {
   }
 
   readAllParentProductsFromOnlineStoreProducts(products) {
-
     const parentProducts = [];
     products.map((product) => {
-
       if (product.parentProductID === '') {
         parentProducts.push(product.itemId);
       }
@@ -47,7 +45,7 @@ class businessCalculations {
     return safetyStock;
   }
 
-  getStocksAvailableLessSafetyStock(stocksAvailable, averageSalesPerDay, isRetail=false) {
+  getStocksAvailableLessSafetyStock(stocksAvailable, averageSalesPerDay, isRetail = false) {
     // VALIDATION
     const stocksAvailableSchema = Joi.number().required();
     const averageSalesPerDaySchema = Joi.number().required();
@@ -58,11 +56,10 @@ class businessCalculations {
     }
 
     // FUNCTION
-    let stocksAvailableLessSafetyStock
+    let stocksAvailableLessSafetyStock;
     if (isRetail) {
-      stocksAvailableLessSafetyStock = stocksAvailable - new AppConfig().getRetailSafetyStock()
-    }
-    else {
+      stocksAvailableLessSafetyStock = stocksAvailable - new AppConfig().getRetailSafetyStock();
+    } else {
       stocksAvailableLessSafetyStock = stocksAvailable - this.getSafetyStock(averageSalesPerDay);
     }
 
@@ -290,7 +287,6 @@ class businessCalculations {
   }
 
   getVehicleForDelivery(weightOfItems) {
-
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -300,7 +296,6 @@ class businessCalculations {
     const vehicleSchema = Joi.object().required();
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
-
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
 
       if (error2) {
@@ -355,10 +350,7 @@ class businessCalculations {
 
       return this.lalamovedeliveryvehicles.van;
     }
-    if (
-    
-      weightOfItems > this.lalamovedeliveryvehicles.van.maxWeight
-    ) {
+    if (weightOfItems > this.lalamovedeliveryvehicles.van.maxWeight) {
       const { error7 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.closedvan);
       if (error7) {
         throw new Error('Data Validation Error');
@@ -404,7 +396,6 @@ class businessCalculations {
   }
 
   async checkStocksIfAvailableInFirestore(cart) {
-
     const cartSchema = Joi.object().required();
 
     const { error2 } = cartSchema.validate(cart);
@@ -427,9 +418,9 @@ class businessCalculations {
     // const countEntries = Object.entries(count);
     const products = await this.cloudfirestore.readAllProductsForOnlineStore();
     Object.entries(cart).map(([itemId, quantity]) => {
-      if (itemId.slice(-4) === "-RET") {
-        return
-      } 
+      if (itemId.slice(-4) === '-RET') {
+        return;
+      }
       products.map((dataitem) => {
         if (dataitem.itemId === itemId) {
           const stocksAvailableLessSafetyStock = this.getStocksAvailableLessSafetyStock(
@@ -446,7 +437,6 @@ class businessCalculations {
             }
             message = message + `${dataitem.itemName} - ${stocksLeft} stocks left \n`;
             outOfStockDetected = true;
-
           }
         }
       });
@@ -474,10 +464,10 @@ class businessCalculations {
     }
   }
 
-  getValueAddedTax(totalPrice,urlOfBir2303,noVat = new AppConfig().getNoVat()) {
-    console.log(urlOfBir2303)
+  getValueAddedTax(totalPrice, urlOfBir2303, noVat = new AppConfig().getNoVat()) {
+    console.log(urlOfBir2303);
     if (urlOfBir2303 == '') {
-      return 0
+      return 0;
     }
 
     const totalPriceSchema = Joi.number().required();
@@ -486,14 +476,13 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-
-    let vatPercentage
+    let vatPercentage;
 
     if (noVat) {
-      vatPercentage = 1.0
+      vatPercentage = 1.0;
     }
     if (!noVat) {
-      vatPercentage = 1.12
+      vatPercentage = 1.12;
     }
 
     const vat = totalPrice - totalPrice / vatPercentage;
@@ -546,9 +535,7 @@ class businessCalculations {
       cart[product] = 0;
     }
 
-
     cart[product] += 1;
-
 
     const newCartSchema = Joi.object().required();
     const { error3 } = newCartSchema.validate(cart);
@@ -570,9 +557,7 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-
     cart[product] -= 1;
-
 
     Object.entries(cart).map(([itemId, quantity]) => {
       if (quantity === 0) {
@@ -603,12 +588,10 @@ class businessCalculations {
     }
 
     if (cart[itemId] == null) {
-      cart[itemId] = 0
+      cart[itemId] = 0;
     }
 
-    cart[itemId] += parseFloat(quantity)
-
-
+    cart[itemId] += parseFloat(quantity);
 
     const newCartSchema = Joi.object().required();
     const { error4 } = newCartSchema.validate(cart);
@@ -619,28 +602,27 @@ class businessCalculations {
     return cart;
   }
 
-  afterCheckoutRedirectLogic(data,testing=false) {
-    const dataSchema = Joi.object(
-      { paymentMethodSelected : Joi.string().required(),
-        referenceNumber : Joi.string().required().allow(''),
-        grandTotal : Joi.number().required(),
-        deliveryFee : Joi.number().required().allow(null),
-        vat : Joi.number().required().allow(null),
-        rows : Joi.array().required().allow(null),
-        area : Joi.array().required().allow(null),
-        fullName : Joi.string().required(),
-        eMail : Joi.string().required(),
-        phoneNumber : Joi.string().required().allow(''),
-        setMayaRedirectUrl : Joi.func().required(),
-        setMayaCheckoutId : Joi.func().required(),
-        localDeliveryAddress : Joi.string().required().allow(null),
-        addressText : Joi.string().required().allow(null),
-        userId : Joi.string().required(),
-        navigateTo : Joi.func(),
-        itemsTotal : Joi.number().required().allow(null),
-        date: Joi.date().required()
-      }
-    ).required();
+  afterCheckoutRedirectLogic(data, testing = false) {
+    const dataSchema = Joi.object({
+      paymentMethodSelected: Joi.string().required(),
+      referenceNumber: Joi.string().required().allow(''),
+      grandTotal: Joi.number().required(),
+      deliveryFee: Joi.number().required().allow(null),
+      vat: Joi.number().required().allow(null),
+      rows: Joi.array().required().allow(null),
+      area: Joi.array().required().allow(null),
+      fullName: Joi.string().required(),
+      eMail: Joi.string().required(),
+      phoneNumber: Joi.string().required().allow(''),
+      setMayaRedirectUrl: Joi.func().required(),
+      setMayaCheckoutId: Joi.func().required(),
+      localDeliveryAddress: Joi.string().required().allow(null),
+      addressText: Joi.string().required().allow(null),
+      userId: Joi.string().required(),
+      navigateTo: Joi.func(),
+      itemsTotal: Joi.number().required().allow(null),
+      date: Joi.date().required(),
+    }).required();
 
     const { error } = dataSchema.validate(data);
 
@@ -676,32 +658,26 @@ class businessCalculations {
     //   }
     //   else {
     //     return paymentMethodSelected
-    //   } 
+    //   }
     // }
-    if (['bdo','unionbank','maya','visa','mastercard','gcash'].includes(paymentMethodSelected)) {
-      if (testing === false) {
-        data.navigateTo('/checkout/proofOfPayment', {
-          state: {
-            paymentMethodSelected: paymentMethodSelected,
-            referenceNumber: data.referenceNumber,
-            itemsTotal: data.itemsTotal,
-            deliveryFee: data.deliveryFee,
-            grandTotal: data.grandTotal,
-            vat: data.vat,
-            rows: data.rows,
-            area: data.area,
-            date: data.date,
-          },
-        });
-      }
-      else {
-        return paymentMethodSelected
-      }
+
+    if (testing === false) {
+      data.navigateTo('/checkout/proofOfPayment', {
+        state: {
+          paymentMethodSelected: paymentMethodSelected,
+          referenceNumber: data.referenceNumber,
+          itemsTotal: data.itemsTotal,
+          deliveryFee: data.deliveryFee,
+          grandTotal: data.grandTotal,
+          vat: data.vat,
+          rows: data.rows,
+          area: data.area,
+          date: data.date,
+        },
+      });
+    } else {
+      return paymentMethodSelected;
     }
-
-
-
-    
   }
 
   generateOrderReference() {

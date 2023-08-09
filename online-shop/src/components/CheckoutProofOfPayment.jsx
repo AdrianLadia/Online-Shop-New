@@ -50,21 +50,15 @@ const CheckoutProofOfPayment = (props) => {
     accountName = 'ADRIAN LADIA';
     accountNumber = '109355469422';
   }
-  if (paymentMethodSelected == 'gcash') {
-    bankName = 'GCASH';
-    accountName = 'ADRIAN LADIA';
-    accountNumber = '0917-892-7206';
-  }
 
-  if (['maya', 'visa', 'mastercard', 'gcash'].includes(paymentMethodSelected)) {
+  if (['maya', 'visa', 'mastercard', 'gcash','shoppeepay','wechatpay'].includes(paymentMethodSelected)) {
     qrLink = 'https://paymaya.me/starpack';
   }
 
-  function onUpload(url) {
+  async function onUpload(url) {
     const timestamp = Timestamp.fromDate(date);
     const timestampString = timestamp.toDate().toLocaleString();
-
-    cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
+    await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
   }
 
   return (
@@ -92,7 +86,7 @@ const CheckoutProofOfPayment = (props) => {
 
             {bankName == null && qrLink != null ? (
               <div className='mb-8'>
-              <p>Please scan QR code or click the payment link to send us a payment:</p>
+              <p>Please scan QR code or click the payment link to send us a payment of : <strong>₱ {grandTotal}</strong></p>
               <img src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55'></img>
               <a  className=" ml-11 text-blue-600 underline hover:text-blue-800 visited:text-purple-600 " href={qrLink} target="_blank" rel="noopener noreferrer">{qrLink}</a>
 

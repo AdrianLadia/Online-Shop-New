@@ -33,6 +33,7 @@ function PaymentMethods() {
         // ONLY SHOW CARD IF ENABLED
         if (payments.enabled === true) {
           const id = payments.id
+          console.log(id)
     
           return(
             <PaymentCheckoutCard paymentOption={payments.id} cardSelected={cardSelected} setCardSelected={setCardSelected} setPaymentMethodSelected={setPaymentMethodSelected} />

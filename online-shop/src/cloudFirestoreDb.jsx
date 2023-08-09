@@ -383,8 +383,13 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         forTesting: forTesting,
       };
 
-      const encodedData = encodeURIComponent(JSON.stringify(json));
-      const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink?data=${encodedData}`)
+      const jsonData = JSON.stringify(json);
+      console.log(jsonData);
+      const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       const data = res.data;
       return data;
     } catch (error) {
@@ -526,6 +531,18 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     });
     return res
   }
+
+  async getIpAddress() {
+    const res = await axios.get(`https://api64.ipify.org/?format=json`);
+    return res.data.ip
+  }
+
+  async getAllAffiliateUsers() {
+    const res = await axios.get(`${this.url}getAllAffiliateUsers`);
+    return res.data
+  }
+
+  
 
 }
 

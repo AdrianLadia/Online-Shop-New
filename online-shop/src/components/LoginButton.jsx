@@ -27,6 +27,7 @@ import InvisibleRecaptcha from './InvisibleRecaptcha';
 const ReactPhoneInput = PhoneInput.default ? PhoneInput.default : PhoneInput;
 
 const LoginButton = (props) => {
+  const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser,cloudfirestore,setAffiliate } = useContext(AppContext);
   const position = props.position;
   const isAffiliateLink = props.isAffiliateLink;
   const [openUnsupportedBrowserModal, setOpenUnsupportedBrowserModal] = useState(false);
@@ -38,6 +39,7 @@ const LoginButton = (props) => {
   const [height, setHeight] = useState('40%');
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [loading,setLoading] = useState(false);
+ 
 
   const style = {
     position: 'absolute',
@@ -59,6 +61,24 @@ const LoginButton = (props) => {
     p: 4,
   };
 
+  useEffect(() => {
+    if (isAffiliateLink) {
+      let params = new URLSearchParams(window.location.search);
+      let affiliateId = params.get('aid');
+      console.log('Affiliate ID: ' + affiliateId);
+
+      cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
+        affiliateUsers.forEach((affiliateUser) => {
+          if (affiliateUser.affiliateId === affiliateId) {
+            setAffiliate(affiliateUser.uid);
+          }
+        });
+      });
+      
+      return;
+    }
+  }, [isAffiliateLink]);
+
   let recaptchaVerifier = null;
   let handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
 
@@ -68,7 +88,6 @@ const LoginButton = (props) => {
     handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
   }
 
-  const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser } = useContext(AppContext);
   
 
   async function setUpRecaptcha(number) {

@@ -3,7 +3,20 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({
-  origin: ['https://starpack.ph', 'http://localhost:9099', 'http://localhost:5173','http://localhost:3000', 'http://localhost:5174','https://pg.maya.ph','https://payments.maya.ph','https://payments.paymaya.com',"http://127.0.0.1:5173","http://127.0.0.1:5174","https://127.0.0.1:5173","https://127.0.0.1:5174"]
+  origin: [
+    'https://starpack.ph',
+    'http://localhost:9099',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://localhost:5174',
+    'https://pg.maya.ph',
+    'https://payments.maya.ph',
+    'https://payments.paymaya.com',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    'https://127.0.0.1:5173',
+    'https://127.0.0.1:5174',
+  ],
   // origin: true
   // origin: ['http://localhost:9099']
 });
@@ -40,7 +53,6 @@ async function sendmail(to, subject, htmlContent) {
       subject: subject,
       html: htmlContent,
     });
-
   } catch (error) {
     console.log(error);
   }
@@ -181,15 +193,25 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     .update({ ['orders']: orders });
 }
 
+exports.getIPAddress = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const clientIP =
+      req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
+    console.log(clientIP);
+    res.send(clientIP);
+    //
+  });
+});
+
 exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const userid = req.query.data;
-     
+
       const db = admin.firestore();
       const user = await db.collection('Users').doc(userid).get();
       const userRole = user.data().userRole;
-   
+
       res.send(userRole);
     } catch (error) {
       console.log(error);
@@ -208,7 +230,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
 
       // Fetch and process the documents
       const querySnapshot = await forOnlineStoreQuery.get();
-   
+
       const products = [];
       querySnapshot.forEach((doc) => {
         // Add each product to the products array along with its document ID
@@ -234,8 +256,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
           weight: data.weight,
           packsPerBox: data.packsPerBox,
           piecesPerPack: data.piecesPerPack,
-          boxImage : data.boxImage,
-
+          boxImage: data.boxImage,
         };
         products.push(productObject);
       });
@@ -383,281 +404,281 @@ exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.
 
 // ##############
 
-exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ memory: '2GB' }).https.onRequest(async (req, res) => {
-  corsHandler(req, res, async () => {
-    
-    const data = parseData(req.query.data);
-    const userid = data.userid;
-    const username = data.username;
-    const localDeliveryAddress = data.localDeliveryAddress;
-    const locallatitude = data.locallatitude;
-    const locallongitude = data.locallongitude;
-    const localphonenumber = data.localphonenumber;
-    const localname = data.localname;
-    const orderDate = new Date();
-    const cart = data.cart;
-    const itemstotal = data.itemstotal;
-    const vat = data.vat;
-    const shippingtotal = data.shippingtotal;
-    const grandTotal = data.grandTotal;
-    const reference = data.reference;
-    const userphonenumber = data.userphonenumber;
-    const deliveryNotes = data.deliveryNotes;
-    const totalWeight = data.totalWeight;
-    const deliveryVehicle = data.deliveryVehicle;
-    const needAssistance = data.needAssistance;
-    const eMail = data.eMail;
-    const sendMail = data.sendEmail;
-    const isInvoiceNeeded = data.isInvoiceNeeded;
-    const urlOfBir2303 = data.urlOfBir2303;
+exports.transactionPlaceOrder = functions
+  .region('asia-southeast1')
+  .runWith({ memory: '2GB' })
+  .https.onRequest(async (req, res) => {
+    corsHandler(req, res, async () => {
+      const data = parseData(req.query.data);
+      const userid = data.userid;
+      const username = data.username;
+      const localDeliveryAddress = data.localDeliveryAddress;
+      const locallatitude = data.locallatitude;
+      const locallongitude = data.locallongitude;
+      const localphonenumber = data.localphonenumber;
+      const localname = data.localname;
+      const orderDate = new Date();
+      const cart = data.cart;
+      const itemstotal = data.itemstotal;
+      const vat = data.vat;
+      const shippingtotal = data.shippingtotal;
+      const grandTotal = data.grandTotal;
+      const reference = data.reference;
+      const userphonenumber = data.userphonenumber;
+      const deliveryNotes = data.deliveryNotes;
+      const totalWeight = data.totalWeight;
+      const deliveryVehicle = data.deliveryVehicle;
+      const needAssistance = data.needAssistance;
+      const eMail = data.eMail;
+      const sendMail = data.sendEmail;
+      const isInvoiceNeeded = data.isInvoiceNeeded;
+      const urlOfBir2303 = data.urlOfBir2303;
 
-    let cartUniqueItems = [];
+      let cartUniqueItems = [];
 
-    const db = admin.firestore();
+      const db = admin.firestore();
 
-    let itemsTotalBackEnd = 0;
-    const itemKeys = Object.keys(cart);
+      let itemsTotalBackEnd = 0;
+      const itemKeys = Object.keys(cart);
 
-    const cartItemsPrice = {};
+      const cartItemsPrice = {};
 
-    for (const key of itemKeys) {
-      const itemId = key;
-      const itemQuantity = cart[key];
-      const item = await db.collection('Products').doc(itemId).get();
-      const price = item.data().price;
-      const total = price * itemQuantity;
-      itemsTotalBackEnd += total;
-      cartUniqueItems.push(itemId);
-      cartItemsPrice[itemId] = price;
-    }
-
-    if (data.testing == false) {
-      if (itemsTotalBackEnd != itemstotal + vat) {
-        console.log('itemsTotalBackEnd != itemstotal');
-        res.status(400).send('Invalid data submitted. Please try again later');
-        return;
+      for (const key of itemKeys) {
+        const itemId = key;
+        const itemQuantity = cart[key];
+        const item = await db.collection('Products').doc(itemId).get();
+        const price = item.data().price;
+        const total = price * itemQuantity;
+        itemsTotalBackEnd += total;
+        cartUniqueItems.push(itemId);
+        cartItemsPrice[itemId] = price;
       }
 
-      if (vat + itemstotal + shippingtotal != grandTotal) {
-        console.log('vat + itemstotal + shippingtotal != grandTotal');
-        res.status(400).send('Invalid data submitted. Please try again later');
-        return;
+      if (data.testing == false) {
+        if (itemsTotalBackEnd != itemstotal + vat) {
+          console.log('itemsTotalBackEnd != itemstotal');
+          res.status(400).send('Invalid data submitted. Please try again later');
+          return;
+        }
+
+        if (vat + itemstotal + shippingtotal != grandTotal) {
+          console.log('vat + itemstotal + shippingtotal != grandTotal');
+          res.status(400).send('Invalid data submitted. Please try again later');
+          return;
+        }
+
+        if (shippingtotal < 0) {
+          res.status(400).send('Invalid data submitted. Please try again later');
+          return;
+        }
+
+        if (cart.length <= 0) {
+          res.status(400).send('You need to have items in your cart');
+          return;
+        }
+
+        if (itemstotal <= 0) {
+          res.status(400).send('Invalid data submitted. Please try again later');
+          return;
+        }
+
+        if (vat < 0) {
+          res.status(400).send('Invalid data submitted. Please try again later');
+          return;
+        }
+
+        if (grandTotal < 0) {
+          res.status(400).send('Invalid data submitted. Please try again later');
+          return;
+        }
+
+        if (totalWeight < 0) {
+          res.status(400).send('Invalid data submitted. Please try again later');
+          return;
+        }
+
+        if (localDeliveryAddress == '') {
+          res.status(400).send('Please Enter Delivery Address');
+          return;
+        }
+
+        if (localphonenumber == '') {
+          res.status(400).send('Please Enter Phone Number');
+          return;
+        }
+
+        if (localname == '') {
+          res.status(400).send('Please Enter Contact Name');
+          return;
+        }
       }
 
-      if (shippingtotal < 0) {
-        res.status(400).send('Invalid data submitted. Please try again later');
-        return;
-      }
+      db.runTransaction(async (transaction) => {
+        try {
+          // read user data
+          const userRef = db.collection('Users').doc(userid);
+          const user = await transaction.get(userRef);
+          const userData = user.data();
+          const deliveryAddress = userData.deliveryAddress;
+          const contactPerson = userData.contactPerson;
+          const ordersOnHold = {};
+          const currentInventory = {};
 
-      if (cart.length <= 0) {
-        res.status(400).send('You need to have items in your cart');
-        return;
-      }
+          await Promise.all(
+            cartUniqueItems.map(async (c) => {
+              const productRef = db.collection('Products').doc(c);
+              const productdoc = await transaction.get(productRef);
+              // currentInventory.push(productdoc.data().stocksAvailable)
+              ordersOnHold[c] = productdoc.data().stocksOnHold;
+              currentInventory[c] = productdoc.data().stocksAvailable;
+            })
+          );
 
-      if (itemstotal <= 0) {
-        res.status(400).send('Invalid data submitted. Please try again later');
-        return;
-      }
+          // WRITE
+          // WRITE TO PRODUCTS ON HOLD
 
-      if (vat < 0) {
-        res.status(400).send('Invalid data submitted. Please try again later');
-        return;
-      }
+          await Promise.all(
+            cartUniqueItems.map(async (itemId) => {
+              const prodref = db.collection('Products').doc(itemId);
+              const orderQuantity = data.cart[itemId];
+              const newStocksAvailable = currentInventory[itemId] - orderQuantity;
+              let oldOrdersOnHold = ordersOnHold[itemId];
 
-      if (grandTotal < 0) {
-        res.status(400).send('Invalid data submitted. Please try again later');
-        return;
-      }
+              oldOrdersOnHold = ordersOnHold[itemId];
 
-      if (totalWeight < 0) {
-        res.status(400).send('Invalid data submitted. Please try again later');
-        return;
-      }
+              if (oldOrdersOnHold == undefined) {
+                oldOrdersOnHold = [];
+              }
 
-      if (localDeliveryAddress == '') {
-        res.status(400).send('Please Enter Delivery Address');
-        return;
-      }
+              const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
+              const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
 
-      if (localphonenumber == '') {
-        res.status(400).send('Please Enter Phone Number');
-        return;
-      }
+              console.log('orderQuantity', orderQuantity);
+              console.log('newStocksAvailable', newStocksAvailable);
+              console.log('oldOrdersOnHold', oldOrdersOnHold);
+              console.log('newOrderOnHold', newOrderOnHold);
+              console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
 
-      if (localname == '') {
-        res.status(400).send('Please Enter Contact Name');
-        return;
-      }
-    }
+              transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
+              transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
+            })
+          );
 
-    db.runTransaction(async (transaction) => {
-      try {
-        // read user data
-        const userRef = db.collection('Users').doc(userid);
-        const user = await transaction.get(userRef);
-        const userData = user.data();
-        const deliveryAddress = userData.deliveryAddress;
-        const contactPerson = userData.contactPerson;
-        const ordersOnHold = {};
-        const currentInventory = {};
-
-        await Promise.all(
-          cartUniqueItems.map(async (c) => {
-            const productRef = db.collection('Products').doc(c);
-            const productdoc = await transaction.get(productRef);
-            // currentInventory.push(productdoc.data().stocksAvailable)
-            ordersOnHold[c] = productdoc.data().stocksOnHold;
-            currentInventory[c] = productdoc.data().stocksAvailable;
-          })
-        );
-
-        // WRITE
-        // WRITE TO PRODUCTS ON HOLD
-
-       
-        await Promise.all(
-          cartUniqueItems.map(async (itemId) => {
-            const prodref = db.collection('Products').doc(itemId);
-            const orderQuantity = data.cart[itemId];
-            const newStocksAvailable = currentInventory[itemId] - orderQuantity;
-            let oldOrdersOnHold = ordersOnHold[itemId];
-
-            oldOrdersOnHold = ordersOnHold[itemId];
-
-            if (oldOrdersOnHold == undefined) {
-              oldOrdersOnHold = [];
+          // WRITE TO DELIVER ADDRESS LIST
+          let addressexists = false;
+          let latitudeexists = false;
+          let longitudeexists = false;
+          deliveryAddress.map((d) => {
+            if (d.address == localDeliveryAddress) {
+              console.log('address already exists');
+              addressexists = true;
             }
-
-            const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
-            const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
-
-    
-            console.log('orderQuantity', orderQuantity);
-            console.log('newStocksAvailable', newStocksAvailable);
-            console.log('oldOrdersOnHold', oldOrdersOnHold);
-            console.log('newOrderOnHold', newOrderOnHold);
-            console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
-
-            transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
-            transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
-          })
-        );
-
-        // WRITE TO DELIVER ADDRESS LIST
-        let addressexists = false;
-        let latitudeexists = false;
-        let longitudeexists = false;
-        deliveryAddress.map((d) => {
-          if (d.address == localDeliveryAddress) {
-            console.log('address already exists');
-            addressexists = true;
+            if (d.latitude == locallatitude) {
+              console.log('latitude already exists');
+              latitudeexists = true;
+            }
+            if (d.longitude == locallongitude) {
+              console.log('longitude already exists');
+              longitudeexists = true;
+            }
+          });
+          if (addressexists == false || latitudeexists == false || longitudeexists == false) {
+            console.log('adding new address');
+            const newAddress = [
+              {
+                latitude: locallatitude,
+                longitude: locallongitude,
+                address: localDeliveryAddress,
+              },
+            ];
+            const updatedAddressList = [...newAddress, ...deliveryAddress];
+            transaction.update(userRef, { deliveryAddress: updatedAddressList });
           }
-          if (d.latitude == locallatitude) {
-            console.log('latitude already exists');
-            latitudeexists = true;
+
+          // WRITE TO CONTACT NUMBER
+          // CHECKS IF CONTACTS ALREADY EXISTS IF NOT ADDS IT TO FIRESTORE
+
+          let phonenumberexists = false;
+          let nameexists = false;
+          contactPerson.map((d) => {
+            if (d.phoneNumber == localphonenumber) {
+              console.log('phonenumber already exists');
+              phonenumberexists = true;
+            }
+            if (d.name == localname) {
+              console.log('name already exists');
+              nameexists = true;
+            }
+          });
+          if (phonenumberexists == false || nameexists == false) {
+            console.log('updating contact');
+            const newContact = [{ name: localname, phoneNumber: localphonenumber }];
+            const updatedContactList = [...newContact, ...contactPerson];
+            console.log(updatedContactList);
+            transaction.update(userRef, { contactPerson: updatedContactList });
           }
-          if (d.longitude == locallongitude) {
-            console.log('longitude already exists');
-            longitudeexists = true;
-          }
-        });
-        if (addressexists == false || latitudeexists == false || longitudeexists == false) {
-          console.log('adding new address');
-          const newAddress = [
-            {
-              latitude: locallatitude,
-              longitude: locallongitude,
-              address: localDeliveryAddress,
-            },
-          ];
-          const updatedAddressList = [...newAddress, ...deliveryAddress];
-          transaction.update(userRef, { deliveryAddress: updatedAddressList });
-        }
 
-        // WRITE TO CONTACT NUMBER
-        // CHECKS IF CONTACTS ALREADY EXISTS IF NOT ADDS IT TO FIRESTORE
+          const oldOrders = userData.orders;
+          const newOrder = {
+            orderDate: orderDate,
+            contactName: localname,
+            deliveryAddress: localDeliveryAddress,
+            contactPhoneNumber: localphonenumber,
+            deliveryAddressLatitude: locallatitude,
+            deliveryAddressLongitude: locallongitude,
+            cart: cart,
+            itemsTotal: itemstotal,
+            vat: vat,
+            shippingTotal: shippingtotal,
+            grandTotal: grandTotal,
+            delivered: false,
+            reference: reference,
+            paid: false,
+            userName: username,
+            userPhoneNumber: userphonenumber,
+            deliveryNotes: deliveryNotes,
+            orderAcceptedByClient: false,
+            userWhoAcceptedOrder: null,
+            orderAcceptedByClientDate: null,
+            clientIDWhoAcceptedOrder: null,
+            totalWeight: totalWeight,
+            deliveryVehicle: deliveryVehicle,
+            needAssistance: needAssistance,
+            userId: userid,
+            proofOfPaymentLink: [],
+            eMail: eMail,
+            cartItemsPrice: cartItemsPrice,
+            isInvoiceNeeded: isInvoiceNeeded,
+            urlOfBir2303: urlOfBir2303,
+          };
 
-        let phonenumberexists = false;
-        let nameexists = false;
-        contactPerson.map((d) => {
-          if (d.phoneNumber == localphonenumber) {
-            console.log('phonenumber already exists');
-            phonenumberexists = true;
-          }
-          if (d.name == localname) {
-            console.log('name already exists');
-            nameexists = true;
-          }
-        });
-        if (phonenumberexists == false || nameexists == false) {
-          console.log('updating contact');
-          const newContact = [{ name: localname, phoneNumber: localphonenumber }];
-          const updatedContactList = [...newContact, ...contactPerson];
-          console.log(updatedContactList);
-          transaction.update(userRef, { contactPerson: updatedContactList });
-        }
+          const updatedOrders = [newOrder, ...oldOrders];
+          console.log(updatedOrders);
+          transaction.update(userRef, { orders: updatedOrders });
+          // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
+          transaction.update(userRef, { cart: {} });
 
-        const oldOrders = userData.orders;
-        const newOrder = {
-          orderDate: orderDate,
-          contactName: localname,
-          deliveryAddress: localDeliveryAddress,
-          contactPhoneNumber: localphonenumber,
-          deliveryAddressLatitude: locallatitude,
-          deliveryAddressLongitude: locallongitude,
-          cart: cart,
-          itemsTotal: itemstotal,
-          vat: vat,
-          shippingTotal: shippingtotal,
-          grandTotal: grandTotal,
-          delivered: false,
-          reference: reference,
-          paid: false,
-          userName: username,
-          userPhoneNumber: userphonenumber,
-          deliveryNotes: deliveryNotes,
-          orderAcceptedByClient: false,
-          userWhoAcceptedOrder: null,
-          orderAcceptedByClientDate: null,
-          clientIDWhoAcceptedOrder: null,
-          totalWeight: totalWeight,
-          deliveryVehicle: deliveryVehicle,
-          needAssistance: needAssistance,
-          userId: userid,
-          proofOfPaymentLink: [],
-          eMail: eMail,
-          cartItemsPrice: cartItemsPrice,
-          isInvoiceNeeded: isInvoiceNeeded,
-          urlOfBir2303: urlOfBir2303,
-        };
+          // CREATE ORDERMESSAGES CHAT
+          const orderMessagesRef = db.collection('ordersMessages').doc(reference);
+          transaction.set(orderMessagesRef, {
+            messages: [],
+            ownerUserId: userid,
+            ownerName: username,
+            referenceNumber: reference,
+            isInquiry: false,
+            ownerReadAll: true,
+            adminReadAll: true,
+          });
+          orderMessagesRef.collection('messages');
 
-        const updatedOrders = [newOrder, ...oldOrders];
-        console.log(updatedOrders)
-        transaction.update(userRef, { orders: updatedOrders });
-        // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
-        transaction.update(userRef, { cart: {} });
+          console.log(newOrder.eMail);
 
-        // CREATE ORDERMESSAGES CHAT
-        const orderMessagesRef = db.collection('ordersMessages').doc(reference);
-        transaction.set(orderMessagesRef, {
-          messages: [],
-          ownerUserId: userid,
-          ownerName: username,
-          referenceNumber: reference,
-          isInquiry : false,
-          ownerReadAll : true,
-          adminReadAll : true,
-        });
-        orderMessagesRef.collection('messages');
-
-        console.log(newOrder.eMail);
-
-        if (sendMail == true) {
-          try{
-             sendmail(
-              newOrder.eMail,
-              'Order Confirmation',
-              `<p>Dear Customer,</p>
+          if (sendMail == true) {
+            try {
+              sendmail(
+                newOrder.eMail,
+                'Order Confirmation',
+                `<p>Dear Customer,</p>
             
             <p>We are pleased to inform you that your order has been confirmed.</p>
             
@@ -671,12 +692,12 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ me
             
             <p>Best Regards,<br>
             The Star Pack Team</p>`
-            );
-  
-             sendmail(
-              'ladiaadrian@gmail.com',
-              'Order Received',
-              `<p>Order received,</p>
+              );
+
+              sendmail(
+                'ladiaadrian@gmail.com',
+                'Order Received',
+                `<p>Order received,</p>
             
             <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
             <p><strong>Customer:</strong> ${newOrder.userName}</p>
@@ -686,21 +707,20 @@ exports.transactionPlaceOrder = functions.region('asia-southeast1').runWith({ me
             
             <p>Best Regards,<br>
             Star Pack Head</p>`
-            );
+              );
+            } catch {
+              console.log('error sending email');
+            }
           }
-          catch{
-            console.log('error sending email')
-          }
-        }
 
-        res.send('SUCCESS');
-      } catch (e) {
-        console.log(e);
-        res.status(400).send('FAILED');
-      }
+          res.send('SUCCESS');
+        } catch (e) {
+          console.log(e);
+          res.status(400).send('FAILED');
+        }
+      });
     });
   });
-});
 
 exports.checkIfUserIdAlreadyExist = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -860,18 +880,33 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-
     const data = req.body;
-    const depositAmount = data.amount
-    const commissionPercentage = 0.05
+    const depositAmount = data.amount;
+    const orderReference = data.reference;
+    const commissionPercentage = 0.03;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
     const db = admin.firestore();
     const userId = data.userId;
+    const customerUserRef = db.collection('Users').doc(userId);
+    const customerSnapshot = await customerUserRef.get();
+
+    const customerData = customerSnapshot.data();
+    const ordersData = customerData.orders
+    const orderDetails = ordersData.filter((order) => order.reference === orderReference);
+    const orderDetail = orderDetails[0];
+    const itemsTotal = orderDetail.itemsTotal;
+    console.log('itemsTotal', itemsTotal);
+    const orderVat = orderDetail.vat;
+    const vatPercentage = orderVat / itemsTotal;
+    const shippingTotal = orderDetail.shippingTotal;
+
+    const lessCommissionToShipping =  parseFloat((shippingTotal * ( (depositAmount) / itemsTotal)).toFixed(2))
+
     const paymentsRef = db.collection('Payments');
-    console.log('proofOfPaymentLink',proofOfPaymentLink);
+    console.log('proofOfPaymentLink', proofOfPaymentLink);
     const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
-    const paymentSnapshot = await paymentQuery.get(); 
+    const paymentSnapshot = await paymentQuery.get();
     let documentID;
     let paymentsData;
     paymentSnapshot.forEach((doc) => {
@@ -888,21 +923,26 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const userRef = db.collection('Users').doc(userId);
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
-        const affiliateIdOfCustomer = userData.affiliate 
-        console.log(userData)
-        const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer)
-        const affiliateUserSnap = await transaction.get(affiliateUserRef)
+        const affiliateIdOfCustomer = userData.affiliate;
+        const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
+        const affiliateUserSnap = await transaction.get(affiliateUserRef);
 
-        const affiliateUserData = affiliateUserSnap.data()
-        const oldAffiliateCommissions = affiliateUserData.affiliateCommissions
-        console.log('oldAffiliateCommissions',oldAffiliateCommissions)
-        const newAffiliateCommissions = [...oldAffiliateCommissions,{
-          customer : 'test',
-          dateOrdered : new Date().toDateString(),
-          commission : parseFloat(depositAmount) * commissionPercentage,
-          status: 'claimable',
-          claimCode: ''
-        }]
+        const affiliateUserData = affiliateUserSnap.data();
+        const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
+        console.log('depositAmount', depositAmount);
+        console.log('vatPercentage', vatPercentage);
+        console.log('commissionPercentage', commissionPercentage);
+        console.log('lessCommissionToShipping', lessCommissionToShipping);
+        const newAffiliateCommissions = [
+          ...oldAffiliateCommissions,
+          {
+            customer: 'test',
+            dateOrdered: new Date().toDateString(),
+            commission: ((parseFloat(depositAmount) - lessCommissionToShipping)  / (1 + vatPercentage)) * commissionPercentage,
+            status: 'claimable',
+            claimCode: '',
+          },
+        ];
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
@@ -933,7 +973,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
 
         // WRITE
         if (affiliateIdOfCustomer != null) {
-          transaction.update(affiliateUserRef,{affiliateCommissions : newAffiliateCommissions})
+          transaction.update(affiliateUserRef, { affiliateCommissions: newAffiliateCommissions });
         }
 
         if (paymentsData) {
@@ -1013,8 +1053,6 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           }
         });
 
-      
-
         // WRITE
         transaction.set(paymentsRef, {
           orderReference: referenceNumber,
@@ -1068,7 +1106,8 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
   corsHandler(req, res, async () => {
     try {
       // Get the user document
-      const data = parseData(req.query.data)
+      const data = req.body;
+      
       console.log(data);
       const userName = data.userName;
       const paymentMethod = data.paymentMethod;
@@ -1107,7 +1146,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const userDoc = await transaction.get(userRef);
           const userData = userDoc.data();
           const orders = userData.orders;
-          console.log('orders', orders)
+          console.log('orders', orders);
           const orderIndex = orders.findIndex((order) => order.reference === orderReference);
           const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
           const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
@@ -1150,7 +1189,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           console.log(paymentId);
 
           if (forTesting == false) {
-             sendmail(
+            sendmail(
               'ladiaadrian@gmail.com',
               'Payment Uploaded',
               `<h2>Payment Uploaded</h2>
@@ -1359,7 +1398,6 @@ async function deleteOldOrders() {
   }
 }
 
-
 exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
@@ -1456,186 +1494,205 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
 
 exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const data = req.body
-    const affiliateUserId = data.affiliateUserId
-    const depositorUserRole = data.depositorUserRole
-    const amountDeposited = data.amountDeposited
-    const claimId = data.affiliateClaimId
-    try{
+    const data = req.body;
+    const affiliateUserId = data.affiliateUserId;
+    const depositorUserRole = data.depositorUserRole;
+    const amountDeposited = data.amountDeposited;
+    const claimId = data.affiliateClaimId;
+    try {
       // Check if user logged in is admin or superAdmin if not res.status(401)
-      if(depositorUserRole == 'admin' || depositorUserRole == 'superAdmin'){
+      if (depositorUserRole == 'admin' || depositorUserRole == 'superAdmin') {
         // Add data to affiliates account affiliateDeposits
         const db = admin.firestore();
-        try{
+        try {
           db.runTransaction(async (transaction) => {
-            const userRef = db.collection('Users').doc(affiliateUserId)
+            const userRef = db.collection('Users').doc(affiliateUserId);
             const docRef = await userRef.get();
-            const affiliateUserData = docRef.data()
-            const oldAffiliateDeposits = affiliateUserData.affiliateDeposits
-            const oldAffiliateClaims = affiliateUserData.affiliateClaims
-            const oldAffiliateCommissions = affiliateUserData.affiliateCommissions
+            const affiliateUserData = docRef.data();
+            const oldAffiliateDeposits = affiliateUserData.affiliateDeposits;
+            const oldAffiliateClaims = affiliateUserData.affiliateClaims;
+            const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
             // UPDATE AFFILIATE CLAIMS
-            const updatedClaimData = []
-            oldAffiliateClaims.map((claims)=>{
-              if(claims.affiliateClaimId == claimId){
-                claims.totalDeposited += amountDeposited
-                updatedClaimData.push(claims)
-              }else{
-                updatedClaimData.push(claims)
+            const updatedClaimData = [];
+            oldAffiliateClaims.map((claims) => {
+              if (claims.affiliateClaimId == claimId) {
+                claims.totalDeposited += amountDeposited;
+                updatedClaimData.push(claims);
+              } else {
+                updatedClaimData.push(claims);
               }
-            })
+            });
             // UPDATE AFFILIATE DEPOSITS
-            const updatedData = []
-            oldAffiliateDeposits.map((oldDeposits)=>{
-              updatedData.push(oldDeposits)
-            })
-            updatedData.push(data)
+            const updatedData = [];
+            oldAffiliateDeposits.map((oldDeposits) => {
+              updatedData.push(oldDeposits);
+            });
+            updatedData.push(data);
             // UPDATE AFFILIATE COMMISSIONS
-            const updatedCommissionData = []
-            const filledClaimIds = []
-            updatedClaimData.forEach((claim)=>{
-              if (claim.amount == claim.totalDeposited){
-                filledClaimIds.push(claim.affiliateClaimId) 
-                claim.isDone = true
+            const updatedCommissionData = [];
+            const filledClaimIds = [];
+            updatedClaimData.forEach((claim) => {
+              if (claim.amount == claim.totalDeposited) {
+                filledClaimIds.push(claim.affiliateClaimId);
+                claim.isDone = true;
               }
-            })
+            });
 
-            oldAffiliateCommissions.forEach((commission)=>{
-              if (filledClaimIds.includes(commission.claimCode)){
-                commission.status = 'paid'
+            oldAffiliateCommissions.forEach((commission) => {
+              if (filledClaimIds.includes(commission.claimCode)) {
+                commission.status = 'paid';
               }
-              updatedCommissionData.push(commission)
-            })
-            
+              updatedCommissionData.push(commission);
+            });
 
-            transaction.update(userRef, {affiliateClaims:updatedClaimData});
-            transaction.update(userRef, {affiliateDeposits:updatedData});
-            transaction.update(userRef, {affiliateCommissions:updatedCommissionData})
-
+            transaction.update(userRef, { affiliateClaims: updatedClaimData });
+            transaction.update(userRef, { affiliateDeposits: updatedData });
+            transaction.update(userRef, { affiliateCommissions: updatedCommissionData });
           });
-        }
-        catch(e) {
+        } catch (e) {
           res.status(400).send('Error adding deposit to affiliate.');
         }
-      }else{
-        res.status(401)
+      } else {
+        res.status(401);
       }
-    }catch(e){
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
-    res.status(200).send(data)
-  })
-})
+    res.status(200).send(data);
+  });
+});
 
 exports.onAffiliateClaim = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const db = admin.firestore()
-    const data = req.body
-    try{
+    const db = admin.firestore();
+    const data = req.body;
+    try {
       db.runTransaction(async (transaction) => {
-        const forStatus = data.data1
-        const commDate = forStatus.date
-        const commData = forStatus.data
-        const commId = forStatus.id
-        const claimCode = forStatus.claimCode
-        const userRef = db.collection('Users').doc(commId)
-        const forClaims = data.data2
-        const affiliateUserId = forClaims.affiliateUserId
-        const affiliateRef = await db.collection('Users').doc(affiliateUserId).get()
-        const affiliateUserData = affiliateRef.data()
-        const oldAffiliateClaims = affiliateUserData.affiliateClaims
+        const forStatus = data.data1;
+        const commDate = forStatus.date;
+        const commData = forStatus.data;
+        const commId = forStatus.id;
+        const claimCode = forStatus.claimCode;
+        const userRef = db.collection('Users').doc(commId);
+        const forClaims = data.data2;
+        const affiliateUserId = forClaims.affiliateUserId;
+        const affiliateRef = await db.collection('Users').doc(affiliateUserId).get();
+        const affiliateUserData = affiliateRef.data();
+        const oldAffiliateClaims = affiliateUserData.affiliateClaims;
 
-        const updatedClaimData = []
-        oldAffiliateClaims.map((oldClaims)=>{
-          updatedClaimData.push(oldClaims)
-        })
-        updatedClaimData.push(forClaims)
-        
-        const updatedCommData = []
-        commData.map((commissions)=>{
-          if(new Date(commissions.dateOrdered) <= new Date(commDate) && commissions.status == 'claimable' && commissions.claimCode == ''){
-            commissions.status = 'pending'
-            commissions.claimCode = claimCode
-            updatedCommData.push(commissions)
-          }else{
-            updatedCommData.push(commissions)
+        const updatedClaimData = [];
+        oldAffiliateClaims.map((oldClaims) => {
+          updatedClaimData.push(oldClaims);
+        });
+        updatedClaimData.push(forClaims);
+
+        const updatedCommData = [];
+        commData.map((commissions) => {
+          if (
+            new Date(commissions.dateOrdered) <= new Date(commDate) &&
+            commissions.status == 'claimable' &&
+            commissions.claimCode == ''
+          ) {
+            commissions.status = 'pending';
+            commissions.claimCode = claimCode;
+            updatedCommData.push(commissions);
+          } else {
+            updatedCommData.push(commissions);
           }
-        })
-        transaction.update(userRef, {affiliateClaims:updatedClaimData})
-        transaction.update(userRef, {affiliateCommissions:updatedCommData})
-        res.status(200).send(data)
-      })
-    }catch(e){
-      console.log(e)
+        });
+        transaction.update(userRef, { affiliateClaims: updatedClaimData });
+        transaction.update(userRef, { affiliateCommissions: updatedCommData });
+        res.status(200).send(data);
+      });
+    } catch (e) {
+      console.log(e);
     }
-  })
-})
+  });
+});
 
 exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const info = req.body
-    const amountDeposited = info.amountDeposited
-    const userId = info.userId
-    const claimId = info.claimId
-    const db = admin.firestore()
-    try{
-      const docRef = await db.collection('Users').doc(userId).get()
-      const affiliateUserData = docRef.data()
-      const affiliateClaims = affiliateUserData.affiliateClaims
-      const updatedData = []
+    const info = req.body;
+    const amountDeposited = info.amountDeposited;
+    const userId = info.userId;
+    const claimId = info.claimId;
+    const db = admin.firestore();
+    try {
+      const docRef = await db.collection('Users').doc(userId).get();
+      const affiliateUserData = docRef.data();
+      const affiliateClaims = affiliateUserData.affiliateClaims;
+      const updatedData = [];
 
-      affiliateClaims.map((claim)=>{
-        if(claim.affiliateClaimId == claimId){
-          claim.totalDeposited += amountDeposited
-          updatedData.push(claim)
-        }else{
-          updatedData.push(claim)
+      affiliateClaims.map((claim) => {
+        if (claim.affiliateClaimId == claimId) {
+          claim.totalDeposited += amountDeposited;
+          updatedData.push(claim);
+        } else {
+          updatedData.push(claim);
         }
-      })
-      const userRef = db.collection('Users').doc(userId)
-      await userRef.update({affiliateClaims:updatedData})
-      res.status(200).send(data)
-    }catch(e){}
-  })
-})
+      });
+      const userRef = db.collection('Users').doc(userId);
+      await userRef.update({ affiliateClaims: updatedData });
+      res.status(200).send(data);
+    } catch (e) {}
+  });
+});
 
 exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const data = req.body
-    const claimId = data.claimId
-    const userId = data.userId
-    const date = data.date
-    const db = admin.firestore()
-    try{
-      const docRef = await db.collection('Users').doc(userId).get()
-      const affiliateUserData = docRef.data()
-      const affiliateClaims = affiliateUserData.affiliateClaims
-      const affiliateCommissions = affiliateUserData.affiliateCommissions
-      const updatedData1 = []
-      affiliateCommissions.map((commissions)=>{
-        if(new Date(commissions.dateOrdered) <= new Date(date) && commissions.status == 'pending' && commissions.claimCode == claimId){
-          commissions.status = 'claimed'
-          updatedData1.push(commissions)
-        }else{
-          updatedData1.push(commissions)
+    const data = req.body;
+    const claimId = data.claimId;
+    const userId = data.userId;
+    const date = data.date;
+    const db = admin.firestore();
+    try {
+      const docRef = await db.collection('Users').doc(userId).get();
+      const affiliateUserData = docRef.data();
+      const affiliateClaims = affiliateUserData.affiliateClaims;
+      const affiliateCommissions = affiliateUserData.affiliateCommissions;
+      const updatedData1 = [];
+      affiliateCommissions.map((commissions) => {
+        if (
+          new Date(commissions.dateOrdered) <= new Date(date) &&
+          commissions.status == 'pending' &&
+          commissions.claimCode == claimId
+        ) {
+          commissions.status = 'claimed';
+          updatedData1.push(commissions);
+        } else {
+          updatedData1.push(commissions);
         }
-      })
-      const userRef = db.collection('Users').doc(userId)
-      await userRef.update({affiliateCommissions:updatedData1});
+      });
+      const userRef = db.collection('Users').doc(userId);
+      await userRef.update({ affiliateCommissions: updatedData1 });
 
-      const updatedData = []
-      affiliateClaims.map((claim)=>{
-        if(claim.affiliateClaimId == claimId){
-          claim.isDone = true
-          updatedData.push(claim)
-        }else{
-          updatedData.push(claim)
+      const updatedData = [];
+      affiliateClaims.map((claim) => {
+        if (claim.affiliateClaimId == claimId) {
+          claim.isDone = true;
+          updatedData.push(claim);
+        } else {
+          updatedData.push(claim);
         }
-      })
-      await userRef.update({affiliateClaims:updatedData});
-      res.status(200).send(data)
-    }catch(e){}
-  })
-})
+      });
+      await userRef.update({ affiliateClaims: updatedData });
+      res.status(200).send(data);
+    } catch (e) {}
+  });
+});
 
-
+exports.getAllAffiliateUsers = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const db = admin.firestore();
+    const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
+    const snapshot = await usersRef.get();
+    const affiliateUsers = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.affiliateId != '') {
+        affiliateUsers.push(data);
+      }
+    });
+    res.status(200).send(affiliateUsers);
+  });
+});

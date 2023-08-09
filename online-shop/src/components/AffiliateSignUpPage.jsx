@@ -12,11 +12,6 @@ const AffiliateSignUpPage = (props) => {
     const navigateTo = useNavigate();
 
     useEffect(() => {
-        setAffiliate(affiliateId);
-    }, [affiliateId]);
-
-
-    useEffect(() => {
         if (userdata != null) {
             navigateTo('/shop')
         }
