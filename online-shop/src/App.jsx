@@ -49,6 +49,8 @@ function App() {
   const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
   const navigateTo = useNavigate();
 
+
+
   useEffect(() => {
     if (appConfig.getIsDevEnvironment() == true) {
       if (!authEmulatorConnected) {
@@ -104,6 +106,10 @@ function App() {
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
   const [affiliate, setAffiliate] = useState(null);
+
+  useEffect(() => {
+    console.log(affiliate)
+  }, [affiliate]);
 
 
   useEffect(() => {
