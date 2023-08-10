@@ -259,6 +259,7 @@ function App() {
                   affiliateCommissions : [],
                   bir2303Link : null,
                   affiliateId : null,
+                  affiliateBankAccounts : [],
                 },
                 user.uid
               );

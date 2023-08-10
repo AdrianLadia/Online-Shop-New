@@ -52,6 +52,7 @@ const CheckoutProofOfPayment = (props) => {
   }
 
   if (['maya', 'visa', 'mastercard', 'gcash','shoppeepay','wechatpay'].includes(paymentMethodSelected)) {
+    bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
   }
 

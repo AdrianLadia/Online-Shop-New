@@ -39,7 +39,7 @@ const MyOrderCardModal = (props) => {
   });
 
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore } = useContext(AppContext);
+  const { storage, userId, cloudfirestore,userdata } = useContext(AppContext);
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
@@ -70,10 +70,7 @@ const MyOrderCardModal = (props) => {
     }
   }
 
-  function onUpload2(proofOfPaymentLink) {
-    cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink);
-    setLinkCount(1);
-  }
+
 
   return (
     <div>

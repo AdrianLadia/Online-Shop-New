@@ -45,6 +45,7 @@ await cloudfirestore.createNewUser(
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
   },
   'TESTUSER'
 );
@@ -601,6 +602,7 @@ describe('Transaction Create Payment', async () => {
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
       },
       'testuser'
     );
@@ -647,6 +649,7 @@ describe('firestoredb', async () => {
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
       },
       'test'
     );
@@ -672,6 +675,7 @@ describe('firestoredb', async () => {
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
       },
       'testuser'
     );
@@ -1567,6 +1571,7 @@ describe('cloudfirestoredb', async () => {
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
       },
       'testuser'
     );
@@ -1694,6 +1699,7 @@ describe('cloudfirestoredb', async () => {
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
       },
       'testuser'
     );
@@ -1837,6 +1843,7 @@ describe('cloudfirestoredb', async () => {
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
       },
       'testuser'
     );
@@ -1870,6 +1877,7 @@ describe('cloudfirestoredb', async () => {
     affiliateCommissions: [],
     bir2303Link : null,
     affiliateId : null,
+    affiliateBankAccounts : [],
       },
       'testuser2'
     );
@@ -2893,6 +2901,7 @@ describe.only('test commission system', async () => {
         affiliateCommissions: [],
         bir2303Link : null,
         affiliateId : null,
+        affiliateBankAccounts : [],
       },
       'TESTAFFILIATE'
     );
@@ -2917,6 +2926,7 @@ describe.only('test commission system', async () => {
         affiliateCommissions: [],
         bir2303Link : null,
         affiliateId : null,
+        affiliateBankAccounts : [],
       },
       'TESTUSER'
     );
@@ -3111,12 +3121,55 @@ describe.only('test commission system', async () => {
     const commissions = affiliateData.affiliateCommissions
     let found = false
     commissions.forEach((commission) => {
-      if (commission.commission == 261.64281528) {
+      if (commission.commission == '261.64') {
         found = true
       }
     })
     expect(found).toEqual(true)
   })
+  test('affiliate add payment method', async () => {
+    await firestore.updateAffiliateBankAccount('TESTAFFILIATE', {bank : 'bdo',accountName: 'Adrian Ladia',accountNumber:'1234567890'})
+    await delay(300)
+    const affiliate = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateBankAccount = affiliate.affiliateBankAccounts
+    let foundbdo = false
+    affiliateBankAccount.forEach((bank) => {
+      if (bank.bank == 'bdo') {
+        foundbdo = true
+      }
+    })
+    expect(foundbdo).toEqual(true)
+    await firestore.updateAffiliateBankAccount('TESTAFFILIATE', {bank : 'unionbank',accountName: 'Adrian Ladia',accountNumber:'1234567890'})
+    await firestore.updateAffiliateBankAccount('TESTAFFILIATE', {bank : 'gcash',accountName: 'Adrian Ladia',accountNumber:'1234567890'})
+    await firestore.updateAffiliateBankAccount('TESTAFFILIATE', {bank : 'maya',accountName: 'Adrian Ladia',accountNumber:'1234567890'})
+    await delay(300)
+    const affiliate2 = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateBankAccount2 = affiliate2.affiliateBankAccounts
+
+    if (affiliateBankAccount2.length != 4) {
+      throw new Error('not all bank accounts are added')
+    }
+
+    await firestore.updateAffiliateBankAccount('TESTAFFILIATE', {bank : 'bdo',accountName: 'Ladia Adrian',accountNumber:'0987654321'})
+    await firestore.updateAffiliateBankAccount('TESTAFFILIATE', {bank : 'unionbank',accountName: 'Ladia Adrian',accountNumber:'0987654321'})
+
+    const affiliate3 = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
+    const affiliateBankAccount3 = affiliate3.affiliateBankAccounts
+
+    affiliateBankAccount3.forEach((bank) => {
+      if (bank.bank == 'bdo') {
+        expect(bank.accountName).toEqual('Ladia Adrian')
+        expect(bank.accountNumber).toEqual('0987654321')
+      }
+      if (bank.bank == 'unionbank') {
+        expect(bank.accountName).toEqual('Ladia Adrian')
+        expect(bank.accountNumber).toEqual('0987654321')
+      }
+    })
+
+  },500000)
+
+
 
 })
 
@@ -3147,3 +3200,4 @@ describe('get all affiliates', () => {
     expect(users.length).toBeGreaterThan(0)
   })
 })
+

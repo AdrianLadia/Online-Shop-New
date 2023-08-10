@@ -48,7 +48,7 @@ const AffiliateClaimRequest = () => {
   function handleModalDepositClick() {
     const data = {
       depositImageUrl : imageProof,
-      amountDeposited : parseInt(amountDeposited),
+      amountDeposited : parseFloat(amountDeposited),
       affiliateClaimId : affiliateClaimId,
       affiliateUserId: affiliateUserId,
       depositMethod : depositMethod,
@@ -135,7 +135,7 @@ const AffiliateClaimRequest = () => {
                     <Button onClick={() => {handleOpen(data)}} disabled={data.amount <= data.totalDeposited?true:false} className={data.amount <= data.totalDeposited?'bg-gray-200' : 'bg-color10b hover:bg-blue1'} variant='contained'>Deposit</Button>
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => {onDoneClick(data.affiliateClaimId, data.affiliateUserId, data.transactionDate)}} disabled={data.amount == data.totalDeposited?false:true} variant='outlined'>Done</Button>
+                    <Button onClick={() => {onDoneClick(data.affiliateClaimId, data.affiliateUserId, data.transactionDate)}} disabled={data.totalDeposited >= data.amount ?false:true} variant='outlined'>Done</Button>
                   </TableCell>
                 </TableRow>
                 )):'No Claim Requests'}

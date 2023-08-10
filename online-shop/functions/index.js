@@ -929,6 +929,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
 
         const affiliateUserData = affiliateUserSnap.data();
         const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
+        const commission =((parseFloat(depositAmount) - lessCommissionToShipping)  / (1 + vatPercentage)) * commissionPercentage
         console.log('depositAmount', depositAmount);
         console.log('vatPercentage', vatPercentage);
         console.log('commissionPercentage', commissionPercentage);
@@ -938,7 +939,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           {
             customer: 'test',
             dateOrdered: new Date().toDateString(),
-            commission: ((parseFloat(depositAmount) - lessCommissionToShipping)  / (1 + vatPercentage)) * commissionPercentage,
+            commission: commission.toFixed(2) ,
             status: 'claimable',
             claimCode: '',
           },

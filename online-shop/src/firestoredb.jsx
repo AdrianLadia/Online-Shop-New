@@ -511,6 +511,62 @@ class firestoredb extends firestorefunctions {
     return userData.orders;
   }
 
+  async readAllAvailableAffiliateBankAccounts(userId) {
+    const userData = await super.readSelectedDataFromCollection('Users',userId);
+    const affiliateBankAccounts = userData.affiliateBankAccounts;
+    return affiliateBankAccounts;
+  }
+
+  async updateAffiliateBankAccount(userId, data) {
+    try{
+
+      const dataSchema  = Joi.object({}).keys({
+        bank: Joi.string().required(),
+        accountName: Joi.string().required(),
+        accountNumber : Joi.string().required(),
+      }).unknown(true);
+
+      const { error } = dataSchema.validate(data);
+      
+      if (error) {
+        throw new Error(error);
+      }
+
+      const affiliateUserData = await this.readSelectedDataFromCollection('Users', userId);
+      const oldAffiliateBankAccount = affiliateUserData.affiliateBankAccounts
+      let newAffiliateBankAccount = [];
+      const bankName = data.bank
+      const bankAccountUserName = data.accountName
+      const bankAccountNumber = data.accountNumber
+      let foundAccountToBeUpdated = false;
+      oldAffiliateBankAccount.forEach((bankAccount) => {
+        if (bankAccount.bank == bankName) {
+          foundAccountToBeUpdated = true;
+        }
+      });
+  
+      if (foundAccountToBeUpdated) {
+        oldAffiliateBankAccount.forEach((bankAccount) => {
+          if (bankAccount.bank == bankName) {
+            bankAccount.accountName = bankAccountUserName;
+            bankAccount.accountNumber = bankAccountNumber;
+          }
+        });
+        newAffiliateBankAccount = oldAffiliateBankAccount;
+      }
+      else {
+        newAffiliateBankAccount = [...oldAffiliateBankAccount, { bank: bankName, accountName: bankAccountUserName, accountNumber: bankAccountNumber }];
+      }
+  
+      await this.updateDocumentFromCollection('Users', userId, { affiliateBankAccounts: newAffiliateBankAccount });
+      return true;
+    }
+    catch(error){
+      console.error(error);
+      return false
+    }
+  }
+
 
   // async markCommissionPending(data, date, id){
   //   const updatedData = []
