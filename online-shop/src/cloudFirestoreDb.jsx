@@ -5,8 +5,6 @@ import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
-
-
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false) {
     super();
@@ -90,15 +88,19 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       await this.createDocument(data, userId, 'Users');
-      await this.createDocument({
-        messages: [],
-        ownerUserId: userId,
-        ownerName: data.name,
-        referenceNumber: userId,
-        isInquiry : true,
-        adminReadAll : true,
-        ownerReadAll : true,
-      },userId,'ordersMessages')
+      await this.createDocument(
+        {
+          messages: [],
+          ownerUserId: userId,
+          ownerName: data.name,
+          referenceNumber: userId,
+          isInquiry: true,
+          adminReadAll: true,
+          ownerReadAll: true,
+        },
+        userId,
+        'ordersMessages'
+      );
     } catch (error) {
       // Handle the 400 error messages
       const errorMessage = error.response.data;
@@ -150,16 +152,15 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       needAssistance: Joi.boolean().required(),
       eMail: Joi.string().required(),
       sendEmail: Joi.boolean().required(),
-      testing : Joi.boolean().required(),
-      isInvoiceNeeded : Joi.boolean().required(),
-      urlOfBir2303 : Joi.string().allow('',null),
+      testing: Joi.boolean().required(),
+      isInvoiceNeeded: Joi.boolean().required(),
+      urlOfBir2303: Joi.string().allow('', null),
     }).unknown(false);
 
     if (data['testing'] == null) {
       data['testing'] = false;
     }
     const { error } = schema.validate(data);
-
 
     const encodedData = encodeURIComponent(JSON.stringify(data));
 
@@ -168,23 +169,13 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
-   
-
     try {
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
       alert('Order placed successfully');
       return response;
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        // Handle the 400 error messages
-        const errorMessage = error.response.data;
-        console.error('Error:', errorMessage);
-        alert(errorMessage);
-      } else {
-        // Handle other errors
-        console.error('An error occurred:', error);
-        alert('An error occurred. Please try again later.');
-      }
+      // Handle other errors
+      alert('Failed to place order. Please try again later.');
     }
   }
 
@@ -345,12 +336,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     const jsonData = JSON.stringify(data);
 
-    // const res = await axios.post(`${this.url}sendEmail`, jsonData, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-
     try {
       const encodedData = encodeURIComponent(JSON.stringify(data));
       const response = await axios.post(`${this.url}transactionCreatePayment`, jsonData, {
@@ -358,10 +343,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           'Content-Type': 'application/json',
         },
       });
+      console.log(response);
       return response;
     } catch {
-      console.log(error);
-      alert('An error occurred. Please try again later.');
+      throw new Error(error);
     }
   }
 
@@ -373,23 +358,23 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     paymentMethod,
     forTesting = false
   ) {
-    try {
-      const json = {
-        orderReference: orderReference,
-        userId: userId,
-        proofOfPaymentLink: proofOfPaymentLink,
-        userName: userName,
-        paymentMethod: paymentMethod,
-        forTesting: forTesting,
-      };
+    const json = {
+      orderReference: orderReference,
+      userId: userId,
+      proofOfPaymentLink: proofOfPaymentLink,
+      userName: userName,
+      paymentMethod: paymentMethod,
+      forTesting: forTesting,
+    };
 
-      const jsonData = JSON.stringify(json);
-      console.log(jsonData);
+    const jsonData = JSON.stringify(json);
+    console.log(jsonData);
+    try {
       const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
         },
-      })
+      });
       const data = res.data;
       return data;
     } catch (error) {
@@ -414,7 +399,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const jsonData = JSON.stringify(data);
 
     try {
-
       const res = await axios.post(`${this.url}sendEmail`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
@@ -479,7 +463,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         'Content-Type': 'application/json',
       },
     });
-    return res
+    return res;
   }
 
   async onAffiliateClaim(data) {
@@ -489,7 +473,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         'Content-Type': 'application/json',
       },
     });
-    return res
+    return res;
   }
 
   // async addClaimsToAffiliate(data) {
@@ -519,7 +503,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         'Content-Type': 'application/json',
       },
     });
-    return res
+    return res;
   }
 
   async markAffiliateClaimDone(data) {
@@ -529,21 +513,18 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         'Content-Type': 'application/json',
       },
     });
-    return res
+    return res;
   }
 
   async getIpAddress() {
     const res = await axios.get(`https://api64.ipify.org/?format=json`);
-    return res.data.ip
+    return res.data.ip;
   }
 
   async getAllAffiliateUsers() {
     const res = await axios.get(`${this.url}getAllAffiliateUsers`);
-    return res.data
+    return res.data;
   }
-
-  
-
 }
 
 export default cloudFirestoreDb;

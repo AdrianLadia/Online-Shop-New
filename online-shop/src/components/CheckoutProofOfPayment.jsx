@@ -59,7 +59,13 @@ const CheckoutProofOfPayment = (props) => {
   async function onUpload(url) {
     const timestamp = Timestamp.fromDate(date);
     const timestampString = timestamp.toDate().toLocaleString();
-    await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
+    try{
+      await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
+    }
+    catch(error){
+      alert('Failed to upload proof of payment. Please try again.')
+      return
+    }
   }
 
   return (

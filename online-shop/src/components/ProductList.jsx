@@ -58,7 +58,12 @@ const ProductList = (props) => {
 
   useEffect(() => {
     if (cart != [] && userdata != null) {
-      firestore.createUserCart(cart, userdata.uid);
+      try{
+        firestore.createUserCart(cart, userdata.uid);
+      }
+      catch(e){
+        alert('Failed to update cart info. Please try again.')
+      }
     }
   }, [cart,updateCartInfo]);
 

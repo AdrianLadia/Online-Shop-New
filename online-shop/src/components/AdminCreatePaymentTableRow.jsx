@@ -24,7 +24,6 @@ const AdminCreatePaymentTableRow = (props) => {
   async function updatePaymentStatus(status) {
     setLoading(true);
     if (status === 'approved') {
-
       if (amount === '') {
         alert('Please enter amount');
         setLoading(false);
@@ -38,7 +37,14 @@ const AdminCreatePaymentTableRow = (props) => {
         paymentprovider: paymentMethod,
         proofOfPaymentLink: proofOfPaymentLink
       };
-      await cloudfirestore.transactionCreatePayment(data);
+      try{
+        await cloudfirestore.transactionCreatePayment(data);
+      }
+      catch(error){
+        alert('Error creating payment. Please try again.');
+        setLoading(false);
+        return
+      }
       const customerEmail = await firestore.readEmailAddressByUserId(userId);
   
       await cloudfirestore.sendEmail({
@@ -51,7 +57,14 @@ const AdminCreatePaymentTableRow = (props) => {
       setAmount('');
     }
     if (status === 'declined') {
-      await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink);
+      try{
+        await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink);
+      }
+      catch{
+        alert('Error deleting declined payment. Please try again.');
+        setLoading(false);
+        return
+      }
       const customerEmail = await firestore.readEmailAddressByUserId(userId);
      
       cloudfirestore.sendEmail({

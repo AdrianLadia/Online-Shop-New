@@ -53,7 +53,13 @@ const ImageUploadButton = (props) => {
           const downloadURL = await getDownloadURL(ordersRefStorage);
   
           if (onUploadFunction !== undefined) {
-            onUploadFunction(downloadURL);
+            try{
+              await onUploadFunction(downloadURL);
+            }
+            catch(error){
+              alert('Error uploading image. Please try again.');
+              return
+            }
           }
 
           const downloadUrlSchema = Joi.string().uri().required();

@@ -64,6 +64,7 @@ function parseData(data) {
   try {
     parsedData = JSON.parse(decodeURIComponent(data));
   } catch (e) {
+    console.log(e);
     res.status(400).send('Invalid data format. Data must be a valid URL-encoded JSON string.');
     return;
   }
@@ -264,6 +265,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
       // Send the products array as a JSON response
       res.status(200).send(products);
     } catch (error) {
+      console.log(error);
       res.status(400).send('Error reading products. Please try again later');
     }
     // return res.json({status: 'ok'})
@@ -382,6 +384,7 @@ exports.createPayment = functions.region('asia-southeast1').https.onRequest(asyn
       await createPayment(data, db);
       res.status(200).send('success');
     } catch (error) {
+      console.log(error);
       res.status(400).send('Error creating payment. Please try again later');
     }
   });
@@ -397,6 +400,7 @@ exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.
 
       res.status(200).send('success');
     } catch (error) {
+      console.log(error);
       res.status(400).send(error);
     }
   });
@@ -512,213 +516,218 @@ exports.transactionPlaceOrder = functions
           return;
         }
       }
-
-      db.runTransaction(async (transaction) => {
-        try {
-          // read user data
-          const userRef = db.collection('Users').doc(userid);
-          const user = await transaction.get(userRef);
-          const userData = user.data();
-          const deliveryAddress = userData.deliveryAddress;
-          const contactPerson = userData.contactPerson;
-          const ordersOnHold = {};
-          const currentInventory = {};
-
-          await Promise.all(
-            cartUniqueItems.map(async (c) => {
-              const productRef = db.collection('Products').doc(c);
-              const productdoc = await transaction.get(productRef);
-              // currentInventory.push(productdoc.data().stocksAvailable)
-              ordersOnHold[c] = productdoc.data().stocksOnHold;
-              currentInventory[c] = productdoc.data().stocksAvailable;
-            })
-          );
-
-          // WRITE
-          // WRITE TO PRODUCTS ON HOLD
-
-          await Promise.all(
-            cartUniqueItems.map(async (itemId) => {
-              const prodref = db.collection('Products').doc(itemId);
-              const orderQuantity = data.cart[itemId];
-              const newStocksAvailable = currentInventory[itemId] - orderQuantity;
-              let oldOrdersOnHold = ordersOnHold[itemId];
-
-              oldOrdersOnHold = ordersOnHold[itemId];
-
-              if (oldOrdersOnHold == undefined) {
-                oldOrdersOnHold = [];
+      try{
+        await db.runTransaction(async (transaction) => {
+          try {
+            // read user data
+            const userRef = db.collection('Users').doc(userid);
+            const user = await transaction.get(userRef);
+            const userData = user.data();
+            const deliveryAddress = userData.deliveryAddress;
+            const contactPerson = userData.contactPerson;
+            const ordersOnHold = {};
+            const currentInventory = {};
+  
+            await Promise.all(
+              cartUniqueItems.map(async (c) => {
+                const productRef = db.collection('Products').doc(c);
+                const productdoc = await transaction.get(productRef);
+                // currentInventory.push(productdoc.data().stocksAvailable)
+                ordersOnHold[c] = productdoc.data().stocksOnHold;
+                currentInventory[c] = productdoc.data().stocksAvailable;
+              })
+            );
+  
+            // WRITE
+            // WRITE TO PRODUCTS ON HOLD
+  
+            await Promise.all(
+              cartUniqueItems.map(async (itemId) => {
+                const prodref = db.collection('Products').doc(itemId);
+                const orderQuantity = data.cart[itemId];
+                const newStocksAvailable = currentInventory[itemId] - orderQuantity;
+                let oldOrdersOnHold = ordersOnHold[itemId];
+  
+                oldOrdersOnHold = ordersOnHold[itemId];
+  
+                if (oldOrdersOnHold == undefined) {
+                  oldOrdersOnHold = [];
+                }
+  
+                const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
+                const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
+  
+                console.log('orderQuantity', orderQuantity);
+                console.log('newStocksAvailable', newStocksAvailable);
+                console.log('oldOrdersOnHold', oldOrdersOnHold);
+                console.log('newOrderOnHold', newOrderOnHold);
+                console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
+  
+                transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
+                transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
+              })
+            );
+  
+            // WRITE TO DELIVER ADDRESS LIST
+            let addressexists = false;
+            let latitudeexists = false;
+            let longitudeexists = false;
+            deliveryAddress.map((d) => {
+              if (d.address == localDeliveryAddress) {
+                console.log('address already exists');
+                addressexists = true;
               }
-
-              const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
-              const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
-
-              console.log('orderQuantity', orderQuantity);
-              console.log('newStocksAvailable', newStocksAvailable);
-              console.log('oldOrdersOnHold', oldOrdersOnHold);
-              console.log('newOrderOnHold', newOrderOnHold);
-              console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
-
-              transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
-              transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
-            })
-          );
-
-          // WRITE TO DELIVER ADDRESS LIST
-          let addressexists = false;
-          let latitudeexists = false;
-          let longitudeexists = false;
-          deliveryAddress.map((d) => {
-            if (d.address == localDeliveryAddress) {
-              console.log('address already exists');
-              addressexists = true;
+              if (d.latitude == locallatitude) {
+                console.log('latitude already exists');
+                latitudeexists = true;
+              }
+              if (d.longitude == locallongitude) {
+                console.log('longitude already exists');
+                longitudeexists = true;
+              }
+            });
+            if (addressexists == false || latitudeexists == false || longitudeexists == false) {
+              console.log('adding new address');
+              const newAddress = [
+                {
+                  latitude: locallatitude,
+                  longitude: locallongitude,
+                  address: localDeliveryAddress,
+                },
+              ];
+              const updatedAddressList = [...newAddress, ...deliveryAddress];
+              transaction.update(userRef, { deliveryAddress: updatedAddressList });
             }
-            if (d.latitude == locallatitude) {
-              console.log('latitude already exists');
-              latitudeexists = true;
+  
+            // WRITE TO CONTACT NUMBER
+            // CHECKS IF CONTACTS ALREADY EXISTS IF NOT ADDS IT TO FIRESTORE
+  
+            let phonenumberexists = false;
+            let nameexists = false;
+            contactPerson.map((d) => {
+              if (d.phoneNumber == localphonenumber) {
+                console.log('phonenumber already exists');
+                phonenumberexists = true;
+              }
+              if (d.name == localname) {
+                console.log('name already exists');
+                nameexists = true;
+              }
+            });
+            if (phonenumberexists == false || nameexists == false) {
+              console.log('updating contact');
+              const newContact = [{ name: localname, phoneNumber: localphonenumber }];
+              const updatedContactList = [...newContact, ...contactPerson];
+              console.log(updatedContactList);
+              transaction.update(userRef, { contactPerson: updatedContactList });
             }
-            if (d.longitude == locallongitude) {
-              console.log('longitude already exists');
-              longitudeexists = true;
+  
+            const oldOrders = userData.orders;
+            const newOrder = {
+              orderDate: orderDate,
+              contactName: localname,
+              deliveryAddress: localDeliveryAddress,
+              contactPhoneNumber: localphonenumber,
+              deliveryAddressLatitude: locallatitude,
+              deliveryAddressLongitude: locallongitude,
+              cart: cart,
+              itemsTotal: itemstotal,
+              vat: vat,
+              shippingTotal: shippingtotal,
+              grandTotal: grandTotal,
+              delivered: false,
+              reference: reference,
+              paid: false,
+              userName: username,
+              userPhoneNumber: userphonenumber,
+              deliveryNotes: deliveryNotes,
+              orderAcceptedByClient: false,
+              userWhoAcceptedOrder: null,
+              orderAcceptedByClientDate: null,
+              clientIDWhoAcceptedOrder: null,
+              totalWeight: totalWeight,
+              deliveryVehicle: deliveryVehicle,
+              needAssistance: needAssistance,
+              userId: userid,
+              proofOfPaymentLink: [],
+              eMail: eMail,
+              cartItemsPrice: cartItemsPrice,
+              isInvoiceNeeded: isInvoiceNeeded,
+              urlOfBir2303: urlOfBir2303,
+            };
+  
+            const updatedOrders = [newOrder, ...oldOrders];
+            console.log(updatedOrders);
+            transaction.update(userRef, { orders: updatedOrders });
+            // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
+            transaction.update(userRef, { cart: {} });
+  
+            // CREATE ORDERMESSAGES CHAT
+            const orderMessagesRef = db.collection('ordersMessages').doc(reference);
+            transaction.set(orderMessagesRef, {
+              messages: [],
+              ownerUserId: userid,
+              ownerName: username,
+              referenceNumber: reference,
+              isInquiry: false,
+              ownerReadAll: true,
+              adminReadAll: true,
+            });
+            orderMessagesRef.collection('messages');
+  
+            console.log(newOrder.eMail);
+  
+            if (sendMail == true) {
+              try {
+                sendmail(
+                  newOrder.eMail,
+                  'Order Confirmation',
+                  `<p>Dear Customer,</p>
+              
+              <p>We are pleased to inform you that your order has been confirmed.</p>
+              
+              <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+              
+              <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
+              
+              <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
+              
+              <p>Thank you for choosing Star Pack!</p>
+              
+              <p>Best Regards,<br>
+              The Star Pack Team</p>`
+                );
+  
+                sendmail(
+                  'ladiaadrian@gmail.com',
+                  'Order Received',
+                  `<p>Order received,</p>
+              
+              <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+              <p><strong>Customer:</strong> ${newOrder.userName}</p>
+              <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
+      
+              <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
+              
+              <p>Best Regards,<br>
+              Star Pack Head</p>`
+                );
+              } catch {
+                console.log('error sending email');
+              }
             }
-          });
-          if (addressexists == false || latitudeexists == false || longitudeexists == false) {
-            console.log('adding new address');
-            const newAddress = [
-              {
-                latitude: locallatitude,
-                longitude: locallongitude,
-                address: localDeliveryAddress,
-              },
-            ];
-            const updatedAddressList = [...newAddress, ...deliveryAddress];
-            transaction.update(userRef, { deliveryAddress: updatedAddressList });
+  
+            res.send('SUCCESS');
+          } catch (e) {
+            console.log(e);
+            res.status(400).send('FAILED');
           }
-
-          // WRITE TO CONTACT NUMBER
-          // CHECKS IF CONTACTS ALREADY EXISTS IF NOT ADDS IT TO FIRESTORE
-
-          let phonenumberexists = false;
-          let nameexists = false;
-          contactPerson.map((d) => {
-            if (d.phoneNumber == localphonenumber) {
-              console.log('phonenumber already exists');
-              phonenumberexists = true;
-            }
-            if (d.name == localname) {
-              console.log('name already exists');
-              nameexists = true;
-            }
-          });
-          if (phonenumberexists == false || nameexists == false) {
-            console.log('updating contact');
-            const newContact = [{ name: localname, phoneNumber: localphonenumber }];
-            const updatedContactList = [...newContact, ...contactPerson];
-            console.log(updatedContactList);
-            transaction.update(userRef, { contactPerson: updatedContactList });
-          }
-
-          const oldOrders = userData.orders;
-          const newOrder = {
-            orderDate: orderDate,
-            contactName: localname,
-            deliveryAddress: localDeliveryAddress,
-            contactPhoneNumber: localphonenumber,
-            deliveryAddressLatitude: locallatitude,
-            deliveryAddressLongitude: locallongitude,
-            cart: cart,
-            itemsTotal: itemstotal,
-            vat: vat,
-            shippingTotal: shippingtotal,
-            grandTotal: grandTotal,
-            delivered: false,
-            reference: reference,
-            paid: false,
-            userName: username,
-            userPhoneNumber: userphonenumber,
-            deliveryNotes: deliveryNotes,
-            orderAcceptedByClient: false,
-            userWhoAcceptedOrder: null,
-            orderAcceptedByClientDate: null,
-            clientIDWhoAcceptedOrder: null,
-            totalWeight: totalWeight,
-            deliveryVehicle: deliveryVehicle,
-            needAssistance: needAssistance,
-            userId: userid,
-            proofOfPaymentLink: [],
-            eMail: eMail,
-            cartItemsPrice: cartItemsPrice,
-            isInvoiceNeeded: isInvoiceNeeded,
-            urlOfBir2303: urlOfBir2303,
-          };
-
-          const updatedOrders = [newOrder, ...oldOrders];
-          console.log(updatedOrders);
-          transaction.update(userRef, { orders: updatedOrders });
-          // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
-          transaction.update(userRef, { cart: {} });
-
-          // CREATE ORDERMESSAGES CHAT
-          const orderMessagesRef = db.collection('ordersMessages').doc(reference);
-          transaction.set(orderMessagesRef, {
-            messages: [],
-            ownerUserId: userid,
-            ownerName: username,
-            referenceNumber: reference,
-            isInquiry: false,
-            ownerReadAll: true,
-            adminReadAll: true,
-          });
-          orderMessagesRef.collection('messages');
-
-          console.log(newOrder.eMail);
-
-          if (sendMail == true) {
-            try {
-              sendmail(
-                newOrder.eMail,
-                'Order Confirmation',
-                `<p>Dear Customer,</p>
-            
-            <p>We are pleased to inform you that your order has been confirmed.</p>
-            
-            <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
-            
-            <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
-            
-            <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
-            
-            <p>Thank you for choosing Star Pack!</p>
-            
-            <p>Best Regards,<br>
-            The Star Pack Team</p>`
-              );
-
-              sendmail(
-                'ladiaadrian@gmail.com',
-                'Order Received',
-                `<p>Order received,</p>
-            
-            <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
-            <p><strong>Customer:</strong> ${newOrder.userName}</p>
-            <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
-    
-            <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
-            
-            <p>Best Regards,<br>
-            Star Pack Head</p>`
-              );
-            } catch {
-              console.log('error sending email');
-            }
-          }
-
-          res.send('SUCCESS');
-        } catch (e) {
-          console.log(e);
-          res.status(400).send('FAILED');
-        }
-      });
+        });
+      }
+      catch(error){
+        console.log(error);
+        res.status(400).send('FAILED');
+      }
     });
   });
 
@@ -917,13 +926,14 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     });
 
     try {
-      db.runTransaction(async (transaction) => {
+      await db.runTransaction(async (transaction) => {
         // READ
         // const paymentsRef = db.collection('Payments').doc();
         const userRef = db.collection('Users').doc(userId);
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
         const affiliateIdOfCustomer = userData.affiliate;
+
         const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
         const affiliateUserSnap = await transaction.get(affiliateUserRef);
 
@@ -984,7 +994,8 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         transaction.update(userRef, { orders: orders });
       });
       res.status(200).send('success');
-    } catch {
+    } catch(error) {
+      console.log(error);
       res.status(400).send('Error adding document.');
     }
   });
@@ -1020,7 +1031,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
 
       const db = admin.firestore();
 
-      db.runTransaction(async (transaction) => {
+      await db.runTransaction(async (transaction) => {
         // READ
         const paymentsRef = db.collection('Payments').doc();
         const userRef = db.collection('Users').doc(userId);
@@ -1139,7 +1150,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
 
       const db = admin.firestore();
 
-      db.runTransaction(async (transaction) => {
+      await db.runTransaction(async (transaction) => {
         try {
           // READ
           const orderMessagesRef = db.collection('ordersMessages').doc(orderReference);
@@ -1214,8 +1225,8 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         }
       });
     } catch (error) {
-      res.status(400).send('Error updating proof of payment link.');
       console.error('Error updating proof of payment link:', error);
+      res.status(400).send('Error updating proof of payment link.');
     }
   });
 });
@@ -1369,7 +1380,7 @@ async function deleteOldOrders() {
     console.log('stocksToAdjust', stocksToAdjust);
 
     //
-    db.runTransaction(async (transaction) => {
+    await db.runTransaction(async (transaction) => {
       dataNeededToUpdateOrderValue.forEach(async (data) => {
         const userId = data.userId;
         const userRef = db.collection('Users').doc(userId);
@@ -1396,6 +1407,7 @@ async function deleteOldOrders() {
     });
   } catch (error) {
     console.log(error);
+    res.status(400).send('failed to delete old orders');
   }
 }
 
@@ -1405,6 +1417,7 @@ exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(as
       deleteOldOrders();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
+      console.log(error);
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1416,6 +1429,7 @@ exports.giveAffiliateCommission = functions.region('asia-southeast1').https.onRe
       giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
+      console.log(error);
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1433,63 +1447,70 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
     const data = req.body;
     const { userId, orderReference } = data;
     const db = admin.firestore();
-    db.runTransaction(async (transaction) => {
-      try {
-        // READ
-        const userRef = db.collection('Users').doc(userId);
-        const userDataObj = await transaction.get(userRef);
-        const userData = userDataObj.data();
-        let orders = userData.orders;
-        const data = orders.filter((order) => order.reference != orderReference);
-        const cancelledData = orders.filter((order) => order.reference == orderReference);
-        const cancelledDataCart = cancelledData[0].cart;
-
-        console.log('data', data);
-        console.log('cancelledData', cancelledData);
-        console.log('cancelledDataCart', cancelledDataCart);
-
-        orders = data;
-        // READ OLD STOCKSAVAILABLE
-        const oldStocksAvailable = {};
-        const newStocksOnHoldData = {};
-
-        await Promise.all(
-          Object.entries(cancelledDataCart).map(async ([itemId, quantity]) => {
+    try {
+      await db.runTransaction(async (transaction) => {
+        try {
+          // READ
+          const userRef = db.collection('Users').doc(userId);
+          const userDataObj = await transaction.get(userRef);
+          const userData = userDataObj.data();
+          let orders = userData.orders;
+          const data = orders.filter((order) => order.reference != orderReference);
+          const cancelledData = orders.filter((order) => order.reference == orderReference);
+          const cancelledDataCart = cancelledData[0].cart;
+  
+          console.log('data', data);
+          console.log('cancelledData', cancelledData);
+          console.log('cancelledDataCart', cancelledDataCart);
+  
+          orders = data;
+          // READ OLD STOCKSAVAILABLE
+          const oldStocksAvailable = {};
+          const newStocksOnHoldData = {};
+  
+          await Promise.all(
+            Object.entries(cancelledDataCart).map(async ([itemId, quantity]) => {
+              const productRef = db.collection('Products').doc(itemId);
+  
+              const prodSnap = await transaction.get(productRef);
+              const prodData = prodSnap.data();
+              const stocksOnHold = prodData.stocksOnHold;
+              const stocksAvailable = prodData.stocksAvailable;
+              oldStocksAvailable[itemId] = stocksAvailable;
+              const newStocksOnHold = stocksOnHold.filter((data) => {
+                if (data.reference != orderReference) {
+                  return true;
+                }
+              });
+              newStocksOnHoldData[itemId] = newStocksOnHold;
+            })
+          );
+  
+          console.log(oldStocksAvailable);
+          console.log(newStocksOnHoldData);
+          // WRITE
+          Object.entries(cancelledDataCart).map(([itemId, quantity]) => {
+            console.log(itemId);
             const productRef = db.collection('Products').doc(itemId);
-
-            const prodSnap = await transaction.get(productRef);
-            const prodData = prodSnap.data();
-            const stocksOnHold = prodData.stocksOnHold;
-            const stocksAvailable = prodData.stocksAvailable;
-            oldStocksAvailable[itemId] = stocksAvailable;
-            const newStocksOnHold = stocksOnHold.filter((data) => {
-              if (data.reference != orderReference) {
-                return true;
-              }
-            });
-            newStocksOnHoldData[itemId] = newStocksOnHold;
-          })
-        );
-
-        console.log(oldStocksAvailable);
-        console.log(newStocksOnHoldData);
-        // WRITE
-        Object.entries(cancelledDataCart).map(([itemId, quantity]) => {
-          console.log(itemId);
-          const productRef = db.collection('Products').doc(itemId);
-          const newStocksAvailable = oldStocksAvailable[itemId] + quantity;
-          const newStocksOnHold = newStocksOnHoldData[itemId];
-          console.log(newStocksOnHold);
-          transaction.update(productRef, { stocksAvailable: newStocksAvailable });
-          transaction.update(productRef, { stocksOnHold: newStocksOnHold });
-        });
-
-        transaction.update(userRef, { orders: orders });
-        res.status(200).send('success');
-      } catch {
-        res.status(400).send('Error deleting order.');
-      }
-    });
+            const newStocksAvailable = oldStocksAvailable[itemId] + quantity;
+            const newStocksOnHold = newStocksOnHoldData[itemId];
+            console.log(newStocksOnHold);
+            transaction.update(productRef, { stocksAvailable: newStocksAvailable });
+            transaction.update(productRef, { stocksOnHold: newStocksOnHold });
+          });
+  
+          transaction.update(userRef, { orders: orders });
+          res.status(200).send('success');
+        } catch(error) {
+          console.log(error);
+          res.status(400).send('Error deleting order.');
+        }
+      });
+    }
+    catch(error) {
+      console.log(error);
+      res.status(400).send('Error deleting order.');
+    }
   });
 });
 
@@ -1506,7 +1527,7 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
         // Add data to affiliates account affiliateDeposits
         const db = admin.firestore();
         try {
-          db.runTransaction(async (transaction) => {
+          await db.runTransaction(async (transaction) => {
             const userRef = db.collection('Users').doc(affiliateUserId);
             const docRef = await userRef.get();
             const affiliateUserData = docRef.data();
@@ -1551,6 +1572,7 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
             transaction.update(userRef, { affiliateCommissions: updatedCommissionData });
           });
         } catch (e) {
+          console.log(e);
           res.status(400).send('Error adding deposit to affiliate.');
         }
       } else {
@@ -1607,6 +1629,7 @@ exports.onAffiliateClaim = functions.region('asia-southeast1').https.onRequest(a
       });
     } catch (e) {
       console.log(e);
+      res.status(400).send('Error on affiliate claim.');
     }
   });
 });
@@ -1635,7 +1658,9 @@ exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').http
       const userRef = db.collection('Users').doc(userId);
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   });
 });
 
@@ -1678,7 +1703,9 @@ exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onReq
       });
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   });
 });
 

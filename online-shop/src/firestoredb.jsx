@@ -102,9 +102,12 @@ class firestoredb extends firestorefunctions {
     } catch (error) {
       throw new Error(error)
     }
-
-    await retryApi(async () => await super.updateDocumentFromCollection('Products', id, data));
-    // await super.updateDocumentFromCollection('Products', id, data);
+    try{
+      await retryApi(async () => await super.updateDocumentFromCollection('Products', id, data));
+    }
+    catch(error){
+      throw new Error(error)
+    }
   }
 
   // USED FOR STOREFRONT
@@ -193,11 +196,16 @@ class firestoredb extends firestorefunctions {
   }
 
   async createUserCart(data, userid) {
-    await retryApi(async () => {
-      super.updateDocumentFromCollection('Users', userid, {
-        cart: data,
+    try{
+      await retryApi(async () => {
+        super.updateDocumentFromCollection('Users', userid, {
+          cart: data,
+        });
       });
-    });
+    }
+    catch(error){
+      throw new Error(error)
+    }
   }
 
   async deleteAllUserCart(userid) {
@@ -409,30 +417,35 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteDeclinedPayment(reference, userId, link) {
-    await runTransaction(this.db, async (transaction) => {
-      console.log('deleteDeclinedPayment');
-      const userRef = doc(this.db, 'Users/', userId);
-      const userRefDoc = await transaction.get(userRef);
-      const userDoc = userRefDoc.data();
-      const orders = userDoc.orders;
-      orders.forEach((order) => {
-        const orderReference = order.reference;
-        if (orderReference == reference) {
-          const proofOfPaymentLinks = order.proofOfPaymentLink;
-          const data = proofOfPaymentLinks.filter((item) => item !== link);
-          order.proofOfPaymentLink = data;
-        }
+    try{
+      await runTransaction(this.db, async (transaction) => {
+        console.log('deleteDeclinedPayment');
+        const userRef = doc(this.db, 'Users/', userId);
+        const userRefDoc = await transaction.get(userRef);
+        const userDoc = userRefDoc.data();
+        const orders = userDoc.orders;
+        orders.forEach((order) => {
+          const orderReference = order.reference;
+          if (orderReference == reference) {
+            const proofOfPaymentLinks = order.proofOfPaymentLink;
+            const data = proofOfPaymentLinks.filter((item) => item !== link);
+            order.proofOfPaymentLink = data;
+          }
+        });
+  
+        transaction.update(userRef, { orders: orders });
+  
+        const paymentsRef = collection(this.db, 'Payments');
+        const q = query(paymentsRef, where('proofOfPaymentLink', '==', link));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          transaction.update(doc.ref, { status: 'declined' });
+        });
       });
-
-      transaction.update(userRef, { orders: orders });
-
-      const paymentsRef = collection(this.db, 'Payments');
-      const q = query(paymentsRef, where('proofOfPaymentLink', '==', link));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        transaction.update(doc.ref, { status: 'declined' });
-      });
-    });
+    }
+    catch(error){
+      throw new Error(error);
+    }
   }
 
   async addProductInteraction(userId, itemName, timeStamp) {

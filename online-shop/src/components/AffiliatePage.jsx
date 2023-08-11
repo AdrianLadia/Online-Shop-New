@@ -82,7 +82,8 @@ const AdminAffiliatePage = () => {
           totalUnclaimed += parseFloat(item.commission)
         })
 
-        setTotal(totalUnclaimed)
+
+        setTotal(totalUnclaimed.toFixed(2))
       }
     }, [affiliateCommissions, refreshUser]);
 

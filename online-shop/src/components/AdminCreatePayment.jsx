@@ -25,6 +25,8 @@ import { HiCash } from 'react-icons/hi';
 import AdminCreatePaymentTable from './AdminCreatePaymentTable';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import Joi from 'joi';
+import { CircularProgress } from '@mui/material';
+import { set } from 'date-fns';
 
 const AdminCreatePayment = (props) => {
   const { cloudfirestore, storage, firestore } = useContext(AppContext);
@@ -40,19 +42,19 @@ const AdminCreatePayment = (props) => {
   const [amount, setAmount] = React.useState('');
   const dummy = useRef(null);
   const [paymentLink, setPaymentLink] = React.useState('');
-  const [allPaymentProviders, setAllPaymentProviders] = React.useState([])
+  const [allPaymentProviders, setAllPaymentProviders] = React.useState([]);
   const [userid, setUserid] = React.useState('');
   const [unpaidOrdersReference, setUnpaidOrdersReference] = React.useState([]);
-  
+  const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
     firestore.readAllPaymentProviders().then((result) => {
-      const ids = result.map((data) => {return(data.id)});
+      const ids = result.map((data) => {
+        return data.id;
+      });
       setAllPaymentProviders(ids);
     });
   }, []);
-
-
 
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
@@ -65,7 +67,7 @@ const AdminCreatePayment = (props) => {
       const userId = datamanipulation.getUserUidFromUsers(users, selectedName);
       setUserid(userId);
       firestore.readAllOrdersByUserId(userId).then((result) => {
-        const unpaidOrdersReference = []        
+        const unpaidOrdersReference = [];
         result.forEach((data) => {
           if (data.paid == false) {
             unpaidOrdersReference.push(data.reference);
@@ -73,13 +75,11 @@ const AdminCreatePayment = (props) => {
         });
         setUnpaidOrdersReference(unpaidOrdersReference);
       });
-
     }
-
   }, [selectedName]);
 
   async function onCreatePayment() {
-    
+    setLoading(true);
     const data = {
       userId: userid,
       amount: parseFloat(amount),
@@ -102,25 +102,27 @@ const AdminCreatePayment = (props) => {
 
     if (error) {
       alert(error.message);
+      setLoading(false);
     }
 
-    cloudfirestore.transactionCreatePayment(data).then((result) => {
-      if (result.data == 'success') {
+    cloudfirestore
+      .transactionCreatePayment(data)
+      .then((res) => {
         alert('Payment Created Successfully');
         setAmount('');
         setReference('');
-        setPaymentProvider('');
         setPaymentLink('');
+        setLoading(false);
         cloudfirestore.sendEmail({
-          to:customerEmail,
-          subject:'Payment Created',
-          text:'Payment of PHP ' + amount + ' has been accepted by us. Please check your account for more details.'
-        }
-        );
-      } else {
-        alert('Payment Creation Failed. Please try again.');
-      }
-    });
+          to: customerEmail,
+          subject: 'Payment Created',
+          text: 'Payment of PHP ' + amount + ' has been accepted by us. Please check your account for more details.',
+        });
+      })
+      .catch((err) => {
+        alert('Failed to create payment. Please try again later.');
+        setLoading(false);
+      });
   }
 
   function onUploadFunction(url) {
@@ -152,7 +154,6 @@ const AdminCreatePayment = (props) => {
               sx={style}
             />
 
-
             <TextField
               id="amountPayment"
               onChange={(event) => setAmount(event.target.value)}
@@ -173,7 +174,7 @@ const AdminCreatePayment = (props) => {
               className="flex w-full"
               sx={style}
             />
-{/* 
+            {/* 
             <TextField
               id="referencePayment"
               onChange={(event) => setReference(event.target.value)}
@@ -189,7 +190,9 @@ const AdminCreatePayment = (props) => {
               disablePortal
               id="paymentProviderPayment"
               options={allPaymentProviders}
-              renderInput={(params) => <TextField {...params} label="Payment Provider ex. GCash / Paymaya" InputLabelProps={labelStyle} />}
+              renderInput={(params) => (
+                <TextField {...params} label="Payment Provider ex. GCash / Paymaya" InputLabelProps={labelStyle} />
+              )}
               className="flex w-full"
               sx={style}
             />
@@ -211,7 +214,12 @@ const AdminCreatePayment = (props) => {
               onClick={onCreatePayment}
               className="flex justify-center py-2 sm:py-2.5 w-6/12 sm:w-4/12 md:w-3/12 2md:w-4/12 uppercase text-sm sm:text-medium shadow-xl tracking-wide bg-color10b hover:bg-blue-400 rounded-lg ease-in-out duration-300"
             >
-              <HiCash className='mr-1.5' size={25} /> <a className='mt-0.5'>Create Payment</a>
+              {loading ? <CircularProgress className='text-white' size={25} /> : <div className='flex flex-row'>
+                <HiCash className="mr-1.5" size={25} />
+                <span >Create Payment</span>
+              </div> }
+              
+                
             </button>
             <div className="">
               <ImageUploadButton

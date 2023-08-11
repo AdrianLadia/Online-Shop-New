@@ -7,10 +7,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import useWindowDimensions from "./UseWindowDimensions";
-import AdminAddItemModal from "./AdminAddOrEditItem";
-import firestoredb from "../firestoredb";
-import AdminDeleteItemModal from "./AdminDeleteItemModal";
-import AdminEditItemModal from "./AdminEditItemModal";
 import { useEffect } from "react";
 
 function createData(
@@ -200,7 +196,7 @@ const AdminInventory = (props) => {
         </TableContainer>
       </div>
       {/* BUTTONS */}
-      <div className="flex flex-col gap-2 2xs:flex-row w-11/12 xs:w-6/12 md:w-2/4 justify-evenly 2xs:mt-8 m-5">
+      {/* <div className="flex flex-col gap-2 2xs:flex-row w-11/12 xs:w-6/12 md:w-2/4 justify-evenly 2xs:mt-8 m-5">
         <button 
           onClick={handleOpenDeleteItem}
           className="bg-red1 hover:bg-rose-500 text-white rounded-lg p-3 font-semibold"
@@ -219,7 +215,7 @@ const AdminInventory = (props) => {
         >
           Edit Item
         </button>
-      </div>
+      </div> */}
       {/* ADD ITEM MODAL */}
       {/* <AdminAddItemModal
         open={openAddItem}
@@ -229,13 +225,13 @@ const AdminInventory = (props) => {
         setRefresh={setRefresh}
       /> */}
       {/* DELETE ITEM MODAL */}
-      <AdminDeleteItemModal
+      {/* <AdminDeleteItemModal
         open={openDeleteItem}
         handleClose={handleCloseDeleteItem}
         products={productlist}
         refresh={refresh}
         setRefresh={setRefresh}
-      />
+      /> */}
       {/* EDIT ITEM MODAL */}
       {/* <AdminEditItemModal
         open={openEditItem}

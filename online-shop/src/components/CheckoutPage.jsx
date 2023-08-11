@@ -28,6 +28,8 @@ import Button from '@mui/material/Button';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import Image from './ImageComponents/Image';
 import AppConfig from '../AppConfig';
+import firebaseConfig from '../firebase_config';
+
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -70,6 +72,7 @@ const CheckoutPage = () => {
     storage,
     openProfileUpdaterModal,
     firestore,
+    setOpenProfileUpdaterModal,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -297,6 +300,7 @@ const CheckoutPage = () => {
           isInvoiceNeeded: isInvoiceNeeded,
           urlOfBir2303: urlOfBir2303,
         });
+        console.log(res.data);
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
       } catch (err) {
@@ -351,7 +355,7 @@ const CheckoutPage = () => {
   }, [total, vat, deliveryFee]);
 
   function searchAddress() {
-    Geocode.fromAddress(addressGeocodeSearch, 'AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I', 'en', 'ph').then(
+    Geocode.fromAddress(addressGeocodeSearch, firebaseConfig.apiKey, 'en', 'ph').then(
       (response) => {
         const { lat, lng } = response.results[0].geometry.location;
         setLocalLatitude(lat);

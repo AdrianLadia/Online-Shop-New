@@ -236,8 +236,10 @@ function App() {
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           if (userExists) {
             setUserId(user.uid);
+            return
           } else {
             async function createNewUser() {
+              console.log(affiliate)
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,

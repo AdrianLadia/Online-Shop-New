@@ -12,6 +12,7 @@ import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
 import useWindowDimensions from './UseWindowDimensions';
 import Image from './ImageComponents/Image';
+import firebaseConfig from '../firebase_config';
 
 const MyOrderCardModal = (props) => {
   const style = {
@@ -35,7 +36,7 @@ const MyOrderCardModal = (props) => {
   };
 
   let { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
+    googleMapsApiKey: firebaseConfig.apiKey,
   });
 
   const datamanipulation = new dataManipulation();

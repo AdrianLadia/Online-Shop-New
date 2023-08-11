@@ -41,7 +41,7 @@ class firestorefunctions {
       }
     } catch (e) {
       if (consolelog) {
-        console.error('Error adding document: ', e);
+        throw new Error('Error adding document: ' + e);
       }
     }
   }
