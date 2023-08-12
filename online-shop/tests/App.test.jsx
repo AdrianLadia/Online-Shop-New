@@ -2876,7 +2876,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe.only('test commission system', async () => {
+describe('test commission system', async () => {
   test('Setup test', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE')
     await firestore.deleteDocumentFromCollection('Users', 'TESTUSER')
@@ -3198,6 +3198,72 @@ describe('get all affiliates', () => {
   test('invoke function', async () => {
     const users = await cloudfirestore.getAllAffiliateUsers()
     expect(users.length).toBeGreaterThan(0)
+  })
+})
+
+describe.only('count all orders of a specific year', () => {
+  test('prepare data', async () => {
+    await firestore.updateDocumentFromCollection('Users',userTestId,{orders : []})
+    await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 1000,
+      vat: 100,
+      shippingtotal: 2002,
+      grandTotal: 1000 + 100 + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 1000,
+      vat: 100,
+      shippingtotal: 2002,
+      grandTotal: 1000 + 100 + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(300)
+  })
+  test('count orders', async () => {
+    const yearToday = new Date().getFullYear()
+    const userdata = await firestore.readSelectedDataFromCollection('Users',userTestId)
+    const orders = userdata.orders
+    const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders,yearToday)
+    expect(count).toEqual(2)
   })
 })
 

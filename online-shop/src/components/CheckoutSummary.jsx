@@ -42,6 +42,8 @@ const CheckoutSummary = (props) => {
 
   const area = props.area;
   const rows = props.rows;
+  
+  const itemsTotal = vat + total
 
   // useEffect(() => {
   //   async function getTableData() {
@@ -155,16 +157,16 @@ const CheckoutSummary = (props) => {
               ) : null}
 
               <ListItem>
-                <ListItemText primary="Items Total:" secondary={'₱' + total.toLocaleString()} />
+                <ListItemText primary="Items Total:" secondary={'₱' + itemsTotal.toLocaleString()} />
               </ListItem>
-              {new AppConfig().getNoVat() ? null : 
+              {/* {new AppConfig().getNoVat() ? null : 
               (vat > 0) ?
               (
                 <ListItem>
                   <ListItemText primary="Tax:" secondary={'₱' + vat.toLocaleString()} />
                 </ListItem>
               ) : null
-              }
+              } */}
 
               <ListItem>
                 <ListItemText primary="Delivery Fee:" secondary={'₱' + deliveryFee.toLocaleString()} />

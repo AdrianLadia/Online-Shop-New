@@ -155,6 +155,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       testing: Joi.boolean().required(),
       isInvoiceNeeded: Joi.boolean().required(),
       urlOfBir2303: Joi.string().allow('', null),
+      countOfOrdersThisYear: Joi.number().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {

@@ -437,6 +437,7 @@ exports.transactionPlaceOrder = functions
       const sendMail = data.sendEmail;
       const isInvoiceNeeded = data.isInvoiceNeeded;
       const urlOfBir2303 = data.urlOfBir2303;
+      const countOfOrdersThisYear = data.countOfOrdersThisYear;
 
       let cartUniqueItems = [];
 
@@ -654,6 +655,7 @@ exports.transactionPlaceOrder = functions
               cartItemsPrice: cartItemsPrice,
               isInvoiceNeeded: isInvoiceNeeded,
               urlOfBir2303: urlOfBir2303,
+              countOfOrdersThisYear: countOfOrdersThisYear,
             };
   
             const updatedOrders = [newOrder, ...oldOrders];

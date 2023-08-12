@@ -125,6 +125,17 @@ const CheckoutPage = () => {
 
   const [urlOfBir2303, setUrlOfBir2303] = useState('');
 
+  const [countOfOrdersThisYear, setCountOfOrdersThisYear] = useState(0);
+
+  // Get count of orders for this year
+  useEffect(() => {
+    const yearToday = new Date().getFullYear();
+    console.log(userdata.orders);
+    const count = datamanipulation.countAllOrdersOfUserInASpecificYear(userdata.orders,yearToday)
+    console.log(count);
+    setCountOfOrdersThisYear(count);
+  }, []);
+
   // Get url of bir2303
   useEffect(() => {
     const userDataUrlOfBir2303 = userdata?.bir2303Link;
@@ -299,6 +310,7 @@ const CheckoutPage = () => {
           sendEmail: true,
           isInvoiceNeeded: isInvoiceNeeded,
           urlOfBir2303: urlOfBir2303,
+          countOfOrdersThisYear: countOfOrdersThisYear,
         });
         console.log(res.data);
         setTransactionStatus(res.data);
@@ -694,7 +706,7 @@ const CheckoutPage = () => {
                 )}
                 <div className="flex flex-row justify-center">
                   <div className="flex justify-center m-5">
-                    <Typography variant="h6">Do you need an invoice?</Typography>
+                    <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
                   </div>
                   <div className="flex mt-4">
                     <Switch
@@ -727,7 +739,7 @@ const CheckoutPage = () => {
                   ) : (
                     <div>
                       <Typography variant="h7" className="flex justify-center mb-5 mx-5">
-                        We need to get your BIR 2303 Form to process your invoice. Please upload a photo below.
+                        Please upload a photo below of your BIR 2303 form if you have one.
                       </Typography>
                       <ImageUploadButton
                         buttonTitle={'Upload BIR 2303 Form'}

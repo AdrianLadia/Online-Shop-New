@@ -745,6 +745,20 @@ class dataManipulation {
     return differenceInSeconds;
   }
 
+  countAllOrdersOfUserInASpecificYear(orders, year) {
+    let count = 0;
+    orders.forEach((order) => {
+      const orderDate = order.orderDate
+      const date = new Date(orderDate._seconds * 1000 + orderDate._nanoseconds / 1000000);
+      const orderYear = date.getFullYear();
+
+      if (orderYear == year) {
+        count += 1;
+      }
+    })
+    return count;
+  }
+
   // convertTimestampToFirebaseTimestamp(timestamp) {
   //   const date = new Date(timestamp.seconds * 1000);
   //   date.setMilliseconds(timestamp.nanoseconds / 1000000);

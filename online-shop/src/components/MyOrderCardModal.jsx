@@ -151,12 +151,12 @@ const MyOrderCardModal = (props) => {
               >
                 <Divider />
                 <ListItem>
-                  <ListItemText primary="Items Total" secondary={order.itemsTotal} />
+                  <ListItemText primary="Items Total" secondary={order.itemsTotal + order.vat} />
                 </ListItem>
                 <Divider />
-                <ListItem>
+                {/* <ListItem>
                   <ListItemText primary="VAT" secondary={order.vat} />
-                </ListItem>
+                </ListItem> */}
                 <Divider />
                 <ListItem>
                   <ListItemText primary="Shipping" secondary={order.shippingTotal} />
