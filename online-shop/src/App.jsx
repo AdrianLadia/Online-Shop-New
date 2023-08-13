@@ -293,8 +293,8 @@ function App() {
   useEffect(() => {
     // GET ALL PRODUCTS
     async function readAllProductsForOnlineStore() {
-      console.log(selectedCategory);
       const categoriesQueried  = []
+      const combinedProductsList = []
       products.forEach((product) => {
       
         if (!categoriesQueried.includes(product.category)) {
@@ -304,13 +304,18 @@ function App() {
 
       if (!categoriesQueried.includes(selectedCategory)) {
         await cloudfirestore.readAllProductsForOnlineStore(selectedCategory).then((selectedProducts) => {
-          const combinedProductsList = [...products, ...selectedProducts];
-          setProducts(combinedProductsList);
+          combinedProductsList = [...products, ...selectedProducts];
         });
       }
+
+
+
+      setProducts(combinedProductsList);
     }
     readAllProductsForOnlineStore();
   }, [selectedCategory]);
+
+  
 
   useEffect(() => {
     if (userdata) {
