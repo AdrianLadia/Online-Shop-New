@@ -106,6 +106,7 @@ function App() {
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
   const [affiliate, setAffiliate] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     console.log(affiliate)
@@ -292,12 +293,24 @@ function App() {
   useEffect(() => {
     // GET ALL PRODUCTS
     async function readAllProductsForOnlineStore() {
-      await cloudfirestore.readAllProductsForOnlineStore().then((products) => {
-        setProducts(products);
+      console.log(selectedCategory);
+      const categoriesQueried  = []
+      products.forEach((product) => {
+      
+        if (!categoriesQueried.includes(product.category)) {
+          categoriesQueried.push(product.category)
+        }
       });
+
+      if (!categoriesQueried.includes(selectedCategory)) {
+        await cloudfirestore.readAllProductsForOnlineStore(selectedCategory).then((selectedProducts) => {
+          const combinedProductsList = [...products, ...selectedProducts];
+          setProducts(combinedProductsList);
+        });
+      }
     }
     readAllProductsForOnlineStore();
-  }, []);
+  }, [selectedCategory]);
 
   useEffect(() => {
     if (userdata) {
@@ -473,6 +486,8 @@ function App() {
     setAffiliate : setAffiliate,
     isAffiliate: isAffiliate,
     openProfileUpdaterModal: openProfileUpdaterModal,
+    selectedCategory: selectedCategory,
+    setSelectedCategory: setSelectedCategory,
   };
 
   return (

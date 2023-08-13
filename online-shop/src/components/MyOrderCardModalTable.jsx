@@ -13,8 +13,9 @@ import { ContentCutOutlined } from '@mui/icons-material';
 import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
-  const { products } = React.useContext(AppContext);
-
+  const {cloudfirestore } = React.useContext(AppContext);
+  
+  const [products, setProducts] = React.useState([]);
   const { width, height } = useWindowDimensions();
   function getMaxHeightTable() {
     return height - 10000;
@@ -26,6 +27,20 @@ const MyOrderCardModalTable = (props) => {
 
 
   const [rows, setRows] = React.useState([]);
+
+  useEffect(() => {
+    console.log(products)
+  }, [products]);
+
+  useEffect(() => {
+    Object.keys(cart).forEach((key) => {
+      cloudfirestore.readSelectedDataFromOnlineStore(key).then((data) => {
+        const combinedProducts = [...products, data];
+        setProducts(combinedProducts);
+      });
+    });
+    
+  }, []);
 
 
 
@@ -44,7 +59,7 @@ const MyOrderCardModalTable = (props) => {
     }
 
     getTableData();
-  }, []);
+  }, [products]);
 
 
 

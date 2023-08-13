@@ -221,13 +221,55 @@ exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async
   });
 });
 
+exports.readSelectedDataFromOnlineStore = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      const body = req.body;
+      const productId = body.productId;
+      const db = admin.firestore();
+      const selectedDataRef = db.collection('Products').doc(productId);
+      const selectedData = await selectedDataRef.get();
+      const data = selectedData.data();
+      const productObject = {
+        averageSalesPerDay: data.averageSalesPerDay,
+        brand: data.brand,
+        category: data.category,
+        color: data.color,
+        description: data.description,
+        dimensions: data.dimensions,
+        imageLinks: data.imageLinks,
+        itemId: data.itemId,
+        isCustomized: data.isCustomized,
+        itemName: data.itemName,
+        material: data.material,
+        parentProductID: data.parentProductID,
+        pieces: data.pieces,
+        price: data.price,
+        size: data.size,
+        stocksAvailable: data.stocksAvailable,
+        unit: data.unit,
+        weight: data.weight,
+        packsPerBox: data.packsPerBox,
+        piecesPerPack: data.piecesPerPack,
+        boxImage: data.boxImage,
+      };
+     
+      res.send(productObject);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send('Error reading selected data. Please try again later');
+    }
+  });
+});
+
 exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       // Create a query for products where forOnlineStore is true
+      const category = req.query.category;
       const db = admin.firestore();
       const productsRef = db.collection('Products');
-      const forOnlineStoreQuery = productsRef.where('forOnlineStore', '==', true);
+      const forOnlineStoreQuery = productsRef.where('forOnlineStore', '==', true).where('category','==',category)
 
       // Fetch and process the documents
       const querySnapshot = await forOnlineStoreQuery.get();

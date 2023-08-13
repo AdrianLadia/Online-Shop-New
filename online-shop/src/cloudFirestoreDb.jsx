@@ -211,9 +211,26 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async readAllProductsForOnlineStore() {
+  async readSelectedDataFromOnlineStore(productId) {
+    try{
+      const jsonData = JSON.stringify({productId:productId});
+      console.log(jsonData);
+      const res = await axios.post(`${this.url}readSelectedDataFromOnlineStore`,jsonData,{
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return res.data;
+    }
+    catch(error){
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+
+  async readAllProductsForOnlineStore(category) {
     try {
-      const response = await axios.request(`${this.url}readAllProductsForOnlineStore`);
+      const response = await axios.request(`${this.url}readAllProductsForOnlineStore?category=${category}`);
       const toReturn = response.data;
       const schema = Joi.array().items(schemas.productSchema());
 

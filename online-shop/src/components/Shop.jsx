@@ -12,8 +12,8 @@ const Shop = () => {
 
   const [wholesale, setWholesale] = useState(false);
   const [retail, setRetail] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const {isSupportedBrowser} = useContext(AppContext);
+  
+  const {isSupportedBrowser,selectedCategory,setSelectedCategory} = useContext(AppContext);
 
   return (
     <div className='flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 '>
