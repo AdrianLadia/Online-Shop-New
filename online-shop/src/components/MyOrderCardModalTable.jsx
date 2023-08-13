@@ -29,9 +29,6 @@ const MyOrderCardModalTable = (props) => {
 
   const [rows, setRows] = React.useState([]);
 
-  useEffect(() => {
-    console.log(products)
-  }, [products]);
 
   useEffect(() => {
 
