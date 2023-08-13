@@ -135,7 +135,6 @@ function App() {
             }
           }
         });
-        console.log(unreadCustomerServiceMessages)
         setUnreadCustomerServiceMessages(unreadCustomerServiceMessages);
       });
 
@@ -294,7 +293,7 @@ function App() {
     // GET ALL PRODUCTS
     async function readAllProductsForOnlineStore() {
       const categoriesQueried  = []
-      const combinedProductsList = []
+      let combinedProductsList = []
       products.forEach((product) => {
       
         if (!categoriesQueried.includes(product.category)) {
@@ -308,12 +307,32 @@ function App() {
         });
       }
 
-
-
       setProducts(combinedProductsList);
     }
     readAllProductsForOnlineStore();
   }, [selectedCategory]);
+
+  useEffect(() => {
+    if (userdata != null) {
+      console.log(cart);
+  
+      const fetchCartProductsData = async () => {
+        const cartProductPromises = Object.keys(cart).map(async (key) => {
+          const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
+          return productData;
+        });
+  
+        const cartProductsData = await Promise.all(cartProductPromises);
+        console.log(products)
+        const productsCombined = [...products, ...cartProductsData];
+        
+        console.log(productsCombined)
+        setProducts(productsCombined);
+      };
+  
+      fetchCartProductsData();
+    }
+  }, [userdata]);
 
   
 

@@ -46,7 +46,7 @@ const CategorySelector = (props) => {
         // This selects the category from the url or from the featured category
         // if there is a url we use the url, if not we use the featured category
         let categoryToUse 
-        console.log(categoryFromUrl)
+    
         if (categoryFromUrl != null) {
           categoryToUse = categoryFromUrl
         }
@@ -66,19 +66,19 @@ const CategorySelector = (props) => {
   };
 
   useEffect(() => {
-    async function fetchCategories() {
-      const categories = await firestore.readAllCategories();
+    firestore.readAllCategories().then((categories) => {
       const categoryList = datamanipulation.getCategoryList(categories, hiddenCategories);
       setCategories(categoryList);
-    }
-    fetchCategories();
+    })
   }, []);
 
   useEffect(() => {
-    if (categories != null) {
+    console.log('value',value)
+    if (categories != null && value != null) {
+      console.log('CHANGED CATEGORY')
       setSelectedCategory(categories[value]);
     }
-  }, [value, categories]);
+  }, [value]);
 
   return (
     <ThemeProvider theme={theme}>
