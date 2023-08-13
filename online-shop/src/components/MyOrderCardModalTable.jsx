@@ -33,13 +33,21 @@ const MyOrderCardModalTable = (props) => {
   }, [products]);
 
   useEffect(() => {
-    Object.keys(cart).forEach((key) => {
-      cloudfirestore.readSelectedDataFromOnlineStore(key).then((data) => {
-        const combinedProducts = [...products, data];
-        setProducts(combinedProducts);
+
+    const fetchCartProductsData = async () => {
+      const cartProductPromises = Object.keys(cart).map(async (key) => {
+        const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
+        return productData;
       });
-    });
-    
+
+      const data = await Promise.all(cartProductPromises);
+      const productsCombined = [...products, ...data];
+
+      console.log(productsCombined);
+      setProducts(productsCombined);
+    };
+
+    fetchCartProductsData();
   }, []);
 
 

@@ -32,7 +32,6 @@ import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
 
-
 const devEnvironment = true;
 
 function App() {
@@ -48,8 +47,6 @@ function App() {
 
   const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
   const navigateTo = useNavigate();
-
-
 
   useEffect(() => {
     if (appConfig.getIsDevEnvironment() == true) {
@@ -107,25 +104,26 @@ function App() {
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
   const [affiliate, setAffiliate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [cartProductsData, setCartProductsData] = useState([]);
+  const [categoryProductsData, setCategoryProductsData] = useState([]);
 
   useEffect(() => {
-    console.log(affiliate)
+    console.log(affiliate);
   }, [affiliate]);
-
 
   useEffect(() => {
     cloudfirestore.getIpAddress().then((ipAddress) => {
       const data = {
         ipAddress: ipAddress,
-        dateTime : new Date(),
-        pageOpened : window.location.href
-      }
-      firestore.addDataToPageOpens(data)
+        dateTime: new Date(),
+        pageOpened: window.location.href,
+      };
+      firestore.addDataToPageOpens(data);
     });
   }, []);
 
   useEffect(() => {
-    if (userdata != null ) {
+    if (userdata != null) {
       let unreadCustomerServiceMessages = 0;
       firestore.readOrderMessageByReference(userdata.uid).then((messages) => {
         messages.messages.forEach((message) => {
@@ -139,18 +137,17 @@ function App() {
       });
 
       let unreadOrderMessages = 0;
-      
+
       orders.map((order) => {
         firestore.readOrderMessageByReference(order.reference).then((messages) => {
           messages.messages.forEach((message) => {
             if (message.userId != userdata.uid) {
-              
               if (message.read === false) {
                 unreadOrderMessages += 1;
               }
             }
           });
-          console.log('setting')
+          console.log('setting');
           setUnreadOrderMessages(unreadOrderMessages);
         });
       });
@@ -229,17 +226,16 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      
       if (user) {
         setUserState('userloading');
         setUser(user);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           if (userExists) {
             setUserId(user.uid);
-            return
+            return;
           } else {
             async function createNewUser() {
-              console.log(affiliate)
+              console.log(affiliate);
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -256,12 +252,12 @@ function App() {
                   payments: [],
                   userRole: 'member',
                   affiliate: affiliate,
-                  affiliateClaims : [],
-                  affiliateDeposits : [],
-                  affiliateCommissions : [],
-                  bir2303Link : null,
-                  affiliateId : null,
-                  affiliateBankAccounts : [],
+                  affiliateClaims: [],
+                  affiliateDeposits: [],
+                  affiliateCommissions: [],
+                  bir2303Link: null,
+                  affiliateId: null,
+                  affiliateBankAccounts: [],
                 },
                 user.uid
               );
@@ -292,49 +288,59 @@ function App() {
   useEffect(() => {
     // GET ALL PRODUCTS
     async function readAllProductsForOnlineStore() {
-      const categoriesQueried  = []
-      let combinedProductsList = []
-      products.forEach((product) => {
-      
+      const categoriesQueried = [];
+      let combinedProductsList = [];
+      categoryProductsData.forEach((product) => {
         if (!categoriesQueried.includes(product.category)) {
-          categoriesQueried.push(product.category)
+          categoriesQueried.push(product.category);
         }
       });
-
       if (!categoriesQueried.includes(selectedCategory)) {
         await cloudfirestore.readAllProductsForOnlineStore(selectedCategory).then((selectedProducts) => {
-          combinedProductsList = [...products, ...selectedProducts];
+          combinedProductsList = [...categoryProductsData, ...selectedProducts];
         });
+        setCategoryProductsData(combinedProductsList);
       }
 
-      setProducts(combinedProductsList);
     }
+
     readAllProductsForOnlineStore();
   }, [selectedCategory]);
+
+
 
   useEffect(() => {
     if (userdata != null) {
       console.log(cart);
-  
+
       const fetchCartProductsData = async () => {
         const cartProductPromises = Object.keys(cart).map(async (key) => {
           const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
           return productData;
         });
-  
-        const cartProductsData = await Promise.all(cartProductPromises);
-        console.log(products)
-        const productsCombined = [...products, ...cartProductsData];
-        
-        console.log(productsCombined)
-        setProducts(productsCombined);
+
+        const data = await Promise.all(cartProductPromises);
+        const productsCombined = [...cartProductsData, ...data];
+
+        console.log(productsCombined);
+        setCartProductsData(productsCombined);
       };
-  
+
       fetchCartProductsData();
     }
   }, [userdata]);
 
-  
+
+  useEffect(() => {
+    const combinedProductsList = [...categoryProductsData, ...cartProductsData];
+    //remove duplicates
+    const uniqueProducts = combinedProductsList.filter((thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index);
+    setProducts(uniqueProducts);
+  }, [cartProductsData,categoryProductsData]);
+
+  useEffect(() => {
+    console.log(products);
+  }, [products]);
 
   useEffect(() => {
     if (userdata) {
@@ -495,19 +501,19 @@ function App() {
     setUnreadCustomerServiceMessages: setUnreadCustomerServiceMessages,
     isAndroidDevice: isAndroidDevice,
     isGoogleChrome: isGoogleChrome,
-    updateCartInfo:updateCartInfo,
-    setUpdateCartInfo:setUpdateCartInfo,
-    isAppleDevice : isAppleDevice,
-    allUserData : allUserData,
-    setAllUserData:setAllUserData,
-    inquiryMessageSwitch : inquiryMessageSwitch,
-    setInquiryMessageSwitch : setInquiryMessageSwitch,
-    unreadCustomerServiceMessages : unreadCustomerServiceMessages,
-    setUnreadCustomerServiceMessages : setUnreadCustomerServiceMessages,
-    isAndroidDevice : isAndroidDevice,
-    isGoogleChrome : isGoogleChrome,
-    affiliate : affiliate,
-    setAffiliate : setAffiliate,
+    updateCartInfo: updateCartInfo,
+    setUpdateCartInfo: setUpdateCartInfo,
+    isAppleDevice: isAppleDevice,
+    allUserData: allUserData,
+    setAllUserData: setAllUserData,
+    inquiryMessageSwitch: inquiryMessageSwitch,
+    setInquiryMessageSwitch: setInquiryMessageSwitch,
+    unreadCustomerServiceMessages: unreadCustomerServiceMessages,
+    setUnreadCustomerServiceMessages: setUnreadCustomerServiceMessages,
+    isAndroidDevice: isAndroidDevice,
+    isGoogleChrome: isGoogleChrome,
+    affiliate: affiliate,
+    setAffiliate: setAffiliate,
     isAffiliate: isAffiliate,
     openProfileUpdaterModal: openProfileUpdaterModal,
     selectedCategory: selectedCategory,
