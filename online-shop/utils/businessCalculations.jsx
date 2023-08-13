@@ -404,19 +404,24 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    // function countStrings(arr) {
-    //   const counts = {};
-    //   arr.forEach((str) => {
-    //     counts[str] = counts[str] ? counts[str] + 1 : 1;
-    //   });
-    //   return counts;
-    // }
     // CONFIRM AGAIN IF STOCKS AVAILABLE
     let message = 'Unfortunately someone else might have bought the stocks listed below. \n \n';
     let outOfStockDetected = false;
     // const count = countStrings(cart);
     // const countEntries = Object.entries(count);
-    const products = await this.cloudfirestore.readAllProductsForOnlineStore();
+    console.log('cart', cart);
+    const fetchCartProductsData = async () => {
+      const cartProductPromises = Object.keys(cart).map(async (key) => {
+        const productData = await this.cloudfirestore.readSelectedDataFromOnlineStore(key);
+        return productData;
+      });
+
+      const data = await Promise.all(cartProductPromises);
+      return data;
+      
+    };
+    const products = await fetchCartProductsData();
+    console.log('products', products);
     Object.entries(cart).map(([itemId, quantity]) => {
       if (itemId.slice(-4) === '-RET') {
         return;

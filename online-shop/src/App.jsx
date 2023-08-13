@@ -147,7 +147,6 @@ function App() {
               }
             }
           });
-          console.log('setting');
           setUnreadOrderMessages(unreadOrderMessages);
         });
       });
@@ -296,6 +295,7 @@ function App() {
         }
       });
       if (!categoriesQueried.includes(selectedCategory)) {
+        console.log('READING CATEGORY');
         await cloudfirestore.readAllProductsForOnlineStore(selectedCategory).then((selectedProducts) => {
           combinedProductsList = [...categoryProductsData, ...selectedProducts];
         });
@@ -311,8 +311,7 @@ function App() {
 
   useEffect(() => {
     if (userdata != null) {
-      console.log(cart);
-
+      console.log('READING CART');
       const fetchCartProductsData = async () => {
         const cartProductPromises = Object.keys(cart).map(async (key) => {
           const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
@@ -337,10 +336,6 @@ function App() {
     const uniqueProducts = combinedProductsList.filter((thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index);
     setProducts(uniqueProducts);
   }, [cartProductsData,categoryProductsData]);
-
-  useEffect(() => {
-    console.log(products);
-  }, [products]);
 
   useEffect(() => {
     if (userdata) {
