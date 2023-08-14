@@ -64,7 +64,7 @@ function delay(ms) {
 
 describe('Business Calcualtions', () => {
   test('readAllParentProductsFromOnlineStoreProducts', async () => {
-    const products = await cloudfirestore.readAllProductsForOnlineStore();
+    const products = await cloudfirestore.readAllProductsForOnlineStore('Paper Bag');
     await delay(100);
     const parentProducts = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products);
     expect(parentProducts.length).toBeGreaterThan(0);
@@ -2368,20 +2368,151 @@ describe('updatePaymentStatus', () => {
   });
 }, 100000);
 
-describe.only('deleteOldOrders', () => {
+describe('deleteOldOrders', async () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
-    await firestore.updateDocumentFromCollection('Users', userTestId, {
-      orders: [
-        { paid: true, orderDate: twoDaysAgo, reference: 'testref1234', proofOfPaymentLink: [], cart: {} },
-        { paid: false, orderDate: twoDaysAgo, reference: 'testref12345', proofOfPaymentLink: [], cart: {} },
-        { paid: false, orderDate: currentDate, reference: 'testref123456', proofOfPaymentLink: [], cart: {} },
-        { paid: true, orderDate: currentDate, reference: 'testref1234567', proofOfPaymentLink: [], cart: {} },
-        { paid: false, orderDate: currentDate, reference: 'testref12345678', proofOfPaymentLink: ['a'], cart: {} },
-      ],
+    const itemsTotal = 10000
+    const vat = 1000
+    await cloudfirestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
+      testing:true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12, 'PPB#12': 12, 'PPB#1-RET':12 },
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
+    await delay(300);
+    await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
+      testing:true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12, 'PPB#12': 12, 'PPB#1-RET':12 },
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(300);
+    await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
+      testing:true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12, 'PPB#12': 12, 'PPB#1-RET':12 },
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref123456',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(300);
+    await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
+      testing:true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12, 'PPB#12': 12, 'PPB#1-RET':12 },
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref1234567',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(300);
+    await cloudfirestore.transactionPlaceOrder({
+      isInvoiceNeeded: true,
+      testing:true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12, 'PPB#12': 12, 'PPB#1-RET':12 },
+      itemstotal: itemsTotal,
+      vat: vat,
+      shippingtotal: 2002,
+      grandTotal: itemsTotal + vat + 2002,
+      reference: 'testref12345678',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await firestore.updateDocumentFromCollection('Orders', 'testref1234', {orderDate: twoDaysAgo});
+    await firestore.updateDocumentFromCollection('Orders', 'testref12345', {orderDate: twoDaysAgo});
+    
     await delay(200);
   });
 
@@ -2392,7 +2523,6 @@ describe.only('deleteOldOrders', () => {
     const orders = testUserData.orders;
     let found1 = false;
     let found2 = false;
-    let found3 = false;
     let found4 = false;
     orders.map((order) => {
       if (order.reference == 'testref12345') {
@@ -2406,7 +2536,7 @@ describe.only('deleteOldOrders', () => {
         found2 = true;
       }
       if (order.reference == 'testref1234') {
-        found3 = true;
+        throw new Error('Order not deleted');
       }
       if (order.reference == 'testref12345678') {
         found4 = true;
@@ -2415,7 +2545,6 @@ describe.only('deleteOldOrders', () => {
 
     expect(found1).toEqual(true);
     expect(found2).toEqual(true);
-    expect(found3).toEqual(true);
     expect(found4).toEqual(true);
   }, 100000);
 
@@ -2426,7 +2555,10 @@ describe.only('deleteOldOrders', () => {
   });
 
   test('Create an order with items to test if items are added back to stocksAvailable and stocksOnHold is deleted', async () => {
+    
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
+    await firestore.deleteDocumentFromCollection('Orders', 'testref12345');
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#12', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#1-RET', { stocksOnHold: [] });
@@ -2472,14 +2604,7 @@ describe.only('deleteOldOrders', () => {
     const userdata = await firestore.readUserById(userTestId);
     const orders = userdata.orders;
 
-    orders.map((order) => {
-      if (order.reference == 'testref1234') {
-        order.orderDate = twoDaysAgo;
-      }
-    });
-
-    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: orders });
-    await delay(300);
+    cloudfirestore.updateDocumentFromCollection('Orders', 'testref1234', { orderDate: twoDaysAgo })
 
     await cloudfirestore.transactionPlaceOrder({
       isInvoiceNeeded: true,

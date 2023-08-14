@@ -1319,24 +1319,25 @@ async function deleteOldOrders() {
   const usersRef = db.collection('Orders').where('paid', '==', false);
   const snapshot = await usersRef.get();
   const deletedOrders = [];
-  // const dataNeededToUpdateOrderValue = []; // {userId, filteredOrders}
+  const dataNeededToUpdateOrderValue = []; // {userId, filteredOrders}
   try {
-    snapshot.forEach((order) => {
+    snapshot.forEach((orderObj) => {
       // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
       let paymentLinks;
+      const order = orderObj.data();
       paymentLinks = order.proofOfPaymentLink;
       if (paymentLinks == null) {
         paymentLinks = [];
       }
 
       if (paymentLinks.length > 0) {
-         return
+        return;
       }
 
       // IF ORDER IS PAID. DO NOT DELETE
       const paid = order.paid;
       if (paid) {
-        return
+        return;
       }
 
       // IF ORDER IS NOT EXPIRED DO NOT DELETE (24 hr window)
@@ -1353,18 +1354,15 @@ async function deleteOldOrders() {
       const lessThanExpiryHours = diffHours < expiryHours;
 
       if (lessThanExpiryHours) {
-        return
+        return;
       }
 
       console.log(`order ${order.reference} is expired and will be deleted`);
       // foundExpiredOrders = true;
       // WE PASS THE ORDER TO THE ARRAY ADD THE ORDER CART BACK TO THE INVENTORY
       deletedOrders.push(order);
-
-      // if (foundExpiredOrders) {
-      //   dataNeededToUpdateOrderValue.push({ userId: userId, filteredOrder: filteredOrder });
-      //   // db.collection('Users').doc(userId).update({ orders: filteredOrder });
-      // }
+      dataNeededToUpdateOrderValue.push({ userId: order.userId, reference: order.reference });
+      console.log('deletedOrders', deletedOrders);
     });
 
     const dataNeededToUpdateProductValue = []; //This is the data needed to do the writes it follows this schema
@@ -1387,7 +1385,8 @@ async function deleteOldOrders() {
       });
     });
 
-    // console.log(allCartItems)
+    console.log('dataNeededToUpdateProductValue', dataNeededToUpdateProductValue);
+    console.log('allCartItems', allCartItems);
 
     const finalDataNeededToUpdateProductValue = [];
     const stocksToAdjust = {};
@@ -1395,15 +1394,52 @@ async function deleteOldOrders() {
 
     await Promise.all(
       allCartItems.map(async (itemId) => {
+        console.log('itemId', itemId);
         const productRef = db.collection('Products').doc(itemId);
         const productGet = await productRef.get();
         const prodData = productGet.data();
+
         const stocksAvailable = prodData.stocksAvailable;
         const stocksOnHold = prodData.stocksOnHold;
-
-
         stocksToAdjust[itemId] = stocksAvailable;
         stocksOnHoldToAdjust[itemId] = stocksOnHold;
+      })
+    );
+
+    console.log('OldstocksToAdjust', stocksToAdjust);
+    console.log('OldstocksOnHoldToAdjust', stocksOnHoldToAdjust);
+
+    const orderUserIds = [];
+    const orderReferences = [];
+
+    // console.log('dataNeededToUpdateOrderValue', dataNeededToUpdateOrderValue);
+
+    dataNeededToUpdateOrderValue.map((data) => {
+      const userId = data.userId;
+      const reference = data.reference;
+      orderReferences.push(reference);
+      if (!orderUserIds.includes(userId)) {
+        orderUserIds.push(userId);
+      }
+    });
+
+    // console.log('orderUserIds', orderUserIds);
+    // console.log('orderReferences', orderReferences);
+
+    const filteredOrderData = []
+
+    await Promise.all(
+      orderUserIds.map(async (userId) => {
+        const userObj = await db.collection('Users').doc(userId).get();
+        const userData = userObj.data();
+        const orders = userData.orders;
+        const filteredOrders = orders.filter((order) => {
+          if (!orderReferences.includes(order.reference)) {
+            return true;
+          }
+        });
+        filteredOrderData.push({ userId: userId, filteredOrders: filteredOrders });
+        // console.log('filteredOrders for ' + userId, filteredOrders);
       })
     );
 
@@ -1416,7 +1452,7 @@ async function deleteOldOrders() {
       const stocksOnHold = stocksOnHoldToAdjust[itemId];
       // console.log('_____________________________________________')
       // console.log(itemId)
-      console.log('stocksOnHold', stocksOnHold);
+      // console.log('stocksOnHold', stocksOnHold);
       // console.log(reference)
       const newStocksOnHold = stocksOnHold.filter((order) => order.reference != reference);
       // console.log(newStocksOnHold)
@@ -1426,16 +1462,16 @@ async function deleteOldOrders() {
       finalDataNeededToUpdateProductValue.push(newData);
     });
 
-    console.log('dataNeededToUpdateOrderValue', dataNeededToUpdateOrderValue);
-    console.log('stocksOnHoldToAdjust', stocksOnHoldToAdjust);
-    console.log('stocksToAdjust', stocksToAdjust);
+    // console.log('dataNeededToUpdateOrderValue', dataNeededToUpdateOrderValue);
+    console.log('NewstocksOnHoldToAdjust', stocksOnHoldToAdjust);
+    console.log('NewstocksToAdjust', stocksToAdjust);
 
     //
     await db.runTransaction(async (transaction) => {
-      dataNeededToUpdateOrderValue.forEach(async (data) => {
+      filteredOrderData.forEach(async (data) => {
         const userId = data.userId;
         const userRef = db.collection('Users').doc(userId);
-        transaction.update(userRef, { orders: data.filteredOrder });
+        transaction.update(userRef, { orders: data.filteredOrders });
       });
 
       const entries = Object.entries(stocksToAdjust);
@@ -1458,7 +1494,7 @@ async function deleteOldOrders() {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send('failed to delete old orders');
+    throw error;
   }
 }
 
