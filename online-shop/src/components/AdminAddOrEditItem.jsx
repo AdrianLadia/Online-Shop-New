@@ -127,7 +127,7 @@ const AdminAddOrEditItem = (props) => {
   function checkDimensions(throwError = true) {
     if ([null,''].includes(dimensions) == false) {
       let count = 0;
-      console.log(dimensions);
+   
       for (let character of dimensions) {
         if (character == 'x' || character == 'X') {
           count += 1;
@@ -151,12 +151,12 @@ const AdminAddOrEditItem = (props) => {
 
   useEffect(() => {
     const dimensionsCorrect = checkDimensions(false);
-    console.log(dimensionsCorrect)
+   
     // Split the string by 'x' to get an array of dimensions
     if (dimensionsCorrect) {
-      console.log(dimensions)
+  
       const dimensionsArray = dimensions.split(/x|X/).map((item) => Number(item.trim()));
-      console.log(dimensionsArray);
+      
       const metersPerInch = 0.0254;
       const metersLength = dimensionsArray[0] * metersPerInch;
       const metersWidth = dimensionsArray[1] * metersPerInch;
@@ -191,7 +191,7 @@ const AdminAddOrEditItem = (props) => {
     }
 
     if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
-      console.log(piecesPerPack, packsPerBox, pieces);
+      
       alert('Pieces per pack * Packs per box must be equal to total pieces');
       setLoading(false);
       return;
@@ -293,7 +293,7 @@ const AdminAddOrEditItem = (props) => {
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
     if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
-      console.log(piecesPerPack, packsPerBox, pieces);
+  
       alert('Pieces per pack * Packs per box must be equal to total pieces');
       setLoading(false);
       return;
@@ -452,7 +452,6 @@ const AdminAddOrEditItem = (props) => {
       setColor(selectedItemDetails.color);
       setMaterial(selectedItemDetails.material);
       setSize(selectedItemDetails.size);
-      console.log('hasRetailVersion', hasRetailVersion);
       setIsThisRetail(hasRetailVersion);
       setPacksPerBox(selectedItemDetails.packsPerBox);
       setPiecesPerPack(selectedItemDetails.piecesPerPack);

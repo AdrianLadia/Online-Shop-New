@@ -37,9 +37,9 @@ const OpenCartButton = (props) => {
 
   function GetPricePerProduct() {
     let prices = [];
-    console.log('cart', cart);
+
     Object.entries(cart).map(([key, value]) => {
-      console.log(products)
+
       products.map((product, index) => {
         if (key === product.itemId) {
           prices.push({

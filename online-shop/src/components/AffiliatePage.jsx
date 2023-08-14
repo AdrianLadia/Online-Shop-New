@@ -25,12 +25,12 @@ const AdminAffiliatePage = () => {
       if (userdata) {
         firestore.readAllAvailableAffiliateBankAccounts(userdata.uid).then(bankAccounts=>{
           setPaymentMethodData(bankAccounts)
-          console.log(bankAccounts)
+         
           const bankNames = []
           bankAccounts.forEach((bank)=>{
             bankNames.push(bank.bank)
           })
-          console.log(bankNames)
+
           setPaymentMethods(bankNames)
         })
       }
@@ -66,7 +66,7 @@ const AdminAffiliatePage = () => {
             alert("Your Claim Request is Submitted Successfully.")
             window.location.reload()
           }else{
-            console.log(res)
+           
           }
         })
       }

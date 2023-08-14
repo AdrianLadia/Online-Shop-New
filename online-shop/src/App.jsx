@@ -106,6 +106,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cartProductsData, setCartProductsData] = useState([]);
   const [categoryProductsData, setCategoryProductsData] = useState([]);
+  const [userOrderReference, setUserOrderReference] = useState(null);
 
   useEffect(() => {
     console.log(affiliate);
@@ -387,16 +388,32 @@ function App() {
 
         setDeliveryAddress(data.deliveryAddress);
         setPhoneNumber(data.phoneNumber);
-        setOrders(data.orders);
+        setUserOrderReference(data.orders);
         setPayments(data.payments);
         setContactPerson(data.contactPerson);
-        // LAST TO RUN
         setUserState('userloaded');
         setUserLoaded(true);
       }
     }
     setAllUserData();
   }, [userId, refreshUser]);
+
+  useEffect(() => {
+    if (userOrderReference != null) {
+      const orderPromises = userOrderReference.map(async (order) => {
+        const orderData = await cloudfirestore.readSelectedOrder(order.reference,userId);
+        return orderData;
+      });
+      Promise.all(orderPromises).then((data) => {
+        setOrders(data);
+      });
+    }
+
+  }, [userOrderReference]);
+
+  useEffect(() => {
+    console.log(orders);
+  }, [orders]);
 
   useEffect(() => {
     if (goToCheckoutPage) {

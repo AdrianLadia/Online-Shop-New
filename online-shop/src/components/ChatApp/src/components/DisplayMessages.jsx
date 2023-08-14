@@ -48,7 +48,7 @@ const DisplayMessages = (props) => {
   async function markMessagesAsRead() {
     let unreadOwner = 0;
     let unreadAdmin = 0;
-    console.log('messages', messages);
+
     if (messages != null) {
       messages.map((mess) => {
     

@@ -73,9 +73,9 @@ const CategorySelector = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log('value',value)
+
     if (categories != null && value != null) {
-      console.log('CHANGED CATEGORY')
+
       setSelectedCategory(categories[value]);
     }
   }, [value]);

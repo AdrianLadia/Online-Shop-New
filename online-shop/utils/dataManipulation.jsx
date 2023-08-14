@@ -498,8 +498,6 @@ class dataManipulation {
     let total_non_state = 0;
     let total_weight_non_state = 0;
 
-    console.log(product_list)
-
     Object.entries(cart).map(([key, quantity]) => {
       product_list.map((product) => {
         if (product.itemId === key) {
@@ -512,7 +510,6 @@ class dataManipulation {
             productPrice = cartItemPrice[key];
           }
 
-          console.log(product.weight)
 
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
@@ -665,7 +662,7 @@ class dataManipulation {
     if (categorySelected == 'Paper Bag') {
       
     }
-    // console.log(selected_products)
+
     return selected_products;
   }
 

@@ -79,7 +79,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async createNewUser(data, userId) {
     const schema = schemas.userSchema();
-    console.log(data);
 
     const { error } = schema.validate(data);
     if (error) {
@@ -236,7 +235,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
       const { error } = schema.validate(toReturn);
 
-      // console.log(toReturn)
+
       if (error) {
         alert(error.message);
         throw new Error(error.message);
@@ -361,7 +360,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response);
+  
       return response;
     } catch {
       throw new Error(error);
@@ -386,7 +385,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     };
 
     const jsonData = JSON.stringify(json);
-    console.log(jsonData);
+
     try {
       const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, jsonData, {
         headers: {
@@ -541,6 +540,14 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async getAllAffiliateUsers() {
     const res = await axios.get(`${this.url}getAllAffiliateUsers`);
+    return res.data;
+  }
+
+  async readSelectedOrder(reference, userId) {
+    const jsonData = JSON.stringify({ reference, userId });
+    const res = await axios.post(`${this.url}readSelectedOrder`,jsonData, {
+      headers: {'Content-Type': 'application/json'},
+    });
     return res.data;
   }
 }

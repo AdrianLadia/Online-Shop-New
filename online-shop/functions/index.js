@@ -699,10 +699,12 @@ exports.transactionPlaceOrder = functions
               urlOfBir2303: urlOfBir2303,
               countOfOrdersThisYear: countOfOrdersThisYear,
             };
-  
-            const updatedOrders = [newOrder, ...oldOrders];
-            console.log(updatedOrders);
+            const userOrderObject = {reference:reference,date:new Date()}
+            const updatedOrders = [userOrderObject, ...oldOrders];
             transaction.update(userRef, { orders: updatedOrders });
+            const orderCollectionRef = db.collection('Orders').doc(reference);
+
+            transaction.set(orderCollectionRef, newOrder);
             // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
             transaction.update(userRef, { cart: {} });
   
@@ -941,67 +943,72 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const proofOfPaymentLink = data.proofOfPaymentLink;
     const db = admin.firestore();
     const userId = data.userId;
-    const customerUserRef = db.collection('Users').doc(userId);
-    const customerSnapshot = await customerUserRef.get();
-
-    const customerData = customerSnapshot.data();
-    const ordersData = customerData.orders
-    const orderDetails = ordersData.filter((order) => order.reference === orderReference);
-    const orderDetail = orderDetails[0];
-    const itemsTotal = orderDetail.itemsTotal;
-    console.log('itemsTotal', itemsTotal);
-    const orderVat = orderDetail.vat;
-    const vatPercentage = orderVat / itemsTotal;
-    const shippingTotal = orderDetail.shippingTotal;
-
-    const lessCommissionToShipping =  parseFloat((shippingTotal * ( (depositAmount) / itemsTotal)).toFixed(2))
-
-    const paymentsRef = db.collection('Payments');
-    console.log('proofOfPaymentLink', proofOfPaymentLink);
-    const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
-    const paymentSnapshot = await paymentQuery.get();
-    let documentID;
-    let paymentsData;
-    paymentSnapshot.forEach((doc) => {
-      paymentsData = doc.data();
-      console.log('paymentsData', paymentsData);
-      paymentsData.status = 'approved';
-      documentID = doc.id;
-    });
-
+    
     try {
       await db.runTransaction(async (transaction) => {
         // READ
+        const customerUserRef = db.collection('Users').doc(userId);
+        const customerSnapshot = await transaction.get(customerUserRef);
+    
+        const customerData = customerSnapshot.data();
+        const orderRef = db.collection('Orders').doc(orderReference);
+        const orderSnapshot = await transaction.get(orderRef);
+        const orderDetail = orderSnapshot.data();
+        const itemsTotal = orderDetail.itemsTotal;
+        const orderVat = orderDetail.vat;
+        const vatPercentage = orderVat / itemsTotal;
+        const shippingTotal = orderDetail.shippingTotal;
+    
+        const lessCommissionToShipping =  parseFloat((shippingTotal * ( (depositAmount) / itemsTotal)).toFixed(2))
+    
+        const paymentsRef = db.collection('Payments');
+        const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
+        const paymentSnapshot = await paymentQuery.get();
+        let documentID;
+        let paymentsData;
+        paymentSnapshot.forEach((doc) => {
+          paymentsData = doc.data();
+          console.log('paymentsData', paymentsData);
+          paymentsData.status = 'approved';
+          documentID = doc.id;
+        });
         // const paymentsRef = db.collection('Payments').doc();
         const userRef = db.collection('Users').doc(userId);
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
         const affiliateIdOfCustomer = userData.affiliate;
 
-        const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
-        const affiliateUserSnap = await transaction.get(affiliateUserRef);
+        if (affiliateIdOfCustomer != null) {
+          const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
+          const affiliateUserSnap = await transaction.get(affiliateUserRef);
+          const affiliateUserData = affiliateUserSnap.data();
+          const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
+          const commission =((parseFloat(depositAmount) - lessCommissionToShipping)  / (1 + vatPercentage)) * commissionPercentage
+          console.log('depositAmount', depositAmount);
+          console.log('vatPercentage', vatPercentage);
+          console.log('commissionPercentage', commissionPercentage);
+          console.log('lessCommissionToShipping', lessCommissionToShipping);
+          const newAffiliateCommissions = [
+            ...oldAffiliateCommissions,
+            {
+              customer: 'test',
+              dateOrdered: new Date().toDateString(),
+              commission: commission.toFixed(2) ,
+              status: 'claimable',
+              claimCode: '',
+            },
+          ];
+        } 
 
-        const affiliateUserData = affiliateUserSnap.data();
-        const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
-        const commission =((parseFloat(depositAmount) - lessCommissionToShipping)  / (1 + vatPercentage)) * commissionPercentage
-        console.log('depositAmount', depositAmount);
-        console.log('vatPercentage', vatPercentage);
-        console.log('commissionPercentage', commissionPercentage);
-        console.log('lessCommissionToShipping', lessCommissionToShipping);
-        const newAffiliateCommissions = [
-          ...oldAffiliateCommissions,
-          {
-            customer: 'test',
-            dateOrdered: new Date().toDateString(),
-            commission: commission.toFixed(2) ,
-            status: 'claimable',
-            claimCode: '',
-          },
-        ];
+
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
-        const orders = userData.orders;
+        const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
+        const ordersObject = await transaction.get(allUserOrdersQuery);
+        const orders = ordersObject.docs.map((doc) => doc.data());
+        
+        console.log('orders', orders);
 
         let totalPayments = 0;
         newPayments.map((payment) => {
@@ -1014,19 +1021,35 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           return timeA - timeB;
         });
 
+        const toUpdateOrders = []
+
         orders.forEach((order) => {
+          console.log(order.orderDate)
           totalPayments -= order.grandTotal;
+          let paid = null
           if (totalPayments >= 0) {
-            order.paid = true;
+            paid = true;
             console.log(order.reference + ' is PAID');
           }
           if (totalPayments < 0) {
-            order.paid = false;
+            paid = false;
             console.log(order.reference + ' is NOT PAID');
+          }
+          if (order.paid !== paid) {
+            toUpdateOrders.push({reference: order.reference, paid: paid})
           }
         });
 
+        console.log('orderDetail', orderDetail);
+        
+        throw new Error('test');
+
         // WRITE
+        toUpdateOrders.forEach((order) => {
+          const orderRef = db.collection('Orders').doc(order.reference);
+          transaction.update(orderRef, { paid: order.paid });
+        });
+
         if (affiliateIdOfCustomer != null) {
           transaction.update(affiliateUserRef, { affiliateCommissions: newAffiliateCommissions });
         }
@@ -1035,7 +1058,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           transaction.update(db.collection('Payments').doc(documentID), paymentsData);
         }
         transaction.update(userRef, { payments: newPayments });
-        transaction.update(userRef, { orders: orders });
+      
       });
       res.status(200).send('success');
     } catch(error) {
@@ -1201,12 +1224,11 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const userRef = db.collection('Users').doc(userId);
           const userDoc = await transaction.get(userRef);
           const userData = userDoc.data();
-          const orders = userData.orders;
-          console.log('orders', orders);
-          const orderIndex = orders.findIndex((order) => order.reference === orderReference);
-          const proofOfPayments = orders[orderIndex].proofOfPaymentLink;
+          const orderRef = db.collection('Orders').doc(orderReference);
+          const ordersObject = await transaction.get(orderRef)
+          const order = ordersObject.data();
+          const proofOfPayments = order.proofOfPaymentLink;
           const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
-          orders[orderIndex].proofOfPaymentLink = newProofOfPayment;
           const orderMessages = await transaction.get(orderMessagesRef);
           const orderMessagesData = orderMessages.data();
           const oldMessages = orderMessagesData.messages;
@@ -1224,8 +1246,8 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
 
           transaction.update(orderMessagesRef, { messages: newMessageHistory });
 
-          transaction.update(userRef, {
-            orders: orders,
+          transaction.update(orderRef, {
+            proofOfPaymentLink: newProofOfPayment,
           });
 
           // TODO
@@ -1499,9 +1521,15 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
           const userDataObj = await transaction.get(userRef);
           const userData = userDataObj.data();
           let orders = userData.orders;
+
+
+
           const data = orders.filter((order) => order.reference != orderReference);
-          const cancelledData = orders.filter((order) => order.reference == orderReference);
-          const cancelledDataCart = cancelledData[0].cart;
+          
+          const cancelledOrderRef = db.collection('Orders').doc(orderReference);
+          const cancelledDataObj = await transaction.get(cancelledOrderRef);
+          const cancelledData = cancelledDataObj.data();
+          const cancelledDataCart = cancelledData.cart;
   
           console.log('data', data);
           console.log('cancelledData', cancelledData);
@@ -1544,6 +1572,7 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
           });
   
           transaction.update(userRef, { orders: orders });
+          transaction.delete(cancelledOrderRef);
           res.status(200).send('success');
         } catch(error) {
           console.log(error);
@@ -1767,4 +1796,34 @@ exports.getAllAffiliateUsers = functions.region('asia-southeast1').https.onReque
     });
     res.status(200).send(affiliateUsers);
   });
+});
+
+exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const data = req.body;
+    const reference = data.reference;
+    const userId = data.userId;
+
+    console.log(reference)
+    const db = admin.firestore();
+    const orderRef = db.collection('Orders').doc(reference);
+    const orderDoc = await orderRef.get();
+    const orderData = orderDoc.data();
+    const orderUserId = orderData.userId;
+    const userRef = db.collection('Users').doc(userId);
+    const userDoc = await userRef.get();
+    const userData = userDoc.data();
+    const userRole = userData.userRole;
+    console.log(userRole)
+
+    if (!['admin','superAdmin'].includes(userRole)) {
+      if (orderUserId != userId ) {
+        res.status(401).send('Unauthorized');
+      }
+    }
+    console.log(orderData)
+
+    res.status(200).send(orderData);
+
+  })
 });

@@ -48,7 +48,7 @@ class firestoredb extends firestorefunctions {
     try {
       await productsSchema.validateAsync(products);
     } catch (error) {
-      console.log(products)
+    
       throw new Error(error);
     }
 

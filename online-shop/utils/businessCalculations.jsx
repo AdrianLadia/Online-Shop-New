@@ -407,9 +407,6 @@ class businessCalculations {
     // CONFIRM AGAIN IF STOCKS AVAILABLE
     let message = 'Unfortunately someone else might have bought the stocks listed below. \n \n';
     let outOfStockDetected = false;
-    // const count = countStrings(cart);
-    // const countEntries = Object.entries(count);
-    console.log('cart', cart);
     const fetchCartProductsData = async () => {
       const cartProductPromises = Object.keys(cart).map(async (key) => {
         const productData = await this.cloudfirestore.readSelectedDataFromOnlineStore(key);
@@ -421,7 +418,6 @@ class businessCalculations {
       
     };
     const products = await fetchCartProductsData();
-    console.log('products', products);
     Object.entries(cart).map(([itemId, quantity]) => {
       if (itemId.slice(-4) === '-RET') {
         return;
@@ -470,7 +466,6 @@ class businessCalculations {
   }
 
   getValueAddedTax(totalPrice, urlOfBir2303, noVat = new AppConfig().getNoVat()) {
-    console.log(urlOfBir2303);
     if (urlOfBir2303 == '') {
       return 0;
     }
