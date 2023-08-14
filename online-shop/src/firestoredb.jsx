@@ -525,6 +525,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllAvailableAffiliateBankAccounts(userId) {
+    console.log(userId)
     const userData = await super.readSelectedDataFromCollection('Users',userId);
     const affiliateBankAccounts = userData.affiliateBankAccounts;
     return affiliateBankAccounts;
