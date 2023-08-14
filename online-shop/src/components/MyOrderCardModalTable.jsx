@@ -41,7 +41,7 @@ const MyOrderCardModalTable = (props) => {
       const data = await Promise.all(cartProductPromises);
       const productsCombined = [...products, ...data];
 
-      console.log(productsCombined);
+    
       setProducts(productsCombined);
     };
 
@@ -60,7 +60,7 @@ const MyOrderCardModalTable = (props) => {
         urlOfBir2303
       );
 
-      console.log(rows_non_state);
+
 
       setRows(rows_non_state);
     }

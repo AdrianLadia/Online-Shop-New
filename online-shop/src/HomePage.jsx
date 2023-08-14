@@ -218,7 +218,7 @@ const HomePage = ({isAffiliateLink}) => {
 
     function handleMessageClick(){
       if (userdata) {
-        console.log('Has userdata')
+  
         navigateTo('/orderChat',{ state: { orderReference: userdata.uid,isInquiry: true,backButtonRedirect:pathname,fromHomePage:false } })
       }
       else {

@@ -298,6 +298,7 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
       isInvoiceNeeded: true,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -340,6 +341,7 @@ describe('Data Manipulation', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -440,6 +442,7 @@ describe('Data Manipulation', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     const orders = await firestore.readUserById(userTestId);
@@ -1018,6 +1021,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(200);
 
@@ -1110,6 +1114,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(200);
 
@@ -1136,6 +1141,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await delay(200);
@@ -1163,6 +1169,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await delay(200);
@@ -1248,6 +1255,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await delay(300);
@@ -1328,6 +1336,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(300);
 
@@ -1418,6 +1427,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1443,6 +1453,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1468,6 +1479,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     const req3 = {
@@ -1606,7 +1618,7 @@ describe('cloudfirestoredb', async () => {
     expect(falseUser).toEqual(false);
   });
 
-  test('transactionPlaceOrder', async () => {
+  test.only('transactionPlaceOrder', async () => {
     await firestore.createProduct(
       {
         itemId: 'test',
@@ -1734,6 +1746,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(500);
 
@@ -1741,6 +1754,16 @@ describe('cloudfirestoredb', async () => {
     const deliveryAddress = testUser.deliveryAddress;
     const contactPerson = testUser.contactPerson;
     const orders = testUser.orders;
+    const allOrderIds = await firestore.readAllIdsFromCollection('Orders');
+
+    let foundOrderId = false;
+    allOrderIds.forEach((orderId) => {
+      if (orderId === 'testref12345678') {
+        foundOrderId = true;
+      }
+    });
+
+    expect(foundOrderId).toEqual(true);
 
     expect(deliveryAddress).length(1);
     expect(contactPerson).length(1);
@@ -1769,6 +1792,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(500);
 
@@ -1804,6 +1828,7 @@ describe('cloudfirestoredb', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(300);
 
@@ -1930,6 +1955,7 @@ describe('retryApiCall', () => {
 describe('deleteOrderFromUserFirestore', () => {
   test('clean Orders first', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
   });
 
   test('creating three orders from testUser', async () => {
@@ -1963,6 +1989,7 @@ describe('deleteOrderFromUserFirestore', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1988,6 +2015,7 @@ describe('deleteOrderFromUserFirestore', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2013,6 +2041,7 @@ describe('deleteOrderFromUserFirestore', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     test('check if reference is added to orderMessages collection', async () => {
@@ -2079,7 +2108,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe('updateOrderProofOfPaymentLink', () => {
+describe.only('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -2111,6 +2140,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(300);
   }, 100000);
@@ -2125,16 +2155,9 @@ describe('updateOrderProofOfPaymentLink', () => {
       true
     );
     await delay(300);
-    const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
-    const orders = userData.orders;
-    let orderFound = false;
-    orders.map((order) => {
-      if (order.reference == 'testref1234') {
-        orderFound = true;
-        expect(order.proofOfPaymentLink).toEqual(['https://testlink.com']);
-      }
-    });
-    expect(orderFound).toEqual(true);
+    const orderData = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+
+    expect(orderData.proofOfPaymentLink).toEqual(['https://testlink.com']);
   });
 
   test('Check if proof of payment is added to payments & orderMessages collection message field', async () => {
@@ -2161,16 +2184,11 @@ describe('updateOrderProofOfPaymentLink', () => {
       true
     );
     await delay(300);
-    const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
-    const orders = userData.orders;
-    let orderFound = false;
-    orders.map((order) => {
-      if (order.reference == 'testref1234') {
-        orderFound = true;
-        expect(order.proofOfPaymentLink).toEqual(['https://testlink.com', 'https://testlink2.com']);
-      }
-    });
-    expect(orderFound).toEqual(true);
+
+    const orderData = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+    expect(orderData.proofOfPaymentLink).toEqual(['https://testlink.com', 'https://testlink2.com']);
+
+
   });
 
   test('Check if proof of payment is added to payments 2', async () => {
@@ -2324,6 +2342,7 @@ describe('updatePaymentStatus', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
   });
   test('create Test Payment Proof Upload', async () => {
@@ -2442,6 +2461,7 @@ describe('deleteOldOrders', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await delay(300);
@@ -2484,6 +2504,7 @@ describe('deleteOldOrders', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(2000);
   }, 100000);
@@ -2567,6 +2588,7 @@ describe('transactionPlaceOrder test retail', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
     await delay(300);
     const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2613,6 +2635,7 @@ describe('deleteDeclinedPayments', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -2707,6 +2730,8 @@ describe('testCancelOrder', () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      
     });
   });
 
@@ -2721,6 +2746,9 @@ describe('testCancelOrder', () => {
     const order = user.orders;
 
     expect(order.length).toEqual(0);
+
+    const data = await firestore.readSelectedDataFromCollection('Orders','testref1234')
+    expect(data).toEqual(undefined)
 
     const productDataNew = await cloudfirestore.readSelectedDataFromCollection('Products', 'PPB#16');
     productDataNew.stocksOnHold.map((stock) => {
@@ -2839,6 +2867,7 @@ describe('testRetailTransactionPlaceOrder', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     });
 
     await delay(200);
@@ -2954,6 +2983,7 @@ describe('test commission system', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     })
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
@@ -3107,6 +3137,7 @@ describe('test commission system', async () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
     })
   })
   test('pay order with vat', async () => {
@@ -3201,7 +3232,7 @@ describe('get all affiliates', () => {
   })
 })
 
-describe.only('count all orders of a specific year', () => {
+describe('count all orders of a specific year', () => {
   test('prepare data', async () => {
     await firestore.updateDocumentFromCollection('Users',userTestId,{orders : []})
     await cloudfirestore.transactionPlaceOrder({

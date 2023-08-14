@@ -13,7 +13,6 @@ class firestoredb extends firestorefunctions {
 
   // USED FOR ADMIN INVENTORY
   async createProduct(data, id, products) {
-   
     const schema = schemas.productSchema();
 
     const { error } = schema.validate(data);
@@ -21,7 +20,7 @@ class firestoredb extends firestorefunctions {
     if (error) {
       alert(error);
       throw new Error(error);
-      return
+      return;
     }
 
     let foundSimilarProductId = false;
@@ -44,11 +43,10 @@ class firestoredb extends firestorefunctions {
   async readAllProducts() {
     const products = await retryApi(async () => await super.readAllDataFromCollection('Products'));
     const productsSchema = Joi.array().items(schemas.productSchema());
-    
+
     try {
       await productsSchema.validateAsync(products);
     } catch (error) {
-      console.log(products)
       throw new Error(error);
     }
 
@@ -79,34 +77,33 @@ class firestoredb extends firestorefunctions {
       price: Joi.number().required(),
       description: Joi.string().required().allow(''),
       weight: Joi.number().required(),
-      dimensions: Joi.string().allow(null,''),
+      dimensions: Joi.string().allow(null, ''),
       category: Joi.string().required(),
       imageLinks: Joi.array(),
-      brand: Joi.string().allow(null,''),
+      brand: Joi.string().allow(null, ''),
       pieces: Joi.number().required(),
-      color: Joi.string().allow(null,''),
-      material: Joi.string().allow(null,''),
-      size: Joi.string().allow(null,''),
-      parentProductID: Joi.string().allow(null,''),
-      isCustomized : Joi.boolean().required(),
-      piecesPerPack : Joi.number(),
-      packsPerBox : Joi.number(),
-      cbm : Joi.number().allow('',null),
-      boxImage : Joi.string().uri().allow(null,''),
-      costPrice : Joi.number().allow('',null),
-      freightCost : Joi.number().allow('',null),
+      color: Joi.string().allow(null, ''),
+      material: Joi.string().allow(null, ''),
+      size: Joi.string().allow(null, ''),
+      parentProductID: Joi.string().allow(null, ''),
+      isCustomized: Joi.boolean().required(),
+      piecesPerPack: Joi.number(),
+      packsPerBox: Joi.number(),
+      cbm: Joi.number().allow('', null),
+      boxImage: Joi.string().uri().allow(null, ''),
+      costPrice: Joi.number().allow('', null),
+      freightCost: Joi.number().allow('', null),
     }).unknown(false);
 
     try {
       await schema.validateAsync(data);
     } catch (error) {
-      throw new Error(error)
+      throw new Error(error);
     }
-    try{
+    try {
       await retryApi(async () => await super.updateDocumentFromCollection('Products', id, data));
-    }
-    catch(error){
-      throw new Error(error)
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
@@ -151,7 +148,7 @@ class firestoredb extends firestorefunctions {
 
     return categories;
   }
-  
+
   async readAllUserIds() {
     const ids = await retryApi(async () => await super.readAllIdsFromCollection('Users'));
 
@@ -196,15 +193,14 @@ class firestoredb extends firestorefunctions {
   }
 
   async createUserCart(data, userid) {
-    try{
+    try {
       await retryApi(async () => {
         super.updateDocumentFromCollection('Users', userid, {
           cart: data,
         });
       });
-    }
-    catch(error){
-      throw new Error(error)
+    } catch (error) {
+      throw new Error(error);
     }
   }
 
@@ -240,7 +236,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteUserContactPersons(userid, name, phoneNumber) {
-  
     await retryApi(async () => {
       await super.deleteDocumentFromCollectionArray(
         'Users',
@@ -417,24 +412,29 @@ class firestoredb extends firestorefunctions {
   }
 
   async deleteDeclinedPayment(reference, userId, link) {
-    try{
+    try {
       await runTransaction(this.db, async (transaction) => {
         console.log('deleteDeclinedPayment');
         const userRef = doc(this.db, 'Users/', userId);
         const userRefDoc = await transaction.get(userRef);
         const userDoc = userRefDoc.data();
         const orders = userDoc.orders;
-        orders.forEach((order) => {
-          const orderReference = order.reference;
-          if (orderReference == reference) {
-            const proofOfPaymentLinks = order.proofOfPaymentLink;
-            const data = proofOfPaymentLinks.filter((item) => item !== link);
-            order.proofOfPaymentLink = data;
+        console.log(orders);
+
+        const orderRef = doc(this.db, 'Orders/', reference);
+        const orderRefDoc = await transaction.get(orderRef);
+        const orderData = orderRefDoc.data();
+        const oldProofOfPaymentLink = orderData.proofOfPaymentLink;
+
+        const newProofOfPaymentLink = oldProofOfPaymentLink.filter((url) => {
+          if (url != link) {
+            return url;
           }
         });
-  
-        transaction.update(userRef, { orders: orders });
-  
+
+
+        transaction.update(orderRef, { proofOfPaymentLink: newProofOfPaymentLink });
+
         const paymentsRef = collection(this.db, 'Payments');
         const q = query(paymentsRef, where('proofOfPaymentLink', '==', link));
         const querySnapshot = await getDocs(q);
@@ -442,8 +442,7 @@ class firestoredb extends firestorefunctions {
           transaction.update(doc.ref, { status: 'declined' });
         });
       });
-    }
-    catch(error){
+    } catch (error) {
       throw new Error(error);
     }
   }
@@ -490,15 +489,17 @@ class firestoredb extends firestorefunctions {
     return await super.readAllDataFromCollection('Machines');
   }
 
-  async readAllClaims(ids){
+  async readAllClaims(ids) {
     try {
-      const userDataArray = await Promise.all(ids.map(async (id) => {
-        const userData = await this.readUserById(id);
-        if(userData.userRole == 'affiliate'){
-          return userData.affiliateClaims
-        }
-      }));
-      const affiliateUserData = userDataArray.filter(userData => userData !== undefined );
+      const userDataArray = await Promise.all(
+        ids.map(async (id) => {
+          const userData = await this.readUserById(id);
+          if (userData.userRole == 'affiliate') {
+            return userData.affiliateClaims;
+          }
+        })
+      );
+      const affiliateUserData = userDataArray.filter((userData) => userData !== undefined);
       return affiliateUserData;
     } catch (error) {
       console.error(error);
@@ -515,8 +516,12 @@ class firestoredb extends firestorefunctions {
   }
 
   async addDataToPageOpens(data) {
-    await this.addDocumentArrayFromCollection('Security','pageOpens',{ipAddress: data.ipAddress, dateTime: data.dateTime, pageOpened: data.pageOpened}, 'data');
-
+    await this.addDocumentArrayFromCollection(
+      'Security',
+      'pageOpens',
+      { ipAddress: data.ipAddress, dateTime: data.dateTime, pageOpened: data.pageOpened },
+      'data'
+    );
   }
 
   async readAllOrdersByUserId(userId) {
@@ -525,40 +530,40 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllAvailableAffiliateBankAccounts(userId) {
-    console.log(userId)
-    const userData = await super.readSelectedDataFromCollection('Users',userId);
+    const userData = await super.readSelectedDataFromCollection('Users', userId);
     const affiliateBankAccounts = userData.affiliateBankAccounts;
     return affiliateBankAccounts;
   }
 
   async updateAffiliateBankAccount(userId, data) {
-    try{
-
-      const dataSchema  = Joi.object({}).keys({
-        bank: Joi.string().required(),
-        accountName: Joi.string().required(),
-        accountNumber : Joi.string().required(),
-      }).unknown(true);
+    try {
+      const dataSchema = Joi.object({})
+        .keys({
+          bank: Joi.string().required(),
+          accountName: Joi.string().required(),
+          accountNumber: Joi.string().required(),
+        })
+        .unknown(true);
 
       const { error } = dataSchema.validate(data);
-      
+
       if (error) {
         throw new Error(error);
       }
 
       const affiliateUserData = await this.readSelectedDataFromCollection('Users', userId);
-      const oldAffiliateBankAccount = affiliateUserData.affiliateBankAccounts
+      const oldAffiliateBankAccount = affiliateUserData.affiliateBankAccounts;
       let newAffiliateBankAccount = [];
-      const bankName = data.bank
-      const bankAccountUserName = data.accountName
-      const bankAccountNumber = data.accountNumber
+      const bankName = data.bank;
+      const bankAccountUserName = data.accountName;
+      const bankAccountNumber = data.accountNumber;
       let foundAccountToBeUpdated = false;
       oldAffiliateBankAccount.forEach((bankAccount) => {
         if (bankAccount.bank == bankName) {
           foundAccountToBeUpdated = true;
         }
       });
-  
+
       if (foundAccountToBeUpdated) {
         oldAffiliateBankAccount.forEach((bankAccount) => {
           if (bankAccount.bank == bankName) {
@@ -567,20 +572,20 @@ class firestoredb extends firestorefunctions {
           }
         });
         newAffiliateBankAccount = oldAffiliateBankAccount;
+      } else {
+        newAffiliateBankAccount = [
+          ...oldAffiliateBankAccount,
+          { bank: bankName, accountName: bankAccountUserName, accountNumber: bankAccountNumber },
+        ];
       }
-      else {
-        newAffiliateBankAccount = [...oldAffiliateBankAccount, { bank: bankName, accountName: bankAccountUserName, accountNumber: bankAccountNumber }];
-      }
-  
+
       await this.updateDocumentFromCollection('Users', userId, { affiliateBankAccounts: newAffiliateBankAccount });
       return true;
-    }
-    catch(error){
+    } catch (error) {
       console.error(error);
-      return false
+      return false;
     }
   }
-
 
   // async markCommissionPending(data, date, id){
   //   const updatedData = []
@@ -594,8 +599,6 @@ class firestoredb extends firestorefunctions {
   //   })
   //   this.updateDocumentFromCollection('users', id, { ['affiliateCommissions']: updatedData });
   // }
-
-
 }
 
 export default firestoredb;

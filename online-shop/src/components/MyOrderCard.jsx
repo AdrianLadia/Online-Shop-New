@@ -16,13 +16,13 @@ import { useLocation } from 'react-router-dom';
 function MyOrderCard(props) {
   const { pathname } = useLocation();
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata } =
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata,orders } =
     React.useContext(AppContext);
   const order = props.order;
   const paid = order.paid;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
-  console.log(order)
+
 
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
@@ -80,9 +80,10 @@ function MyOrderCard(props) {
 
   function handlePay() {
     let price;
-    userdata.orders.map((s) => {
+    orders.map((s) => {
       if (order.reference === s.reference) {
         price = s.grandTotal;
+        console.log(price)
       }
     });
 

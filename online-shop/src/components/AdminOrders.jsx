@@ -19,9 +19,10 @@ import Divider from '@mui/material/Divider';
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import { BsFillBagCheckFill } from 'react-icons/bs';
+import { collection,where,query,onSnapshot } from 'firebase/firestore';
 
 const AdminOrders = (props) => {
-  const { firestore, cloudfirestore } = React.useContext(AppContext);
+  const { firestore, cloudfirestore,db } = React.useContext(AppContext);
 
   const styles = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
@@ -30,8 +31,8 @@ const AdminOrders = (props) => {
   const [orders, setOrders] = React.useState([]);
   const [startDate, setStartDate] = useState('');
   const [referenceNumber, setReferenceNumber] = useState('');
-  const [delivered, setDelivered] = useState(null);
-  const [paid, setPaid] = useState(null);
+  const [delivered, setDelivered] = useState(false);
+  const [paid, setPaid] = useState(true);
   const [selectedName, setSelectedName] = React.useState('');
   const [allUserNames, setAllUserNames] = React.useState([]);
   const [selectedOrderReference, setSelectedOrderReference] = useState(null);
@@ -40,6 +41,7 @@ const AdminOrders = (props) => {
   const handleOpenModal = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
   const dummy = useRef(null);
+  let unsubscribe = null;
 
   const users = props.users;
 
@@ -60,27 +62,47 @@ const AdminOrders = (props) => {
   }, [users]);
 
   useEffect(() => {
-    if (referenceNumber !== '') {
-      orders.map((order) => {
-        if (order.reference === referenceNumber) {
-          setOrders([order]);
-          return;
-        }
-      });
-    } else {
-      firestore.readAllOrders().then((ordersFirestore) => {
-        const filteredOrders = datamanipulation.filterOrders(
-          ordersFirestore,
-          startDate,
-          referenceNumber,
-          delivered,
-          paid,
-          selectedName
-        );
-        setOrders(filteredOrders);
-      });
+
+    if (unsubscribe !== null) {
+      unsubscribe();
+      console.log('unsubscribed')
     }
-  }, [startDate, referenceNumber, delivered, paid, selectedName]);
+
+    const docRef = collection(db, 'Orders')
+    console.log(paid,delivered)
+    const q = query(docRef,where('paid', '==', paid),where('delivered', '==', delivered)); 
+    unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const orders = []
+      querySnapshot.forEach((doc) => {
+        orders.push(doc.data())
+      });
+      console.log(orders)
+      setOrders(orders);
+    });
+  }, [paid, delivered]);
+
+  // useEffect(() => {
+  //   if (referenceNumber !== '') {
+  //     orders.map((order) => {
+  //       if (order.reference === referenceNumber) {
+  //         setOrders([order]);
+  //         return;
+  //       }
+  //     });
+  //   } else {
+  //     firestore.readAllOrders().then((ordersFirestore) => {
+  //       const filteredOrders = datamanipulation.filterOrders(
+  //         ordersFirestore,
+  //         startDate,
+  //         referenceNumber,
+  //         delivered,
+  //         paid,
+  //         selectedName
+  //       );
+  //       setOrders(filteredOrders);
+  //     });
+  //   }
+  // }, [startDate, referenceNumber, delivered, paid, selectedName]);
 
   useEffect(() => {
     orders.map((order) => {
@@ -166,7 +188,7 @@ const AdminOrders = (props) => {
             <FormControl>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="Disabled"
+                defaultValue="Paid"
                 name="radio-buttons-group"
               >
                 <FormControlLabel
@@ -185,14 +207,14 @@ const AdminOrders = (props) => {
                     setPaid(false);
                   }}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   value="Disabled"
                   control={<Radio />}
                   label="Disabled"
                   onClick={(e) => {
                     setPaid(null);
                   }}
-                />
+                /> */}
               </RadioGroup>
             </FormControl>
           </div>
@@ -201,7 +223,7 @@ const AdminOrders = (props) => {
             <FormControl>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="Disabled"
+                defaultValue="Not Delivered"
                 name="radio-buttons-group"
               >
                 <FormControlLabel
@@ -220,14 +242,14 @@ const AdminOrders = (props) => {
                     setDelivered(false);
                   }}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   value="Disabled"
                   control={<Radio />}
                   label="Disabled"
                   onClick={(e) => {
                     setDelivered(null);
                   }}
-                />
+                /> */}
               </RadioGroup>
             </FormControl>
           </div>

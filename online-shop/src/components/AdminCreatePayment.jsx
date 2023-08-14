@@ -29,7 +29,7 @@ import { CircularProgress } from '@mui/material';
 import { set } from 'date-fns';
 
 const AdminCreatePayment = (props) => {
-  const { cloudfirestore, storage, firestore } = useContext(AppContext);
+  const { cloudfirestore, storage, firestore, userdata } = useContext(AppContext);
 
   const style = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
@@ -62,21 +62,51 @@ const AdminCreatePayment = (props) => {
   }, [users]);
 
   useEffect(() => {
-    setReference('');
-    if (selectedName != '') {
-      const userId = datamanipulation.getUserUidFromUsers(users, selectedName);
-      setUserid(userId);
-      firestore.readAllOrdersByUserId(userId).then((result) => {
+    async function getReferences() {
+      setReference('');
+      if (selectedName !== '') {
+        const userId = datamanipulation.getUserUidFromUsers(users, selectedName);
+        setUserid(userId);
+        const result = await firestore.readAllOrdersByUserId(userId);
         const unpaidOrdersReference = [];
-        result.forEach((data) => {
-          if (data.paid == false) {
-            unpaidOrdersReference.push(data.reference);
-          }
+        console.log(result);
+  
+        const promises = result.map(async (orderData) => {
+          const data = await cloudfirestore.readSelectedOrder(orderData.reference, userdata.uid);
+          return data;
         });
-        setUnpaidOrdersReference(unpaidOrdersReference);
-      });
+  
+        Promise.all(promises).then((res) => {
+          const unpaidOrdersReference = [];
+          res.forEach((data) => {
+            if (data.paid == false) {
+              unpaidOrdersReference.push(data.reference);
+            }
+          });
+          setUnpaidOrdersReference(unpaidOrdersReference);
+          // You may want to set the result to your state or do something else with it
+        });
+      }
     }
+    getReferences();
   }, [selectedName]);
+  
+
+  // useEffect(() => {
+  //   setReference('');
+  //   if (selectedName != '') {
+  //     const userId = datamanipulation.getUserUidFromUsers(users, selectedName);
+  //     setUserid(userId);
+  //     firestore.readAllOrdersByUserId(userId).then((result) => {
+  //       const unpaidOrdersReference = [];
+  //       console.log(result);
+  //       const promises = result.forEach(async (data) => {
+  //         await cloudfirestore.readSelectedOrder(result.reference,userdata.uid).then((result) => {
+  //       });
+  //       setUnpaidOrdersReference(unpaidOrdersReference);
+  //     });
+  //   }
+  // }, [selectedName]);
 
   async function onCreatePayment() {
     setLoading(true);
@@ -214,12 +244,14 @@ const AdminCreatePayment = (props) => {
               onClick={onCreatePayment}
               className="flex justify-center py-2 sm:py-2.5 w-6/12 sm:w-4/12 md:w-3/12 2md:w-4/12 uppercase text-sm sm:text-medium shadow-xl tracking-wide bg-color10b hover:bg-blue-400 rounded-lg ease-in-out duration-300"
             >
-              {loading ? <CircularProgress className='text-white' size={25} /> : <div className='flex flex-row'>
-                <HiCash className="mr-1.5" size={25} />
-                <span >Create Payment</span>
-              </div> }
-              
-                
+              {loading ? (
+                <CircularProgress className="text-white" size={25} />
+              ) : (
+                <div className="flex flex-row">
+                  <HiCash className="mr-1.5" size={25} />
+                  <span>Create Payment</span>
+                </div>
+              )}
             </button>
             <div className="">
               <ImageUploadButton

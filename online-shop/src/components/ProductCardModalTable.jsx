@@ -17,7 +17,7 @@ const ProductCardModalTable = (props) => {
     const { height, width } = useWindowDimensions();
     let rows = []
     let isPack = null
-    console.log(props.specs)
+  
 
     if (props.specs.unit == 'Pack') {
       isPack = true

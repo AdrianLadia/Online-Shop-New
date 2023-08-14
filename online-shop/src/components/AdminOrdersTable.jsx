@@ -54,7 +54,6 @@ const AdminOrdersTable = (props) => {
     const localrows = [];
 
     orders.map((order) => {
-      console.log(order);
       localrows.push(
         createData(
           order.reference,
@@ -82,9 +81,7 @@ const AdminOrdersTable = (props) => {
     handleOpenModal();
   }
 
-  useEffect(() => {
-    console.log(rows);
-  }, [rows]);
+
 
   return (
     <TableContainer component={Paper} sx={{ height: '80vh' }}>

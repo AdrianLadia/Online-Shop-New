@@ -30,8 +30,6 @@ const AffiliateAddPaymentMethodModal = (props) => {
   const [accountName, setAccountName] = useState('');
 
   function handleMethodChange(event){
-    console.log(event);
-    console.log(paymentMethodData)
     
     let found = false;
     paymentMethodData.forEach((bank)=>{

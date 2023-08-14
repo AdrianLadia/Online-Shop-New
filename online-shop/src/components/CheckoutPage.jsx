@@ -72,7 +72,7 @@ const CheckoutPage = () => {
     storage,
     openProfileUpdaterModal,
     firestore,
-    setOpenProfileUpdaterModal,
+    orders,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -130,9 +130,9 @@ const CheckoutPage = () => {
   // Get count of orders for this year
   useEffect(() => {
     const yearToday = new Date().getFullYear();
-    console.log(userdata.orders);
-    const count = datamanipulation.countAllOrdersOfUserInASpecificYear(userdata.orders,yearToday)
-    console.log(count);
+    
+    const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders,yearToday)
+
     setCountOfOrdersThisYear(count);
   }, []);
 
@@ -154,7 +154,7 @@ const CheckoutPage = () => {
   // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
   useEffect(() => {
     setRowsMountCount(rowsMountCount + 1);
-    console.log(rows);
+
   }, [rows]);
 
   useEffect(() => {
@@ -312,7 +312,7 @@ const CheckoutPage = () => {
           urlOfBir2303: urlOfBir2303,
           countOfOrdersThisYear: countOfOrdersThisYear,
         });
-        console.log(res.data);
+    
         setTransactionStatus(res.data);
         setPlacedOrder(!placedOrder);
       } catch (err) {
@@ -329,7 +329,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (userdata) {
-      // console.log(userdata)
+   
       setLocalEmail(userdata.email);
 
       if (userdata.contactPerson.length > 0) {
@@ -343,7 +343,7 @@ const CheckoutPage = () => {
         setZoom(15);
       }
       if (userdata.contactPerson.length == 0) {
-        console.log(userdata);
+
 
         setLocalPhoneNumber(userdata.phoneNumber);
       }

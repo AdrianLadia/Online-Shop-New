@@ -62,11 +62,11 @@ const LoginButton = (props) => {
   };
 
   useEffect(() => {
-    console.log('isAffiliateLink: ' + isAffiliateLink);
+  
     if (isAffiliateLink) {
       let params = new URLSearchParams(window.location.search);
       let affiliateId = params.get('aid');
-      console.log('Affiliate ID: ' + affiliateId);
+
 
       cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
         affiliateUsers.forEach((affiliateUser) => {
