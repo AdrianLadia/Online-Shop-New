@@ -172,7 +172,7 @@ const MyOrderCardModal = (props) => {
               Delivery Point
             </Typography>
             {isLoaded ? (
-              <div className="mt-2 flex flex-col h-56">
+              <div className="mt-2 flex flex-col h-96">
                 <GoogleMap
                   clickableIcons={false}
                   zoom={16}

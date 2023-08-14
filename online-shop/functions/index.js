@@ -954,6 +954,8 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
+        const oldProofOfPaymentLink = orderDetail.proofOfPaymentLink;
+        const newProofOfPaymentLink = [...oldProofOfPaymentLink,proofOfPaymentLink];
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
@@ -977,7 +979,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
         const affiliateIdOfCustomer = userData.affiliate;
-
+        let newAffiliateCommissions
         if (affiliateIdOfCustomer != null) {
           const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
           const affiliateUserSnap = await transaction.get(affiliateUserRef);
@@ -988,7 +990,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           console.log('vatPercentage', vatPercentage);
           console.log('commissionPercentage', commissionPercentage);
           console.log('lessCommissionToShipping', lessCommissionToShipping);
-          const newAffiliateCommissions = [
+          newAffiliateCommissions = [
             ...oldAffiliateCommissions,
             {
               customer: 'test',
@@ -999,6 +1001,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
             },
           ];
         } 
+
 
 
 
@@ -1040,15 +1043,15 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           }
         });
 
-        console.log('orderDetail', orderDetail);
-        
-        throw new Error('test');
 
         // WRITE
+        
         toUpdateOrders.forEach((order) => {
-          const orderRef = db.collection('Orders').doc(order.reference);
-          transaction.update(orderRef, { paid: order.paid });
+          const ref = db.collection('Orders').doc(order.reference);
+          transaction.update(ref, { paid: order.paid });
         });
+
+        transaction.update(orderRef, { proofOfPaymentLink: newProofOfPaymentLink });
 
         if (affiliateIdOfCustomer != null) {
           transaction.update(affiliateUserRef, { affiliateCommissions: newAffiliateCommissions });
