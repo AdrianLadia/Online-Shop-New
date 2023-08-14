@@ -1618,7 +1618,7 @@ describe('cloudfirestoredb', async () => {
     expect(falseUser).toEqual(false);
   });
 
-  test.only('transactionPlaceOrder', async () => {
+  test('transactionPlaceOrder', async () => {
     await firestore.createProduct(
       {
         itemId: 'test',
@@ -2108,7 +2108,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe.only('updateOrderProofOfPaymentLink', () => {
+describe('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -2368,7 +2368,7 @@ describe('updatePaymentStatus', () => {
   });
 }, 100000);
 
-describe('deleteOldOrders', () => {
+describe.only('deleteOldOrders', () => {
   test('create PAID 2 day ago order for testing', async () => {
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day

@@ -253,7 +253,7 @@ exports.readSelectedDataFromOnlineStore = functions.region('asia-southeast1').ht
         piecesPerPack: data.piecesPerPack,
         boxImage: data.boxImage,
       };
-     
+
       res.send(productObject);
     } catch (error) {
       console.log(error);
@@ -269,7 +269,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
       const category = req.query.category;
       const db = admin.firestore();
       const productsRef = db.collection('Products');
-      const forOnlineStoreQuery = productsRef.where('forOnlineStore', '==', true).where('category','==',category)
+      const forOnlineStoreQuery = productsRef.where('forOnlineStore', '==', true).where('category', '==', category);
 
       // Fetch and process the documents
       const querySnapshot = await forOnlineStoreQuery.get();
@@ -559,7 +559,7 @@ exports.transactionPlaceOrder = functions
           return;
         }
       }
-      try{
+      try {
         await db.runTransaction(async (transaction) => {
           try {
             // read user data
@@ -570,7 +570,7 @@ exports.transactionPlaceOrder = functions
             const contactPerson = userData.contactPerson;
             const ordersOnHold = {};
             const currentInventory = {};
-  
+
             await Promise.all(
               cartUniqueItems.map(async (c) => {
                 const productRef = db.collection('Products').doc(c);
@@ -580,37 +580,37 @@ exports.transactionPlaceOrder = functions
                 currentInventory[c] = productdoc.data().stocksAvailable;
               })
             );
-  
+
             // WRITE
             // WRITE TO PRODUCTS ON HOLD
-  
+
             await Promise.all(
               cartUniqueItems.map(async (itemId) => {
                 const prodref = db.collection('Products').doc(itemId);
                 const orderQuantity = data.cart[itemId];
                 const newStocksAvailable = currentInventory[itemId] - orderQuantity;
                 let oldOrdersOnHold = ordersOnHold[itemId];
-  
+
                 oldOrdersOnHold = ordersOnHold[itemId];
-  
+
                 if (oldOrdersOnHold == undefined) {
                   oldOrdersOnHold = [];
                 }
-  
+
                 const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
                 const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
-  
+
                 console.log('orderQuantity', orderQuantity);
                 console.log('newStocksAvailable', newStocksAvailable);
                 console.log('oldOrdersOnHold', oldOrdersOnHold);
                 console.log('newOrderOnHold', newOrderOnHold);
                 console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
-  
+
                 transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
                 transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
               })
             );
-  
+
             // WRITE TO DELIVER ADDRESS LIST
             let addressexists = false;
             let latitudeexists = false;
@@ -641,10 +641,10 @@ exports.transactionPlaceOrder = functions
               const updatedAddressList = [...newAddress, ...deliveryAddress];
               transaction.update(userRef, { deliveryAddress: updatedAddressList });
             }
-  
+
             // WRITE TO CONTACT NUMBER
             // CHECKS IF CONTACTS ALREADY EXISTS IF NOT ADDS IT TO FIRESTORE
-  
+
             let phonenumberexists = false;
             let nameexists = false;
             contactPerson.map((d) => {
@@ -664,7 +664,7 @@ exports.transactionPlaceOrder = functions
               console.log(updatedContactList);
               transaction.update(userRef, { contactPerson: updatedContactList });
             }
-  
+
             const oldOrders = userData.orders;
             const newOrder = {
               orderDate: orderDate,
@@ -699,7 +699,7 @@ exports.transactionPlaceOrder = functions
               urlOfBir2303: urlOfBir2303,
               countOfOrdersThisYear: countOfOrdersThisYear,
             };
-            const userOrderObject = {reference:reference,date:new Date()}
+            const userOrderObject = { reference: reference, date: new Date() };
             const updatedOrders = [userOrderObject, ...oldOrders];
             transaction.update(userRef, { orders: updatedOrders });
             const orderCollectionRef = db.collection('Orders').doc(reference);
@@ -707,7 +707,7 @@ exports.transactionPlaceOrder = functions
             transaction.set(orderCollectionRef, newOrder);
             // DELETE CART BY UPDATING IT TO AN EMPTY ARRAY
             transaction.update(userRef, { cart: {} });
-  
+
             // CREATE ORDERMESSAGES CHAT
             const orderMessagesRef = db.collection('ordersMessages').doc(reference);
             transaction.set(orderMessagesRef, {
@@ -720,9 +720,9 @@ exports.transactionPlaceOrder = functions
               adminReadAll: true,
             });
             orderMessagesRef.collection('messages');
-  
+
             console.log(newOrder.eMail);
-  
+
             if (sendMail == true) {
               try {
                 sendmail(
@@ -743,7 +743,7 @@ exports.transactionPlaceOrder = functions
               <p>Best Regards,<br>
               The Star Pack Team</p>`
                 );
-  
+
                 sendmail(
                   'ladiaadrian@gmail.com',
                   'Order Received',
@@ -762,15 +762,14 @@ exports.transactionPlaceOrder = functions
                 console.log('error sending email');
               }
             }
-  
+
             res.send('SUCCESS');
           } catch (e) {
             console.log(e);
             res.status(400).send('FAILED');
           }
         });
-      }
-      catch(error){
+      } catch (error) {
         console.log(error);
         res.status(400).send('FAILED');
       }
@@ -943,26 +942,26 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const proofOfPaymentLink = data.proofOfPaymentLink;
     const db = admin.firestore();
     const userId = data.userId;
-    
+
     try {
       await db.runTransaction(async (transaction) => {
         // READ
         const customerUserRef = db.collection('Users').doc(userId);
         const customerSnapshot = await transaction.get(customerUserRef);
-    
+
         const customerData = customerSnapshot.data();
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
         const oldProofOfPaymentLink = orderDetail.proofOfPaymentLink;
-        const newProofOfPaymentLink = [...oldProofOfPaymentLink,proofOfPaymentLink];
+        const newProofOfPaymentLink = [...oldProofOfPaymentLink, proofOfPaymentLink];
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
         const shippingTotal = orderDetail.shippingTotal;
-    
-        const lessCommissionToShipping =  parseFloat((shippingTotal * ( (depositAmount) / itemsTotal)).toFixed(2))
-    
+
+        const lessCommissionToShipping = parseFloat((shippingTotal * (depositAmount / itemsTotal)).toFixed(2));
+
         const paymentsRef = db.collection('Payments');
         const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
         const paymentSnapshot = await paymentQuery.get();
@@ -979,13 +978,14 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
         const affiliateIdOfCustomer = userData.affiliate;
-        let newAffiliateCommissions
+        let newAffiliateCommissions;
         if (affiliateIdOfCustomer != null) {
           const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
           const affiliateUserSnap = await transaction.get(affiliateUserRef);
           const affiliateUserData = affiliateUserSnap.data();
           const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
-          const commission =((parseFloat(depositAmount) - lessCommissionToShipping)  / (1 + vatPercentage)) * commissionPercentage
+          const commission =
+            ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
           console.log('depositAmount', depositAmount);
           console.log('vatPercentage', vatPercentage);
           console.log('commissionPercentage', commissionPercentage);
@@ -995,22 +995,19 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
             {
               customer: 'test',
               dateOrdered: new Date().toDateString(),
-              commission: commission.toFixed(2) ,
+              commission: commission.toFixed(2),
               status: 'claimable',
               claimCode: '',
             },
           ];
-        } 
-
-
-
+        }
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
         const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
         const ordersObject = await transaction.get(allUserOrdersQuery);
         const orders = ordersObject.docs.map((doc) => doc.data());
-        
+
         console.log('orders', orders);
 
         let totalPayments = 0;
@@ -1024,12 +1021,12 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           return timeA - timeB;
         });
 
-        const toUpdateOrders = []
+        const toUpdateOrders = [];
 
         orders.forEach((order) => {
-          console.log(order.orderDate)
+          console.log(order.orderDate);
           totalPayments -= order.grandTotal;
-          let paid = null
+          let paid = null;
           if (totalPayments >= 0) {
             paid = true;
             console.log(order.reference + ' is PAID');
@@ -1039,13 +1036,12 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
             console.log(order.reference + ' is NOT PAID');
           }
           if (order.paid !== paid) {
-            toUpdateOrders.push({reference: order.reference, paid: paid})
+            toUpdateOrders.push({ reference: order.reference, paid: paid });
           }
         });
 
-
         // WRITE
-        
+
         toUpdateOrders.forEach((order) => {
           const ref = db.collection('Orders').doc(order.reference);
           transaction.update(ref, { paid: order.paid });
@@ -1061,10 +1057,9 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           transaction.update(db.collection('Payments').doc(documentID), paymentsData);
         }
         transaction.update(userRef, { payments: newPayments });
-      
       });
       res.status(200).send('success');
-    } catch(error) {
+    } catch (error) {
       console.log(error);
       res.status(400).send('Error adding document.');
     }
@@ -1189,7 +1184,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
     try {
       // Get the user document
       const data = req.body;
-      
+
       console.log(data);
       const userName = data.userName;
       const paymentMethod = data.paymentMethod;
@@ -1228,7 +1223,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const userDoc = await transaction.get(userRef);
           const userData = userDoc.data();
           const orderRef = db.collection('Orders').doc(orderReference);
-          const ordersObject = await transaction.get(orderRef)
+          const ordersObject = await transaction.get(orderRef);
           const order = ordersObject.data();
           const proofOfPayments = order.proofOfPaymentLink;
           const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
@@ -1320,67 +1315,56 @@ async function deleteOldOrders() {
   const db = admin.firestore();
   const expiryHours = 24;
   let currentTime = new Date();
-  const usersRef = db.collection('Users');
+
+  const usersRef = db.collection('Orders').where('paid', '==', false);
   const snapshot = await usersRef.get();
   const deletedOrders = [];
-  const dataNeededToUpdateOrderValue = []; // {userId, filteredOrders}
+  // const dataNeededToUpdateOrderValue = []; // {userId, filteredOrders}
   try {
-    snapshot.forEach((doc) => {
-      const user = doc.data();
-      const orders = user.orders;
-      const userId = user.uid;
-      console.log('orders', userId, orders);
-      let foundExpiredOrders = false;
-
-      const filteredOrder = orders.filter((order) => {
-        // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
-        let paymentLinks;
-        paymentLinks = order.proofOfPaymentLink;
-        if (paymentLinks == null) {
-          console.log('converted to empty array');
-          paymentLinks = [];
-        }
-
-        if (paymentLinks.length > 0) {
-          console.log('payment links length > 0');
-          return true;
-        }
-
-        // IF ORDER IS PAID. DO NOT DELETE
-        const paid = order.paid;
-        if (paid) {
-          return true;
-        }
-
-        // IF ORDER IS NOT EXPIRED DO NOT DELETE (24 hr window)
-        let orderTimeStamp = order.orderDate;
-        try {
-          orderTimeStamp = orderTimeStamp.toDate();
-        } catch {
-          orderTimeStamp = new Date(orderTimeStamp);
-        }
-
-        const diffTime = Math.abs(currentTime - orderTimeStamp);
-        const msInHour = 1000 * 60 * 60;
-        const diffHours = Math.floor(diffTime / msInHour);
-        const lessThanExpiryHours = diffHours < expiryHours;
-
-        if (lessThanExpiryHours) {
-          return true;
-        }
-
-        console.log('found expired orders');
-        foundExpiredOrders = true;
-        // WE PASS THE ORDER TO THE ARRAY ADD THE ORDER CART BACK TO THE INVENTORY
-        deletedOrders.push(order);
-      });
-
-      console.log('filteredOrder', filteredOrder);
-
-      if (foundExpiredOrders) {
-        dataNeededToUpdateOrderValue.push({ userId: userId, filteredOrder: filteredOrder });
-        // db.collection('Users').doc(userId).update({ orders: filteredOrder });
+    snapshot.forEach((order) => {
+      // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
+      let paymentLinks;
+      paymentLinks = order.proofOfPaymentLink;
+      if (paymentLinks == null) {
+        paymentLinks = [];
       }
+
+      if (paymentLinks.length > 0) {
+         return
+      }
+
+      // IF ORDER IS PAID. DO NOT DELETE
+      const paid = order.paid;
+      if (paid) {
+        return
+      }
+
+      // IF ORDER IS NOT EXPIRED DO NOT DELETE (24 hr window)
+      let orderTimeStamp = order.orderDate;
+      try {
+        orderTimeStamp = orderTimeStamp.toDate();
+      } catch {
+        orderTimeStamp = new Date(orderTimeStamp);
+      }
+
+      const diffTime = Math.abs(currentTime - orderTimeStamp);
+      const msInHour = 1000 * 60 * 60;
+      const diffHours = Math.floor(diffTime / msInHour);
+      const lessThanExpiryHours = diffHours < expiryHours;
+
+      if (lessThanExpiryHours) {
+        return
+      }
+
+      console.log(`order ${order.reference} is expired and will be deleted`);
+      // foundExpiredOrders = true;
+      // WE PASS THE ORDER TO THE ARRAY ADD THE ORDER CART BACK TO THE INVENTORY
+      deletedOrders.push(order);
+
+      // if (foundExpiredOrders) {
+      //   dataNeededToUpdateOrderValue.push({ userId: userId, filteredOrder: filteredOrder });
+      //   // db.collection('Users').doc(userId).update({ orders: filteredOrder });
+      // }
     });
 
     const dataNeededToUpdateProductValue = []; //This is the data needed to do the writes it follows this schema
@@ -1414,11 +1398,9 @@ async function deleteOldOrders() {
         const productRef = db.collection('Products').doc(itemId);
         const productGet = await productRef.get();
         const prodData = productGet.data();
-        // console.log(prodData)
         const stocksAvailable = prodData.stocksAvailable;
         const stocksOnHold = prodData.stocksOnHold;
-        // console.log(stocksOnHold)
-        // console.log(stocksAvailable)
+
 
         stocksToAdjust[itemId] = stocksAvailable;
         stocksOnHoldToAdjust[itemId] = stocksOnHold;
@@ -1525,28 +1507,26 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
           const userData = userDataObj.data();
           let orders = userData.orders;
 
-
-
           const data = orders.filter((order) => order.reference != orderReference);
-          
+
           const cancelledOrderRef = db.collection('Orders').doc(orderReference);
           const cancelledDataObj = await transaction.get(cancelledOrderRef);
           const cancelledData = cancelledDataObj.data();
           const cancelledDataCart = cancelledData.cart;
-  
+
           console.log('data', data);
           console.log('cancelledData', cancelledData);
           console.log('cancelledDataCart', cancelledDataCart);
-  
+
           orders = data;
           // READ OLD STOCKSAVAILABLE
           const oldStocksAvailable = {};
           const newStocksOnHoldData = {};
-  
+
           await Promise.all(
             Object.entries(cancelledDataCart).map(async ([itemId, quantity]) => {
               const productRef = db.collection('Products').doc(itemId);
-  
+
               const prodSnap = await transaction.get(productRef);
               const prodData = prodSnap.data();
               const stocksOnHold = prodData.stocksOnHold;
@@ -1560,7 +1540,7 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
               newStocksOnHoldData[itemId] = newStocksOnHold;
             })
           );
-  
+
           console.log(oldStocksAvailable);
           console.log(newStocksOnHoldData);
           // WRITE
@@ -1573,17 +1553,16 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
             transaction.update(productRef, { stocksAvailable: newStocksAvailable });
             transaction.update(productRef, { stocksOnHold: newStocksOnHold });
           });
-  
+
           transaction.update(userRef, { orders: orders });
           transaction.delete(cancelledOrderRef);
           res.status(200).send('success');
-        } catch(error) {
+        } catch (error) {
           console.log(error);
           res.status(400).send('Error deleting order.');
         }
       });
-    }
-    catch(error) {
+    } catch (error) {
       console.log(error);
       res.status(400).send('Error deleting order.');
     }
@@ -1807,7 +1786,7 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     const reference = data.reference;
     const userId = data.userId;
 
-    console.log(reference)
+    console.log(reference);
     const db = admin.firestore();
     const orderRef = db.collection('Orders').doc(reference);
     const orderDoc = await orderRef.get();
@@ -1817,16 +1796,15 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     const userDoc = await userRef.get();
     const userData = userDoc.data();
     const userRole = userData.userRole;
-    console.log(userRole)
+    console.log(userRole);
 
-    if (!['admin','superAdmin'].includes(userRole)) {
-      if (orderUserId != userId ) {
+    if (!['admin', 'superAdmin'].includes(userRole)) {
+      if (orderUserId != userId) {
         res.status(401).send('Unauthorized');
       }
     }
-    console.log(orderData)
+    console.log(orderData);
 
     res.status(200).send(orderData);
-
-  })
+  });
 });
