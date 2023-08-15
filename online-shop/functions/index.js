@@ -937,6 +937,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const data = req.body;
     const depositAmount = data.amount;
     const orderReference = data.reference;
+    console.log('orderRef',orderReference)
     const commissionPercentage = 0.03;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
@@ -953,6 +954,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
+        console.log(orderDetail)
         const oldProofOfPaymentLink = orderDetail.proofOfPaymentLink;
         const newProofOfPaymentLink = [...oldProofOfPaymentLink, proofOfPaymentLink];
         const itemsTotal = orderDetail.itemsTotal;
@@ -979,8 +981,9 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const userData = userSnap.data();
         const affiliateIdOfCustomer = userData.affiliate;
         let newAffiliateCommissions;
+        let affiliateUserRef;
         if (affiliateIdOfCustomer != null) {
-          const affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
+          affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
           const affiliateUserSnap = await transaction.get(affiliateUserRef);
           const affiliateUserData = affiliateUserSnap.data();
           const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
@@ -1105,12 +1108,23 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
-        const orders = userData.orders;
+        const orderReferences = userData.orders;
+
+        const orderPromises = orderReferences.map(async(orderReference) => {
+          const docRef = db.collection('Orders').doc(orderReference.reference);
+          const docSnap = await transaction.get(docRef);
+          const orderData = docSnap.data();
+          return orderData;
+        })
+
+        const orders = await Promise.all(orderPromises)
 
         let totalPayments = 0;
         newPayments.map((payment) => {
           totalPayments += parseFloat(payment.amount);
         });
+
+        console.log('orders', orders);
 
         orders.sort((a, b) => {
           const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
@@ -1118,13 +1132,24 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           return timeA - timeB;
         });
 
+        const ordersToUpdate = []
+
+
         orders.forEach((order) => {
           totalPayments -= order.grandTotal;
           if (totalPayments >= 0) {
-            order.paid = true;
+            if (order.paid != true) {
+              ordersToUpdate.push({reference:order.reference, paid:true})
+            } 
             console.log(order.reference + ' is PAID');
           }
           if (totalPayments < 0) {
+            if (order.paid != false) {
+              ordersToUpdate.push({
+                reference:order.reference,
+                paid : false
+              })
+            }
             order.paid = false;
             console.log(order.reference + ' is NOT PAID');
           }
@@ -1140,7 +1165,13 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           paymentMethod: 'Maya',
         });
         transaction.update(userRef, { payments: newPayments });
-        transaction.update(userRef, { orders: orders });
+        
+        console.log('ordersToUpdate',ordersToUpdate)
+
+        ordersToUpdate.forEach((order) => {
+          const orderRef = db.collection('Orders').doc(order.reference)
+          transaction.update(orderRef, { paid: order.paid });
+        })
       });
 
       res.status(200).send('success');

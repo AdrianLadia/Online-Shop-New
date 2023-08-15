@@ -16,7 +16,7 @@ class businessCalculations {
   readAllParentProductsFromOnlineStoreProducts(products) {
     const parentProducts = [];
     products.map((product) => {
-      if (product.parentProductID === '') {
+      if (['',null].includes(product.parentProductID)) {
         parentProducts.push(product.itemId);
       }
     });
@@ -407,17 +407,14 @@ class businessCalculations {
     // CONFIRM AGAIN IF STOCKS AVAILABLE
     let message = 'Unfortunately someone else might have bought the stocks listed below. \n \n';
     let outOfStockDetected = false;
-    const fetchCartProductsData = async () => {
-      const cartProductPromises = Object.keys(cart).map(async (key) => {
-        const productData = await this.cloudfirestore.readSelectedDataFromOnlineStore(key);
-        return productData;
-      });
 
-      const data = await Promise.all(cartProductPromises);
-      return data;
-      
-    };
-    const products = await fetchCartProductsData();
+    const cartProductPromises = Object.keys(cart).map(async (key) => {
+      const productData = await this.cloudfirestore.readSelectedDataFromOnlineStore(key);
+      return productData;
+    });
+    
+    const products = await Promise.all(cartProductPromises);
+
     Object.entries(cart).map(([itemId, quantity]) => {
       if (itemId.slice(-4) === '-RET') {
         return;

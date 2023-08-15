@@ -363,6 +363,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   
       return response;
     } catch {
+      console.log(error);
       throw new Error(error);
     }
   }
