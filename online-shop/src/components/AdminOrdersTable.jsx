@@ -78,7 +78,6 @@ const AdminOrdersTable = (props) => {
 
   function handleRowClick(referenceNumber) {
     setSelectedOrderReference(referenceNumber);
-    handleOpenModal();
   }
 
 

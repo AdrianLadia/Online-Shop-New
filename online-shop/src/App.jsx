@@ -107,6 +107,7 @@ function App() {
   const [cartProductsData, setCartProductsData] = useState([]);
   const [categoryProductsData, setCategoryProductsData] = useState([]);
   const [userOrderReference, setUserOrderReference] = useState(null);
+  const [favoriteProductData, setFavoriteProductData] = useState([]);
 
   useEffect(() => {
     console.log(affiliate);
@@ -330,13 +331,31 @@ function App() {
     }
   }, [userdata]);
 
+  useEffect(() => {
+    if (userdata != null) {
+      console.log('READING FAVORITES');
+      const fetchFavoriteProductsData = async () => {
+        const favoriteProductPromises = userdata.favoriteItems.map(async (key) => {
+          const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
+          return productData;
+        });
+
+        const favoriteProductsData = await Promise.all(favoriteProductPromises);
+        
+        setFavoriteProductData(favoriteProductsData);
+      };
+
+      fetchFavoriteProductsData();
+    }
+  }, [userdata]);
+
 
   useEffect(() => {
-    const combinedProductsList = [...categoryProductsData, ...cartProductsData];
+    const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData];
     //remove duplicates
     const uniqueProducts = combinedProductsList.filter((thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index);
     setProducts(uniqueProducts);
-  }, [cartProductsData,categoryProductsData]);
+  }, [cartProductsData,categoryProductsData,favoriteProductData]);
 
   useEffect(() => {
     if (userdata) {

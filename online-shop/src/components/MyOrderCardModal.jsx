@@ -49,6 +49,8 @@ const MyOrderCardModal = (props) => {
   const { width } = useWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
 
+  console.log(order);
+
   useEffect(() => {
     if (width < 550) {
       return setScreenSizeMobile(false);
@@ -138,7 +140,7 @@ const MyOrderCardModal = (props) => {
               </Typography>
             </div>
 
-            <MyOrderCardModalTable order={order} />
+            <MyOrderCardModalTable id={order.id} key={order.id} order={order}  />
 
             <div className="mt-5 flex flex-col">
               <List

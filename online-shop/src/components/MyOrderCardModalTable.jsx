@@ -13,6 +13,7 @@ import { ContentCutOutlined } from '@mui/icons-material';
 import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
+  console.log('MyOrderCardModalTable');
   const {cloudfirestore } = React.useContext(AppContext);
   
   const [products, setProducts] = React.useState([]);
@@ -21,7 +22,8 @@ const MyOrderCardModalTable = (props) => {
     return height - 10000;
   }
   const order = props.order;
-  const cart = order.cart;
+  console.log('order', order);
+  console.log('order.cart', order.cart);
   const urlOfBir2303 = order.urlOfBir2303
   const cartItemsPrice = order.cartItemsPrice;
   const datamanipulation = new dataManipulation();
@@ -33,12 +35,14 @@ const MyOrderCardModalTable = (props) => {
   useEffect(() => {
 
     const fetchCartProductsData = async () => {
-      const cartProductPromises = Object.keys(cart).map(async (key) => {
+      console.log('order.cart', order.cart);
+      const cartProductPromises = Object.keys(order.cart).map(async (key) => {
         const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
         return productData;
       });
 
       const data = await Promise.all(cartProductPromises);
+      console.log('data', data);
       const productsCombined = [...products, ...data];
 
     
@@ -55,7 +59,7 @@ const MyOrderCardModalTable = (props) => {
     
       const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
         products,
-        cart,
+        order.cart,
         cartItemsPrice,
         urlOfBir2303
       );

@@ -107,10 +107,17 @@ const AdminOrders = (props) => {
   useEffect(() => {
     orders.map((order) => {
       if (order.reference === selectedOrderReference) {
+        console.log(order);
         setSelectedOrder(order);
       }
     });
   }, [selectedOrderReference]);
+
+  useEffect(() => {
+    if (selectedOrder !== null) {
+      handleOpenModal();
+    }
+  }, [selectedOrder]);
 
   async function deleteExpiredOrders() {
     await cloudfirestore.deleteOldOrders();
