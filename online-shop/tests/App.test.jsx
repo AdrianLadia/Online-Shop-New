@@ -74,6 +74,31 @@ await cloudfirestore.createNewUser(
   },
   'TESTUSER'
 );
+await cloudfirestore.createNewUser(
+  {
+    uid: 'NOAFFILIATETESTUSER',
+    name: 'test user3',
+    email: 'test3@gmail.com',
+    emailVerified: true,
+    phoneNumber: '09178927206',
+    deliveryAddress: [],
+    contactPerson: [],
+    isAnonymous: false,
+    orders: [],
+    cart: {},
+    favoriteItems: [],
+    payments: [],
+    userRole: 'member',
+    affiliate : null,
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
+    affiliateBankAccounts : [],
+  },
+  'NOAFFILIATETESTUSER'
+);
 const businesscalculations = new businessCalculations();
 const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
@@ -580,12 +605,6 @@ describe('Database', async () => {
     const data = await firestore.readAllParentProducts();
     await delay(100);
     expect(data).not.toBe([]);
-  });
-  // a
-
-  test('transactionCreatePayment', async () => {
-    await firestore.transactionCreatePayment('LP6ARIs14qZm4qjj1YOLCSNjxsj1', 1999, '124532-1235', 'GCASH');
-    await delay(100);
   });
   test('updatedoc', async () => {
     await firestore.updatePhoneNumber(userTestId, '09178927206');
@@ -3495,3 +3514,124 @@ describe('count all orders of a specific year', () => {
   })
 })
 
+describe('test transaction create payment without an affiliate' , () => {
+  test('setting up test', async () => {
+    await firestore.updateDocumentFromCollection('Users','NOAFFILIATETESTUSER',{orders : [],payments : []})
+    const orderIds = await firestore.readAllIdsFromCollection('Orders')
+
+    const orderPromises = orderIds.map(async (orderId) => {
+      await firestore.deleteDocumentFromCollection('Orders',orderId)
+    })
+
+    await Promise.all(orderPromises)
+    await cloudfirestore.createDocument({'test':'test'},'mock','Orders')
+
+
+    await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: 'NOAFFILIATETESTUSER',
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 9998,
+      vat: 0,
+      shippingtotal: 2002,
+      grandTotal: 12000,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(300)
+    await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: 'NOAFFILIATETESTUSER',
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 9998,
+      vat: 0,
+      shippingtotal: 2002,
+      grandTotal: 12000,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(300)
+  })
+  test('create payment', async () => {
+    await cloudfirestore.transactionCreatePayment({
+      userId: 'NOAFFILIATETESTUSER',
+      amount: 12000,
+      reference: 'testref1234',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    })
+  
+    const user = await firestore.readSelectedDataFromCollection('Users','NOAFFILIATETESTUSER')
+    const payment = user.payments
+    const orderReferences = user.orders
+
+    let foundPayment = false
+    payment.forEach((payment) => {
+      if (payment.reference === 'testref1234') {
+        foundPayment = true
+      }
+    })
+
+    expect(foundPayment).toBe(true)
+    expect (orderReferences.length).toBe(2)
+
+    const orderPromises = orderReferences.map(async (orderReference) => {
+      const order = await firestore.readSelectedDataFromCollection('Orders',orderReference.reference)
+      return order
+    })
+
+    const orders = await Promise.all(orderPromises)
+
+    orders.map((order) => {
+      if (order.reference === 'testref1234') {
+        expect(order.proofOfPaymentLink).toEqual(['testlink3'])
+        expect(order.paid).toBe(true)
+      }
+      if (order.reference === 'testref12345') {
+        expect(order.proofOfPaymentLink).toEqual([])
+        expect(order.paid).toBe(false)
+      }
+    })
+
+    const paymentObj = await firestore.readAllDataFromCollection('Payments')
+    
+    let foundPaymentObj = false
+    paymentObj.forEach((payment) => {
+      if (payment.orderReference === 'testref1234') {
+        foundPaymentObj = true
+      }
+    })
+
+    expect(foundPaymentObj).toBe(true)
+  },10000)
+})
