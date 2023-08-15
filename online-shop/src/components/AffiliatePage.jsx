@@ -24,6 +24,7 @@ const AdminAffiliatePage = () => {
     useEffect(() => {
       if (userdata) {
         firestore.readAllAvailableAffiliateBankAccounts(userdata.uid).then(bankAccounts=>{
+          console.log(bankAccounts)
           setPaymentMethodData(bankAccounts)
          
           const bankNames = []
