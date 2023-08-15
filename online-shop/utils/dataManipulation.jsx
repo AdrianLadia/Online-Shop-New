@@ -751,7 +751,24 @@ class dataManipulation {
     let count = 0;
     orders.forEach((order) => {
       const orderDate = order.orderDate
-      const date = new Date(orderDate._seconds * 1000 + orderDate._nanoseconds / 1000000);
+      let seconds
+      let nanoseconds
+
+      try{
+        seconds = orderDate.seconds
+      }
+      catch {
+        seconds = orderDate._seconds
+      }
+
+      try{
+        nanoseconds = orderDate.nanoseconds
+      }
+      catch {
+        nanoseconds = orderDate._nanoseconds
+      }
+
+      const date = new Date(seconds * 1000 + nanoseconds / 1000000);
       const orderYear = date.getFullYear();
 
       if (orderYear == year) {

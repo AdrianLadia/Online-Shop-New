@@ -23,7 +23,32 @@ const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
 const firestore = new firestoredb(app, true);
 const cloudfirestorefunctions = new cloudFirestoreFunctions(app, true);
-const cloudfirestore = new cloudFirestoreDb(app);
+const cloudfirestore = new cloudFirestoreDb(app, true);
+await cloudfirestore.createNewUser(
+  {
+    uid: 'TESTAFFILIATE',
+    name: 'affiliate user',
+    email: 'affiliate@gmail.com',
+    emailVerified: true,
+    phoneNumber: '09178927206',
+    deliveryAddress: [],
+    contactPerson: [],
+    isAnonymous: false,
+    orders: [],
+    cart: {},
+    favoriteItems: [],
+    payments: [],
+    userRole: 'affiliate',
+    affiliate: null,
+    affiliateClaims: [],
+    affiliateDeposits: [],
+    affiliateCommissions: [],
+    bir2303Link : null,
+    affiliateId : null,
+    affiliateBankAccounts : [],
+  },
+  'TESTAFFILIATE'
+);
 await cloudfirestore.createNewUser(
   {
     uid: 'TESTUSER',
@@ -183,21 +208,10 @@ describe('Business Calcualtions', () => {
     });
   });
   test('checkStocksIfAvailableInFirestore', async () => {
-    const products = await firestore.readAllProducts();
-    const result = await businesscalculations.checkStocksIfAvailableInFirestore(products, [
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1',
-      'PPB#1-RET',
-    ]);
+    const result = await businesscalculations.checkStocksIfAvailableInFirestore({
+      'PPB#1' : 11,
+      'PPB#1-RET': 1,
+  });
   });
   test('getValueAddedTax', () => {
     const subtotal = 100;
@@ -354,8 +368,14 @@ describe('Data Manipulation', async () => {
     await delay(1000);
 
     const testuser = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orderReferences = testuser.orders;
 
-    const orders = testuser.orders;
+    const orderPromises = orderReferences.map(async (orderReference) => {
+      return await firestore.readSelectedDataFromCollection('Orders', orderReference.reference);
+    });
+
+    const orders = await Promise.all(orderPromises);
+
     const payments = testuser.payments;
     const tableData = datamanipulation.accountStatementData(orders, payments);
     const table = datamanipulation.accountStatementTable(tableData);
@@ -439,7 +459,8 @@ describe('Data Manipulation', async () => {
 
     const orders = await firestore.readUserById(userTestId);
     await delay(100);
-    const order = orders.orders[0];
+    const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+    await delay(100);
     const cart = order.cart;
     const cartItemsPrice = order.cartItemsPrice;
 
@@ -987,13 +1008,15 @@ describe('cloudfirestoredb', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     await firestore.deleteDocumentFromCollectionByFieldValue('Payments', 'orderReference', 'testref1234');
-    await cloudfirestore.deleteDocumentFromCollection('Orders','testref12')
-    await cloudfirestore.deleteDocumentFromCollection('Orders','testref123')
-    await cloudfirestore.deleteDocumentFromCollection('Orders','testref1234')
-    await cloudfirestore.deleteDocumentFromCollection('Orders','testref1235')
-    await cloudfirestore.deleteDocumentFromCollection('Orders','testref123456')
-    await cloudfirestore.deleteDocumentFromCollection('Orders','testref1234567')
-    await cloudfirestore.deleteDocumentFromCollection('Orders','testref12345678')
+    await delay(300)
+    const ids = await firestore.readAllIdsFromCollection('Orders')
+    await delay(300)
+    const promises = ids.map(async (id) => {
+      await firestore.deleteDocumentFromCollection('Orders', id)
+    })
+
+    await Promise.all(promises)
+
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
     const itemsTotal = (ppb16Price * 12) / 1.12;
@@ -1206,7 +1229,7 @@ describe('cloudfirestoredb', async () => {
     })
 
   }, 100000);
-  test('transactionCreatePayment', async () => {
+  test('transactionCreatePayment2', async () => {
 
     await cloudfirestore.transactionPlaceOrder({
       testing : true,
@@ -1220,7 +1243,7 @@ describe('cloudfirestoredb', async () => {
       localname: 'Adrian Ladia',
       cart: { 'PPB#16': 12 },
       itemstotal: 8888,
-      vat: vat,
+      vat: 0,
       shippingtotal: 2002,
       grandTotal: 8888,
       reference: 'testref123456789',
@@ -1242,6 +1265,7 @@ describe('cloudfirestoredb', async () => {
       amount: 8888,
       reference: 'testref123456789',
       paymentprovider: 'Maya',
+      proofOfPaymentLink :'www.testlink.com'
     };
     await cloudfirestore.transactionCreatePayment(data);
 
@@ -1646,7 +1670,7 @@ describe('cloudfirestoredb', async () => {
   });
 
   test('readAllProductsForOnlineStore', async () => {
-    const products = await cloudfirestore.readAllProductsForOnlineStore();
+    const products = await cloudfirestore.readAllProductsForOnlineStore('Paper Bag');
     await delay(300);
 
     expect(products).toBeInstanceOf(Array);
@@ -2837,19 +2861,11 @@ describe('deleteDeclinedPayments', () => {
     await firestore.deleteDeclinedPayment('testref1234', userTestId, 'https://testlink.com');
   });
   test('checking values', async () => {
-    const user = await firestore.readUserById(userTestId);
-    const orders = user.orders;
     const payments = await firestore.readAllDataFromCollection('Payments');
-
     let found = false;
-    orders.map((order) => {
-      if (order.reference == 'testref1234') {
-        found = true;
-        expect(order.proofOfPaymentLink).toEqual(['https://testlink2.com', 'https://testlink3.com']);
-      }
-    });
-
-    expect(found).toEqual(true);
+    const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+    await delay(300);
+    expect(order.proofOfPaymentLink).toEqual(['https://testlink2.com', 'https://testlink3.com']);
 
     let found2 = false;
     payments.map((payment) => {
@@ -3459,9 +3475,21 @@ describe('count all orders of a specific year', () => {
     await delay(300)
   })
   test('count orders', async () => {
+
+    
+
     const yearToday = new Date().getFullYear()
     const userdata = await firestore.readSelectedDataFromCollection('Users',userTestId)
-    const orders = userdata.orders
+    const ordersRef = userdata.orders
+
+    const ordersPromises = ordersRef.map(async (order) => {
+      const orderdata = await firestore.readSelectedDataFromCollection('Orders',order.reference)
+      return orderdata
+    })
+
+    const orders = await Promise.all(ordersPromises)
+    
+
     const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders,yearToday)
     expect(count).toEqual(2)
   })
