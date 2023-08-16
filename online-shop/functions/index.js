@@ -11,7 +11,7 @@ const corsHandler = cors({
     'http://localhost:5174',
     'http://localhost:5175',
     'http://localhost:5176',
-    
+
     'https://pg.maya.ph',
     'https://payments.maya.ph',
     'https://payments.paymaya.com',
@@ -170,20 +170,16 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     return timeA - timeB;
   });
 
-
   // edit orders
   orders.forEach((order) => {
     totalPayments -= order.grandTotal;
     if (totalPayments >= 0) {
       order.paid = true;
-
     }
     if (totalPayments < 0) {
       order.paid = false;
-
     }
   });
-
 
   await db
     .collection('Users')
@@ -376,7 +372,7 @@ exports.transactionPlaceOrder = functions
       const itemKeys = Object.keys(cart);
 
       const cartItemsPrice = {};
-      const stocksAvailableList = []
+      const stocksAvailableList = [];
 
       for (const key of itemKeys) {
         const itemId = key;
@@ -389,28 +385,34 @@ exports.transactionPlaceOrder = functions
         itemsTotalBackEnd += total;
         cartUniqueItems.push(itemId);
         cartItemsPrice[itemId] = price;
-        stocksAvailableList.push({itemId, stocksAvailable,itemName})
-      }
-
-      const stockOuts = []
-
-      stocksAvailableList.forEach((item) => {
-        const backEndStocksAvailable = item.stocksAvailable
-        const dataReceivedStocksAvailable = cart[item.itemId]
-        const difference = backEndStocksAvailable - dataReceivedStocksAvailable
-
-        if (difference < 0)  {
-          stockOuts.push(item.itemName)
-          return;
-        }
-      })
-    
-      if (stockOuts.length > 0) {
-        res.status(409).send(`The following items are out of stock: ${stockOuts.join(', ')}\nPlease refresh the website to update stocks`);
-        return;
+        stocksAvailableList.push({ itemId, stocksAvailable, itemName });
       }
 
       if (data.testing == false) {
+        const stockOuts = [];
+
+        stocksAvailableList.forEach((item) => {
+          const backEndStocksAvailable = item.stocksAvailable;
+          const dataReceivedStocksAvailable = cart[item.itemId];
+          const difference = backEndStocksAvailable - dataReceivedStocksAvailable;
+
+          if (difference < 0) {
+            stockOuts.push(item.itemName);
+            return;
+          }
+        });
+
+        if (stockOuts.length > 0) {
+          res
+            .status(409)
+            .send(
+              `The following items are out of stock: ${stockOuts.join(
+                ', '
+              )}\nPlease refresh the website to update stocks`
+            );
+          return;
+        }
+
         if (itemsTotalBackEnd != itemstotal + vat) {
           console.log('itemsTotalBackEnd != itemstotal');
           res.status(400).send('Invalid data submitted. Please try again later');
@@ -520,20 +522,16 @@ exports.transactionPlaceOrder = functions
             let longitudeexists = false;
             deliveryAddress.map((d) => {
               if (d.address == localDeliveryAddress) {
-             
                 addressexists = true;
               }
               if (d.latitude == locallatitude) {
-   
                 latitudeexists = true;
               }
               if (d.longitude == locallongitude) {
-            
                 longitudeexists = true;
               }
             });
             if (addressexists == false || latitudeexists == false || longitudeexists == false) {
-        
               const newAddress = [
                 {
                   latitude: locallatitude,
@@ -552,19 +550,16 @@ exports.transactionPlaceOrder = functions
             let nameexists = false;
             contactPerson.map((d) => {
               if (d.phoneNumber == localphonenumber) {
-            
                 phonenumberexists = true;
               }
               if (d.name == localname) {
-               
                 nameexists = true;
               }
             });
             if (phonenumberexists == false || nameexists == false) {
-           
               const newContact = [{ name: localname, phoneNumber: localphonenumber }];
               const updatedContactList = [...newContact, ...contactPerson];
-            
+
               transaction.update(userRef, { contactPerson: updatedContactList });
             }
 
@@ -624,8 +619,6 @@ exports.transactionPlaceOrder = functions
             });
             orderMessagesRef.collection('messages');
 
-    
-
             if (sendMail == true) {
               try {
                 sendmail(
@@ -661,19 +654,15 @@ exports.transactionPlaceOrder = functions
               <p>Best Regards,<br>
               Star Pack Head</p>`
                 );
-              } catch {
-             
-              }
+              } catch {}
             }
 
             res.send('SUCCESS');
           } catch (e) {
-     
             res.status(400).send('FAILED');
           }
         });
       } catch (error) {
-  
         res.status(400).send('FAILED');
       }
     });
@@ -837,7 +826,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const data = req.body;
     const depositAmount = data.amount;
     const orderReference = data.reference;
-   
+
     const commissionPercentage = 0.03;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
@@ -854,7 +843,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
-  
+
         const oldProofOfPaymentLink = orderDetail.proofOfPaymentLink;
         const newProofOfPaymentLink = [...oldProofOfPaymentLink, proofOfPaymentLink];
         const itemsTotal = orderDetail.itemsTotal;
@@ -871,7 +860,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         let paymentsData;
         paymentSnapshot.forEach((doc) => {
           paymentsData = doc.data();
-    
+
           paymentsData.status = 'approved';
           documentID = doc.id;
         });
@@ -997,21 +986,19 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
         const newPayments = [...oldPayments, data];
         const orderReferences = userData.orders;
 
-        const orderPromises = orderReferences.map(async(orderReference) => {
+        const orderPromises = orderReferences.map(async (orderReference) => {
           const docRef = db.collection('Orders').doc(orderReference.reference);
           const docSnap = await transaction.get(docRef);
           const orderData = docSnap.data();
           return orderData;
-        })
+        });
 
-        const orders = await Promise.all(orderPromises)
+        const orders = await Promise.all(orderPromises);
 
         let totalPayments = 0;
         newPayments.map((payment) => {
           totalPayments += parseFloat(payment.amount);
         });
-
-      
 
         orders.sort((a, b) => {
           const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
@@ -1019,26 +1006,23 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           return timeA - timeB;
         });
 
-        const ordersToUpdate = []
-
+        const ordersToUpdate = [];
 
         orders.forEach((order) => {
           totalPayments -= order.grandTotal;
           if (totalPayments >= 0) {
             if (order.paid != true) {
-              ordersToUpdate.push({reference:order.reference, paid:true})
-            } 
-          
+              ordersToUpdate.push({ reference: order.reference, paid: true });
+            }
           }
           if (totalPayments < 0) {
             if (order.paid != false) {
               ordersToUpdate.push({
-                reference:order.reference,
-                paid : false
-              })
+                reference: order.reference,
+                paid: false,
+              });
             }
             order.paid = false;
-         
           }
         });
 
@@ -1052,12 +1036,11 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           paymentMethod: 'Maya',
         });
         transaction.update(userRef, { payments: newPayments });
-      
 
         ordersToUpdate.forEach((order) => {
-          const orderRef = db.collection('Orders').doc(order.reference)
+          const orderRef = db.collection('Orders').doc(order.reference);
           transaction.update(orderRef, { paid: order.paid });
-        })
+        });
       });
 
       res.status(200).send('success');
@@ -1076,7 +1059,6 @@ exports.payMayaWebHookFailed = functions.region('asia-southeast1').https.onReque
 
   // TODO: You will have to implement the logic of this method.
 
-
   res.send({
     success: true,
   });
@@ -1090,7 +1072,6 @@ exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequ
 
   // TODO: You will have to implement the logic of this method.
 
-
   res.send({
     success: true,
   });
@@ -1102,15 +1083,12 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
       // Get the user document
       const data = req.body;
 
-
       const userName = data.userName;
       const paymentMethod = data.paymentMethod;
       const orderReference = data.orderReference;
       const userId = data.userId;
       const proofOfPaymentLink = data.proofOfPaymentLink;
       const forTesting = data.forTesting;
-
-
 
       // VALIDATE DATA
       const dataSchema = Joi.object({
@@ -1179,7 +1157,6 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           });
 
           const paymentId = newPaymentRef.id;
-
 
           if (forTesting == false) {
             sendmail(
@@ -1279,7 +1256,6 @@ async function deleteOldOrders() {
       // WE PASS THE ORDER TO THE ARRAY ADD THE ORDER CART BACK TO THE INVENTORY
       deletedOrders.push(order);
       dataNeededToUpdateOrderValue.push({ userId: order.userId, reference: order.reference });
-
     });
 
     const dataNeededToUpdateProductValue = []; //This is the data needed to do the writes it follows this schema
@@ -1301,15 +1277,12 @@ async function deleteOldOrders() {
       });
     });
 
-
-
     const finalDataNeededToUpdateProductValue = [];
     const stocksToAdjust = {};
     const stocksOnHoldToAdjust = {};
 
     await Promise.all(
       allCartItems.map(async (itemId) => {
-    
         const productRef = db.collection('Products').doc(itemId);
         const productGet = await productRef.get();
         const prodData = productGet.data();
@@ -1321,12 +1294,8 @@ async function deleteOldOrders() {
       })
     );
 
-  
-
     const orderUserIds = [];
     const orderReferences = [];
-
-
 
     dataNeededToUpdateOrderValue.map((data) => {
       const userId = data.userId;
@@ -1337,8 +1306,7 @@ async function deleteOldOrders() {
       }
     });
 
-
-    const filteredOrderData = []
+    const filteredOrderData = [];
 
     await Promise.all(
       orderUserIds.map(async (userId) => {
@@ -1399,10 +1367,8 @@ async function deleteOldOrders() {
         transaction.delete(orderRef);
         transaction.create(expiredOrderRef, order);
       });
-
     });
   } catch (error) {
-
     throw error;
   }
 }
@@ -1413,7 +1379,6 @@ exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(as
       deleteOldOrders();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
-
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1425,7 +1390,6 @@ exports.giveAffiliateCommission = functions.region('asia-southeast1').https.onRe
       giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
-
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1459,7 +1423,6 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
           const cancelledData = cancelledDataObj.data();
           const cancelledDataCart = cancelledData.cart;
 
-
           orders = data;
           // READ OLD STOCKSAVAILABLE
           const oldStocksAvailable = {};
@@ -1485,7 +1448,6 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
 
           // WRITE
           Object.entries(cancelledDataCart).map(([itemId, quantity]) => {
-
             const productRef = db.collection('Products').doc(itemId);
             const newStocksAvailable = oldStocksAvailable[itemId] + quantity;
             const newStocksOnHold = newStocksOnHoldData[itemId];
@@ -1569,8 +1531,7 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
       } else {
         res.status(401);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     res.status(200).send(data);
   });
 });
@@ -1720,7 +1681,6 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     const reference = data.reference;
     const userId = data.userId;
 
-
     const db = admin.firestore();
     const orderRef = db.collection('Orders').doc(reference);
     const orderDoc = await orderRef.get();
@@ -1730,7 +1690,6 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     const userDoc = await userRef.get();
     const userData = userDoc.data();
     const userRole = userData.userRole;
-
 
     if (!['admin', 'superAdmin'].includes(userRole)) {
       if (orderUserId != userId) {

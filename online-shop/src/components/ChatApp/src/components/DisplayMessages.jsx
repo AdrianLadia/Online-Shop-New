@@ -77,7 +77,7 @@ const DisplayMessages = (props) => {
         }
       }    
     } 
-
+    console.log(selectedChatOrderId)
     await firestore.updateOrderMessageAsRead(selectedChatOrderId, messages);
 
 

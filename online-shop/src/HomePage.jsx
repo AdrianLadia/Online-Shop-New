@@ -12,7 +12,7 @@ import { AiFillMessage } from "react-icons/ai";
 import LoginButton from './components/LoginButton';
 import AccountMenu from './components/AccountMenu';
 import onLogoutClick from '../utils/classes/onLogoutClick';
-import { Tooltip } from '@mui/material';
+import { Tooltip, Typography } from '@mui/material';
 
 const HomePage = ({isAffiliateLink}) => {
 
@@ -235,10 +235,25 @@ const HomePage = ({isAffiliateLink}) => {
       }
     }
 
+    function responsiveTitleText(){
+          if (width <= 850) {
+            return 'h4'
+          }
+          else if (width <= 1400) {
+            return 'h3'
+          }
+          else if (width <= 1900) {
+            return 'h2'
+          }
+          else {
+            return 'h1'
+          }
+    }
+
 
 
     return (
-    <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
+    <div className=" h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
       style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}>
 
         {/* Navigation Bar */}
@@ -325,7 +340,7 @@ const HomePage = ({isAffiliateLink}) => {
         </div>
 
         {/* Page 1 Home*/}
-        <div ref={page1} className="snap-start w-screen h-screen bg-cover bg-center " 
+        <div ref={page1} className=" w-screen h-screen bg-cover bg-center " 
           style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + `url(${backgroundImageUrl})`}}
           >
             <div className='h-1/10 p-10 w-full flex'/>
@@ -346,16 +361,16 @@ const HomePage = ({isAffiliateLink}) => {
                         <LoginButton isAffiliateLink={isAffiliateLink}/>
                       </div>
                       :<>
-                      <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
-                        <button 
-                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
-                          onClick={handleShop}
-                            ><FaShoppingBag className='text-xl '/> Shop Now!
-                        </button>
-                      </span>
                       <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300'> 
                         <button 
-                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal border-color10b text-color10b hover:text-white hover:border-color10b p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal  border-color10b text-color10b hover:text-white hover:border-color10bp-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
+                          onClick={handleShop}
+                            ><FaShoppingBag className='text-xl ml-3'/> Shop Now!
+                        </button>
+                      </span>
+                      <span className='hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300'> 
+                        <button 
+                          className='w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal  border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300'
                           onClick={handleMessageClick}
                             ><AiFillMessage className='-ml-0.5 text-xl '/> {responsiveMessageText()}
                         </button>
@@ -387,9 +402,8 @@ const HomePage = ({isAffiliateLink}) => {
               </div>
             </div>
         </div>
-
         {/* Page 2 About*/}
-        <div ref={page2} className="mt-10 snap-start w-screen h-screen bg-cover bg-center"
+        <div ref={page2} className="mt-10  w-screen h-screen bg-cover bg-center"
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
          >
           <div className='h-1/10 w-full flex'/>
@@ -399,18 +413,20 @@ const HomePage = ({isAffiliateLink}) => {
                >
               {/* Header */}
               <div className='w-19/20 sm:w-9/10 md:w-4/10 h-1/2 md:h-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl border border-gray-100'>
-                <h1 className='h-2/10 text-2xl sm:text-4xl font-bold'>Star Pack is</h1>
+                {/* <h1 className='h-2/10 text-2xl sm:text-4xl font-bold'>Star Pack is</h1> */}
+                <Typography variant={responsiveTitleText()} sx={{fontWeight:'bold',color:'#6bd0ff'}}>Star Pack is...</Typography>
                 <p className='h-6/10 tracking-tighter sm:tracking-normal text-sm w-full md:w-10/12 text-white indent-2 overflow-y-auto'>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                  Quisquam facilis sapiente reprehenderit quis exercitationem corporis obcaecati. 
+                <Typography variant='h6'>
+                "Empowering Businesses, Simplifying Success.<br/><br/>We pave the way for growth by streamlining operations, allowing companies to focus on what they do best. Your vision, our mission."
+                </Typography>
                 </p>
-                <div className='h-2/10 flex justify-start'>
+                {/* <div className='h-2/10 flex justify-start'>
                   <span className='w-28 xs:w-32 md:w-32 h-10 md:h-12 hover:w-0 ease-in-out duration-300 rounded-r-full bg-black'>
                     <button className='w-28 xs:w-32 md:w-32 h-10 md:h-12 text-xs sm:text-md text-white hover:text-black border-black border font-normal md:font-semibold ease-in-out duration-300 rounded-r-full flex items-center p-3 '>
                       <BsBookHalf className='text-xl mr-1 sm:mr-2'/>Read More
                     </button>
                   </span>
-                </div>
+                </div> */}
               </div>
               {/* Image */}
               <div className='w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center'>
@@ -425,7 +441,7 @@ const HomePage = ({isAffiliateLink}) => {
         </div>
 
         {/* Page 3 Products*/}
-        <div ref={page3} className="snap-start w-screen h-screen bg-cover bg-center"
+        <div ref={page3} className=" w-screen h-screen bg-cover bg-center"
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
          >
           <div className='h-1/10 w-full flex'/>
@@ -464,7 +480,7 @@ const HomePage = ({isAffiliateLink}) => {
 
         {/* Page 4 Affiliate*/}
         {isAffiliateLink?null:
-        <div ref={page4} className="snap-start w-screen h-screen bg-cover bg-center "
+        <div ref={page4} className=" w-screen h-screen bg-cover bg-center "
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
          >
           <div className='h-1/10 md:p-10 w-full'/>
@@ -539,7 +555,7 @@ const HomePage = ({isAffiliateLink}) => {
         <> </>
 
         {/* Last Page*/}
-        <div ref={page5} className="snap-start w-screen h-screen flex flex-col justify-center items-center bg-cover bg-center"
+        <div ref={page5} className=" w-screen h-screen flex flex-col justify-center items-center bg-cover bg-center"
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0)),' + `url(${contactsImage})`}}
          >
           {/* <div className='rounded-full m-1 border-x-2 border-color30 text-white px-0.5 text-6xl font-bold w-fit flex justify-center items-center tracking-wider'>

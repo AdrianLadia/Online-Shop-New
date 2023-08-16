@@ -170,12 +170,12 @@ const AccountMenu = (props) => {
         <Divider />
         {/* ADMIN MENU */}
 
-        <MenuItem id="settingsMenu" className="hover:bg-color10b">
+        {/* <MenuItem id="settingsMenu" className="hover:bg-color10b">
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           <span>Settings</span>
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem id="logoutMenu" onClick={props.signout} className="hover:bg-red-400 ">
           <ListItemIcon>
             <Logout fontSize="small" />

@@ -587,6 +587,9 @@ class firestoredb extends firestorefunctions {
       return false;
     }
   }
+  async updateOrderMessageName(userId, name) {
+    await this.updateDocumentFromCollection('ordersMessages', userId, { ownerName: name });
+  }
 
   // async markCommissionPending(data, date, id){
   //   const updatedData = []

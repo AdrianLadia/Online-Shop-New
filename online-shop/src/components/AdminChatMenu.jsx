@@ -14,6 +14,7 @@ import { HiOutlineChatAlt, HiChatAlt } from "react-icons/hi";
 import { doc, onSnapshot,collection } from 'firebase/firestore';
 import { set } from 'date-fns';
 import AdminChatMenuOpenButton from './AdminChatMenuOpenButton';
+import firestoredb from '../firestoredb';
 
 const AdminChatMenu = () => {
     const dummy = useRef(null);
@@ -22,6 +23,7 @@ const AdminChatMenu = () => {
     const [chatData, setChatData] = useState([])
     const [chatButtonState, setChatButtonState] = useState(null)
     const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false)
+    const alreadyTriedToSearchName = []
     
 
 
@@ -75,6 +77,25 @@ const AdminChatMenu = () => {
     }
       dummy.current.scrollIntoView({ behavior: 'smooth' });
   },[chatSwitch])
+
+  useEffect(()=>{
+    
+    chatData.map((chat)=>{
+      if (chat.customerName === null) {
+        if (alreadyTriedToSearchName.includes(chat.id)) {
+          return null
+        }
+        const customerId = chat.id
+        alreadyTriedToSearchName.push(customerId)
+        firestore.readUserById(customerId).then((user)=>{
+          const customerName = user.name
+          firestore.updateOrderMessageName(customerId,customerName)
+          console.log('UPDATED NAME')
+        })
+
+      }
+    })
+  },[chatData])
 
   return (
     <div className="flex justify-center flex-col lg:flex-row overflow-x-auto h-full">

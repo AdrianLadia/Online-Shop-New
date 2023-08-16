@@ -249,7 +249,8 @@ function App() {
                   favoriteItems: [],
                   payments: [],
                   userRole: 'member',
-                  affiliate: affiliate,
+                  // affiliate: affiliate, TURN ON AND REPLACE CURRENT AFFILIATE WITH THIS AFTER TESTS
+                  affiliate: 'LP6ARIs14qZm4qjj1YOLCSNjxsj1', // FOR TESTING
                   affiliateClaims: [],
                   affiliateDeposits: [],
                   affiliateCommissions: [],
