@@ -12,7 +12,6 @@ function MyOrders() {
   const { orders,setUserState,userdata } = useContext(AppContext);
   const [reversedOrders, setReversedOrders] = useState([]);
   
-  console.log(orders);
 
 
   useEffect(() => {
@@ -20,7 +19,6 @@ function MyOrders() {
   }, [orders]);
 
   useEffect(() => {
-    console.log(userdata);
     if (userdata) {
       setUserState('userloaded');
     }

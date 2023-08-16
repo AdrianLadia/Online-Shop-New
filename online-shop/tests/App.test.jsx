@@ -2457,6 +2457,23 @@ describe('updatePaymentStatus', () => {
 
 describe('deleteOldOrders', async () => {
   test('create PAID 2 day ago order for testing', async () => {
+
+    const allOrders = await firestore.readAllIdsFromCollection('Orders');
+    const allExpiredOrders = await firestore.readAllIdsFromCollection('ExpiredOrders');
+
+    const deleteAllOrdersPromise = allOrders.map(async (orderId) => {
+      await firestore.deleteDocumentFromCollection('Orders', orderId);
+    }  );
+
+    const deleteAllExpiredOrdersPromise = allExpiredOrders.map(async (orderId) => {
+      await firestore.deleteDocumentFromCollection('ExpiredOrders', orderId);
+    }  );
+
+    await Promise.all(deleteAllOrdersPromise);
+    await Promise.all(deleteAllExpiredOrdersPromise);
+    await firestore.createDocument('Orders', 'mock', {test:'test'})
+    await firestore.createDocument('ExpiredOrders', 'mock', {test:'test'})
+
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
     const twoDaysAgo = new Date(currentDate.getTime() - 2 * msInADay); // Subtract 2 days from the current date
@@ -2601,7 +2618,7 @@ describe('deleteOldOrders', async () => {
     await firestore.updateDocumentFromCollection('Orders', 'testref12345', {orderDate: twoDaysAgo});
     
     await delay(200);
-  });
+  },100000);
 
   test('check if order deleted', async () => {
     const res = await cloudfirestore.deleteOldOrders();
@@ -2649,6 +2666,21 @@ describe('deleteOldOrders', async () => {
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#12', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#1-RET', { stocksOnHold: [] });
+    const allOrders = await firestore.readAllIdsFromCollection('Orders');
+    const allExpiredOrders = await firestore.readAllIdsFromCollection('ExpiredOrders');
+
+    const deleteAllOrdersPromise = allOrders.map(async (orderId) => {
+      await firestore.deleteDocumentFromCollection('Orders', orderId);
+    }  );
+
+    const deleteAllExpiredOrdersPromise = allExpiredOrders.map(async (orderId) => {
+      await firestore.deleteDocumentFromCollection('ExpiredOrders', orderId);
+    }  );
+
+    await Promise.all(deleteAllOrdersPromise);
+    await Promise.all(deleteAllExpiredOrdersPromise);
+    await firestore.createDocument('Orders', 'mock', {test:'test'})
+    await firestore.createDocument('ExpiredOrders', 'mock', {test:'test'})
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
     const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
@@ -2760,6 +2792,15 @@ describe('deleteOldOrders', async () => {
     });
 
     expect(found).toEqual(true);
+
+    const expiredOrder = await firestore.readSelectedDataFromCollection('ExpiredOrders', 'testref1234');
+    expect(expiredOrder.reference).toEqual('testref1234');
+
+    const shouldBeRemovedOrder = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+    expect(shouldBeRemovedOrder).toEqual(undefined);
+
+
+
   }, 100000);
 });
 
@@ -3634,4 +3675,41 @@ describe('test transaction create payment without an affiliate' , () => {
 
     expect(foundPaymentObj).toBe(true)
   },10000)
+})
+
+describe.only('test transactionPlaceOrder should not allow order if cart stocks is more than what is available in firestore' , () => {
+  test('setup test', async () => {
+    await cloudfirestore.updateDocumentFromCollection('Products','PPB#16',{stocksAvailable : 4})
+    await cloudfirestore.updateDocumentFromCollection('Products','PPB#16-RET',{stocksAvailable : 4})
+  })
+  test('invoke function', async () => {
+    const res = await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 5 , 'PPB#16-RET' : 5},
+      itemstotal: 1000,
+      vat: 0,
+      shippingtotal: 2002,
+      grandTotal: 1000 + 0 + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    
+    expect(res.status).toEqual(409)
+  })
 })

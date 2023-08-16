@@ -70,7 +70,7 @@ const ImageUploadButton = (props) => {
           }
           else {
             alert('Image uploaded successfully.');
-            console.log(downloadURL)
+    
           }
         });
       }

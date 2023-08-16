@@ -175,7 +175,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return response;
     } catch (error) {
       // Handle other errors
-      alert('Failed to place order. Please try again later.');
+      return error.response
+      
     }
   }
 
@@ -218,7 +219,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           'Content-Type': 'application/json',
         },
       });
-      console.log('Reading')
       return res.data;
     }
     catch(error){

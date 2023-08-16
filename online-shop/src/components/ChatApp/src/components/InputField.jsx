@@ -75,12 +75,10 @@ const InputField = (props) => {
       }),
     })
       .then(() => {
-        console.log('Message is sent Successfuly: ', newMessage);
         setMessage('');
         setNewMessage('');
       })
       .catch((error) => {
-        console.error('Error adding data to the array field: ', error);
         setMessage('');
         setNewMessage('');
       });
@@ -102,12 +100,10 @@ const InputField = (props) => {
       }),
     })
       .then(() => {
-        console.log('Message is sent Successfuly: ', message);
         setMessage('');
         setNewMessage('');
       })
       .catch((error) => {
-        console.error('Error adding data to the array field: ', error);
         setMessage('');
         setNewMessage('');
       });

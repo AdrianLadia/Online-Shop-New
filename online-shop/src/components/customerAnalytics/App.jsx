@@ -19,7 +19,6 @@ const App = () => {
     const datamanipulation = new dataManipulation()
     const dummy = useRef(null)
 
-    // console.log(customerTotalValueRanking.length)
 
     useEffect(()=>{
         firestore.readSelectedDataFromCollection('Analytics','CustomerMonthlySales').then((data) => {

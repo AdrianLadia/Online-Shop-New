@@ -16,7 +16,7 @@ const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
   const datamanipulation = new dataManipulation();
-  const { storage, cloudfirestore, userId, userdata, firestore } = useContext(AppContext);
+  const { storage, cloudfirestore, userId, userdata, firestore , refreshUser,setRefreshUser} = useContext(AppContext);
   const location = useLocation();
   const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area, paymentMethodSelected, date } =
     location.state;
@@ -27,7 +27,9 @@ const CheckoutProofOfPayment = (props) => {
   const navigateTo = useNavigate();
   const [paymentMethods, setPaymentMethods] = useState([]);
 
-
+function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   useEffect(() => {
     firestore.readAllPaymentProviders().then((providers) => {
@@ -60,7 +62,10 @@ const CheckoutProofOfPayment = (props) => {
     const timestamp = Timestamp.fromDate(date);
     const timestampString = timestamp.toDate().toLocaleString();
     try{
-      await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
+      setRefreshUser(!refreshUser)
+      await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName)
+      await delay(5000)
+      navigateTo('/myorders/orderList')
     }
     catch(error){
       alert('Failed to upload proof of payment. Please try again.')

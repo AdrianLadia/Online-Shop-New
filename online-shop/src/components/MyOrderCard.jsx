@@ -83,7 +83,7 @@ function MyOrderCard(props) {
     orders.map((s) => {
       if (order.reference === s.reference) {
         price = s.grandTotal;
-        console.log(price)
+
       }
     });
 
@@ -178,6 +178,18 @@ function MyOrderCard(props) {
     }
   }, [width]);
 
+  function shouldShowTimer() {
+    if (order.paid) {
+      return false;
+    }
+    if (order.paid == false  && proofOfPaymentLinkCount <= 0) {
+      return true;
+    }
+    if (order.paid == false && proofOfPaymentLinkCount > 0) {
+      return false;
+    }
+  }
+
   return (
     <div
       className={
@@ -186,7 +198,7 @@ function MyOrderCard(props) {
     >
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
         <div className="flex flex-row justify-between mb-4">
-          {proofOfPaymentLinkCount <= 0 ? (
+          {shouldShowTimer()  ? (
             <CountdownTimer
               className="ml-2 mt-1"
               size={3}

@@ -45,21 +45,6 @@ const CheckoutSummary = (props) => {
   
   const itemsTotal = vat + total
 
-  // useEffect(() => {
-  //   async function getTableData() {
-  //     const [rows_non_state, total_non_state, total_weight_non_state,vat] = datamanipulation.getCheckoutPageTableDate(
-  //       products,
-  //       cart
-  //     );
-  //     setVat(vat);
-  //     setMayaCheckoutItemDetails(rows_non_state);
-  //     setRows(rows_non_state);
-  //     setLoading(false);
-  //     setTotal(total_non_state);
-  //     setTotalWeight(total_weight_non_state);
-  //   }
-  //   getTableData();
-  // }, [cart]);
 
   function responsiveWidth() {
     if (width < 550) {
@@ -119,8 +104,8 @@ const CheckoutSummary = (props) => {
                     <TableCell>{row.itemName}</TableCell>
                     <TableCell align="right">{row.itemquantity}</TableCell>
                     <TableCell align="right">{row.pieces}</TableCell>
-                    <TableCell align="right">{row.itemprice}</TableCell>
-                    <TableCell align="right">{row.itemtotal}</TableCell>
+                    <TableCell align="right">₱ {row.itemprice}</TableCell>
+                    <TableCell align="right">₱ {row.itemtotal}</TableCell>
                     <TableCell align="right">{row.weighttotal + ' Kg'}</TableCell>
                   </TableRow>
                 ))}
@@ -152,7 +137,7 @@ const CheckoutSummary = (props) => {
 
               {totalWeight ? (
                 <ListItem>
-                  <ListItemText primary="Weight of Items:" secondary={totalWeight + ' Kg'} />
+                  <ListItemText primary="Weight of Items:" secondary={totalWeight.toFixed(2) + ' Kg'} />
                 </ListItem>
               ) : null}
 

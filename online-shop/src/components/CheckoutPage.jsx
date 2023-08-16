@@ -190,33 +190,41 @@ const CheckoutPage = () => {
 
   // PAYMENT METHODS
   useEffect(() => {
-    if (transactionStatus === 'SUCCESS') {
-      setCart({});
+    if (transactionStatus != null) {
+      
+      if (transactionStatus.data === 'SUCCESS') {
+        setCart({});
+  
+        businesscalculations.afterCheckoutRedirectLogic({
+          paymentMethodSelected: paymentMethodSelected,
+          referenceNumber: referenceNumber,
+          grandTotal: grandTotal,
+          deliveryFee: deliveryFee,
+          vat: vat,
+          rows: rows,
+          area: area,
+          fullName: userdata.name,
+          eMail: userdata.email,
+          phoneNumber: userdata.phoneNumber,
+          setMayaRedirectUrl: setMayaRedirectUrl,
+          setMayaCheckoutId: setMayaCheckoutId,
+          localDeliveryAddress: localDeliveryAddress,
+          addressText: addressText,
+          userId: userdata.uid,
+          navigateTo: navigateTo,
+          itemsTotal: total,
+          date: new Date(),
+        });
+        setRefreshUser(!refreshUser);
+      }
+      if (transactionStatus.status == 409) {
 
-      businesscalculations.afterCheckoutRedirectLogic({
-        paymentMethodSelected: paymentMethodSelected,
-        referenceNumber: referenceNumber,
-        grandTotal: grandTotal,
-        deliveryFee: deliveryFee,
-        vat: vat,
-        rows: rows,
-        area: area,
-        fullName: userdata.name,
-        eMail: userdata.email,
-        phoneNumber: userdata.phoneNumber,
-        setMayaRedirectUrl: setMayaRedirectUrl,
-        setMayaCheckoutId: setMayaCheckoutId,
-        localDeliveryAddress: localDeliveryAddress,
-        addressText: addressText,
-        userId: userdata.uid,
-        navigateTo: navigateTo,
-        itemsTotal: total,
-        date: new Date(),
-      });
-      setRefreshUser(!refreshUser);
+        alert(transactionStatus.data);
+      }
+  
+  
+      setPlaceOrderLoading(false);
     }
-
-    setPlaceOrderLoading(false);
   }, [placedOrder]);
 
   useEffect(() => {
@@ -277,12 +285,6 @@ const CheckoutPage = () => {
     }
     // Check if order has enough stocks
     setPlaceOrderLoading(true);
-    const readproducts = products;
-    const [outOfStockDetected, message] = await businesscalculations.checkStocksIfAvailableInFirestore(cart);
-    if (outOfStockDetected) {
-      alert(message);
-      return;
-    }
 
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
@@ -315,7 +317,7 @@ const CheckoutPage = () => {
           countOfOrdersThisYear: countOfOrdersThisYear,
         });
     
-        setTransactionStatus(res.data);
+        setTransactionStatus(res);
         setPlacedOrder(!placedOrder);
       } catch (err) {
         setPlaceOrderLoading(false);

@@ -69,7 +69,7 @@ const AdminCreatePayment = (props) => {
         setUserid(userId);
         const result = await firestore.readAllOrdersByUserId(userId);
         const unpaidOrdersReference = [];
-        console.log(result);
+  
   
         const promises = result.map(async (orderData) => {
           const data = await cloudfirestore.readSelectedOrder(orderData.reference, userdata.uid);
@@ -91,22 +91,6 @@ const AdminCreatePayment = (props) => {
     getReferences();
   }, [selectedName]);
   
-
-  // useEffect(() => {
-  //   setReference('');
-  //   if (selectedName != '') {
-  //     const userId = datamanipulation.getUserUidFromUsers(users, selectedName);
-  //     setUserid(userId);
-  //     firestore.readAllOrdersByUserId(userId).then((result) => {
-  //       const unpaidOrdersReference = [];
-  //       console.log(result);
-  //       const promises = result.forEach(async (data) => {
-  //         await cloudfirestore.readSelectedOrder(result.reference,userdata.uid).then((result) => {
-  //       });
-  //       setUnpaidOrdersReference(unpaidOrdersReference);
-  //     });
-  //   }
-  // }, [selectedName]);
 
   async function onCreatePayment() {
     setLoading(true);

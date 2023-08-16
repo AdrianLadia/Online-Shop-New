@@ -60,12 +60,12 @@ const InvisibleRecaptcha = (props) => {
         .confirm(code)
         .then((userCredential) => {
             setLoading(false)
-          console.log('User signed in successfully!');
+
           // handle signed in user
         })
         .catch((error) => {
             setLoading(false)
-          console.error('Error during code confirmation', error);
+
         });
     }
   }

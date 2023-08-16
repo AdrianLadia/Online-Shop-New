@@ -63,16 +63,8 @@ class dataManipulation {
         data[key].map((info) => {
           let year = info.Year;
           let month = info.Month;
-        //   console.log(month, year);
           let quantity = info.Quantity;
-            // console.log('year',year);
-            // console.log('yearToday',yearToday)
-            // console.log('month',month);
-            // console.log('monthToday',monthToday);
-            // console.log('-----')
           if (year != yearToday) {
-            // console.log(year, yearToday);
-            // console.log(month, monthToday);
             toReturn.push([year, month, quantity]);
             return
           }

@@ -109,9 +109,6 @@ function App() {
   const [userOrderReference, setUserOrderReference] = useState(null);
   const [favoriteProductData, setFavoriteProductData] = useState([]);
 
-  useEffect(() => {
-    console.log(affiliate);
-  }, [affiliate]);
 
   useEffect(() => {
     cloudfirestore.getIpAddress().then((ipAddress) => {
@@ -236,7 +233,7 @@ function App() {
             return;
           } else {
             async function createNewUser() {
-              console.log(affiliate);
+        
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -297,7 +294,6 @@ function App() {
         }
       });
       if (!categoriesQueried.includes(selectedCategory)) {
-        console.log('READING CATEGORY');
         await cloudfirestore.readAllProductsForOnlineStore(selectedCategory).then((selectedProducts) => {
           combinedProductsList = [...categoryProductsData, ...selectedProducts];
         });
@@ -313,7 +309,6 @@ function App() {
 
   useEffect(() => {
     if (userdata != null) {
-      console.log('READING CART');
       const fetchCartProductsData = async () => {
         const cartProductPromises = Object.keys(cart).map(async (key) => {
           const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
@@ -323,7 +318,6 @@ function App() {
         const data = await Promise.all(cartProductPromises);
         const productsCombined = [...cartProductsData, ...data];
 
-        console.log(productsCombined);
         setCartProductsData(productsCombined);
       };
 
@@ -333,9 +327,7 @@ function App() {
 
   useEffect(() => {
     if (userdata != null) {
-      console.log('READING FAVORITES');
       const fetchFavoriteProductsData = async () => {
-        console.log(userdata.favoriteItems)
         const favoriteProductPromises = userdata.favoriteItems.map(async (key) => {
           const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
           return productData;
@@ -430,10 +422,6 @@ function App() {
     }
 
   }, [userOrderReference]);
-
-  useEffect(() => {
-    console.log(orders);
-  }, [orders]);
 
   useEffect(() => {
     if (goToCheckoutPage) {

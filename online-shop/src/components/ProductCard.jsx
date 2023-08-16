@@ -66,6 +66,7 @@ const ProductCard = (props) => {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
 
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -79,12 +80,14 @@ const ProductCard = (props) => {
     }
     const totalOrder = cartQuantity + parseInt(quantity);
 
+
     function getStocksAvailable() {
       if (props.product.unit === 'Pack') {
      
         return stocksAvailable;
       }
       if (props.product.unit != 'Pack') {
+        console.log('stocks available', props.product.stocksAvailable);
         return props.product.stocksAvailable;
       }
     }
@@ -360,7 +363,7 @@ const ProductCard = (props) => {
               <div className="flex flex-row items-center">
                 <button
                   id="addtocartbutton"
-                  className=" h-max w-5/12 2xs:w-5/12 py-3 2xs:px-2 rounded-lg text-xs text-black border-2 border-color60 bg-color10b hover:bg-color1"
+                  className=" h-max w-5/12 2xs:w-5/12 py-3 2xs:px-2 rounded-lg text-xs text-black  bg-color10b hover:bg-color1"
                   // className=" h-max w-5/12 2xs:w-1/3 py-3 2xs:px-2 rounded text-xs text-black border-2 border-color10a bg-color10a hover:bg-color10c hover:border-4 hover:border-double"
                   type="button"
                   onClick={AddToCart}

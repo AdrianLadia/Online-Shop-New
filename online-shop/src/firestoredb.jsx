@@ -339,7 +339,7 @@ class firestoredb extends firestorefunctions {
       const userDoc = userData;
 
       if (userDoc === undefined) {
-        console.log('User document not found');
+
         return;
       }
 
@@ -360,9 +360,9 @@ class firestoredb extends firestorefunctions {
 
         await super.updateDocumentFromCollection('Users', userId, { orders: orders });
 
-        console.log('Order deleted successfully');
+  
       } else {
-        console.log('Order not found');
+
       }
     } catch (error) {
       console.error('Error deleting order:', error);
@@ -390,6 +390,7 @@ class firestoredb extends firestorefunctions {
   }
 
   async readPayments() {
+    
     return await this.readAllDataFromCollection('Payments');
   }
   // NOT USING THIS IF IN THE TRANSACTION CREATE PAYMENT CLOUD FIRESTORE WILL BE COMBINED WITH THIS FUNCTION
@@ -414,12 +415,12 @@ class firestoredb extends firestorefunctions {
   async deleteDeclinedPayment(reference, userId, link) {
     try {
       await runTransaction(this.db, async (transaction) => {
-        console.log('deleteDeclinedPayment');
+
         const userRef = doc(this.db, 'Users/', userId);
         const userRefDoc = await transaction.get(userRef);
         const userDoc = userRefDoc.data();
         const orders = userDoc.orders;
-        console.log(orders);
+    
 
         const orderRef = doc(this.db, 'Orders/', reference);
         const orderRefDoc = await transaction.get(orderRef);

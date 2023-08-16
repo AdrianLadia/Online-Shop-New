@@ -9,6 +9,9 @@ const corsHandler = cors({
     'http://localhost:5173',
     'http://localhost:3000',
     'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:5176',
+    
     'https://pg.maya.ph',
     'https://payments.maya.ph',
     'https://payments.paymaya.com',
@@ -64,7 +67,6 @@ function parseData(data) {
   try {
     parsedData = JSON.parse(decodeURIComponent(data));
   } catch (e) {
-    console.log(e);
     res.status(400).send('Invalid data format. Data must be a valid URL-encoded JSON string.');
     return;
   }
@@ -137,10 +139,8 @@ async function createPayment(data, db) {
   const userData = user.data();
   // const userData = userRef.data();
   const oldPayments = userData.payments;
-  console.log('old Payments', oldPayments);
 
   const newPayments = [...oldPayments, data];
-  console.log('new Payments', newPayments);
 
   await db
     .collection('Users')
@@ -170,24 +170,21 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     return timeA - timeB;
   });
 
-  orders.map((order) => {
-    console.log(order.orderDate);
-  });
 
   // edit orders
   orders.forEach((order) => {
     totalPayments -= order.grandTotal;
     if (totalPayments >= 0) {
       order.paid = true;
-      console.log(order.reference + ' is PAID');
+
     }
     if (totalPayments < 0) {
       order.paid = false;
-      console.log(order.reference + ' is NOT PAID');
+
     }
   });
 
-  console.log('Credit left is : ' + totalPayments);
+
   await db
     .collection('Users')
     .doc(userId)
@@ -198,7 +195,6 @@ exports.getIPAddress = functions.region('asia-southeast1').https.onRequest(async
   corsHandler(req, res, async () => {
     const clientIP =
       req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
-    console.log(clientIP);
     res.send(clientIP);
     //
   });
@@ -215,7 +211,6 @@ exports.readUserRole = functions.region('asia-southeast1').https.onRequest(async
 
       res.send(userRole);
     } catch (error) {
-      console.log(error);
       res.status(400).send('Error reading user role. Please try again later');
     }
   });
@@ -256,7 +251,6 @@ exports.readSelectedDataFromOnlineStore = functions.region('asia-southeast1').ht
 
       res.send(productObject);
     } catch (error) {
-      console.log(error);
       res.status(400).send('Error reading selected data. Please try again later');
     }
   });
@@ -307,116 +301,11 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
       // Send the products array as a JSON response
       res.status(200).send(products);
     } catch (error) {
-      console.log(error);
       res.status(400).send('Error reading products. Please try again later');
     }
     // return res.json({status: 'ok'})
   });
 });
-
-// #########
-// async transactionCreatePayment(userid, amount, reference, paymentprovider) {
-
-//   const userIdSchema = Joi.string().required();
-//   const amountSchema = Joi.number().required();
-//   const referenceSchema = Joi.string().required();
-//   const paymentproviderSchema = Joi.string().required();
-
-//   console.log(typeof(amount))
-//   console.log(amount)
-
-//   const {error1} = userIdSchema.validate(userid);
-
-//   const {error2} = amountSchema.validate(amount);
-
-//   const {error3} = referenceSchema.validate(reference);
-
-//   const {error4} = paymentproviderSchema.validate(paymentprovider);
-
-//   if(error1 || error2 || error3 || error4){
-//     console.log(error1, error2, error3, error4)
-//     throw new Error("Data Validation Error")
-//   }
-
-//   const docRef = doc(this.db, "Users" + "/", userid);
-//   try {
-//     await runTransaction(this.db, async (transaction) => {
-//       // READ
-//       const doc = await transaction.get(docRef);
-//       const orders = doc.data().orders;
-//       const payments = doc.data().payments;
-
-//       const data = [];
-//       let totalpayments = parseFloat(amount);
-
-//       payments.map((payment) => {
-//         data.push(payment);
-//         console.log(parseFloat(payment.amount));
-//         totalpayments += parseFloat(payment.amount);
-//       });
-
-//       orders.sort((a, b) => {
-//         return (
-//           new Date(a.orderDate.seconds * 1000).getTime() -
-//           new Date(b.orderDate.seconds * 1000).getTime()
-//         );
-//       });
-
-//       console.log("Total Payments: ", totalpayments);
-//       orders.map((order) => {
-//         totalpayments -= parseFloat(order.grandTotal);
-//         totalpayments = Math.round(totalpayments);
-//         if (totalpayments >= 0) {
-//           console.log("Order Paid");
-//           console.log(order.reference);
-//           if (order.paid == false) {
-//             console.log(
-//               "Updating Order to Paid with reference ",
-//               order.reference
-//             );
-//             // WRITE
-//             transaction.update(docRef, {
-//               ["orders"]: arrayRemove(order),
-//             });
-//             order.paid = true;
-//             // WRITE
-//             transaction.update(docRef, {
-//               ["orders"]: arrayUnion(order),
-//             });
-//             console.log(order);
-//           }
-//         }
-//         if (order.paid == true && totalpayments < 0) {
-//           console.log("Order Was Paid but now unpaid");
-//           console.log(order.reference);
-//           // WRITE
-//           transaction.update(docRef, {
-//             ["orders"]: arrayRemove(order),
-//           });
-//           order.paid = false;
-//           // WRITE
-//           transaction.update(docRef, {
-//             ["orders"]: arrayUnion(order),
-//           });
-//           console.log(order);
-//         }
-//       });
-
-//       // WRITE
-//       transaction.update(docRef, {
-//         ['payments']: arrayUnion({
-//           date: new Date(),
-//           amount: amount,
-//           reference: reference,
-//           paymentprovider: paymentprovider,
-//         }),
-//       });
-//     });
-//     console.log("Transaction successfully committed!");
-//   } catch (e) {
-//     console.log("Transaction failed: ", e);
-//   }
-// }
 
 exports.createPayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -426,7 +315,6 @@ exports.createPayment = functions.region('asia-southeast1').https.onRequest(asyn
       await createPayment(data, db);
       res.status(200).send('success');
     } catch (error) {
-      console.log(error);
       res.status(400).send('Error creating payment. Please try again later');
     }
   });
@@ -442,7 +330,6 @@ exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.
 
       res.status(200).send('success');
     } catch (error) {
-      console.log(error);
       res.status(400).send(error);
     }
   });
@@ -489,6 +376,7 @@ exports.transactionPlaceOrder = functions
       const itemKeys = Object.keys(cart);
 
       const cartItemsPrice = {};
+      const stocksAvailableList = []
 
       for (const key of itemKeys) {
         const itemId = key;
@@ -496,9 +384,30 @@ exports.transactionPlaceOrder = functions
         const item = await db.collection('Products').doc(itemId).get();
         const price = item.data().price;
         const total = price * itemQuantity;
+        const stocksAvailable = item.data().stocksAvailable;
+        const itemName = item.data().itemName;
         itemsTotalBackEnd += total;
         cartUniqueItems.push(itemId);
         cartItemsPrice[itemId] = price;
+        stocksAvailableList.push({itemId, stocksAvailable,itemName})
+      }
+
+      const stockOuts = []
+
+      stocksAvailableList.forEach((item) => {
+        const backEndStocksAvailable = item.stocksAvailable
+        const dataReceivedStocksAvailable = cart[item.itemId]
+        const difference = backEndStocksAvailable - dataReceivedStocksAvailable
+
+        if (difference < 0)  {
+          stockOuts.push(item.itemName)
+          return;
+        }
+      })
+    
+      if (stockOuts.length > 0) {
+        res.status(409).send(`The following items are out of stock: ${stockOuts.join(', ')}\nPlease refresh the website to update stocks`);
+        return;
       }
 
       if (data.testing == false) {
@@ -600,12 +509,6 @@ exports.transactionPlaceOrder = functions
                 const newOrderOnHold = { reference: reference, quantity: orderQuantity, userId: userid };
                 const oldAndNewOrdersOnHold = [...oldOrdersOnHold, newOrderOnHold];
 
-                console.log('orderQuantity', orderQuantity);
-                console.log('newStocksAvailable', newStocksAvailable);
-                console.log('oldOrdersOnHold', oldOrdersOnHold);
-                console.log('newOrderOnHold', newOrderOnHold);
-                console.log('oldAndNewOrdersOnHold', oldAndNewOrdersOnHold);
-
                 transaction.update(prodref, { ['stocksOnHold']: oldAndNewOrdersOnHold });
                 transaction.update(prodref, { ['stocksAvailable']: newStocksAvailable });
               })
@@ -617,20 +520,20 @@ exports.transactionPlaceOrder = functions
             let longitudeexists = false;
             deliveryAddress.map((d) => {
               if (d.address == localDeliveryAddress) {
-                console.log('address already exists');
+             
                 addressexists = true;
               }
               if (d.latitude == locallatitude) {
-                console.log('latitude already exists');
+   
                 latitudeexists = true;
               }
               if (d.longitude == locallongitude) {
-                console.log('longitude already exists');
+            
                 longitudeexists = true;
               }
             });
             if (addressexists == false || latitudeexists == false || longitudeexists == false) {
-              console.log('adding new address');
+        
               const newAddress = [
                 {
                   latitude: locallatitude,
@@ -649,19 +552,19 @@ exports.transactionPlaceOrder = functions
             let nameexists = false;
             contactPerson.map((d) => {
               if (d.phoneNumber == localphonenumber) {
-                console.log('phonenumber already exists');
+            
                 phonenumberexists = true;
               }
               if (d.name == localname) {
-                console.log('name already exists');
+               
                 nameexists = true;
               }
             });
             if (phonenumberexists == false || nameexists == false) {
-              console.log('updating contact');
+           
               const newContact = [{ name: localname, phoneNumber: localphonenumber }];
               const updatedContactList = [...newContact, ...contactPerson];
-              console.log(updatedContactList);
+            
               transaction.update(userRef, { contactPerson: updatedContactList });
             }
 
@@ -721,7 +624,7 @@ exports.transactionPlaceOrder = functions
             });
             orderMessagesRef.collection('messages');
 
-            console.log(newOrder.eMail);
+    
 
             if (sendMail == true) {
               try {
@@ -759,18 +662,18 @@ exports.transactionPlaceOrder = functions
               Star Pack Head</p>`
                 );
               } catch {
-                console.log('error sending email');
+             
               }
             }
 
             res.send('SUCCESS');
           } catch (e) {
-            console.log(e);
+     
             res.status(400).send('FAILED');
           }
         });
       } catch (error) {
-        console.log(error);
+  
         res.status(400).send('FAILED');
       }
     });
@@ -895,9 +798,6 @@ exports.readSelectedDataFromCollection = functions.region('asia-southeast1').htt
 
     const db = admin.firestore();
 
-    console.log('collectionName: ', collectionName);
-    console.log('id: ', id);
-
     try {
       db.collection(collectionName)
         .doc(id)
@@ -937,7 +837,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const data = req.body;
     const depositAmount = data.amount;
     const orderReference = data.reference;
-    console.log('orderRef',orderReference)
+   
     const commissionPercentage = 0.03;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
@@ -954,7 +854,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
-        console.log(orderDetail)
+  
         const oldProofOfPaymentLink = orderDetail.proofOfPaymentLink;
         const newProofOfPaymentLink = [...oldProofOfPaymentLink, proofOfPaymentLink];
         const itemsTotal = orderDetail.itemsTotal;
@@ -971,7 +871,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         let paymentsData;
         paymentSnapshot.forEach((doc) => {
           paymentsData = doc.data();
-          console.log('paymentsData', paymentsData);
+    
           paymentsData.status = 'approved';
           documentID = doc.id;
         });
@@ -989,10 +889,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
           const commission =
             ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
-          console.log('depositAmount', depositAmount);
-          console.log('vatPercentage', vatPercentage);
-          console.log('commissionPercentage', commissionPercentage);
-          console.log('lessCommissionToShipping', lessCommissionToShipping);
           newAffiliateCommissions = [
             ...oldAffiliateCommissions,
             {
@@ -1011,8 +907,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const ordersObject = await transaction.get(allUserOrdersQuery);
         const orders = ordersObject.docs.map((doc) => doc.data());
 
-        console.log('orders', orders);
-
         let totalPayments = 0;
         newPayments.map((payment) => {
           totalPayments += parseFloat(payment.amount);
@@ -1027,16 +921,13 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const toUpdateOrders = [];
 
         orders.forEach((order) => {
-          console.log(order.orderDate);
           totalPayments -= order.grandTotal;
           let paid = null;
           if (totalPayments >= 0) {
             paid = true;
-            console.log(order.reference + ' is PAID');
           }
           if (totalPayments < 0) {
             paid = false;
-            console.log(order.reference + ' is NOT PAID');
           }
           if (order.paid !== paid) {
             toUpdateOrders.push({ reference: order.reference, paid: paid });
@@ -1063,7 +954,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
       });
       res.status(200).send('success');
     } catch (error) {
-      console.log(error);
       res.status(400).send('Error adding document.');
     }
   });
@@ -1076,9 +966,6 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
       res.status(405).send('Method Not Allowed');
       return;
     }
-
-    // TODO: You will have to implement the logic of this method.
-    // console.log(req.body);
 
     try {
       const totalAmount = req.body.totalAmount.value;
@@ -1124,7 +1011,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           totalPayments += parseFloat(payment.amount);
         });
 
-        console.log('orders', orders);
+      
 
         orders.sort((a, b) => {
           const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
@@ -1141,7 +1028,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
             if (order.paid != true) {
               ordersToUpdate.push({reference:order.reference, paid:true})
             } 
-            console.log(order.reference + ' is PAID');
+          
           }
           if (totalPayments < 0) {
             if (order.paid != false) {
@@ -1151,7 +1038,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
               })
             }
             order.paid = false;
-            console.log(order.reference + ' is NOT PAID');
+         
           }
         });
 
@@ -1165,8 +1052,7 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           paymentMethod: 'Maya',
         });
         transaction.update(userRef, { payments: newPayments });
-        
-        console.log('ordersToUpdate',ordersToUpdate)
+      
 
         ordersToUpdate.forEach((order) => {
           const orderRef = db.collection('Orders').doc(order.reference)
@@ -1189,7 +1075,7 @@ exports.payMayaWebHookFailed = functions.region('asia-southeast1').https.onReque
   }
 
   // TODO: You will have to implement the logic of this method.
-  console.log(req.body);
+
 
   res.send({
     success: true,
@@ -1203,7 +1089,7 @@ exports.payMayaWebHookExpired = functions.region('asia-southeast1').https.onRequ
   }
 
   // TODO: You will have to implement the logic of this method.
-  console.log(req.body);
+
 
   res.send({
     success: true,
@@ -1216,7 +1102,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
       // Get the user document
       const data = req.body;
 
-      console.log(data);
+
       const userName = data.userName;
       const paymentMethod = data.paymentMethod;
       const orderReference = data.orderReference;
@@ -1224,7 +1110,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
       const proofOfPaymentLink = data.proofOfPaymentLink;
       const forTesting = data.forTesting;
 
-      console.log(proofOfPaymentLink);
+
 
       // VALIDATE DATA
       const dataSchema = Joi.object({
@@ -1293,7 +1179,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           });
 
           const paymentId = newPaymentRef.id;
-          console.log(paymentId);
+
 
           if (forTesting == false) {
             sendmail(
@@ -1393,7 +1279,7 @@ async function deleteOldOrders() {
       // WE PASS THE ORDER TO THE ARRAY ADD THE ORDER CART BACK TO THE INVENTORY
       deletedOrders.push(order);
       dataNeededToUpdateOrderValue.push({ userId: order.userId, reference: order.reference });
-      console.log('deletedOrders', deletedOrders);
+
     });
 
     const dataNeededToUpdateProductValue = []; //This is the data needed to do the writes it follows this schema
@@ -1403,8 +1289,7 @@ async function deleteOldOrders() {
       const cart = order.cart;
       const reference = order.reference;
       const userId = order.userId;
-      console.log('_____________________________');
-      console.log('cart', cart);
+
       const cartItems = Object.keys(cart);
       cartItems.map(async (itemId) => {
         const deletedOrderData = { reference: reference, userId: userId, quantity: null, itemId: itemId }; // {itemId: quantity}
@@ -1416,8 +1301,7 @@ async function deleteOldOrders() {
       });
     });
 
-    console.log('dataNeededToUpdateProductValue', dataNeededToUpdateProductValue);
-    console.log('allCartItems', allCartItems);
+
 
     const finalDataNeededToUpdateProductValue = [];
     const stocksToAdjust = {};
@@ -1425,7 +1309,7 @@ async function deleteOldOrders() {
 
     await Promise.all(
       allCartItems.map(async (itemId) => {
-        console.log('itemId', itemId);
+    
         const productRef = db.collection('Products').doc(itemId);
         const productGet = await productRef.get();
         const prodData = productGet.data();
@@ -1437,13 +1321,12 @@ async function deleteOldOrders() {
       })
     );
 
-    console.log('OldstocksToAdjust', stocksToAdjust);
-    console.log('OldstocksOnHoldToAdjust', stocksOnHoldToAdjust);
+  
 
     const orderUserIds = [];
     const orderReferences = [];
 
-    // console.log('dataNeededToUpdateOrderValue', dataNeededToUpdateOrderValue);
+
 
     dataNeededToUpdateOrderValue.map((data) => {
       const userId = data.userId;
@@ -1454,8 +1337,6 @@ async function deleteOldOrders() {
       }
     });
 
-    // console.log('orderUserIds', orderUserIds);
-    // console.log('orderReferences', orderReferences);
 
     const filteredOrderData = []
 
@@ -1470,7 +1351,6 @@ async function deleteOldOrders() {
           }
         });
         filteredOrderData.push({ userId: userId, filteredOrders: filteredOrders });
-        // console.log('filteredOrders for ' + userId, filteredOrders);
       })
     );
 
@@ -1481,21 +1361,12 @@ async function deleteOldOrders() {
       const itemId = data.itemId;
       stocksToAdjust[itemId] += quantity;
       const stocksOnHold = stocksOnHoldToAdjust[itemId];
-      // console.log('_____________________________________________')
-      // console.log(itemId)
-      // console.log('stocksOnHold', stocksOnHold);
-      // console.log(reference)
+
       const newStocksOnHold = stocksOnHold.filter((order) => order.reference != reference);
-      // console.log(newStocksOnHold)
-      // console.log('_____________________________________________')
       stocksOnHoldToAdjust[itemId] = newStocksOnHold;
       const newData = { itemId: itemId, newStocksOnHold: newStocksOnHold };
       finalDataNeededToUpdateProductValue.push(newData);
     });
-
-    // console.log('dataNeededToUpdateOrderValue', dataNeededToUpdateOrderValue);
-    console.log('NewstocksOnHoldToAdjust', stocksOnHoldToAdjust);
-    console.log('NewstocksToAdjust', stocksToAdjust);
 
     //
     await db.runTransaction(async (transaction) => {
@@ -1506,7 +1377,6 @@ async function deleteOldOrders() {
       });
 
       const entries = Object.entries(stocksToAdjust);
-      console.log('entries', entries);
       for (const [key, value] of entries) {
         const itemId = key;
         const newStocksAvailable = value;
@@ -1532,7 +1402,7 @@ async function deleteOldOrders() {
 
     });
   } catch (error) {
-    console.log(error);
+
     throw error;
   }
 }
@@ -1543,7 +1413,7 @@ exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(as
       deleteOldOrders();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
-      console.log(error);
+
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1555,7 +1425,7 @@ exports.giveAffiliateCommission = functions.region('asia-southeast1').https.onRe
       giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
-      console.log(error);
+
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1589,9 +1459,6 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
           const cancelledData = cancelledDataObj.data();
           const cancelledDataCart = cancelledData.cart;
 
-          console.log('data', data);
-          console.log('cancelledData', cancelledData);
-          console.log('cancelledDataCart', cancelledDataCart);
 
           orders = data;
           // READ OLD STOCKSAVAILABLE
@@ -1616,15 +1483,12 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
             })
           );
 
-          console.log(oldStocksAvailable);
-          console.log(newStocksOnHoldData);
           // WRITE
           Object.entries(cancelledDataCart).map(([itemId, quantity]) => {
-            console.log(itemId);
+
             const productRef = db.collection('Products').doc(itemId);
             const newStocksAvailable = oldStocksAvailable[itemId] + quantity;
             const newStocksOnHold = newStocksOnHoldData[itemId];
-            console.log(newStocksOnHold);
             transaction.update(productRef, { stocksAvailable: newStocksAvailable });
             transaction.update(productRef, { stocksOnHold: newStocksOnHold });
           });
@@ -1633,12 +1497,10 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
           transaction.delete(cancelledOrderRef);
           res.status(200).send('success');
         } catch (error) {
-          console.log(error);
           res.status(400).send('Error deleting order.');
         }
       });
     } catch (error) {
-      console.log(error);
       res.status(400).send('Error deleting order.');
     }
   });
@@ -1702,14 +1564,12 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
             transaction.update(userRef, { affiliateCommissions: updatedCommissionData });
           });
         } catch (e) {
-          console.log(e);
           res.status(400).send('Error adding deposit to affiliate.');
         }
       } else {
         res.status(401);
       }
     } catch (e) {
-      console.log(e);
     }
     res.status(200).send(data);
   });
@@ -1758,7 +1618,6 @@ exports.onAffiliateClaim = functions.region('asia-southeast1').https.onRequest(a
         res.status(200).send(data);
       });
     } catch (e) {
-      console.log(e);
       res.status(400).send('Error on affiliate claim.');
     }
   });
@@ -1789,7 +1648,7 @@ exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').http
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
     } catch (e) {
-      console.log(e);
+      res.status(400).send('Error adding deposit to affiliate.');
     }
   });
 });
@@ -1834,7 +1693,7 @@ exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onReq
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
     } catch (e) {
-      console.log(e);
+      res.status(400).send('Error marking affiliate claim done.');
     }
   });
 });
@@ -1861,7 +1720,7 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     const reference = data.reference;
     const userId = data.userId;
 
-    console.log(reference);
+
     const db = admin.firestore();
     const orderRef = db.collection('Orders').doc(reference);
     const orderDoc = await orderRef.get();
@@ -1871,14 +1730,13 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     const userDoc = await userRef.get();
     const userData = userDoc.data();
     const userRole = userData.userRole;
-    console.log(userRole);
+
 
     if (!['admin', 'superAdmin'].includes(userRole)) {
       if (orderUserId != userId) {
         res.status(401).send('Unauthorized');
       }
     }
-    console.log(orderData);
 
     res.status(200).send(orderData);
   });

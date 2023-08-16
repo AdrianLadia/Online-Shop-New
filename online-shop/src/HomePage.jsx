@@ -235,7 +235,7 @@ const HomePage = ({isAffiliateLink}) => {
       }
     }
 
-    // console.log(userdata == null)
+
 
     return (
     <div className="snap-y snap-proximity h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"

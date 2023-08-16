@@ -20,7 +20,7 @@ const CustomerGraph = ({data, firestore, products}) => {
     try{
       barLowestPoint&&barLowestPoint.sort((a, b) => {if (a[1] !== b[1]) {return a[1] - b[1]; } });
     }catch(e){
-      console.log(e)
+
     }
 
     const dates = []
@@ -64,7 +64,7 @@ const CustomerGraph = ({data, firestore, products}) => {
     try{
       labels = newD.map((date)=>monthNames[parseInt(date.slice(4, 6)) - 1] + date.slice(0, 4))
     }catch(e){
-      console.log(e)
+
     }
 
     const newSalesData = []
@@ -82,7 +82,7 @@ const CustomerGraph = ({data, firestore, products}) => {
         }
       }
     }catch(e){
-      console.log(e)
+
     }
 
     const graphData = {
@@ -148,7 +148,7 @@ const CustomerGraph = ({data, firestore, products}) => {
                 // }else if (context[0].datasetIndex == 1){
                 //   return( "Sales: " + graphData.datasets[0].data[context[0].dataIndex])
                 // }else{
-                //   console.log("Error")
+         
                 // }
               }
             }

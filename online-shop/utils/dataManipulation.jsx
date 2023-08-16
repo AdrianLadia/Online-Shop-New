@@ -90,8 +90,6 @@ class dataManipulation {
       });
     }
 
- 
-
     data.sort((a, b) => {
       if (forTesting) {
         return b.date - a.date;
@@ -112,17 +110,21 @@ class dataManipulation {
           proofOfPaymentLink = item.proofOfPaymentLink;
         }
 
-        const dataToPush = [item.date, item.paymentprovider + ' ' + item.reference, '', parseFloat(item.amount),proofOfPaymentLink];
+        const dataToPush = [
+          item.date,
+          item.paymentprovider + ' ' + item.reference,
+          '',
+          parseFloat(item.amount),
+          proofOfPaymentLink,
+        ];
         dataToUse.push(dataToPush);
       } else {
         dataToUse.push([item.date, item.reference, item.grandTotal, '']);
       }
     });
 
-    
     let runningBalance = 0;
     dataToUse.map((item) => {
-      
       runningBalance += item[2];
       runningBalance -= item[3];
       item.push(Math.round(runningBalance * 100) / 100);
@@ -134,12 +136,8 @@ class dataManipulation {
 
       if (item[2] == '') {
         let proofOfPaymentLink = item.splice(4, 1)[0];
-        item.push(proofOfPaymentLink)
+        item.push(proofOfPaymentLink);
       }
-
-
-    
-
     });
 
     if (forTesting) {
@@ -147,17 +145,17 @@ class dataManipulation {
         item[0] = this.convertDateToNanoSecondsAndSeconds(item[0]);
       });
     }
-    
+
     const dataToUseSchema = Joi.array().required();
-    
+
     const { error } = dataToUseSchema.validate(dataToUse);
     if (error) {
       throw new Error(error);
     }
-    
+
     return dataToUse;
   }
-  
+
   accountStatementTable(tableData, forTesting = false) {
     function createData(date, reference, credit, debit, runningBalance, color, proofOfPaymentLink) {
       return { date, reference, credit, debit, runningBalance, color, proofOfPaymentLink };
@@ -172,14 +170,13 @@ class dataManipulation {
         date = this.convertDateTimeStampToDateString(item[0]);
       }
 
-      let proofOfPaymentLink
+      let proofOfPaymentLink;
       if (item[6]) {
-        proofOfPaymentLink = item[6]
+        proofOfPaymentLink = item[6];
       }
 
       rowsdata.push(createData(date, item[1], item[2], item[3], item[4], item[5], proofOfPaymentLink));
     });
-
 
     return rowsdata;
   }
@@ -479,7 +476,7 @@ class dataManipulation {
     return categoryWithFavorites;
   }
 
-  getCheckoutPageTableDate(product_list, cart, cartItemPrice,urlOfBir2303) {
+  getCheckoutPageTableDate(product_list, cart, cartItemPrice, urlOfBir2303) {
     const productListSchema = Joi.array();
     const productListCart = Joi.object();
 
@@ -490,8 +487,8 @@ class dataManipulation {
       throw new Error(error1);
     }
 
-    function createData(itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId) {
-      return { itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId };
+    function createData(itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId,category) {
+      return { itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId,category };
     }
 
     let rows_non_state = [];
@@ -501,22 +498,17 @@ class dataManipulation {
     Object.entries(cart).map(([key, quantity]) => {
       product_list.map((product) => {
         if (product.itemId === key) {
-      
           let productPrice;
-    
+
           if (cartItemPrice === null) {
             productPrice = product.price;
           } else {
             productPrice = cartItemPrice[key];
           }
 
-
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
           const weight = product.weight * quantity;
-
-
-            
 
           let row = createData(
             product.imageLinks[0],
@@ -526,16 +518,23 @@ class dataManipulation {
             parseInt(productPrice).toLocaleString(),
             (productPrice * quantity).toLocaleString(),
             weight,
-            product.itemId
+            product.itemId,
+            product.category
           );
 
           rows_non_state.push(row);
         }
       });
     });
+    console.log(rows_non_state);
+    rows_non_state.sort((a, b) => {
+      if (a.category < b.category) return -1;
+      if (a.category > b.category) return 1;
+      return 0;
+    });
 
     const businesscalculations = new businessCalculations();
-    const vat = businesscalculations.getValueAddedTax(total_non_state,urlOfBir2303);
+    const vat = businesscalculations.getValueAddedTax(total_non_state, urlOfBir2303);
     const items_total = total_non_state - vat;
 
     const toReturn = [rows_non_state, items_total, total_weight_non_state, vat];
@@ -547,6 +546,8 @@ class dataManipulation {
     if (error3) {
       throw new Error(error3);
     }
+
+    console.log(toReturn);
 
     return toReturn;
   }
@@ -585,16 +586,14 @@ class dataManipulation {
     }
 
     if (categorySelected === 'Favorites') {
-
       let selected_products = [];
 
       products.map((product) => {
-
         if (favorites.includes(product.itemId)) {
           selected_products.push(product);
         }
       });
-    
+
       return selected_products;
     }
 
@@ -611,8 +610,7 @@ class dataManipulation {
           } else {
             products[i]['forTutorial'] = false;
           }
-        }
-        else{
+        } else {
           wholesale_count += 1;
           if (wholesale_count == 1) {
             products[i]['forTutorial'] = true;
@@ -660,7 +658,6 @@ class dataManipulation {
 
     // SET ORDER OF PRODUCTS BY CATEGORY
     if (categorySelected == 'Paper Bag') {
-      
     }
 
     return selected_products;
@@ -750,22 +747,20 @@ class dataManipulation {
   countAllOrdersOfUserInASpecificYear(orders, year) {
     let count = 0;
     orders.forEach((order) => {
-      const orderDate = order.orderDate
-      let seconds
-      let nanoseconds
+      const orderDate = order.orderDate;
+      let seconds;
+      let nanoseconds;
 
-      try{
-        seconds = orderDate.seconds
-      }
-      catch {
-        seconds = orderDate._seconds
+      try {
+        seconds = orderDate.seconds;
+      } catch {
+        seconds = orderDate._seconds;
       }
 
-      try{
-        nanoseconds = orderDate.nanoseconds
-      }
-      catch {
-        nanoseconds = orderDate._nanoseconds
+      try {
+        nanoseconds = orderDate.nanoseconds;
+      } catch {
+        nanoseconds = orderDate._nanoseconds;
       }
 
       const date = new Date(seconds * 1000 + nanoseconds / 1000000);
@@ -774,7 +769,7 @@ class dataManipulation {
       if (orderYear == year) {
         count += 1;
       }
-    })
+    });
     return count;
   }
 

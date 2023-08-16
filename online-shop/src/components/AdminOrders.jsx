@@ -65,18 +65,18 @@ const AdminOrders = (props) => {
 
     if (unsubscribe !== null) {
       unsubscribe();
-      console.log('unsubscribed')
+   
     }
 
     const docRef = collection(db, 'Orders')
-    console.log(paid,delivered)
+  
     const q = query(docRef,where('paid', '==', paid),where('delivered', '==', delivered)); 
     unsubscribe = onSnapshot(q, (querySnapshot) => {
       const orders = []
       querySnapshot.forEach((doc) => {
         orders.push(doc.data())
       });
-      console.log(orders)
+  
       setOrders(orders);
     });
   }, [paid, delivered]);
@@ -107,7 +107,7 @@ const AdminOrders = (props) => {
   useEffect(() => {
     orders.map((order) => {
       if (order.reference === selectedOrderReference) {
-        console.log(order);
+
         setSelectedOrder(order);
       }
     });

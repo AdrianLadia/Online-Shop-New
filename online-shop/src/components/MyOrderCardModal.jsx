@@ -49,7 +49,7 @@ const MyOrderCardModal = (props) => {
   const { width } = useWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
 
-  console.log(order);
+ 
 
   useEffect(() => {
     if (width < 550) {

@@ -13,7 +13,7 @@ import { ContentCutOutlined } from '@mui/icons-material';
 import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
-  console.log('MyOrderCardModalTable');
+
   const {cloudfirestore } = React.useContext(AppContext);
   
   const [products, setProducts] = React.useState([]);
@@ -22,8 +22,6 @@ const MyOrderCardModalTable = (props) => {
     return height - 10000;
   }
   const order = props.order;
-  console.log('order', order);
-  console.log('order.cart', order.cart);
   const urlOfBir2303 = order.urlOfBir2303
   const cartItemsPrice = order.cartItemsPrice;
   const datamanipulation = new dataManipulation();
@@ -35,14 +33,12 @@ const MyOrderCardModalTable = (props) => {
   useEffect(() => {
 
     const fetchCartProductsData = async () => {
-      console.log('order.cart', order.cart);
       const cartProductPromises = Object.keys(order.cart).map(async (key) => {
         const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
         return productData;
       });
 
       const data = await Promise.all(cartProductPromises);
-      console.log('data', data);
       const productsCombined = [...products, ...data];
 
     
