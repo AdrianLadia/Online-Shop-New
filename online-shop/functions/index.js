@@ -1522,6 +1522,14 @@ async function deleteOldOrders() {
         const productRef = db.collection('Products').doc(itemId);
         transaction.update(productRef, { stocksOnHold: newStocksOnHold });
       }
+
+      deletedOrders.forEach(async (order) => {
+        const orderRef = db.collection('Orders').doc(order.reference);
+        const expiredOrderRef = db.collection('ExpiredOrders').doc(order.reference);
+        transaction.delete(orderRef);
+        transaction.create(expiredOrderRef, order);
+      });
+
     });
   } catch (error) {
     console.log(error);
