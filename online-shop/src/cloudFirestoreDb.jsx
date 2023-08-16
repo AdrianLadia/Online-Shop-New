@@ -213,12 +213,12 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   async readSelectedDataFromOnlineStore(productId) {
     try{
       const jsonData = JSON.stringify({productId:productId});
-      console.log(jsonData);
       const res = await axios.post(`${this.url}readSelectedDataFromOnlineStore`,jsonData,{
         headers: {
           'Content-Type': 'application/json',
         },
       });
+      console.log('Reading')
       return res.data;
     }
     catch(error){

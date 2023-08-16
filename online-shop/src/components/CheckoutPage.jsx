@@ -54,6 +54,7 @@ const CheckoutPage = () => {
     setArea,
     referenceNumber,
     setReferenceNumber,
+    
   } = useContext(CheckoutContext);
 
   const datamanipulation = new dataManipulation();
@@ -212,6 +213,7 @@ const CheckoutPage = () => {
         itemsTotal: total,
         date: new Date(),
       });
+      setRefreshUser(!refreshUser);
     }
 
     setPlaceOrderLoading(false);

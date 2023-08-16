@@ -335,6 +335,7 @@ function App() {
     if (userdata != null) {
       console.log('READING FAVORITES');
       const fetchFavoriteProductsData = async () => {
+        console.log(userdata.favoriteItems)
         const favoriteProductPromises = userdata.favoriteItems.map(async (key) => {
           const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
           return productData;

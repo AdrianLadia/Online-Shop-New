@@ -52,20 +52,20 @@ const AccountMenu = (props) => {
   }
 
   function storeClick() {
-    setUserState('userloading');
-    setRefreshUser(!refreshUser);
+    // setUserState('userloading');
+    // setRefreshUser(!refreshUser);
     navigateTo('/shop');
   }
 
   function myOrdersClick() {
-    setUserState('userloading');
-    setRefreshUser(!refreshUser);
+    // setUserState('userloading');
+    // setRefreshUser(!refreshUser);
     navigateTo('/myorders/orderList');
   }
 
   function accountStatementCLick() {
-    setUserState('userloading');
-    setRefreshUser(!refreshUser);
+    // setUserState('userloading');
+    // setRefreshUser(!refreshUser);
     navigateTo('/accountstatement');
   }
 
