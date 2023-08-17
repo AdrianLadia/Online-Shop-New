@@ -15,22 +15,21 @@ import { doc, onSnapshot,collection } from 'firebase/firestore';
 import { set } from 'date-fns';
 import AdminChatMenuOpenButton from './AdminChatMenuOpenButton';
 import firestoredb from '../firestoredb';
+import menuRules from '../../utils/classes/menuRules';
 
 const AdminChatMenu = () => {
     const dummy = useRef(null);
     const [openChat, setOpenChat] = useState(false);
-    const {firestore,width,selectedChatOrderId, setSelectedChatOrderId, chatSwitch, setChatSwitch, isadmin,db} = useContext(AppContext);
+    const {firestore,selectedChatOrderId, chatSwitch, isadmin,db,userdata} = useContext(AppContext);
     const [chatData, setChatData] = useState([])
     const [chatButtonState, setChatButtonState] = useState(null)
     const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false)
     const alreadyTriedToSearchName = []
-    
-
-
+    const rules = new menuRules(userdata.userRole)
+  
     useEffect(() => {
       const docRef = collection(db, 'ordersMessages')
-      onSnapshot(docRef, (querySnapshot) => {
-        
+      const unsubscibe = onSnapshot(docRef, (querySnapshot) => {
         const chats = []
         querySnapshot.forEach((doc) => {
           if (doc.exists()) {
@@ -61,6 +60,8 @@ const AdminChatMenu = () => {
         })
         setChatData(chats)
       })
+
+      return () => unsubscibe()
     }, []);
 
     useEffect(()=>{
@@ -75,7 +76,9 @@ const AdminChatMenu = () => {
     if(chatSwitch === false){
       setOpenChat(false)
     }
+    if (rules.checkIfUserAuthorized('adminChat')) {
       dummy.current.scrollIntoView({ behavior: 'smooth' });
+    }
   },[chatSwitch])
 
   useEffect(()=>{
@@ -98,6 +101,8 @@ const AdminChatMenu = () => {
   },[chatData])
 
   return (
+    <>
+    {rules.checkIfUserAuthorized('adminChat') ? 
     <div className="flex justify-center flex-col lg:flex-row overflow-x-auto h-full">
       <div ref={dummy}/>
       {selectedChatOrderId != null ? <ChatApp setChatData={setChatData} chatData={chatData} chatButtonState={chatButtonState} setChatButtonState={setChatButtonState} chatButtonStateTrigger={chatButtonStateTrigger} setChatButtonStateTrigger={setChatButtonStateTrigger}/> : null}
@@ -121,6 +126,8 @@ const AdminChatMenu = () => {
         </Table>
       </TableContainer>
     </div>
+    : <>UNAUTHORIZED</>}
+    </>
   );
 };
 

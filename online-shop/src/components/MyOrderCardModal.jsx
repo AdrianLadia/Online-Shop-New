@@ -39,8 +39,9 @@ const MyOrderCardModal = (props) => {
     googleMapsApiKey: firebaseConfig.apiKey,
   });
 
+  const hidePricing = props.hidePricing;
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore,userdata } = useContext(AppContext);
+  const { storage, userId, cloudfirestore, userdata } = useContext(AppContext);
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
@@ -48,8 +49,6 @@ const MyOrderCardModal = (props) => {
   const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
   const { width } = useWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
-
- 
 
   useEffect(() => {
     if (width < 550) {
@@ -71,8 +70,6 @@ const MyOrderCardModal = (props) => {
       }
     }
   }
-
-
 
   return (
     <div>
@@ -116,7 +113,6 @@ const MyOrderCardModal = (props) => {
 
             <div className="w-full border-t-2 mt-4" />
 
-
             <List
               sx={{
                 width: '100%',
@@ -140,7 +136,7 @@ const MyOrderCardModal = (props) => {
               </Typography>
             </div>
 
-            <MyOrderCardModalTable id={order.id} key={order.id} order={order}  />
+            <MyOrderCardModalTable id={order.id} key={order.id} order={order} />
 
             <div className="mt-5 flex flex-col">
               <List
@@ -151,21 +147,24 @@ const MyOrderCardModal = (props) => {
                 }}
               >
                 <Divider />
-                <ListItem>
-                  <ListItemText primary="Items Total" secondary={order.itemsTotal + order.vat} />
-                </ListItem>
+                {hidePricing ? null : (
+                  <ListItem>
+                    <ListItemText primary="Items Total" secondary={order.itemsTotal + order.vat} />
+                  </ListItem>
+                )}
                 <Divider />
-                {/* <ListItem>
-                  <ListItemText primary="VAT" secondary={order.vat} />
-                </ListItem> */}
                 <Divider />
-                <ListItem>
-                  <ListItemText primary="Shipping" secondary={order.shippingTotal} />
-                </ListItem>
+                {hidePricing ? null : (
+                  <ListItem>
+                    <ListItemText primary="Shipping" secondary={order.shippingTotal} />
+                  </ListItem>
+                )}
                 <Divider />
-                <ListItem>
-                  <ListItemText primary="Grand Total" secondary={order.grandTotal} />
-                </ListItem>
+                {hidePricing ? null : (
+                  <ListItem>
+                    <ListItemText primary="Grand Total" secondary={order.grandTotal} />
+                  </ListItem>
+                )}
                 <Divider />
               </List>
             </div>
@@ -220,6 +219,25 @@ const MyOrderCardModal = (props) => {
               ) : null}
 
               {order.proofOfPaymentLink.map((link) => {
+                if (hidePricing) {
+                  return;
+                }
+                return (
+                  <div className="w-full mb-10">
+                    <Image imageUrl={link} />
+                  </div>
+                );
+              })}
+
+              <Divider />
+
+              {order.proofOfDeliveryLink.length > 0 ? (
+                <ListItem>
+                  <ListItemText primary="Delivery Proof" />
+                </ListItem>
+              ) : null}
+
+              {order.proofOfDeliveryLink.map((link) => {
                 return (
                   <div className="w-full mb-10">
                     <Image imageUrl={link} />

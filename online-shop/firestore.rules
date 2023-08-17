@@ -10,7 +10,7 @@ service cloud.firestore {
 
     function isAdminOrSuperAdmin() {
       let userRole = get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.userRole;
-      return userRole == 'admin' || userRole == 'superAdmin';
+      return userRole == 'admin' || userRole == 'superAdmin' || userRole == 'driver' || userRole == 'delivery';
     }
 
     function isSuperAdmin() {

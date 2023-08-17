@@ -11,6 +11,7 @@ import CustomerAnalytics from './customerAnalytics/App';
 import CompanyDashboard from './CompanyDashboard/CompanyDashboard';
 import AffiliateClaimRequest from './AdminAffiliateClaimRequest';
 import AdminNavBar from './AdminNavBar';
+import AdminDelivery from './AdminDelivery';
 import { Routes, Route } from 'react-router-dom';
 
 const Admin = () => {
@@ -125,6 +126,15 @@ const Admin = () => {
             <div>
               <AdminNavBar />
               <AffiliateClaimRequest />
+            </div>
+          }
+        />
+        <Route
+          path="delivery"
+          element={
+            <div>
+              <AdminNavBar />
+              <AdminDelivery />
             </div>
           }
         />

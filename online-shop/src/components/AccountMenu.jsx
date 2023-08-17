@@ -22,6 +22,7 @@ import { AiOutlineMessage } from 'react-icons/ai';
 import { useLocation } from 'react-router-dom';
 import Badge from '@mui/material/Badge';
 import { TbAffiliate } from "react-icons/tb";
+import menuRules from '../../utils/classes/menuRules';
 
 const AccountMenu = (props) => {
   const { pathname } = useLocation();
@@ -29,7 +30,7 @@ const AccountMenu = (props) => {
   const { userdata, isAffiliate, isadmin, refreshUser, setRefreshUser, setUserState, userstate, userId,unreadOrderMessages, unreadCustomerServiceMessages } = useContext(AppContext);
   
   const totalUnreadMessages = unreadOrderMessages + unreadCustomerServiceMessages;
-  
+  const rules = new menuRules(userdata.userRole);
 
 
   const open = Boolean(anchorEl);
@@ -44,7 +45,8 @@ const AccountMenu = (props) => {
   };
 
   function adminClick() {
-    navigateTo('/admin/companyDashboard');
+    const redirectPage = rules.getAdminRedirectPage();
+    navigateTo('/admin/' + redirectPage);
   }
 
   function profileClick() {

@@ -64,6 +64,8 @@ const AdminCreatePaymentTable = () => {
     if (reference != '' && status != '') {
       alert('Reference: ' + reference + ' is ' + status );
     }
+
+    return () => unsubscribe()
   }, [selectedChatOrderId]);
 
   return (

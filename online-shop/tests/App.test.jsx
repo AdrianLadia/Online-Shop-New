@@ -3772,3 +3772,54 @@ describe('test transactionPlaceOrder data validation' , () => {
     expect([400,409].includes(res.status)).toEqual(true)
   })
 })
+
+
+describe.only('test updateOrderAsDelivered it should update order as paid and add proof of payment link' , () => {
+  test('setup test', async () => {
+    await cloudfirestore.deleteDocumentFromCollection('Orders','testref1234')
+    const res = await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 5 , 'PPB#16-RET' : 5},
+      itemstotal: 1000,
+      vat: 0,
+      shippingtotal: 2002,
+      grandTotal: 1000 + 0 + 2002,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+  })
+  test('invoke function', async () => {
+    await firestore.updateOrderAsDelivered('testref1234','testlink3')
+    await delay(300)
+  })
+  test('check if order is updated', async () => {
+    const orderData = await firestore.readSelectedDataFromCollection('Orders','testref1234')
+    expect(orderData.delivered).toEqual(true)
+    expect(orderData.proofOfDeliveryLink).toEqual(['testlink3'])
+  })
+  test('invoke another function', async () => {
+    await firestore.updateOrderAsDelivered('testref1234','testlink4')
+    await delay(300)
+  })
+  test('check if order is updated 2', async () => {
+    const orderData = await firestore.readSelectedDataFromCollection('Orders','testref1234')
+    expect(orderData.delivered).toEqual(true)
+    expect(orderData.proofOfDeliveryLink).toEqual(['testlink3','testlink4'])
+  })
+})

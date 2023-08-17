@@ -26,7 +26,7 @@ import AdminCreatePaymentTable from './AdminCreatePaymentTable';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import Joi from 'joi';
 import { CircularProgress } from '@mui/material';
-import { set } from 'date-fns';
+import menuRules from '../../utils/classes/menuRules';
 
 const AdminCreatePayment = (props) => {
   const { cloudfirestore, storage, firestore, userdata } = useContext(AppContext);
@@ -46,6 +46,7 @@ const AdminCreatePayment = (props) => {
   const [userid, setUserid] = React.useState('');
   const [unpaidOrdersReference, setUnpaidOrdersReference] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const rules = new menuRules(userdata.userRole);
 
   useEffect(() => {
     firestore.readAllPaymentProviders().then((result) => {
@@ -69,13 +70,12 @@ const AdminCreatePayment = (props) => {
         setUserid(userId);
         const result = await firestore.readAllOrdersByUserId(userId);
         const unpaidOrdersReference = [];
-  
-  
+
         const promises = result.map(async (orderData) => {
           const data = await cloudfirestore.readSelectedOrder(orderData.reference, userdata.uid);
           return data;
         });
-  
+
         Promise.all(promises).then((res) => {
           const unpaidOrdersReference = [];
           res.forEach((data) => {
@@ -90,7 +90,6 @@ const AdminCreatePayment = (props) => {
     }
     getReferences();
   }, [selectedName]);
-  
 
   async function onCreatePayment() {
     setLoading(true);
@@ -144,51 +143,53 @@ const AdminCreatePayment = (props) => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className="flex flex-col mb-8 items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
-        <div ref={dummy}></div>
-        <div className="flex flex-col gap-10 w-11/12 md:w-9/12 ">
-          <div className="flex md:flex-row flex-row-reverse justify-center mt-7">
-            <Typography variant="h2" className="mt-1  flex justify-center">
-              <span>Create Payment</span>
-            </Typography>
-            <HiCash size={25} />
-          </div>
+    <>
+      {rules.checkIfUserAuthorized('createPayment') ? (
+        <ThemeProvider theme={theme}>
+          <div className="flex flex-col mb-8 items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
+            <div ref={dummy}></div>
+            <div className="flex flex-col gap-10 w-11/12 md:w-9/12 ">
+              <div className="flex md:flex-row flex-row-reverse justify-center mt-7">
+                <Typography variant="h2" className="mt-1  flex justify-center">
+                  <span>Create Payment</span>
+                </Typography>
+                <HiCash size={25} />
+              </div>
 
-          <Divider sx={{ border: 1 }} />
+              <Divider sx={{ border: 1 }} />
 
-          <div className="grid md:grid-cols-2 gap-5 lg:gap-10">
-            <Autocomplete
-              onChange={(event, value) => setSelectedName(value)}
-              disablePortal
-              id="customerNamePayment"
-              options={allUserNames}
-              renderInput={(params) => <TextField {...params} label="Customer Name" InputLabelProps={labelStyle} />}
-              className="flex w-full"
-              sx={style}
-            />
+              <div className="grid md:grid-cols-2 gap-5 lg:gap-10">
+                <Autocomplete
+                  onChange={(event, value) => setSelectedName(value)}
+                  disablePortal
+                  id="customerNamePayment"
+                  options={allUserNames}
+                  renderInput={(params) => <TextField {...params} label="Customer Name" InputLabelProps={labelStyle} />}
+                  className="flex w-full"
+                  sx={style}
+                />
 
-            <TextField
-              id="amountPayment"
-              onChange={(event) => setAmount(event.target.value)}
-              required
-              label="Amount"
-              InputLabelProps={labelStyle}
-              sx={style}
-              value={amount}
-              typeof="number"
-            />
-            <Autocomplete
-              value={reference}
-              onChange={(event, value) => setReference(value)}
-              disablePortal
-              id="referencePayment"
-              options={unpaidOrdersReference}
-              renderInput={(params) => <TextField {...params} label="Reference" InputLabelProps={labelStyle} />}
-              className="flex w-full"
-              sx={style}
-            />
-            {/* 
+                <TextField
+                  id="amountPayment"
+                  onChange={(event) => setAmount(event.target.value)}
+                  required
+                  label="Amount"
+                  InputLabelProps={labelStyle}
+                  sx={style}
+                  value={amount}
+                  typeof="number"
+                />
+                <Autocomplete
+                  value={reference}
+                  onChange={(event, value) => setReference(value)}
+                  disablePortal
+                  id="referencePayment"
+                  options={unpaidOrdersReference}
+                  renderInput={(params) => <TextField {...params} label="Reference" InputLabelProps={labelStyle} />}
+                  className="flex w-full"
+                  sx={style}
+                />
+                {/* 
             <TextField
               id="referencePayment"
               onChange={(event) => setReference(event.target.value)}
@@ -199,19 +200,19 @@ const AdminCreatePayment = (props) => {
               value={reference}
             /> */}
 
-            <Autocomplete
-              onChange={(event, value) => setPaymentProvider(value)}
-              disablePortal
-              id="paymentProviderPayment"
-              options={allPaymentProviders}
-              renderInput={(params) => (
-                <TextField {...params} label="Payment Provider ex. GCash / Paymaya" InputLabelProps={labelStyle} />
-              )}
-              className="flex w-full"
-              sx={style}
-            />
+                <Autocomplete
+                  onChange={(event, value) => setPaymentProvider(value)}
+                  disablePortal
+                  id="paymentProviderPayment"
+                  options={allPaymentProviders}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Payment Provider ex. GCash / Paymaya" InputLabelProps={labelStyle} />
+                  )}
+                  className="flex w-full"
+                  sx={style}
+                />
 
-            {/* <TextField
+                {/* <TextField
               id="paymentProviderPayment"
               onChange={(event) => setPaymentProvider(event.target.value)}
               required
@@ -220,48 +221,52 @@ const AdminCreatePayment = (props) => {
               value={paymentProvider}
               sx={style}
             /> */}
-          </div>
+              </div>
 
-          <div className="flex-col gap-10 md:gap-0 md:flex-row flex justify-evenly items-center">
-            <button
-              id="createPaymentButton"
-              onClick={onCreatePayment}
-              className="flex justify-center py-2 sm:py-2.5 w-6/12 sm:w-4/12 md:w-3/12 2md:w-4/12 uppercase text-sm sm:text-medium shadow-xl tracking-wide bg-color10b hover:bg-blue-400 rounded-lg ease-in-out duration-300"
-            >
-              {loading ? (
-                <CircularProgress className="text-white" size={25} />
-              ) : (
-                <div className="flex flex-row">
-                  <HiCash className="mr-1.5" size={25} />
-                  <span>Create Payment</span>
+              <div className="flex-col gap-10 md:gap-0 md:flex-row flex justify-evenly items-center">
+                <button
+                  id="createPaymentButton"
+                  onClick={onCreatePayment}
+                  className="flex justify-center py-2 sm:py-2.5 w-6/12 sm:w-4/12 md:w-3/12 2md:w-4/12 uppercase text-sm sm:text-medium shadow-xl tracking-wide bg-color10b hover:bg-blue-400 rounded-lg ease-in-out duration-300"
+                >
+                  {loading ? (
+                    <CircularProgress className="text-white" size={25} />
+                  ) : (
+                    <div className="flex flex-row">
+                      <HiCash className="mr-1.5" size={25} />
+                      <span>Create Payment</span>
+                    </div>
+                  )}
+                </button>
+                <div className="">
+                  <ImageUploadButton
+                    onUploadFunction={onUploadFunction}
+                    folderName={'Payments/' + selectedName + '/' + reference}
+                    storage={storage}
+                    id="createPayment"
+                    buttonTitle="Upload Proof Of Payment"
+                  />
                 </div>
-              )}
-            </button>
-            <div className="">
-              <ImageUploadButton
-                onUploadFunction={onUploadFunction}
-                folderName={'Payments/' + selectedName + '/' + reference}
-                storage={storage}
-                id="createPayment"
-                buttonTitle="Upload Proof Of Payment"
+              </div>
+              <TextField
+                id="proofOfPaymentLink"
+                disabled
+                required
+                label="Payment Link"
+                InputLabelProps={labelStyle}
+                value={paymentLink}
               />
+
+              <Divider sx={{ border: 1 }} />
+
+              <AdminCreatePaymentTable />
             </div>
           </div>
-          <TextField
-            id="proofOfPaymentLink"
-            disabled
-            required
-            label="Payment Link"
-            InputLabelProps={labelStyle}
-            value={paymentLink}
-          />
-
-          <Divider sx={{ border: 1 }} />
-
-          <AdminCreatePaymentTable />
-        </div>
-      </div>
-    </ThemeProvider>
+        </ThemeProvider>
+      ) : (
+        <>UNAUTHORIZED</>
+      )}
+    </>
   );
 };
 

@@ -67,7 +67,7 @@ const ChatApp = (props) => {
   }, [userdata]);
 
   useEffect(() => {
-
+    let unsubscribe
     if (selectedChatOrderId != null) {
       const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
       unsubscribe = onSnapshot(docRef, (doc) => {
@@ -81,6 +81,8 @@ const ChatApp = (props) => {
       });
    
     }
+
+    return () => unsubscribe();
   }, [selectedChatOrderId]);
 
   return (

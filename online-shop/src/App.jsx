@@ -154,13 +154,14 @@ function App() {
 
   useEffect(() => {
     if (userdata != null) {
-      if (userdata.userRole == 'admin' || userdata.userRole == 'superAdmin') {
+      if (isadmin) {
         firestore.readAllDataFromCollection('Users').then((users) => {
           setAllUserData(users);
         });
+        
       }
     }
-  }, [userdata]);
+  }, [isadmin]);
 
   useEffect(() => {
     let paymentState = {};
@@ -384,13 +385,12 @@ function App() {
         }
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
-        const adminRoles = ['admin', 'superAdmin'];
-
+        const nonAdminRoles = ['member', 'affiliate'];
         const userRole = await cloudfirestore.readUserRole(data.uid);
-        if (adminRoles.includes(userRole)) {
-          setIsAdmin(true);
-        } else {
+        if (nonAdminRoles.includes(userRole)) {
           setIsAdmin(false);
+        } else {
+          setIsAdmin(true);
         }
         if (userRole === 'affiliate') {
           setIsAffiliate(true);
@@ -410,6 +410,12 @@ function App() {
     }
     setAllUserData();
   }, [userId, refreshUser]);
+
+  useEffect(() => {
+    if (userdata != null) {
+      setUserState('userloaded');
+    }
+  }, [userdata]);
 
   useEffect(() => {
     if (userOrderReference != null) {

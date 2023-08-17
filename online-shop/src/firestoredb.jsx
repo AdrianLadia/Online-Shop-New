@@ -293,6 +293,17 @@ class firestoredb extends firestorefunctions {
     return orders;
   }
 
+  async readAllNotDeliveredOrders() {
+    const ordersRef = collection(this.db, 'Orders');
+    const q = query(ordersRef, where('delivered', '==', false));
+    const querySnapshot = await getDocs(q);
+    const orders = [];
+    querySnapshot.forEach((doc) => {
+      orders.push(doc.data());
+    })
+    return orders;
+  }
+
   async readAllPaidOrders() {
     const orders = super.readAllOrders().then((orders) => {
       const paidorders = orders.filter((order) => {
@@ -591,6 +602,24 @@ class firestoredb extends firestorefunctions {
     await this.updateDocumentFromCollection('ordersMessages', userId, { ownerName: name });
   }
 
+  async updateOrderAsDelivered(orderId,proofOfDeliveryLink){
+    try {
+      await runTransaction(this.db, async (transaction) => {
+        const orderRef = doc(this.db, 'Orders/', orderId);
+        const orderRefDoc = await transaction.get(orderRef);
+        const orderData = orderRefDoc.data();
+        
+        const oldProofOfDeliveryLinks = orderData.proofOfDeliveryLink;
+        const newProofOfDeliveryLinks = [...oldProofOfDeliveryLinks, proofOfDeliveryLink];
+
+        transaction.update(orderRef, { proofOfDeliveryLink: newProofOfDeliveryLinks });
+        transaction.update(orderRef, { delivered: true });
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  
   // async markCommissionPending(data, date, id){
   //   const updatedData = []
   //   data.map((commissions)=>{

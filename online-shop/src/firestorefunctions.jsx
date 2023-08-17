@@ -33,6 +33,7 @@ class firestorefunctions {
     }
   }
 
+
   async createDocument(data, id, collection) {
     try {
       const docRef = await setDoc(doc(this.db, collection + '/', id), data);

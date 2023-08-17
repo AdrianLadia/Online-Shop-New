@@ -596,6 +596,7 @@ exports.transactionPlaceOrder = functions
               isInvoiceNeeded: isInvoiceNeeded,
               urlOfBir2303: urlOfBir2303,
               countOfOrdersThisYear: countOfOrdersThisYear,
+              proofOfDeliveryLink: [],
             };
             const userOrderObject = { reference: reference, date: new Date() };
             const updatedOrders = [userOrderObject, ...oldOrders];
