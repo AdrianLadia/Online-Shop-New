@@ -28,7 +28,6 @@ const express = require('express');
 const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
-const { onSnapshot, runTransaction } = require('firebase/firestore');
 
 admin.initializeApp();
 
@@ -1783,10 +1782,5 @@ exports.voidPayment = functions.region('asia-southeast1').runWith({ memory: '2GB
       console.log(error)
       res.status(400).send('Error voiding payment');
     }
-
-  
-
-
-
   });
 });
