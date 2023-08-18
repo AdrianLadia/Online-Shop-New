@@ -1537,8 +1537,10 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
       } else {
         res.status(401);
       }
-    } catch (e) {}
-    console.log(e);
+    } catch (e) {
+      console.log(e);
+    }
+    
     res.status(200).send(data);
   });
 });

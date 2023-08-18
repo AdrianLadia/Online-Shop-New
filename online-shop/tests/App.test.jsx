@@ -1024,7 +1024,7 @@ describe('getCartCount', () => {
   });
 });
 
-describe('cloudfirestoredb', async () => {
+describe.only('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1095,7 +1095,7 @@ describe('cloudfirestoredb', async () => {
     await cloudfirestore.transactionCreatePayment(data);
     await delay(200);
     const payments2 = await firestore.readAllDataFromCollection('Payments');
-    let found2;
+    let found2 = false;
     payments2.map((payment) => {
       if (payment.proofOfPaymentLink === 'testlink3') {
         expect(payment.status).toEqual('approved');
@@ -1124,6 +1124,10 @@ describe('cloudfirestoredb', async () => {
     expect(userOrders.length > 0).toEqual(true);
     expect(payments.length > 0).toEqual(true);  
     expect(order.paid).toEqual(true);
+
+    
+
+
       
     
     await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
@@ -3774,7 +3778,7 @@ describe('test transactionPlaceOrder data validation' , () => {
 })
 
 
-describe.only('test updateOrderAsDelivered it should update order as paid and add proof of payment link' , () => {
+describe('test updateOrderAsDelivered it should update order as paid and add proof of payment link' , () => {
   test('setup test', async () => {
     await cloudfirestore.deleteDocumentFromCollection('Orders','testref1234')
     const res = await cloudfirestore.transactionPlaceOrder({
@@ -3989,7 +3993,7 @@ describe('Void payment' , () => {
      allPaymentData.forEach(async (payment) => {
         if (payment.proofOfPaymentLink === 'www.testlink123.com') {
           found = true
-          expect(payment.status).toEqual('declined')
+          expect(payment.status).toEqual('voided')
         }
      })
 
@@ -4008,3 +4012,4 @@ describe('Void payment' , () => {
 
   })
 })
+
