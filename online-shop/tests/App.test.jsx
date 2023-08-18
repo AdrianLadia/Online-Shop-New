@@ -3774,7 +3774,7 @@ describe('test transactionPlaceOrder data validation' , () => {
 })
 
 
-describe('test updateOrderAsDelivered it should update order as paid and add proof of payment link' , () => {
+describe.only('test updateOrderAsDelivered it should update order as paid and add proof of payment link' , () => {
   test('setup test', async () => {
     await cloudfirestore.deleteDocumentFromCollection('Orders','testref1234')
     const res = await cloudfirestore.transactionPlaceOrder({
@@ -3803,6 +3803,7 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
     });
+    await delay(300)
   })
   test('invoke function', async () => {
     await firestore.updateOrderAsDelivered('testref1234','testlink3')
@@ -3824,7 +3825,7 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
   })
 })
 
-describe.only('Void payment' , () => {
+describe('Void payment' , () => {
   test('setup test', async () => {
     await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{orders : []})
     await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{payments : []})
