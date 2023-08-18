@@ -28,6 +28,7 @@ const express = require('express');
 const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
+const { onSnapshot, runTransaction } = require('firebase/firestore');
 
 admin.initializeApp();
 
@@ -73,6 +74,37 @@ function parseData(data) {
   return parsedData;
 }
 
+function updateAccountStatement(payments,orders) {
+  let totalPayments = 0;
+  payments.map((payment) => {
+    totalPayments += parseFloat(payment.amount);
+  });
+
+  orders.sort((a, b) => {
+    const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
+    const timeB = b.orderDate.seconds * 1e9 + b.orderDate.nanoseconds;
+    return timeA - timeB;
+  });
+
+  const toUpdateOrders = [];
+
+  orders.forEach((order) => {
+    totalPayments -= order.grandTotal;
+    let paid = null;
+    if (totalPayments >= 0) {
+      paid = true;
+    }
+    if (totalPayments < 0) {
+      paid = false;
+    }
+    if (order.paid !== paid) {
+      toUpdateOrders.push({ reference: order.reference, paid: paid });
+    }
+  });
+
+  return toUpdateOrders;
+}
+
 function getCartCount(cart) {
   // VALIDATION
   const cartSchema = Joi.array().required();
@@ -114,42 +146,7 @@ function getValueAddedTax(totalPrice) {
   }
   return roundedVat;
 }
-
-async function createPayment(data, db) {
-  const paymentSchema = Joi.object({
-    userId: Joi.string().required(),
-    amount: Joi.number().required(),
-    reference: Joi.string().required(),
-    paymentprovider: Joi.string().required(),
-  })
-    .required()
-    .unknown(false);
-
-  const { error } = paymentSchema.validate(data);
-
-  if (error) {
-    throw new Error('Data Validation Error');
-  }
-
-  const userId = data.userId;
-
-  data['date'] = new Date();
-
-  const user = await db.collection('Users').doc(userId).get();
-  const userData = user.data();
-  // const userData = userRef.data();
-  const oldPayments = userData.payments;
-
-  const newPayments = [...oldPayments, data];
-
-  await db
-    .collection('Users')
-    .doc(userId)
-    .update({
-      ['payments']: newPayments,
-    });
-}
-
+  
 async function updateOrdersAsPaidOrNotPaid(userId, db) {
   const user = await db.collection('Users').doc(userId).get();
   const userData = user.data();
@@ -247,6 +244,7 @@ exports.readSelectedDataFromOnlineStore = functions.region('asia-southeast1').ht
 
       res.send(productObject);
     } catch (error) {
+      console.log(error);
       res.status(400).send('Error reading selected data. Please try again later');
     }
   });
@@ -297,6 +295,7 @@ exports.readAllProductsForOnlineStore = functions.region('asia-southeast1').http
       // Send the products array as a JSON response
       res.status(200).send(products);
     } catch (error) {
+      console.log(error);
       res.status(400).send('Error reading products. Please try again later');
     }
     // return res.json({status: 'ok'})
@@ -311,6 +310,7 @@ exports.createPayment = functions.region('asia-southeast1').https.onRequest(asyn
       await createPayment(data, db);
       res.status(200).send('success');
     } catch (error) {
+      console.log(error);
       res.status(400).send('Error creating payment. Please try again later');
     }
   });
@@ -326,6 +326,7 @@ exports.updateOrdersAsPaidOrNotPaid = functions.region('asia-southeast1').https.
 
       res.status(200).send('success');
     } catch (error) {
+      console.log(error);
       res.status(400).send(error);
     }
   });
@@ -660,10 +661,12 @@ exports.transactionPlaceOrder = functions
 
             res.send('SUCCESS');
           } catch (e) {
+            console.log(error);
             res.status(400).send('FAILED');
           }
         });
       } catch (error) {
+        console.log(error);
         res.status(400).send('FAILED');
       }
     });
@@ -827,6 +830,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const data = req.body;
     const depositAmount = data.amount;
     const orderReference = data.reference;
+    const paymentprovider = data.paymentprovider;
 
     const commissionPercentage = 0.03;
     data['date'] = new Date();
@@ -863,6 +867,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
           paymentsData = doc.data();
 
           paymentsData.status = 'approved';
+          paymentsData.amount = depositAmount;
           documentID = doc.id;
         });
         // const paymentsRef = db.collection('Payments').doc();
@@ -896,34 +901,10 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
         const ordersObject = await transaction.get(allUserOrdersQuery);
         const orders = ordersObject.docs.map((doc) => doc.data());
-
-        let totalPayments = 0;
-        newPayments.map((payment) => {
-          totalPayments += parseFloat(payment.amount);
-        });
-
-        orders.sort((a, b) => {
-          const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
-          const timeB = b.orderDate.seconds * 1e9 + b.orderDate.nanoseconds;
-          return timeA - timeB;
-        });
-
-        const toUpdateOrders = [];
-
-        orders.forEach((order) => {
-          totalPayments -= order.grandTotal;
-          let paid = null;
-          if (totalPayments >= 0) {
-            paid = true;
-          }
-          if (totalPayments < 0) {
-            paid = false;
-          }
-          if (order.paid !== paid) {
-            toUpdateOrders.push({ reference: order.reference, paid: paid });
-          }
-        });
-
+        
+        const toUpdateOrders = updateAccountStatement(newPayments, orders)
+        
+        console.log(toUpdateOrders)
         // WRITE
 
         toUpdateOrders.forEach((order) => {
@@ -939,11 +920,27 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
 
         if (paymentsData) {
           transaction.update(db.collection('Payments').doc(documentID), paymentsData);
+          transaction.update(userRef, { payments: newPayments });
+        }
+        else{
+          const paymentRef = db.collection('Payments').doc();
+          
+          transaction.set(paymentRef, {
+            orderReference: orderReference,
+            proofOfPaymentLink: proofOfPaymentLink,
+            userId: userId,
+            status: 'approved',
+            userName: userData.name,
+            paymentMethod: paymentprovider,
+            paymentId: paymentRef.id,
+            amount : depositAmount
+          });
         }
         transaction.update(userRef, { payments: newPayments });
       });
       res.status(200).send('success');
     } catch (error) {
+      console.log(error);
       res.status(400).send('Error adding document.');
     }
   });
@@ -1155,6 +1152,8 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
             status: 'pending',
             userName: userName,
             paymentMethod: paymentMethod,
+            paymentId: newPaymentRef.id,
+            amount : null
           });
 
           const paymentId = newPaymentRef.id;
@@ -1370,6 +1369,7 @@ async function deleteOldOrders() {
       });
     });
   } catch (error) {
+    console.log(error);
     throw error;
   }
 }
@@ -1380,6 +1380,7 @@ exports.deleteOldOrders = functions.region('asia-southeast1').https.onRequest(as
       deleteOldOrders();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
+      console.log(error);
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1391,6 +1392,7 @@ exports.giveAffiliateCommission = functions.region('asia-southeast1').https.onRe
       giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
+      console.log(error);
       res.status(400).send('failed to delete old orders');
     }
   });
@@ -1460,10 +1462,12 @@ exports.transactionCancelOrder = functions.region('asia-southeast1').https.onReq
           transaction.delete(cancelledOrderRef);
           res.status(200).send('success');
         } catch (error) {
+          console.log(error);
           res.status(400).send('Error deleting order.');
         }
       });
     } catch (error) {
+      console.log(error);
       res.status(400).send('Error deleting order.');
     }
   });
@@ -1527,12 +1531,14 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
             transaction.update(userRef, { affiliateCommissions: updatedCommissionData });
           });
         } catch (e) {
+          console.log(e);
           res.status(400).send('Error adding deposit to affiliate.');
         }
       } else {
         res.status(401);
       }
     } catch (e) {}
+    console.log(e);
     res.status(200).send(data);
   });
 });
@@ -1580,6 +1586,7 @@ exports.onAffiliateClaim = functions.region('asia-southeast1').https.onRequest(a
         res.status(200).send(data);
       });
     } catch (e) {
+      console.log(e);
       res.status(400).send('Error on affiliate claim.');
     }
   });
@@ -1610,6 +1617,7 @@ exports.addDepositToAffiliateDeposits = functions.region('asia-southeast1').http
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
     } catch (e) {
+      console.log(e);
       res.status(400).send('Error adding deposit to affiliate.');
     }
   });
@@ -1655,6 +1663,7 @@ exports.markAffiliateClaimDone = functions.region('asia-southeast1').https.onReq
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
     } catch (e) {
+      console.log(e);
       res.status(400).send('Error marking affiliate claim done.');
     }
   });
@@ -1686,6 +1695,7 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     const orderRef = db.collection('Orders').doc(reference);
     const orderDoc = await orderRef.get();
     const orderData = orderDoc.data();
+
     const orderUserId = orderData.userId;
     const userRef = db.collection('Users').doc(userId);
     const userDoc = await userRef.get();
@@ -1699,5 +1709,82 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
     }
 
     res.status(200).send(orderData);
+  });
+});
+
+
+exports.voidPayment = functions.region('asia-southeast1').runWith({ memory: '2GB' }).https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const db = admin.firestore();
+    const data = req.body;
+    const orderReference = data.orderReference;
+    const proofOfPaymentLink = data.proofOfPaymentLink;
+    const userId = data.userId
+    try{
+      db.runTransaction(async (transaction) => {
+        const orderRef = db.collection('Orders').doc(orderReference);
+        const userRef = db.collection('Users').doc(userId);
+        
+        const orderDoc = await transaction.get(orderRef);
+        const orderData = orderDoc.data();
+        const orderProofOfPaymentLink = orderData.proofOfPaymentLink;
+        
+        const userDoc = await transaction.get(userRef);
+        const userData = userDoc.data();
+        const payments = userData.payments
+  
+        const paymentsRef = db.collection('Payments');
+        const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink)
+        const paymentSnapshot = await transaction.get(paymentQuery);
+  
+        const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
+        const ordersObject = await transaction.get(allUserOrdersQuery);
+        const orders = ordersObject.docs.map((doc) => doc.data());
+        
+        // delete payments in user
+        const updatedPayments = payments.filter((payment) => {
+          if (payment.proofOfPaymentLink != proofOfPaymentLink) {
+            return payment
+          }
+        });
+  
+        transaction.update(userRef, { payments: updatedPayments });
+  
+        // delete proof of payment link in order
+        const updatedOrderProofOfPaymentLink = orderProofOfPaymentLink.filter((link) => {
+          if (link != proofOfPaymentLink) {
+            return link
+          }
+        });
+  
+        transaction.update(orderRef, { proofOfPaymentLink: updatedOrderProofOfPaymentLink });
+  
+        // update payment object in payment
+        paymentSnapshot.forEach((doc) => {
+          const id = doc.id;
+          const ref = db.collection('Payments').doc(id);
+          transaction.update(ref, { status: 'voided' })
+        })
+  
+        // update account statement in user
+        const toUpdateOrders = updateAccountStatement(updatedPayments,orders)
+  
+        toUpdateOrders.forEach((order) => {
+          const ref = db.collection('Orders').doc(order.reference);
+          transaction.update(ref, { paid: order.paid });
+        });
+  
+        res.status(200).send('Payment voided successfully');        
+      });
+    }
+    catch(error) {
+      console.log(error)
+      res.status(400).send('Error voiding payment');
+    }
+
+  
+
+
+
   });
 });

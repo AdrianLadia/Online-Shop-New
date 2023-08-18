@@ -1005,7 +1005,7 @@ describe('getCartCount', () => {
   });
 
   test('getValueAddedTax', () => {
-    const { getValueAddedTax } = require('../functions/index.js');
+    const { getValueAddedTax, transactionCreatePayment } = require('../functions/index.js');
     const getValueAddedTaxBusinessCalculations = businesscalculations.getValueAddedTax;
     const vat = getValueAddedTaxBusinessCalculations(1000);
     const vat2 = getValueAddedTaxBusinessCalculations(1000);
@@ -3774,7 +3774,7 @@ describe('test transactionPlaceOrder data validation' , () => {
 })
 
 
-describe.only('test updateOrderAsDelivered it should update order as paid and add proof of payment link' , () => {
+describe('test updateOrderAsDelivered it should update order as paid and add proof of payment link' , () => {
   test('setup test', async () => {
     await cloudfirestore.deleteDocumentFromCollection('Orders','testref1234')
     const res = await cloudfirestore.transactionPlaceOrder({
@@ -3821,5 +3821,189 @@ describe.only('test updateOrderAsDelivered it should update order as paid and ad
     const orderData = await firestore.readSelectedDataFromCollection('Orders','testref1234')
     expect(orderData.delivered).toEqual(true)
     expect(orderData.proofOfDeliveryLink).toEqual(['testlink3','testlink4'])
+  })
+})
+
+describe.only('Void payment' , () => {
+  test('setup test', async () => {
+    await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{orders : []})
+    await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{payments : []})
+    const allPaymentIds = await firestore.readAllIdsFromCollection('Payments')
+
+    const promisePayments = allPaymentIds.map(async (paymentId) => {
+      await firestore.deleteDocumentFromCollection('Payments',paymentId)
+    })
+
+    await Promise.all(promisePayments)
+    await cloudfirestore.createDocument({'test' : 'test'},'mock','Payments')
+
+    const allOrderIds = await firestore.readAllIdsFromCollection('Orders')
+
+    const promiseOrder = allOrderIds.map(async (orderId) => {
+      await firestore.deleteDocumentFromCollection('Orders',orderId)
+    })
+
+    await Promise.all(promiseOrder)
+
+    await cloudfirestore.createDocument({'test' : 'test'},'mock','Orders')
+
+    await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 5 , 'PPB#16-RET' : 5},
+      itemstotal: 9000,
+      vat: 800,
+      shippingtotal: 200,
+      grandTotal: 9000 + 800 + 200,
+      reference: 'testref1',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 5 , 'PPB#16-RET' : 5},
+      itemstotal: 9000,
+      vat: 800,
+      shippingtotal: 200,
+      grandTotal: 9000 + 800 + 200,
+      reference: 'testref12',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await cloudfirestore.transactionPlaceOrder({
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 5 , 'PPB#16-RET' : 5},
+      itemstotal: 9000,
+      vat: 800,
+      shippingtotal: 200,
+      grandTotal: 9000 + 800 + 200,
+      reference: 'testref123',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(300)
+  },10000)
+  test('create payment of 20000', async () => {
+    
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 20000,
+      reference: 'testref12',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'www.testlink12.com',
+    });
+  })
+  test('check values', async () => {
+    const testref1data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref1')
+    const testref12data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref12')
+    const testref123data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref123')
+
+    expect(testref1data.paid).toEqual(true)
+    expect(testref12data.paid).toEqual(true)
+    expect(testref123data.paid).toEqual(false)
+  })
+  test('pay overpayment 20000', async () => {
+
+
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 20000,
+      reference: 'testref123',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'www.testlink123.com',
+    });
+    const testref123data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref123')
+
+    expect(testref123data.paid).toEqual(true)
+  })
+  test('voidpayment', async () => {
+    const userId = await cloudfirestore.readSelectedDataFromCollection('Users',userTestId)
+
+    await cloudfirestore.voidPayment({
+      orderReference: 'testref123',
+      proofOfPaymentLink: 'www.testlink123.com',
+      userId: userTestId,
+    })
+  },100000)
+  test('check values 2', async () => {
+    // delete payments in user
+    const userdata = await cloudfirestore.readSelectedDataFromCollection('Users',userTestId)
+    const userPayments = userdata.payments
+    const userPaymentFound = userPayments.find((payment) => payment.proofOfPaymentLink === 'www.testlink123.com')
+
+    expect(userPaymentFound).toEqual(undefined)
+
+    // delete proof of payment link in order
+    const order = await cloudfirestore.readSelectedDataFromCollection('Orders','testref123')
+    expect(order.proofOfPaymentLink).toEqual([])
+
+    // update payment object in payment to declines
+     const allPaymentData = await cloudfirestore.readAllDataFromCollection('Payments')
+
+     let found = false
+     allPaymentData.forEach(async (payment) => {
+        if (payment.proofOfPaymentLink === 'www.testlink123.com') {
+          found = true
+          expect(payment.status).toEqual('declined')
+        }
+     })
+
+     expect(found).toEqual(true)
+
+     //update teslink123 tp unpaid
+
+     const testref1data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref1')
+     const testref12data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref12')
+     const testref123data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref123')
+
+      expect(testref1data.paid).toEqual(true)
+      expect(testref12data.paid).toEqual(true)
+      expect(testref123data.paid).toEqual(false)
+ 
+
   })
 })

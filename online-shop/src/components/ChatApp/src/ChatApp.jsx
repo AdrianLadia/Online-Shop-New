@@ -13,13 +13,8 @@ const ChatApp = (props) => {
     db,
     selectedChatOrderId,
     setSelectedChatOrderId,
-    userId,
     userdata,
-    setRefreshUser,
-    refreshUser,
     userstate,
-    allUserData,
-    firestore,
   } = useContext(AppContext);
   const location = useLocation();
   const setChatData = props.setChatData;
@@ -55,19 +50,28 @@ const ChatApp = (props) => {
     if (userdata) {
       try {
         const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
+        console.log('RUNNING A');
+        console.log(userdata)
+        // setSelectedChatOrderId(userdata.uid);
       }
       catch {
         if (userdata.userRole == 'member') {
+          console.log('RUNNING B');
           setSelectedChatOrderId(userdata.uid);
           setIsInquiryMessage(true);
           setBackButtonRedirect('/');
         }
       }
+
+      if (fromHomePage) {
+        setSelectedChatOrderId(userdata.uid);
+      }
+
     }
   }, [userdata]);
+  
 
   useEffect(() => {
-    let unsubscribe
     if (selectedChatOrderId != null) {
       const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
       unsubscribe = onSnapshot(docRef, (doc) => {
@@ -79,10 +83,10 @@ const ChatApp = (props) => {
           console.log('No such document!');
         }
       });
-   
+      
+      return () => unsubscribe();
     }
 
-    return () => unsubscribe();
   }, [selectedChatOrderId]);
 
   return (

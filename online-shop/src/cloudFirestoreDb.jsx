@@ -175,8 +175,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return response;
     } catch (error) {
       // Handle other errors
-      return error.response
-      
+      return error.response;
     }
   }
 
@@ -212,16 +211,15 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async readSelectedDataFromOnlineStore(productId) {
-    try{
-      const jsonData = JSON.stringify({productId:productId});
-      const res = await axios.post(`${this.url}readSelectedDataFromOnlineStore`,jsonData,{
+    try {
+      const jsonData = JSON.stringify({ productId: productId });
+      const res = await axios.post(`${this.url}readSelectedDataFromOnlineStore`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
       return res.data;
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
       throw new Error(error);
     }
@@ -234,7 +232,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const schema = Joi.array().items(schemas.productSchema());
 
       const { error } = schema.validate(toReturn);
-
 
       if (error) {
         alert(error.message);
@@ -360,7 +357,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           'Content-Type': 'application/json',
         },
       });
-  
+
       return response;
     } catch {
       console.log(error);
@@ -546,8 +543,18 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async readSelectedOrder(reference, userId) {
     const jsonData = JSON.stringify({ reference, userId });
-    const res = await axios.post(`${this.url}readSelectedOrder`,jsonData, {
-      headers: {'Content-Type': 'application/json'},
+    const res = await axios.post(`${this.url}readSelectedOrder`, jsonData, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return res.data;
+  }
+
+  async voidPayment(data) {
+    const jsonData = JSON.stringify(data);
+    const res = await axios.post(`${this.url}voidPayment`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     return res.data;
   }
