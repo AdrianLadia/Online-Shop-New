@@ -278,7 +278,9 @@ class dataManipulation {
 
     const customers = [];
     users.map((user) => {
-      customers.push(user.name);
+      if (![null,undefined].includes(user.name)) {
+        customers.push(user.name);
+      }
     });
 
     const schemaCustomers = Joi.array();

@@ -3810,16 +3810,29 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
     await delay(300)
   })
   test('invoke function', async () => {
-    await firestore.updateOrderAsDelivered('testref1234','testlink3')
+    await firestore.updateOrderAsDelivered('testref1234','testlink3',{userId : 'driver',userRole : 'admin'})
     await delay(300)
   })
   test('check if order is updated', async () => {
     const orderData = await firestore.readSelectedDataFromCollection('Orders','testref1234')
+    const ordersMessagesData = await firestore.readSelectedDataFromCollection('ordersMessages','testref1234')
+    const ordersMessages = ordersMessagesData.messages
+    
+    let found = false
+    ordersMessages.forEach((message) => {
+      if (message.image === 'teslink3') {
+        found = true
+      }
+    })
+    expect(found).toEqual(true)
+
+    expect(ordersMessagesData.delivered).toEqual(true)
+    expect(ordersMessagesData.proofOfDeliveryLink).toEqual(['testlink3'])
     expect(orderData.delivered).toEqual(true)
     expect(orderData.proofOfDeliveryLink).toEqual(['testlink3'])
   })
   test('invoke another function', async () => {
-    await firestore.updateOrderAsDelivered('testref1234','testlink4')
+    await firestore.updateOrderAsDelivered('testref1234','testlink4',{userId : 'driver',userRole : 'admin'})
     await delay(300)
   })
   test('check if order is updated 2', async () => {
