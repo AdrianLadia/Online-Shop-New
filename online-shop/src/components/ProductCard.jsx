@@ -87,7 +87,7 @@ const ProductCard = (props) => {
         return stocksAvailable;
       }
       if (props.product.unit != 'Pack') {
-        console.log('stocks available', props.product.stocksAvailable);
+
         return props.product.stocksAvailable;
       }
     }

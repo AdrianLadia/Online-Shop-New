@@ -50,12 +50,11 @@ const ChatApp = (props) => {
     if (userdata) {
       try {
         const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
-        console.log('RUNNING A');
-        console.log(userdata);
+
         // setSelectedChatOrderId(userdata.uid);
       } catch {
         if (userdata.userRole == 'member') {
-          console.log('RUNNING B');
+
           setSelectedChatOrderId(userdata.uid);
           setIsInquiryMessage(true);
           setBackButtonRedirect('/');
@@ -81,13 +80,16 @@ const ChatApp = (props) => {
         if (doc.exists()) {
           const lastMessageUserId = doc.data().messages[doc.data().messages.length - 1].userId;
           if (componentMounted && lastMessageUserId != userdata.uid) {
-            console.log('PLAYING SOUND');
             console.log('docdatamessage', doc.data().messages.length);
             console.log('messagedetails', messageDetails.messages.length);
+            console.log(doc.data().messages)
+            console.log(messageDetails.messages)
             if (doc.data().messages.length > messageDetails.messages.length) {
+              console.log('PLAYING SOUND');
               playSound();
             }
           }
+          console.log('SETTED', doc.data());
           setMessageDetails(doc.data());
           setSelectedChatOrderId(doc.id);
           setComponentMounted(true);

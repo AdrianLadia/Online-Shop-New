@@ -62,8 +62,6 @@ const AdminCreatePaymentTable = () => {
           pendingPayments.push({ link: link, reference: reference, userId: userId, userName: userName, paymentMethod: paymentMethod, amount: amount });
           photoLink.push({ link: link });
         });
-        console.log(pendingPayments);
-        console.log(paymentsData);
         if (pendingPayments.length > paymentsData.length) {
           playSound();
         }

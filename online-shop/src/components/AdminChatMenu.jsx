@@ -58,17 +58,17 @@ const AdminChatMenu = () => {
               latestMessage: latestMessage,
               unreadCount: unreadCount,
             });
-            console.log('PLAY SOUND');
             
           }
         } else {
           console.log('No such document!');
         }
       });
-
+      
       console.log('Chat Length', chats.length)
       console.log('Chat Data Length', chatData.length)
       if (chats.length > chatData.length) {
+        console.log('PLAY SOUND');
         playSound();
       }
 

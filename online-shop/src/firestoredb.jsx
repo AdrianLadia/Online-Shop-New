@@ -604,7 +604,7 @@ class firestoredb extends firestorefunctions {
 
   async updateOrderAsDelivered(orderId,proofOfDeliveryLink,userData){
     try {
-      console.log(userData)
+  
       const userRole = userData.userRole;
       const userId = userData.uid;
       await runTransaction(this.db, async (transaction) => {
@@ -621,9 +621,6 @@ class firestoredb extends firestorefunctions {
         
         const oldProofOfDeliveryLinks = orderData.proofOfDeliveryLink;
         const newProofOfDeliveryLinks = [...oldProofOfDeliveryLinks, proofOfDeliveryLink];
-
-        console.log(newProofOfDeliveryLinks)
-        console.log(newMessages)
 
         transaction.update(orderRef, { proofOfDeliveryLink: newProofOfDeliveryLinks });
         transaction.update(orderRef, { delivered: true });
