@@ -609,11 +609,14 @@ class firestoredb extends firestorefunctions {
         const orderRefDoc = await transaction.get(orderRef);
         const orderData = orderRefDoc.data();
         
+        const ordersMessagesRef = doc(this.db, 'ordersMessages/', orderId);
+        
         const oldProofOfDeliveryLinks = orderData.proofOfDeliveryLink;
         const newProofOfDeliveryLinks = [...oldProofOfDeliveryLinks, proofOfDeliveryLink];
 
         transaction.update(orderRef, { proofOfDeliveryLink: newProofOfDeliveryLinks });
         transaction.update(orderRef, { delivered: true });
+        transaction.update(ordersMessagesRef, { delivered: true });
       });
     } catch (error) {
       throw new Error(error);

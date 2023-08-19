@@ -617,6 +617,7 @@ exports.transactionPlaceOrder = functions
               isInquiry: false,
               ownerReadAll: true,
               adminReadAll: true,
+              delivered: false
             });
             orderMessagesRef.collection('messages');
 

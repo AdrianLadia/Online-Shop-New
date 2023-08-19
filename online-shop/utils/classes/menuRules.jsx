@@ -20,7 +20,6 @@ class menuRules {
             driver : 'delivery',
         }
         this.userRole = userRole;
-        console.log(userRole);
     }
 
     checkIfUserAuthorized(menuName) {

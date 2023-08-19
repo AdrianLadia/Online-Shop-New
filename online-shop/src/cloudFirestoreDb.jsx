@@ -96,6 +96,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           isInquiry: true,
           adminReadAll: true,
           ownerReadAll: true,
+          delivered: false
         },
         userId,
         'ordersMessages'

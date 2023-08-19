@@ -6,6 +6,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../AppContext';
 import { useLocation } from 'react-router-dom';
 import LoginButton from '../../LoginButton';
+import NotificationSound from '../../../sounds/chat.mp3'
 
 
 const ChatApp = (props) => {
@@ -23,6 +24,13 @@ const ChatApp = (props) => {
   const [isInquiryMessage, setIsInquiryMessage] = useState(false);
   const [backButtonRedirect, setBackButtonRedirect] = useState(null);
   const [fromHomePage, setFromHomePage] = useState(false);
+  const [componentMounted, setComponentMounted] = useState(false);
+  
+  const playSound = () => {
+    const audioEl = document.getElementsByClassName("audio-element")[0];
+    audioEl.play();
+  }
+
   let unsubscribe = null;
   // There are 2 states of mounting this component one is using navigateTo and
   // other is using the component ChatApp directly
@@ -76,9 +84,18 @@ const ChatApp = (props) => {
       const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
       unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
-          
+          const lastMessageUserId = doc.data().messages[doc.data().messages.length - 1].userId;
+          if (componentMounted && lastMessageUserId != userdata.uid) {
+            console.log('PLAYING SOUND');
+            console.log('docdatamessage',doc.data().messages.length)
+            console.log('messagedetails',messageDetails.messages.length)
+            if (doc.data().messages.length > messageDetails.messages.length) {
+              playSound();
+            }
+          }
           setMessageDetails(doc.data());
           setSelectedChatOrderId(doc.id);
+          setComponentMounted(true);
         } else {
           console.log('No such document!');
         }
@@ -121,6 +138,9 @@ const ChatApp = (props) => {
           </div>
         </div>
       )}
+      <audio className="audio-element">
+        <source src={NotificationSound}></source>
+      </audio>
     </>
   );
 };
