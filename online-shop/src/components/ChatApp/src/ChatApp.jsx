@@ -76,20 +76,17 @@ const ChatApp = (props) => {
   useEffect(() => {
     if (selectedChatOrderId != null) {
       const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
+      let data = null
       unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
+          data = doc.data();
           const lastMessageUserId = doc.data().messages[doc.data().messages.length - 1].userId;
           if (componentMounted && lastMessageUserId != userdata.uid) {
-            console.log('docdatamessage', doc.data().messages.length);
-            console.log('messagedetails', messageDetails.messages.length);
-            console.log(doc.data().messages)
-            console.log(messageDetails.messages)
             if (doc.data().messages.length > messageDetails.messages.length) {
-              console.log('PLAYING SOUND');
+          
               playSound();
             }
           }
-          console.log('SETTED', doc.data());
           setMessageDetails(doc.data());
           setSelectedChatOrderId(doc.id);
           setComponentMounted(true);
@@ -97,6 +94,9 @@ const ChatApp = (props) => {
           console.log('No such document!');
         }
       });
+
+      console.log(data)
+      
 
       return () => unsubscribe();
     }

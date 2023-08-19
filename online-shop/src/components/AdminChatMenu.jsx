@@ -65,10 +65,8 @@ const AdminChatMenu = () => {
         }
       });
       
-      console.log('Chat Length', chats.length)
-      console.log('Chat Data Length', chatData.length)
       if (chats.length > chatData.length) {
-        console.log('PLAY SOUND');
+
         playSound();
       }
 
