@@ -31,12 +31,6 @@ function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  useEffect(() => {
-    firestore.readAllPaymentProviders().then((providers) => {
-      setPaymentMethods(providers);
-    });
-  }, []);
-
   let bankName;
   let accountName;
   let accountNumber;
@@ -57,6 +51,8 @@ function delay(ms) {
     bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
   }
+
+  useEffect(() => {console.log(paymentMethodSelected)}, [paymentMethodSelected]);
 
   async function onUpload(url) {
     const timestamp = Timestamp.fromDate(date);
@@ -96,7 +92,7 @@ function delay(ms) {
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
 
-            {bankName == null && qrLink != null ? (
+            {qrLink != null ? (
               <div className='mb-8'>
               <p>Please scan QR code or click the payment link to send us a payment of : <strong>₱ {grandTotal}</strong></p>
               <img src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55'></img>
