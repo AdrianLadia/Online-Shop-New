@@ -684,7 +684,7 @@ const HomePage = ({ isAffiliateLink }) => {
           {/* Products & CTA*/}
           <div className="w-11/12 md:w-4/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-b-3xl md:rounded-bl-none md:rounded-r-3xl flex flex-col justify-center items-center border border-green2 p-2">
             <div className="h-full w-full flex flex-col justify-center xs:justify-between gap-2 items-center ">
-              <div className="w-10/12 h-2/10 text-2xl md:text-4xl items-center flex text-white font-bold ">
+              <div className="w-10/12 h-2/10 text-2xl md:text-4xl items-center flex text-color10b font-bold ">
                 Products We Offer:
               </div>
               <div className="w-11/12 h-6/10 flex flex-col justify-between items-center gap-4 ">
@@ -724,7 +724,7 @@ const HomePage = ({ isAffiliateLink }) => {
           className=" w-screen h-screen bg-cover bg-center "
           //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
         >
-          <div className="h-1/10 md:p-10 w-full" />
+          <div className="h-1/10 md:p-10 w-full " />
           <div
             ref={p4}
             className="flex flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
@@ -734,16 +734,16 @@ const HomePage = ({ isAffiliateLink }) => {
                 return (
                   <div
                     key={index}
-                    className="h-1/2 md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative "
+                    className="h-1/2  md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative "
                   >
                     <button
-                      className="absolute top-30 left-9 md:left-10 lg:left-12 xl:left-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300 "
+                      className="absolute mt-36 top-30 left-9 md:left-10 lg:left-12 xl:left-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300 "
                       onClick={previousSlide}
                     >
                       <BsArrowLeftShort className="text-lg md:text-2xl text-white" />
                     </button>
                     <button
-                      className="absolute top-30 right-9 md:right-10 lg:right-12 xl:right-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300"
+                      className="absolute mt-36 top-30 right-9 md:right-10 lg:right-12 xl:right-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300"
                       onClick={nextSlide}
                     >
                       <BsArrowRightShort className="text-lg md:text-2xl text-white" />
@@ -753,7 +753,7 @@ const HomePage = ({ isAffiliateLink }) => {
                       // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.70),rgba(0,0,0,0.70)),' + "url('./vids/bg.jpg')"}}
                     >
                       {/* Steps */}
-                      <div className="h-9/10 md:h-3/10 w-full flex justify-start items-center p-5 gap-2 ">
+                      <div className="h-9/10 md:h-3/10 w-full flex justify-start items-center p-5 gap-2  ">
                         <div className="h-full w-full flex flex-col gap-2 overflow-y-auto ">
                           <h1 className="sm:text-lg md:text-xl tracking-wide text-white font-bold ">
                             <p className=" decoration-color60">
@@ -768,7 +768,7 @@ const HomePage = ({ isAffiliateLink }) => {
                         </div>
                       </div>
                       <img
-                        className="hidden md:block  h-6/10 rounded-3xl border aspect-square border-color60 mb-3 text-white"
+                        className="md:block  h-6/10 rounded-3xl border aspect-square border-color60 mb-3 text-white"
                         alt="Affiliate Image"
                         src={photoUrl}
                       />
@@ -812,7 +812,7 @@ const HomePage = ({ isAffiliateLink }) => {
                 // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
               >
                 <h1
-                  className="w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-white p-1 font-bold 
+                  className="w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-color10b p-1 font-bold 
                                tracking-tight md:tracking-wide "
                   //  underline underline-offset-8 decoration-color60
                 >
