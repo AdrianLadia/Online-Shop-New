@@ -66,11 +66,12 @@ const AdminDelivery = () => {
       alert('Please upload a delivery photo proof');
     } else {
       try {
-        await firestore.updateOrderAsDelivered(selectedOrderReference, imageLink);
+        await firestore.updateOrderAsDelivered(selectedOrderReference, imageLink,userdata);
         // const newReference = references.filter((reference) => reference[1] !== selectedOrderReference)
         setImageLink(null);
         alert('Uploaded Proof of Delivery');
       } catch (error) {
+        console.log(error);
         alert('Failed to upload image');
       }
     }

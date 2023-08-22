@@ -6,16 +6,10 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import AppContext from '../../../AppContext';
 import { useLocation } from 'react-router-dom';
 import LoginButton from '../../LoginButton';
-
+import NotificationSound from '../../../sounds/chat.mp3';
 
 const ChatApp = (props) => {
-  const {
-    db,
-    selectedChatOrderId,
-    setSelectedChatOrderId,
-    userdata,
-    userstate,
-  } = useContext(AppContext);
+  const { db, selectedChatOrderId, setSelectedChatOrderId, userdata, userstate } = useContext(AppContext);
   const location = useLocation();
   const setChatData = props.setChatData;
   const chatData = props.chatData;
@@ -23,19 +17,26 @@ const ChatApp = (props) => {
   const [isInquiryMessage, setIsInquiryMessage] = useState(false);
   const [backButtonRedirect, setBackButtonRedirect] = useState(null);
   const [fromHomePage, setFromHomePage] = useState(false);
+  const [componentMounted, setComponentMounted] = useState(false);
+  const [orderClosed, setOrderClosed] = useState(false);
+
+  const playSound = () => {
+    const audioEl = document.getElementsByClassName('audio-element')[0];
+    audioEl.play();
+  };
+
   let unsubscribe = null;
   // There are 2 states of mounting this component one is using navigateTo and
   // other is using the component ChatApp directly
   useEffect(() => {
     try {
       const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
-  
+
       if (fromHomePage) {
         setIsInquiryMessage(isInquiry);
         setBackButtonRedirect(backButtonRedirect);
         setFromHomePage(true);
       } else {
-
         setSelectedChatOrderId(orderReference);
         setIsInquiryMessage(isInquiry);
         setBackButtonRedirect(backButtonRedirect);
@@ -46,17 +47,14 @@ const ChatApp = (props) => {
   }, []);
 
   useEffect(() => {
-
     if (userdata) {
       try {
         const { orderReference, isInquiry, backButtonRedirect, fromHomePage } = location.state;
-        console.log('RUNNING A');
-        console.log(userdata)
+
         // setSelectedChatOrderId(userdata.uid);
-      }
-      catch {
+      } catch {
         if (userdata.userRole == 'member') {
-          console.log('RUNNING B');
+
           setSelectedChatOrderId(userdata.uid);
           setIsInquiryMessage(true);
           setBackButtonRedirect('/');
@@ -66,27 +64,42 @@ const ChatApp = (props) => {
       if (fromHomePage) {
         setSelectedChatOrderId(userdata.uid);
       }
-
     }
   }, [userdata]);
-  
+
+  useEffect(() => {
+    if (messageDetails.delivered) {
+      setOrderClosed(true);
+    }
+  }, [messageDetails]);
 
   useEffect(() => {
     if (selectedChatOrderId != null) {
       const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
+      let data = null
       unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
+          data = doc.data();
+          const lastMessageUserId = doc.data().messages[doc.data().messages.length - 1].userId;
+          if (componentMounted && lastMessageUserId != userdata.uid) {
+            if (doc.data().messages.length > messageDetails.messages.length) {
           
+              playSound();
+            }
+          }
           setMessageDetails(doc.data());
           setSelectedChatOrderId(doc.id);
+          setComponentMounted(true);
         } else {
           console.log('No such document!');
         }
       });
+
+      console.log(data)
       
+
       return () => unsubscribe();
     }
-
   }, [selectedChatOrderId]);
 
   return (
@@ -99,12 +112,11 @@ const ChatApp = (props) => {
               messages={messageDetails}
               isInquiryMessage={isInquiryMessage}
               backButtonRedirect={backButtonRedirect}
-      
             />
             {messageDetails != {} ? (
               <DisplayMessages chatData={chatData} setChatData={setChatData} messageDetails={messageDetails} />
             ) : null}
-            <InputField />
+            <InputField orderClosed={orderClosed}/>
           </div>
         </div>
       ) : // IF USER IS LOGGED OUT
@@ -117,10 +129,16 @@ const ChatApp = (props) => {
             <p className="text-xl">We are always here to help you. Log in now to start the conversation.</p>
           </div>
           <div className="mt-10">
-            <LoginButton isAffiliateLink={false} className="py-2 px-4 rounded bg-white text-blue-500 hover:bg-blue-500 hover:text-white transition-colors duration-200" />
+            <LoginButton
+              isAffiliateLink={false}
+              className="py-2 px-4 rounded bg-white text-blue-500 hover:bg-blue-500 hover:text-white transition-colors duration-200"
+            />
           </div>
         </div>
       )}
+      <audio className="audio-element">
+        <source src={NotificationSound}></source>
+      </audio>
     </>
   );
 };

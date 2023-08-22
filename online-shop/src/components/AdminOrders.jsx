@@ -21,6 +21,7 @@ import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import { collection, where, query, onSnapshot } from 'firebase/firestore';
 import menuRules from '../../utils/classes/menuRules';
+import NotificationSound from '../sounds/delivery.mp3';
 
 const AdminOrders = (props) => {
   const { userdata, cloudfirestore, db } = React.useContext(AppContext);
@@ -47,6 +48,11 @@ const AdminOrders = (props) => {
 
   const users = props.users;
 
+  const playSound = () => {
+    const audioEl = document.getElementsByClassName('audio-element')[0];
+    audioEl.play();
+  };
+
   useEffect(() => {
     dummy.current.scrollIntoView({ behavior: 'smooth' });
   }, []);
@@ -72,12 +78,17 @@ const AdminOrders = (props) => {
 
     const q = query(docRef, where('paid', '==', paid), where('delivered', '==', delivered));
     const unsubscribe2 = onSnapshot(q, (querySnapshot) => {
-      const orders = [];
+      const ordersData = [];
       querySnapshot.forEach((doc) => {
-        orders.push(doc.data());
+        ordersData.push(doc.data());
       });
 
-      setOrders(orders);
+      if (ordersData.length > orders.length) {
+        playSound();
+      }
+     
+
+      setOrders(ordersData);
     });
 
     return () => unsubscribe2();
@@ -277,6 +288,9 @@ const AdminOrders = (props) => {
       ) : (
         <>UNAUTHORIZED</>
       )}
+       <audio className="audio-element">
+        <source src={NotificationSound}></source>
+      </audio>
     </>
   );
 };

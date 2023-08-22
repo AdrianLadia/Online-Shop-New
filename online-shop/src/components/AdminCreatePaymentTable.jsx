@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import AppContext from '../AppContext';
 import AdminCreatePaymentTableRow from './AdminCreatePaymentTableRow';
 import { collection,where,query,onSnapshot } from 'firebase/firestore';
+import NotificationSound from '../sounds/payment.mp3';
 
 const AdminCreatePaymentTable = () => {
   const { firestore, selectedChatOrderId, setSelectedChatOrderId, cloudfirestore,db } = useContext(AppContext);
@@ -11,6 +12,11 @@ const AdminCreatePaymentTable = () => {
   const [status, setStatus] = useState('');
   const [link, setLink] = useState([]);
   const [amount, setAmount] = useState(null);
+
+  const playSound = () => {
+    const audioEl = document.getElementsByClassName('audio-element')[0];
+    audioEl.play();
+  };
 
   // async function readPayments() {
 
@@ -56,6 +62,9 @@ const AdminCreatePaymentTable = () => {
           pendingPayments.push({ link: link, reference: reference, userId: userId, userName: userName, paymentMethod: paymentMethod, amount: amount });
           photoLink.push({ link: link });
         });
+        if (pendingPayments.length > paymentsData.length) {
+          playSound();
+        }
         setPaymentsData(pendingPayments);
         setLink([photoLink]);
       });
@@ -110,6 +119,9 @@ const AdminCreatePaymentTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <audio className="audio-element">
+        <source src={NotificationSound}></source>
+      </audio>
     </div>
   );
 };

@@ -602,18 +602,29 @@ class firestoredb extends firestorefunctions {
     await this.updateDocumentFromCollection('ordersMessages', userId, { ownerName: name });
   }
 
-  async updateOrderAsDelivered(orderId,proofOfDeliveryLink){
+  async updateOrderAsDelivered(orderId,proofOfDeliveryLink,userData){
     try {
+  
+      const userRole = userData.userRole;
+      const userId = userData.uid;
       await runTransaction(this.db, async (transaction) => {
         const orderRef = doc(this.db, 'Orders/', orderId);
         const orderRefDoc = await transaction.get(orderRef);
         const orderData = orderRefDoc.data();
+
+        
+        const ordersMessagesRef = doc(this.db, 'ordersMessages/', orderId);
+        const orderMessagesRefDoc = await transaction.get(ordersMessagesRef);
+        const orderMesssagesData = orderMessagesRefDoc.data();
+        const oldMessages = orderMesssagesData.messages
+        const newMessages = [...oldMessages, {dateTime: new Date(), image: proofOfDeliveryLink, message: '', read: false, userId: userId, userRole: userRole}]
         
         const oldProofOfDeliveryLinks = orderData.proofOfDeliveryLink;
         const newProofOfDeliveryLinks = [...oldProofOfDeliveryLinks, proofOfDeliveryLink];
 
         transaction.update(orderRef, { proofOfDeliveryLink: newProofOfDeliveryLinks });
         transaction.update(orderRef, { delivered: true });
+        transaction.update(ordersMessagesRef, { delivered: true , messages: newMessages});
       });
     } catch (error) {
       throw new Error(error);

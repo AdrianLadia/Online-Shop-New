@@ -28,7 +28,6 @@ const express = require('express');
 const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
-const { onSnapshot, runTransaction } = require('firebase/firestore');
 
 admin.initializeApp();
 
@@ -618,6 +617,7 @@ exports.transactionPlaceOrder = functions
               isInquiry: false,
               ownerReadAll: true,
               adminReadAll: true,
+              delivered: false
             });
             orderMessagesRef.collection('messages');
 
@@ -1537,8 +1537,10 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
       } else {
         res.status(401);
       }
-    } catch (e) {}
-    console.log(e);
+    } catch (e) {
+      console.log(e);
+    }
+    
     res.status(200).send(data);
   });
 });
@@ -1781,10 +1783,5 @@ exports.voidPayment = functions.region('asia-southeast1').runWith({ memory: '2GB
       console.log(error)
       res.status(400).send('Error voiding payment');
     }
-
-  
-
-
-
   });
 });
