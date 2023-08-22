@@ -3824,7 +3824,7 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
   })
 })
 
-describe.only('Void payment' , () => {
+describe('Void payment' , () => {
   test('setup test', async () => {
     await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{orders : []})
     await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{payments : []})
@@ -3988,7 +3988,7 @@ describe.only('Void payment' , () => {
      allPaymentData.forEach(async (payment) => {
         if (payment.proofOfPaymentLink === 'www.testlink123.com') {
           found = true
-          expect(payment.status).toEqual('declined')
+          expect(payment.status).toEqual('voided')
         }
      })
 
