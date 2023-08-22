@@ -14,6 +14,8 @@ import AccountMenu from './components/AccountMenu';
 import onLogoutClick from '../utils/classes/onLogoutClick';
 import { Tooltip, Typography } from '@mui/material';
 import { Helmet } from 'react-helmet';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
@@ -48,6 +50,88 @@ const HomePage = ({ isAffiliateLink }) => {
   const { ref: p3, inView: p3inView } = useInView();
   const { ref: p4, inView: p4inView } = useInView();
   const { ref: p5, inView: p5inView } = useInView();
+  const imageLinks = [
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F219188380_339680914479015_8955674208447247687_n.jpg?alt=media&token=e85ed75b-9834-4034-b45b-26d7374dfa46',
+      title: 'Meal Boxes',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F221621321_342180770895696_1602830668534641305_n.jpg?alt=media&token=bdbd5aec-30d7-4d41-a80e-9c6d1ebeddb0',
+      title: 'Preparing Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F228038692_351362533310853_8813176931431024100_n.jpg?alt=media&token=6af11de3-dfb9-4dce-adb9-37538ad610cb',
+      title: 'On the way to customer',
+    },
+    // {
+    //   img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F222141374_346206067159833_8448281573669809504_n.jpg?alt=media&token=01acc82d-0deb-40e2-9b0c-ce5afc152c7d',
+    //   title: 'Preparing Orders',
+    // },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F217634046_336332124813894_7044115875027516288_n.jpg?alt=media&token=7faa3834-5385-4d5d-a470-df9bd6c2b4ef',
+      title: 'Bulk Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F230694446_351362509977522_7348059010310207683_n.jpg?alt=media&token=370b0549-5b5c-421b-bcf3-2e138bca48d9',
+      title: 'On the way to customer',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F231067856_350219846758455_6976017347179805633_n.jpg?alt=media&token=22a1b914-9817-4bef-83f5-1a9608900ae0',
+      title: 'Preparing Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F234171857_352867233160383_8265703320209317540_n.jpg?alt=media&token=c112f337-173e-4eb0-830f-645ee6919d22',
+      title: 'On the way to customer',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FPack2.jpg?alt=media&token=3fa57a9e-dcdb-405b-8409-ae0a85d22a85',
+      title: 'Preparing Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2F234587905_352867103160396_4680551027091678700_n.jpg?alt=media&token=ec2ee6f6-7ad2-4fcf-962d-672975ef5da6',
+      title: 'On the way to customer',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FPack1.jpg?alt=media&token=ec918c4b-cf0d-4641-bcbf-79c4b65357d3',
+      title: 'Preparing Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FDeliver1.jpg?alt=media&token=9bec149c-8730-412e-b480-33c973494c06',
+      title: 'On the way to customer',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FPack3.jpg?alt=media&token=ba8f76cb-55cd-4b95-a9ef-979d7dc44537',
+      title: 'Preparing Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FDeliver2.jpg?alt=media&token=3a2e497a-56fb-4cf3-9524-cc8a73283a2a',
+      title: 'On the way to customer',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FPack4.jpg?alt=media&token=82eadf91-7f58-4fd2-b413-0767fdee9430',
+      title: 'Preparing Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FDeliver3.jpg?alt=media&token=000a12f1-1420-41ed-9804-1e4c02e8167b',
+      title: 'On the way to customer',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FPack5.jpg?alt=media&token=307a1810-8fdb-4e5d-a04b-19e1e2befa95',
+      title: 'Preparing Orders',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FDeliver4.jpg?alt=media&token=51dc0b36-79fc-4313-a8af-6f1923c994aa',
+      title: 'On the way to customer',
+    },
+    {
+      img: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDelivery%20Photos%2FPack6.jpg?alt=media&token=d717019f-a3a5-4ffb-bd79-bef8260cf22a',
+      title: 'Preparing Orders',
+    },
+    // {
+    //   img: ,
+    //   title: ,
+    // },
+  ];
   const tutorial = [
     {
       step: [
@@ -96,22 +180,68 @@ const HomePage = ({ isAffiliateLink }) => {
   const [photoUrl, setPhotoUrl] = useState('');
 
   function handleCategory(item) {
-    if (item === 'Paper Bags') {
+    if (item === 'Aluminum Tray') {
       setSelectedCategoryImage('./vids/PPB.png');
       setSelectedCategory(item);
-    } else if (item === 'Food Wrappers') {
-      setSelectedCategoryImage('./vids/AF.JPG');
+    }
+    
+    if (item === 'Bowls') {
+      setSelectedCategoryImage('./vids/PPB.png');
       setSelectedCategory(item);
-    } else if (item === 'Roll Bags') {
+    }
+
+    if (item === 'Cake Box') {
+      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategory(item);
+    }
+
+    if (item === 'Food Wrappers') {
+      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategory(item);
+    }
+
+    if (item === 'Meal Box') {
+      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategory(item);
+    }
+
+    if (item === 'Paper Bag') {
+      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategory(item);
+    }  
+    if (item === 'Plastic Containers') {
       setSelectedCategoryImage('./vids/RB.png');
       setSelectedCategory(item);
-    } else if (item === 'Meal Boxes') {
+    } 
+    if (item === 'Plates') {
       setSelectedCategoryImage('./vids/MB.png');
       setSelectedCategory(item);
-    } else if (item === 'Sando Bags') {
+    } 
+    if (item === 'Roll Bag') {
       setSelectedCategoryImage('./vids/SB.png');
       setSelectedCategory(item);
-    } else if (item === 'Trash Bags') {
+    }
+    if (item === 'Sando Bag') {
+      setSelectedCategoryImage('./vids/SB.png');
+      setSelectedCategory(item);
+    }
+    if (item === 'Sauce Cups') {
+      setSelectedCategoryImage('./vids/SB.png');
+      setSelectedCategory(item);
+    }
+    if (item === 'Sushi Tray') {
+      setSelectedCategoryImage('./vids/SB.png');
+      setSelectedCategory(item);
+    }
+    if (item === 'Tissue Paper') {
+      setSelectedCategoryImage('./vids/TB.png');
+      setSelectedCategory(item);
+    } 
+    if (item === 'Trash Bag') {
+      setSelectedCategoryImage('./vids/TB.png');
+      setSelectedCategory(item);
+    }
+    if (item === 'Utensils') {
       setSelectedCategoryImage('./vids/TB.png');
       setSelectedCategory(item);
     }
@@ -698,10 +828,10 @@ const HomePage = ({ isAffiliateLink }) => {
             <div className="h-1/5 text-2xl md:text-5xl w-10/12 sm:w-7/12 flex items-center font-bold text-white">
               {selectedCategory ? selectedCategory : 'Paper Bags'}
             </div>
-            <img
+            {/* <img
               className="w-10/12 sm:w-8/12 h-3/5 rounded-xl xs:rounded-3xl ease-in-out border border-green2 "
               src={selectedCategoryImage}
-            />
+            /> */}
           </div>
           {/* Products & CTA*/}
           <div className="w-11/12 md:w-4/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-b-3xl md:rounded-bl-none md:rounded-r-3xl flex flex-col justify-center items-center border border-green2 p-2">
@@ -713,6 +843,9 @@ const HomePage = ({ isAffiliateLink }) => {
                 <div className="w-full h-9/10 grid grid-cols-3 sm:grid-cols-2 p-3 justify-start items-start gap-2 overflow-y-auto">
                   {categories &&
                     categories.map((s, index) => {
+                      if (s == 'Favorites') {
+                        return null;
+                      }
                       return (
                         <button key={index} onClick={() => handleCategory(s)} className={' ' + productButtonStyle(s)}>
                           <p className="overflow-x-auto">{s}</p>

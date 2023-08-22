@@ -31,6 +31,8 @@ import ProfileUpdaterModal from './components/ProfileUpdaterModal';
 import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
+import dataManipulation from '../utils/dataManipulation';
+
 
 const devEnvironment = true;
 
@@ -62,6 +64,7 @@ function App() {
   const db = firestore.db;
   const cloudfirestore = new cloudFirestoreDb();
   const businesscalculation = new businessCalculations();
+  const datamanipulation = new dataManipulation();
 
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
@@ -108,7 +111,14 @@ function App() {
   const [categoryProductsData, setCategoryProductsData] = useState([]);
   const [userOrderReference, setUserOrderReference] = useState(null);
   const [favoriteProductData, setFavoriteProductData] = useState([]);
+  const hiddenCategories = [];
 
+  useEffect(() => {
+    firestore.readAllCategories().then((categories) => {
+      const categoryList = datamanipulation.getCategoryList(categories, hiddenCategories);
+      setCategories(categoryList);
+    });
+  }, []);
 
   useEffect(() => {
     cloudfirestore.getIpAddress().then((ipAddress) => {
