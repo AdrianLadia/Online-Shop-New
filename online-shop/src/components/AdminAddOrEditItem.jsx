@@ -42,7 +42,7 @@ const style = {
 
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
-  const { firestore, storage, categories: initialCategories } = React.useContext(AppContext);
+  const { firestore, storage, categories: initialCategories, userdata } = React.useContext(AppContext);
   const [categories, setCategories] = React.useState(initialCategories);
 
   useEffect(() => {
@@ -115,7 +115,7 @@ const AdminAddOrEditItem = (props) => {
   const [costPrice, setCostPrice] = useState(0);
   const [freightCost, setFreightCost] = useState(0);
   const [timeoutId, setTimeoutId] = useState(null);
-  const rules = new menuRules();
+  const rules = new menuRules(userdata.userRole);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
@@ -364,10 +364,10 @@ const AdminAddOrEditItem = (props) => {
           material: material,
           size: size,
           stocksAvailable: 0,
-          stocksOnHold: null,
+          stocksOnHold: [],
           averageSalesPerDay: 0,
           parentProductID: itemID,
-          stocksOnHoldCompleted: null,
+          stocksOnHoldCompleted: [],
           forOnlineStore: true,
           isCustomized: isCustomized,
           stocksIns: null,
