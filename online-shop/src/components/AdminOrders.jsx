@@ -24,7 +24,7 @@ import menuRules from '../../utils/classes/menuRules';
 import NotificationSound from '../sounds/delivery.mp3';
 
 const AdminOrders = (props) => {
-  const { userdata, cloudfirestore, db } = React.useContext(AppContext);
+  const { userdata, cloudfirestore, db, firestore } = React.useContext(AppContext);
 
   const styles = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
@@ -40,13 +40,26 @@ const AdminOrders = (props) => {
   const [selectedOrderReference, setSelectedOrderReference] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [openModal, setOpenModal] = React.useState(false);
+  const [allUsers, setAllUsers] = React.useState([]);
   const handleOpenModal = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
   const dummy = useRef(null);
   const rules = new menuRules(userdata.userRole);
   let unsubscribe = null;
 
-  const users = props.users;
+  const users = props.users 
+
+  useEffect(() => {
+    if (users) {
+      setAllUsers(users);
+    }
+    else {
+      firestore.readAllUsers().then((users) => {
+        setAllUsers(users);
+      });
+    }
+    console.log('users', users);
+  }, [users]);
 
   const playSound = () => {
     const audioEl = document.getElementsByClassName('audio-element')[0];
@@ -62,12 +75,22 @@ const AdminOrders = (props) => {
   };
 
   useEffect(() => {
-    const customers = [];
-    users.map((user) => {
-      customers.push(user.name);
-    });
-    setAllUserNames(customers);
+    if (users != null) {
+      const customers = [];
+      users.map((user) => {
+        customers.push(user.name);
+      });
+      setAllUserNames(customers);
+    }
   }, [users]);
+
+  useEffect(() => {
+    const filter = orders.filter((order) => {
+      return order.userName === selectedName;
+    });
+    console.log(filter);
+    setOrders(filter);
+  }, [selectedName]);
 
   useEffect(() => {
     if (unsubscribe !== null) {
@@ -86,7 +109,6 @@ const AdminOrders = (props) => {
       if (ordersData.length > orders.length) {
         playSound();
       }
-     
 
       setOrders(ordersData);
     });
@@ -112,6 +134,10 @@ const AdminOrders = (props) => {
     await cloudfirestore.deleteOldOrders();
   }
 
+  function onReferenceClearClick() {
+    setReferenceNumber('');
+  }
+
   return (
     <>
       {rules.checkIfUserAuthorized('orders') ? (
@@ -125,7 +151,7 @@ const AdminOrders = (props) => {
 
             <Divider sx={{ border: 1 }} className="w-11/12 my-5 border-black" />
 
-            <div className="flex flex-col gap-2 justify-evenly items-center mt-20 w-full lg:w-10/12 lg:flex-row h-28 lg:mt-2">
+            {/* <div className="flex flex-col gap-2 justify-evenly items-center mt-20 w-full lg:w-10/12 lg:flex-row h-28 lg:mt-2">
               <div className="flex flex-row justify-center h-14 lg:w-1/4">
                 <div className="flex w-44 sm:w-56">
                   <TextField
@@ -134,13 +160,14 @@ const AdminOrders = (props) => {
                     variant="outlined"
                     InputLabelProps={labelStyle}
                     sx={styles}
+                    value={referenceNumber}
                     onChange={(e) => {
                       setReferenceNumber(e.target.value);
                     }}
                   />
                 </div>
                 <div className="ml-1 flex">
-                  <button className="p-3 rounded-lg text-white bg-red1 hover:bg-red-400 border-2 border-red-600">
+                  <button onClick={onReferenceClearClick} className="p-3 rounded-lg text-white bg-red1 hover:bg-red-400 border-2 border-red-600">
                     Clear
                   </button>
                 </div>
@@ -181,7 +208,7 @@ const AdminOrders = (props) => {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex flex-row mt-20 xs:mt-28 lg:mt-1 w-11/12 md:w-5/12 justify-evenly">
               <div className="">
@@ -288,7 +315,7 @@ const AdminOrders = (props) => {
       ) : (
         <>UNAUTHORIZED</>
       )}
-       <audio className="audio-element">
+      <audio className="audio-element">
         <source src={NotificationSound}></source>
       </audio>
     </>

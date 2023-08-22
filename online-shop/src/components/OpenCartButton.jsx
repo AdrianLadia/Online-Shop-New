@@ -9,6 +9,7 @@ import AppContext from '../AppContext';
 import CircularProgress from '@mui/material/CircularProgress';
 import businessCalculations from '../../utils/businessCalculations';
 import dataManipulation from '../../utils/dataManipulation';
+import AppConfig from '../AppConfig';
 
 const OpenCartButton = (props) => {
   const businesscalculations = new businessCalculations();
@@ -24,7 +25,21 @@ const OpenCartButton = (props) => {
     useContext(AppContext);
 
   function onAddToCartClick(product) {
-    const newCart = businesscalculations.addToCart(cart, product);
+    let stocksAvailable = 1000000000000
+    products.forEach((item) => {
+      if (item.itemId == product ) {
+        if (item.unit == 'Pack') {
+          stocksAvailable = item.stocksAvailable - new AppConfig().getRetailSafetyStock()
+        }
+        else {
+          
+          const safetyStock = businesscalculations.getSafetyStock(item.averageSalesPerDay)
+          stocksAvailable = item.stocksAvailable - safetyStock
+        }
+      }
+    });
+    console.log(stocksAvailable)
+    const newCart = businesscalculations.addToCart(cart, product, stocksAvailable);
     setUpdateCartInfo(!updateCartInfo);
     setCart(newCart);
   }

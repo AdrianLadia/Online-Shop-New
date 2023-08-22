@@ -29,7 +29,8 @@ import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import Image from './ImageComponents/Image';
 import AppConfig from '../AppConfig';
 import firebaseConfig from '../firebase_config';
-
+import OrdersCalendar from './OrdersCalendar';
+import allowedDeliveryDates from '../../utils/classes/allowedDeliveryDates';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -54,7 +55,6 @@ const CheckoutPage = () => {
     setArea,
     referenceNumber,
     setReferenceNumber,
-    
   } = useContext(CheckoutContext);
 
   const datamanipulation = new dataManipulation();
@@ -128,11 +128,23 @@ const CheckoutPage = () => {
 
   const [countOfOrdersThisYear, setCountOfOrdersThisYear] = useState(0);
 
+  const [startDate,setStartDate] = useState(new Date());
+
+  const allowedDates = new allowedDeliveryDates()
+  allowedDates.runMain()
+  const minDate = allowedDates.minDate
+  const maxDate = allowedDates.maxDate
+  const filterDate = allowedDates.excludeDates
+  const holidays = allowedDates.holidays
+
+  
+
+
   // Get count of orders for this year
   useEffect(() => {
     const yearToday = new Date().getFullYear();
-    
-    const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders,yearToday)
+
+    const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders, yearToday);
 
     setCountOfOrdersThisYear(count);
   }, []);
@@ -155,7 +167,6 @@ const CheckoutPage = () => {
   // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
   useEffect(() => {
     setRowsMountCount(rowsMountCount + 1);
-
   }, [rows]);
 
   useEffect(() => {
@@ -191,10 +202,9 @@ const CheckoutPage = () => {
   // PAYMENT METHODS
   useEffect(() => {
     if (transactionStatus != null) {
-      
       if (transactionStatus.data === 'SUCCESS') {
         setCart({});
-  
+
         businesscalculations.afterCheckoutRedirectLogic({
           paymentMethodSelected: paymentMethodSelected,
           referenceNumber: referenceNumber,
@@ -218,11 +228,9 @@ const CheckoutPage = () => {
         setRefreshUser(!refreshUser);
       }
       if (transactionStatus.status == 409) {
-
         alert(transactionStatus.data);
       }
-  
-  
+
       setPlaceOrderLoading(false);
     }
   }, [placedOrder]);
@@ -315,8 +323,9 @@ const CheckoutPage = () => {
           isInvoiceNeeded: isInvoiceNeeded,
           urlOfBir2303: urlOfBir2303,
           countOfOrdersThisYear: countOfOrdersThisYear,
+          deliveryDate : startDate.toISOString()
         });
-    
+
         setTransactionStatus(res);
         setPlacedOrder(!placedOrder);
       } catch (err) {
@@ -328,12 +337,15 @@ const CheckoutPage = () => {
   }
 
   useEffect(() => {
+    console.log(startDate)
+  }, [startDate]);
+
+  useEffect(() => {
     setRefreshUser(!refreshUser);
   }, []);
 
   useEffect(() => {
     if (userdata) {
-   
       setLocalEmail(userdata.email);
 
       if (userdata.contactPerson.length > 0) {
@@ -347,8 +359,6 @@ const CheckoutPage = () => {
         setZoom(15);
       }
       if (userdata.contactPerson.length == 0) {
-
-
         setLocalPhoneNumber(userdata.phoneNumber);
       }
     }
@@ -708,11 +718,11 @@ const CheckoutPage = () => {
                     rows={rows}
                   />
                 )}
-                <div className="flex flex-row justify-center">
+                <div className="flex flex-col lg:flex-row justify-center">
                   <div className="flex justify-center m-5">
                     <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
                   </div>
-                  <div className="flex mt-4">
+                  <div className="flex justify-center items-center">
                     <Switch
                       {...label}
                       checked={isInvoiceNeeded}
@@ -737,7 +747,9 @@ const CheckoutPage = () => {
                         >
                           update BIR 2303
                         </ImageUploadButton>
-                        <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">Remove BIR 2303</button>
+                        <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">
+                          Remove BIR 2303
+                        </button>
                       </div>
                     </>
                   ) : (
@@ -757,6 +769,18 @@ const CheckoutPage = () => {
                     </div>
                   )
                 ) : null}
+
+                <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
+                <div className="flex flex-col justify-center m-5">
+                  <div className=" flex justify-center">
+                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                      Delivery Date
+                    </Typography>
+                  </div>
+                  <div className="flex justify-center mt-5 mb-5">
+                    <OrdersCalendar startDate={startDate} setStartDate={setStartDate} minDate={minDate} maxDate={maxDate} filterDate={filterDate} disabledDates={holidays} />
+                  </div>
+                </div>
 
                 <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
 

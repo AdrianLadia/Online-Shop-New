@@ -258,6 +258,7 @@ function App() {
                   bir2303Link: null,
                   affiliateId: null,
                   affiliateBankAccounts: [],
+                  joinedDate: new Date(),
                 },
                 user.uid
               );

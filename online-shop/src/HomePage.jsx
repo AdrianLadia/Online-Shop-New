@@ -13,10 +13,11 @@ import LoginButton from './components/LoginButton';
 import AccountMenu from './components/AccountMenu';
 import onLogoutClick from '../utils/classes/onLogoutClick';
 import { Tooltip, Typography } from '@mui/material';
+import { Helmet } from 'react-helmet';
 
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart } = useContext(AppContext);
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, categories } = useContext(AppContext);
   const favorites =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c';
   const pinpoint =
@@ -73,7 +74,8 @@ const HomePage = ({ isAffiliateLink }) => {
       ],
     },
   ];
-  const categories = ['Paper Bags', 'Food Wrappers', 'Roll Bags', 'Meal Boxes', 'Sando Bags'];
+  // const categories = ['Paper Bags', 'Food Wrappers', 'Roll Bags', 'Meal Boxes', 'Sando Bags'];
+
   const [selectedCategory, setSelectedCategory] = useState('Paper Bags');
   const [selectedSlide, setSelectedSlide] = useState(0);
   const [selectedCategoryImage, setSelectedCategoryImage] = useState('./vids/PPB.png');
@@ -123,6 +125,7 @@ const HomePage = ({ isAffiliateLink }) => {
     navigateTo('/signUp');
   }
 
+
   useEffect(() => {
     if (selectedSlide === 0) {
       setPhotoUrl(
@@ -130,13 +133,19 @@ const HomePage = ({ isAffiliateLink }) => {
       );
     }
     if (selectedSlide === 1) {
-      setPhotoUrl('https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDALL%C2%B7E%202023-08-21%2011.19.12%20-%20an%20afiiliate%20with%20a%20red%20jacket%20happily%20sharing%20information%20to%20a%20restaurant%20owner%20256.png?alt=media&token=220d87f5-5ef0-45ac-853c-5d3b40ef90ec');
+      setPhotoUrl(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDALL%C2%B7E%202023-08-21%2011.19.12%20-%20an%20afiiliate%20with%20a%20red%20jacket%20happily%20sharing%20information%20to%20a%20restaurant%20owner%20256.png?alt=media&token=220d87f5-5ef0-45ac-853c-5d3b40ef90ec'
+      );
     }
     if (selectedSlide === 2) {
-      setPhotoUrl('https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Faffiliate%20ordering%20254.png?alt=media&token=1eedd6e7-9518-4ac9-976b-47bed43ffd2b');
+      setPhotoUrl(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Faffiliate%20ordering%20254.png?alt=media&token=1eedd6e7-9518-4ac9-976b-47bed43ffd2b'
+      );
     }
     if (selectedSlide === 3) {
-      setPhotoUrl('https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fearning%20commission%20256.png?alt=media&token=04c535e7-898a-44d1-aeb6-8d5b0e4019b2');
+      setPhotoUrl(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fearning%20commission%20256.png?alt=media&token=04c535e7-898a-44d1-aeb6-8d5b0e4019b2'
+      );
     }
   }, [selectedSlide]);
 
@@ -300,8 +309,21 @@ const HomePage = ({ isAffiliateLink }) => {
       className=" h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
       style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})` }}
     >
+      <Helmet>
+        <title>Star Pack: Cebu's Leading Online Packaging Supplier</title>
+        <meta
+          name="description"
+          content="Star Pack: Cebu's Leading Online Packaging Supplier. High Quality Products, Unparalleled Service, and Reasonable Price Points."
+        />
+        <meta
+          property="og:description"
+          content="Star Pack: Cebu's Leading Online Packaging Supplier. High Quality Products, Unparalleled Service, and Reasonable Price Points."
+        />
+        <meta property="og:url" content="https://www.starpack.ph/" />
+      </Helmet>
+
       {/* Navigation Bar */}
-      <div className={navStyle()}>
+      <nav className={navStyle()}>
         {/* Logo */}
         <div className="w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 ">
           <img
@@ -511,7 +533,7 @@ const HomePage = ({ isAffiliateLink }) => {
             </div>
           ) : null}
         </div>
-      </div>
+      </nav>
 
       {/* Page 1 Home*/}
       <div
@@ -854,8 +876,8 @@ const HomePage = ({ isAffiliateLink }) => {
         <div ref={p5} className="flex flex-col justify-evenly items-end h-screen w-screen mb-2 text-white">
           {/* Why Us */}
           <div className="w-full h-full flex flex-col justify-end items-center gap-3">
-            <div className="h-11/20 w-19/20 md:w-10/12 mt-2.5 rounded-t-3xl p-2 2xs:p-3 bg-opacity-10 bg-color30 border border-color30">
-              <div className="md:grid-cols-2 lg:grid-cols-3 2lg:grid-cols-4 xl:grid-cols-5 grid h-full gap-2 justify-evenly items-stretch overflow-y-auto">
+            <div className=" h-11/20 w-19/20 md:w-10/12 mt-2.5 rounded-t-3xl p-2 2xs:p-3 bg-opacity-10 bg-color30 border border-color30">
+              <div className="md:grid-cols-2 lg:grid-cols-3 2lg:grid-cols-4 xl:grid-cols-5 grid h-full gap-2 justify-evenly items-stretch ">
                 <div className={footerCardStyle()}>
                   <div className="w-full h-6/10 flex justify-center items-center ">
                     <img className="w-full h-full" alt="This should render an image" src={favorites} />

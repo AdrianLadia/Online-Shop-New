@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
 import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 function a11yProps(index) {
   return {
@@ -42,18 +43,14 @@ const CategorySelector = (props) => {
   useEffect(() => {
     if (categories != null) {
       categories.forEach((category, index) => {
-
         // This selects the category from the url or from the featured category
         // if there is a url we use the url, if not we use the featured category
-        let categoryToUse 
+        let categoryToUse;
 
-      
-    
         if (categoryFromUrl != null) {
-          categoryToUse = categoryFromUrl
-        }
-        else {
-          categoryToUse = featuredCategory
+          categoryToUse = categoryFromUrl;
+        } else {
+          categoryToUse = featuredCategory;
         }
 
         if (category === categoryToUse) {
@@ -61,7 +58,7 @@ const CategorySelector = (props) => {
         }
       });
     }
-  }, [categories,categoryFromUrl]);
+  }, [categories, categoryFromUrl]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -71,13 +68,11 @@ const CategorySelector = (props) => {
     firestore.readAllCategories().then((categories) => {
       const categoryList = datamanipulation.getCategoryList(categories, hiddenCategories);
       setCategories(categoryList);
-    })
+    });
   }, []);
 
   useEffect(() => {
-
     if (categories != null && value != null) {
-
       setSelectedCategory(categories[value]);
     }
   }, [value]);
@@ -85,6 +80,15 @@ const CategorySelector = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <div className="w-full">
+        {categories && categories[value] ? (
+          <Helmet>
+            <title>{categories[value]} - Star Pack: Packaging Supplies</title>
+            <meta
+              name="description"
+              content={`Browse our selection of packaging supplies in the ${categories[value]} category.`}
+            />
+          </Helmet>
+        ) : null}
         <div className="flex flex-col items-center mt-5 from-colorbackground via-color2 to-color1">
           <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>

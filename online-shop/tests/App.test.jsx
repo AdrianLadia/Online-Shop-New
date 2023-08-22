@@ -17,6 +17,7 @@ import firestorefunctions from '../src/firestorefunctions';
 import { fi } from 'date-fns/locale';
 import AppConfig from '../src/AppConfig';
 import storeProductsOrganizer from '../utils/classes/storeProductsOrganizer';
+import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
 
 //
 const datamanipulation = new dataManipulation();
@@ -4025,4 +4026,3 @@ describe('Void payment' , () => {
 
   })
 })
-

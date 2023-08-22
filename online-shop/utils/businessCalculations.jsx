@@ -517,22 +517,27 @@ class businessCalculations {
     return grandTotal;
   }
 
-  addToCart(cart, product) {
+  addToCart(cart, product,stocksAvailable) {
     const cartSchema = Joi.object().required();
     const productSchema = Joi.string().required();
 
     const { error1 } = cartSchema.validate(cart);
     const { error2 } = productSchema.validate(product);
-
+    
     if (error1 || error2) {
       throw new Error('Data Validation Error');
     }
-
+    console.log(stocksAvailable);
     if (cart[product] === undefined) {
       cart[product] = 0;
     }
 
-    cart[product] += 1;
+    if (cart[product] + 1 <= stocksAvailable) {
+      cart[product] += 1;
+    }
+    else {
+      alert('Not enough stocks available');
+    }
 
     const newCartSchema = Joi.object().required();
     const { error3 } = newCartSchema.validate(cart);

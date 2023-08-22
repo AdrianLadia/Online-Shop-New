@@ -36,28 +36,26 @@ const ProductCard = (props) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState('');
   const retailSafetyStock = new AppConfig().getRetailSafetyStock()
-
-
-
+  
   useEffect(() => {
     setImageLoading(true);
     setQuantity('');
   }, [props.product]);
-
+  
   useEffect(() => {
     const img = new Image();
     img.src = props.product.imageLinks[0]; // Replace with your image URL
-
+    
     img.onload = () => {
       setImageSrc(img.src);
       setImageLoading(false);
     };
-
+    
     img.onerror = () => {
       console.error('An error occurred while loading the image.');
     };
   }, [props]);
-
+  
   let safetyStock;
   if (product.averageSalesPerDay != undefined) {
     safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
@@ -65,8 +63,11 @@ const ProductCard = (props) => {
   if (product.averageSalesPerDay === undefined) {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
+  
 
-
+  const retailStocksAvailable = product.stocksAvailable - retailSafetyStock
+  const wholesaleStocksAvailable = product.stocksAvailable - safetyStock
+  
   const handleClose = () => {
     setOpen(false);
   };
@@ -326,7 +327,7 @@ const ProductCard = (props) => {
                       </Typography>
                       <span className="flex h-3 w-3 ml-1 ">
                         <span className="inline-flex items-center justify-center mt-0 2xl:mt-1 py-2 px-1.5 text-xs font-semibold text-white bg-red-600 rounded-full">
-                          {(product.unit == 'Pack') ? product.stocksAvailable - retailSafetyStock : product.stocksAvailable - safetyStock}
+                          {(product.unit == 'Pack') ? retailStocksAvailable : wholesaleStocksAvailable}
                         </span>
                       </span>
                     </div>

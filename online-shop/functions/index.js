@@ -363,6 +363,7 @@ exports.transactionPlaceOrder = functions
       const isInvoiceNeeded = data.isInvoiceNeeded;
       const urlOfBir2303 = data.urlOfBir2303;
       const countOfOrdersThisYear = data.countOfOrdersThisYear;
+      const deliveryDate = new Date(data.deliveryDate)
 
       let cartUniqueItems = [];
 
@@ -597,6 +598,7 @@ exports.transactionPlaceOrder = functions
               urlOfBir2303: urlOfBir2303,
               countOfOrdersThisYear: countOfOrdersThisYear,
               proofOfDeliveryLink: [],
+              deliveryDate: deliveryDate
             };
             const userOrderObject = { reference: reference, date: new Date() };
             const updatedOrders = [userOrderObject, ...oldOrders];

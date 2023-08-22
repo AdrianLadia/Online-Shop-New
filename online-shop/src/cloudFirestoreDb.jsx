@@ -86,6 +86,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
+      console.log(data)
       await this.createDocument(data, userId, 'Users');
       await this.createDocument(
         {
@@ -156,6 +157,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       isInvoiceNeeded: Joi.boolean().required(),
       urlOfBir2303: Joi.string().allow('', null),
       countOfOrdersThisYear: Joi.number().required(),
+      deliveryDate: Joi.date().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {

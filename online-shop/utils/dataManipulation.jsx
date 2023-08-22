@@ -10,6 +10,18 @@ import AppConfig from '../src/AppConfig';
 class dataManipulation {
   constructor() {}
 
+  convertTimestampToDateStringWithoutTime(timestamp) {
+    const timestampInMilliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+
+    // Create a date object
+    const date = new Date(timestampInMilliseconds);
+
+    // Format as a string without time (e.g., "YYYY-MM-DD")
+    const dateString = date.toISOString().split('T')[0];
+
+    return dateString;
+  }
+
   convertDateToNanoSecondsAndSeconds(dateObject) {
     const date = new Date(dateObject);
     const nanoseconds = (date.getTime() % 1000) * 1000000;
@@ -278,7 +290,7 @@ class dataManipulation {
 
     const customers = [];
     users.map((user) => {
-      if (![null,undefined].includes(user.name)) {
+      if (![null, undefined].includes(user.name)) {
         customers.push(user.name);
       }
     });
@@ -489,8 +501,18 @@ class dataManipulation {
       throw new Error(error1);
     }
 
-    function createData(itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId,category) {
-      return { itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId,category };
+    function createData(
+      itemimage,
+      itemName,
+      itemquantity,
+      pieces,
+      itemprice,
+      itemtotal,
+      weighttotal,
+      itemId,
+      category
+    ) {
+      return { itemimage, itemName, itemquantity, pieces, itemprice, itemtotal, weighttotal, itemId, category };
     }
 
     let rows_non_state = [];
