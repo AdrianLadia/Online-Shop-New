@@ -26,7 +26,7 @@ const CategorySelector = (props) => {
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
   const { firestore, categories, setCategories } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
-  const hiddenCategories = [];
+  
 
   useEffect(() => {
     // Function to extract the "category" parameter from the URL query string
@@ -64,12 +64,7 @@ const CategorySelector = (props) => {
     setValue(newValue);
   };
 
-  useEffect(() => {
-    firestore.readAllCategories().then((categories) => {
-      const categoryList = datamanipulation.getCategoryList(categories, hiddenCategories);
-      setCategories(categoryList);
-    });
-  }, []);
+
 
   useEffect(() => {
     if (categories != null && value != null) {
