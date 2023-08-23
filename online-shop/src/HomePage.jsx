@@ -19,9 +19,12 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, categories } = useContext(AppContext);
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, categories } =
+    useContext(AppContext);
   const favorites =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c';
+  const autoCalculate =
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDALL%C2%B7E%202023-08-23%2011.29.52%20-%20A%20vector%20illustration%20of%20a%20person%20using%20a%20calculator.png?alt=media&token=710cc90e-15bf-4ab9-a6d9-8946fc52009c';
   const pinpoint =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Flocation_icon-star-copy-02.svg?alt=media&token=0cc4139c-4e2f-4e24-abe4-b4f34e9a9a8d';
   const customerChat =
@@ -160,9 +163,11 @@ const HomePage = ({ isAffiliateLink }) => {
   ];
   // const categories = ['Paper Bags', 'Food Wrappers', 'Roll Bags', 'Meal Boxes', 'Sando Bags'];
 
-  const [selectedCategory, setSelectedCategory] = useState('Paper Bags');
+  const [selectedCategory, setSelectedCategory] = useState('Paper Bag');
   const [selectedSlide, setSelectedSlide] = useState(0);
-  const [selectedCategoryImage, setSelectedCategoryImage] = useState('./vids/PPB.png');
+  const [selectedCategoryImage, setSelectedCategoryImage] = useState(
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bag.png?alt=media&token=3312b85b-8ae7-4d8c-83ff-8e5be3424f2f'
+  );
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [locallatitude, setLocalLatitude] = useState(10.35979);
   const [locallongitude, setLocalLongitude] = useState(123.93984);
@@ -181,68 +186,94 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function handleCategory(item) {
     if (item === 'Aluminum Tray') {
-      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FAluminum%20Tray.png?alt=media&token=53e2292b-7669-42a9-bd29-44b4b2afbbd4'
+      );
       setSelectedCategory(item);
     }
-    
+
     if (item === 'Bowls') {
-      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bowls.png?alt=media&token=4fec5edb-9d7f-41cd-9553-ff86bdf7b26d'
+      );
       setSelectedCategory(item);
     }
 
     if (item === 'Cake Box') {
-      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FCake%20Box.png?alt=media&token=3b8071ad-d8fc-4473-b61c-addf75edf4d7'
+      );
       setSelectedCategory(item);
     }
 
     if (item === 'Food Wrappers') {
-      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FFood%20Wrapper.png?alt=media&token=97288826-8b18-42b6-b53d-38e9f50ee716'
+      );
       setSelectedCategory(item);
     }
 
     if (item === 'Meal Box') {
-      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2Fclamshell%20700.png?alt=media&token=bfe9b5c5-a20e-489b-8f7b-94ed71490f59'
+      );
       setSelectedCategory(item);
     }
 
     if (item === 'Paper Bag') {
-      setSelectedCategoryImage('./vids/PPB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bag.png?alt=media&token=3312b85b-8ae7-4d8c-83ff-8e5be3424f2f'
+      );
       setSelectedCategory(item);
-    }  
+    }
     if (item === 'Plastic Containers') {
-      setSelectedCategoryImage('./vids/RB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FMicrowavables.png?alt=media&token=52d29e07-45a6-4338-8d28-81c63dc4ef4d'
+      );
       setSelectedCategory(item);
-    } 
+    }
     if (item === 'Plates') {
       setSelectedCategoryImage('./vids/MB.png');
       setSelectedCategory(item);
-    } 
+    }
     if (item === 'Roll Bag') {
-      setSelectedCategoryImage('./vids/SB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FRoll%20Bag.png?alt=media&token=62bf8483-59fc-4a80-906f-a26c8b109170'
+      );
       setSelectedCategory(item);
     }
     if (item === 'Sando Bag') {
-      setSelectedCategoryImage('./vids/SB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FSando%20Bag.png?alt=media&token=b98cefdc-0494-40be-af43-3cf408709651'
+      );
       setSelectedCategory(item);
     }
     if (item === 'Sauce Cups') {
-      setSelectedCategoryImage('./vids/SB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FSauce%20Cups.png?alt=media&token=a613faa0-4242-43ea-bbb8-ad3d168bbbdb'
+      );
       setSelectedCategory(item);
     }
     if (item === 'Sushi Tray') {
-      setSelectedCategoryImage('./vids/SB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FSushi%20Tray.png?alt=media&token=474c1626-c3c8-4cfa-937b-16aa3b98ef85'
+      );
       setSelectedCategory(item);
     }
     if (item === 'Tissue Paper') {
       setSelectedCategoryImage('./vids/TB.png');
       setSelectedCategory(item);
-    } 
+    }
     if (item === 'Trash Bag') {
-      setSelectedCategoryImage('./vids/TB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FTrash%20Bags.png?alt=media&token=e2ac4ce9-5cdf-48c5-a4e4-0ae9ac33fec3'
+      );
       setSelectedCategory(item);
     }
     if (item === 'Utensils') {
-      setSelectedCategoryImage('./vids/TB.png');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FUtensils.png?alt=media&token=03f715b3-5665-4e95-8e63-8c16e67e1abd'
+      );
       setSelectedCategory(item);
     }
   }
@@ -254,7 +285,6 @@ const HomePage = ({ isAffiliateLink }) => {
   function handleAff() {
     navigateTo('/signUp');
   }
-
 
   useEffect(() => {
     if (selectedSlide === 0) {
@@ -305,7 +335,7 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function productButtonStyle(product) {
     if (product === selectedCategory) {
-      return 'h-10 md:h-12 text-xs xs:text-sm text-center w-full p-1 border border-color60 bg-color60 text-color60 text-bold text-white rounded-full font-semibold ease-in-out duration-100 ';
+      return 'h-10 md:h-12 text-xs xs:text-sm text-center w-full p-1 border border-color60 bg-color10b text-color60 text-bold text-white rounded-full font-semibold ease-in-out duration-100 ';
     } else {
       return 'h-10 md:h-12 text-xs xs:text-sm text-center w-full p-1 text-green2 border border-green2 hover:bg-green2 rounded-full text-color60 text-bold hover:text-white font-semibold ease-in-out duration-100 ';
     }
@@ -398,10 +428,6 @@ const HomePage = ({ isAffiliateLink }) => {
     }
   }
 
-  function footerCardStyle() {
-    return ' hover:bg-green1 hover:bg-opacity-20 hover:border-none w-full h-full p-2 gap-1 flex flex-col justify-center items-center border border-color60 rounded-t-xl';
-  }
-
   function handleMessageClick() {
     if (userdata) {
       navigateTo('/orderChat', {
@@ -431,6 +457,14 @@ const HomePage = ({ isAffiliateLink }) => {
       return 'h2';
     } else {
       return 'h1';
+    }
+  }
+
+  function responsiveText() {
+    if (width <= 768) {
+      return 'p';
+    } else {
+      return 'h6';
     }
   }
 
@@ -469,7 +503,7 @@ const HomePage = ({ isAffiliateLink }) => {
         {/* Menu */}
         <div className="w-full sm:w-8/12 md:w-11/12 flex-row-reverse md:flex-row justify-start md:justify-between flex">
           {/* SMall Screen Menu */}
-          <div className="block md:hidden w-3/12 sm:w-2/12 text-3xl h-20 p-2 ">
+          <div className=" block md:hidden w-3/12 sm:w-2/12 text-3xl h-20 p-2 ">
             <div className=" flex justify-center items-center w-full h-full">
               {showMenu == false ? (
                 <BsList
@@ -783,7 +817,7 @@ const HomePage = ({ isAffiliateLink }) => {
                 Star Pack is...
               </Typography>
               <p className="h-6/10 tracking-tighter sm:tracking-normal text-sm w-full md:w-10/12 text-white indent-2 overflow-y-auto">
-                <Typography variant="h6">
+                <Typography variant={responsiveText()}>
                   "Empowering Businesses, Simplifying Success.
                   <br />
                   <br />
@@ -825,13 +859,12 @@ const HomePage = ({ isAffiliateLink }) => {
         >
           {/* Header & Image */}
           <div className=" w-11/12 md:w-7/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl gap-1 sm:gap-5 flex flex-col justify-center items-center border border-green2">
-            <div className="h-1/5 text-2xl md:text-5xl w-10/12 sm:w-7/12 flex items-center font-bold text-white">
+            {/* <div className="h-1/5 text-2xl md:text-5xl w-10/12 sm:w-7/12 flex items-center font-bold text-white">
               {selectedCategory ? selectedCategory : 'Paper Bags'}
+            </div> */}
+            <div className=" w-64 h-64 lg:w-96 lg:h-96 rounded-xl xs:rounded-3xl border border-green2 overflow-hidden flex items-center justify-center">
+              <img className="ease-in-out" src={selectedCategoryImage} />
             </div>
-            {/* <img
-              className="w-10/12 sm:w-8/12 h-3/5 rounded-xl xs:rounded-3xl ease-in-out border border-green2 "
-              src={selectedCategoryImage}
-            /> */}
           </div>
           {/* Products & CTA*/}
           <div className="w-11/12 md:w-4/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-b-3xl md:rounded-bl-none md:rounded-r-3xl flex flex-col justify-center items-center border border-green2 p-2">
@@ -879,7 +912,104 @@ const HomePage = ({ isAffiliateLink }) => {
           className=" w-screen h-screen bg-cover bg-center "
           //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
         >
-          <div className="h-1/10 md:p-10 w-full " />
+     {/* Last Page*/}
+     <div className="flex w-full justify-center pb-20">
+        <div className="border w-9/10 flex rounded-lg border-color60 items-center justify-center">
+          <div className="flex flex-col  w-full pb-24 lg:pb-48">
+            <div className="flex flex-col justify-center items-center w-full mt-20">
+              <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
+                Shop Features
+              </Typography>
+            </div>
+
+            <div className="flex flex-col mt-20">
+              <div className="flex flex-row justify-evenly">
+                <div className="w-1/3 lg:w-60 ">
+                  <div className=" flex justify-center items-center ">
+                    <img className="w-full h-full" alt="Favorite Items" src={favorites} />
+                  </div>
+                  <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                      Favorite Items
+                    </h1>
+                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                      Adding your favorite items to your 'Favorites' list for quick and convenient access.
+                    </h2>
+                  </div>
+                </div>
+                <div className="w-1/3 lg:w-60">
+                  <div className=" flex justify-center items-center ">
+                    <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate} />
+                  </div>
+                  <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                      Auto Calculate Cost
+                    </h1>
+                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                      The delivery fee and total cost of items will be calculated at checkout. There will be no hidden
+                      charges after delivery.
+                    </h2>
+                  </div>
+                </div>
+                <div className="w-1/3 lg:w-60">
+                  <div className=" flex justify-center items-center ">
+                    <img className="w-full h-full" alt="This should render an image" src={pinpoint} />
+                  </div>
+                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30 text-white">
+                      Pinpoint Location
+                    </h1>
+                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                      Who needs big signs or landmarks when you can pinpoint your exact location!
+                    </h2>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row justify-evenly">
+                <div className="lg:w-60">
+                  <div className=" flex justify-center items-center ">
+                    <img className="w-full h-full" alt="Chat With Customer Service" src={customerChat} />
+                  </div>
+                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                      Chat with Customer Service
+                    </h1>
+                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                      Any questions or concerns? There is a chat customer service available to help you out.
+                    </h2>
+                  </div>
+                </div>
+                <div className="lg:w-60">
+                  <div className=" flex justify-center items-center ">
+                    <img className="w-full h-full" alt="Save Location and Contacts" src={saved} />
+                  </div>
+                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                      Save Location and Contacts
+                    </h1>
+                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                      This makes it quicker and easier to fill in the details for your next order.
+                    </h2>
+                  </div>
+                </div>
+                <div className="lg:w-60">
+                  <div className=" flex justify-center items-center ">
+                    <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple} />
+                  </div>
+                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                      Multiple Payment Methods
+                    </h1>
+                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                      Gives you the flexibility to choose the option that is most convenient and suits your preferences.
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
           <div
             ref={p4}
             className="flex flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
@@ -993,210 +1123,124 @@ const HomePage = ({ isAffiliateLink }) => {
         </div>
       )}
 
-      <> </>
+ 
 
-      {/* Last Page*/}
-      <div
-        ref={page5}
-        className=" w-screen h-screen flex flex-col justify-center items-center bg-cover bg-center"
-        //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0)),' + `url(${contactsImage})`}}
-      >
-        {/* <div className='rounded-full m-1 border-x-2 border-color30 text-white px-0.5 text-6xl font-bold w-fit flex justify-center items-center tracking-wider'>
-            <div className=' rounded-full h-full border-color60 border-y-2 flex items-center'>
-              <img src={logo} className=" h-14 w-14 rounded-full border-2 border-color30"/>
-            </div>
-          </div> */}
-        <div ref={p5} className="flex flex-col justify-evenly items-end h-screen w-screen mb-2 text-white">
-          {/* Why Us */}
-          <div className="w-full h-full flex flex-col justify-end items-center gap-3">
-            <div className=" h-11/20 w-19/20 md:w-10/12 mt-2.5 rounded-t-3xl p-2 2xs:p-3 bg-opacity-10 bg-color30 border border-color30">
-              <div className="md:grid-cols-2 lg:grid-cols-3 2lg:grid-cols-4 xl:grid-cols-5 grid h-full gap-2 justify-evenly items-stretch ">
-                <div className={footerCardStyle()}>
-                  <div className="w-full h-6/10 flex justify-center items-center ">
-                    <img className="w-full h-full" alt="This should render an image" src={favorites} />
-                  </div>
-                  <div className=" w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30">
-                      Favorite Items
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter">
-                      Adding your favorite items to your 'Favorites' list for quick and convenient access.
-                    </h2>
-                  </div>
-                </div>
-                <div className={footerCardStyle()}>
-                  <div className="w-full h-6/10 flex justify-center items-center ">
-                    <img className="w-full h-full" alt="This should render an image" src={pinpoint} />
-                  </div>
-                  <div className="w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30">
-                      Pinpoint Location
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter">
-                      Who needs big signs or landmarks when you can pinpoint your exact location!
-                    </h2>
-                  </div>
-                </div>
-                <div className={footerCardStyle()}>
-                  <div className="w-full h-6/10 flex justify-center items-center ">
-                    <img className="w-full h-full" alt="This should render an image" src={customerChat} />
-                  </div>
-                  <div className="w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30">
-                      Chat with Customer Service
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter">
-                      Any questions or concerns? There is a chat customer service available to help you out.
-                    </h2>
-                  </div>
-                </div>
-                <div className={footerCardStyle()}>
-                  <div className="w-full h-6/10 flex justify-center items-center ">
-                    <img className="w-full h-full" alt="This should render an image" src={saved} />
-                  </div>
-                  <div className="w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30">
-                      Save Location and Contacts
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter">
-                      This makes it quicker and easier to fill in the details for your next order.
-                    </h2>
-                  </div>
-                </div>
-                <div className={footerCardStyle()}>
-                  <div className="w-full h-6/10 flex justify-center items-center ">
-                    <img className="w-full h-full" alt="This should render an image" src={multiple} />
-                  </div>
-                  <div className="w-full h-4/10 flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30">
-                      Multiple Payment Methods
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter ">
-                      Gives you the flexibility to choose the option that is most convenient and suits your preferences.
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Footer */}
-            <div className="h-4/10 w-full 2xs:w-19/20 md:w-10/12 bg-opacity-60 rounded-t-3xl bg-color60 p-2">
-              <div className="h-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch gap-2 rounded-t-3xl overflow-y-auto">
-                {/* Find Us */}
-                <div className="overflow-y-hidden flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch min-h-4/10 row-span-2 col-span-2">
-                  <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Find Us</h1>
-                  <div className="flex items-start 2xs:items-center justify-start gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full ">
-                    <span className={spanFooterStyle()}>
-                      <FaMapMarkerAlt className="text-white" />
-                    </span>
-                    <p className="text-slate-500 text-xs tracking-tighter overflow-x-auto">
-                      9W6M+7GX, P.Sanchez / Pagsabungan Rd, Mandaue City, Cebu.
-                    </p>
-                  </div>
-                  <div className="w-full">
-                    <GoogleMaps
-                      selectedAddress={selectedAddress}
-                      setSelectedAddress={setSelectedAddress}
-                      locallatitude={locallatitude}
-                      setLocalLatitude={setLocalLatitude}
-                      locallongitude={locallongitude}
-                      setLocalLongitude={setLocalLongitude}
-                      setLocalDeliveryAddress={setLocalDeliveryAddress}
-                      zoom={zoom}
-                      setZoom={setZoom}
-                      setAddressText={setAddressText}
-                      forFooter={true}
-                    />
-                  </div>
-                </div>
-                {/* Menu */}
+      {/* <div className="flex h-4/10 w-full 2xs:w-19/20 md:w-10/12 bg-opacity-60 rounded-t-3xl bg-color60 p-2">
 
-                <div className="flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
-                  <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
-                  <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs">
-                    <ul className="h-19/20 w-11/12 flex flex-col justify-evenly items- gap-1 md:gap-2">
-                      <li
-                        onClick={() => {
-                          scroll('page1');
-                        }}
-                        className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-                      >
-                        Home
-                      </li>
-                      <li
-                        onClick={() => {
-                          scroll('page2');
-                        }}
-                        className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-                      >
-                        About Us
-                      </li>
-                      <li
-                        onClick={() => {
-                          scroll('page3');
-                        }}
-                        className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-                      >
-                        Products
-                      </li>
-                      <li
-                        onClick={() => {
-                          scroll('page4');
-                        }}
-                        className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-                      >
-                        Affiliate Program
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                {/* Call Us */}
-                <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
-                  <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Call Us</h1>
-                  <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full">
-                    <span className={spanFooterStyle()}>
-                      <FaPhoneAlt className="text-white" />
-                    </span>
-                    <p className="text-slate-500 text-xs tracking-tight overflow-x-auto">09178927206</p>
-                  </div>
-                </div>
-                {/* Mail Us */}
-                <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
-                  <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Mail Us</h1>
-                  <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full">
-                    <span className={spanFooterStyle()}>
-                      <FaGoogle className="text-white" />
-                    </span>
-                    <p className="text-slate-500 text-xs tracking-tight hyphens-auto overflow-x-auto">test@gmail.com</p>
-                  </div>
-                </div>
-                {/* Follow Us */}
-                <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white  w-stretch ">
-                  <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Follow Us</h1>
-                  <div className="flex justify-around items-center gap-1 bg-slate-100 rounded-t-xl w-full mt-1 p-2 h-full">
-                    <span className={spanFooterStyle()}>
-                      <FaFacebookF className="text-white" />
-                    </span>
-                    <span className={spanFooterStyle()}>
-                      <FaViber className="text-white" />
-                    </span>
-                    <span className={spanFooterStyle()}>
-                      <FaInstagram className="text-white" />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div className=" h-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch gap-2 rounded-t-3xl overflow-y-auto">
+      
+        <div className="overflow-y-hidden flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch min-h-4/10 row-span-2 col-span-2">
+          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Find Us</h1>
+          <div className="flex items-start 2xs:items-center justify-start gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full ">
+            <span className={spanFooterStyle()}>
+              <FaMapMarkerAlt className="text-white" />
+            </span>
+            <p className="text-slate-500 text-xs tracking-tighter overflow-x-auto">
+              9W6M+7GX, P.Sanchez / Pagsabungan Rd, Mandaue City, Cebu.
+            </p>
+          </div>
+          <div className="w-full">
+            <GoogleMaps
+              selectedAddress={selectedAddress}
+              setSelectedAddress={setSelectedAddress}
+              locallatitude={locallatitude}
+              setLocalLatitude={setLocalLatitude}
+              locallongitude={locallongitude}
+              setLocalLongitude={setLocalLongitude}
+              setLocalDeliveryAddress={setLocalDeliveryAddress}
+              zoom={zoom}
+              setZoom={setZoom}
+              setAddressText={setAddressText}
+              forFooter={true}
+            />
+          </div>
+        </div>
+     
+
+        <div className="flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
+          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
+          <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs">
+            <ul className="h-19/20 w-11/12 flex flex-col justify-evenly items- gap-1 md:gap-2">
+              <li
+                onClick={() => {
+                  scroll('page1');
+                }}
+                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
+              >
+                Home
+              </li>
+              <li
+                onClick={() => {
+                  scroll('page2');
+                }}
+                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
+              >
+                About Us
+              </li>
+              <li
+                onClick={() => {
+                  scroll('page3');
+                }}
+                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
+              >
+                Products
+              </li>
+              <li
+                onClick={() => {
+                  scroll('page4');
+                }}
+                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
+              >
+                Affiliate Program
+              </li>
+            </ul>
+          </div>
+        </div>
+        Call Us
+        <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
+          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Call Us</h1>
+          <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full">
+            <span className={spanFooterStyle()}>
+              <FaPhoneAlt className="text-white" />
+            </span>
+            <p className="text-slate-500 text-xs tracking-tight overflow-x-auto">09178927206</p>
+          </div>
+        </div>
+        Mail Us
+        <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
+          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Mail Us</h1>
+          <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full">
+            <span className={spanFooterStyle()}>
+              <FaGoogle className="text-white" />
+            </span>
+            <p className="text-slate-500 text-xs tracking-tight hyphens-auto overflow-x-auto">test@gmail.com</p>
+          </div>
+        </div>
+        Follow Us
+        <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white  w-stretch ">
+          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Follow Us</h1>
+          <div className="flex justify-around items-center gap-1 bg-slate-100 rounded-t-xl w-full mt-1 p-2 h-full">
+            <span className={spanFooterStyle()}>
+              <FaFacebookF className="text-white" />
+            </span>
+            <span className={spanFooterStyle()}>
+              <FaViber className="text-white" />
+            </span>
+            <span className={spanFooterStyle()}>
+              <FaInstagram className="text-white" />
+            </span>
           </div>
         </div>
       </div>
+      </div> */}
 
       {/* Copyright */}
-      <div className=" h-1/10 w-full flex flex-col justify-start items-center gap-2 bg-color60 bg-opacity-50">
+      {/* <div className=" h-1/10 w-full flex flex-col justify-start items-center gap-2 bg-color60 bg-opacity-50">
         <div className="w-11/12 border-b-2 border-black" />
         <div className="flex h-full justify-center items-center gap-2">
           <div className="h-9/10 w-full flex justify-center items-center">Copyright © 2023 | Made by Paper Boy</div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
