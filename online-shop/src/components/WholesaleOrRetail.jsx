@@ -1,13 +1,15 @@
 import { Typography } from '@mui/material';
 import isFirstDayOfMonth from 'date-fns/isFirstDayOfMonth/index';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState } from 'react';
+import AppContext from '../AppContext';
 
 const WholesaleOrRetail = (props) => {
   const setWholesale = props.setWholesale;
   const setRetail = props.setRetail;
-  const wholesale = props.wholesale
-  const retail = props.retail
+  const wholesale = props.wholesale;
+  const retail = props.retail;
+  const { setSelectedCategory,selectedCategory } = useContext(AppContext);
 
   function onWholesaleClick() {
     setWholesale(true);
@@ -19,35 +21,45 @@ const WholesaleOrRetail = (props) => {
     setRetail(true);
   }
 
-  function buttonStyle(no){
-    if(no==1){
-      if(wholesale == true && retail == false){
-        return " text-white "
+  function buttonStyle(no) {
+    if (no == 1) {
+      if (wholesale == true && retail == false) {
+        return ' text-white ';
       }
-    }
-    else if(no==2){
-      if(retail == true && wholesale == false){
-        return " text-white"
+    } else if (no == 2) {
+      if (retail == true && wholesale == false) {
+        return ' text-white';
       }
     }
   }
 
   function responsiveButtonColorPack() {
     if (retail) {
-      return "shadow-xl bg-color10b  "
-    }
-    else {
-      return "bg-gray-400 text-bg-color10b"
+      return 'shadow-xl bg-color10b  ';
+    } else {
+      return 'bg-gray-400 text-bg-color10b';
     }
   }
 
   function responsiveButtonColorBox() {
     if (wholesale) {
-      return "shadow-xl bg-color10b"
+      return 'shadow-xl bg-color10b';
+    } else {
+      return 'bg-gray-400 text-bg-color10b';
     }
-    else {
-      return "bg-gray-400 text-bg-color10b"
+  }
+
+  function responsiveButtonColorFavorites() {
+    if (selectedCategory == 'Favorites') {
+      return 'shadow-xl bg-color10b  ';
+    } else {
+      return 'bg-gray-400 text-bg-color10b';
     }
+  }
+
+  function onFavoritesClick() {
+    console.log('onFavoritesClick');
+    setSelectedCategory('Favorites');
   }
 
   return (
@@ -60,7 +72,10 @@ const WholesaleOrRetail = (props) => {
           onClick={onWholesaleClick}
           // className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
           // className=" mr-1 mt-5 flex-none font-semibold p-3 rounded-full bg-gradient-to-r from-color30 to-color10a lg:w-40 hover:animate-pulse"
-          className={" mr-1  flex-none font-semibold p-3 rounded-full w-3/5 2xs:w-32 lg:w-40 hover:animate-pulse text-white " + responsiveButtonColorBox()}
+          className={
+            ' mr-1  flex-none font-semibold p-3 rounded-full w-3/5 2xs:w-32 lg:w-40 hover:animate-pulse text-white ' +
+            responsiveButtonColorBox()
+          }
         >
           <Typography>BOX</Typography>
         </button>
@@ -68,10 +83,14 @@ const WholesaleOrRetail = (props) => {
           onClick={onRetailClick}
           // className="ml-1  flex-none font-semibold p-3 rounded-full bg-color10a hover:bg-color30 hover:border-color10a lg:w-40 hover:animate-pulse"
           // className="ml-1  flex-none font-semibold p-3 rounded-full bg-gradient-to-l from-color30 to-color10a lg:w-40 hover:animate-pulse"
-          className={"ml-1  flex-none font-semibold p-3 rounded-full w-3/5 2xs:w-32 lg:w-40 hover:animate-pulse text-white " + responsiveButtonColorPack()}
+          className={
+            'ml-1  flex-none font-semibold p-3 rounded-full w-3/5 2xs:w-32 lg:w-40 hover:animate-pulse text-white ' +
+            responsiveButtonColorPack()
+          }
         >
           <Typography>PACK</Typography>
         </button>
+        <button className=' mr-1  flex-none font-semibold p-3 rounded-full w-3/5 2xs:w-32 lg:w-40 hover:animate-pulse text-white '  onClick={onFavoritesClick}>Favorites</button>
       </div>
     </div>
   );
