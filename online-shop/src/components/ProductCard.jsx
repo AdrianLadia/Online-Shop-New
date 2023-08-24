@@ -167,12 +167,17 @@ const ProductCard = (props) => {
   
       if (stocksAvailable <= 50) {
         setLowStock(true);
-     
+      }
+      else {
+        setLowStock(false);
       }
     }
     else {
       if (product.stocksAvailable <= 50 + safetyStock && product.unit) {
         setLowStock(true);
+      }
+      else {
+        setLowStock(false);
       }
     }
   }, [product.stocksAvailable]);

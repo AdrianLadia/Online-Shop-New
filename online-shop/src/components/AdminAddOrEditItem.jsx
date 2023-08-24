@@ -547,28 +547,18 @@ const AdminAddOrEditItem = (props) => {
                 sx={{ width: 'fullWidth' }}
                 renderInput={(params) => <TextField {...params} label="Item Name" />}
               />
-            ) : // <Box sx={{ width: '100%' }}>
-            //   <FormControl fullWidth>
-            //     <InputLabel required={true} id="demo-simple-select-label">
-            //       Select Item
-            //     </InputLabel>
-            //     <Select
-            //       labelId="demo-simple-select-label"
-            //       id="demo-simple-select"
-            //       value={selectedItemToEdit}
-            //       label="Unit"
-            //       onChange={(event) => {
-            //         console.log('event.target.value', event.target.value);
-            //         setSelectedItemToEdit(event.target.value);
-            //       }}
-            //     >
-            //       {productNames.map((product) => {
-            //         return <MenuItem value={product[1]}>{product[0]}</MenuItem>;
-            //       })}
-            //     </Select>
-            //   </FormControl>
-            // </Box>
-            null}
+            ) : <TextField
+            required
+            disabled={addOrEditItem == 'Edit' ? true : false}
+            id="outlined-basic123"
+            label="Item Name"
+            variant="outlined"
+            sx={{ marginTop: 3 }}
+            value={itemName}
+            onChange={(event) => {
+              setItemName(event.target.value);
+            }}
+          />}
 
             <TextField
               required

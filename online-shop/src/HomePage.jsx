@@ -359,13 +359,13 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function scroll(page) {
     if (page === 'page1') {
-      page1.current.scrollIntoView({ behavior: 'instant' });
+      page1.current.scrollIntoView({ behavior: 'smooth' });
     } else if (page === 'page2') {
-      page2.current.scrollIntoView({ behavior: 'instant' });
+      page2.current.scrollIntoView({ behavior: 'smooth' });
     } else if (page === 'page3') {
-      page3.current.scrollIntoView({ behavior: 'instant' });
+      page3.current.scrollIntoView({ behavior: 'smooth' });
     } else if (page === 'page4') {
-      page4.current.scrollIntoView({ behavior: 'instant' });
+      page4.current.scrollIntoView({ behavior: 'smooth' });
     } else if (page === 'page5') {
       page5.current.scrollIntoView({ behavior: 'smooth' });
     }
@@ -491,7 +491,7 @@ const HomePage = ({ isAffiliateLink }) => {
         {/* Logo */}
         <div className="w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 ">
           <img
-            loading="lazy"
+            
             src={logo}
             alt="logo"
             className=" h-14 w-14 sm:h-16 sm:w-16 2xl:h-20 2xl:w-20 rounded-full border-2 border-color30 cursor-pointer"
@@ -598,6 +598,14 @@ const HomePage = ({ isAffiliateLink }) => {
             >
               Products
             </button>
+            <button
+              onClick={() => {
+                scroll('page4');
+              }}
+              className={buttonStyle('page4')}
+            >
+              Features
+            </button>
             {isAffiliateLink ? (
               <button
                 onClick={() => {
@@ -610,9 +618,9 @@ const HomePage = ({ isAffiliateLink }) => {
             ) : (
               <button
                 onClick={() => {
-                  scroll('page4');
+                  scroll('page5');
                 }}
-                className={buttonStyle('page4')}
+                className={buttonStyle('page5')}
               >
                 Affiliate
               </button>
@@ -832,7 +840,7 @@ const HomePage = ({ isAffiliateLink }) => {
             {/* Image */}
             <div className="w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center">
               <img
-                loading="lazy"
+                
                 className="w-full h-full rounded-3xl  text-white"
                 alt="About Image"
                 //  src='./vids/STAR-DELIVERY.png'
@@ -842,9 +850,9 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </div>
         <div className="flex flex-col h-full  items-center mt-10 ">
-          <Typography>What We Do</Typography>
-          <div className="w-9/10 h-96  border border-emerald-300 mt-5 rounded-lg overflow-auto">
-            <div className='p-5 lg:p-10'>
+          {/* <Typography variant='h3' sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>What We Do</Typography> */}
+          <div className="w-9/10 h-96 lg:h-80per  border border-emerald-300 mt-5 rounded-lg overflow-auto">
+            <div className="p-5 lg:p-10">
               <ImageList variant="masonry" cols={2} gap={8}>
                 {imageLinks.map((item) => (
                   <ImageListItem key={item.img}>
@@ -852,7 +860,7 @@ const HomePage = ({ isAffiliateLink }) => {
                       src={`${item.img}?w=248&fit=crop&auto=format`}
                       srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
                       alt={item.title}
-                      loading="lazy"
+                      
                     />
                   </ImageListItem>
                 ))}
@@ -879,7 +887,7 @@ const HomePage = ({ isAffiliateLink }) => {
               {selectedCategory ? selectedCategory : 'Paper Bags'}
             </div> */}
             <div className=" w-64 h-64 lg:w-96 lg:h-96 rounded-xl xs:rounded-3xl border border-green2 overflow-hidden flex items-center justify-center">
-              <img className="ease-in-out" src={selectedCategoryImage} loading="lazy" />
+              <img className="ease-in-out" src={selectedCategoryImage}  />
             </div>
           </div>
           {/* Products & CTA*/}
@@ -905,9 +913,9 @@ const HomePage = ({ isAffiliateLink }) => {
               </div>
               <div className="h-2/10 w-full flex justify-center">
                 <div className="w-32 md:w-36 lg:w-48 flex justify-start ">
-                  <span className="w-32 md:w-36 lg:w-48 h-10 md:h-14 hover:w-0 bg-blue1 hover:bg-color10b mt-3 rounded-full ease-in-out duration-300">
+                  <span className="w-32 md:w-36 lg:w-48 h-10 md:h-14 hover:w-0 mt-3 rounded-full ease-in-out duration-300">
                     <button
-                      className=" w-32 md:w-36 lg:w-48 h-10 md:h-14 p-3 text-xs sm:text-sm flex justify-center items-center font-normal md:font-semibold rounded-full border border-blue1 text-white hover:text-color10b hover:border-color10b ease-in-out duration-300"
+                      className=" w-32 md:w-36 lg:w-48 h-10 md:h-14 p-3 text-xs sm:text-sm flex justify-center items-center font-normal md:font-semibold rounded-full border bg-color10b border-blue1 hover:bg-blue1 text-white  "
                       onClick={handleShop}
                     >
                       <FaShoppingBag className=" text-xl " />
@@ -921,15 +929,15 @@ const HomePage = ({ isAffiliateLink }) => {
         </div>
       </div>
 
-      {/* Page 4 Affiliate*/}
+      {/* Page 4 Features*/}
       {isAffiliateLink ? null : (
         <div
           ref={page4}
-          className=" w-screen h-screen bg-cover bg-center "
+          className="  w-screen  bg-cover bg-center "
           //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
         >
           {/* Last Page*/}
-          <div className="flex w-full justify-center pb-20">
+          <div ref={p4} className="flex w-full justify-center pb-20">
             <div className="border w-9/10 flex rounded-lg border-color60 items-center justify-center">
               <div className="flex flex-col  w-full pb-24 lg:pb-48">
                 <div className="flex flex-col justify-center items-center w-full mt-20">
@@ -942,7 +950,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   <div className="flex flex-row justify-evenly">
                     <div className="w-1/3 lg:w-60 ">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Favorite Items" src={favorites} loading="lazy" />
+                        <img className="w-full h-full" alt="Favorite Items" src={favorites}  />
                       </div>
                       <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -955,7 +963,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                     <div className="w-1/3 lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate} loading="lazy" />
+                        <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate}  />
                       </div>
                       <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -973,7 +981,7 @@ const HomePage = ({ isAffiliateLink }) => {
                           className="w-full h-full"
                           alt="This should render an image"
                           src={pinpoint}
-                          loading="lazy"
+                          
                         />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
@@ -986,14 +994,14 @@ const HomePage = ({ isAffiliateLink }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-row justify-evenly">
+                  <div className="flex flex-row justify-evenly ">
                     <div className="lg:w-60">
                       <div className=" flex justify-center items-center ">
                         <img
                           className="w-full h-full"
                           alt="Chat With Customer Service"
                           src={customerChat}
-                          loading="lazy"
+                          
                         />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
@@ -1007,7 +1015,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                     <div className="lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Save Location and Contacts" src={saved} loading="lazy" />
+                        <img className="w-full h-full" alt="Save Location and Contacts" src={saved}  />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -1020,7 +1028,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                     <div className="lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple} loading="lazy" />
+                        <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple}  />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -1037,119 +1045,121 @@ const HomePage = ({ isAffiliateLink }) => {
               </div>
             </div>
           </div>
-          <div
-            ref={p4}
-            className="flex flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
-          >
-            {tutorial.map((state, index) => {
-              if (selectedSlide === index) {
-                return (
-                  <div
-                    key={index}
-                    className="h-1/2  md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative "
-                  >
-                    <button
-                      className="absolute mt-36 top-30 left-9 md:left-10 lg:left-12 xl:left-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300 "
-                      onClick={previousSlide}
-                    >
-                      <BsArrowLeftShort className="text-lg md:text-2xl text-white" />
-                    </button>
-                    <button
-                      className="absolute mt-36 top-30 right-9 md:right-10 lg:right-12 xl:right-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300"
-                      onClick={nextSlide}
-                    >
-                      <BsArrowRightShort className="text-lg md:text-2xl text-white" />
-                    </button>
-                    <div
-                      className="h-full w-19/20 p-5 md:p-10 flex flex-col justify-evenly items-center rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl border border-color60 bg-local bg-cover bg-center "
-                      // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.70),rgba(0,0,0,0.70)),' + "url('./vids/bg.jpg')"}}
-                    >
-                      {/* Steps */}
-                      <div className="h-9/10 md:h-3/10 w-full flex justify-start items-center p-5 gap-2  ">
-                        <div className="h-full w-full flex flex-col gap-2 overflow-y-auto ">
-                          <h1 className="sm:text-lg md:text-xl tracking-wide text-white font-bold ">
-                            <p className=" decoration-color60">
-                              Step {index + 1} - {state.step[0]}
-                            </p>{' '}
-                            <div className="border-color60 border-b w-11/12"></div>
-                            {/* <p className='underline underline-offset-4 decoration-color60'>{state.step[0]}</p> */}
-                          </h1>
-                          <p className="text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-white ">
-                            {state.step[1]}
-                          </p>
-                        </div>
-                      </div>
-                      <img
-                        className="md:block  h-6/10 rounded-3xl border aspect-square border-color60 mb-3 text-white"
-                        alt="Affiliate Image"
-                        src={photoUrl}
-                        loading="lazy"
-                      />
-                      <div className="w-full h-1/10 flex justify-center items-center gap-5">
-                        <button
-                          className={sliderButton(0)}
-                          onClick={() => {
-                            setSelectedSlide(0);
-                          }}
-                        ></button>
-                        <button
-                          className={sliderButton(1)}
-                          onClick={() => {
-                            setSelectedSlide(1);
-                          }}
-                        ></button>
-                        <button
-                          className={sliderButton(2)}
-                          onClick={() => {
-                            setSelectedSlide(2);
-                          }}
-                        ></button>
-                        <button
-                          className={sliderButton(3)}
-                          onClick={() => {
-                            setSelectedSlide(3);
-                          }}
-                        ></button>
-                      </div>
+        </div>
+      )}
+      <div
+        ref={p5}
+        className="flex mb-96 lg:-mb-96 flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
+      >
+        {tutorial.map((state, index) => {
+          if (selectedSlide === index) {
+            return (
+              <div
+                key={index}
+                className="h-1/2  md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative "
+              >
+                <button
+                  className="absolute mt-36 top-30 left-9 md:left-10 lg:left-12 xl:left-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300 "
+                  onClick={previousSlide}
+                >
+                  <BsArrowLeftShort className="text-lg md:text-2xl text-white" />
+                </button>
+                <button
+                  className="absolute mt-36 top-30 right-9 md:right-10 lg:right-12 xl:right-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300"
+                  onClick={nextSlide}
+                >
+                  <BsArrowRightShort className="text-lg md:text-2xl text-white" />
+                </button>
+                <div
+                  className="h-full w-19/20 p-5 md:p-10 flex flex-col justify-evenly items-center rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl border border-color60 bg-local bg-cover bg-center "
+                  // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.70),rgba(0,0,0,0.70)),' + "url('./vids/bg.jpg')"}}
+                >
+                  {/* Steps */}
+                  <div className="h-9/10 md:h-3/10 w-full flex justify-start items-center p-5 gap-2  ">
+                    <div className="h-full w-full flex flex-col gap-2 overflow-y-auto ">
+                      <h1 className="sm:text-lg md:text-xl tracking-wide text-white font-bold ">
+                        <p className=" decoration-color60">
+                          Step {index + 1} - {state.step[0]}
+                        </p>{' '}
+                        <div className="border-color60 border-b w-11/12"></div>
+                        {/* <p className='underline underline-offset-4 decoration-color60'>{state.step[0]}</p> */}
+                      </h1>
+                      <p className="text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-white ">
+                        {state.step[1]}
+                      </p>
                     </div>
                   </div>
-                );
-              }
-            })}
-            {/* Affiliate Description */}
-            <div className="h-1/2 md:h-full xl:h-5/6 w-full md:w-5/12 flex flex-col justify-center items-center md:items-start p-5 gap-5 ">
-              <div
-                className="h-full md:h-full w-19/20 md:w-11/12 p-5 md:p-10 gap-8 md:gap-5 flex flex-col 
-                              justify-evenly md:justify-center items-center md:items-start border border-color60 
-                              rounded-b-4xl md:rounded-r-3xl lg:rounded-l-none xl:rounded-r-semifull bg-cover bg-center "
-                // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
-              >
-                <h1
-                  className="w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-color10b p-1 font-bold 
-                               tracking-tight md:tracking-wide "
-                  //  underline underline-offset-8 decoration-color60
-                >
-                  Become an Affiliate
-                </h1>
-                <div className="font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-white tracking-tight indent-5 ml-0.5 overflow-y-auto">
-                  An affiliate is someone who helps sell or promote a product or service. They are like a partner to the
-                  company that makes the product. When the affiliate tells others about the product and those people buy
-                  it because of the affiliate's recommendation, the affiliate gets a reward, like a small percentage of
-                  the money from the sale. It's a way for people to earn a little bit of money by sharing things they
-                  like with others.
-                </div>
-                <div className="flex justify-start items-center h-1/10 md:h-2/6 w-full ">
-                  <span className="w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300">
-                    <button className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300">
-                      <FaPenSquare className="ml-1 text-xl" /> <a className=" ml-2">Register</a>
-                    </button>
-                  </span>
+                  <img
+                    className="md:block  h-6/10 rounded-3xl border aspect-square border-color60 mb-3 text-white"
+                    alt="Affiliate Image"
+                    src={photoUrl}
+                  />
+                  <div className="w-full h-1/10 flex justify-center items-center gap-5">
+                    <button
+                      className={sliderButton(0)}
+                      onClick={() => {
+                        setSelectedSlide(0);
+                      }}
+                    ></button>
+                    <button
+                      className={sliderButton(1)}
+                      onClick={() => {
+                        setSelectedSlide(1);
+                      }}
+                    ></button>
+                    <button
+                      className={sliderButton(2)}
+                      onClick={() => {
+                        setSelectedSlide(2);
+                      }}
+                    ></button>
+                    <button
+                      className={sliderButton(3)}
+                      onClick={() => {
+                        setSelectedSlide(3);
+                      }}
+                    ></button>
+                  </div>
                 </div>
               </div>
+            );
+          }
+        })}
+        {/* Affiliate Description */}
+        <div
+          ref={page5}
+          className=" md:h-full xl:h-5/6 w-full md:w-5/12 flex flex-col justify-center items-center md:items-start p-5 gap-5 "
+        >
+          <div
+            className="h-full md:h-full w-19/20 md:w-11/12 p-5 md:p-10 gap-8 md:gap-5 flex flex-col 
+                              justify-evenly md:justify-center items-center md:items-start border border-color60 
+                              rounded-b-4xl md:rounded-r-3xl lg:rounded-l-none xl:rounded-r-semifull bg-cover bg-center "
+            // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
+          >
+            <h1
+              className="w-full lg:w-9/12 h-3/20 md:h-2/6 lg:h-3/10 text-lg 2xs:text-2xl sm:text-3xl md:text-4xl text-color10b p-1 font-bold 
+                               tracking-tight md:tracking-wide "
+              //  underline underline-offset-8 decoration-color60
+            >
+              Become an Affiliate
+            </h1>
+            <div className="font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-white tracking-tight indent-5 ml-0.5 overflow-y-auto">
+              An affiliate is someone who helps sell or promote a product or service. They are like a partner to the
+              company that makes the product. When the affiliate tells others about the product and those people buy it
+              because of the affiliate's recommendation, the affiliate gets a reward, like a small percentage of the
+              money from the sale. It's a way for people to earn a little bit of money by sharing things they like with
+              others.
+            </div>
+            <div className="flex justify-start items-center h-1/10 md:h-2/6 w-full ">
+              <span className="w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300">
+                <button className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300">
+                  <FaPenSquare className="ml-1 text-xl" /> <a className=" ml-2">Register</a>
+                </button>
+              </span>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* <div className="flex h-4/10 w-full 2xs:w-19/20 md:w-10/12 bg-opacity-60 rounded-t-3xl bg-color60 p-2">
 
