@@ -32,8 +32,8 @@ const CustomerDropdown = ({ data, setChosen, customerTotalValueRanking }) => {
   // };
 
   return (
-    <div className="h-full w-full ">
-      <div className="h-9/10 w-full flex justify-center items-end ">
+    <div className="w-full h-full ">
+      <div className="flex items-end justify-center w-full h-9/10 ">
         <Autocomplete
           onChange={(event, newValue) => {
             setChosenCustomer(newValue), setChosen(newValue)
@@ -47,7 +47,7 @@ const CustomerDropdown = ({ data, setChosen, customerTotalValueRanking }) => {
               fontSize: 15,
             },
           }}
-          className='text-color60 w-full xs:w-11/12'
+          className='w-full text-color60 xs:w-11/12'
           sx={{
             backgroundColor: '#ffffff',
             borderRadius: 2,
