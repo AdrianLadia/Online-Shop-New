@@ -3,8 +3,6 @@ import { Modal } from '@material-ui/core';
 import Fade from '@mui/material/Fade';
 import Box from '@mui/material/Box';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
-import ImageList from '@material-ui/core/ImageList';
-import ImageListItem from '@material-ui/core/ImageListItem';
 import { makeStyles } from '@material-ui/core/styles';
 import { useState } from 'react';
 import { Typography } from '@mui/material';

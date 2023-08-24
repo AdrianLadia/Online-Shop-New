@@ -11,6 +11,7 @@
     "react-geocode": "^0.2.3",
     "react-helmet": "^6.1.0",
     "react-phone-input-2": "^2.15.1",
+    "react-photo-gallery": "^8.0.0",
     "react-spinners": "^0.13.8",
     "typeface-poppins": "^1.1.13"
   }

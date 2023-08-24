@@ -491,6 +491,7 @@ const HomePage = ({ isAffiliateLink }) => {
         {/* Logo */}
         <div className="w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 ">
           <img
+            loading="lazy"
             src={logo}
             alt="logo"
             className=" h-14 w-14 sm:h-16 sm:w-16 2xl:h-20 2xl:w-20 rounded-full border-2 border-color30 cursor-pointer"
@@ -503,7 +504,7 @@ const HomePage = ({ isAffiliateLink }) => {
         {/* Menu */}
         <div className="w-full sm:w-8/12 md:w-11/12 flex-row-reverse md:flex-row justify-start md:justify-between flex">
           {/* SMall Screen Menu */}
-          <div className=" block md:hidden w-3/12 sm:w-2/12 text-3xl h-20 p-2 ">
+          <div className="block md:hidden w-3/12 sm:w-2/12 text-3xl h-20 p-2 ">
             <div className=" flex justify-center items-center w-full h-full">
               {showMenu == false ? (
                 <BsList
@@ -799,12 +800,7 @@ const HomePage = ({ isAffiliateLink }) => {
         </div>
       </div>
       {/* Page 2 About*/}
-      <div
-        ref={page2}
-        className="mt-10  w-screen h-screen bg-cover bg-center"
-        //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
-      >
-        <div className="h-1/10 w-full flex" />
+      <div ref={page2} className="mt-10 flex flex-col  w-screen  bg-cover bg-center">
         <div ref={p2} className="flex h-9/10 w-full justify-center items-center ">
           <div
             className=" w-11/12 h-9/10 flex-col md:flex-row p-5 sm:p-16 md:p-5 gap-2 sm:gap-4 flex items-center justify-evenly rounded-3xl bg-local bg-cover bg-center"
@@ -836,11 +832,31 @@ const HomePage = ({ isAffiliateLink }) => {
             {/* Image */}
             <div className="w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center">
               <img
+                loading="lazy"
                 className="w-full h-full rounded-3xl  text-white"
                 alt="About Image"
                 //  src='./vids/STAR-DELIVERY.png'
                 src={about}
               />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col h-full  items-center mt-10 ">
+          <Typography>What We Do</Typography>
+          <div className="w-9/10 h-96  border border-emerald-300 mt-5 rounded-lg overflow-auto">
+            <div className='p-5 lg:p-10'>
+              <ImageList variant="masonry" cols={2} gap={8}>
+                {imageLinks.map((item) => (
+                  <ImageListItem key={item.img}>
+                    <img
+                      src={`${item.img}?w=248&fit=crop&auto=format`}
+                      srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                      alt={item.title}
+                      loading="lazy"
+                    />
+                  </ImageListItem>
+                ))}
+              </ImageList>
             </div>
           </div>
         </div>
@@ -863,7 +879,7 @@ const HomePage = ({ isAffiliateLink }) => {
               {selectedCategory ? selectedCategory : 'Paper Bags'}
             </div> */}
             <div className=" w-64 h-64 lg:w-96 lg:h-96 rounded-xl xs:rounded-3xl border border-green2 overflow-hidden flex items-center justify-center">
-              <img className="ease-in-out" src={selectedCategoryImage} />
+              <img className="ease-in-out" src={selectedCategoryImage} loading="lazy" />
             </div>
           </div>
           {/* Products & CTA*/}
@@ -912,104 +928,115 @@ const HomePage = ({ isAffiliateLink }) => {
           className=" w-screen h-screen bg-cover bg-center "
           //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
         >
-     {/* Last Page*/}
-     <div className="flex w-full justify-center pb-20">
-        <div className="border w-9/10 flex rounded-lg border-color60 items-center justify-center">
-          <div className="flex flex-col  w-full pb-24 lg:pb-48">
-            <div className="flex flex-col justify-center items-center w-full mt-20">
-              <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
-                Shop Features
-              </Typography>
-            </div>
+          {/* Last Page*/}
+          <div className="flex w-full justify-center pb-20">
+            <div className="border w-9/10 flex rounded-lg border-color60 items-center justify-center">
+              <div className="flex flex-col  w-full pb-24 lg:pb-48">
+                <div className="flex flex-col justify-center items-center w-full mt-20">
+                  <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
+                    Shop Features
+                  </Typography>
+                </div>
 
-            <div className="flex flex-col mt-20">
-              <div className="flex flex-row justify-evenly">
-                <div className="w-1/3 lg:w-60 ">
-                  <div className=" flex justify-center items-center ">
-                    <img className="w-full h-full" alt="Favorite Items" src={favorites} />
+                <div className="flex flex-col mt-20">
+                  <div className="flex flex-row justify-evenly">
+                    <div className="w-1/3 lg:w-60 ">
+                      <div className=" flex justify-center items-center ">
+                        <img className="w-full h-full" alt="Favorite Items" src={favorites} loading="lazy" />
+                      </div>
+                      <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                          Favorite Items
+                        </h1>
+                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                          Adding your favorite items to your 'Favorites' list for quick and convenient access.
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="w-1/3 lg:w-60">
+                      <div className=" flex justify-center items-center ">
+                        <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate} loading="lazy" />
+                      </div>
+                      <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                          Auto Calculate Cost
+                        </h1>
+                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                          The delivery fee and total cost of items will be calculated at checkout. There will be no
+                          hidden charges after delivery.
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="w-1/3 lg:w-60">
+                      <div className=" flex justify-center items-center ">
+                        <img
+                          className="w-full h-full"
+                          alt="This should render an image"
+                          src={pinpoint}
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30 text-white">
+                          Pinpoint Location
+                        </h1>
+                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                          Who needs big signs or landmarks when you can pinpoint your exact location!
+                        </h2>
+                      </div>
+                    </div>
                   </div>
-                  <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                      Favorite Items
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                      Adding your favorite items to your 'Favorites' list for quick and convenient access.
-                    </h2>
-                  </div>
-                </div>
-                <div className="w-1/3 lg:w-60">
-                  <div className=" flex justify-center items-center ">
-                    <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate} />
-                  </div>
-                  <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                      Auto Calculate Cost
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                      The delivery fee and total cost of items will be calculated at checkout. There will be no hidden
-                      charges after delivery.
-                    </h2>
-                  </div>
-                </div>
-                <div className="w-1/3 lg:w-60">
-                  <div className=" flex justify-center items-center ">
-                    <img className="w-full h-full" alt="This should render an image" src={pinpoint} />
-                  </div>
-                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30 text-white">
-                      Pinpoint Location
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                      Who needs big signs or landmarks when you can pinpoint your exact location!
-                    </h2>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-row justify-evenly">
-                <div className="lg:w-60">
-                  <div className=" flex justify-center items-center ">
-                    <img className="w-full h-full" alt="Chat With Customer Service" src={customerChat} />
-                  </div>
-                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                      Chat with Customer Service
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                      Any questions or concerns? There is a chat customer service available to help you out.
-                    </h2>
-                  </div>
-                </div>
-                <div className="lg:w-60">
-                  <div className=" flex justify-center items-center ">
-                    <img className="w-full h-full" alt="Save Location and Contacts" src={saved} />
-                  </div>
-                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                      Save Location and Contacts
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                      This makes it quicker and easier to fill in the details for your next order.
-                    </h2>
-                  </div>
-                </div>
-                <div className="lg:w-60">
-                  <div className=" flex justify-center items-center ">
-                    <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple} />
-                  </div>
-                  <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                    <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                      Multiple Payment Methods
-                    </h1>
-                    <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                      Gives you the flexibility to choose the option that is most convenient and suits your preferences.
-                    </h2>
+                  <div className="flex flex-row justify-evenly">
+                    <div className="lg:w-60">
+                      <div className=" flex justify-center items-center ">
+                        <img
+                          className="w-full h-full"
+                          alt="Chat With Customer Service"
+                          src={customerChat}
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                          Chat with Customer Service
+                        </h1>
+                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                          Any questions or concerns? There is a chat customer service available to help you out.
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="lg:w-60">
+                      <div className=" flex justify-center items-center ">
+                        <img className="w-full h-full" alt="Save Location and Contacts" src={saved} loading="lazy" />
+                      </div>
+                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                          Save Location and Contacts
+                        </h1>
+                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                          This makes it quicker and easier to fill in the details for your next order.
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="lg:w-60">
+                      <div className=" flex justify-center items-center ">
+                        <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple} loading="lazy" />
+                      </div>
+                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
+                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
+                          Multiple Payment Methods
+                        </h1>
+                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
+                          Gives you the flexibility to choose the option that is most convenient and suits your
+                          preferences.
+                        </h2>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
           <div
             ref={p4}
             className="flex flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
@@ -1056,6 +1083,7 @@ const HomePage = ({ isAffiliateLink }) => {
                         className="md:block  h-6/10 rounded-3xl border aspect-square border-color60 mb-3 text-white"
                         alt="Affiliate Image"
                         src={photoUrl}
+                        loading="lazy"
                       />
                       <div className="w-full h-1/10 flex justify-center items-center gap-5">
                         <button
@@ -1122,8 +1150,6 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </div>
       )}
-
- 
 
       {/* <div className="flex h-4/10 w-full 2xs:w-19/20 md:w-10/12 bg-opacity-60 rounded-t-3xl bg-color60 p-2">
 
