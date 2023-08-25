@@ -57,7 +57,7 @@ const AdminDelivery = () => {
   }, [selectedOrderReference]);
 
   function onUploadFunction(imageLink) {
-    console.log('uploading');
+   
     setImageLink(imageLink);
   }
 

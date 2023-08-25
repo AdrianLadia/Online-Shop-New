@@ -168,12 +168,6 @@ const HomePage = ({ isAffiliateLink }) => {
   const [selectedCategoryImage, setSelectedCategoryImage] = useState(
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bag.png?alt=media&token=3312b85b-8ae7-4d8c-83ff-8e5be3424f2f'
   );
-  const [selectedAddress, setSelectedAddress] = useState(false);
-  const [locallatitude, setLocalLatitude] = useState(10.35979);
-  const [locallongitude, setLocalLongitude] = useState(123.93984);
-  const [localDeliveryAddress, setLocalDeliveryAddress] = useState('');
-  const [zoom, setZoom] = useState(18);
-  const [addressText, setAddressText] = useState('');
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showButton, setShowButton] = useState(false);
@@ -573,7 +567,7 @@ const HomePage = ({ isAffiliateLink }) => {
             ) : null}
           </div>
           {/* LarGe screen menu */}
-          <div className="hidden md:block w-11/12 lg:w-2/3 xl:w-1/2 text-base md:text-lg xl:text-xl h-20 gap-0.5 justify-evenly items-start ">
+          <div className="hidden md:block text-base md:text-lg xl:text-xl h-20 gap-0.5 justify-evenly items-start">
             <button
               onClick={() => {
                 scroll('page1');
@@ -617,6 +611,7 @@ const HomePage = ({ isAffiliateLink }) => {
               </button>
             ) : (
               <button
+              
                 onClick={() => {
                   scroll('page5');
                 }}

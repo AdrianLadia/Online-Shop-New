@@ -336,9 +336,6 @@ const CheckoutPage = () => {
     }
   }
 
-  useEffect(() => {
-    console.log(startDate)
-  }, [startDate]);
 
   useEffect(() => {
     setRefreshUser(!refreshUser);

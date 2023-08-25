@@ -38,7 +38,6 @@ const OpenCartButton = (props) => {
         }
       }
     });
-    console.log(stocksAvailable)
     const newCart = businesscalculations.addToCart(cart, product, stocksAvailable);
     setUpdateCartInfo(!updateCartInfo);
     setCart(newCart);
@@ -96,7 +95,6 @@ const OpenCartButton = (props) => {
     });
 
     setTotalPrice(total_price);
-    console.log(prices);
     prices.sort((a, b) => {
       if (a.category < b.category) return -1;
       if (a.category > b.category) return 1;

@@ -86,7 +86,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      console.log(data)
       await this.createDocument(data, userId, 'Users');
       await this.createDocument(
         {

@@ -10,12 +10,14 @@ import AppContext from '../AppContext';
 import { CircularProgress } from '@mui/material';
 import useWindowDimensions from './UseWindowDimensions';
 import { Helmet } from 'react-helmet';
+import ScrollTopButton from './ScrollTopButton';
 
 const Shop = () => {
   const { width } = useWindowDimensions();
   const [wholesale, setWholesale] = useState(false);
   const [retail, setRetail] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [categorySelectorInView, setCategorySelectorInView] = useState(true);
 
   const { isSupportedBrowser, selectedCategory, setSelectedCategory, products } = useContext(AppContext);
 
@@ -45,10 +47,11 @@ const Shop = () => {
       {/* <OpeningSoonModal /> */}
 
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
+      <ScrollTopButton categorySelectorInView={categorySelectorInView} />
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail} wholesale={wholesale} retail={retail} />
       {/* CATEGORY */}
-      <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} setWholesale={setWholesale} wholesale={wholesale} setRetail={setRetail} retail={retail} />
+      <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} setWholesale={setWholesale} wholesale={wholesale} setRetail={setRetail} retail={retail} setCategorySelectorInView={setCategorySelectorInView} />
       {/* PRODUCTS */}
 
       {loading ? (

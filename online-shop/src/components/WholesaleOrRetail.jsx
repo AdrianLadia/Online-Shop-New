@@ -63,18 +63,15 @@ const WholesaleOrRetail = (props) => {
   }
 
   function checkIfWholesaleOrRetailSelected() {
-    if (wholesale || retail) {
-      console.log('wholesale or retail selected');
+    if (wholesale || retail) {;
       return true;
     }
     else {
-      console.log('wholesale or retail not selected');
       return false;
     }
   }
 
   function responsiveButtonColorFavorites() {
-    console.log('RAN')
     if (selectedCategory == 'Favorites' && !checkIfWholesaleOrRetailSelected()) {
       return 'shadow-xl bg-color10b  ';
     } else {
@@ -83,7 +80,6 @@ const WholesaleOrRetail = (props) => {
   }
 
   function onFavoritesClick() {
-    console.log('onFavoritesClick');
     setSelectedCategory('Favorites');
     setWholesale(false);
     setRetail(false);
