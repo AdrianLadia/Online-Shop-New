@@ -706,7 +706,7 @@ const HomePage = ({ isAffiliateLink }) => {
       {/* Page 1 Home*/}
       <div
         ref={page1}
-        className=" w-screen h-screen bg-cover bg-center "
+        className=" w-screen h-screen bg-cover bg-center  "
         style={{
           backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + `url(${backgroundImageUrl})`,
         }}
