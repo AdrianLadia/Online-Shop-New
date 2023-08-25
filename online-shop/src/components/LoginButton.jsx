@@ -132,7 +132,6 @@ const LoginButton = (props) => {
   
   const handleClick = (event) => {
     if (!isSupportedBrowser) {
-      console.log('Setting to open unsupported modal');
       setOpenUnsupportedBrowserModal(true);
       return;
     }

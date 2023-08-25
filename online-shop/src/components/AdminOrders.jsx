@@ -58,7 +58,7 @@ const AdminOrders = (props) => {
         setAllUsers(users);
       });
     }
-    console.log('users', users);
+
   }, [users]);
 
   const playSound = () => {
@@ -88,7 +88,7 @@ const AdminOrders = (props) => {
     const filter = orders.filter((order) => {
       return order.userName === selectedName;
     });
-    console.log(filter);
+  
     setOrders(filter);
   }, [selectedName]);
 

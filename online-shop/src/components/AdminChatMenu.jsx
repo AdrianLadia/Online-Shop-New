@@ -108,7 +108,7 @@ const AdminChatMenu = () => {
         firestore.readUserById(customerId).then((user) => {
           const customerName = user.name;
           firestore.updateOrderMessageName(customerId, customerName);
-          console.log('UPDATED NAME');
+     
         });
       }
     });

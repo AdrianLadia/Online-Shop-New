@@ -20,6 +20,7 @@ const AdminAffiliatePage = () => {
     const accountName = 'John Doe';
     const currentDate = new Date().toDateString()
     const [openAddPaymentMethodModal, setOpenAddPaymentMethodModal] = useState(false);
+    const [loading,setLoading] = useState(true)
 
     useEffect(() => {
       if (userdata) {
@@ -41,6 +42,7 @@ const AdminAffiliatePage = () => {
 
     function onClaimClick(){
       if(chosenMethod && total > 0 && userdata){
+        setLoading(true)
         const data1 = {
           date: new Date().toDateString(),
           data: affiliateCommissions,
@@ -66,11 +68,14 @@ const AdminAffiliatePage = () => {
           if(res.request.status==200){
             alert("Your Claim Request is Submitted Successfully.")
             window.location.reload()
+            setLoading(false)
           }else{
-           
+            alert("Something went wrong. Please try again.")
+            setLoading(false)
           }
         })
       }
+      
     }
 
     let affiliateCommissions = userdata ? userdata.affiliateCommissions:null;
@@ -93,6 +98,18 @@ const AdminAffiliatePage = () => {
         return ' bg-color10b hover:bg-blue1'
       }else{
         return ' bg-gray-300 cursor-not-allowed'
+      }
+    }
+
+    function disableButton(){
+      if (chosenMethod && total != 0) {
+        return false
+      }
+      else if (loading == false) {
+        return false
+      }
+      else {
+        return true
       }
     }
 
@@ -122,7 +139,7 @@ const AdminAffiliatePage = () => {
             />
           </div>
           <div className='h-full  flex'>
-            <Button disabled={chosenMethod && total != 0? false:true} onClick={onClaimClick} 
+            <Button disabled={ disableButton()} onClick={onClaimClick} 
               className={'tracking-widest px-10 rounded-lg mb-0.5 w-3/12 ' + disableColor()} variant='contained'>Claim
             </Button>
           </div>

@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Link, Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
+import { de } from 'date-fns/locale';
 
 const AdminOrdersTable = (props) => {
   const datamanipulation = new dataManipulation();
@@ -69,12 +70,19 @@ const AdminOrdersTable = (props) => {
         withInvoice = 'No'
       }
 
+      let deliveryDate
+      if (order.deliveryDate) {
+        deliveryDate = datamanipulation.convertTimestampToDateStringWithoutTime(order.deliveryDate)
+      }
+      else {
+        deliveryDate = ''
+      }
 
       localrows.push(
         createData(
           order.reference,
           datamanipulation.convertDateTimeStampToDateString(order.orderDate),
-          datamanipulation.convertTimestampToDateStringWithoutTime(order.deliveryDate),
+          deliveryDate,
           order.userName,
           order.paid ? 'YES' : 'NO',
           order.delivered ? 'YES' : 'NO',

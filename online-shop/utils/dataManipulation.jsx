@@ -11,6 +11,7 @@ class dataManipulation {
   constructor() {}
 
   convertTimestampToDateStringWithoutTime(timestamp) {
+    console.log(timestamp)
     const timestampInMilliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
 
     // Create a date object

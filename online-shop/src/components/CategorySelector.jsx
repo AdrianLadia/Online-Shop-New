@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useContext } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
 import Tabs from '@mui/material/Tabs';
@@ -26,10 +26,10 @@ const CategorySelector = (props) => {
   const setSelectedCategory = props.setSelectedCategory;
   const selectedCategory = props.selectedCategory;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
-  const { firestore, categories, setCategories,categoryValue,setCategoryValue } = useContext(AppContext);
+  const { firestore, categories, setCategories, categoryValue, setCategoryValue } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
-  const {wholesale,retail,setWholesale,setRetail} = props;
-  
+  const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
+  const myElement = useRef(null);
 
   useEffect(() => {
     // Function to extract the "category" parameter from the URL query string
@@ -70,17 +70,49 @@ const CategorySelector = (props) => {
     setCategoryValue(newValue);
   };
 
-
-
   useEffect(() => {
     if (categories != null && categoryValue != null) {
       setSelectedCategory(categories[categoryValue]);
     }
   }, [categoryValue]);
 
+  function isElementOutOfView(el) {
+    if (!el) return true;
+
+    const rect = el.getBoundingClientRect();
+
+    return rect.bottom < 0 || rect.right < 0 || rect.left > window.innerWidth || rect.top > window.innerHeight;
+  }
+
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (myElement.current) {
+        const outOfView = isElementOutOfView(myElement.current);
+        setCategorySelectorInView(!outOfView);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup: remove the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // The empty dependency array ensures the useEffect runs once when the component mounts and not on every re-render.
+
+
+  useEffect(() => {
+    if (myElement.current) {
+      const outOfView = isElementOutOfView(myElement.current);
+      setCategorySelectorInView(!outOfView);
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
-      <div className="w-full">
+      <div ref={myElement} className="w-full">
         {categories && categories[categoryValue] ? (
           <Helmet>
             <title>{categories[categoryValue]} - Star Pack: Packaging Supplies</title>
