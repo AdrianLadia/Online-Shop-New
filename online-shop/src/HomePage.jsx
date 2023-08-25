@@ -34,15 +34,15 @@ const HomePage = ({ isAffiliateLink }) => {
   const multiple =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fmultiplepayment-05%20(1).svg?alt=media&token=3cd6fdfd-9d71-4ce4-afc2-3feec5891d93';
   const backgroundImageUrl =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FkMz46WMzlexoqIBGHaHX2gQ2lZo9%2F11584182023-107801%2Fpaper%20products.jpg?alt=media&token=895a3219-b509-4dcf-bdd8-ee8d86327f69';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fpaper%20products.jpg?alt=media&token=65a433cd-ba8c-40f6-ad3f-00f5348e217d';
   const contactsImage =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Orders%2FqVTOh9OFWYh4myliIFXYIkr5D7H2%2F11114222023-906350%2Fpexels-resource-boy-13031765.jpg?alt=media&token=2573bad4-dd7d-4387-a241-a565ac237123';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fkraft%20background.png?alt=media&token=87967b75-1ca4-4d7e-bac3-4dab5a6a7315';
   const logo =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fstarpack.png?alt=media&token=e108388d-74f7-45a1-8344-9c6af612f053';
   const videoAd =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed.mp4?alt=media&token=bc6b257e-7ba9-4568-b843-b32c4927a5fb&_gl=1*1pcfpf3*_ga*MTk5NDU4NTY2OC4xNjc4NDI0NDg0*_ga_CW55HF8NVT*MTY4NjE5NjY5Ny4xOC4xLjE2ODYxOTY3NjguMC4wLjA';
   const about =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/affiliateDeposits%2Faffiliate_user_2%2Ff4b3d1ee-cd04-4b70-8255-e4a4594d5aabhome-page-01.svg?alt=media&token=1ee55a4e-4d5f-4035-b907-651d998b774b';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ff4b3d1ee-cd04-4b70-8255-e4a4594d5aabhome-page-01.png?alt=media&token=c3efbd67-95ce-42c0-8786-f0a6f06fd5de';
   const page1 = useRef();
   const page2 = useRef();
   const page3 = useRef();
