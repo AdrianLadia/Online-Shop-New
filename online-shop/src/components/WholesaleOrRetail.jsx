@@ -16,6 +16,7 @@ const WholesaleOrRetail = (props) => {
   function onWholesaleClick() {
     setWholesale(true);
     setRetail(false);
+    
   }
 
   function onRetailClick() {

@@ -149,20 +149,20 @@ const MyOrderCardModal = (props) => {
                 <Divider />
                 {hidePricing ? null : (
                   <ListItem>
-                    <ListItemText primary="Items Total" secondary={order.itemsTotal + order.vat} />
+                    <ListItemText primary="Items Total" secondary={'₱' + (order.itemsTotal + order.vat).toLocaleString()} />
                   </ListItem>
                 )}
                 <Divider />
                 <Divider />
                 {hidePricing ? null : (
                   <ListItem>
-                    <ListItemText primary="Shipping" secondary={order.shippingTotal} />
+                    <ListItemText primary="Shipping" secondary={'₱' + order.shippingTotal.toLocaleString()} />
                   </ListItem>
                 )}
                 <Divider />
                 {hidePricing ? null : (
                   <ListItem>
-                    <ListItemText primary="Grand Total" secondary={order.grandTotal} />
+                    <ListItemText primary="Grand Total" secondary={'₱' + order.grandTotal.toLocaleString()} />
                   </ListItem>
                 )}
                 <Divider />

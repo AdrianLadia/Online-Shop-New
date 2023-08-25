@@ -83,7 +83,12 @@ const CartTable = (props) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                     {columns.map((column) => {
-                      const value = row[column.id];
+                      let value = row[column.id];
+
+                      if (['price','total'].includes(column.id)) {
+                        value = '₱ ' + value.toLocaleString('en-US')
+                      }
+                      
                       if (column.id === 'itemimage') {
                         return(
                           <TableCell key={column.id} align={column.align}>
@@ -94,7 +99,7 @@ const CartTable = (props) => {
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.format && typeof value === "number"
-                            ? column.format(value)
+                            ? column.format( value)
                             : value}
                         </TableCell>
                       );

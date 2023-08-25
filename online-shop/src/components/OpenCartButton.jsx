@@ -165,7 +165,7 @@ const OpenCartButton = (props) => {
                 <AiOutlineShoppingCart size={25} />
               </div>
               <div className="mt-0.5 flex flex-row ml-3">
-                <Typography variant="h6"> Php </Typography>
+                <Typography variant="h6"> ₱ </Typography>
                 <Typography sx={{ marginLeft: 1 }} id="totalPrice" variant="h6">
                   {' '}
                   {totalPrice.toLocaleString()}{' '}

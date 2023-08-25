@@ -33,6 +33,10 @@ const ProductCardModalTable = (props) => {
             return
           }
         }
+        if ([null,'',,undefined].includes(props.specs[key])) { 
+          return
+        }
+
         rows.push(createData(key,props.specs[key])) // key is the key of the object, props.specs[key] is the value of the key of the object
      
     })
