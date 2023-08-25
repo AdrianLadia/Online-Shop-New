@@ -3,13 +3,15 @@ import isFirstDayOfMonth from 'date-fns/isFirstDayOfMonth/index';
 import React, { useContext } from 'react';
 import { useState } from 'react';
 import AppContext from '../AppContext';
+import { AiFillHeart } from 'react-icons/ai';
+import AppConfig from '../AppConfig';
 
 const WholesaleOrRetail = (props) => {
   const setWholesale = props.setWholesale;
   const setRetail = props.setRetail;
   const wholesale = props.wholesale;
   const retail = props.retail;
-  const { setSelectedCategory,selectedCategory } = useContext(AppContext);
+  const { setSelectedCategory,selectedCategory,setCategoryValue,categories} = useContext(AppContext);
 
   function onWholesaleClick() {
     setWholesale(true);
@@ -17,6 +19,16 @@ const WholesaleOrRetail = (props) => {
   }
 
   function onRetailClick() {
+    if (selectedCategory == 'Favorites') {
+      const featuredCategory = new AppConfig().getFeaturedCategory();
+      setSelectedCategory(featuredCategory);
+      categories.forEach((category, index) => {
+
+        if (category === featuredCategory) {
+          setCategoryValue(index);
+        }
+      });
+    }
     setWholesale(false);
     setRetail(true);
   }
@@ -49,8 +61,20 @@ const WholesaleOrRetail = (props) => {
     }
   }
 
+  function checkIfWholesaleOrRetailSelected() {
+    if (wholesale || retail) {
+      console.log('wholesale or retail selected');
+      return true;
+    }
+    else {
+      console.log('wholesale or retail not selected');
+      return false;
+    }
+  }
+
   function responsiveButtonColorFavorites() {
-    if (selectedCategory == 'Favorites') {
+    console.log('RAN')
+    if (selectedCategory == 'Favorites' && !checkIfWholesaleOrRetailSelected()) {
       return 'shadow-xl bg-color10b  ';
     } else {
       return 'bg-gray-400 text-bg-color10b';
@@ -60,6 +84,9 @@ const WholesaleOrRetail = (props) => {
   function onFavoritesClick() {
     console.log('onFavoritesClick');
     setSelectedCategory('Favorites');
+    setWholesale(false);
+    setRetail(false);
+    setCategoryValue(0)
   }
 
   return (
@@ -90,7 +117,9 @@ const WholesaleOrRetail = (props) => {
         >
           <Typography>PACK</Typography>
         </button>
-        <button className=' mr-1  flex-none font-semibold p-3 rounded-full w-3/5 2xs:w-32 lg:w-40 hover:animate-pulse text-white '  onClick={onFavoritesClick}>Favorites</button>
+        <button className={' ml-2  flex-none font-semibold p-3 rounded-full  hover:animate-pulse text-white ' + responsiveButtonColorFavorites()}  onClick={onFavoritesClick} >
+          <AiFillHeart className="text-2xl" color='red' />
+        </button>
       </div>
     </div>
   );

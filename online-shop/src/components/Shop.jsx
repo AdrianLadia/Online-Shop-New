@@ -48,7 +48,7 @@ const Shop = () => {
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail setWholesale={setWholesale} setRetail={setRetail} wholesale={wholesale} retail={retail} />
       {/* CATEGORY */}
-      <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} />
+      <CategorySelector setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} setWholesale={setWholesale} wholesale={wholesale} setRetail={setRetail} retail={retail} />
       {/* PRODUCTS */}
 
       {loading ? (

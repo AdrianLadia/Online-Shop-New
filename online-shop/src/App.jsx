@@ -111,6 +111,7 @@ function App() {
   const [categoryProductsData, setCategoryProductsData] = useState([]);
   const [userOrderReference, setUserOrderReference] = useState(null);
   const [favoriteProductData, setFavoriteProductData] = useState([]);
+  const [categoryValue, setCategoryValue] = useState(null);
   const hiddenCategories = [];
 
   useEffect(() => {
@@ -556,6 +557,8 @@ function App() {
     openProfileUpdaterModal: openProfileUpdaterModal,
     selectedCategory: selectedCategory,
     setSelectedCategory: setSelectedCategory,
+    categoryValue: categoryValue,
+    setCategoryValue: setCategoryValue,
   };
 
   return (

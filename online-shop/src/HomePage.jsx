@@ -767,8 +767,9 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
           {/* Video  */}
           <div className="h-1/2 md:h-full w-full md:w-6/10 items-start xs:items-center flex justify-center ">
-            <div className="h-7/10 w-full flex justify-center items-center relative">
-              <video
+            <div className="h-7/10  mt-10 w-full flex justify-center items-center relative">
+              <img loading='lazy' className="h-full w-11/12 xl:w-10/12 flex justify-center items-center" src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed%20(4).gif?alt=media&token=b077f8c7-4b17-4891-b3ea-8338f720fc33'></img>
+              {/* <video
                 ref={videoRef}
                 autoPlay
                 loop
@@ -780,7 +781,7 @@ const HomePage = ({ isAffiliateLink }) => {
                 className="h-full w-11/12 xl:w-10/12 flex justify-center items-center"
               >
                 <source src={videoAd} />
-              </video>
+              </video> */}
               {showButton ? (
                 <div className="absolute flex justify-center items-center gap-12 2xs:gap-16 lg:gap-20 ">
                   <button

@@ -10,6 +10,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import AppConfig from '../AppConfig';
 
 function a11yProps(index) {
   return {
@@ -20,12 +21,14 @@ function a11yProps(index) {
 
 const CategorySelector = (props) => {
   const location = useLocation();
-  const featuredCategory = 'Meal Box';
-  const [value, setValue] = React.useState(null);
+  const featuredCategory = new AppConfig().getFeaturedCategory();
+
   const setSelectedCategory = props.setSelectedCategory;
+  const selectedCategory = props.selectedCategory;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
-  const { firestore, categories, setCategories } = useContext(AppContext);
+  const { firestore, categories, setCategories,categoryValue,setCategoryValue } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
+  const {wholesale,retail,setWholesale,setRetail} = props;
   
 
   useEffect(() => {
@@ -54,33 +57,36 @@ const CategorySelector = (props) => {
         }
 
         if (category === categoryToUse) {
-          setValue(index);
+          setCategoryValue(index);
         }
       });
     }
   }, [categories, categoryFromUrl]);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    if (wholesale == false && retail == false) {
+      setRetail(true);
+    }
+    setCategoryValue(newValue);
   };
 
 
 
   useEffect(() => {
-    if (categories != null && value != null) {
-      setSelectedCategory(categories[value]);
+    if (categories != null && categoryValue != null) {
+      setSelectedCategory(categories[categoryValue]);
     }
-  }, [value]);
+  }, [categoryValue]);
 
   return (
     <ThemeProvider theme={theme}>
       <div className="w-full">
-        {categories && categories[value] ? (
+        {categories && categories[categoryValue] ? (
           <Helmet>
-            <title>{categories[value]} - Star Pack: Packaging Supplies</title>
+            <title>{categories[categoryValue]} - Star Pack: Packaging Supplies</title>
             <meta
               name="description"
-              content={`Browse our selection of packaging supplies in the ${categories[value]} category.`}
+              content={`Browse our selection of packaging supplies in the ${categories[categoryValue]} category.`}
             />
           </Helmet>
         ) : null}
@@ -88,7 +94,7 @@ const CategorySelector = (props) => {
           <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>
               <Tabs
-                value={value}
+                value={categoryValue}
                 onChange={handleChange}
                 aria-label="basic tabs example"
                 indicatorColor="primary"

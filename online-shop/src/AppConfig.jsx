@@ -7,6 +7,11 @@ class AppConfig {
         this.noVat = false
         this.retailSafetyStock = 2
         this.freeDeliveryThreshold = 10000
+        this.featuredCategory = 'Meal Box'
+    }
+
+    getFeaturedCategory() {
+        return this.featuredCategory
     }
 
     getFreeDeliveryThreshold() {
