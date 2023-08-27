@@ -928,8 +928,8 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </div>
       </div>
-      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5">
-        <Card sx={{ width: 250, flexShrink:0  }}>
+      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:justify-center">
+        <Card ref={page4} sx={{ width: 250, flexShrink: 0 }} elevation={20}>
           <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="green iguana" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
@@ -940,12 +940,8 @@ const HomePage = ({ isAffiliateLink }) => {
               after delivery.
             </Typography>
           </CardContent>
-          {/* <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions> */}
         </Card>
-        <Card sx={{ width: 250, flexShrink:0 }}>
+        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
           <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
@@ -956,163 +952,57 @@ const HomePage = ({ isAffiliateLink }) => {
             </Typography>
           </CardContent>
         </Card>
-        <Card sx={{ width: 250, flexShrink:0  }}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={pinpoint} title="green iguana" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              Favorite Items
+              Pinpoint Location
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+              Who needs big signs or landmarks when you can pinpoint your exact location!
             </Typography>
           </CardContent>
         </Card>
-        <Card sx={{ width: 250, flexShrink:0  }}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+
+        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={saved} title="green iguana" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              Favorite Items
+              Save Location and Contacts
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+              This makes it quicker and easier to fill in the details for your next order.
             </Typography>
           </CardContent>
         </Card>
-        <Card sx={{ width: 250, flexShrink:0  }}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={customerChat} title="green iguana" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              Favorite Items
+              Chat with Customer Service
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+              Any questions or concerns? There is a chat customer service available to help you out.
             </Typography>
           </CardContent>
         </Card>
-        <Card sx={{ width: 250, flexShrink:0  }}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={multiple} title="green iguana" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              Favorite Items
+              Multiple Payment Methods
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+              Gives you the flexibility to choose the option that is most convenient and suits your preferences.
             </Typography>
           </CardContent>
         </Card>
       </div>
-      {/* Page 4 Features*/}
-      {isAffiliateLink ? null : (
-        <div
-          ref={page4}
-          className=" bg-red-100 w-screen  bg-cover bg-center "
-          //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
-        >
-          {/* Last Page*/}
-
-          <div ref={p4} className="flex w-full justify-center pb-20">
-            <div className="border w-9/10 flex rounded-lg border-color60 items-center justify-center">
-              <div className="flex flex-col  w-full pb-24 lg:pb-48">
-                <div className="flex flex-col justify-center items-center w-full mt-20">
-                  <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
-                    Shop Features
-                  </Typography>
-                </div>
-
-                <div className="flex flex-col mt-20">
-                  <div className="flex flex-row justify-evenly">
-                    <div className="w-1/3 lg:w-60 ">
-                      <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Favorite Items" src={favorites} />
-                      </div>
-                      <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                          Favorite Items
-                        </h1>
-                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                          Adding your favorite items to your 'Favorites' list for quick and convenient access.
-                        </h2>
-                      </div>
-                    </div>
-                    <div className="w-1/3 lg:w-60">
-                      <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate} />
-                      </div>
-                      <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                          Auto Calculate Cost
-                        </h1>
-                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                          The delivery fee and total cost of items will be calculated at checkout. There will be no
-                          hidden charges after delivery.
-                        </h2>
-                      </div>
-                    </div>
-                    <div className="w-1/3 lg:w-60">
-                      <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="This should render an image" src={pinpoint} />
-                      </div>
-                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30 text-white">
-                          Pinpoint Location
-                        </h1>
-                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                          Who needs big signs or landmarks when you can pinpoint your exact location!
-                        </h2>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-row justify-evenly ">
-                    <div className="lg:w-60">
-                      <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Chat With Customer Service" src={customerChat} />
-                      </div>
-                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                          Chat with Customer Service
-                        </h1>
-                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                          Any questions or concerns? There is a chat customer service available to help you out.
-                        </h2>
-                      </div>
-                    </div>
-                    <div className="lg:w-60">
-                      <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Save Location and Contacts" src={saved} />
-                      </div>
-                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                          Save Location and Contacts
-                        </h1>
-                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                          This makes it quicker and easier to fill in the details for your next order.
-                        </h2>
-                      </div>
-                    </div>
-                    <div className="lg:w-60">
-                      <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple} />
-                      </div>
-                      <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
-                        <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
-                          Multiple Payment Methods
-                        </h1>
-                        <h2 className="h-1/2 text-sm flex text-center p-1 tracking-tighter text-white">
-                          Gives you the flexibility to choose the option that is most convenient and suits your
-                          preferences.
-                        </h2>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+ 
+     
       <div
         ref={p5}
-        className="flex mb-96 lg:-mb-96 flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
+        className="flex mb-40 lg:-mb-40 flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
       >
         {tutorial.map((state, index) => {
           if (selectedSlide === index) {
