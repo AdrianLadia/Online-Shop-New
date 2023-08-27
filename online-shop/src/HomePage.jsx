@@ -16,6 +16,11 @@ import { Tooltip, Typography } from '@mui/material';
 import { Helmet } from 'react-helmet';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
 
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
@@ -367,11 +372,11 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function navStyle() {
     if (p1inView && p2inView === false) {
-      return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-green3 bg-opacity-70 ease-in-out duration-300 w-full z-50';
+      return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-gradient-to-r from-color10c via-color10c to-color60   ease-in-out duration-300 w-full z-50';
     } else if (p5inView) {
       return ' hidden';
     } else {
-      return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-green3 bg-opacity-100 ease-in-out duration-300 w-full z-50';
+      return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-gradient-to-r from-color10c via-color10c to-color60 ease-in-out duration-300 w-full z-50';
     }
   }
 
@@ -485,10 +490,9 @@ const HomePage = ({ isAffiliateLink }) => {
         {/* Logo */}
         <div className="w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 ">
           <img
-            
             src={logo}
             alt="logo"
-            className=" h-14 w-14 sm:h-16 sm:w-16 2xl:h-20 2xl:w-20 rounded-full border-2 border-color30 cursor-pointer"
+            className=" h-14 w-14 sm:h-16 sm:w-16 2xl:h-20 2xl:w-20 rounded-full cursor-pointer"
             // onClick={()=>{scroll("page1")}}
             onClick={() => {
               isAffiliateLink ? navigateTo('/') : scroll('page1');
@@ -611,7 +615,6 @@ const HomePage = ({ isAffiliateLink }) => {
               </button>
             ) : (
               <button
-              
                 onClick={() => {
                   scroll('page5');
                 }}
@@ -763,7 +766,10 @@ const HomePage = ({ isAffiliateLink }) => {
           {/* Video  */}
           <div className="h-1/2 md:h-full w-full md:w-6/10 items-start xs:items-center flex justify-center ">
             <div className="h-7/10  mt-10 w-full flex justify-center items-center relative">
-              <img className="h-full w-11/12 xl:w-10/12 flex justify-center items-center" src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed%20(4).gif?alt=media&token=b077f8c7-4b17-4891-b3ea-8338f720fc33'></img>
+              <img
+                className="h-full w-11/12 xl:w-10/12 flex justify-center items-center"
+                src="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed%20(4).gif?alt=media&token=b077f8c7-4b17-4891-b3ea-8338f720fc33"
+              ></img>
               {/* <video
                 ref={videoRef}
                 autoPlay
@@ -811,12 +817,12 @@ const HomePage = ({ isAffiliateLink }) => {
             //  style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + "url('./vids/pexel.jpg')"}}
           >
             {/* Header */}
-            <div className="w-19/20 sm:w-9/10 md:w-4/10 h-1/2 md:h-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl border border-gray-100">
+            <div className="bg-colorbackground w-19/20 sm:w-9/10 md:w-4/10 h-1/2 md:h-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl shadow-lg   ">
               {/* <h1 className='h-2/10 text-2xl sm:text-4xl font-bold'>Star Pack is</h1> */}
               <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
                 Star Pack is...
               </Typography>
-              <p className="h-6/10 tracking-tighter sm:tracking-normal text-sm w-full md:w-10/12 text-white indent-2 overflow-y-auto">
+              <p className="h-6/10 tracking-tighter sm:tracking-normal text-sm w-full md:w-10/12 text-black indent-2 overflow-y-auto">
                 <Typography variant={responsiveText()}>
                   "Empowering Businesses, Simplifying Success.
                   <br />
@@ -836,7 +842,6 @@ const HomePage = ({ isAffiliateLink }) => {
             {/* Image */}
             <div className="w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center">
               <img
-                
                 className="w-full h-full rounded-3xl  text-white"
                 alt="About Image"
                 //  src='./vids/STAR-DELIVERY.png'
@@ -856,7 +861,6 @@ const HomePage = ({ isAffiliateLink }) => {
                       src={`${item.img}?w=248&fit=crop&auto=format`}
                       srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
                       alt={item.title}
-                      
                     />
                   </ImageListItem>
                 ))}
@@ -883,7 +887,7 @@ const HomePage = ({ isAffiliateLink }) => {
               {selectedCategory ? selectedCategory : 'Paper Bags'}
             </div> */}
             <div className=" w-64 h-64 lg:w-96 lg:h-96 rounded-xl xs:rounded-3xl border border-green2 overflow-hidden flex items-center justify-center">
-              <img className="ease-in-out" src={selectedCategoryImage}  />
+              <img className="ease-in-out" src={selectedCategoryImage} />
             </div>
           </div>
           {/* Products & CTA*/}
@@ -924,15 +928,88 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </div>
       </div>
-
+      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5">
+        <Card sx={{ width: 250, flexShrink:0  }}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="green iguana" />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Auto Calculate Cost
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              The delivery fee and total cost of items will be calculated at checkout. There will be no hidden charges
+              after delivery.
+            </Typography>
+          </CardContent>
+          {/* <CardActions>
+                <Button size="small">Share</Button>
+                <Button size="small">Learn More</Button>
+              </CardActions> */}
+        </Card>
+        <Card sx={{ width: 250, flexShrink:0 }}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Favorite Items
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ width: 250, flexShrink:0  }}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Favorite Items
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ width: 250, flexShrink:0  }}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Favorite Items
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ width: 250, flexShrink:0  }}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Favorite Items
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ width: 250, flexShrink:0  }}>
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Favorite Items
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Adding your favorite items to your 'Favorites' list for quick and convenient access.
+            </Typography>
+          </CardContent>
+        </Card>
+      </div>
       {/* Page 4 Features*/}
       {isAffiliateLink ? null : (
         <div
           ref={page4}
-          className="  w-screen  bg-cover bg-center "
+          className=" bg-red-100 w-screen  bg-cover bg-center "
           //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
         >
           {/* Last Page*/}
+
           <div ref={p4} className="flex w-full justify-center pb-20">
             <div className="border w-9/10 flex rounded-lg border-color60 items-center justify-center">
               <div className="flex flex-col  w-full pb-24 lg:pb-48">
@@ -946,7 +1023,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   <div className="flex flex-row justify-evenly">
                     <div className="w-1/3 lg:w-60 ">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Favorite Items" src={favorites}  />
+                        <img className="w-full h-full" alt="Favorite Items" src={favorites} />
                       </div>
                       <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -959,7 +1036,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                     <div className="w-1/3 lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate}  />
+                        <img className="w-full h-full" alt="Auto Calculate Cost" src={autoCalculate} />
                       </div>
                       <div className="  flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -973,12 +1050,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                     <div className="w-1/3 lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img
-                          className="w-full h-full"
-                          alt="This should render an image"
-                          src={pinpoint}
-                          
-                        />
+                        <img className="w-full h-full" alt="This should render an image" src={pinpoint} />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline  underline-offset-4 decoration-color30 text-white">
@@ -993,12 +1065,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   <div className="flex flex-row justify-evenly ">
                     <div className="lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img
-                          className="w-full h-full"
-                          alt="Chat With Customer Service"
-                          src={customerChat}
-                          
-                        />
+                        <img className="w-full h-full" alt="Chat With Customer Service" src={customerChat} />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -1011,7 +1078,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                     <div className="lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Save Location and Contacts" src={saved}  />
+                        <img className="w-full h-full" alt="Save Location and Contacts" src={saved} />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
@@ -1024,7 +1091,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                     <div className="lg:w-60">
                       <div className=" flex justify-center items-center ">
-                        <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple}  />
+                        <img className="w-full h-full" alt="Multiple Payment Methods" src={multiple} />
                       </div>
                       <div className=" flex flex-col justify-start items-center rounded-b-2xl p-2 ">
                         <h1 className="h-1/2 flex text-center items-center font-bold p-1 underline underline-offset-4 decoration-color30 text-white">
