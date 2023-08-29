@@ -3690,7 +3690,7 @@ describe('test transaction create payment without an affiliate' , () => {
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
     });
-    await delay(300)
+    await delay(5000)
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       testing: true,
@@ -3718,8 +3718,8 @@ describe('test transaction create payment without an affiliate' , () => {
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
     });
-    await delay(300)
-  })
+    await delay(5000)
+  },100000)
   test('create payment', async () => {
     await cloudfirestore.transactionCreatePayment({
       userId: 'NOAFFILIATETESTUSER',
@@ -3728,7 +3728,7 @@ describe('test transaction create payment without an affiliate' , () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     })
-    await delay(10000)
+    await delay(5000)
   
     const user = await firestore.readSelectedDataFromCollection('Users','NOAFFILIATETESTUSER')
     const payment = user.payments

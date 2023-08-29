@@ -201,6 +201,10 @@ exports.onPaymentsChange = functions.region('asia-southeast1').firestore
       created = false
     }
 
+    if (afterData == undefined) {
+      return
+    }
+
     if (created == false) {
       let checkPayments = false
       if (beforeData.amount != afterData.amount) {
@@ -259,7 +263,7 @@ exports.onPaymentsChange = functions.region('asia-southeast1').firestore
         created = false
       }
 
-      if (afterData.grandTotal == undefined) {
+      if (afterData == undefined) {
         return
       }
   
@@ -957,7 +961,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     try {
       await db.runTransaction(async (transaction) => {
         // READ
-        const customerUserRef = db.collection('Users').doc(userId);
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
@@ -972,8 +975,6 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         if (oldOrderProofOfPaymentLinks.includes(proofOfPaymentLink)) {
           doNotAddProofOfPaymentLink = true;
         }
-
-
 
         const lessCommissionToShipping = parseFloat((shippingTotal * (depositAmount / itemsTotal)).toFixed(2));
 
