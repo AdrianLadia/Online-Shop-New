@@ -38,6 +38,7 @@ const AdminCreatePaymentTableRow = (props) => {
         proofOfPaymentLink: proofOfPaymentLink
       };
       try{
+        // console.log('RAN transactionCreatePayment')
         await cloudfirestore.transactionCreatePayment(data);
       }
       catch(error){
@@ -76,8 +77,8 @@ const AdminCreatePaymentTableRow = (props) => {
       setLoading(false);
     }
 
-    const newPaymentsData = paymentsData.filter((data) => data.link != proofOfPaymentLink);
-    setPaymentsData(newPaymentsData);
+    // const newPaymentsData = paymentsData.filter((data) => data.link != proofOfPaymentLink);
+    // setPaymentsData(newPaymentsData);
   }
 
   
@@ -99,6 +100,7 @@ const AdminCreatePaymentTableRow = (props) => {
       <TableCell align="right">
         <div className="flex justify-evenly gap-2 xs:gap-3">
           <button
+            disabled={loading}
             className=" border border-red-400 hover:bg-red-50 text-red-400 px-4 py-3 rounded-xl"
             // onClick={() => data.link === data.link? (deleteDeclinedProofOfPaymentLink(data.reference, 'declined',data.userId, data.link)) : null}
             onClick={() => updatePaymentStatus('declined')}
@@ -106,6 +108,7 @@ const AdminCreatePaymentTableRow = (props) => {
             {loading ? <CircularProgress size={20} className=' text-red mt-1'/> : <>Deny</> }
           </button>
           <button
+            disabled={loading}
             className="bg-blue1 hover:bg-color10b hover:border-color10b border border-blue1 text-white px-4 py-3 rounded-xl"
             onClick={() => updatePaymentStatus('approved')}
           >

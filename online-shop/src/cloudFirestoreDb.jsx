@@ -335,6 +335,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async transactionCreatePayment(data) {
+    console.log('RUNNING');
     const dataSchema = Joi.object({
       userId: Joi.string().required(),
       amount: Joi.number().required(),
@@ -350,10 +351,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
-    const jsonData = JSON.stringify(data);
-
+    
     try {
-      const encodedData = encodeURIComponent(JSON.stringify(data));
+      const jsonData = JSON.stringify(data);
+      // console.log('RUNNING');
       const response = await axios.post(`${this.url}transactionCreatePayment`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
@@ -361,7 +362,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       });
 
       return response;
-    } catch {
+    } catch (error) {
       console.log(error);
       throw new Error(error);
     }
