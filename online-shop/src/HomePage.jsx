@@ -334,9 +334,9 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function productButtonStyle(product) {
     if (product === selectedCategory) {
-      return 'h-10 md:h-12 text-xs xs:text-sm text-center w-full p-1 border border-color60 bg-color10b text-color60 text-bold text-white rounded-full font-semibold ease-in-out duration-100 ';
+      return 'h-10 md:h-12 text-xs xs:text-sm text-center w-full p-1 border border-white bg-color10b text-color60 text-bold text-white rounded-full font-semibold ease-in-out duration-100 ';
     } else {
-      return 'h-10 md:h-12 text-xs xs:text-sm text-center w-full p-1 text-green2 border border-green2 hover:bg-green2 rounded-full text-color60 text-bold hover:text-white font-semibold ease-in-out duration-100 ';
+      return 'h-10 md:h-12 text-xs xs:text-sm text-center bg-gray-400 w-full p-1 text-green2 border border-white hover:bg-green2 rounded-full text-white text-bold hover:text-white font-semibold ease-in-out duration-100 ';
     }
   }
 
@@ -449,13 +449,13 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function responsiveTitleText() {
     if (width <= 850) {
-      return 'h4';
+      return 'h5';
     } else if (width <= 1400) {
-      return 'h3';
+      return 'h4';
     } else if (width <= 1900) {
-      return 'h2';
+      return 'h3';
     } else {
-      return 'h1';
+      return 'h2';
     }
   }
 
@@ -469,8 +469,10 @@ const HomePage = ({ isAffiliateLink }) => {
 
   return (
     <div
-      className=" h-screen w-screen overflow-y-scroll overflow-x-hidden bg-cover bg-center"
-      style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})` }}
+      className=" h-screen w-screen  overflow-y-scroll overflow-x-hidden bg-cover bg-center"
+      // style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})` }}
+      style={{backgroundColor:'#a3886c'}}
+    
     >
       <Helmet>
         <title>Star Pack: Cebu's Leading Online Packaging Supplier</title>
@@ -892,8 +894,8 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
           {/* Products & CTA*/}
           <div className="w-11/12 md:w-4/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-b-3xl md:rounded-bl-none md:rounded-r-3xl flex flex-col justify-center items-center border border-green2 p-2">
-            <div className="h-full w-full flex flex-col justify-center xs:justify-between gap-2 items-center ">
-              <div className="w-10/12 h-2/10 text-2xl md:text-4xl items-center flex text-color10b font-bold ">
+            <div className="h-full w-full flex flex-col justify-center xs:justify-between gap-2 items-center bg-colorbackground rounded-lg ">
+              <div className="w-10/12 h-2/10 text-2xl md:text-4xl items-center flex text-color10b font-bold">
                 Products We Offer:
               </div>
               <div className="w-11/12 h-6/10 flex flex-col justify-between items-center gap-4 ">
@@ -1024,20 +1026,20 @@ const HomePage = ({ isAffiliateLink }) => {
                   <BsArrowRightShort className="text-lg md:text-2xl text-white" />
                 </button>
                 <div
-                  className="h-full w-19/20 p-5 md:p-10 flex flex-col justify-evenly items-center rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl border border-color60 bg-local bg-cover bg-center "
+                  className="bg-colorbackground h-full w-19/20 p-5 md:p-10 flex flex-col justify-evenly items-center rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl border border-color60 bg-local bg-cover bg-center "
                   // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.70),rgba(0,0,0,0.70)),' + "url('./vids/bg.jpg')"}}
                 >
                   {/* Steps */}
                   <div className="h-9/10 md:h-3/10 w-full flex justify-start items-center p-5 gap-2  ">
                     <div className="h-full w-full flex flex-col gap-2 overflow-y-auto ">
-                      <h1 className="sm:text-lg md:text-xl tracking-wide text-white font-bold ">
+                      <h1 className="sm:text-lg md:text-xl tracking-wide text-black font-bold ">
                         <p className=" decoration-color60">
                           Step {index + 1} - {state.step[0]}
                         </p>{' '}
                         <div className="border-color60 border-b w-11/12"></div>
                         {/* <p className='underline underline-offset-4 decoration-color60'>{state.step[0]}</p> */}
                       </h1>
-                      <p className="text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-white ">
+                      <p className="text-sm lg:text-md tracking-tighter md:tracking-wide indent-3 text-black ">
                         {state.step[1]}
                       </p>
                     </div>
@@ -1084,7 +1086,7 @@ const HomePage = ({ isAffiliateLink }) => {
           className=" md:h-full xl:h-5/6 w-full md:w-5/12 flex flex-col justify-center items-center md:items-start p-5 gap-5 "
         >
           <div
-            className="h-full md:h-full w-19/20 md:w-11/12 p-5 md:p-10 gap-8 md:gap-5 flex flex-col 
+            className="bg-colorbackground h-full md:h-full w-19/20 md:w-11/12 p-5 md:p-10 gap-8 md:gap-5 flex flex-col 
                               justify-evenly md:justify-center items-center md:items-start border border-color60 
                               rounded-b-4xl md:rounded-r-3xl lg:rounded-l-none xl:rounded-r-semifull bg-cover bg-center "
             // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.90),rgba(0,0,0,0.55)),' + `url(${affiliateImg})`}}
@@ -1096,7 +1098,7 @@ const HomePage = ({ isAffiliateLink }) => {
             >
               Become an Affiliate
             </h1>
-            <div className="font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-white tracking-tight indent-5 ml-0.5 overflow-y-auto">
+            <div className="font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-black tracking-tight indent-5 ml-0.5 overflow-y-auto">
               An affiliate is someone who helps sell or promote a product or service. They are like a partner to the
               company that makes the product. When the affiliate tells others about the product and those people buy it
               because of the affiliate's recommendation, the affiliate gets a reward, like a small percentage of the
