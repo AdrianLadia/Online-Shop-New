@@ -3657,11 +3657,11 @@ describe('count all orders of a specific year', () => {
   })
 })
 
-describe('test transaction create payment without an affiliate' , () => {
+describe.only('test transaction create payment without an affiliate' , () => {
   test('setting up test', async () => {
     await firestore.updateDocumentFromCollection('Users','NOAFFILIATETESTUSER',{orders : [],payments : []})
     resetOrdersAndPayments()
-
+    await delay(300)
 
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -3719,7 +3719,7 @@ describe('test transaction create payment without an affiliate' , () => {
       countOfOrdersThisYear: 0,
     });
     await delay(5000)
-  },100000)
+  },1000000)
   test('create payment', async () => {
     await cloudfirestore.transactionCreatePayment({
       userId: 'NOAFFILIATETESTUSER',

@@ -201,7 +201,8 @@ exports.onPaymentsChange = functions.region('asia-southeast1').firestore
       created = false
     }
 
-    if (afterData == undefined) {
+
+    if (!('amount' in afterData)) {
       return
     }
 
@@ -263,7 +264,8 @@ exports.onPaymentsChange = functions.region('asia-southeast1').firestore
         created = false
       }
 
-      if (afterData == undefined) {
+
+      if (!('grandTotal' in afterData)) {
         return
       }
   
