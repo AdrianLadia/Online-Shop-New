@@ -201,20 +201,22 @@ exports.onPaymentsChange = functions.region('asia-southeast1').firestore
       created = false
     }
 
-    let checkPayments = false
-    if (beforeData.amount != afterData.amount) {
-      checkPayments = true
-      console.log('amount changed')
-    }
-    if (beforeData.status != afterData.status) {
-      checkPayments = true
-      console.log('status changed')
+    if (created == false) {
+      let checkPayments = false
+      if (beforeData.amount != afterData.amount) {
+        checkPayments = true
+        console.log('amount changed')
+      }
+      if (beforeData.status != afterData.status) {
+        checkPayments = true
+        console.log('status changed')
+      }
+      if (checkPayments == false) {
+        console.log('not updating account statement')
+        return
+      }
     }
 
-    if (checkPayments == false) {
-      console.log('not updating account statement')
-      return
-    }
 
     const db = admin.firestore();
     const userId = afterData.userId;
@@ -261,8 +263,6 @@ exports.onPaymentsChange = functions.region('asia-southeast1').firestore
         return
       }
   
-      console.log('beforeData',beforeData)
-      console.log('afterData',afterData)
       if (created == false) {
         if (beforeData.grandTotal == afterData.grandTotal) {
           console.log('grandTotal did not change so not changing paid')
@@ -966,6 +966,14 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
         const shippingTotal = orderDetail.shippingTotal;
+        const oldOrderProofOfPaymentLinks = orderDetail.proofOfPaymentLink;
+        const newOrderPayments = [...oldOrderProofOfPaymentLinks, proofOfPaymentLink];
+        let doNotAddProofOfPaymentLink = false;
+        if (oldOrderProofOfPaymentLinks.includes(proofOfPaymentLink)) {
+          doNotAddProofOfPaymentLink = true;
+        }
+
+
 
         const lessCommissionToShipping = parseFloat((shippingTotal * (depositAmount / itemsTotal)).toFixed(2));
 
@@ -1021,6 +1029,10 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         //   const ref = db.collection('Orders').doc(order.reference);
         //   transaction.update(ref, { paid: order.paid });
         // });
+
+        if (doNotAddProofOfPaymentLink == false) {
+          transaction.update(orderRef, { proofOfPaymentLink: newOrderPayments });
+        }
 
         if (affiliateIdOfCustomer != null) {
           transaction.update(affiliateUserRef, { affiliateCommissions: newAffiliateCommissions });
@@ -1090,50 +1102,10 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
-        const orderReferences = userData.orders;
-
-        const orderPromises = orderReferences.map(async (orderReference) => {
-          const docRef = db.collection('Orders').doc(orderReference.reference);
-          const docSnap = await transaction.get(docRef);
-          const orderData = docSnap.data();
-          return orderData;
-        });
-
-        const orders = await Promise.all(orderPromises);
-
-        let totalPayments = 0;
-        newPayments.map((payment) => {
-          totalPayments += parseFloat(payment.amount);
-        });
-
-        orders.sort((a, b) => {
-          const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
-          const timeB = b.orderDate.seconds * 1e9 + b.orderDate.nanoseconds;
-          return timeA - timeB;
-        });
-
-        const ordersToUpdate = [];
-
-        orders.forEach((order) => {
-          totalPayments -= order.grandTotal;
-          if (totalPayments >= 0) {
-            if (order.paid != true) {
-              ordersToUpdate.push({ reference: order.reference, paid: true });
-            }
-          }
-          if (totalPayments < 0) {
-            if (order.paid != false) {
-              ordersToUpdate.push({
-                reference: order.reference,
-                paid: false,
-              });
-            }
-            order.paid = false;
-          }
-        });
 
         // WRITE
         transaction.set(paymentsRef, {
+          amount: totalAmount,
           orderReference: referenceNumber,
           proofOfPaymentLink: '',
           userId: userId,
@@ -1143,10 +1115,6 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
         });
         transaction.update(userRef, { payments: newPayments });
 
-        ordersToUpdate.forEach((order) => {
-          const orderRef = db.collection('Orders').doc(order.reference);
-          transaction.update(orderRef, { paid: order.paid });
-        });
       });
 
       res.status(200).send('success');
@@ -1327,6 +1295,7 @@ async function deleteOldOrders() {
       // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
       let paymentLinks;
       const order = orderObj.data();
+      console.log(order)
       paymentLinks = order.proofOfPaymentLink;
       if (paymentLinks == null) {
         paymentLinks = [];

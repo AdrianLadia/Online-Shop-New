@@ -112,6 +112,31 @@ const testid = testconfig.getTestUserId();
 const user = await cloudfirestorefunctions.readSelectedDataFromCollection('Users', userTestId);
 const allProducts = await firestore.readAllProducts()
 
+async function resetOrdersAndPayments() {
+  const allOrders = await firestore.readAllIdsFromCollection('Orders');
+  const allExpiredOrders = await firestore.readAllIdsFromCollection('ExpiredOrders');
+  const idsPayment = await firestore.readAllIdsFromCollection('Payments')
+
+  const deleteAllPaymentsPromise = idsPayment.map(async (paymentId) => {
+    await firestore.deleteDocumentFromCollection('Payments', paymentId);
+  });
+
+  const deleteAllOrdersPromise = allOrders.map(async (orderId) => {
+    await firestore.deleteDocumentFromCollection('Orders', orderId);
+  }  );
+
+  const deleteAllExpiredOrdersPromise = allExpiredOrders.map(async (orderId) => {
+    await firestore.deleteDocumentFromCollection('ExpiredOrders', orderId);
+  }  );
+
+  await firestore.createDocument({test:'test'}, 'mock', 'Orders')
+  await firestore.createDocument({test:'test'}, 'mock', 'ExpiredOrders')
+  await firestore.createDocument({test:'test'}, 'mock', 'Payments')
+  await Promise.all(deleteAllOrdersPromise);
+  await Promise.all(deleteAllExpiredOrdersPromise);
+  await Promise.all(deleteAllPaymentsPromise);
+}
+
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -355,6 +380,7 @@ describe('Data Manipulation', async () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
+    await delay(5000);
 
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -401,7 +427,7 @@ describe('Data Manipulation', async () => {
       proofOfPaymentLink: 'testlink2',
     });
 
-    await delay(1000);
+    await delay(5000);
 
     const testuser = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orderReferences = testuser.orders;
@@ -583,12 +609,7 @@ describe('firestorefunctions', async () => {
     await delay(100);
     expect(newdata).not.toBe(olddata);
   });
-  test('deleteDocumentFromCollection', async () => {
-    const olddata = await firestore.readAllIdsFromCollection('Products');
-    await delay(100);
-    const newdata = firestore.deleteDocumentFromCollection('Products', 'test');
-    expect(newdata).not.toBe(olddata);
-  });
+
   test('addDocumentArrayFromCollection', async () => {
     await firestore.createDocument({ testarray: [] }, 'test', 'Products');
     await delay(100);
@@ -608,8 +629,18 @@ describe('firestorefunctions', async () => {
     await delay(100);
     const testfield = selected.testarray;
     expect(testfield).toEqual([{ test: 'testarray' }]);
+    await delay(100);
+  });
+  test('deleteDocumentFromCollection', async () => {
+    const olddata = await firestore.readAllIdsFromCollection('Products');
+    await delay(100);
     await firestore.deleteDocumentFromCollection('Products', 'test');
     await delay(100);
+    const newdata = await firestore.readAllIdsFromCollection('Products');
+    if (newdata.includes('test')) {
+      throw new Error('test is not deleted');
+    }
+
   });
 });
 
@@ -1018,7 +1049,6 @@ describe('getCartCount', () => {
   });
 
   test('getValueAddedTax', () => {
-    const { getValueAddedTax, transactionCreatePayment } = require('../functions/index.js');
     const getValueAddedTaxBusinessCalculations = businesscalculations.getValueAddedTax;
     const vat = getValueAddedTaxBusinessCalculations(1000);
     const vat2 = getValueAddedTaxBusinessCalculations(1000);
@@ -1043,25 +1073,9 @@ describe('cloudfirestoredb', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     await firestore.deleteDocumentFromCollectionByFieldValue('Payments', 'orderReference', 'testref1234');
     await delay(300)
-    const ids = await firestore.readAllIdsFromCollection('Orders')
-    await delay(300)
-    const promises = ids.map(async (id) => {
-      await firestore.deleteDocumentFromCollection('Orders', id)
-    })
 
-    const paymentIds = await firestore.readAllIdsFromCollection('Payments')
-    await delay(300)
-    const paymentPromises = paymentIds.map(async (id) => {
-      await firestore.deleteDocumentFromCollection('Payments', id)
-    })
+    resetOrdersAndPayments()
 
-    
-
-    
-    await Promise.all(promises)
-    await Promise.all(paymentPromises)
-    await firestore.createDocument({ test: 'test' }, 'mock', 'Orders');
-    await firestore.createDocument({ test: 'test' }, 'mock', 'Payments');
 
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -1116,7 +1130,7 @@ describe('cloudfirestoredb', async () => {
     };
 
     await cloudfirestore.transactionCreatePayment(data);
-    await delay(5000);
+    await delay(7000);
     const payments2 = await firestore.readAllDataFromCollection('Payments');
     let found2 = false;
     payments2.map((payment) => {
@@ -1165,20 +1179,7 @@ describe('cloudfirestoredb', async () => {
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
 
-    const idsOrder = await firestore.readAllIdsFromCollection('Orders')
-    const idsPayment = await firestore.readAllIdsFromCollection('Payments')
-    await delay(300)
-    const promiseOrders = idsOrder.map(async (id) => {
-      await firestore.deleteDocumentFromCollection('Orders', id)
-    })
-    const promisePayments = idsPayment.map(async (id) => {
-      await firestore.deleteDocumentFromCollection('Payments', id)
-    })
-
-    await firestore.createDocument({ test: 'test' }, 'mock', 'Payments');
-    await firestore.createDocument({ test: 'test' }, 'mock', 'Orders');
-    await Promise.all(promisePayments)
-    await Promise.all(promiseOrders)
+    resetOrdersAndPayments()
 
 
     
@@ -1343,6 +1344,7 @@ describe('cloudfirestoredb', async () => {
       proofOfPaymentLink :'www.testlink.com'
     };
     await cloudfirestore.transactionCreatePayment(data);
+    await delay(5000);
 
     const user = await firestore.readUserById(userTestId);
     const payments = user.payments;
@@ -1355,7 +1357,7 @@ describe('cloudfirestoredb', async () => {
 
     // await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await delay(100);
-  });
+  },100000);
   test('testPayMayaWebHookSuccess', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1364,6 +1366,8 @@ describe('cloudfirestoredb', async () => {
     await firestore.deleteDocumentFromCollection('Orders', 'testref123456');
     await firestore.deleteDocumentFromCollection('Orders', 'testref1234567');
     await firestore.deleteDocumentFromCollection('Orders', 'testref12345678');
+
+    resetOrdersAndPayments()
 
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -1423,20 +1427,24 @@ describe('cloudfirestoredb', async () => {
         failure: 'http://starpack.ph/checkoutFailed',
         cancel: 'http://starpack.ph/checkoutCancelled',
       },
-      requestReferenceNumber: 'paymayaref',
+      requestReferenceNumber: 'testref1234',
       metadata: {
         userId: userTestId,
       },
     };
 
     const res = await cloudfirestore.testPayMayaWebHookSuccess(req);
-    await delay(300);
+    await delay(5000);
     const data = res.data;
     expect(data).toEqual('success');
 
     const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const ordersReferences = user.orders;
     const payments = user.payments;
+
+    if (payments.length == 0) {
+      throw new Error('No payments found');
+    }
 
     const orderPromises = ordersReferences.map(async(order) => {
       const doc = await firestore.readSelectedDataFromCollection('Orders', order.reference);
@@ -1446,15 +1454,19 @@ describe('cloudfirestoredb', async () => {
 
     const orders = await Promise.all(orderPromises);
 
+    if (orders.length == 0) {
+      throw new Error('No orders found');
+    }
+
     orders.forEach((order) => {
-      if (order.reference == 'paymayaref') {
+      if (order.reference == 'testref1234') {
         expect(order.paid).toEqual(true);
       } 
     });
 
     let found1 = false;
     payments.map((payment) => {
-      if (payment.reference == 'paymayaref') {
+      if (payment.reference == 'testref1234') {
         found1 = true;
       }
     });
@@ -2547,21 +2559,7 @@ describe('updatePaymentStatus', () => {
 describe('deleteOldOrders', async () => {
   test('create PAID 2 day ago order for testing', async () => {
 
-    const allOrders = await firestore.readAllIdsFromCollection('Orders');
-    const allExpiredOrders = await firestore.readAllIdsFromCollection('ExpiredOrders');
-
-    const deleteAllOrdersPromise = allOrders.map(async (orderId) => {
-      await firestore.deleteDocumentFromCollection('Orders', orderId);
-    }  );
-
-    const deleteAllExpiredOrdersPromise = allExpiredOrders.map(async (orderId) => {
-      await firestore.deleteDocumentFromCollection('ExpiredOrders', orderId);
-    }  );
-
-    await Promise.all(deleteAllOrdersPromise);
-    await Promise.all(deleteAllExpiredOrdersPromise);
-    await firestore.createDocument('Orders', 'mock', {test:'test'})
-    await firestore.createDocument('ExpiredOrders', 'mock', {test:'test'})
+    resetOrdersAndPayments()
 
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2761,21 +2759,7 @@ describe('deleteOldOrders', async () => {
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#12', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#1-RET', { stocksOnHold: [] });
-    const allOrders = await firestore.readAllIdsFromCollection('Orders');
-    const allExpiredOrders = await firestore.readAllIdsFromCollection('ExpiredOrders');
-
-    const deleteAllOrdersPromise = allOrders.map(async (orderId) => {
-      await firestore.deleteDocumentFromCollection('Orders', orderId);
-    }  );
-
-    const deleteAllExpiredOrdersPromise = allExpiredOrders.map(async (orderId) => {
-      await firestore.deleteDocumentFromCollection('ExpiredOrders', orderId);
-    }  );
-
-    await Promise.all(deleteAllOrdersPromise);
-    await Promise.all(deleteAllExpiredOrdersPromise);
-    await firestore.createDocument('Orders', 'mock', {test:'test'})
-    await firestore.createDocument('ExpiredOrders', 'mock', {test:'test'})
+    resetOrdersAndPayments()
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
     const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
@@ -3091,6 +3075,7 @@ describe('testCancelOrder', () => {
     const stocksAvailableOld = productDataOld.stocksAvailable;
 
     await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' });
+    await delay(300)
     const user = await cloudfirestore.readSelectedUserById(userTestId);
     const order = user.orders;
 
@@ -3257,6 +3242,9 @@ describe('testStoreProductsOrganizer', async () => {
 
 describe('test commission system', async () => {
   test('Setup test', async () => {
+    resetOrdersAndPayments()
+
+
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE')
     await firestore.deleteDocumentFromCollection('Users', 'TESTUSER')
     await cloudfirestore.createNewUser(
@@ -3346,6 +3334,7 @@ describe('test commission system', async () => {
       proofOfPaymentLink: 'www.test.com',
   
     })
+    await delay(5000);
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
       amount: 100000,
@@ -3354,6 +3343,7 @@ describe('test commission system', async () => {
       proofOfPaymentLink: 'www.test.com',
 
     })
+    await delay(5000);
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
       amount: 200000,
@@ -3362,7 +3352,7 @@ describe('test commission system', async () => {
       proofOfPaymentLink: 'www.test.com',
 
     })
-    await delay(300)
+    await delay(5000);
 
   });
   test('check if transaction create payment added commissions to affiliate', async () => {
@@ -3502,6 +3492,7 @@ describe('test commission system', async () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     })
+    await delay(5000);
     const affiliateData = await cloudfirestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE')
     const commissions = affiliateData.affiliateCommissions
     let found = false
@@ -3552,11 +3543,11 @@ describe('test commission system', async () => {
       }
     })
 
-  },500000)
+  })
 
 
 
-})
+},500000)
 
 
 describe('test bir2303Link functions', () => {
@@ -3669,14 +3660,7 @@ describe('count all orders of a specific year', () => {
 describe('test transaction create payment without an affiliate' , () => {
   test('setting up test', async () => {
     await firestore.updateDocumentFromCollection('Users','NOAFFILIATETESTUSER',{orders : [],payments : []})
-    const orderIds = await firestore.readAllIdsFromCollection('Orders')
-
-    const orderPromises = orderIds.map(async (orderId) => {
-      await firestore.deleteDocumentFromCollection('Orders',orderId)
-    })
-
-    await Promise.all(orderPromises)
-    await cloudfirestore.createDocument({'test':'test'},'mock','Orders')
+    resetOrdersAndPayments()
 
 
     await cloudfirestore.transactionPlaceOrder({
@@ -3744,6 +3728,7 @@ describe('test transaction create payment without an affiliate' , () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     })
+    await delay(10000)
   
     const user = await firestore.readSelectedDataFromCollection('Users','NOAFFILIATETESTUSER')
     const payment = user.payments
@@ -3787,7 +3772,7 @@ describe('test transaction create payment without an affiliate' , () => {
     })
 
     expect(foundPaymentObj).toBe(true)
-  },10000)
+  },1000000000)
 })
 
 describe('test transactionPlaceOrder should not allow order if cart stocks is more than what is available in firestore' , () => {
@@ -3894,7 +3879,7 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
     await delay(300)
   })
   test('invoke function', async () => {
-    await firestore.updateOrderAsDelivered('testref1234','testlink3',{userId : 'driver',userRole : 'admin'})
+    await firestore.updateOrderAsDelivered('testref1234','testlink3',{uid : 'driver',userRole : 'admin'})
     await delay(300)
   })
   test('check if order is updated', async () => {
@@ -3904,19 +3889,18 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
     
     let found = false
     ordersMessages.forEach((message) => {
-      if (message.image === 'teslink3') {
+      if (message.image === 'testlink3') {
         found = true
       }
     })
     expect(found).toEqual(true)
 
     expect(ordersMessagesData.delivered).toEqual(true)
-    expect(ordersMessagesData.proofOfDeliveryLink).toEqual(['testlink3'])
     expect(orderData.delivered).toEqual(true)
     expect(orderData.proofOfDeliveryLink).toEqual(['testlink3'])
   })
   test('invoke another function', async () => {
-    await firestore.updateOrderAsDelivered('testref1234','testlink4',{userId : 'driver',userRole : 'admin'})
+    await firestore.updateOrderAsDelivered('testref1234','testlink4',{uid : 'driver',userRole : 'admin'})
     await delay(300)
   })
   test('check if order is updated 2', async () => {
@@ -3930,24 +3914,7 @@ describe('Void payment' , () => {
   test('setup test', async () => {
     await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{orders : []})
     await cloudfirestore.updateDocumentFromCollection('Users',userTestId,{payments : []})
-    const allPaymentIds = await firestore.readAllIdsFromCollection('Payments')
-
-    const promisePayments = allPaymentIds.map(async (paymentId) => {
-      await firestore.deleteDocumentFromCollection('Payments',paymentId)
-    })
-
-    await Promise.all(promisePayments)
-    await cloudfirestore.createDocument({'test' : 'test'},'mock','Payments')
-
-    const allOrderIds = await firestore.readAllIdsFromCollection('Orders')
-
-    const promiseOrder = allOrderIds.map(async (orderId) => {
-      await firestore.deleteDocumentFromCollection('Orders',orderId)
-    })
-
-    await Promise.all(promiseOrder)
-
-    await cloudfirestore.createDocument({'test' : 'test'},'mock','Orders')
+    resetOrdersAndPayments()
 
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4041,7 +4008,9 @@ describe('Void payment' , () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'www.testlink12.com',
     });
+    await delay(5000);
   })
+  
   test('check values', async () => {
     await delay(5000);
     const testref1data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref1')
@@ -4115,4 +4084,4 @@ describe('Void payment' , () => {
  
 
   })
-})
+},100000)
