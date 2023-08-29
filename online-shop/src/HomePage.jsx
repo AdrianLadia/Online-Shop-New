@@ -928,7 +928,7 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </div>
       </div>
-      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:justify-center">
+      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 ">
         <Card ref={page4} sx={{ width: 250, flexShrink: 0 }} elevation={20}>
           <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="green iguana" />
           <CardContent>
@@ -1043,7 +1043,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </div>
                   </div>
                   <img
-                    className="md:block  h-6/10 rounded-3xl border aspect-square border-color60 mb-3 text-white"
+                    className="md:block   rounded-3xl border aspect-square border-color60 mb-3 text-white"
                     alt="Affiliate Image"
                     src={photoUrl}
                   />

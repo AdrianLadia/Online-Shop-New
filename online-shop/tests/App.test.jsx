@@ -47,6 +47,7 @@ await cloudfirestore.createNewUser(
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
   },
   'TESTAFFILIATE'
 );
@@ -72,6 +73,7 @@ await cloudfirestore.createNewUser(
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
   },
   'TESTUSER'
 );
@@ -97,6 +99,7 @@ await cloudfirestore.createNewUser(
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
   },
   'NOAFFILIATETESTUSER'
 );
@@ -269,12 +272,15 @@ describe('Business Calcualtions', () => {
   });
   test('addToCart and removeFromCart', () => {
     const cart = user.cart;
-    let newCart = businesscalculations.addToCart(cart, 'PPB#1');
+    let newCart = businesscalculations.addToCart(cart, 'PPB#1',5);
     expect(newCart).toEqual({ 'PPB#1': 1 });
-    const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2');
+    const newCart2 = businesscalculations.addToCart(newCart, 'PPB#2',5);
     expect(newCart2).toEqual({ 'PPB#1': 1, 'PPB#2': 1 });
-    const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2');
+    const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2',5);
     expect(newCart3).toEqual({ 'PPB#1': 1 });
+    const newCart4 = businesscalculations.addToCart(newCart3, 'PPB#1',0);
+    expect(newCart4).toEqual({ 'PPB#1': 1 });
+
   });
   test('addToCartWithQuantity', () => {
     const cart = {};
@@ -306,6 +312,7 @@ describe('Data Manipulation', async () => {
     
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -350,6 +357,7 @@ describe('Data Manipulation', async () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -460,6 +468,7 @@ describe('Data Manipulation', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -644,6 +653,7 @@ describe('Transaction Create Payment', async () => {
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
       },
       'testuser'
     );
@@ -691,6 +701,7 @@ describe('firestoredb', async () => {
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
       },
       'test'
     );
@@ -717,6 +728,7 @@ describe('firestoredb', async () => {
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
       },
       'testuser'
     );
@@ -1037,9 +1049,19 @@ describe('cloudfirestoredb', async () => {
       await firestore.deleteDocumentFromCollection('Orders', id)
     })
 
-    await firestore.createDocument({ test: 'test' }, 'mock', 'Orders');
+    const paymentIds = await firestore.readAllIdsFromCollection('Payments')
+    await delay(300)
+    const paymentPromises = paymentIds.map(async (id) => {
+      await firestore.deleteDocumentFromCollection('Payments', id)
+    })
 
+    
+
+    
     await Promise.all(promises)
+    await Promise.all(paymentPromises)
+    await firestore.createDocument({ test: 'test' }, 'mock', 'Orders');
+    await firestore.createDocument({ test: 'test' }, 'mock', 'Payments');
 
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -1047,7 +1069,7 @@ describe('cloudfirestoredb', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
-      
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1094,7 +1116,7 @@ describe('cloudfirestoredb', async () => {
     };
 
     await cloudfirestore.transactionCreatePayment(data);
-    await delay(200);
+    await delay(5000);
     const payments2 = await firestore.readAllDataFromCollection('Payments');
     let found2 = false;
     payments2.map((payment) => {
@@ -1134,7 +1156,7 @@ describe('cloudfirestoredb', async () => {
     await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-  }, 100000);
+  }, 10000000);
   test('updateOrdersAsPaidOrNotPaid', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1143,7 +1165,26 @@ describe('cloudfirestoredb', async () => {
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
 
+    const idsOrder = await firestore.readAllIdsFromCollection('Orders')
+    const idsPayment = await firestore.readAllIdsFromCollection('Payments')
+    await delay(300)
+    const promiseOrders = idsOrder.map(async (id) => {
+      await firestore.deleteDocumentFromCollection('Orders', id)
+    })
+    const promisePayments = idsPayment.map(async (id) => {
+      await firestore.deleteDocumentFromCollection('Payments', id)
+    })
+
+    await firestore.createDocument({ test: 'test' }, 'mock', 'Payments');
+    await firestore.createDocument({ test: 'test' }, 'mock', 'Orders');
+    await Promise.all(promisePayments)
+    await Promise.all(promiseOrders)
+
+
+    
+
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1172,6 +1213,7 @@ describe('cloudfirestoredb', async () => {
     await delay(200);
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1201,6 +1243,7 @@ describe('cloudfirestoredb', async () => {
     await delay(200);
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1237,9 +1280,7 @@ describe('cloudfirestoredb', async () => {
       proofOfPaymentLink: 'www.testlink.com',
     });
 
-    await delay(200);
-    await cloudfirestore.updateOrdersAsPaidOrNotPaid(userTestId);
-    await delay(200);
+    await delay(5000);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
 
@@ -1265,7 +1306,7 @@ describe('cloudfirestoredb', async () => {
   test('transactionCreatePayment2', async () => {
 
     await cloudfirestore.transactionPlaceOrder({
-      
+      deliveryDate: new Date(),   
       testing : true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1330,6 +1371,7 @@ describe('cloudfirestoredb', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     const result = await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1420,6 +1462,7 @@ describe('cloudfirestoredb', async () => {
     expect(found1).toEqual(true);
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1481,7 +1524,8 @@ describe('cloudfirestoredb', async () => {
     };
 
     const res2 = await cloudfirestore.testPayMayaWebHookSuccess(req2);
-    await delay(300);
+
+    await delay(5000);
     const data2 = res2.data;
     expect(data2).toEqual('success');
 
@@ -1497,11 +1541,14 @@ describe('cloudfirestoredb', async () => {
       }
     });
 
+    
+
     expect(found1).toEqual(true);
     expect(user3orders.paid).toEqual(true);
     expect(user3orderReferences.length).toEqual(2);
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1529,6 +1576,7 @@ describe('cloudfirestoredb', async () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1556,6 +1604,7 @@ describe('cloudfirestoredb', async () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -1691,6 +1740,7 @@ describe('cloudfirestoredb', async () => {
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
       },
       'testuser'
     );
@@ -1819,6 +1869,7 @@ describe('cloudfirestoredb', async () => {
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
       },
       'testuser'
     );
@@ -1831,6 +1882,7 @@ describe('cloudfirestoredb', async () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: 'testuser',
@@ -1878,6 +1930,7 @@ describe('cloudfirestoredb', async () => {
     expect(orders).length(1);
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: 'testuser',
@@ -1915,6 +1968,7 @@ describe('cloudfirestoredb', async () => {
     expect(orders2).length(2);
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: 'testuser',
@@ -1979,6 +2033,7 @@ describe('cloudfirestoredb', async () => {
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
       },
       'testuser'
     );
@@ -2013,6 +2068,7 @@ describe('cloudfirestoredb', async () => {
     bir2303Link : null,
     affiliateId : null,
     affiliateBankAccounts : [],
+    joinedDate : new Date(),
       },
       'testuser2'
     );
@@ -2077,6 +2133,7 @@ describe('deleteOrderFromUserFirestore', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2104,6 +2161,7 @@ describe('deleteOrderFromUserFirestore', () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2131,6 +2189,7 @@ describe('deleteOrderFromUserFirestore', () => {
     });
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2231,6 +2290,7 @@ describe('updateOrderProofOfPaymentLink', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2434,6 +2494,7 @@ describe('updatePaymentStatus', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2509,6 +2570,7 @@ describe('deleteOldOrders', async () => {
     const vat = 1000
     await cloudfirestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       testing:true,
@@ -2537,6 +2599,7 @@ describe('deleteOldOrders', async () => {
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing:true,
       userid: userTestId,
@@ -2564,6 +2627,7 @@ describe('deleteOldOrders', async () => {
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing:true,
       userid: userTestId,
@@ -2591,6 +2655,7 @@ describe('deleteOldOrders', async () => {
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing:true,
       userid: userTestId,
@@ -2618,6 +2683,7 @@ describe('deleteOldOrders', async () => {
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing:true,
       userid: userTestId,
@@ -2718,6 +2784,7 @@ describe('deleteOldOrders', async () => {
     const vat = ppb12Price * 12 + ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing:true,
       userid: userTestId,
@@ -2755,6 +2822,7 @@ describe('deleteOldOrders', async () => {
     cloudfirestore.updateDocumentFromCollection('Orders', 'testref1234', { orderDate: twoDaysAgo })
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2849,6 +2917,7 @@ describe('transactionPlaceOrder test retail', async () => {
     const stocksAvailable = data.stocksAvailable;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2897,6 +2966,7 @@ describe('deleteDeclinedPayments', () => {
     const vat = ppb16Price * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -2985,6 +3055,7 @@ describe('testCancelOrder', () => {
     const vat = ppb16Price * 12 + ppb16RetPrice * 12 - itemsTotal;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       isInvoiceNeeded: true,
       userid: userTestId,
@@ -3122,6 +3193,7 @@ describe('testRetailTransactionPlaceOrder', async () => {
     const ppb3WholesaleOldStocks = oldPpb3Wholesale.stocksAvailable;
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing : true,
       userid: userTestId,
@@ -3209,6 +3281,7 @@ describe('test commission system', async () => {
         bir2303Link : null,
         affiliateId : null,
         affiliateBankAccounts : [],
+        joinedDate : new Date(),
       },
       'TESTAFFILIATE'
     );
@@ -3234,10 +3307,12 @@ describe('test commission system', async () => {
         bir2303Link : null,
         affiliateId : null,
         affiliateBankAccounts : [],
+        joinedDate : new Date(),
       },
       'TESTUSER'
     );
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing : true,
       userid: userTestId,
@@ -3392,6 +3467,7 @@ describe('test commission system', async () => {
   })
   test('create another order with vat and pay' , async () => {
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       isInvoiceNeeded: true,
       testing : true,
       userid: userTestId,
@@ -3514,6 +3590,7 @@ describe('count all orders of a specific year', () => {
   test('prepare data', async () => {
     await firestore.updateDocumentFromCollection('Users',userTestId,{orders : []})
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -3540,6 +3617,7 @@ describe('count all orders of a specific year', () => {
       countOfOrdersThisYear: 0,
     });
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -3602,6 +3680,7 @@ describe('test transaction create payment without an affiliate' , () => {
 
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: 'NOAFFILIATETESTUSER',
       username: 'Adrian',
@@ -3629,6 +3708,7 @@ describe('test transaction create payment without an affiliate' , () => {
     });
     await delay(300)
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: 'NOAFFILIATETESTUSER',
       username: 'Adrian',
@@ -3717,6 +3797,7 @@ describe('test transactionPlaceOrder should not allow order if cart stocks is mo
   })
   test('invoke function', async () => {
     const res = await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -3749,6 +3830,7 @@ describe('test transactionPlaceOrder should not allow order if cart stocks is mo
 describe('test transactionPlaceOrder data validation' , () => {
   test('invoke function', async () => {
     const res = await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       userid: userTestId,
       username: 'Adrian',
       localDeliveryAddress: 'Test City',
@@ -3783,6 +3865,7 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
   test('setup test', async () => {
     await cloudfirestore.deleteDocumentFromCollection('Orders','testref1234')
     const res = await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -3867,6 +3950,7 @@ describe('Void payment' , () => {
     await cloudfirestore.createDocument({'test' : 'test'},'mock','Orders')
 
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -3893,6 +3977,7 @@ describe('Void payment' , () => {
       countOfOrdersThisYear: 0,
     });
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -3919,6 +4004,7 @@ describe('Void payment' , () => {
       countOfOrdersThisYear: 0,
     });
     await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -3957,6 +4043,7 @@ describe('Void payment' , () => {
     });
   })
   test('check values', async () => {
+    await delay(5000);
     const testref1data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref1')
     const testref12data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref12')
     const testref123data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref123')
@@ -3975,6 +4062,7 @@ describe('Void payment' , () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'www.testlink123.com',
     });
+    await delay(5000);
     const testref123data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref123')
 
     expect(testref123data.paid).toEqual(true)
@@ -3987,7 +4075,9 @@ describe('Void payment' , () => {
       proofOfPaymentLink: 'www.testlink123.com',
       userId: userTestId,
     })
+    await delay(5000);
   },100000)
+  
   test('check values 2', async () => {
     // delete payments in user
     const userdata = await cloudfirestore.readSelectedDataFromCollection('Users',userTestId)

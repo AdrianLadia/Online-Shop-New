@@ -75,9 +75,13 @@ function parseData(data) {
 
 function updateAccountStatement(payments,orders) {
   let totalPayments = 0;
+  
   payments.map((payment) => {
+    console.log(payment)
     totalPayments += parseFloat(payment.amount);
   });
+
+  console.log(totalPayments)
 
   orders.sort((a, b) => {
     const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
@@ -182,6 +186,114 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     .doc(userId)
     .update({ ['orders']: orders });
 }
+
+exports.onPaymentsChange = functions.region('asia-southeast1').firestore
+  .document('Payments/{paymentId}')
+  .onWrite(async (change, context) => {
+    const beforeData = change.before.data();
+    const afterData = change.after.data();
+
+    let created = null
+    if (beforeData == undefined) {
+      created = true
+    }
+    else {
+      created = false
+    }
+
+    let checkPayments = false
+    if (beforeData.amount != afterData.amount) {
+      checkPayments = true
+      console.log('amount changed')
+    }
+    if (beforeData.status != afterData.status) {
+      checkPayments = true
+      console.log('status changed')
+    }
+
+    if (checkPayments == false) {
+      console.log('not updating account statement')
+      return
+    }
+
+    const db = admin.firestore();
+    const userId = afterData.userId;
+    const paymentsSnapshot = await db.collection('Payments').where("status", "==", "approved").where('userId','==',userId).get();
+    const userPayments = paymentsSnapshot.docs.map(doc => doc.data());
+    const user = await db.collection('Users').doc(userId).get();
+    const userOrders = user.data().orders;
+
+    const orderPromises = userOrders.map((order) => {
+      const ref = order.reference
+      const orderRef = db.collection('Orders').doc(ref)
+      return orderRef.get()
+    });
+
+    const orderSnapshots = await Promise.all(orderPromises);
+
+    const orders = orderSnapshots.map((orderSnapshot) => {
+      return orderSnapshot.data()
+    });
+
+    const toUpdate = updateAccountStatement(userPayments,orders)
+    console.log(toUpdate)
+    toUpdate.forEach(async (_toUpdate) => {
+      const orderRef = db.collection('Orders').doc(_toUpdate.reference)
+      await orderRef.update({paid: _toUpdate.paid})
+    })
+  });
+
+  exports.onOrdersChange = functions.region('asia-southeast1').firestore
+  .document('Orders/{orderId}')
+  .onWrite(async (change, context) => {
+    try{
+      const beforeData = change.before.data();
+      const afterData = change.after.data();
+      let created = null
+      if (beforeData == undefined) {
+        created = true
+      }
+      else{
+        created = false
+      }
+
+      if (afterData.grandTotal == undefined) {
+        return
+      }
+  
+      console.log('beforeData',beforeData)
+      console.log('afterData',afterData)
+      if (created == false) {
+        if (beforeData.grandTotal == afterData.grandTotal) {
+          console.log('grandTotal did not change so not changing paid')
+          return
+        }
+      }
+  
+      const db = admin.firestore();
+      const userId = afterData.userId;
+      const orderSnapshot = await db.collection('Orders').where("userId", "==", userId).get();
+      const userOrders = orderSnapshot.docs.map(doc => doc.data());
+      const paymentsSnapshot = await db.collection('Payments').where("status", "==", "approved").where('userId','==',userId).get();
+      const userPayments = paymentsSnapshot.docs.map(doc => doc.data());
+      
+      
+      // console.log('userOrders',userOrders)
+      // console.log('userPayments' ,userPayments)
+      
+      const toUpdate = updateAccountStatement(userPayments,userOrders)
+      console.log(toUpdate)
+      toUpdate.forEach(async (_toUpdate) => {
+        const orderRef = db.collection('Orders').doc(_toUpdate.reference)
+        await orderRef.update({paid: _toUpdate.paid})
+      })
+    }
+    catch(error){
+      console.log(error)
+    }
+  });
+
+
 
 exports.getIPAddress = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -830,6 +942,7 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
+    
     const depositAmount = data.amount;
     const orderReference = data.reference;
     const paymentprovider = data.paymentprovider;
@@ -837,6 +950,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const commissionPercentage = 0.03;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
+    console.log('Proof of payment link', proofOfPaymentLink)
     const db = admin.firestore();
     const userId = data.userId;
 
@@ -844,15 +958,10 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
       await db.runTransaction(async (transaction) => {
         // READ
         const customerUserRef = db.collection('Users').doc(userId);
-        const customerSnapshot = await transaction.get(customerUserRef);
-
-        const customerData = customerSnapshot.data();
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
 
-        const oldProofOfPaymentLink = orderDetail.proofOfPaymentLink;
-        const newProofOfPaymentLink = [...oldProofOfPaymentLink, proofOfPaymentLink];
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
@@ -904,17 +1013,14 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const ordersObject = await transaction.get(allUserOrdersQuery);
         const orders = ordersObject.docs.map((doc) => doc.data());
         
-        const toUpdateOrders = updateAccountStatement(newPayments, orders)
+        // const toUpdateOrders = updateAccountStatement(newPayments, orders)
         
-        console.log(toUpdateOrders)
         // WRITE
 
-        toUpdateOrders.forEach((order) => {
-          const ref = db.collection('Orders').doc(order.reference);
-          transaction.update(ref, { paid: order.paid });
-        });
-
-        transaction.update(orderRef, { proofOfPaymentLink: newProofOfPaymentLink });
+        // toUpdateOrders.forEach((order) => {
+        //   const ref = db.collection('Orders').doc(order.reference);
+        //   transaction.update(ref, { paid: order.paid });
+        // });
 
         if (affiliateIdOfCustomer != null) {
           transaction.update(affiliateUserRef, { affiliateCommissions: newAffiliateCommissions });
@@ -1771,12 +1877,12 @@ exports.voidPayment = functions.region('asia-southeast1').runWith({ memory: '2GB
         })
   
         // update account statement in user
-        const toUpdateOrders = updateAccountStatement(updatedPayments,orders)
+        // const toUpdateOrders = updateAccountStatement(updatedPayments,orders)
   
-        toUpdateOrders.forEach((order) => {
-          const ref = db.collection('Orders').doc(order.reference);
-          transaction.update(ref, { paid: order.paid });
-        });
+        // toUpdateOrders.forEach((order) => {
+        //   const ref = db.collection('Orders').doc(order.reference);
+        //   transaction.update(ref, { paid: order.paid });
+        // });
   
         res.status(200).send('Payment voided successfully');        
       });
