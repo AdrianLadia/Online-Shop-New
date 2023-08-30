@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import menuRules from '../../utils/classes/menuRules';
 import AppContext from '../AppContext';
 import {CiDeliveryTruck} from 'react-icons/ci';
+import {MdOutlineCancelPresentation} from 'react-icons/md';
 
 const AdminNavBar = () => {
   const { width } = UseWindowDimensions();
@@ -49,6 +50,11 @@ const AdminNavBar = () => {
     setAnchorEl(null);
     navigateTo('/admin/createPayment');
   };
+
+  const handleClickVoidPayment = () => {
+    setAnchorEl(null);
+    navigateTo('/admin/voidPayment');
+  }
 
   const handleClickCustomerOrders = () => {
     setAnchorEl(null);
@@ -222,6 +228,16 @@ const AdminNavBar = () => {
             >
               {' '}
               <HiOutlineCash size={19} />     <span>Create Payment</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('voidPayment') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="voidPaymentMenu"
+              onClick={handleClickVoidPayment}
+            >
+              {' '}
+              <MdOutlineCancelPresentation size={19} />     <span>Void Payment</span>
             </MenuItem>
           ) : null}
           {/* <Divider className="mt-0.5"/>   */}

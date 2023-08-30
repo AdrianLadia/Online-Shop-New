@@ -17,10 +17,9 @@ import { Helmet } from 'react-helmet';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
+
 
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
@@ -342,17 +341,17 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function buttonStyle(page) {
     if (p1inView == true && p2inView == false && page == 'page1') {
-      return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold';
+      return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
     } else if (p2inView == true && p3inView == false && page == 'page2') {
-      return 'w-28 lg:lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold ';
+      return 'w-28 lg:lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold ';
     } else if (p3inView == true && p4inView == false && page == 'page3') {
-      return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold';
+      return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
     } else if (p4inView == true && p5inView == false && page == 'page4') {
-      return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold';
+      return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
     } else if (p5inView == true && p4inView == false && page == 'page5') {
-      return 'w-28 lg:w-32 h-20 border-b-4 text-white border-white ease-in-out duration-100 font-semibold';
+      return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
     } else {
-      return 'w-28 lg:w-32 h-20 hover:text-white ease-in-out duration-50 font-semibold ';
+      return 'w-28 lg:w-32 h-20 hover:text-color10b ease-in-out duration-50 font-semibold ';
     }
   }
 
@@ -373,8 +372,6 @@ const HomePage = ({ isAffiliateLink }) => {
   function navStyle() {
     if (p1inView && p2inView === false) {
       return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-gradient-to-r from-color10c via-color10c to-color60   ease-in-out duration-300 w-full z-50';
-    } else if (p5inView) {
-      return ' hidden';
     } else {
       return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-gradient-to-r from-color10c via-color10c to-color60 ease-in-out duration-300 w-full z-50';
     }
@@ -494,7 +491,7 @@ const HomePage = ({ isAffiliateLink }) => {
           <img
             src={logo}
             alt="logo"
-            className=" h-14 w-14 sm:h-16 sm:w-16 2xl:h-20 2xl:w-20 rounded-full cursor-pointer"
+            className=" h-14 w-14  rounded-full cursor-pointer"
             // onClick={()=>{scroll("page1")}}
             onClick={() => {
               isAffiliateLink ? navigateTo('/') : scroll('page1');
@@ -651,7 +648,7 @@ const HomePage = ({ isAffiliateLink }) => {
                 }}
               />
             ) : null
-          ) : (p1inView == false && p2inView) || p3inView || p4inView ? (
+          ) : (p1inView == false || p2inView )  ? (
             <div className=" gap-3 flex justify-end w-1/3 sm:w-1/4">
               {/* Message Button */}
               <div className="w-1/2 sm:w-4/12 xl:w-2/12 flex justify-end sm:justify-center items-center mr-1 ">
@@ -930,7 +927,7 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </div>
       </div>
-      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 ">
+      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 mt-20 ">
         <Card ref={page4} sx={{ width: 250, flexShrink: 0 }} elevation={20}>
           <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="green iguana" />
           <CardContent>
@@ -1004,14 +1001,14 @@ const HomePage = ({ isAffiliateLink }) => {
      
       <div
         ref={p5}
-        className="flex mb-40 lg:-mb-40 flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 "
+        className="flex mb-40 lg:-mb-40 flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 mt-40"
       >
         {tutorial.map((state, index) => {
           if (selectedSlide === index) {
             return (
               <div
                 key={index}
-                className="h-1/2  md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative "
+                className=" h-1/2  md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative "
               >
                 <button
                   className="absolute mt-36 top-30 left-9 md:left-10 lg:left-12 xl:left-14 text-2xl p-0.5 md:p-2 rounded-full bg-color60 hover:bg-color10c ease-in-out duration-300 "
@@ -1026,7 +1023,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   <BsArrowRightShort className="text-lg md:text-2xl text-white" />
                 </button>
                 <div
-                  className="bg-colorbackground h-full w-19/20 p-5 md:p-10 flex flex-col justify-evenly items-center rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl border border-color60 bg-local bg-cover bg-center "
+                  className="bg-colorbackground  w-19/20 p-5 md:p-10 flex flex-col justify-evenly items-center rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl border border-color60 bg-local bg-cover bg-center "
                   // style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.70),rgba(0,0,0,0.70)),' + "url('./vids/bg.jpg')"}}
                 >
                   {/* Steps */}

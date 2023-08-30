@@ -68,7 +68,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         return toReturn;
       }
 
-      return response.data;
     } catch (error) {
       // Handle the 400 error messages
       const errorMessage = error.response.data;
@@ -554,12 +553,33 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async voidPayment(data) {
     const jsonData = JSON.stringify(data);
-    const res = await axios.post(`${this.url}voidPayment`, jsonData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return res.data;
+    try{
+      const res = await axios.post(`${this.url}voidPayment`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return res.data;
+    }
+    catch{
+      throw new Error('Error voiding payment');
+    }
+  }
+
+
+  async editCustomerOrder(data) {
+    const jsonData = JSON.stringify(data);
+    try {
+      const res = await axios.post(`${this.url}editCustomerOrder`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return res.data;
+    }
+    catch{
+      throw new Error('Error editing order');
+    }
   }
 }
 
