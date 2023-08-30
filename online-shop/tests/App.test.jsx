@@ -4211,13 +4211,14 @@ describe.only('test edit customer function' , () => {
       orderReference:'testref1234',
       cart : { 'test': 24,'test2':10 },
     })
+    await delay(5000)
   })
   test('check values', async () => {
     const order = await firestore.readSelectedDataFromCollection('Orders','testref1234')
     await delay(300)
 
     expect(order.cart).toEqual({ 'test': 24,'test2':10 })
-    expect(order.itemstotal).toEqual(44000)
+    expect(order.itemsTotal).toEqual(44000)
     expect(order.grandTotal).toEqual(47000)
     expect(order.paid).toEqual(false)
   })

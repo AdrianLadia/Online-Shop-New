@@ -73,15 +73,15 @@ function parseData(data) {
   return parsedData;
 }
 
-function updateAccountStatement(payments,orders) {
+function updateAccountStatement(payments, orders) {
   let totalPayments = 0;
-  
+
   payments.map((payment) => {
-    console.log(payment)
+    console.log(payment);
     totalPayments += parseFloat(payment.amount);
   });
 
-  console.log(totalPayments)
+  console.log(totalPayments);
 
   orders.sort((a, b) => {
     const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
@@ -149,7 +149,7 @@ function getValueAddedTax(totalPrice) {
   }
   return roundedVat;
 }
-  
+
 async function updateOrdersAsPaidOrNotPaid(userId, db) {
   const user = await db.collection('Users').doc(userId).get();
   const userData = user.data();
@@ -187,119 +187,120 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     .update({ ['orders']: orders });
 }
 
-exports.onPaymentsChange = functions.region('asia-southeast1').firestore
-  .document('Payments/{paymentId}')
+exports.onPaymentsChange = functions
+  .region('asia-southeast1')
+  .firestore.document('Payments/{paymentId}')
   .onWrite(async (change, context) => {
     const beforeData = change.before.data();
     const afterData = change.after.data();
 
-    let created = null
+    let created = null;
     if (beforeData == undefined) {
-      created = true
+      created = true;
+    } else {
+      created = false;
     }
-    else {
-      created = false
-    }
-
 
     if (!('amount' in afterData)) {
-      return
+      return;
     }
 
     if (created == false) {
-      let checkPayments = false
+      let checkPayments = false;
       if (beforeData.amount != afterData.amount) {
-        checkPayments = true
-        console.log('amount changed')
+        checkPayments = true;
+        console.log('amount changed');
       }
       if (beforeData.status != afterData.status) {
-        checkPayments = true
-        console.log('status changed')
+        checkPayments = true;
+        console.log('status changed');
       }
       if (checkPayments == false) {
-        console.log('not updating account statement')
-        return
+        console.log('not updating account statement');
+        return;
       }
     }
 
-
     const db = admin.firestore();
     const userId = afterData.userId;
-    const paymentsSnapshot = await db.collection('Payments').where("status", "==", "approved").where('userId','==',userId).get();
-    const userPayments = paymentsSnapshot.docs.map(doc => doc.data());
+    const paymentsSnapshot = await db
+      .collection('Payments')
+      .where('status', '==', 'approved')
+      .where('userId', '==', userId)
+      .get();
+    const userPayments = paymentsSnapshot.docs.map((doc) => doc.data());
     const user = await db.collection('Users').doc(userId).get();
     const userOrders = user.data().orders;
 
     const orderPromises = userOrders.map((order) => {
-      const ref = order.reference
-      const orderRef = db.collection('Orders').doc(ref)
-      return orderRef.get()
+      const ref = order.reference;
+      const orderRef = db.collection('Orders').doc(ref);
+      return orderRef.get();
     });
 
     const orderSnapshots = await Promise.all(orderPromises);
 
     const orders = orderSnapshots.map((orderSnapshot) => {
-      return orderSnapshot.data()
+      return orderSnapshot.data();
     });
 
-    const toUpdate = updateAccountStatement(userPayments,orders)
-    console.log(toUpdate)
+    const toUpdate = updateAccountStatement(userPayments, orders);
+    console.log(toUpdate);
     toUpdate.forEach(async (_toUpdate) => {
-      const orderRef = db.collection('Orders').doc(_toUpdate.reference)
-      await orderRef.update({paid: _toUpdate.paid})
-    })
+      const orderRef = db.collection('Orders').doc(_toUpdate.reference);
+      await orderRef.update({ paid: _toUpdate.paid });
+    });
   });
 
-  exports.onOrdersChange = functions.region('asia-southeast1').firestore
-  .document('Orders/{orderId}')
+exports.onOrdersChange = functions
+  .region('asia-southeast1')
+  .firestore.document('Orders/{orderId}')
   .onWrite(async (change, context) => {
-    try{
+    try {
       const beforeData = change.before.data();
       const afterData = change.after.data();
-      let created = null
+      let created = null;
       if (beforeData == undefined) {
-        created = true
+        created = true;
+      } else {
+        created = false;
       }
-      else{
-        created = false
-      }
-
 
       if (!('grandTotal' in afterData)) {
-        return
+        return;
       }
-  
+
       if (created == false) {
         if (beforeData.grandTotal == afterData.grandTotal) {
-          console.log('grandTotal did not change so not changing paid')
-          return
+          console.log('grandTotal did not change so not changing paid');
+          return;
         }
       }
-  
+
       const db = admin.firestore();
       const userId = afterData.userId;
-      const orderSnapshot = await db.collection('Orders').where("userId", "==", userId).get();
-      const userOrders = orderSnapshot.docs.map(doc => doc.data());
-      const paymentsSnapshot = await db.collection('Payments').where("status", "==", "approved").where('userId','==',userId).get();
-      const userPayments = paymentsSnapshot.docs.map(doc => doc.data());
-      
-      
+      const orderSnapshot = await db.collection('Orders').where('userId', '==', userId).get();
+      const userOrders = orderSnapshot.docs.map((doc) => doc.data());
+      const paymentsSnapshot = await db
+        .collection('Payments')
+        .where('status', '==', 'approved')
+        .where('userId', '==', userId)
+        .get();
+      const userPayments = paymentsSnapshot.docs.map((doc) => doc.data());
+
       // console.log('userOrders',userOrders)
       // console.log('userPayments' ,userPayments)
-      
-      const toUpdate = updateAccountStatement(userPayments,userOrders)
-      console.log(toUpdate)
+
+      const toUpdate = updateAccountStatement(userPayments, userOrders);
+      console.log(toUpdate);
       toUpdate.forEach(async (_toUpdate) => {
-        const orderRef = db.collection('Orders').doc(_toUpdate.reference)
-        await orderRef.update({paid: _toUpdate.paid})
-      })
-    }
-    catch(error){
-      console.log(error)
+        const orderRef = db.collection('Orders').doc(_toUpdate.reference);
+        await orderRef.update({ paid: _toUpdate.paid });
+      });
+    } catch (error) {
+      console.log(error);
     }
   });
-
-
 
 exports.getIPAddress = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -481,7 +482,7 @@ exports.transactionPlaceOrder = functions
       const isInvoiceNeeded = data.isInvoiceNeeded;
       const urlOfBir2303 = data.urlOfBir2303;
       const countOfOrdersThisYear = data.countOfOrdersThisYear;
-      const deliveryDate = new Date(data.deliveryDate)
+      const deliveryDate = new Date(data.deliveryDate);
 
       let cartUniqueItems = [];
 
@@ -716,7 +717,7 @@ exports.transactionPlaceOrder = functions
               urlOfBir2303: urlOfBir2303,
               countOfOrdersThisYear: countOfOrdersThisYear,
               proofOfDeliveryLink: [],
-              deliveryDate: deliveryDate
+              deliveryDate: deliveryDate,
             };
             const userOrderObject = { reference: reference, date: new Date() };
             const updatedOrders = [userOrderObject, ...oldOrders];
@@ -737,7 +738,7 @@ exports.transactionPlaceOrder = functions
               isInquiry: false,
               ownerReadAll: true,
               adminReadAll: true,
-              delivered: false
+              delivered: false,
             });
             orderMessagesRef.collection('messages');
 
@@ -948,7 +949,7 @@ exports.login = functions.region('asia-southeast1').https.onRequest(async (req, 
 exports.transactionCreatePayment = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
-    
+
     const depositAmount = data.amount;
     const orderReference = data.reference;
     const paymentprovider = data.paymentprovider;
@@ -956,7 +957,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const commissionPercentage = 0.03;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
-    console.log('Proof of payment link', proofOfPaymentLink)
+    console.log('Proof of payment link', proofOfPaymentLink);
     const db = admin.firestore();
     const userId = data.userId;
 
@@ -1023,9 +1024,9 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
         const ordersObject = await transaction.get(allUserOrdersQuery);
         const orders = ordersObject.docs.map((doc) => doc.data());
-        
+
         // const toUpdateOrders = updateAccountStatement(newPayments, orders)
-        
+
         // WRITE
 
         // toUpdateOrders.forEach((order) => {
@@ -1044,10 +1045,9 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         if (paymentsData) {
           transaction.update(db.collection('Payments').doc(documentID), paymentsData);
           transaction.update(userRef, { payments: newPayments });
-        }
-        else{
+        } else {
           const paymentRef = db.collection('Payments').doc();
-          
+
           transaction.set(paymentRef, {
             orderReference: orderReference,
             proofOfPaymentLink: proofOfPaymentLink,
@@ -1056,7 +1056,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
             userName: userData.name,
             paymentMethod: paymentprovider,
             paymentId: paymentRef.id,
-            amount : depositAmount
+            amount: depositAmount,
           });
         }
         transaction.update(userRef, { payments: newPayments });
@@ -1117,7 +1117,6 @@ exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequ
           paymentMethod: 'Maya',
         });
         transaction.update(userRef, { payments: newPayments });
-
       });
 
       res.status(200).send('success');
@@ -1232,7 +1231,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
             userName: userName,
             paymentMethod: paymentMethod,
             paymentId: newPaymentRef.id,
-            amount : null
+            amount: null,
           });
 
           const paymentId = newPaymentRef.id;
@@ -1298,7 +1297,7 @@ async function deleteOldOrders() {
       // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
       let paymentLinks;
       const order = orderObj.data();
-      console.log(order)
+      console.log(order);
       paymentLinks = order.proofOfPaymentLink;
       if (paymentLinks == null) {
         paymentLinks = [];
@@ -1620,7 +1619,7 @@ exports.addDepositToAffiliate = functions.region('asia-southeast1').https.onRequ
     } catch (e) {
       console.log(e);
     }
-    
+
     res.status(200).send(data);
   });
 });
@@ -1794,77 +1793,78 @@ exports.readSelectedOrder = functions.region('asia-southeast1').https.onRequest(
   });
 });
 
+exports.voidPayment = functions
+  .region('asia-southeast1')
+  .runWith({ memory: '2GB' })
+  .https.onRequest(async (req, res) => {
+    corsHandler(req, res, async () => {
+      const db = admin.firestore();
+      const data = req.body;
+      const orderReference = data.orderReference;
+      const proofOfPaymentLink = data.proofOfPaymentLink;
+      const userId = data.userId;
+      try {
+        db.runTransaction(async (transaction) => {
+          const orderRef = db.collection('Orders').doc(orderReference);
+          const userRef = db.collection('Users').doc(userId);
 
-exports.voidPayment = functions.region('asia-southeast1').runWith({ memory: '2GB' }).https.onRequest(async (req, res) => {
-  corsHandler(req, res, async () => {
-    const db = admin.firestore();
-    const data = req.body;
-    const orderReference = data.orderReference;
-    const proofOfPaymentLink = data.proofOfPaymentLink;
-    const userId = data.userId
-    try{
-      db.runTransaction(async (transaction) => {
-        const orderRef = db.collection('Orders').doc(orderReference);
-        const userRef = db.collection('Users').doc(userId);
-        
-        const orderDoc = await transaction.get(orderRef);
-        const orderData = orderDoc.data();
-        const orderProofOfPaymentLink = orderData.proofOfPaymentLink;
-        
-        const userDoc = await transaction.get(userRef);
-        const userData = userDoc.data();
-        const payments = userData.payments
-  
-        const paymentsRef = db.collection('Payments');
-        const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink)
-        const paymentSnapshot = await transaction.get(paymentQuery);
-  
-        const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
-        const ordersObject = await transaction.get(allUserOrdersQuery);
-        const orders = ordersObject.docs.map((doc) => doc.data());
-        
-        // delete payments in user
-        const updatedPayments = payments.filter((payment) => {
-          if (payment.proofOfPaymentLink != proofOfPaymentLink) {
-            return payment
-          }
+          const orderDoc = await transaction.get(orderRef);
+          const orderData = orderDoc.data();
+          const orderProofOfPaymentLink = orderData.proofOfPaymentLink;
+
+          const userDoc = await transaction.get(userRef);
+          const userData = userDoc.data();
+          const payments = userData.payments;
+
+          const paymentsRef = db.collection('Payments');
+          const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
+          const paymentSnapshot = await transaction.get(paymentQuery);
+
+          const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
+          const ordersObject = await transaction.get(allUserOrdersQuery);
+          const orders = ordersObject.docs.map((doc) => doc.data());
+
+          // delete payments in user
+          const updatedPayments = payments.filter((payment) => {
+            if (payment.proofOfPaymentLink != proofOfPaymentLink) {
+              return payment;
+            }
+          });
+
+          transaction.update(userRef, { payments: updatedPayments });
+
+          // delete proof of payment link in order
+          const updatedOrderProofOfPaymentLink = orderProofOfPaymentLink.filter((link) => {
+            if (link != proofOfPaymentLink) {
+              return link;
+            }
+          });
+
+          transaction.update(orderRef, { proofOfPaymentLink: updatedOrderProofOfPaymentLink });
+
+          // update payment object in payment
+          paymentSnapshot.forEach((doc) => {
+            const id = doc.id;
+            const ref = db.collection('Payments').doc(id);
+            transaction.update(ref, { status: 'voided' });
+          });
+
+          // update account statement in user
+          // const toUpdateOrders = updateAccountStatement(updatedPayments,orders)
+
+          // toUpdateOrders.forEach((order) => {
+          //   const ref = db.collection('Orders').doc(order.reference);
+          //   transaction.update(ref, { paid: order.paid });
+          // });
+
+          res.status(200).send('Payment voided successfully');
         });
-  
-        transaction.update(userRef, { payments: updatedPayments });
-  
-        // delete proof of payment link in order
-        const updatedOrderProofOfPaymentLink = orderProofOfPaymentLink.filter((link) => {
-          if (link != proofOfPaymentLink) {
-            return link
-          }
-        });
-  
-        transaction.update(orderRef, { proofOfPaymentLink: updatedOrderProofOfPaymentLink });
-  
-        // update payment object in payment
-        paymentSnapshot.forEach((doc) => {
-          const id = doc.id;
-          const ref = db.collection('Payments').doc(id);
-          transaction.update(ref, { status: 'voided' })
-        })
-  
-        // update account statement in user
-        // const toUpdateOrders = updateAccountStatement(updatedPayments,orders)
-  
-        // toUpdateOrders.forEach((order) => {
-        //   const ref = db.collection('Orders').doc(order.reference);
-        //   transaction.update(ref, { paid: order.paid });
-        // });
-  
-        res.status(200).send('Payment voided successfully');        
-      });
-    }
-    catch(error) {
-      console.log(error)
-      res.status(400).send('Error voiding payment');
-    }
+      } catch (error) {
+        console.log(error);
+        res.status(400).send('Error voiding payment');
+      }
+    });
   });
-});
 
 exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -1875,35 +1875,47 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
 
     try {
       await db.runTransaction(async (transaction) => {
-        // READ
-        // GET ITEMS PRICE
-        const itemDetailPromises = cart.map(async(itemId) => {
-          const productRef = db.collection('Products').doc(itemId);
-          const productDoc = await transaction.get(productRef);
-          const productData = productDoc.data();
-          return productData
-        });
-  
-        const itemDetails = await Promise.all(itemDetailPromises);
-  
+        const itemDetails = await Promise.all(
+          Object.keys(cart).map(async (itemId) => {
+            console.log(itemId);
+            const productRef = db.collection('Products').doc(itemId);
+            const productDoc = await transaction.get(productRef);
+            return productDoc.data();
+          })
+        );
+
+        console.log(itemDetails);
+
+        // await Promise.all(
+        //   cartUniqueItems.map(async (c) => {
+        //     const productRef = db.collection('Products').doc(c);
+        //     const productdoc = await transaction.get(productRef);
+        //     // currentInventory.push(productdoc.data().stocksAvailable)
+        //     ordersOnHold[c] = productdoc.data().stocksOnHold;
+        //     currentInventory[c] = productdoc.data().stocksAvailable;
+        //   })
+        // );
+
         let newItemsTotal = 0;
-        cart.forEach((itemId) => {
+        Object.keys(cart).forEach((itemId) => {
           const itemData = itemDetails.find((item) => item.itemId == itemId);
           const quantity = cart[itemId];
           const total = itemData.price * quantity;
           newItemsTotal += total;
         });
-  
+
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderDoc = await transaction.get(orderRef);
         const orderData = orderDoc.data();
-        const newGrandTotal = newItemsTotal + orderData.shippingTotal; + orderData.vat 
-        
+        const newGrandTotal = newItemsTotal + orderData.shippingTotal + orderData.vat;
+
         // WRITE
-        transaction.update(orderRef, { cart: cart, itemsTotal: newItemsTotal, grandTotal : newGrandTotal });
+
+        transaction.update(orderRef, { cart: cart, itemsTotal: newItemsTotal, grandTotal: newGrandTotal });
       });
       res.status(200).send('Order edited successfully');
-    } catch {
+    } catch (error) {
+      console.log(error);
       res.status(400).send('Error editing order');
     }
   });
