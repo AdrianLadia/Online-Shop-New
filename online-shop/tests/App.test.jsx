@@ -3657,7 +3657,7 @@ describe('count all orders of a specific year', () => {
   })
 })
 
-describe.only('test transaction create payment without an affiliate' , () => {
+describe('test transaction create payment without an affiliate' , () => {
   test('setting up test', async () => {
     await firestore.updateDocumentFromCollection('Users','NOAFFILIATETESTUSER',{orders : [],payments : []})
     resetOrdersAndPayments()
@@ -4073,6 +4073,7 @@ describe('Void payment' , () => {
      expect(found).toEqual(true)
 
      //update teslink123 tp unpaid
+     
 
      const testref1data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref1')
      const testref12data = await cloudfirestore.readSelectedDataFromCollection('Orders','testref12')
@@ -4085,3 +4086,159 @@ describe('Void payment' , () => {
 
   })
 },100000)
+
+
+describe.only('test edit customer function' , () => {
+  test('setup test', async () => {
+    resetOrdersAndPayments()
+    await firestore.createProduct(
+      {
+        itemId: 'test',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 1000,
+        description: 'none',
+        weight: 15,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
+      },
+      'test',allProducts
+    );
+
+    await firestore.createProduct(
+      {
+        itemId: 'test2',
+        itemName: 'testname2',
+        unit: 'bale',
+        price: 2000,
+        description: 'none',
+        weight: 15,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: []
+      },
+      'test2',allProducts
+    );
+
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'test': 12,'test2':5 },
+      itemstotal: 22000,
+      vat: 1000,
+      shippingtotal: 2000,
+      grandTotal: 25000,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(1000)
+  })
+  test('create payment', async () => {
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 25000,
+      reference: 'testref1234',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    });
+
+    await delay(5000)
+
+    const order = await cloudfirestore.readSelectedDataFromCollection('Orders','testref1234')
+    expect(order.paid).toEqual(true)
+  })
+  test('invoke function', async () => {
+    await cloudfirestore.editCustomerOrder({
+      orderReference:'testref1234',
+      cart : { 'test': 24,'test2':10 },
+    })
+  })
+  test('check values', async () => {
+    const order = await firestore.readSelectedDataFromCollection('Orders','testref1234')
+    await delay(300)
+
+    expect(order.cart).toEqual({ 'test': 24,'test2':10 })
+    expect(order.itemstotal).toEqual(44000)
+    expect(order.grandTotal).toEqual(47000)
+    expect(order.paid).toEqual(false)
+  })
+  test('create another payment', async () => {
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 47000,
+      reference: 'testref1234',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    });
+
+    await delay(5000)
+  })
+  test('check values 2', async () => {
+    const order =await cloudfirestore.readSelectedDataFromCollection('Orders','testref1234')
+    expect(order.paid).toEqual(true)
+  })
+  test('clean data', async () => {
+    await firestore.deleteDocumentFromCollection('Orders','testref1234')
+    await firestore.deleteDocumentFromCollection('Products','test')
+    await firestore.deleteDocumentFromCollection('Products','test2')
+  })
+},100000000)

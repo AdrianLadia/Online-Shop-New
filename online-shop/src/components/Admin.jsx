@@ -13,6 +13,7 @@ import AffiliateClaimRequest from './AdminAffiliateClaimRequest';
 import AdminNavBar from './AdminNavBar';
 import AdminDelivery from './AdminDelivery';
 import { Routes, Route } from 'react-router-dom';
+import AdminVoidPayment from './AdminVoidPayment';
 
 const Admin = () => {
   const { firestore, allUserData, setAllUserData, categories } = React.useContext(AppContext);
@@ -71,6 +72,15 @@ const Admin = () => {
             <div>
               <AdminNavBar />
               <AdminCreatePayment users={allUserData} setUsers={setAllUserData} />
+            </div>
+          }
+        />
+        <Route
+          path="voidPayment"
+          element={
+            <div>
+              <AdminNavBar />
+              <AdminVoidPayment users={allUserData} setUsers={setAllUserData} />
             </div>
           }
         />

@@ -1865,3 +1865,46 @@ exports.voidPayment = functions.region('asia-southeast1').runWith({ memory: '2GB
     }
   });
 });
+
+exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const db = admin.firestore();
+    const data = req.body;
+    const orderReference = data.orderReference;
+    const cart = data.cart;
+
+    try {
+      await db.runTransaction(async (transaction) => {
+        // READ
+        // GET ITEMS PRICE
+        const itemDetailPromises = cart.map(async(itemId) => {
+          const productRef = db.collection('Products').doc(itemId);
+          const productDoc = await transaction.get(productRef);
+          const productData = productDoc.data();
+          return productData
+        });
+  
+        const itemDetails = await Promise.all(itemDetailPromises);
+  
+        let newItemsTotal = 0;
+        cart.forEach((itemId) => {
+          const itemData = itemDetails.find((item) => item.itemId == itemId);
+          const quantity = cart[itemId];
+          const total = itemData.price * quantity;
+          newItemsTotal += total;
+        });
+  
+        const orderRef = db.collection('Orders').doc(orderReference);
+        const orderDoc = await transaction.get(orderRef);
+        const orderData = orderDoc.data();
+        const newGrandTotal = newItemsTotal + orderData.shippingTotal; + orderData.vat 
+        
+        // WRITE
+        transaction.update(orderRef, { cart: cart, itemsTotal: newItemsTotal, grandTotal : newGrandTotal });
+      });
+      res.status(200).send('Order edited successfully');
+    } catch {
+      res.status(400).send('Error editing order');
+    }
+  });
+});

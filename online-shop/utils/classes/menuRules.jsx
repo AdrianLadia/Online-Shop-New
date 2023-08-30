@@ -6,6 +6,7 @@ class menuRules {
             editItem: ['superAdmin'],
             inventory: ['admin','superAdmin','delivery'],
             createPayment: ['superAdmin'],
+            voidPayment: ['superAdmin'],
             orders: ['delivery','admin','superAdmin'],
             itemAnalytics: ['admin','superAdmin'],
             customerAnalytics: ['admin','superAdmin'],
