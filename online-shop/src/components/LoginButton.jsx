@@ -177,7 +177,7 @@ const LoginButton = (props) => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        className={"bg-color10b p-1 sm:p-2 text-slate-800 xs:font-bold hover:bg-color10c rounded-r-lg sm:rounded-lg mr-1 2xs:ml-0"}
+        className={"bg-color10b p-1 sm:p-2 text-white xs:font-bold hover:bg-color10c rounded-r-lg sm:rounded-lg mr-1 2xs:ml-0"}
       >
         {isAffiliateLink? "Sign up":'Login'}
       </Button>

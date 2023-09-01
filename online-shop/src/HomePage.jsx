@@ -346,7 +346,7 @@ const HomePage = ({ isAffiliateLink }) => {
       return 'w-28 lg:lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold ';
     } else if (p3inView == true && p4inView == false && page == 'page3') {
       return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
-    } else if (p4inView == true && p5inView == false && page == 'page4') {
+    } else if (p4inView == true  && page == 'page4') {
       return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
     } else if (p5inView == true && p4inView == false && page == 'page5') {
       return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
@@ -399,9 +399,9 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function menuStyle() {
     if (showMenu == false) {
-      return 'h-12 w-10 sm:h-14 sm:w-12 bg-black text-white hover:text-color60 mt-1 p-1 rounded-sm';
+      return 'h-9 w-10 sm:h-14 sm:w-12 bg-transparent text-white hover:text-color60 mt-1 p-1 rounded-sm';
     } else {
-      return 'h-12 w-10 sm:h-14 sm:w-12 bg-black text-color60 hover:text-red-300 mt-1 p-1 rounded-sm';
+      return 'h-12 w-10 sm:h-14 sm:w-12 bg-transparent text-white hover:text-red-300 mt-1 p-1 rounded-sm';
     }
   }
 
@@ -464,6 +464,19 @@ const HomePage = ({ isAffiliateLink }) => {
     }
   }
 
+  function responsiveImageList() {
+    console.log(width)
+    if (width <= 850) {
+      return 2;
+    } else if (width <= 1400) {
+      return 3;
+    } else if (width <= 1900) {
+      return 4;
+    } else {
+      return 5;
+    }
+  }
+
   return (
     <div
       className=" h-screen w-screen  overflow-y-scroll overflow-x-hidden bg-cover bg-center"
@@ -499,9 +512,9 @@ const HomePage = ({ isAffiliateLink }) => {
           />
         </div>
         {/* Menu */}
-        <div className="w-full sm:w-8/12 md:w-11/12 flex-row-reverse md:flex-row justify-start md:justify-between flex">
+        <div className="w-full flex-row-reverse md:flex-row justify-start md:justify-between flex">
           {/* SMall Screen Menu */}
-          <div className="block md:hidden w-3/12 sm:w-2/12 text-3xl h-20 p-2 ">
+          <div className="block md:hidden text-3xl h-20 p-2 ">
             <div className=" flex justify-center items-center w-full h-full">
               {showMenu == false ? (
                 <BsList
@@ -509,6 +522,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   onClick={() => {
                     setShowMenu(true);
                   }}
+                  
                 />
               ) : (
                 <BsX
@@ -516,6 +530,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   onClick={() => {
                     setShowMenu(false);
                   }}
+                  
                 />
               )}
             </div>
@@ -525,6 +540,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   <button
                     onClick={() => {
                       scroll('page1');
+                      setShowMenu(false)
                     }}
                     className={'text-xl  ' + menuButtonStyle('page1')}
                   >
@@ -533,6 +549,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   <button
                     onClick={() => {
                       scroll('page2');
+                      setShowMenu(false)
                     }}
                     className={'text-xl  ' + menuButtonStyle('page2')}
                   >
@@ -541,15 +558,26 @@ const HomePage = ({ isAffiliateLink }) => {
                   <button
                     onClick={() => {
                       scroll('page3');
+                      setShowMenu(false)
                     }}
                     className={'text-xl  ' + menuButtonStyle('page3')}
                   >
                     Products
                   </button>
+                  <button
+                    onClick={() => {
+                      scroll('page4');
+                      setShowMenu(false)
+                    }}
+                    className={'text-xl  ' + menuButtonStyle('page3')}
+                  >
+                    Features
+                  </button>
                   {isAffiliateLink ? (
                     <button
                       onClick={() => {
                         scroll('page5');
+                        setShowMenu(false)
                       }}
                       className={'text-xl  ' + menuButtonStyle('page5')}
                     >
@@ -558,7 +586,8 @@ const HomePage = ({ isAffiliateLink }) => {
                   ) : (
                     <button
                       onClick={() => {
-                        scroll('page4');
+                        scroll('page5');
+                        setShowMenu(false)
                       }}
                       className={'text-xl  ' + menuButtonStyle('page4')}
                     >
@@ -651,11 +680,11 @@ const HomePage = ({ isAffiliateLink }) => {
           ) : (p1inView == false || p2inView )  ? (
             <div className=" gap-3 flex justify-end w-1/3 sm:w-1/4">
               {/* Message Button */}
-              <div className="w-1/2 sm:w-4/12 xl:w-2/12 flex justify-end sm:justify-center items-center mr-1 ">
+              <div className="flex justify-end sm:justify-center items-center mr-1 ">
                 <button
                   onClick={handleMessageClick}
-                  className="text-3xl lg:text-4xl h-12 w-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mt-1 rounded-full 
-                                relative flex justify-center items-center bg-black text-color10b hover:text-blue1"
+                  className="text-3xl lg:text-4xl p-2 mt-1 rounded-full 
+                                relative flex justify-center items-center bg-color10b text-color10b hover:text-blue1"
                   onMouseEnter={() => {
                     setShowMessageToolTip(true);
                   }}
@@ -663,7 +692,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     setShowMessageToolTip(false);
                   }}
                 >
-                  <AiFillMessage />
+                  <AiFillMessage size={25} color='white'/>
                 </button>
                 {showMessageToolTip ? (
                   <div
@@ -675,13 +704,13 @@ const HomePage = ({ isAffiliateLink }) => {
                 ) : null}
               </div>
               {/* Shop Button */}
-              <div className="w-1/2 sm:w-4/12 xl:w-2/12 flex justify-end sm:justify-center items-center mr-1 ">
+              <div className="flex justify-end sm:justify-center items-center mr-1 ">
                 <button
                   onClick={() => {
                     handleShop();
                   }}
-                  className="text-2xl lg:text-3xl xl:text-4xl h-12 w-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mt-1 rounded-full 
-                                relative flex justify-center items-center bg-black text-color60 hover:text-color30"
+                  className="text-2xl lg:text-3xl xl:text-4xl py-1 mt-1 rounded-full 
+                                relative flex justify-center items-center bg-color10b text-color60 hover:text-color30"
                   onMouseEnter={() => {
                     setShowShopToolTip(true);
                   }}
@@ -689,7 +718,15 @@ const HomePage = ({ isAffiliateLink }) => {
                     setShowShopToolTip(false);
                   }}
                 >
-                  <FaShoppingBag />
+                  <div className='ml-3'>
+                    <FaShoppingBag size={25} color='white' />
+                  </div>
+                  <div className='ml-2 mr-3'>
+                    <Typography variant="h6" color={'white'} >
+                      Shop
+                    </Typography>
+                  </div>
+                  
                 </button>
                 {showShopToolTip ? (
                   <div
@@ -851,9 +888,9 @@ const HomePage = ({ isAffiliateLink }) => {
         </div>
         <div className="flex flex-col h-full  items-center mt-10 ">
           {/* <Typography variant='h3' sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>What We Do</Typography> */}
-          <div className="w-9/10 h-96 lg:h-80per  border border-emerald-300 mt-5 rounded-lg overflow-auto">
+          <div className="w-9/10  h-96 lg:h-60per border border-color60 mt-5 rounded-lg overflow-auto">
             <div className="p-5 lg:p-10">
-              <ImageList variant="masonry" cols={2} gap={8}>
+              <ImageList variant="masonry" cols={responsiveImageList()} gap={8}>
                 {imageLinks.map((item) => (
                   <ImageListItem key={item.img}>
                     <img
@@ -885,9 +922,9 @@ const HomePage = ({ isAffiliateLink }) => {
             {/* <div className="h-1/5 text-2xl md:text-5xl w-10/12 sm:w-7/12 flex items-center font-bold text-white">
               {selectedCategory ? selectedCategory : 'Paper Bags'}
             </div> */}
-            <div className=" w-64 h-64 lg:w-96 lg:h-96 rounded-xl xs:rounded-3xl border border-green2 overflow-hidden flex items-center justify-center">
-              <img className="ease-in-out" src={selectedCategoryImage} />
-            </div>
+            {/* <div className=" w-64 h-64 lg:w-96 lg:h-96 rounded-xl xs:rounded-3xl border border-green2 overflow-hidden flex items-center justify-center"> */}
+              <img className="ease-in-out h-8/10 rounded-lg" src={selectedCategoryImage} />
+            
           </div>
           {/* Products & CTA*/}
           <div className="w-11/12 md:w-4/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-b-3xl md:rounded-bl-none md:rounded-r-3xl flex flex-col justify-center items-center border border-green2 p-2">
@@ -927,9 +964,9 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </div>
       </div>
-      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 mt-20 ">
+      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 mt-40 ">
         <Card ref={page4} sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="green iguana" />
+          <CardMedia  sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="auto calculate" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Auto Calculate Cost
@@ -941,7 +978,7 @@ const HomePage = ({ isAffiliateLink }) => {
           </CardContent>
         </Card>
         <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="green iguana" />
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="favorite items" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Favorite Items
@@ -952,7 +989,7 @@ const HomePage = ({ isAffiliateLink }) => {
           </CardContent>
         </Card>
         <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={pinpoint} title="green iguana" />
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={pinpoint} title="pinpoint delivery locations" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Pinpoint Location
@@ -964,7 +1001,7 @@ const HomePage = ({ isAffiliateLink }) => {
         </Card>
 
         <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={saved} title="green iguana" />
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={saved} title="save location and contacts" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Save Location and Contacts
@@ -975,7 +1012,7 @@ const HomePage = ({ isAffiliateLink }) => {
           </CardContent>
         </Card>
         <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={customerChat} title="green iguana" />
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={customerChat} title="chat with customer" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Chat with Customer Service
@@ -986,7 +1023,7 @@ const HomePage = ({ isAffiliateLink }) => {
           </CardContent>
         </Card>
         <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={multiple} title="green iguana" />
+          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={multiple} title="multiple payment" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Multiple Payment Methods
