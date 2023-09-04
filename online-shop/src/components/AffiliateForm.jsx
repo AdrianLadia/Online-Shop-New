@@ -1,7 +1,6 @@
 import QRCode from 'react-qr-code';
 import React from 'react';
 
-
 const AffiliateForm = () => {
 
   const affiliateId = '123456';
@@ -17,7 +16,6 @@ const AffiliateForm = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-center mt-5">
-  
         <QRCode value={baseURL + '/signUp?aid=' + affiliateId} />
       </div>
     </div>

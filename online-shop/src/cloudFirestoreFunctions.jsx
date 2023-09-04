@@ -19,9 +19,6 @@ class cloudFirestoreFunctions {
     this.functions = getFunctions(app);
   }
 
-  
-
-
 
   async createDocument(firestoreData, id, collection) {
 

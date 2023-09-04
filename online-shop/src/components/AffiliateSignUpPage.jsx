@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import AppContext from '../AppContext';
-import LoginButton from './LoginButton';
 import { useNavigate } from 'react-router-dom';
 import HomePage from '../HomePage';
 

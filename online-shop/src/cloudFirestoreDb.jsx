@@ -5,8 +5,6 @@ import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
-
-
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false) {
     super();
