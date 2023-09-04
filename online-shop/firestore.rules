@@ -28,35 +28,35 @@ service cloud.firestore {
     //   allow read: if isAdminOrSuperAdmin() || (request.auth != null && request.auth.uid == userId);
     // }
 
-    match /Products/{productId}/{product=**} {
-      allow read: if true
-      allow create: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
-      allow update: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
-      allow delete: if isSuperAdmin();
-    }
+    // match /Products/{productId}/{product=**} {
+    //   allow read: if true
+    //   allow create: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
+    //   allow update: if (isAdminOrSuperAdmin() || "clicks" in request.resource.data)
+    //   allow delete: if isSuperAdmin();
+    // }
 
-    match /Categories/{categoryId}/{category=**} {
-      allow read: if true
-    }
+    // match /Categories/{categoryId}/{category=**} {
+    //   allow read: if true
+    // }
 
-    match /ordersMessages/{referenceNumber} {
-      allow read, write : if request.auth != null && request.auth.uid == resource.data.ownerUserId || isAdminOrSuperAdmin();
+    // match /ordersMessages/{referenceNumber} {
+    //   allow read, write : if request.auth != null && request.auth.uid == resource.data.ownerUserId || isAdminOrSuperAdmin();
       
-    }
+    // }
 
-    match /Payments/{orderReference} {
-      allow read, write : if request.auth != null && isAdminOrSuperAdmin();
-    } 
+    // match /Payments/{orderReference} {
+    //   allow read, write : if request.auth != null && isAdminOrSuperAdmin();
+    // } 
 
-    match /PaymentProviders/{providers} {
-      allow read: if true
-      allow write : if request.auth != null && isAdminOrSuperAdmin();
-    }
+    // match /PaymentProviders/{providers} {
+    //   allow read: if true
+    //   allow write : if request.auth != null && isAdminOrSuperAdmin();
+    // }
 
-    match /Machines/{machine} {
-      allow read: if true
-      allow write : if request.auth != null && isAdminOrSuperAdmin();
-    } 
+    // match /Machines/{machine} {
+    //   allow read: if true
+    //   allow write : if request.auth != null && isAdminOrSuperAdmin();
+    // } 
 
     // match /Analytics/{analytics} {
     //   allow read: if request.auth != null && isAdminOrSuperAdmin();
