@@ -24,7 +24,6 @@ const AdminCreatePaymentTableRow = (props) => {
   async function updatePaymentStatus(status) {
     setLoading(true);
     if (status === 'approved') {
-
       if (amount === '') {
         alert('Please enter amount');
         setLoading(false);
@@ -36,10 +35,17 @@ const AdminCreatePaymentTableRow = (props) => {
         amount: amount,
         reference: orderReference,
         paymentprovider: paymentMethod,
-        proofOfPaymentLink: proofOfPaymentLink,
-        affiliateUserId : 'm3XqOfwYVchb1jwe9Jpat5ZrzJYJ'
+        proofOfPaymentLink: proofOfPaymentLink
       };
-      await cloudfirestore.transactionCreatePayment(data);
+      try{
+        // console.log('RAN transactionCreatePayment')
+        await cloudfirestore.transactionCreatePayment(data);
+      }
+      catch(error){
+        alert('Error creating payment. Please try again.');
+        setLoading(false);
+        return
+      }
       const customerEmail = await firestore.readEmailAddressByUserId(userId);
   
       await cloudfirestore.sendEmail({
@@ -52,7 +58,14 @@ const AdminCreatePaymentTableRow = (props) => {
       setAmount('');
     }
     if (status === 'declined') {
-      await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink);
+      try{
+        await firestore.deleteDeclinedPayment(orderReference, userId, proofOfPaymentLink);
+      }
+      catch{
+        alert('Error deleting declined payment. Please try again.');
+        setLoading(false);
+        return
+      }
       const customerEmail = await firestore.readEmailAddressByUserId(userId);
      
       cloudfirestore.sendEmail({
@@ -64,8 +77,8 @@ const AdminCreatePaymentTableRow = (props) => {
       setLoading(false);
     }
 
-    const newPaymentsData = paymentsData.filter((data) => data.link != proofOfPaymentLink);
-    setPaymentsData(newPaymentsData);
+    // const newPaymentsData = paymentsData.filter((data) => data.link != proofOfPaymentLink);
+    // setPaymentsData(newPaymentsData);
   }
 
   
@@ -87,6 +100,7 @@ const AdminCreatePaymentTableRow = (props) => {
       <TableCell align="right">
         <div className="flex justify-evenly gap-2 xs:gap-3">
           <button
+            disabled={loading}
             className=" border border-red-400 hover:bg-red-50 text-red-400 px-4 py-3 rounded-xl"
             // onClick={() => data.link === data.link? (deleteDeclinedProofOfPaymentLink(data.reference, 'declined',data.userId, data.link)) : null}
             onClick={() => updatePaymentStatus('declined')}
@@ -94,6 +108,7 @@ const AdminCreatePaymentTableRow = (props) => {
             {loading ? <CircularProgress size={20} className=' text-red mt-1'/> : <>Deny</> }
           </button>
           <button
+            disabled={loading}
             className="bg-blue1 hover:bg-color10b hover:border-color10b border border-blue1 text-white px-4 py-3 rounded-xl"
             onClick={() => updatePaymentStatus('approved')}
           >

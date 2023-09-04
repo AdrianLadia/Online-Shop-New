@@ -49,7 +49,7 @@ const AccountStatement = () => {
 
       setTableData(dataToUse);
     } catch (e) {
-      console.log(e);
+      
     }
   }, [orders]);
 

@@ -6,6 +6,10 @@ import { useState } from "react";
 const OrdersCalendar = (props) => {
     const startDate = props.startDate
     const setStartDate = props.setStartDate
+    const disabledDates = props.disabledDates
+    const minDate = props.minDate
+    const maxDate = props.maxDate
+    const filterDate = props.filterDate
 
   return (
     <div className='rounded-md'>
@@ -14,7 +18,12 @@ const OrdersCalendar = (props) => {
                       placeholder:text-lg placeholder:text-blue1' 
           placeholderText="Date"
           selected={startDate}
-          onChange={(date) => setStartDate(date)}/>
+          onChange={(date) => setStartDate(date)}
+          minDate = {minDate}
+          maxDate = {maxDate}
+          filterDate = {filterDate}
+
+          />
     </div>
   )
 }

@@ -46,14 +46,22 @@ const ImageUploadButton = (props) => {
         
         uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
           setButtonColor(true);
-          setButtonText('Uploaded Successfuly');
-          setLoading(false);
+
   
           // GET IMAGE URL
           const downloadURL = await getDownloadURL(ordersRefStorage);
+
   
           if (onUploadFunction !== undefined) {
-            onUploadFunction(downloadURL);
+            try{
+              await onUploadFunction(downloadURL);
+              setButtonText('Uploaded Successfuly');
+              setLoading(false);
+            }
+            catch(error){
+              alert('Error uploading image. Please try again.');
+              return
+            }
           }
 
           const downloadUrlSchema = Joi.string().uri().required();
@@ -64,7 +72,7 @@ const ImageUploadButton = (props) => {
           }
           else {
             alert('Image uploaded successfully.');
-            console.log(downloadURL)
+    
           }
         });
       }

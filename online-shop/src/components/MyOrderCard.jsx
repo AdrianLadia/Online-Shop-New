@@ -16,13 +16,13 @@ import { useLocation } from 'react-router-dom';
 function MyOrderCard(props) {
   const { pathname } = useLocation();
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata } =
+  const { storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata,orders } =
     React.useContext(AppContext);
   const order = props.order;
   const paid = order.paid;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
-  console.log(order)
+
 
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
@@ -80,9 +80,10 @@ function MyOrderCard(props) {
 
   function handlePay() {
     let price;
-    userdata.orders.map((s) => {
+    orders.map((s) => {
       if (order.reference === s.reference) {
         price = s.grandTotal;
+
       }
     });
 
@@ -177,6 +178,18 @@ function MyOrderCard(props) {
     }
   }, [width]);
 
+  function shouldShowTimer() {
+    if (order.paid) {
+      return false;
+    }
+    if (order.paid == false  && proofOfPaymentLinkCount <= 0) {
+      return true;
+    }
+    if (order.paid == false && proofOfPaymentLinkCount > 0) {
+      return false;
+    }
+  }
+
   return (
     <div
       className={
@@ -185,7 +198,7 @@ function MyOrderCard(props) {
     >
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
         <div className="flex flex-row justify-between mb-4">
-          {proofOfPaymentLinkCount <= 0 ? (
+          {shouldShowTimer()  ? (
             <CountdownTimer
               className="ml-2 mt-1"
               size={3}
@@ -287,15 +300,7 @@ function MyOrderCard(props) {
               </p>
             </button>
 
-            {/* <ImageUploadButton
-              id={`order-${order.reference}`}
-              onUploadFunction={onUpload}
-              storage={storage}
-              folderName={'Orders/' + userId + '/' + order.reference}
-              buttonTitle={'Upload Proof of Payment'}
-              variant="outlined"
-              disabled={disableButton()}
-            /> */}
+
           </div>
         </div>
       </div>

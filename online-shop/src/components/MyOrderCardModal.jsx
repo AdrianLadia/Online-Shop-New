@@ -12,6 +12,7 @@ import AppContext from '../AppContext';
 import dataManipulation from '../../utils/dataManipulation';
 import useWindowDimensions from './UseWindowDimensions';
 import Image from './ImageComponents/Image';
+import firebaseConfig from '../firebase_config';
 
 const MyOrderCardModal = (props) => {
   const style = {
@@ -35,17 +36,17 @@ const MyOrderCardModal = (props) => {
   };
 
   let { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
+    googleMapsApiKey: firebaseConfig.apiKey,
   });
 
+  const hidePricing = props.hidePricing;
   const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore } = useContext(AppContext);
+  const { storage, userId, cloudfirestore, userdata } = useContext(AppContext);
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
-
   const { width } = useWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
 
@@ -68,11 +69,6 @@ const MyOrderCardModal = (props) => {
         return z;
       }
     }
-  }
-
-  function onUpload2(proofOfPaymentLink) {
-    cloudfirestore.updateOrderProofOfPaymentLink(order.reference, userId, proofOfPaymentLink);
-    setLinkCount(1);
   }
 
   return (
@@ -117,23 +113,6 @@ const MyOrderCardModal = (props) => {
 
             <div className="w-full border-t-2 mt-4" />
 
-            {/* <div className="flex flex-col-reverse w-full 2xs:w-11/12 self-center gap-5 mt-5 ">
-                <div className="w-full flex justify-evenly">
-                  <button className=" w-max rounded-lg px-3 py-2 text-blue1 border border-blue1 hover:border-color10b">Cancel Order</button>
-                  <button className="w-max rounded-lg px-8 py-2 text-white border border-blue1 bg-blue1 hover:bg-color10b">Pay</button> 
-                </div>
-                <div className="flex justify-center">
-                  <ImageUploadButton 
-                    name={`orderModal-${order.reference}`} 
-                    onUploadFunction={onUpload2} 
-                    storage={storage} 
-                    folderName={'Orders/' + userId + '/' + order.reference}  
-                    buttonTitle={'Upload Proof of Payment'} />
-                </div>
-              </div> */}
-
-            {/* <div className="w-full border-t-2 mt-4"/> */}
-
             <List
               sx={{
                 width: '100%',
@@ -157,7 +136,7 @@ const MyOrderCardModal = (props) => {
               </Typography>
             </div>
 
-            <MyOrderCardModalTable order={order} />
+            <MyOrderCardModalTable id={order.id} key={order.id} order={order} />
 
             <div className="mt-5 flex flex-col">
               <List
@@ -168,21 +147,24 @@ const MyOrderCardModal = (props) => {
                 }}
               >
                 <Divider />
-                <ListItem>
-                  <ListItemText primary="Items Total" secondary={order.itemsTotal} />
-                </ListItem>
+                {hidePricing ? null : (
+                  <ListItem>
+                    <ListItemText primary="Items Total" secondary={'₱' + (order.itemsTotal + order.vat).toLocaleString()} />
+                  </ListItem>
+                )}
                 <Divider />
-                <ListItem>
-                  <ListItemText primary="VAT" secondary={order.vat} />
-                </ListItem>
                 <Divider />
-                <ListItem>
-                  <ListItemText primary="Shipping" secondary={order.shippingTotal} />
-                </ListItem>
+                {hidePricing ? null : (
+                  <ListItem>
+                    <ListItemText primary="Shipping" secondary={'₱' + order.shippingTotal.toLocaleString()} />
+                  </ListItem>
+                )}
                 <Divider />
-                <ListItem>
-                  <ListItemText primary="Grand Total" secondary={order.grandTotal} />
-                </ListItem>
+                {hidePricing ? null : (
+                  <ListItem>
+                    <ListItemText primary="Grand Total" secondary={'₱' + order.grandTotal.toLocaleString()} />
+                  </ListItem>
+                )}
                 <Divider />
               </List>
             </div>
@@ -191,7 +173,7 @@ const MyOrderCardModal = (props) => {
               Delivery Point
             </Typography>
             {isLoaded ? (
-              <div className="mt-2 flex flex-col h-56">
+              <div className="mt-2 flex flex-col h-96">
                 <GoogleMap
                   clickableIcons={false}
                   zoom={16}
@@ -237,6 +219,25 @@ const MyOrderCardModal = (props) => {
               ) : null}
 
               {order.proofOfPaymentLink.map((link) => {
+                if (hidePricing) {
+                  return;
+                }
+                return (
+                  <div className="w-full mb-10">
+                    <Image imageUrl={link} />
+                  </div>
+                );
+              })}
+
+              <Divider />
+
+              {order.proofOfDeliveryLink.length > 0 ? (
+                <ListItem>
+                  <ListItemText primary="Delivery Proof" />
+                </ListItem>
+              ) : null}
+
+              {order.proofOfDeliveryLink.map((link) => {
                 return (
                   <div className="w-full mb-10">
                     <Image imageUrl={link} />

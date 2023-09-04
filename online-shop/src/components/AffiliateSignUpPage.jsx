@@ -4,16 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import HomePage from '../HomePage';
 
 const AffiliateSignUpPage = (props) => {
-    const setAffiliate = props.setAffiliate
-    let params = new URLSearchParams(window.location.search);
-    let affiliateId = params.get('aid');
     const { userdata } = React.useContext(AppContext);
     const navigateTo = useNavigate();
-
-    useEffect(() => {
-        setAffiliate(affiliateId);
-    }, [affiliateId]);
-
 
     useEffect(() => {
         if (userdata != null) {

@@ -27,6 +27,7 @@ import InvisibleRecaptcha from './InvisibleRecaptcha';
 const ReactPhoneInput = PhoneInput.default ? PhoneInput.default : PhoneInput;
 
 const LoginButton = (props) => {
+  const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser,cloudfirestore,setAffiliate } = useContext(AppContext);
   const position = props.position;
   const isAffiliateLink = props.isAffiliateLink;
   const [openUnsupportedBrowserModal, setOpenUnsupportedBrowserModal] = useState(false);
@@ -38,6 +39,7 @@ const LoginButton = (props) => {
   const [height, setHeight] = useState('40%');
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [loading,setLoading] = useState(false);
+ 
 
   const style = {
     position: 'absolute',
@@ -59,6 +61,25 @@ const LoginButton = (props) => {
     p: 4,
   };
 
+  useEffect(() => {
+  
+    if (isAffiliateLink) {
+      let params = new URLSearchParams(window.location.search);
+      let affiliateId = params.get('aid');
+
+
+      cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
+        affiliateUsers.forEach((affiliateUser) => {
+          if (affiliateUser.affiliateId === affiliateId) {
+            setAffiliate(affiliateUser.uid);
+          }
+        });
+      });
+      
+      return;
+    }
+  }, [isAffiliateLink]);
+
   let recaptchaVerifier = null;
   let handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
 
@@ -68,7 +89,6 @@ const LoginButton = (props) => {
     handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
   }
 
-  const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser } = useContext(AppContext);
   
 
   async function setUpRecaptcha(number) {
@@ -112,7 +132,6 @@ const LoginButton = (props) => {
   
   const handleClick = (event) => {
     if (!isSupportedBrowser) {
-      console.log('Setting to open unsupported modal');
       setOpenUnsupportedBrowserModal(true);
       return;
     }
@@ -158,7 +177,7 @@ const LoginButton = (props) => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        className={"bg-color10b p-1 sm:p-2 text-slate-800 xs:font-bold hover:bg-color10c rounded-r-lg sm:rounded-lg mr-1 2xs:ml-0"}
+        className={"bg-color10b p-1 sm:p-2 text-white xs:font-bold hover:bg-color10c rounded-r-lg sm:rounded-lg mr-1 2xs:ml-0"}
       >
         {isAffiliateLink? "Sign up":'Login'}
       </Button>

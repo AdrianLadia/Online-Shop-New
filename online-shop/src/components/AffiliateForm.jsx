@@ -11,7 +11,6 @@ const AffiliateForm = () => {
 
   // Get the base URL (protocol + hostname + port)
   const baseURL = urlObject.origin;
-  console.log(baseURL);
 
   return (
     <div className="flex flex-col">

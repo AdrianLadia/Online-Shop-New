@@ -226,7 +226,7 @@ class seleniumCommands extends seleniumElements {
               await addtocartbutton[index].click();
             }
             catch(error){
-              console.log(error)
+   
             }
           }
 

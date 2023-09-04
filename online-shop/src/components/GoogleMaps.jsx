@@ -8,6 +8,8 @@ import { CircularProgress } from '@mui/material';
 import Geocode from 'react-geocode';
 import dataManipulation from '../../utils/dataManipulation';
 import UpdateMapMarkerModal from './UpdateMapMarkerModal';
+import firebaseConfig from '../firebase_config';
+
 
 // NOTES
 // How to set up marker on click
@@ -17,7 +19,7 @@ const GoogleMaps = (props) => {
 
   let { isLoaded } = useLoadScript({
     // googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
-    googleMapsApiKey: 'AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I',
+    googleMapsApiKey: firebaseConfig.apiKey,
   });
 
   const [noAddressHistory, setNoAddressHistory] = useState(undefined);
@@ -96,7 +98,7 @@ const GoogleMaps = (props) => {
   }, [latitude, longitude]);
 
   useEffect(() => {
-    Geocode.setApiKey('AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I');
+    Geocode.setApiKey(firebaseConfig.apiKey);
     Geocode.setLanguage('en');
     Geocode.setLocationType('ROOFTOP');
     Geocode.fromLatLng(locallatitude, locallongitude).then(

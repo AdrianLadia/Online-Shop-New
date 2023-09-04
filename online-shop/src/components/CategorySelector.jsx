@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useContext } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
 import Tabs from '@mui/material/Tabs';
@@ -9,6 +9,8 @@ import Box from '@mui/material/Box';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../colorPalette/MaterialUITheme';
 import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import AppConfig from '../AppConfig';
 
 function a11yProps(index) {
   return {
@@ -19,13 +21,15 @@ function a11yProps(index) {
 
 const CategorySelector = (props) => {
   const location = useLocation();
-  const featuredCategory = 'Meal Box';
-  const [value, setValue] = React.useState(null);
+  const featuredCategory = new AppConfig().getFeaturedCategory();
+
   const setSelectedCategory = props.setSelectedCategory;
+  const selectedCategory = props.selectedCategory;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
-  const { firestore, categories, setCategories } = useContext(AppContext);
+  const { firestore, categories, setCategories, categoryValue, setCategoryValue } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
-  const hiddenCategories = [];
+  const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
+  const myElement = useRef(null);
 
   useEffect(() => {
     // Function to extract the "category" parameter from the URL query string
@@ -42,52 +46,87 @@ const CategorySelector = (props) => {
   useEffect(() => {
     if (categories != null) {
       categories.forEach((category, index) => {
-
         // This selects the category from the url or from the featured category
         // if there is a url we use the url, if not we use the featured category
-        let categoryToUse 
-        console.log(categoryFromUrl)
+        let categoryToUse;
+
         if (categoryFromUrl != null) {
-          categoryToUse = categoryFromUrl
-        }
-        else {
-          categoryToUse = featuredCategory
+          categoryToUse = categoryFromUrl;
+        } else {
+          categoryToUse = featuredCategory;
         }
 
         if (category === categoryToUse) {
-          setValue(index);
+          setCategoryValue(index);
         }
       });
     }
-  }, [categories,categoryFromUrl]);
+  }, [categories, categoryFromUrl]);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    if (wholesale == false && retail == false) {
+      setRetail(true);
+    }
+    setCategoryValue(newValue);
   };
 
   useEffect(() => {
-    async function fetchCategories() {
-      const categories = await firestore.readAllCategories();
-      const categoryList = datamanipulation.getCategoryList(categories, hiddenCategories);
-      setCategories(categoryList);
+    if (categories != null && categoryValue != null) {
+      setSelectedCategory(categories[categoryValue]);
     }
-    fetchCategories();
-  }, []);
+  }, [categoryValue]);
+
+  function isElementOutOfView(el) {
+    if (!el) return true;
+
+    const rect = el.getBoundingClientRect();
+
+    return rect.bottom < 0 || rect.right < 0 || rect.left > window.innerWidth || rect.top > window.innerHeight;
+  }
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    if (categories != null) {
-      setSelectedCategory(categories[value]);
+    const handleScroll = () => {
+      if (myElement.current) {
+        const outOfView = isElementOutOfView(myElement.current);
+        setCategorySelectorInView(!outOfView);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup: remove the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // The empty dependency array ensures the useEffect runs once when the component mounts and not on every re-render.
+
+
+  useEffect(() => {
+    if (myElement.current) {
+      const outOfView = isElementOutOfView(myElement.current);
+      setCategorySelectorInView(!outOfView);
     }
-  }, [value, categories]);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="w-full">
+      <div ref={myElement} className="w-full">
+        {categories && categories[categoryValue] ? (
+          <Helmet>
+            <title>{categories[categoryValue]} - Star Pack: Packaging Supplies</title>
+            <meta
+              name="description"
+              content={`Browse our selection of packaging supplies in the ${categories[categoryValue]} category.`}
+            />
+          </Helmet>
+        ) : null}
         <div className="flex flex-col items-center mt-5 from-colorbackground via-color2 to-color1">
           <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>
               <Tabs
-                value={value}
+                value={categoryValue}
                 onChange={handleChange}
                 aria-label="basic tabs example"
                 indicatorColor="primary"

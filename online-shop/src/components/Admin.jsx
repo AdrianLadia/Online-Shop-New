@@ -11,7 +11,9 @@ import CustomerAnalytics from './customerAnalytics/App';
 import CompanyDashboard from './CompanyDashboard/CompanyDashboard';
 import AffiliateClaimRequest from './AdminAffiliateClaimRequest';
 import AdminNavBar from './AdminNavBar';
+import AdminDelivery from './AdminDelivery';
 import { Routes, Route } from 'react-router-dom';
+import AdminVoidPayment from './AdminVoidPayment';
 
 const Admin = () => {
   const { firestore, allUserData, setAllUserData, categories } = React.useContext(AppContext);
@@ -73,6 +75,15 @@ const Admin = () => {
             </div>
           }
         />
+        <Route
+          path="voidPayment"
+          element={
+            <div>
+              <AdminNavBar />
+              <AdminVoidPayment users={allUserData} setUsers={setAllUserData} />
+            </div>
+          }
+        />
 
         <Route
           path="orders"
@@ -125,6 +136,15 @@ const Admin = () => {
             <div>
               <AdminNavBar />
               <AffiliateClaimRequest />
+            </div>
+          }
+        />
+        <Route
+          path="delivery"
+          element={
+            <div>
+              <AdminNavBar />
+              <AdminDelivery />
             </div>
           }
         />

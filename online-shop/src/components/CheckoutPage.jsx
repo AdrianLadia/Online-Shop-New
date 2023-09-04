@@ -27,6 +27,10 @@ import Geocode from 'react-geocode';
 import Button from '@mui/material/Button';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import Image from './ImageComponents/Image';
+import AppConfig from '../AppConfig';
+import firebaseConfig from '../firebase_config';
+import OrdersCalendar from './OrdersCalendar';
+import allowedDeliveryDates from '../../utils/classes/allowedDeliveryDates';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -67,6 +71,9 @@ const CheckoutPage = () => {
     setMayaCheckoutId,
     paymentMethodSelected,
     storage,
+    openProfileUpdaterModal,
+    firestore,
+    orders,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -119,10 +126,47 @@ const CheckoutPage = () => {
 
   const [urlOfBir2303, setUrlOfBir2303] = useState('');
 
+  const [countOfOrdersThisYear, setCountOfOrdersThisYear] = useState(0);
+
+  const [startDate,setStartDate] = useState(new Date());
+
+  const allowedDates = new allowedDeliveryDates()
+  allowedDates.runMain()
+  const minDate = allowedDates.minDate
+  const maxDate = allowedDates.maxDate
+  const filterDate = allowedDates.excludeDates
+  const holidays = allowedDates.holidays
+
+  
+
+
+  // Get count of orders for this year
+  useEffect(() => {
+    const yearToday = new Date().getFullYear();
+
+    const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders, yearToday);
+
+    setCountOfOrdersThisYear(count);
+  }, []);
+
+  // Get url of bir2303
+  useEffect(() => {
+    const userDataUrlOfBir2303 = userdata?.bir2303Link;
+    if (userDataUrlOfBir2303) {
+      setUrlOfBir2303(userDataUrlOfBir2303);
+    }
+  }, [userdata]);
+
+  // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
+  useEffect(() => {
+    if (openProfileUpdaterModal || userdata === null) {
+      navigateTo('/shop');
+    }
+  }, [openProfileUpdaterModal, userdata]);
+
   // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
   useEffect(() => {
     setRowsMountCount(rowsMountCount + 1);
-    console.log(rows);
   }, [rows]);
 
   useEffect(() => {
@@ -133,7 +177,7 @@ const CheckoutPage = () => {
     }
   }, [rowsMountCount]);
 
-  // GEO CODE
+  // freeDelivery Checker
 
   // PAYMENT METHODS
 
@@ -142,47 +186,53 @@ const CheckoutPage = () => {
       const [rows_non_state, total_non_state, total_weight_non_state, vat] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart,
-        null
+        null,
+        urlOfBir2303
       );
 
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
-
       setTotal(total_non_state);
       setTotalWeight(total_weight_non_state);
     }
     getTableData();
-  }, []);
+  }, [urlOfBir2303]);
 
   // PAYMENT METHODS
   useEffect(() => {
-    if (transactionStatus === 'SUCCESS') {
-      setCart({});
+    if (transactionStatus != null) {
+      if (transactionStatus.data === 'SUCCESS') {
+        setCart({});
 
-      businesscalculations.afterCheckoutRedirectLogic({
-        paymentMethodSelected: paymentMethodSelected,
-        referenceNumber: referenceNumber,
-        grandTotal: grandTotal,
-        deliveryFee: deliveryFee,
-        vat: vat,
-        rows: rows,
-        area: area,
-        fullName: userdata.name,
-        eMail: userdata.email,
-        phoneNumber: userdata.phoneNumber,
-        setMayaRedirectUrl: setMayaRedirectUrl,
-        setMayaCheckoutId: setMayaCheckoutId,
-        localDeliveryAddress: localDeliveryAddress,
-        addressText: addressText,
-        userId: userdata.uid,
-        navigateTo: navigateTo,
-        itemsTotal: total,
-        date: new Date(),
-      });
+        businesscalculations.afterCheckoutRedirectLogic({
+          paymentMethodSelected: paymentMethodSelected,
+          referenceNumber: referenceNumber,
+          grandTotal: grandTotal,
+          deliveryFee: deliveryFee,
+          vat: vat,
+          rows: rows,
+          area: area,
+          fullName: userdata.name,
+          eMail: userdata.email,
+          phoneNumber: userdata.phoneNumber,
+          setMayaRedirectUrl: setMayaRedirectUrl,
+          setMayaCheckoutId: setMayaCheckoutId,
+          localDeliveryAddress: localDeliveryAddress,
+          addressText: addressText,
+          userId: userdata.uid,
+          navigateTo: navigateTo,
+          itemsTotal: total,
+          date: new Date(),
+        });
+        setRefreshUser(!refreshUser);
+      }
+      if (transactionStatus.status == 409) {
+        alert(transactionStatus.data);
+      }
+
+      setPlaceOrderLoading(false);
     }
-
-    setPlaceOrderLoading(false);
   }, [placedOrder]);
 
   useEffect(() => {
@@ -210,7 +260,11 @@ const CheckoutPage = () => {
     setArea(areasInsideDeliveryLocation);
     const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
-      setDeliveryFee(deliveryFee);
+      if (total >= new AppConfig().getFreeDeliveryThreshold()) {
+        setDeliveryFee(0);
+      } else {
+        setDeliveryFee(deliveryFee);
+      }
       setDeliveryVehicle(vehicleObject);
     }
 
@@ -223,6 +277,15 @@ const CheckoutPage = () => {
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
   async function onPlaceOrder() {
+    if (isInvoiceNeeded) {
+      if (urlOfBir2303 === '') {
+        alert(
+          'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
+        );
+        return;
+      }
+    }
+
     if (paymentMethodSelected == null) {
       alert('Please select a payment method');
       setPlaceOrderLoading(false);
@@ -230,12 +293,6 @@ const CheckoutPage = () => {
     }
     // Check if order has enough stocks
     setPlaceOrderLoading(true);
-    const readproducts = products;
-    const [outOfStockDetected, message] = await businesscalculations.checkStocksIfAvailableInFirestore(cart);
-    if (outOfStockDetected) {
-      alert(message);
-      return;
-    }
 
     // Check if userstate is userloaded
     if (userstate === 'userloaded') {
@@ -265,8 +322,11 @@ const CheckoutPage = () => {
           sendEmail: true,
           isInvoiceNeeded: isInvoiceNeeded,
           urlOfBir2303: urlOfBir2303,
+          countOfOrdersThisYear: countOfOrdersThisYear,
+          deliveryDate : startDate.toISOString()
         });
-        setTransactionStatus(res.data);
+
+        setTransactionStatus(res);
         setPlacedOrder(!placedOrder);
       } catch (err) {
         setPlaceOrderLoading(false);
@@ -276,13 +336,13 @@ const CheckoutPage = () => {
     }
   }
 
+
   useEffect(() => {
     setRefreshUser(!refreshUser);
   }, []);
 
   useEffect(() => {
     if (userdata) {
-      // console.log(userdata)
       setLocalEmail(userdata.email);
 
       if (userdata.contactPerson.length > 0) {
@@ -296,8 +356,6 @@ const CheckoutPage = () => {
         setZoom(15);
       }
       if (userdata.contactPerson.length == 0) {
-        console.log(userdata)
-        
         setLocalPhoneNumber(userdata.phoneNumber);
       }
     }
@@ -320,12 +378,12 @@ const CheckoutPage = () => {
   }, [total, vat, deliveryFee]);
 
   function searchAddress() {
-    Geocode.fromAddress(addressGeocodeSearch, 'AIzaSyCSe_aW1KBvOn-2j9GNOEiSJ4Fp52dOM-I', 'en', 'ph').then(
+    Geocode.fromAddress(addressGeocodeSearch, firebaseConfig.apiKey, 'en', 'ph').then(
       (response) => {
         const { lat, lng } = response.results[0].geometry.location;
         setLocalLatitude(lat);
         setLocalLongitude(lng);
-        setZoom(15);
+        setZoom(18);
         setAddressGeocodeSearch('');
         setLocalDeliveryAddress('');
       },
@@ -335,8 +393,14 @@ const CheckoutPage = () => {
     );
   }
 
-  function on2303Upload(url) {
-    setUrlOfBir2303(url)
+  async function on2303Upload(url) {
+    await firestore.addBir2303Link(userdata.uid, url);
+    setUrlOfBir2303(url);
+  }
+
+  async function removeBir2303() {
+    await firestore.deleteBir2303Link(userdata.uid);
+    setUrlOfBir2303('');
   }
 
   return (
@@ -651,11 +715,11 @@ const CheckoutPage = () => {
                     rows={rows}
                   />
                 )}
-                <div className="flex flex-row justify-center">
+                <div className="flex flex-col lg:flex-row justify-center">
                   <div className="flex justify-center m-5">
-                    <Typography variant="h6">Do you need an invoice?</Typography>
+                    <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
                   </div>
-                  <div className="flex mt-4">
+                  <div className="flex justify-center items-center">
                     <Switch
                       {...label}
                       checked={isInvoiceNeeded}
@@ -666,22 +730,54 @@ const CheckoutPage = () => {
                 </div>
 
                 {isInvoiceNeeded ? (
-                  <div>
-                    <Typography variant="h7" className="flex justify-center mb-5 mx-5">
-                      We need to get your BIR 2303 Form to process your invoice. Please upload a photo below.
-                    </Typography>
-                    <ImageUploadButton
-                      buttonTitle={'Upload BIR 2303 Form'}
-                      storage={storage}
-                      folderName={`2303Forms/${userdata.uid}`}
-                      onUploadFunction={on2303Upload}
-
-                    />
-                    <div className="flex justify-center mt-5 mx-5">
-                      <Image imageUrl={urlOfBir2303} />
+                  urlOfBir2303 != '' ? (
+                    <>
+                      <div className="flex justify-center m-5">
+                        <Image imageUrl={urlOfBir2303} />
+                      </div>
+                      <div className="flex justify-center m-5">
+                        <ImageUploadButton
+                          buttonTitle={'Update BIR 2303 Form'}
+                          storage={storage}
+                          folderName={`2303Forms/${userdata.uid}`}
+                          onUploadFunction={on2303Upload}
+                        >
+                          update BIR 2303
+                        </ImageUploadButton>
+                        <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">
+                          Remove BIR 2303
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <Typography variant="h7" className="flex justify-center mb-5 mx-5">
+                        Please upload a photo below of your BIR 2303 form if you have one.
+                      </Typography>
+                      <ImageUploadButton
+                        buttonTitle={'Upload BIR 2303 Form'}
+                        storage={storage}
+                        folderName={`2303Forms/${userdata.uid}`}
+                        onUploadFunction={on2303Upload}
+                      />
+                      <div className="flex justify-center mt-5 mx-5">
+                        <Image imageUrl={urlOfBir2303} />
+                      </div>
                     </div>
-                  </div>
+                  )
                 ) : null}
+
+                <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
+                <div className="flex flex-col justify-center m-5">
+                  <div className=" flex justify-center">
+                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                      Delivery Date
+                    </Typography>
+                  </div>
+                  <div className="flex justify-center mt-5 mb-5">
+                    <OrdersCalendar startDate={startDate} setStartDate={setStartDate} minDate={minDate} maxDate={maxDate} filterDate={filterDate} disabledDates={holidays} />
+                  </div>
+                </div>
 
                 <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
 

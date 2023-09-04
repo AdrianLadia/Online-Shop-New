@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,13 +8,16 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link, Typography } from '@mui/material';
 import dataManipulation from '../../utils/dataManipulation';
+import AppContext from '../AppContext';
+import { de } from 'date-fns/locale';
 
 const AdminOrdersTable = (props) => {
   const datamanipulation = new dataManipulation();
-
+  const { userdata } = useContext(AppContext);
   function createData(
     referenceNumber,
     orderDate,
+    deliveryDate,
     customerName,
     paid,
     delivered,
@@ -25,11 +28,13 @@ const AdminOrdersTable = (props) => {
     deliveryAddressLatitude,
     deliveryAddressLongitude,
     cart,
-    deliveryNotes
+    withInvoice,
+    deliveryNotes,
   ) {
     return {
       referenceNumber,
       orderDate,
+      deliveryDate,
       customerName,
       paid,
       delivered,
@@ -40,6 +45,7 @@ const AdminOrdersTable = (props) => {
       deliveryAddressLatitude,
       deliveryAddressLongitude,
       cart,
+      withInvoice,
       deliveryNotes,
     };
   }
@@ -47,18 +53,36 @@ const AdminOrdersTable = (props) => {
   const orders = props.orders;
   const setSelectedOrderReference = props.setSelectedOrderReference;
   const handleOpenModal = props.handleOpenModal;
+  const rolesThatAllowTotalToBeSeen = ['admin', 'superAdmin'];
 
   const [rows, setRows] = React.useState([]);
 
   useEffect(() => {
     const localrows = [];
-
     orders.map((order) => {
-      console.log(order);
+      console.log(order.countOfOrdersThisYear)
+
+      let withInvoice = null
+      if ([0,1].includes(order.countOfOrdersThisYear)) {
+        withInvoice = 'Yes'
+      }
+      else {
+        withInvoice = 'No'
+      }
+
+      let deliveryDate
+      if (order.deliveryDate) {
+        deliveryDate = datamanipulation.convertTimestampToDateStringWithoutTime(order.deliveryDate)
+      }
+      else {
+        deliveryDate = ''
+      }
+
       localrows.push(
         createData(
           order.reference,
           datamanipulation.convertDateTimeStampToDateString(order.orderDate),
+          deliveryDate,
           order.userName,
           order.paid ? 'YES' : 'NO',
           order.delivered ? 'YES' : 'NO',
@@ -69,6 +93,7 @@ const AdminOrdersTable = (props) => {
           order.deliveryAddressLatitude,
           order.deliveryAddressLongitude,
           order.cart,
+          withInvoice,
           order.deliveryNotes
         )
       );
@@ -79,12 +104,7 @@ const AdminOrdersTable = (props) => {
 
   function handleRowClick(referenceNumber) {
     setSelectedOrderReference(referenceNumber);
-    handleOpenModal();
   }
-
-  useEffect(() => {
-    console.log(rows);
-  }, [rows]);
 
   return (
     <TableContainer component={Paper} sx={{ height: '80vh' }}>
@@ -93,13 +113,17 @@ const AdminOrdersTable = (props) => {
           <TableRow className="bg-color10c border-b-2 border-color60">
             <TableCell>Reference #</TableCell>
             <TableCell align="right">Order Date</TableCell>
+            <TableCell align="right">Delivery Date</TableCell>
             <TableCell align="right">Customer Name</TableCell>
             <TableCell align="right">Paid</TableCell>
             <TableCell align="right">Delivered</TableCell>
-            <TableCell align="right">Total</TableCell>
+            {rolesThatAllowTotalToBeSeen.includes(userdata.userRole) ? (
+              <TableCell align="right">Total</TableCell>
+            ) : null}
             <TableCell align="right">Delivery Address</TableCell>
             <TableCell align="right">Phone Number</TableCell>
             <TableCell align="right">Contact Name</TableCell>
+            <TableCell align="right">With Invoice</TableCell>
             <TableCell align="right">Delivery Notes</TableCell>
           </TableRow>
         </TableHead>
@@ -116,12 +140,14 @@ const AdminOrdersTable = (props) => {
                 }}
               >
                 {/* {referenceNumber, orderDate, customerName, paid, delivered, total, address, phonenumber, name} */}
-                <div className='cursor-pointer'>
+                <div className="cursor-pointer">
                   <TableCell component="th" scope="row">
                     <Link>{row.referenceNumber}</Link>
                   </TableCell>
                 </div>
+
                 <TableCell align="right">{row.orderDate}</TableCell>
+                <TableCell align="right">{row.deliveryDate}</TableCell>
                 <TableCell align="right">{row.customerName}</TableCell>
                 <TableCell align="right">
                   <Typography variant="h7" color={paidColor}>
@@ -133,9 +159,11 @@ const AdminOrdersTable = (props) => {
                     {row.delivered}
                   </Typography>
                 </TableCell>
+                {rolesThatAllowTotalToBeSeen.includes(userdata.userRole) ? (
                 <TableCell align="right">{row.grandTotal}</TableCell>
+            ) : null}
                 <TableCell align="right">
-                  <div className='cursor-pointer'>
+                  <div className="cursor-pointer">
                     <Link
                       onClick={() => {
                         window.open(
@@ -153,6 +181,7 @@ const AdminOrdersTable = (props) => {
                 </TableCell>
                 <TableCell align="right">{row.phonenumber}</TableCell>
                 <TableCell align="right">{row.name}</TableCell>
+                <TableCell align="right">{row.withInvoice}</TableCell>
                 <TableCell align="right">{row.deliveryNotes}</TableCell>
               </TableRow>
             );

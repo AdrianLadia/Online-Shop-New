@@ -4,7 +4,7 @@ class storeProductsOrganizer {
     this.productCategory = null;
     this.finalData = [];
     this.orderOfProducts = [];
-    this.sortedData = null
+    this.sortedData = null;
     this.isRetail = null;
   }
 
@@ -26,11 +26,16 @@ class storeProductsOrganizer {
         'PPB#45',
       ];
     }
+   
     if (this.productCategory == 'Meal Box') {
-        this.orderOfProducts = [
-          'SPAG500TG','SPAG600TG','MB750TG','MB880TG','MB1300TG','MB1500TG'
-        ];
-      }
+      this.orderOfProducts = ['SPAG500PPB', 'SPAG600PPB', 'MB750TG', 'MB880TG', 'MB1300TG', 'MB1500PPB'];
+    }
+
+    if (this.productCategory == 'Aluminum Tray') {
+      this.orderOfProducts = [
+        'ATRE650J','LATRE650J','ATRE2300JK','LATRE2300J','ATRE3100J','LATRE3100J','ATRE4300J','LATRE4300J','ATRO8','LATRO8'
+      ];
+    }
   }
 
   runMain() {
@@ -44,7 +49,7 @@ class storeProductsOrganizer {
     this.organizeData();
     // Check if order of products is available and set final data
     this.checkIfOrderOfProductsIsAvailable();
-    
+
     return this.finalData;
   }
 
@@ -66,8 +71,6 @@ class storeProductsOrganizer {
       return;
     });
   }
-
- 
 
   getProductListCategory() {
     this.productList.forEach((product) => {
@@ -105,8 +108,6 @@ class storeProductsOrganizer {
     });
 
     this.sortedData = sortedData;
-
-
   }
 }
 

@@ -85,7 +85,7 @@ const CartModal = (props) => {
               component="h2"
               className="ml-auto font-bold"
             >
-              Cart Total: {totalPrice.toLocaleString()}
+              Cart Total: ₱ {totalPrice.toLocaleString()}
             </Typography>
           </div>
 
@@ -108,7 +108,7 @@ const CartModal = (props) => {
                 </div>
 
                 <div>
-                  <CheckoutButton totalPrice={totalPrice} />
+                  <CheckoutButton setOpenCart={setOpenCart} totalPrice={totalPrice} />
                 </div>
               </div>
             )}

@@ -16,7 +16,7 @@ const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
   const datamanipulation = new dataManipulation();
-  const { storage, cloudfirestore, userId, userdata, firestore } = useContext(AppContext);
+  const { storage, cloudfirestore, userId, userdata, firestore , refreshUser,setRefreshUser} = useContext(AppContext);
   const location = useLocation();
   const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area, paymentMethodSelected, date } =
     location.state;
@@ -27,13 +27,9 @@ const CheckoutProofOfPayment = (props) => {
   const navigateTo = useNavigate();
   const [paymentMethods, setPaymentMethods] = useState([]);
 
-
-
-  useEffect(() => {
-    firestore.readAllPaymentProviders().then((providers) => {
-      setPaymentMethods(providers);
-    });
-  }, []);
+function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   let bankName;
   let accountName;
@@ -50,21 +46,27 @@ const CheckoutProofOfPayment = (props) => {
     accountName = 'ADRIAN LADIA';
     accountNumber = '109355469422';
   }
-  if (paymentMethodSelected == 'gcash') {
-    bankName = 'GCASH';
-    accountName = 'ADRIAN LADIA';
-    accountNumber = '0917-892-7206';
-  }
 
-  if (['maya', 'visa', 'mastercard', 'gcash'].includes(paymentMethodSelected)) {
+  if (['maya', 'visa', 'mastercard', 'gcash','shoppeepay','wechatpay'].includes(paymentMethodSelected)) {
+    bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
   }
 
-  function onUpload(url) {
+  useEffect(() => {console.log(paymentMethodSelected)}, [paymentMethodSelected]);
+
+  async function onUpload(url) {
     const timestamp = Timestamp.fromDate(date);
     const timestampString = timestamp.toDate().toLocaleString();
-
-    cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
+    try{
+      setRefreshUser(!refreshUser)
+      await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName)
+      await delay(5000)
+      navigateTo('/myorders/orderList')
+    }
+    catch(error){
+      alert('Failed to upload proof of payment. Please try again.')
+      return
+    }
   }
 
   return (
@@ -90,10 +92,10 @@ const CheckoutProofOfPayment = (props) => {
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
 
-            {bankName == null && qrLink != null ? (
+            {qrLink != null ? (
               <div className='mb-8'>
-              <p>Please scan QR code or click the payment link to send us a payment:</p>
-              <img src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55'></img>
+              <p>Please scan QR code or click the payment link to send us a payment of : <strong>₱ {grandTotal}</strong></p>
+              <img src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55' alt='proof of payment container'></img>
               <a  className=" ml-11 text-blue-600 underline hover:text-blue-800 visited:text-purple-600 " href={qrLink} target="_blank" rel="noopener noreferrer">{qrLink}</a>
 
               </div>
@@ -110,6 +112,7 @@ const CheckoutProofOfPayment = (props) => {
             )}
 
             <p>Once you have completed the payment, please <strong>submit proof of payment using the button below or in My Orders Menu</strong>.</p>
+            <p>We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time frame, your order will be cancelled.</p>
 
             <Divider className="mt-5 mb-5"></Divider>
             {/* <CheckoutSummary/> */}
@@ -137,7 +140,7 @@ const CheckoutProofOfPayment = (props) => {
               </div>
               <div className="flex justify-center mt-2">
                 <Typography variant="h7" sx={{ marginRight: 1 }}>
-                  If payment is not received within the time frame, your order will be cancelled.
+                  
                 </Typography>
               </div>
             </div>

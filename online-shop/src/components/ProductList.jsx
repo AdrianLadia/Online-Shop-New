@@ -21,7 +21,16 @@ const ProductList = (props) => {
   const selectedCategory = props.selectedCategory;
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
+  const [isWholesale, setIsWholesale] = useState(false);
 
+  useEffect(() => {
+    if (wholesale) {
+      setIsWholesale(true);
+    }
+    if(retail){
+      setIsWholesale(false);
+    }
+  }, [wholesale,retail]);
 
 
   const [productdataloading, setProductDataLoading] = useState(true);
@@ -43,7 +52,6 @@ const ProductList = (props) => {
       retail,
       favoriteitems
     );
-    // console.log(selected_products)
     const spo = new storeProductsOrganizer(selected_products)
     const organizedProducts = spo.runMain()
     
@@ -58,7 +66,12 @@ const ProductList = (props) => {
 
   useEffect(() => {
     if (cart != [] && userdata != null) {
-      firestore.createUserCart(cart, userdata.uid);
+      try{
+        firestore.createUserCart(cart, userdata.uid);
+      }
+      catch(e){
+        alert('Failed to update cart info. Please try again.')
+      }
     }
   }, [cart,updateCartInfo]);
 
@@ -113,7 +126,7 @@ const ProductList = (props) => {
             }
             return (
               <div className='flex justify-evenly'>
-                <ProductCard id={product.itemId} addtocart={AddToCart} product={product} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={product.stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
+                <ProductCard id={product.itemId} addtocart={AddToCart} isWholesale={isWholesale} product={product} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={product.stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
               </div>
             );
           })

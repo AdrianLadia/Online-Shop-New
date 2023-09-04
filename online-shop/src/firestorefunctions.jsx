@@ -33,6 +33,7 @@ class firestorefunctions {
     }
   }
 
+
   async createDocument(data, id, collection) {
     try {
       const docRef = await setDoc(doc(this.db, collection + '/', id), data);
@@ -41,7 +42,7 @@ class firestorefunctions {
       }
     } catch (e) {
       if (consolelog) {
-        console.error('Error adding document: ', e);
+        throw new Error('Error adding document: ' + e);
       }
     }
   }
@@ -112,6 +113,7 @@ class firestorefunctions {
 
   async updateDocumentFromCollection(collectionname, id, data) {
     const docRef = doc(this.db, collectionname + '/', id);
+    console.log(collectionname, id, data)
     await updateDoc(docRef, data)
       .then(() => {
         if (consolelog) {

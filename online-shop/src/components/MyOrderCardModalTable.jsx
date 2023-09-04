@@ -13,19 +13,40 @@ import { ContentCutOutlined } from '@mui/icons-material';
 import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
-  const { products } = React.useContext(AppContext);
 
+  const {cloudfirestore } = React.useContext(AppContext);
+  
+  const [products, setProducts] = React.useState([]);
   const { width, height } = useWindowDimensions();
   function getMaxHeightTable() {
     return height - 10000;
   }
   const order = props.order;
-  const cart = order.cart;
+  const urlOfBir2303 = order.urlOfBir2303
   const cartItemsPrice = order.cartItemsPrice;
   const datamanipulation = new dataManipulation();
 
 
   const [rows, setRows] = React.useState([]);
+
+
+  useEffect(() => {
+
+    const fetchCartProductsData = async () => {
+      const cartProductPromises = Object.keys(order.cart).map(async (key) => {
+        const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
+        return productData;
+      });
+
+      const data = await Promise.all(cartProductPromises);
+      const productsCombined = [...products, ...data];
+
+    
+      setProducts(productsCombined);
+    };
+
+    fetchCartProductsData();
+  }, []);
 
 
 
@@ -34,8 +55,9 @@ const MyOrderCardModalTable = (props) => {
     
       const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
         products,
-        cart,
-        cartItemsPrice
+        order.cart,
+        cartItemsPrice,
+        urlOfBir2303
       );
 
 
@@ -44,7 +66,7 @@ const MyOrderCardModalTable = (props) => {
     }
 
     getTableData();
-  }, []);
+  }, [products]);
 
 
 
@@ -72,8 +94,8 @@ const MyOrderCardModalTable = (props) => {
                 <TableCell>{row.itemName}</TableCell>
                 <TableCell align="right">{row.itemquantity}</TableCell>
                 <TableCell align="right">{row.pieces}</TableCell>
-                <TableCell align="right">{row.itemprice}</TableCell>
-                <TableCell align="right">{row.itemtotal}</TableCell>
+                <TableCell align="right">{'₱' + row.itemprice}</TableCell>
+                <TableCell align="right">{'₱' + row.itemtotal}</TableCell>
                 <TableCell align="right">{row.weighttotal + ' Kg'}</TableCell>
               </TableRow>
             ))}

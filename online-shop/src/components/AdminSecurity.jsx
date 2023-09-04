@@ -10,6 +10,7 @@ const AdminSecurity = () => {
     
     // Check if admin
     const {isadmin} = useContext(AppContext)
+    
   
     return (
     <div>

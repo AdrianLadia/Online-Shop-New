@@ -6,9 +6,11 @@ import AppContext from '../../../../AppContext';
 import db from '../firebase';
 // import InputFieldUploadButton from './InputFieldUploadButton';
 import ImageUploadButton from '../../../ImageComponents/ImageUploadButton';
+import { Typography } from '@mui/material';
 
 const InputField = (props) => {
   const loggedInUserId = props.stloggedInUserId;
+  const orderClosed = props.orderClosed;
   const [message, setMessage] = useState(null);
   const [newMessage, setNewMessage] = useState(null);
   const [imageLink, setImageLink] = useState(null);
@@ -17,11 +19,11 @@ const InputField = (props) => {
   const date = new Date();
   const { userId, selectedChatOrderId, userdata, firestore, storage } = useContext(AppContext);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
-  const dummy = useRef(null)
+  const dummy = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     dummy.current.scrollIntoView({ behavior: 'smooth' });
-  })
+  });
 
   async function updateMessages() {
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
@@ -75,19 +77,17 @@ const InputField = (props) => {
       }),
     })
       .then(() => {
-        console.log('Message is sent Successfuly: ', newMessage);
         setMessage('');
         setNewMessage('');
       })
       .catch((error) => {
-        console.error('Error adding data to the array field: ', error);
         setMessage('');
         setNewMessage('');
       });
   }
 
   async function sendMessage() {
-  
+    console.log('selectedChatOrderId', selectedChatOrderId);
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     // Add data to the array field
     updateDoc(docRef, {
@@ -102,12 +102,10 @@ const InputField = (props) => {
       }),
     })
       .then(() => {
-        console.log('Message is sent Successfuly: ', message);
         setMessage('');
         setNewMessage('');
       })
       .catch((error) => {
-        console.error('Error adding data to the array field: ', error);
         setMessage('');
         setNewMessage('');
       });
@@ -131,15 +129,31 @@ const InputField = (props) => {
     <div className="flex flex-col justify-end w-full h-1/10 ml-0.5 md:ml-2">
       <div className="w-full h-full">
         <div ref={dummy} className="flex items-center gap-1 w-full h-full rounded-lg">
-          <ImageUploadButton
-            id={'userUploadPhotoButton'}
-            folderName={'Orders/' + userId + '/' + selectedChatOrderId}
-            buttonTitle={''}
-            storage={storage}
-            onUploadFunction={getUploadedImageUrl}
-          />
-          <InputBox sendMessage={sendMessage} message={message} setMessage={setMessage} sent={send} image={imageLink} />
-          <InputSendButton sendMessage={sendMessage} setMessage={setMessage} />
+          {orderClosed ? (
+            <div className='flex justify-center w-full'>
+              <Typography variant='body1' color='white'>
+                This order is closed. You cannot send any message. Please use Customer Service menu instead to message us.
+              </Typography>
+            </div>
+          ) : (
+            <>
+              <ImageUploadButton
+                id={'userUploadPhotoButton'}
+                folderName={'Orders/' + userId + '/' + selectedChatOrderId}
+                buttonTitle={''}
+                storage={storage}
+                onUploadFunction={getUploadedImageUrl}
+              />
+              <InputBox
+                sendMessage={sendMessage}
+                message={message}
+                setMessage={setMessage}
+                sent={send}
+                image={imageLink}
+              />
+              <InputSendButton sendMessage={sendMessage} setMessage={setMessage} />
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -16,7 +16,27 @@ const ProductCardModalTable = (props) => {
 
     const { height, width } = useWindowDimensions();
     let rows = []
+    let isPack = null
+  
+
+    if (props.specs.unit == 'Pack') {
+      isPack = true
+    }
+    else {
+      isPack = false
+    }
+
+
     Object.keys(props.specs).map((key) => {
+        if (isPack) {
+          if (['piecesPerPack','packsPerBox'].includes(key)) {
+            return
+          }
+        }
+        if ([null,'',,undefined].includes(props.specs[key])) { 
+          return
+        }
+
         rows.push(createData(key,props.specs[key])) // key is the key of the object, props.specs[key] is the value of the key of the object
      
     })

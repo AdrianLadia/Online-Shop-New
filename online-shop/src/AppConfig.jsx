@@ -2,10 +2,20 @@
 
 class AppConfig {
     constructor() {
-        this.isDevEnvironment = true
+        this.isDevEnvironment = false
         this.isPaymentSandBox = true
-        this.noVat = true
+        this.noVat = false
         this.retailSafetyStock = 2
+        this.freeDeliveryThreshold = 10000
+        this.featuredCategory = 'Meal Box'
+    }
+
+    getFeaturedCategory() {
+        return this.featuredCategory
+    }
+
+    getFreeDeliveryThreshold() {
+        return this.freeDeliveryThreshold
     }
 
     getIsDevEnvironment() {

@@ -36,28 +36,26 @@ const ProductCard = (props) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState('');
   const retailSafetyStock = new AppConfig().getRetailSafetyStock()
-
-
-
+  
   useEffect(() => {
     setImageLoading(true);
     setQuantity('');
   }, [props.product]);
-
+  
   useEffect(() => {
     const img = new Image();
     img.src = props.product.imageLinks[0]; // Replace with your image URL
-
+    
     img.onload = () => {
       setImageSrc(img.src);
       setImageLoading(false);
     };
-
+    
     img.onerror = () => {
       console.error('An error occurred while loading the image.');
     };
   }, [props]);
-
+  
   let safetyStock;
   if (product.averageSalesPerDay != undefined) {
     safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
@@ -65,7 +63,11 @@ const ProductCard = (props) => {
   if (product.averageSalesPerDay === undefined) {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
+  
 
+  const retailStocksAvailable = product.stocksAvailable - retailSafetyStock
+  const wholesaleStocksAvailable = product.stocksAvailable - safetyStock
+  
   const handleClose = () => {
     setOpen(false);
   };
@@ -79,12 +81,14 @@ const ProductCard = (props) => {
     }
     const totalOrder = cartQuantity + parseInt(quantity);
 
+
     function getStocksAvailable() {
       if (props.product.unit === 'Pack') {
      
         return stocksAvailable;
       }
       if (props.product.unit != 'Pack') {
+
         return props.product.stocksAvailable;
       }
     }
@@ -147,22 +151,33 @@ const ProductCard = (props) => {
       if (stocksAvailable <= retailSafetyStock) {
         setOutOfStock(true);
       }
+      else {
+        setOutOfStock(false);
+      }
     }
     if (product.unit != 'Pack') {
       if (product.stocksAvailable <= safetyStock) {
         setOutOfStock(true);
+      }
+      else {
+        setOutOfStock(false);
       }
     }
     if (product.unit == 'Pack') {
   
       if (stocksAvailable <= 50) {
         setLowStock(true);
-     
+      }
+      else {
+        setLowStock(false);
       }
     }
     else {
       if (product.stocksAvailable <= 50 + safetyStock && product.unit) {
         setLowStock(true);
+      }
+      else {
+        setLowStock(false);
       }
     }
   }, [product.stocksAvailable]);
@@ -317,7 +332,7 @@ const ProductCard = (props) => {
                       </Typography>
                       <span className="flex h-3 w-3 ml-1 ">
                         <span className="inline-flex items-center justify-center mt-0 2xl:mt-1 py-2 px-1.5 text-xs font-semibold text-white bg-red-600 rounded-full">
-                          {(product.unit == 'Pack') ? product.stocksAvailable - retailSafetyStock : product.stocksAvailable - safetyStock}
+                          {(product.unit == 'Pack') ? retailStocksAvailable : wholesaleStocksAvailable}
                         </span>
                       </span>
                     </div>
@@ -354,7 +369,7 @@ const ProductCard = (props) => {
               <div className="flex flex-row items-center">
                 <button
                   id="addtocartbutton"
-                  className=" h-max w-5/12 2xs:w-5/12 py-3 2xs:px-2 rounded-lg text-xs text-black border-2 border-color60 bg-color10b hover:bg-color1"
+                  className=" h-max w-5/12 2xs:w-5/12 py-3 2xs:px-2 rounded-lg text-xs text-black  bg-color10b hover:bg-color1"
                   // className=" h-max w-5/12 2xs:w-1/3 py-3 2xs:px-2 rounded text-xs text-black border-2 border-color10a bg-color10a hover:bg-color10c hover:border-4 hover:border-double"
                   type="button"
                   onClick={AddToCart}

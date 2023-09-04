@@ -4,7 +4,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { TextField } from '@mui/material';
 
 const CustomerDropdown = ({ data, setChosen, customerTotalValueRanking }) => {
-  console.log(data)
   const datamanipulation = new dataManipulation();
   const [customers, setCustomers] = useState([]);
   const [chosenCustomer, setChosenCustomer] = useState([]);

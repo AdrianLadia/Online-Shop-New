@@ -45,7 +45,7 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
         setRealAddress(address)
       })
       .catch(error => {
-        console.log(error);
+
       });
   },[])
 

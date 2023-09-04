@@ -19,11 +19,10 @@ const InputFieldBox = (props) => {
     }
   }
 
-
   return (
     <div className='flex items-center w-9/12 h-full rounded-xl'> 
       {link? <div>
-        <img src={link} className='h-14 w-14'></img>
+        <img src={link} alt='Image sent from Star Pack Customers' className='h-14 w-14'></img>
         {/* <button onClick={erase} className='font-bold mb-0'>X</button> */}
       </div>:null}
         <input 

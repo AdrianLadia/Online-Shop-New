@@ -68,7 +68,6 @@ const PastAverageTimeOrders = ({customerData, lastOrderDate, customerRanking}) =
         }
     }
 
-    // console.log(sortedDataForTable)
 
     const columns = [
         {
@@ -96,7 +95,7 @@ const PastAverageTimeOrders = ({customerData, lastOrderDate, customerRanking}) =
                         sortedDataForTable.formattedValue < parseInt(sortedDataForTable.row.averageInterval.slice(0,sortedDataForTable.row.averageInterval.length - 7)) ? '#7A9D54' : 'Black'
                     }}
                 >
-                    {/* {console.log(sortedDataForTable.row.averageInterval)} */}
+                  
                     {sortedDataForTable.formattedValue}
                 </div>
             )

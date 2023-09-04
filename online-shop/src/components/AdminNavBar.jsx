@@ -1,4 +1,5 @@
 import React from 'react';
+import { useContext } from 'react';
 import UseWindowDimensions from './UseWindowDimensions';
 import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
@@ -9,18 +10,23 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { BsBoxes, BsBagCheck, BsGraphUp } from 'react-icons/bs';
 import { IoArrowBackCircle } from 'react-icons/io5';
 import { RiAdminFill } from 'react-icons/ri';
-import { RiDashboard2Line } from "react-icons/ri";
+import { RiDashboard2Line } from 'react-icons/ri';
 import { HiOutlineCash } from 'react-icons/hi';
 import { VscGraph } from 'react-icons/vsc';
-import { TbAffiliate } from "react-icons/tb";
+import { TbAffiliate } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
+import menuRules from '../../utils/classes/menuRules';
+import AppContext from '../AppContext';
+import {CiDeliveryTruck} from 'react-icons/ci';
+import {MdOutlineCancelPresentation} from 'react-icons/md';
 
 const AdminNavBar = () => {
-
-    const { width } = UseWindowDimensions();
-    const [anchorEl, setAnchorEl] = React.useState(false);
-    const open = Boolean(anchorEl);
-    const navigateTo = useNavigate();
+  const { width } = UseWindowDimensions();
+  const { userdata } = useContext(AppContext);
+  const [anchorEl, setAnchorEl] = React.useState(false);
+  const open = Boolean(anchorEl);
+  const navigateTo = useNavigate();
+  const rules = new menuRules(userdata.userRole);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,57 +38,67 @@ const AdminNavBar = () => {
 
   const handleClickCompanyDashboard = () => {
     setAnchorEl(null);
-    navigateTo('/admin/companyDashboard')
+    navigateTo('/admin/companyDashboard');
   };
 
   const handleClickInventory = () => {
     setAnchorEl(null);
-    navigateTo('/admin/inventory')
+    navigateTo('/admin/inventory');
   };
 
   const handleClickCreatePayment = () => {
     setAnchorEl(null);
-    navigateTo('/admin/createPayment')
+    navigateTo('/admin/createPayment');
   };
+
+  const handleClickVoidPayment = () => {
+    setAnchorEl(null);
+    navigateTo('/admin/voidPayment');
+  }
 
   const handleClickCustomerOrders = () => {
     setAnchorEl(null);
-    navigateTo('/admin/orders')
+    navigateTo('/admin/orders');
   };
 
   const handleClickAnalytics = () => {
     setAnchorEl(null);
-    navigateTo('/admin/itemAnalytics')
+    navigateTo('/admin/itemAnalytics');
   };
 
   const handleClickCustomerAnalytics = () => {
     setAnchorEl(null);
-    navigateTo('/admin/customerAnalytics')
+    navigateTo('/admin/customerAnalytics');
   };
 
   const handleClickAdminChat = () => {
     setAnchorEl(null);
-    navigateTo('/admin/chatMenu')
+    navigateTo('/admin/chatMenu');
   };
 
   const handleClickClaimRequest = () => {
     setAnchorEl(null);
-    navigateTo('/admin/affiliateClaimRequest')
+    navigateTo('/admin/affiliateClaimRequest');
   };
 
   const handleClickAddItem = () => {
     setAnchorEl(null);
-    navigateTo('/admin/addItem')
-  }
+    navigateTo('/admin/addItem');
+  };
 
   const handleClickEditItem = () => {
     setAnchorEl(null);
-    navigateTo('/admin/editItem')
-  }
+    navigateTo('/admin/editItem');
+  };
 
   const handleBack = () => {
     navigateTo('/shop');
   };
+
+  const handleClickDelivery = () => {
+    setAnchorEl(null);
+    navigateTo('/admin/delivery');
+  }
 
   function responsiveSize() {
     if (width < 650) {
@@ -157,109 +173,138 @@ const AdminNavBar = () => {
                 ml: -0.5,
                 mr: 1,
               },
-              // '&:before': {
-              //   content: '""',
-              //   display: 'block',
-              //   position: 'absolute',
-              //   top: 0,
-              //   right: 32,
-              //   width: 10,
-              //   height: 10,
-              //   bgcolor: 'background.paper',
-              //   transform: 'translateY(-50%) rotate(50deg)',
-              //   zIndex: 0,
-              // },
             },
           }}
           MenuListProps={{
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="Company Dashboard"
-            onClick={handleClickCompanyDashboard}
-          >
-            {' '}
-            <RiDashboard2Line size={20} />   <span>  Company Dashboard</span>
-          </MenuItem>
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="inventoryMenu"
-            onClick={handleClickAddItem}
-          >
-            {' '}
-            <BsBoxes size={19} />     <span>Add Item</span>
-          </MenuItem>
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="inventoryMenu"
-            onClick={handleClickEditItem}
-          >
-            {' '}
-            <BsBoxes size={19} />     <span>Edit Item</span>
-          </MenuItem>
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="inventoryMenu"
-            onClick={handleClickInventory}
-          >
-            {' '}
-            <BsBoxes size={19} />     <span>Inventory</span>
-          </MenuItem>
+          {rules.checkIfUserAuthorized('companyDashboard') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="Company Dashboard"
+              onClick={handleClickCompanyDashboard}
+            >
+              {' '}
+              <RiDashboard2Line size={20} />   <span>  Company Dashboard</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('addItem') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="inventoryMenu"
+              onClick={handleClickAddItem}
+            >
+              {' '}
+              <BsBoxes size={19} />     <span>Add Item</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('editItem') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="inventoryMenu"
+              onClick={handleClickEditItem}
+            >
+              {' '}
+              <BsBoxes size={19} />     <span>Edit Item</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('inventory') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="inventoryMenu"
+              onClick={handleClickInventory}
+            >
+              {' '}
+              <BsBoxes size={19} />     <span>Inventory</span>
+            </MenuItem>
+          ) : null}
           {/* <Divider className="mt-0.5"/>   */}
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="createPaymentMenu"
-            onClick={handleClickCreatePayment}
-          >
-            {' '}
-            <HiOutlineCash size={19} />     <span>Create Payment</span>
-          </MenuItem>
+          {rules.checkIfUserAuthorized('createPayment') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="createPaymentMenu"
+              onClick={handleClickCreatePayment}
+            >
+              {' '}
+              <HiOutlineCash size={19} />     <span>Create Payment</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('voidPayment') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="voidPaymentMenu"
+              onClick={handleClickVoidPayment}
+            >
+              {' '}
+              <MdOutlineCancelPresentation size={19} />     <span>Void Payment</span>
+            </MenuItem>
+          ) : null}
           {/* <Divider className="mt-0.5"/>   */}
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="customerOrdersMenu"
-            onClick={handleClickCustomerOrders}
-          >
-            {' '}
-            <BsBagCheck size={19} />     <span>Customer Orders</span>
-          </MenuItem>
+          {rules.checkIfUserAuthorized('orders') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="customerOrdersMenu"
+              onClick={handleClickCustomerOrders}
+            >
+              {' '}
+              <BsBagCheck size={19} />     <span>Customer Orders</span>
+            </MenuItem>
+          ) : null}
           {/* <Divider className="mt-0.5"/>   */}
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="Analytics"
-            onClick={handleClickAnalytics}
-          >
-            {' '}
-            <VscGraph size={20} />     <span>Item Analytics</span>
-          </MenuItem>
+          {rules.checkIfUserAuthorized('itemAnalytics') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="Analytics"
+              onClick={handleClickAnalytics}
+            >
+              {' '}
+              <VscGraph size={20} />     <span>Item Analytics</span>
+            </MenuItem>
+          ) : null}
+
           {/* <Divider className="mt-0.5"/>   */}
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="Customer Analytics"
-            onClick={handleClickCustomerAnalytics}
-          >
-            {' '}
-            <BsGraphUp size={17} />     <span>Customer Analytics</span>
-          </MenuItem>
+          {rules.checkIfUserAuthorized('customerAnalytics') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="Customer Analytics"
+              onClick={handleClickCustomerAnalytics}
+            >
+              {' '}
+              <BsGraphUp size={17} />     <span>Customer Analytics</span>
+            </MenuItem>
+          ) : null}
           {/* <Divider className="mt-0.5"/>   */}
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="Admin Chat"
-            onClick={handleClickAdminChat}
-          >
-            {' '}
-            <HiOutlineChatAlt size={20} />     <span>Admin Chat</span>
-          </MenuItem>
-          <MenuItem
-            className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-            id="Admin Chat"
-            onClick={handleClickClaimRequest}
-          >
-            {' '}
-            <TbAffiliate size={20} />     <span>Claim Requests</span>
-          </MenuItem>
+          {rules.checkIfUserAuthorized('adminChat') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="Admin Chat"
+              onClick={handleClickAdminChat}
+            >
+              {' '}
+              <HiOutlineChatAlt size={20} />     <span>Admin Chat</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('affiliateClaimRequest') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="Affiliate Claim"
+              onClick={handleClickClaimRequest}
+            >
+              {' '}
+              <TbAffiliate size={20} />     <span>Claim Requests</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('delivery') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="delivery"
+              onClick={handleClickDelivery}
+            >
+              {' '}
+              <CiDeliveryTruck size={20} />     <span>Delivery</span>
+            </MenuItem>
+          ) : null}
         </Menu>
       </div>
     </div>

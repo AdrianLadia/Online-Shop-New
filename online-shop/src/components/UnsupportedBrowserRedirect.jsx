@@ -28,18 +28,6 @@ function UnsupportedBrowserRedirect(props) {
   const setOpen = props.setOpen;
 
 
-
-  // useEffect(() => {
-  //   if (isSupportedBrowser == false) {
-  //     console.log('browser is Unsupported');
-  //     const timer = setTimeout(() => {
-  //       setOpen(true);
-  //     }, 5000);
-
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [isSupportedBrowser]);
-
   const handleClose = () => setOpen(false);
 
   function copyLink() {

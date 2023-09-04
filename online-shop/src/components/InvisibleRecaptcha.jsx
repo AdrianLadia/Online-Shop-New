@@ -20,15 +20,14 @@ const InvisibleRecaptcha = (props) => {
       size: 'invisible',
       callback: (response) => {
         // reCAPTCHA solved, allow signInWithPhoneNumber.
-        console.log('response', response);
+       
         onSignInSubmit();
       },
     });
   }, []);
 
   function signIn() {
-      console.log(phoneNumber);
-      console.log(phoneNumber.length);
+
       if (phoneNumber == '') {
           alert('Please enter a valid phone number');
           return;
@@ -43,7 +42,7 @@ const InvisibleRecaptcha = (props) => {
     signInWithPhoneNumber(auth, '+' + phoneNumber, recaptchaVerifierRef.current)
       .then((result) => {
         setLoading(false)
-        console.log('result', result);
+
         setConfirmationResult(result);
         
       })
@@ -61,12 +60,12 @@ const InvisibleRecaptcha = (props) => {
         .confirm(code)
         .then((userCredential) => {
             setLoading(false)
-          console.log('User signed in successfully!');
+
           // handle signed in user
         })
         .catch((error) => {
             setLoading(false)
-          console.error('Error during code confirmation', error);
+
         });
     }
   }

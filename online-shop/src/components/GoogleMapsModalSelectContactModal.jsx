@@ -65,7 +65,7 @@ const GoogleMapsModalSelectContactModal = (props) => {
                 );
               })}
             </div>
-
+            <>Delivery addresses from your past orders will be saved here</>
           </div>
         </Box>
       </Modal>
