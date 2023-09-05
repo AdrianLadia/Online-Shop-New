@@ -374,7 +374,9 @@ const ProductCard = (props) => {
                   type="button"
                   onClick={AddToCart}
                 >
+                <Typography color={'white'}>
                   Add
+                </Typography>
                 </button>
                 <TextField
                   id={'entryquantity' + props.product.itemName}

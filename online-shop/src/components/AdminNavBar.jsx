@@ -61,6 +61,11 @@ const AdminNavBar = () => {
     navigateTo('/admin/orders');
   };
 
+  const handleEditCustomerOrders = () => {
+    setAnchorEl(null);
+    navigateTo('/admin/editCustomerOrder');
+  }
+
   const handleClickAnalytics = () => {
     setAnchorEl(null);
     navigateTo('/admin/itemAnalytics');
@@ -249,6 +254,16 @@ const AdminNavBar = () => {
             >
               {' '}
               <BsBagCheck size={19} />     <span>Customer Orders</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('orders') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="customerOrdersMenu"
+              onClick={handleEditCustomerOrders}
+            >
+              {' '}
+              <BsBagCheck size={19} />     <span>Edit Customer Order</span>
             </MenuItem>
           ) : null}
           {/* <Divider className="mt-0.5"/>   */}
