@@ -16,11 +16,13 @@ import { Card, CardContent } from '@material-ui/core';
 import AppConfig from '../AppConfig';
 
 const ProductCard = (props) => {
+  const product = props.product;
+  const setModal = props.setModal;
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
-  const [modal, setModal] = useState(false);
+  // const [modal, setModal] = useState(false);
   const { height, width } = UseWindowDimensions();
-  const product = props.product;
+  const setClickedProduct = props.setClickedProduct
   const [outofstock, setOutOfStock] = useState(false);
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
@@ -35,7 +37,8 @@ const ProductCard = (props) => {
   const isWholesale = props.isWholesale;
   const [imageLoading, setImageLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState('');
-  const retailSafetyStock = new AppConfig().getRetailSafetyStock()
+  const retailSafetyStock = new AppConfig().getRetailSafetyStock() 
+
   
   useEffect(() => {
     setImageLoading(true);
@@ -63,6 +66,7 @@ const ProductCard = (props) => {
   if (product.averageSalesPerDay === undefined) {
     safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
   }
+  
   
 
   const retailStocksAvailable = product.stocksAvailable - retailSafetyStock
@@ -184,6 +188,7 @@ const ProductCard = (props) => {
 
   function showModal() {
     setModal(true);
+    setClickedProduct(product);
     firestore.updateProductClicks(product.itemId, userId);
   }
 
@@ -410,9 +415,9 @@ const ProductCard = (props) => {
               </div>
             </div>
           </Paper>
-          <div>
+          {/* <div>
             <ProductCardModal modal={modal} setModal={setModal} product={product} />
-          </div>
+          </div> */}
           <div>
             <Snackbar
               className="mb-5 lg:mb-5"

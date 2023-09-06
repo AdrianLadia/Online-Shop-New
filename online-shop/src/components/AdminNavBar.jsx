@@ -256,7 +256,7 @@ const AdminNavBar = () => {
               <BsBagCheck size={19} />     <span>Customer Orders</span>
             </MenuItem>
           ) : null}
-          {rules.checkIfUserAuthorized('orders') ? (
+          {rules.checkIfUserAuthorized('editCustomerOrders') ? (
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
               id="customerOrdersMenu"

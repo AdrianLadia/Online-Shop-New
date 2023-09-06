@@ -13,35 +13,55 @@ import businessCalculations from '../../utils/businessCalculations';
 import cloudFirestoreDb from '../cloudFirestoreDb';
 import UseWindowDimensions from './UseWindowDimensions';
 import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
+import ProductCardModal from './ProductCardModal';
+import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
 
 
 const ProductList = (props) => {
-  const wholesale = props.wholesale
+  const wholesale = props.wholesale;
   const retail = props.retail;
   const selectedCategory = props.selectedCategory;
   const datamanipulation = new dataManipulation();
   const businesscalculations = new businessCalculations();
   const [isWholesale, setIsWholesale] = useState(false);
+  const [modal, setModal] = useState(false);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const modalSelected = query.get('modal') + location.hash;
 
+  
   useEffect(() => {
     if (wholesale) {
       setIsWholesale(true);
     }
-    if(retail){
+    if (retail) {
       setIsWholesale(false);
     }
-  }, [wholesale,retail]);
-
-
+  }, [wholesale, retail]);
+  
   const [productdataloading, setProductDataLoading] = useState(true);
-  const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts,updateCartInfo } = React.useContext(AppContext);
+  const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
+  React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
-
+  const [clickedProduct, setClickedProduct] = useState(null);
+  
   const { width } = UseWindowDimensions();
-
+  
+  
+  useEffect(() => {
+    if (modalSelected != null) {
+      console.log(modalSelected);
+      cloudfirestore.readSelectedDataFromOnlineStore(modalSelected).then((data) => {
+        console.log(data);
+        setClickedProduct(data);
+        setModal(true);
+      });
+    }
+  }, [modalSelected]);
   useEffect(() => {
     if (products != []) {
-      setProductDataLoading(false);}
+      setProductDataLoading(false);
+    }
   }, [products]);
 
   function RenderSelectedProducts(product_category) {
@@ -52,10 +72,9 @@ const ProductList = (props) => {
       retail,
       favoriteitems
     );
-    const spo = new storeProductsOrganizer(selected_products)
-    const organizedProducts = spo.runMain()
-    
-    
+    const spo = new storeProductsOrganizer(selected_products);
+    const organizedProducts = spo.runMain();
+
     return organizedProducts;
   }
 
@@ -66,14 +85,13 @@ const ProductList = (props) => {
 
   useEffect(() => {
     if (cart != [] && userdata != null) {
-      try{
+      try {
         firestore.createUserCart(cart, userdata.uid);
-      }
-      catch(e){
-        alert('Failed to update cart info. Please try again.')
+      } catch (e) {
+        alert('Failed to update cart info. Please try again.');
       }
     }
-  }, [cart,updateCartInfo]);
+  }, [cart, updateCartInfo]);
 
   function divCssIfProductNoteLoaded() {
     if (productdataloading) {
@@ -82,57 +100,68 @@ const ProductList = (props) => {
     if (productdataloading === false) {
       if (width < 640) {
         return 'grid ';
-      }else if(width < 1070) {
+      } else if (width < 1070) {
         return 'grid grid-cols-2 ';
-      }else if(width < 1500) {
+      } else if (width < 1500) {
         return 'grid grid-cols-3 ';
-      }else if(width < 1921) {
+      } else if (width < 1921) {
         return 'grid grid-cols-4';
-      }else{
+      } else {
         return 'grid grid-cols-5';
       }
     }
   }
 
   return (
-    <div className='mb-16 mt-5 '>
-      <div id='productList' className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
+    <div className="mb-16 mt-5 ">
+      <div id="productList" className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
             <CircularProgress size={150} className="" />
           </div>
         ) : RenderSelectedProducts(selectedCategory).length === 0 && selectedCategory === 'Favorites' ? (
-          <div className='flex flex-col align-center w-screen tracking-widest'>
-              <h1 className="text-3xl font-bold text-center mt-10">No Favorites</h1>
-              <h3 className="text-1xl font-bold text-center mt-10 mx-10">
+          <div className="flex flex-col align-center w-screen tracking-widest">
+            <h1 className="text-3xl font-bold text-center mt-10">No Favorites</h1>
+            <h3 className="text-1xl font-bold text-center mt-10 mx-10">
               Add items to your favorites by clicking on the product card then clicking the heart icon
             </h3>
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
-            let stocksAvailable = null
-            let averageSalesPerDay = null
-            let product_chosen = null
+            let stocksAvailable = null;
+            let averageSalesPerDay = null;
+            let product_chosen = null;
             if (product.unit !== 'Bale') {
-              product_chosen = product
-              products.map((p, index) => {    
+              product_chosen = product;
+              products.map((p, index) => {
                 stocksAvailable = p.stocksAvailable;
-              
-                if (p.itemId == product.parentProductID) {
 
-                  averageSalesPerDay = p.averageSalesPerDay
+                if (p.itemId == product.parentProductID) {
+                  averageSalesPerDay = p.averageSalesPerDay;
                 }
               });
             }
             return (
-              <div className='flex justify-evenly'>
-                <ProductCard id={product.itemId} addtocart={AddToCart} isWholesale={isWholesale} product={product} showTutorial={product.forTutorial} setShakeCartAnimation={setShakeCartAnimation} stocksAvailable={product.stocksAvailable} averageSalesPerDay={averageSalesPerDay} />
+              <div className="flex justify-evenly">
+                <ProductCard
+                  setClickedProduct={setClickedProduct}
+                  setModal={setModal}
+                  id={product.itemId}
+                  addtocart={AddToCart}
+                  isWholesale={isWholesale}
+                  product={product}
+                  showTutorial={product.forTutorial}
+                  setShakeCartAnimation={setShakeCartAnimation}
+                  stocksAvailable={product.stocksAvailable}
+                  averageSalesPerDay={averageSalesPerDay}
+                />
               </div>
             );
           })
         )}
       </div>
       <OpenCartButton shakeCartAnimation={shakeCartAnimation} setShakeCartAnimation={setShakeCartAnimation} />
+      {clickedProduct != null ? <ProductCardModal modal={modal} setModal={setModal} product={clickedProduct} /> : null}
     </div>
   );
 };
