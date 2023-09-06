@@ -33,7 +33,6 @@ import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
 
-
 const devEnvironment = true;
 
 function App() {
@@ -580,7 +579,7 @@ function App() {
               {products != [] || categories != null ? (
                 <Shop />
               ) : (
-                <div className="flex w-full h-96 justify-center mt-80">
+                <div className="flex justify-center w-full h-96 mt-80">
                   <CircularProgress size={150} />
                 </div>
               )}

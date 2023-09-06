@@ -97,8 +97,6 @@ const GoogleMaps = (props) => {
     }
   }, [latitude, longitude]);
 
-  
-
   useEffect(() => {
     Geocode.setApiKey(firebaseConfig.apiKey);
     Geocode.setLanguage('en');
