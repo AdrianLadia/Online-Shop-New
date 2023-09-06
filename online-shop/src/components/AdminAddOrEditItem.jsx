@@ -116,6 +116,7 @@ const AdminAddOrEditItem = (props) => {
   const [freightCost, setFreightCost] = useState(0);
   const [timeoutId, setTimeoutId] = useState(null);
   const rules = new menuRules(userdata.userRole);
+  const [forOnlineStore,setForOnlineStore] = useState(true);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
@@ -218,7 +219,7 @@ const AdminAddOrEditItem = (props) => {
         averageSalesPerDay: 0,
         parentProductID: parentProductID,
         stocksOnHoldCompleted: [],
-        forOnlineStore: true,
+        forOnlineStore: forOnlineStore,
         isCustomized: isCustomized,
         stocksIns: [],
         piecesPerPack: parseInt(piecesPerPack),
@@ -256,7 +257,7 @@ const AdminAddOrEditItem = (props) => {
           averageSalesPerDay: 0,
           parentProductID: itemID,
           stocksOnHoldCompleted: [],
-          forOnlineStore: true,
+          forOnlineStore: forOnlineStore,
           isCustomized: isCustomized,
           stocksIns: null,
           cbm: null,
@@ -368,7 +369,7 @@ const AdminAddOrEditItem = (props) => {
           averageSalesPerDay: 0,
           parentProductID: itemID,
           stocksOnHoldCompleted: [],
-          forOnlineStore: true,
+          forOnlineStore: forOnlineStore,
           isCustomized: isCustomized,
           stocksIns: null,
           cbm: null,
@@ -415,6 +416,7 @@ const AdminAddOrEditItem = (props) => {
     }
   }
 
+
   useEffect(() => {
     if (addOrEditItem == 'Edit' && selectedItemToEdit !== null) {
       function checkIfItemHasRetailVersion() {
@@ -453,6 +455,7 @@ const AdminAddOrEditItem = (props) => {
       setPiecesPerPack(selectedItemDetails.piecesPerPack);
       setCostPrice(selectedItemDetails.costPrice);
       setCbm(selectedItemDetails.cbm);
+      setForOnlineStore(selectedItemDetails.forOnlineStore);
 
       if (selectedItemDetails.boxImage == null) {
         setBoxImage('');
@@ -861,6 +864,21 @@ const AdminAddOrEditItem = (props) => {
               className='mb-8'
             />
             <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label> */}
+            </div>
+
+
+            <div className="flex flex-row ">
+              <FormControlLabel
+                control={
+                  <Switch
+                    onClick={() => {
+                      setForOnlineStore(!forOnlineStore);
+                    }}
+                    checked={forOnlineStore}
+                  />
+                }
+                label="Is this For Online Store?"
+              />
             </div>
 
             <div className=" w-full border-b border-dashed border-gray-400"></div>
