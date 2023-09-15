@@ -20,7 +20,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
-
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
   const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, categories } =
@@ -183,6 +182,12 @@ const HomePage = ({ isAffiliateLink }) => {
   const [photoUrl, setPhotoUrl] = useState('');
 
   function handleCategory(item) {
+    if (item === 'Aluminum Foil') {
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Fproducts%2Faluminum%20foil%20suki%2Faluminum%20jumbo%201.png?alt=media&token=bb7da3a4-ccd5-464d-b3e3-2b1dd785c2c6'
+      );
+      setSelectedCategory(item);
+    }
     if (item === 'Aluminum Tray') {
       setSelectedCategoryImage(
         'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FAluminum%20Tray.png?alt=media&token=53e2292b-7669-42a9-bd29-44b4b2afbbd4'
@@ -196,10 +201,43 @@ const HomePage = ({ isAffiliateLink }) => {
       );
       setSelectedCategory(item);
     }
+    if (item === 'Burger Wrapper') {
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bowls.png?alt=media&token=4fec5edb-9d7f-41cd-9553-ff86bdf7b26d'
+      );
+      setSelectedCategory(item);
+    }
+
+    if (item === 'Burger Box') {
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Fproducts%2Faluminum%20foil%20suki%2Faluminum%20jumbo%201.png?alt=media&token=bb7da3a4-ccd5-464d-b3e3-2b1dd785c2c6'
+      );
+      setSelectedCategory(item);
+    }
 
     if (item === 'Cake Box') {
       setSelectedCategoryImage(
         'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FCake%20Box.png?alt=media&token=3b8071ad-d8fc-4473-b61c-addf75edf4d7'
+      );
+      setSelectedCategory(item);
+    }
+    if (item === 'Chopsticks') {
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bowls.png?alt=media&token=4fec5edb-9d7f-41cd-9553-ff86bdf7b26d'
+      );
+      setSelectedCategory(item);
+    }
+
+    if (item === 'Clamshell') {
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bowls.png?alt=media&token=4fec5edb-9d7f-41cd-9553-ff86bdf7b26d'
+      );
+      setSelectedCategory(item);
+    }
+
+    if (item === 'Drink Plastic') {
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bowls.png?alt=media&token=4fec5edb-9d7f-41cd-9553-ff86bdf7b26d'
       );
       setSelectedCategory(item);
     }
@@ -346,7 +384,7 @@ const HomePage = ({ isAffiliateLink }) => {
       return 'w-28 lg:lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold ';
     } else if (p3inView == true && p4inView == false && page == 'page3') {
       return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
-    } else if (p4inView == true  && page == 'page4') {
+    } else if (p4inView == true && page == 'page4') {
       return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
     } else if (p5inView == true && p4inView == false && page == 'page5') {
       return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
@@ -438,9 +476,9 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function responsiveMessageText() {
     if (width <= 767) {
-      return 'Message';
+      return <span>Message</span>;
     } else {
-      return 'Message Us';
+      return <span>Message Us</span>;
     }
   }
 
@@ -465,7 +503,7 @@ const HomePage = ({ isAffiliateLink }) => {
   }
 
   function responsiveImageList() {
-    console.log(width)
+    console.log(width);
     if (width <= 850) {
       return 2;
     } else if (width <= 1400) {
@@ -481,18 +519,17 @@ const HomePage = ({ isAffiliateLink }) => {
     <div
       className=" h-screen w-screen  overflow-y-scroll overflow-x-hidden bg-cover bg-center"
       // style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})` }}
-      style={{backgroundColor:'#a3886c'}}
-    
+      style={{ backgroundColor: '#a3886c' }}
     >
       <Helmet>
         <title>Star Pack: Cebu's Leading Online Packaging Supplier</title>
         <meta
-          name="description"
-          content="Star Pack: Cebu's Leading Online Packaging Supplier. High Quality Products, Unparalleled Service, and Reasonable Price Points."
+          property="og:description"
+          content="Star Pack: Cebu's Leading Online Packaging Supplier. Paper Bags, Meal Boxes, Food Wrappers, Plastic Containers, Utensils, Trash Bags, and more."
         />
         <meta
-          property="og:description"
-          content="Star Pack: Cebu's Leading Online Packaging Supplier. High Quality Products, Unparalleled Service, and Reasonable Price Points."
+          property="description"
+          content="Star Pack: Cebu's Leading Online Packaging Supplier. Paper Bags, Meal Boxes, Food Wrappers, Plastic Containers, Utensils, Trash Bags, and more."
         />
         <meta property="og:url" content="https://www.starpack.ph/" />
       </Helmet>
@@ -522,7 +559,6 @@ const HomePage = ({ isAffiliateLink }) => {
                   onClick={() => {
                     setShowMenu(true);
                   }}
-                  
                 />
               ) : (
                 <BsX
@@ -530,54 +566,61 @@ const HomePage = ({ isAffiliateLink }) => {
                   onClick={() => {
                     setShowMenu(false);
                   }}
-                  
                 />
               )}
             </div>
             {showMenu === true ? (
               <div className="absolute top-20 sm:top-20 right-4 h-9/10 w-3/5 xs:w-1/2 sm:w-1/3 ease-in-out duration-300">
                 <ul className="py-2 px-0.5 gap-2 divide-y divide-green3 rounded-xl flex flex-col w-full justify-start items-center bg-green2 border border-green3 bg-opacity-90">
-                  <button
-                    onClick={() => {
-                      scroll('page1');
-                      setShowMenu(false)
-                    }}
-                    className={'text-xl  ' + menuButtonStyle('page1')}
-                  >
-                    Home
-                  </button>
-                  <button
-                    onClick={() => {
-                      scroll('page2');
-                      setShowMenu(false)
-                    }}
-                    className={'text-xl  ' + menuButtonStyle('page2')}
-                  >
-                    About
-                  </button>
-                  <button
-                    onClick={() => {
-                      scroll('page3');
-                      setShowMenu(false)
-                    }}
-                    className={'text-xl  ' + menuButtonStyle('page3')}
-                  >
-                    Products
-                  </button>
-                  <button
-                    onClick={() => {
-                      scroll('page4');
-                      setShowMenu(false)
-                    }}
-                    className={'text-xl  ' + menuButtonStyle('page3')}
-                  >
-                    Features
-                  </button>
+                  <li>
+                    <button
+                      onClick={() => {
+                        scroll('page1');
+                        setShowMenu(false);
+                      }}
+                      className={'text-xl  ' + menuButtonStyle('page1')}
+                    >
+                      Home
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        scroll('page2');
+                        setShowMenu(false);
+                      }}
+                      className={'text-xl  ' + menuButtonStyle('page2')}
+                    >
+                      About
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        scroll('page3');
+                        setShowMenu(false);
+                      }}
+                      className={'text-xl  ' + menuButtonStyle('page3')}
+                    >
+                      Products
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        scroll('page4');
+                        setShowMenu(false);
+                      }}
+                      className={'text-xl  ' + menuButtonStyle('page3')}
+                    >
+                      Features
+                    </button>
+                  </li>
                   {isAffiliateLink ? (
                     <button
                       onClick={() => {
                         scroll('page5');
-                        setShowMenu(false)
+                        setShowMenu(false);
                       }}
                       className={'text-xl  ' + menuButtonStyle('page5')}
                     >
@@ -587,7 +630,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     <button
                       onClick={() => {
                         scroll('page5');
-                        setShowMenu(false)
+                        setShowMenu(false);
                       }}
                       className={'text-xl  ' + menuButtonStyle('page4')}
                     >
@@ -677,7 +720,7 @@ const HomePage = ({ isAffiliateLink }) => {
                 }}
               />
             ) : null
-          ) : (p1inView == false || p2inView )  ? (
+          ) : p1inView == false || p2inView ? (
             <div className=" gap-3 flex justify-end w-1/3 sm:w-1/4">
               {/* Message Button */}
               <div className="flex justify-end sm:justify-center items-center mr-1 ">
@@ -692,7 +735,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     setShowMessageToolTip(false);
                   }}
                 >
-                  <AiFillMessage size={25} color='white'/>
+                  <AiFillMessage size={25} color="white" />
                 </button>
                 {showMessageToolTip ? (
                   <div
@@ -718,15 +761,14 @@ const HomePage = ({ isAffiliateLink }) => {
                     setShowShopToolTip(false);
                   }}
                 >
-                  <div className='ml-3'>
-                    <FaShoppingBag size={25} color='white' />
+                  <div className="ml-3">
+                    <FaShoppingBag size={25} color="white" />
                   </div>
-                  <div className='ml-2 mr-3'>
-                    <Typography variant="h6" color={'white'} >
+                  <div className="ml-2 mr-3">
+                    <Typography variant="h6" color={'white'}>
                       Shop
                     </Typography>
                   </div>
-                  
                 </button>
                 {showShopToolTip ? (
                   <div
@@ -743,17 +785,18 @@ const HomePage = ({ isAffiliateLink }) => {
       </nav>
 
       {/* Page 1 Home*/}
-      <div
+      <section
         ref={page1}
         className=" w-screen h-screen bg-cover bg-center  "
         style={{
           backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + `url(${backgroundImageUrl})`,
         }}
       >
-        <div className="h-1/10 p-10 w-full flex" />
-        <div ref={p1} className="w-screen h-9/10 flex flex-col my-6 md:mt-0 md:flex-row ">
-          {/* Header */}
-          <div className="h-1/2 md:h-full w-full md:w-4/10 items-start xs:items-center gap-5 flex flex-col justify-center ">
+        <header
+          ref={p1}
+          className="w-screen h-screen flex flex-col my-6 md:mt-0 md:flex-row justify-center items-center "
+        >
+          <article className="h-1/2 md:h-full w-full md:w-4/10 items-start xs:items-center gap-5 flex flex-col justify-center ">
             <div className="mt-2 md:mt-0 justify-end md:justify-center items-center md:items-end h-full w-5/6 flex flex-col ">
               <div className="w-full sm:w-11/12 md:w-full lg:w-5/6 2xl:w-8/12 gap-2 ml-16 md:ml-0 p-3  flex flex-col ">
                 <h1 className="text-4xl 2xs:text-5xl sm:text-6xl md:text-7xl text-color60 font-bold">Star Pack</h1>
@@ -765,10 +808,10 @@ const HomePage = ({ isAffiliateLink }) => {
                     <a className=" text-color60">✓</a> High Quality Products.
                   </li>
                   <li>
-                    <a className=" text-color60">✓</a> Unparalleled Service.
+                    <a className=" text-color60">✓</a> Fast Delivery.
                   </li>
                   <li>
-                    <a className=" text-color60">✓</a> Reasonable Price Points.
+                    <a className=" text-color60">✓</a> Good Price.
                   </li>
                 </ul>
                 {isAffiliateLink ? (
@@ -776,29 +819,30 @@ const HomePage = ({ isAffiliateLink }) => {
                     <LoginButton isAffiliateLink={isAffiliateLink} />
                   </div>
                 ) : (
-                  <>
-                    <span className="hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300">
+                  <div>
+                    <div className="hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color10b rounded-r-full ease-in-out duration-300">
                       <button
                         className="w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal  border-color10b text-color10b hover:text-white hover:border-color10bp-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300"
                         onClick={handleShop}
                       >
                         <FaShoppingBag className="text-xl ml-3" />
-                         Shop Now!
+                        <span className="ml-2 mr-3">Shop Now!</span>
                       </button>
-                    </span>
-                    <span className="hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300">
+                    </div>
+                    <div className="hover:w-32 md:hover:w-36 h-10 md:h-14 w-0 mt-3 bg-color60 rounded-r-full ease-in-out duration-300">
                       <button
                         className="w-32 md:w-36 h-10 md:h-14 font-normal md:font-semibold text-sm md:text-normal  border-color60 text-color60 hover:text-white hover:border-color60 p-3 flex justify-start items-center border-2 rounded-r-full ease-in-out duration-300"
                         onClick={handleMessageClick}
                       >
-                        <AiFillMessage className="-ml-0.5 text-xl " /> {responsiveMessageText()}
+                        <AiFillMessage className="-ml-0.5 mr-1 text-xl " /> {responsiveMessageText()}
                       </button>
-                    </span>
-                  </>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
-          </div>
+          </article>
+
           {/* Video  */}
           <div className="h-1/2 md:h-full w-full md:w-6/10 items-start xs:items-center flex justify-center ">
             <div className="h-7/10  mt-10 w-full flex justify-center items-center relative">
@@ -843,17 +887,17 @@ const HomePage = ({ isAffiliateLink }) => {
               ) : null}
             </div>
           </div>
-        </div>
-      </div>
+        </header>
+      </section>
+
       {/* Page 2 About*/}
-      <div ref={page2} className="mt-10 flex flex-col  w-screen  bg-cover bg-center">
-        <div ref={p2} className="flex h-9/10 w-full justify-center items-center ">
+      <section ref={page2} className="mt-10 flex flex-col  w-screen  bg-cover bg-center">
+        <article ref={p2} className="flex h-9/10 w-full justify-center items-center ">
           <div
             className=" w-11/12 h-9/10 flex-col md:flex-row p-5 sm:p-16 md:p-5 gap-2 sm:gap-4 flex items-center justify-evenly rounded-3xl bg-local bg-cover bg-center"
             //  style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + "url('./vids/pexel.jpg')"}}
           >
-            {/* Header */}
-            <div className="bg-colorbackground w-19/20 sm:w-9/10 md:w-4/10 h-1/2 md:h-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl shadow-lg   ">
+            <header className="bg-colorbackground w-19/20 sm:w-9/10 md:w-4/10 h-1/2 md:h-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl shadow-lg   ">
               {/* <h1 className='h-2/10 text-2xl sm:text-4xl font-bold'>Star Pack is</h1> */}
               <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
                 Star Pack is...
@@ -863,7 +907,7 @@ const HomePage = ({ isAffiliateLink }) => {
                   "Empowering Businesses, Simplifying Success.
                   <br />
                   <br />
-                  We pave the way for growth by streamlining operations, allowing companies to focus on what they do
+                  We pave the way for growth by streamlining business operations, allowing you to focus on what you do
                   best. Your vision, our mission."
                 </Typography>
               </p>
@@ -874,19 +918,14 @@ const HomePage = ({ isAffiliateLink }) => {
                     </button>
                   </span>
                 </div> */}
-            </div>
+            </header>
             {/* Image */}
-            <div className="w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center">
-              <img
-                className="w-full h-full rounded-3xl  text-white"
-                alt="About Image"
-                //  src='./vids/STAR-DELIVERY.png'
-                src={about}
-              />
-            </div>
+            <figure className="w-19/20 sm:w-9/10 md:w-1/2 h-1/2 md:h-full flex justify-center items-center">
+              <img className="w-full h-full rounded-3xl  text-white" alt="About Image" src={about} />
+            </figure>
           </div>
-        </div>
-        <div className="flex flex-col h-full  items-center mt-10 ">
+        </article>
+        <article className="flex flex-col h-full  items-center mt-10 ">
           {/* <Typography variant='h3' sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>What We Do</Typography> */}
           <div className="w-9/10  h-96 lg:h-60per border border-color60 mt-5 rounded-lg overflow-auto">
             <div className="p-5 lg:p-10">
@@ -903,147 +942,336 @@ const HomePage = ({ isAffiliateLink }) => {
               </ImageList>
             </div>
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
 
       {/* Page 3 Products*/}
-      <div
+      <section
         ref={page3}
         className=" w-screen h-screen bg-cover bg-center"
         //  style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})`}}
       >
-        <div className="h-1/10 w-full flex" />
         <div
           ref={p3}
-          className="flex flex-col md:flex-row h-9/10 justify-center items-center p-5 gap-1 xs:gap-2 sm:gap-5 "
+          className="flex flex-col md:flex-row h-full py-20 justify-center items-center p-5 gap-1 xs:gap-2 sm:gap-5 "
         >
           {/* Header & Image */}
-          <div className=" w-11/12 md:w-7/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl gap-1 sm:gap-5 flex flex-col justify-center items-center border border-green2">
-            {/* <div className="h-1/5 text-2xl md:text-5xl w-10/12 sm:w-7/12 flex items-center font-bold text-white">
-              {selectedCategory ? selectedCategory : 'Paper Bags'}
-            </div> */}
-            {/* <div className=" w-64 h-64 lg:w-96 lg:h-96 rounded-xl xs:rounded-3xl border border-green2 overflow-hidden flex items-center justify-center"> */}
-              <img className="ease-in-out h-8/10 rounded-lg" src={selectedCategoryImage} />
-            
-          </div>
+          <figure className=" w-11/12 md:w-7/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl gap-1 sm:gap-5 flex flex-col justify-center items-center border border-green2">
+            <img alt="Selected Category Image" className="ease-in-out h-8/10 rounded-lg" src={selectedCategoryImage} />
+          </figure>
           {/* Products & CTA*/}
           <div className="w-11/12 md:w-4/12 h-1/2 xs:h-1/2 md:h-9/10 rounded-b-3xl md:rounded-bl-none md:rounded-r-3xl flex flex-col justify-center items-center border border-green2 p-2">
             <div className="h-full w-full flex flex-col justify-center xs:justify-between gap-2 items-center bg-colorbackground rounded-lg ">
-              <div className="w-10/12 h-2/10 text-2xl md:text-4xl items-center flex text-color10b font-bold">
+              <h2 className="w-10/12 h-2/10 text-2xl md:text-4xl items-center flex text-color10b font-bold">
                 Products We Offer:
-              </div>
-              <div className="w-11/12 h-6/10 flex flex-col justify-between items-center gap-4 ">
-                <div className="w-full h-9/10 grid grid-cols-3 sm:grid-cols-2 p-3 justify-start items-start gap-2 overflow-y-auto">
-                  {categories &&
-                    categories.map((s, index) => {
-                      if (s == 'Favorites') {
-                        return null;
-                      }
-                      return (
-                        <button key={index} onClick={() => handleCategory(s)} className={' ' + productButtonStyle(s)}>
-                          <p className="overflow-x-auto">{s}</p>
-                        </button>
-                      );
-                    })}
-                </div>
-              </div>
+              </h2>
+              <nav className="w-11/12 h-6/10 flex flex-col justify-between items-center gap-4 ">
+                <ul className="w-full h-9/10 grid grid-cols-2 p-3 justify-start items-start gap-2 overflow-y-auto shadow-xl">
+                  <li>
+                    <button                      onClick={() => handleCategory('Aluminum Foil')}
+                      className={' ' + productButtonStyle('Aluminum Foil')}
+                    >
+                      <span className="overflow-x-auto">Aluminum Foil</span>
+                    </button>
+                  </li>
+
+                  <li>
+                    <button                      onClick={() => handleCategory('Aluminum Tray')}
+                      className={' ' + productButtonStyle('Aluminum Tray')}
+                    >
+                      <span className="overflow-x-auto">Aluminum Tray</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Bowls')}
+                      className={' ' + productButtonStyle('Bowls')}
+                    >
+                      <span className="overflow-x-auto">Bowls</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Burger Box')}
+                      className={' ' + productButtonStyle('Burger Box')}
+                    >
+                      <span className="overflow-x-auto">Burger Box</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Burger Wrapper')}
+                      className={' ' + productButtonStyle('Burger Wrapper')}
+                    >
+                      <span className="overflow-x-auto">Burger Wrapper</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Cake Box')}
+                      className={' ' + productButtonStyle('Cake Box')}
+                    >
+                      <span className="overflow-x-auto">Cake Box</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Chopsticks')}
+                      className={' ' + productButtonStyle('Chopsticks')}
+                    >
+                      <span className="overflow-x-auto">Chopsticks</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Clamshell')}
+                      className={' ' + productButtonStyle('Clamshell')}
+                    >
+                      <span className="overflow-x-auto">Clamshell</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Drink Plastic')}
+                      className={' ' + productButtonStyle('Drink Plastic')}
+                    >
+                      <span className="overflow-x-auto">Drink Plastic</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Sando Bag')}
+                      className={' ' + productButtonStyle('Sando Bag')}
+                    >
+                      <span className="overflow-x-auto">Fork</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button                      onClick={() => handleCategory('Meal Box')}
+                      className={' ' + productButtonStyle('Meal Box')}
+                    >
+                      <span className="overflow-x-auto">Meal Box</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Paper Bag')}
+                      className={' ' + productButtonStyle('Paper Bag')}
+                    >
+                      <span className="overflow-x-auto">Paper Bag</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Plastic Containers')}
+                      className={' ' + productButtonStyle('Plastic Containers')}
+                    >
+                      <span className="overflow-x-auto">Plastic Containers</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Plastic Cups')}
+                      className={' ' + productButtonStyle('Plastic Cups')}
+                    >
+                      <span className="overflow-x-auto">Plastic Cups</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Paper Cups')}
+                      className={' ' + productButtonStyle('Paper Cups')}
+                    >
+                      <span className="overflow-x-auto">Paper Cups</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Plates')}
+                      className={' ' + productButtonStyle('Plates')}
+                    >
+                      <span className="overflow-x-auto">Plates</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Roll Bag')}
+                      className={' ' + productButtonStyle('Roll Bag')}
+                    >
+                      <span className="overflow-x-auto">Roll Bag</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Sando Bag')}
+                      className={' ' + productButtonStyle('Sando Bag')}
+                    >
+                      <span className="overflow-x-auto">Sando Bag</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Sauce Cups')}
+                      className={' ' + productButtonStyle('Sauce Cups')}
+                    >
+                      <span className="overflow-x-auto">Sauce Cups</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Spoon')}
+                      className={' ' + productButtonStyle('Spoon')}
+                    >
+                      <span className="overflow-x-auto">Spoon</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Sushi Tray')}
+                      className={' ' + productButtonStyle('Sushi Tray')}
+                    >
+                      <span className="overflow-x-auto">Sushi Tray</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Tissue Paper')}
+                      className={' ' + productButtonStyle('Tissue Paper')}
+                    >
+                      <span className="overflow-x-auto">Tissue Paper</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Trash Bag')}
+                      className={' ' + productButtonStyle('Trash Bag')}
+                    >
+                      <span className="overflow-x-auto">Trash Bag</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleCategory('Wax Paper')}
+                      className={' ' + productButtonStyle('Wax Paper')}
+                    >
+                      <span className="overflow-x-auto">Wax Paper</span>
+                    </button>
+                  </li>
+                  
+                </ul>
+              </nav>
               <div className="h-2/10 w-full flex justify-center">
                 <div className="w-32 md:w-36 lg:w-48 flex justify-start ">
-                  <span className="w-32 md:w-36 lg:w-48 h-10 md:h-14 hover:w-0 mt-3 rounded-full ease-in-out duration-300">
+                  <div className="w-32 md:w-36 lg:w-48 h-10 md:h-14 hover:w-0 mt-3 rounded-full ease-in-out duration-300">
                     <button
                       className=" w-32 md:w-36 lg:w-48 h-10 md:h-14 p-3 text-xs sm:text-sm flex justify-center items-center font-normal md:font-semibold rounded-full border bg-color10b border-blue1 hover:bg-blue1 text-white  "
                       onClick={handleShop}
                     >
                       <FaShoppingBag className=" text-xl " />
-                       Shop Now!
+                      <span> Shop Now!</span>
                     </button>
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 mt-40 ">
-        <Card ref={page4} sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia  sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="auto calculate" />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Auto Calculate Cost
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              The delivery fee and total cost of items will be calculated at checkout. There will be no hidden charges
-              after delivery.
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="favorite items" />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Favorite Items
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Adding your favorite items to your 'Favorites' list for quick and convenient access.
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={pinpoint} title="pinpoint delivery locations" />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Pinpoint Location
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Who needs big signs or landmarks when you can pinpoint your exact location!
-            </Typography>
-          </CardContent>
-        </Card>
+      </section>
+      <section ref={p4} className="flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 mt-40 shadow-xl ">
+        <article>
+          <Card ref={page4} sx={{ width: 250, flexShrink: 0, height: '100%' }} elevation={20}>
+            <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={autoCalculate} title="auto calculate" />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Auto Calculate Cost
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                The delivery fee and total cost of items will be calculated at checkout. There will be no hidden charges
+                after delivery.
+              </Typography>
+            </CardContent>
+          </Card>
+        </article>
+        <article>
+          <Card sx={{ width: 250, flexShrink: 0, height: '100%' }} elevation={20}>
+            <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={favorites} title="favorite items" />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Favorite Items
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Adding your favorite items to your 'Favorites' list for quick and convenient access.
+              </Typography>
+            </CardContent>
+          </Card>
+        </article>
+        <article>
+          <Card sx={{ width: 250, flexShrink: 0, height: '100%' }} elevation={20}>
+            <CardMedia
+              sx={{ height: 210, backgroundColor: '#e1fadd' }}
+              image={pinpoint}
+              title="pinpoint delivery locations"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Pinpoint Location
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Who needs big signs or landmarks when you can pinpoint your exact location!
+              </Typography>
+            </CardContent>
+          </Card>
+        </article>
+        <article>
+          <Card sx={{ width: 250, flexShrink: 0, height: '100%' }} elevation={20}>
+            <CardMedia
+              sx={{ height: 210, backgroundColor: '#e1fadd' }}
+              image={saved}
+              title="save location and contacts"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Save Location and Contacts
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                This makes it quicker and easier to fill in the details for your next order.
+              </Typography>
+            </CardContent>
+          </Card>
+        </article>
+        <article>
+          <Card sx={{ width: 250, flexShrink: 0, height: '100%' }} elevation={20}>
+            <CardMedia
+              sx={{ height: 210, backgroundColor: '#e1fadd' }}
+              image={customerChat}
+              title="chat with customer"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Chat with Customer Service
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Any questions or concerns? There is a chat customer service available to help you out.
+              </Typography>
+            </CardContent>
+          </Card>
+        </article>
+        <article>
+          <Card sx={{ width: 250, flexShrink: 0, height: '100%' }} elevation={20}>
+            <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={multiple} title="multiple payment" />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Multiple Payment Methods
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Gives you the flexibility to choose the option that is most convenient and suits your preferences.
+              </Typography>
+            </CardContent>
+          </Card>
+        </article>
+      </section>
 
-        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={saved} title="save location and contacts" />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Save Location and Contacts
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              This makes it quicker and easier to fill in the details for your next order.
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={customerChat} title="chat with customer" />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Chat with Customer Service
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Any questions or concerns? There is a chat customer service available to help you out.
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card sx={{ width: 250, flexShrink: 0 }} elevation={20}>
-          <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={multiple} title="multiple payment" />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Multiple Payment Methods
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Gives you the flexibility to choose the option that is most convenient and suits your preferences.
-            </Typography>
-          </CardContent>
-        </Card>
-      </div>
- 
-     
-      <div
+      <section
         ref={p5}
         className="flex mb-40 lg:-mb-40 flex-col md:flex-row h-9/10 w-screen items-center divide-y md:divide-y-0 md:divide-x divide-color60 mt-40"
       >
         {tutorial.map((state, index) => {
           if (selectedSlide === index) {
             return (
-              <div
+              <article
                 key={index}
                 className=" h-1/2  md:h-full xl:h-5/6 w-full md:w-7/12 md:ml-5 flex flex-col justify-center items-center p-5 relative "
               >
@@ -1110,12 +1338,12 @@ const HomePage = ({ isAffiliateLink }) => {
                     ></button>
                   </div>
                 </div>
-              </div>
+              </article>
             );
           }
         })}
         {/* Affiliate Description */}
-        <div
+        <aside
           ref={page5}
           className=" md:h-full xl:h-5/6 w-full md:w-5/12 flex flex-col justify-center items-center md:items-start p-5 gap-5 "
         >
@@ -1132,13 +1360,13 @@ const HomePage = ({ isAffiliateLink }) => {
             >
               Become an Affiliate
             </h1>
-            <div className="font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-black tracking-tight indent-5 ml-0.5 overflow-y-auto">
+            <p className="font-thin w-full h-7/10 md:h-6/10 text-sm md:text-md xl:text-lg text-black tracking-tight indent-5 ml-0.5 overflow-y-auto">
               An affiliate is someone who helps sell or promote a product or service. They are like a partner to the
               company that makes the product. When the affiliate tells others about the product and those people buy it
               because of the affiliate's recommendation, the affiliate gets a reward, like a small percentage of the
               money from the sale. It's a way for people to earn a little bit of money by sharing things they like with
               others.
-            </div>
+            </p>
             <div className="flex justify-start items-center h-1/10 md:h-2/6 w-full ">
               <span className="w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300">
                 <button className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300">
@@ -1147,8 +1375,8 @@ const HomePage = ({ isAffiliateLink }) => {
               </span>
             </div>
           </div>
-        </div>
-      </div>
+        </aside>
+      </section>
 
       {/* <div className="flex h-4/10 w-full 2xs:w-19/20 md:w-10/12 bg-opacity-60 rounded-t-3xl bg-color60 p-2">
 

@@ -184,6 +184,12 @@ const AdminAddOrEditItem = (props) => {
     ];
     const filteredimageLinks = imageLinks.filter((link) => link !== '');
 
+    if (parseFloat(price) <= 0) {
+      alert('Price must be greater than 0');
+      setLoading(false);
+      return;
+    }
+
     if (itemID.length > 10) {
       alert('Item ID must not exceed 10 characters');
       setLoading(false);
@@ -293,6 +299,13 @@ const AdminAddOrEditItem = (props) => {
 
     if (parseFloat(piecesPerPack) * parseFloat(packsPerBox) !== parseFloat(pieces)) {
       alert('Pieces per pack * Packs per box must be equal to total pieces');
+      setLoading(false);
+      return;
+    }
+
+    
+    if (parseFloat(price) <= 0) {
+      alert('Price must be greater than 0');
       setLoading(false);
       return;
     }
