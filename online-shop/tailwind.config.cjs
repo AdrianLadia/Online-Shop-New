@@ -5,6 +5,13 @@ module.exports = {
   plugins: [],
   theme: {
     extend: {
+      boxShadow: {
+        'inner-top': 'inset 0 15px 25px -5px rgba(0, 0, 0, 0.2), inset 0 8px 15px -5px rgba(0, 0, 0, 0.1)',
+        'inner-right': 'inset -15px 0 25px -5px rgba(0, 0, 0, 0.2), inset -8px 0 15px -5px rgba(0, 0, 0, 0.1)',
+        'inner-bottom': 'inset 0 -15px 25px -5px rgba(0, 0, 0, 0.2), inset 0 -8px 15px -5px rgba(0, 0, 0, 0.1)',
+        'inner-left': 'inset 15px 0 25px -5px rgba(0, 0, 0, 0.2), inset 8px 0 15px -5px rgba(0, 0, 0, 0.1)'
+      },
+      
       height: {
         '1/10': "10%",
         '2/15': "12%",

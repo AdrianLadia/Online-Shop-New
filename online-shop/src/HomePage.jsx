@@ -20,6 +20,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
+
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
   const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, categories } =
@@ -312,6 +313,10 @@ const HomePage = ({ isAffiliateLink }) => {
       );
       setSelectedCategory(item);
     }
+  }
+
+  function handleCatalogue() {
+    navigateTo('/products')
   }
 
   function handleShop() {
@@ -943,6 +948,16 @@ const HomePage = ({ isAffiliateLink }) => {
             </div>
           </div>
         </article>
+        <article className="flex justify-center mt-10">
+          <div className="rounded-lg bg-colorbackground w-4/5 lg:w-2/5">
+            <h1 className="m-5 font-bold text-color10b text-xl">What we do</h1>
+            <p className="m-5">
+              We supply paper bags, meal boxes, aluminum foil, plastic containers, paper bowls, sushi tray, chopsticks,
+              spoon & fork, trash bags, wax paper, aluminum tray, cake boxes ,sauce cups, and more to restaurants, fast
+              food chains, and other businesses in Cebu and the Philippines.
+            </p>
+          </div>
+        </article>
       </section>
 
       {/* Page 3 Products*/}
@@ -968,7 +983,8 @@ const HomePage = ({ isAffiliateLink }) => {
               <nav className="w-11/12 h-6/10 flex flex-col justify-between items-center gap-4 ">
                 <ul className="w-full h-9/10 grid grid-cols-2 p-3 justify-start items-start gap-2 overflow-y-auto shadow-xl">
                   <li>
-                    <button                      onClick={() => handleCategory('Aluminum Foil')}
+                    <button
+                      onClick={() => handleCategory('Aluminum Foil')}
                       className={' ' + productButtonStyle('Aluminum Foil')}
                     >
                       <span className="overflow-x-auto">Aluminum Foil</span>
@@ -976,37 +992,36 @@ const HomePage = ({ isAffiliateLink }) => {
                   </li>
 
                   <li>
-                    <button                      onClick={() => handleCategory('Aluminum Tray')}
+                    <button
+                      onClick={() => handleCategory('Aluminum Tray')}
                       className={' ' + productButtonStyle('Aluminum Tray')}
                     >
                       <span className="overflow-x-auto">Aluminum Tray</span>
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Bowls')}
-                      className={' ' + productButtonStyle('Bowls')}
-                    >
+                    <button onClick={() => handleCategory('Bowls')} className={' ' + productButtonStyle('Bowls')}>
                       <span className="overflow-x-auto">Bowls</span>
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Burger Box')}
+                    <button
+                      onClick={() => handleCategory('Burger Box')}
                       className={' ' + productButtonStyle('Burger Box')}
                     >
                       <span className="overflow-x-auto">Burger Box</span>
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Burger Wrapper')}
+                    <button
+                      onClick={() => handleCategory('Burger Wrapper')}
                       className={' ' + productButtonStyle('Burger Wrapper')}
                     >
                       <span className="overflow-x-auto">Burger Wrapper</span>
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Cake Box')}
-                      className={' ' + productButtonStyle('Cake Box')}
-                    >
+                    <button onClick={() => handleCategory('Cake Box')} className={' ' + productButtonStyle('Cake Box')}>
                       <span className="overflow-x-auto">Cake Box</span>
                     </button>
                   </li>
@@ -1019,30 +1034,31 @@ const HomePage = ({ isAffiliateLink }) => {
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Clamshell')}
+                    <button
+                      onClick={() => handleCategory('Clamshell')}
                       className={' ' + productButtonStyle('Clamshell')}
                     >
                       <span className="overflow-x-auto">Clamshell</span>
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Drink Plastic')}
+                    <button
+                      onClick={() => handleCategory('Drink Plastic')}
                       className={' ' + productButtonStyle('Drink Plastic')}
                     >
                       <span className="overflow-x-auto">Drink Plastic</span>
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Sando Bag')}
+                    <button
+                      onClick={() => handleCategory('Sando Bag')}
                       className={' ' + productButtonStyle('Sando Bag')}
                     >
                       <span className="overflow-x-auto">Fork</span>
                     </button>
                   </li>
                   <li>
-                    <button                      onClick={() => handleCategory('Meal Box')}
-                      className={' ' + productButtonStyle('Meal Box')}
-                    >
+                    <button onClick={() => handleCategory('Meal Box')} className={' ' + productButtonStyle('Meal Box')}>
                       <span className="overflow-x-auto">Meal Box</span>
                     </button>
                   </li>
@@ -1079,18 +1095,12 @@ const HomePage = ({ isAffiliateLink }) => {
                     </button>
                   </li>
                   <li>
-                    <button
-                      onClick={() => handleCategory('Plates')}
-                      className={' ' + productButtonStyle('Plates')}
-                    >
+                    <button onClick={() => handleCategory('Plates')} className={' ' + productButtonStyle('Plates')}>
                       <span className="overflow-x-auto">Plates</span>
                     </button>
                   </li>
                   <li>
-                    <button
-                      onClick={() => handleCategory('Roll Bag')}
-                      className={' ' + productButtonStyle('Roll Bag')}
-                    >
+                    <button onClick={() => handleCategory('Roll Bag')} className={' ' + productButtonStyle('Roll Bag')}>
                       <span className="overflow-x-auto">Roll Bag</span>
                     </button>
                   </li>
@@ -1111,10 +1121,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </button>
                   </li>
                   <li>
-                    <button
-                      onClick={() => handleCategory('Spoon')}
-                      className={' ' + productButtonStyle('Spoon')}
-                    >
+                    <button onClick={() => handleCategory('Spoon')} className={' ' + productButtonStyle('Spoon')}>
                       <span className="overflow-x-auto">Spoon</span>
                     </button>
                   </li>
@@ -1150,12 +1157,11 @@ const HomePage = ({ isAffiliateLink }) => {
                       <span className="overflow-x-auto">Wax Paper</span>
                     </button>
                   </li>
-                  
                 </ul>
               </nav>
               <div className="h-2/10 w-full flex justify-center">
-                <div className="w-32 md:w-36 lg:w-48 flex justify-start ">
-                  <div className="w-32 md:w-36 lg:w-48 h-10 md:h-14 hover:w-0 mt-3 rounded-full ease-in-out duration-300">
+                <div className="flex justify-start ">
+                  <div className="flex gap-2 lg:gap-5 flex-row w-full h-10 md:h-14 ">
                     <button
                       className=" w-32 md:w-36 lg:w-48 h-10 md:h-14 p-3 text-xs sm:text-sm flex justify-center items-center font-normal md:font-semibold rounded-full border bg-color10b border-blue1 hover:bg-blue1 text-white  "
                       onClick={handleShop}
@@ -1163,6 +1169,14 @@ const HomePage = ({ isAffiliateLink }) => {
                       <FaShoppingBag className=" text-xl " />
                       <span> Shop Now!</span>
                     </button>
+                    <button
+                      className=" w-32 md:w-36 lg:w-48 h-10 md:h-14 p-3 text-xs sm:text-sm flex justify-center items-center font-normal md:font-semibold rounded-full border bg-color60 border-green-600 hover:bg-green-600 text-white  "
+                      onClick={handleCatalogue}
+                    >
+                      <BsBookHalf className=" text-xl " />
+                      <span> View Catalogue!</span>
+                    </button>
+
                   </div>
                 </div>
               </div>

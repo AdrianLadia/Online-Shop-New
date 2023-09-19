@@ -32,6 +32,7 @@ import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
+import Products from './products';
 
 const devEnvironment = true;
 
@@ -757,6 +758,14 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <AffiliateForm />
+            </AppContext.Provider>
+          }
+        />
+                <Route
+          path="/products"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <Products />
             </AppContext.Provider>
           }
         />
