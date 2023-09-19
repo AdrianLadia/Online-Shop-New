@@ -222,7 +222,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return res.data;
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      console.log(productId)
+      // throw new Error(error);
     }
   }
 
@@ -235,8 +236,22 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const { error } = schema.validate(toReturn);
 
       if (error) {
-        alert(error.message);
-        throw new Error(error.message);
+        console.log(error);
+        const indexMatch = error.message.match(/\[(\d+)\]/);
+        let index
+        if (indexMatch) {
+          index = parseInt(indexMatch[1], 10);
+        } else {
+          console.log("Index not found in the error message.");
+        }
+
+        const jsonString = JSON.stringify(toReturn[index]);
+        const message = error.message + ' |||||| ' + jsonString;
+        console.log(new AppConfig().getFirestoreDeveloperEmail());
+        new AppConfig().getFirestoreDeveloperEmail().forEach(email => {
+          console.log(email);
+          this.sendEmail({to:email,subject:'Error on productData',text:message})
+        })
       }
 
       return toReturn;

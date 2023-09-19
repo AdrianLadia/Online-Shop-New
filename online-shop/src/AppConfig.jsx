@@ -8,6 +8,11 @@ class AppConfig {
         this.retailSafetyStock = 2
         this.freeDeliveryThreshold = 10000
         this.featuredCategory = 'Meal Box'
+        this.firestoreDeveloperEmail = ['ladia.adrian@gmail.com']
+    }
+
+    getFirestoreDeveloperEmail() {
+        return this.firestoreDeveloperEmail
     }
 
     getFeaturedCategory() {
