@@ -19,6 +19,7 @@ import menuRules from '../../utils/classes/menuRules';
 import AppContext from '../AppContext';
 import {CiDeliveryTruck} from 'react-icons/ci';
 import {MdOutlineCancelPresentation} from 'react-icons/md';
+import {AiFillEdit} from 'react-icons/ai';
 
 const AdminNavBar = () => {
   const { width } = UseWindowDimensions();
@@ -103,6 +104,11 @@ const AdminNavBar = () => {
   const handleClickDelivery = () => {
     setAnchorEl(null);
     navigateTo('/admin/delivery');
+  }
+
+  const handleEditOrders = () => {
+    setAnchorEl(null);
+    navigateTo('/admin/editOrders');
   }
 
   function responsiveSize() {
@@ -318,6 +324,16 @@ const AdminNavBar = () => {
             >
               {' '}
               <CiDeliveryTruck size={20} />     <span>Delivery</span>
+            </MenuItem>
+          ) : null}
+                    {rules.checkIfUserAuthorized('editCustomerOrders') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="delivery"
+              onClick={handleEditOrders}
+            >
+              {' '}
+              <AiFillEdit size={20} />     <span>Edit Order</span>
             </MenuItem>
           ) : null}
         </Menu>

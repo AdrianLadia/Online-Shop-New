@@ -631,6 +631,16 @@ class firestoredb extends firestorefunctions {
       throw new Error(error);
     }
   }
+
+  async readSelectedOrder(orderId) {
+    try{
+      const order = await retryApi(async () => await super.readSelectedDataFromCollection('Orders', orderId));
+      return order;
+    }
+    catch{
+      throw new Error('Order not found');
+    }
+  }
   
   // async markCommissionPending(data, date, id){
   //   const updatedData = []

@@ -5,7 +5,7 @@ class AppConfig {
         this.isDevEnvironment = false
         this.isPaymentSandBox = true
         this.noVat = false
-        this.retailSafetyStock = 2
+        this.retailSafetyStock = 0
         this.freeDeliveryThreshold = 10000
         this.featuredCategory = 'Meal Box'
         this.firestoreDeveloperEmail = ['ladia.adrian@gmail.com']

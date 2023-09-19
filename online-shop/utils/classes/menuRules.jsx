@@ -13,7 +13,7 @@ class menuRules {
             adminChat: ['admin','superAdmin'],
             affiliateClaimRequest: ['superAdmin'],
             delivery: ['delivery','driver','admin','superAdmin'],
-            editCustomerOrders: [],
+            editCustomerOrders: ['superAdmin'],
         }
         this.redirectPage = {
             admin : 'companyDashboard',
