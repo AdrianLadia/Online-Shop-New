@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { BsList, BsX } from 'react-icons/bs';
-import useWindowDimensions from './components/UseWindowDimensions';
+
 
 const Products = () => {
   const categories = [
@@ -11,7 +11,7 @@ const Products = () => {
       description:
         "Crafted for convenience and sustainability, our 'Paper Meal Box With Division' is the ideal solution for portioned meals on the go. Made from high-quality, eco-friendly paper, this meal box features distinct compartments, ensuring that your food items remain separate and fresh. Its sturdy design and compact dimensions make it easy to transport, while the minimalist aesthetic suits a variety of settings. Whether you're packing a work lunch or serving at an event, this divided paper box ensures your meal is presented neatly and remains delectable until it's time to dig in.",
     },
-    { categoryName: 'Aluminum Foil', imagePath: [], description: "" },
+    { categoryName: 'Aluminum Foil', imagePath: ['AFOIL (1)','AFOIL (2)','AFOIL (3)','AFOIL (4)','AFOIL (5)'], description: "" },
     { categoryName: 'Aluminum Tray', imagePath: ['ATRE2300JK', 'ATRE3100J', 'ATRE4300J', 'ATRE650J'], description: "Elevate your party serving game with our disposable food aluminum trays. Specifically designed for convenience and style, these trays are the perfect solution for serving a variety of dishes. Made from high-quality aluminum, they ensure even heat distribution, making them ideal for keeping your food warm and delectably delicious. Their lightweight construction allows for easy transport, and their sleek silver finish adds a touch of elegance to any party setting. Celebrate with ease and flair, knowing your culinary delights are presented in the best possible manner." },
     { categoryName: 'Cake Box', imagePath: [], description: "" },
     { categoryName: 'Chopsticks', imagePath: [], description: "" },
@@ -37,17 +37,7 @@ const Products = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [refs, setRefs] = useState({});
   const [scrolledUpOrDown, setScrolledUpOrDown] = useState(true);
-  const { width } = useWindowDimensions();
-  const [showImageList, setShowImageList] = useState(false);
 
-
-  useEffect(() => {
-    if (width > 640) {
-      setShowImageList(true);
-    } else {
-      setShowImageList(false);
-    }
-  }, [width]);
 
   function openModal(itemId) {
     window.open(`https://starpack.ph/shop?modal=${itemId}`, '_blank');
@@ -164,13 +154,15 @@ const Products = () => {
         }
         return (
           <section ref={refs[category.categoryName]} className="flex flex-col lg:flex-row h-screen ">
-            <div className='flex flex-col justify-center items-center mt-10 lg:w-1/2'>
+            <div className='flex flex-col justify-center items-center mt-10 lg:w-1/2 bg-red-300'>
               <h2 className='text-2xl font-bold text-color10a lg:text-4xl'>{category.categoryName}</h2>
               
-              <div className="flex flex-row overflow-x-auto ml-5 mt-10 ">
+              <div className="flex flex-row overflow-x-auto ml-5 mt-10  ">
                 {category.imagePath.map((image) => {
                   
-                  return <img onClick={() => openModal(image)} className='w-4/5 h-4/5 hover:pointe' src={`/images/${image}.webp`} alt={image} />;
+                  const withoutSpaces = image.replace(/\s/g, '');
+                  const imageItemId = withoutSpaces.replace(/\(\d+\)/g, '');
+                  return <img onClick={() => openModal(imageItemId)} key={image} className='w-4/5 h-4/5 hover:cursor-pointer' src={`/images/${image}.webp`} alt={image} />;
                 })}
               </div>
             </div>
