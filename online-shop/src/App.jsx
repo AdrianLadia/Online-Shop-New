@@ -32,7 +32,7 @@ import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
-import Products from './products';
+import ProductsCatalogue from './components/ProductsCatalogue';
 
 const devEnvironment = true;
 
@@ -765,7 +765,7 @@ function App() {
           path="/products"
           element={
             <AppContext.Provider value={appContextValue}>
-              <Products />
+              <ProductsCatalogue />
             </AppContext.Provider>
           }
         />
