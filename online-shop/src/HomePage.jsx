@@ -204,14 +204,14 @@ const HomePage = ({ isAffiliateLink }) => {
     }
     if (item === 'Burger Wrapper') {
       setSelectedCategoryImage(
-        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bowls.png?alt=media&token=4fec5edb-9d7f-41cd-9553-ff86bdf7b26d'
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FBurger%20Box.png?alt=media&token=3534e5d0-cf4d-4314-a326-3c1aba687a64'
       );
       setSelectedCategory(item);
     }
 
     if (item === 'Burger Box') {
       setSelectedCategoryImage(
-        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Fproducts%2Faluminum%20foil%20suki%2Faluminum%20jumbo%201.png?alt=media&token=bb7da3a4-ccd5-464d-b3e3-2b1dd785c2c6'
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FBurger%20Box.png?alt=media&token=3534e5d0-cf4d-4314-a326-3c1aba687a64'
       );
       setSelectedCategory(item);
     }
@@ -231,7 +231,7 @@ const HomePage = ({ isAffiliateLink }) => {
 
     if (item === 'Clamshell') {
       setSelectedCategoryImage(
-        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FPaper%20Bowls.png?alt=media&token=4fec5edb-9d7f-41cd-9553-ff86bdf7b26d'
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2Fclamshell%20700.png?alt=media&token=bfe9b5c5-a20e-489b-8f7b-94ed71490f59'
       );
       setSelectedCategory(item);
     }
@@ -252,7 +252,7 @@ const HomePage = ({ isAffiliateLink }) => {
 
     if (item === 'Meal Box') {
       setSelectedCategoryImage(
-        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2Fclamshell%20700.png?alt=media&token=bfe9b5c5-a20e-489b-8f7b-94ed71490f59'
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FMeal%20Box.png?alt=media&token=d858fd5f-ab65-4c9a-8297-c224bdbdfe5e'
       );
       setSelectedCategory(item);
     }
@@ -311,6 +311,10 @@ const HomePage = ({ isAffiliateLink }) => {
       setSelectedCategoryImage(
         'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FUtensils.png?alt=media&token=03f715b3-5665-4e95-8e63-8c16e67e1abd'
       );
+      setSelectedCategory(item);
+    }
+    if (item == 'Fork') {
+      setSelectedCategoryImage('https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FUtensils.png?alt=media&token=03f715b3-5665-4e95-8e63-8c16e67e1abd');
       setSelectedCategory(item);
     }
   }
@@ -1051,8 +1055,8 @@ const HomePage = ({ isAffiliateLink }) => {
                   </li>
                   <li>
                     <button
-                      onClick={() => handleCategory('Sando Bag')}
-                      className={' ' + productButtonStyle('Sando Bag')}
+                      onClick={() => handleCategory('Fork')}
+                      className={' ' + productButtonStyle('Fork')}
                     >
                       <span className="overflow-x-auto">Fork</span>
                     </button>
