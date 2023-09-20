@@ -403,6 +403,10 @@ const CheckoutPage = () => {
     setUrlOfBir2303('');
   }
 
+  useEffect(() => {
+    console.log(deliveryVehicle)
+  }, [deliveryVehicle]);
+
   return (
     <ThemeProvider theme={theme}>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
@@ -528,7 +532,7 @@ const CheckoutPage = () => {
             value={localname || ''}
           />
         </div>
-        <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+        
         {allowShipping == false ? (
           <div className="flex justify-center my-5">
             <Typography variant="h7" color="red">
@@ -545,8 +549,10 @@ const CheckoutPage = () => {
               </div>
             ) : (
               <>
-                {area.includes('lalamoveServiceArea') ? (
+                {(area.includes('lalamoveServiceArea') && deliveryVehicle.name != 'motorcycle') ? (
+                  
                   <div>
+                    <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
                     <div className="flex justify-center mt-7">
                       <Typography variant="h4" className="font-bold">
                         Assistance

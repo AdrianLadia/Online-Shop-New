@@ -371,6 +371,8 @@ class businessCalculations {
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
 
+    console.log(needAssistance)
+
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
     }
@@ -391,7 +393,7 @@ class businessCalculations {
     if (error4) {
       throw new Error('Data Validation Error');
     }
-
+    console.log(finalDelFee)
     return finalDelFee;
   }
 

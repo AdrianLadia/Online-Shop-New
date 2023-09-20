@@ -29,7 +29,7 @@ const ProductCardModalTable = (props) => {
 
     Object.keys(props.specs).map((key) => {
         if (isPack) {
-          if (['piecesPerPack','packsPerBox'].includes(key)) {
+          if (['piecesPerPack','packsPerBox','size'].includes(key)) {
             return
           }
         }
