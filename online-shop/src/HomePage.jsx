@@ -20,7 +20,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
-
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
   const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, categories } =
@@ -314,13 +313,15 @@ const HomePage = ({ isAffiliateLink }) => {
       setSelectedCategory(item);
     }
     if (item == 'Fork') {
-      setSelectedCategoryImage('https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FUtensils.png?alt=media&token=03f715b3-5665-4e95-8e63-8c16e67e1abd');
+      setSelectedCategoryImage(
+        'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Photos%2FUtensils.png?alt=media&token=03f715b3-5665-4e95-8e63-8c16e67e1abd'
+      );
       setSelectedCategory(item);
     }
   }
 
   function handleCatalogue() {
-    navigateTo('/products')
+    navigateTo('/products');
   }
 
   function handleShop() {
@@ -440,9 +441,7 @@ const HomePage = ({ isAffiliateLink }) => {
     }
   }
 
-  function spanFooterStyle() {
-    return 'p-1 xs:p-2 rounded-full bg-color60 hover:bg-green1 cursor-pointer';
-  }
+
 
   function menuStyle() {
     if (showMenu == false) {
@@ -1054,10 +1053,7 @@ const HomePage = ({ isAffiliateLink }) => {
                     </button>
                   </li>
                   <li>
-                    <button
-                      onClick={() => handleCategory('Fork')}
-                      className={' ' + productButtonStyle('Fork')}
-                    >
+                    <button onClick={() => handleCategory('Fork')} className={' ' + productButtonStyle('Fork')}>
                       <span className="overflow-x-auto">Fork</span>
                     </button>
                   </li>
@@ -1180,7 +1176,6 @@ const HomePage = ({ isAffiliateLink }) => {
                       <BsBookHalf className=" text-xl " />
                       <span> View Catalogue!</span>
                     </button>
-
                   </div>
                 </div>
               </div>
@@ -1387,8 +1382,13 @@ const HomePage = ({ isAffiliateLink }) => {
             </p>
             <div className="flex justify-start items-center h-1/10 md:h-2/6 w-full ">
               <span className="w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300">
-                <button onClick={() => {alert('We are still testing our shop. We will accept affiliates soon. Stay in touch')}} className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300">
-                  <FaPenSquare  className="ml-1 text-xl" /> <a className=" ml-2">Register</a>
+                <button
+                  onClick={() => {
+                    alert('We are still testing our shop. We will accept affiliates soon. Stay in touch');
+                  }}
+                  className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300"
+                >
+                  <FaPenSquare className="ml-1 text-xl" /> <a className=" ml-2">Register</a>
                 </button>
               </span>
             </div>
@@ -1396,114 +1396,37 @@ const HomePage = ({ isAffiliateLink }) => {
         </aside>
       </section>
 
-      {/* <div className="flex h-4/10 w-full 2xs:w-19/20 md:w-10/12 bg-opacity-60 rounded-t-3xl bg-color60 p-2">
+      <div className="flex flex-row  w-full mt-40  bg-opacity-60 rounded-t-3xl bg-color60 p-2 justify-center">
+        <div className="flex flex-row h-full items-stretch gap-2 rounded-t-3xl overflow-y-auto">
+          <div className="flex  flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-1/2 ">
+            <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
+            <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs">
+              <ul className="h-19/20 w-11/12 flex flex-col justify-evenly items- gap-1 md:gap-2">
+                <li className="text-blue1 hover:text-color10b hover:underline cursor-pointer">
+                  <a href="/">Home</a>
+                </li>
+                <li className="text-blue1 hover:text-color10b hover:underline cursor-pointer">
+                  <a href="/shop">Shop</a>
+                </li>
+                <li className="text-blue1 hover:text-color10b hover:underline cursor-pointer">
+                  <a href="/products">Products</a>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-      <div className=" h-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch gap-2 rounded-t-3xl overflow-y-auto">
-      
-        <div className="overflow-y-hidden flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch min-h-4/10 row-span-2 col-span-2">
-          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Find Us</h1>
-          <div className="flex items-start 2xs:items-center justify-start gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full ">
-            <span className={spanFooterStyle()}>
-              <FaMapMarkerAlt className="text-white" />
-            </span>
-            <p className="text-slate-500 text-xs tracking-tighter overflow-x-auto">
-              9W6M+7GX, P.Sanchez / Pagsabungan Rd, Mandaue City, Cebu.
-            </p>
-          </div>
-          <div className="w-full">
-            <GoogleMaps
-              selectedAddress={selectedAddress}
-              setSelectedAddress={setSelectedAddress}
-              locallatitude={locallatitude}
-              setLocalLatitude={setLocalLatitude}
-              locallongitude={locallongitude}
-              setLocalLongitude={setLocalLongitude}
-              setLocalDeliveryAddress={setLocalDeliveryAddress}
-              zoom={zoom}
-              setZoom={setZoom}
-              setAddressText={setAddressText}
-              forFooter={true}
-            />
-          </div>
-        </div>
-     
-
-        <div className="flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
-          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Menu</h1>
-          <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full text-xs">
-            <ul className="h-19/20 w-11/12 flex flex-col justify-evenly items- gap-1 md:gap-2">
-              <li
-                onClick={() => {
-                  scroll('page1');
-                }}
-                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-              >
-                Home
-              </li>
-              <li
-                onClick={() => {
-                  scroll('page2');
-                }}
-                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-              >
-                About Us
-              </li>
-              <li
-                onClick={() => {
-                  scroll('page3');
-                }}
-                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-              >
-                Products
-              </li>
-              <li
-                onClick={() => {
-                  scroll('page4');
-                }}
-                className="text-blue1 hover:text-color10b hover:underline cursor-pointer"
-              >
-                Affiliate Program
-              </li>
-            </ul>
-          </div>
-        </div>
-        Call Us
-        <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
-          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Call Us</h1>
-          <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full">
-            <span className={spanFooterStyle()}>
-              <FaPhoneAlt className="text-white" />
-            </span>
-            <p className="text-slate-500 text-xs tracking-tight overflow-x-auto">09178927206</p>
-          </div>
-        </div>
-        Mail Us
-        <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white w-stretch ">
-          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Mail Us</h1>
-          <div className="flex justify-start items-center gap-2 p-2 mt-1 rounded-t-xl bg-slate-100 w-full h-full">
-            <span className={spanFooterStyle()}>
-              <FaGoogle className="text-white" />
-            </span>
-            <p className="text-slate-500 text-xs tracking-tight hyphens-auto overflow-x-auto">test@gmail.com</p>
-          </div>
-        </div>
-        Follow Us
-        <div className=" flex flex-col justify-start items-start p-3 gap-1 rounded-t-xl bg-white  w-stretch ">
-          <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Follow Us</h1>
-          <div className="flex justify-around items-center gap-1 bg-slate-100 rounded-t-xl w-full mt-1 p-2 h-full">
-            <span className={spanFooterStyle()}>
-              <FaFacebookF className="text-white" />
-            </span>
-            <span className={spanFooterStyle()}>
-              <FaViber className="text-white" />
-            </span>
-            <span className={spanFooterStyle()}>
-              <FaInstagram className="text-white" />
-            </span>
+          <div className=" flex flex-col justify-start  items-start p-3 gap-1 rounded-t-xl bg-white  w-1/2 ">
+            <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Follow Us</h1>
+            <div className="flex justify-around items-center gap-1 bg-slate-100 rounded-t-xl w-full mt-1 p-2 h-full">
+              <a href="https://www.facebook.com/StarPackPh" target="_blank" rel="noopener noreferrer">
+                <div className='w-full p-5 xs:p-2 rounded-full bg-color60 hover:bg-green1 cursor-pointer'>
+                  <FaFacebookF className="text-white" />
+                </div>
+              </a>
+            </div>
           </div>
         </div>
       </div>
-      </div> */}
 
       {/* Copyright */}
       {/* <div className=" h-1/10 w-full flex flex-col justify-start items-center gap-2 bg-color60 bg-opacity-50">

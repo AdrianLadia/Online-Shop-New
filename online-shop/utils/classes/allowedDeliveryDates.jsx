@@ -13,7 +13,6 @@ class allowedDeliveryDates {
   
     excludeDates = (date) => {
         if (this.holidays.includes(date.toLocaleDateString())) {
-            console.log('date is excluded', date)
             return false;
 
         }
