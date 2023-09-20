@@ -1387,8 +1387,8 @@ const HomePage = ({ isAffiliateLink }) => {
             </p>
             <div className="flex justify-start items-center h-1/10 md:h-2/6 w-full ">
               <span className="w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300">
-                <button className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300">
-                  <FaPenSquare className="ml-1 text-xl" /> <a className=" ml-2">Register</a>
+                <button onClick={() => {alert('We are still testing our shop. We will accept affiliates soon. Stay in touch')}} className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300">
+                  <FaPenSquare  className="ml-1 text-xl" /> <a className=" ml-2">Register</a>
                 </button>
               </span>
             </div>
