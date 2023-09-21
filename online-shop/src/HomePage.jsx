@@ -531,15 +531,6 @@ const HomePage = ({ isAffiliateLink }) => {
     >
       <Helmet>
         <title>Star Pack: Cebu's Leading Online Packaging Supplier</title>
-        <meta
-          property="og:description"
-          content="Star Pack: Cebu's Leading Online Packaging Supplier. Paper Bags, Meal Boxes, Food Wrappers, Plastic Containers, Utensils, Trash Bags, and more."
-        />
-        <meta
-          property="description"
-          content="Star Pack: Cebu's Leading Online Packaging Supplier. Paper Bags, Meal Boxes, Food Wrappers, Plastic Containers, Utensils, Trash Bags, and more."
-        />
-        <meta property="og:url" content="https://www.starpack.ph/" />
       </Helmet>
 
       {/* Navigation Bar */}

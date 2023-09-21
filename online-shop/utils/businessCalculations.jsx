@@ -16,7 +16,7 @@ class businessCalculations {
   readAllParentProductsFromOnlineStoreProducts(products) {
     const parentProducts = [];
     products.map((product) => {
-      if (['',null].includes(product.parentProductID)) {
+      if (['', null].includes(product.parentProductID)) {
         parentProducts.push(product.itemId);
       }
     });
@@ -371,7 +371,7 @@ class businessCalculations {
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
 
-    console.log(needAssistance)
+    console.log(needAssistance);
 
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
@@ -393,7 +393,7 @@ class businessCalculations {
     if (error4) {
       throw new Error('Data Validation Error');
     }
-    console.log(finalDelFee)
+    console.log(finalDelFee);
     return finalDelFee;
   }
 
@@ -414,7 +414,7 @@ class businessCalculations {
       const productData = await this.cloudfirestore.readSelectedDataFromOnlineStore(key);
       return productData;
     });
-    
+
     const products = await Promise.all(cartProductPromises);
 
     Object.entries(cart).map(([itemId, quantity]) => {
@@ -464,7 +464,12 @@ class businessCalculations {
     }
   }
 
-  getValueAddedTax(totalPrice, urlOfBir2303, noVat = new AppConfig().getNoVat()) {
+  getValueAddedTax(totalPrice, urlOfBir2303, isInvoiceNeeded, noVat = new AppConfig().getNoVat()) {
+    console.log(isInvoiceNeeded);
+    console.log(urlOfBir2303);
+    if (isInvoiceNeeded == false) {
+      return 0;
+    }
     if (urlOfBir2303 == '') {
       return 0;
     }
@@ -519,13 +524,13 @@ class businessCalculations {
     return grandTotal;
   }
 
-  addToCart(cart, product,stocksAvailable) {
+  addToCart(cart, product, stocksAvailable) {
     const cartSchema = Joi.object().required();
     const productSchema = Joi.string().required();
 
     const { error1 } = cartSchema.validate(cart);
     const { error2 } = productSchema.validate(product);
-    
+
     if (error1 || error2) {
       throw new Error('Data Validation Error');
     }
@@ -536,8 +541,7 @@ class businessCalculations {
 
     if (cart[product] + 1 <= stocksAvailable) {
       cart[product] += 1;
-    }
-    else {
+    } else {
       alert('Not enough stocks available');
     }
 

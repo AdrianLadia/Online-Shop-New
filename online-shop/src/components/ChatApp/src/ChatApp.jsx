@@ -114,7 +114,7 @@ const ChatApp = (props) => {
           content="Have questions? Contact Star Pack today for all your packaging needs."
         />
         <meta property="og:url" content="https://www.starpack.ph/message-us" />
-        <link rel="canonical" href="https://www.starpack.ph/message-us" />
+        
       </Helmet>
 
       {userdata ? (

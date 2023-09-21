@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { BsList, BsX } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 const ProductsCatalogue = () => {
   const categories = [
@@ -408,6 +409,18 @@ const ProductsCatalogue = () => {
 
   return (
     <div className="flex flex-col">
+       <Helmet>
+        <title>Product Catalogue of Star Pack</title>
+        <meta
+          property="og:description"
+          content="View our product catalogue of eco-friendly and biodegradable products."
+        />
+        <meta
+          property="description"
+          content="View our product catalogue of eco-friendly and biodegradable products. "
+        />
+        <meta property="og:url" content="https://www.starpack.ph/" />
+      </Helmet>
       <div className=" h-16"></div>
       <div className="flex justify-center items-center mb-16 mt-10">
         <h1 className="text-2xl font-bold lg:text-6xl text-color10b">Starpack's product catalogue</h1>

@@ -41,7 +41,7 @@ const Shop = () => {
         />
         <meta property="og:url" content="https://www.starpack.ph/shop" />
         <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fstarpack.png?alt=media&token=e108388d-74f7-45a1-8344-9c6af612f053" />
-        <link rel="canonical" href="https://www.starpack.ph/shop" />
+        
       </Helmet>
 
       {/* <OpeningSoonModal /> */}

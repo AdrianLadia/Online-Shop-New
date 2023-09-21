@@ -17,9 +17,9 @@ import { TbAffiliate } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 import menuRules from '../../utils/classes/menuRules';
 import AppContext from '../AppContext';
-import {CiDeliveryTruck} from 'react-icons/ci';
-import {MdOutlineCancelPresentation} from 'react-icons/md';
-import {AiFillEdit} from 'react-icons/ai';
+import { CiDeliveryTruck } from 'react-icons/ci';
+import { MdOutlineCancelPresentation } from 'react-icons/md';
+import { AiFillEdit } from 'react-icons/ai';
 
 const AdminNavBar = () => {
   const { width } = UseWindowDimensions();
@@ -55,7 +55,7 @@ const AdminNavBar = () => {
   const handleClickVoidPayment = () => {
     setAnchorEl(null);
     navigateTo('/admin/voidPayment');
-  }
+  };
 
   const handleClickCustomerOrders = () => {
     setAnchorEl(null);
@@ -65,7 +65,7 @@ const AdminNavBar = () => {
   const handleEditCustomerOrders = () => {
     setAnchorEl(null);
     navigateTo('/admin/editCustomerOrder');
-  }
+  };
 
   const handleClickAnalytics = () => {
     setAnchorEl(null);
@@ -104,12 +104,12 @@ const AdminNavBar = () => {
   const handleClickDelivery = () => {
     setAnchorEl(null);
     navigateTo('/admin/delivery');
-  }
+  };
 
   const handleEditOrders = () => {
     setAnchorEl(null);
     navigateTo('/admin/editOrders');
-  }
+  };
 
   function responsiveSize() {
     if (width < 650) {
@@ -262,14 +262,15 @@ const AdminNavBar = () => {
               <BsBagCheck size={19} />     <span>Customer Orders</span>
             </MenuItem>
           ) : null}
+
           {rules.checkIfUserAuthorized('editCustomerOrders') ? (
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-              id="customerOrdersMenu"
-              onClick={handleEditCustomerOrders}
+              id="delivery"
+              onClick={handleEditOrders}
             >
               {' '}
-              <BsBagCheck size={19} />     <span>Edit Customer Order</span>
+              <AiFillEdit size={20} />     <span>Edit Order</span>
             </MenuItem>
           ) : null}
           {/* <Divider className="mt-0.5"/>   */}
@@ -324,16 +325,6 @@ const AdminNavBar = () => {
             >
               {' '}
               <CiDeliveryTruck size={20} />     <span>Delivery</span>
-            </MenuItem>
-          ) : null}
-                    {rules.checkIfUserAuthorized('editCustomerOrders') ? (
-            <MenuItem
-              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-              id="delivery"
-              onClick={handleEditOrders}
-            >
-              {' '}
-              <AiFillEdit size={20} />     <span>Edit Order</span>
             </MenuItem>
           ) : null}
         </Menu>

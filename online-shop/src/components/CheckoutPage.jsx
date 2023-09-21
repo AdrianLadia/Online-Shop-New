@@ -187,9 +187,11 @@ const CheckoutPage = () => {
         products,
         cart,
         null,
-        urlOfBir2303
+        urlOfBir2303,
+        isInvoiceNeeded
       );
-
+      console.log(isInvoiceNeeded)
+      console.log(vat)
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
@@ -197,7 +199,7 @@ const CheckoutPage = () => {
       setTotalWeight(total_weight_non_state);
     }
     getTableData();
-  }, [urlOfBir2303]);
+  }, [urlOfBir2303,isInvoiceNeeded]);
 
   // PAYMENT METHODS
   useEffect(() => {

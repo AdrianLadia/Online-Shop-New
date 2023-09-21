@@ -491,7 +491,7 @@ class dataManipulation {
     return categoryWithFavorites;
   }
 
-  getCheckoutPageTableDate(product_list, cart, cartItemPrice, urlOfBir2303) {
+  getCheckoutPageTableDate(product_list, cart, cartItemPrice, urlOfBir2303,isInvoiceNeeded) {
     const productListSchema = Joi.array();
     const productListCart = Joi.object();
 
@@ -559,7 +559,7 @@ class dataManipulation {
     });
 
     const businesscalculations = new businessCalculations();
-    const vat = businesscalculations.getValueAddedTax(total_non_state, urlOfBir2303);
+    const vat = businesscalculations.getValueAddedTax(total_non_state, urlOfBir2303, isInvoiceNeeded);
     const items_total = total_non_state - vat;
 
     const toReturn = [rows_non_state, items_total, total_weight_non_state, vat];

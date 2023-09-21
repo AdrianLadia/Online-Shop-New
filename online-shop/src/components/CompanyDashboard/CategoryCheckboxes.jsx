@@ -15,7 +15,7 @@ const CategoryCheckboxes = ({categories, setAllowedCategories, allowedCategories
         {categories?categories.map((type, index)=>{
           if (type != 'Favorites'){
             return (
-              <div id='index' className='tracking-wide text-sm flex flex-col justify-center items-center'>
+              <div key={type} id='index' className='tracking-wide text-sm flex flex-col justify-center items-center'>
                 <input onChange={()=>handleClick(type)} checked={allowedCategories.includes(type)} 
                        className='accent-green-600' id={type} type='checkbox' />
                 <label htmlFor={type}>{type}</label>

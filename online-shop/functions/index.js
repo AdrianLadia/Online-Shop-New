@@ -1886,16 +1886,6 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
 
         console.log(itemDetails);
 
-        // await Promise.all(
-        //   cartUniqueItems.map(async (c) => {
-        //     const productRef = db.collection('Products').doc(c);
-        //     const productdoc = await transaction.get(productRef);
-        //     // currentInventory.push(productdoc.data().stocksAvailable)
-        //     ordersOnHold[c] = productdoc.data().stocksOnHold;
-        //     currentInventory[c] = productdoc.data().stocksAvailable;
-        //   })
-        // );
-
         let newItemsTotal = 0;
         Object.keys(cart).forEach((itemId) => {
           const itemData = itemDetails.find((item) => item.itemId == itemId);
@@ -1907,11 +1897,21 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderDoc = await transaction.get(orderRef);
         const orderData = orderDoc.data();
-        const newGrandTotal = newItemsTotal + orderData.shippingTotal + orderData.vat;
+
+        if (orderData.vat == 0) {
+          const newGrandTotal = newItemsTotal + orderData.shippingTotal + orderData.vat;
+          transaction.update(orderRef, { cart: cart, itemsTotal: newItemsTotal, grandTotal: newGrandTotal });
+        }
+
+        if (orderData.vat > 0) {
+          const itemsTotalLessVat = newItemsTotal / 1.12;
+          const vat = newItemsTotal - itemsTotalLessVat;
+          const newGrandTotal = itemsTotalLessVat + orderData.shippingTotal + vat;
+          transaction.update(orderRef, { cart: cart, itemsTotal: itemsTotalLessVat, grandTotal: newGrandTotal, vat: vat });
+        }
 
         // WRITE
 
-        transaction.update(orderRef, { cart: cart, itemsTotal: newItemsTotal, grandTotal: newGrandTotal });
       });
       res.status(200).send('Order edited successfully');
     } catch (error) {
