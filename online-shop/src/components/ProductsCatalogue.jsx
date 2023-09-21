@@ -499,7 +499,7 @@ const ProductsCatalogue = () => {
                       loading="lazy"
                       onClick={() => openModal(imageItemId)}
                       key={image.id}
-                      className="h-80 lg:h-full hover:cursor-pointer bg-red-300 "
+                      className="h-80 lg:h-full hover:cursor-pointer"
                       src={image.url}
                       alt={`Photo ${index + 1} of ${category.categoryName}`}
                     />
