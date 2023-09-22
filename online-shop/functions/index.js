@@ -608,6 +608,7 @@ exports.transactionPlaceOrder = functions
                 const productdoc = await transaction.get(productRef);
                 // currentInventory.push(productdoc.data().stocksAvailable)
                 ordersOnHold[c] = productdoc.data().stocksOnHold;
+
                 currentInventory[c] = productdoc.data().stocksAvailable;
               })
             );
@@ -1884,19 +1885,71 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
           })
         );
 
-        console.log(itemDetails);
-
         let newItemsTotal = 0;
+        const cartItemReferences = [];
+
         Object.keys(cart).forEach((itemId) => {
           const itemData = itemDetails.find((item) => item.itemId == itemId);
           const quantity = cart[itemId];
           const total = itemData.price * quantity;
           newItemsTotal += total;
+          const itemRef = db.collection('Products').doc(itemId);
+          cartItemReferences.push(itemRef);
         });
+
+        
 
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderDoc = await transaction.get(orderRef);
         const orderData = orderDoc.data();
+
+        console.log('cartItemReferences',cartItemReferences)
+
+        // await Promise.all(
+        //   allCartItems.map(async (itemId) => {
+        //     const productRef = db.collection('Products').doc(itemId);
+        //     const productGet = await productRef.get();
+        //     const prodData = productGet.data();
+    
+        //     const stocksAvailable = prodData.stocksAvailable;
+        //     const stocksOnHold = prodData.stocksOnHold;
+        //     stocksToAdjust[itemId] = stocksAvailable;
+        //     stocksOnHoldToAdjust[itemId] = stocksOnHold;
+        //   })
+        // );
+
+        const promises = cartItemReferences.map(async (itemRef) => {
+          return transaction.get(itemRef);
+        });
+
+        const itemDocs = await Promise.all(promises);
+
+        const itemData = itemDocs.map((itemDoc) => itemDoc.data());
+
+        // reference: reference, quantity: orderQuantity, userId: userid
+        const _stockOnHoldList = []
+        itemData.forEach((item) => {
+          const stockOnHoldList = item.stocksOnHold;
+          stockOnHoldList.forEach((stockOnHold) => {
+            if (stockOnHold.reference == orderReference) {
+              stockOnHold.quantity = cart[item.itemId];
+            }
+          });
+          console.log()
+          _stockOnHoldList[item.itemId] = stockOnHoldList;
+        });
+
+        console.log('stockOnHoldList',_stockOnHoldList)
+
+        // WRITE
+        Object.keys(_stockOnHoldList).forEach((itemId) => {
+          const itemRef = db.collection('Products').doc(itemId);
+          transaction.update(itemRef, { stocksOnHold: stockOnHoldList[itemId] });
+        });
+        // changedStockOnHold.forEach((stockOnHold) => {
+        //   const itemRef = db.collection('Products').doc(stockOnHold.itemId);
+        //   transaction.update(itemRef, { stocksOnHold: stockOnHold });
+        // })
 
         if (orderData.vat == 0) {
           const newGrandTotal = newItemsTotal + orderData.shippingTotal + orderData.vat;
@@ -1907,11 +1960,18 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
           const itemsTotalLessVat = newItemsTotal / 1.12;
           const vat = newItemsTotal - itemsTotalLessVat;
           const newGrandTotal = itemsTotalLessVat + orderData.shippingTotal + vat;
-          transaction.update(orderRef, { cart: cart, itemsTotal: itemsTotalLessVat, grandTotal: newGrandTotal, vat: vat });
+          console.log('newItemsTotal', newItemsTotal);
+          console.log('itemsTotalLessVat', itemsTotalLessVat);
+          console.log('vat', vat);
+          console.log('newGrandTotal', newGrandTotal);
+
+          transaction.update(orderRef, {
+            cart: cart,
+            itemsTotal: itemsTotalLessVat,
+            grandTotal: newGrandTotal,
+            vat: vat,
+          });
         }
-
-        // WRITE
-
       });
       res.status(200).send('Order edited successfully');
     } catch (error) {
