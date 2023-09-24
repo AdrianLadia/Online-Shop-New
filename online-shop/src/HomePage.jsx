@@ -538,7 +538,7 @@ const HomePage = ({ isAffiliateLink }) => {
         {/* Logo */}
         <div className="w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 ">
           <img
-            src={'/favicon.ico'}
+            src={'/android-chrome-512x512.png'}
             alt="logo"
             className=" h-14 w-14  rounded-full cursor-pointer"
             // onClick={()=>{scroll("page1")}}
