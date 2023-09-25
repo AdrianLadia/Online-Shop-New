@@ -4,6 +4,7 @@ import AppContext from '../AppContext';
 import GuestSignInModal from './GuestSignInModal';
 import { CircularProgress } from '@mui/material';
 import UnsupportedBrowserRedirect from './UnsupportedBrowserRedirect';
+import AppConfig from '../AppConfig';
 
 const CheckoutButton = (props) => {
 
@@ -28,6 +29,11 @@ const CheckoutButton = (props) => {
   }
 
   function onCheckoutButtonClick() {
+      const minimumOrder = new AppConfig().getMinimumOrder();
+      if (totalPrice < minimumOrder) {
+        alert("Minimum order is " + minimumOrder + " pesos.")
+        return;
+      }
     // if(totalCredit < 50000){
 
       if (!isSupportedBrowser) {

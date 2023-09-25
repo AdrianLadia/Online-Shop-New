@@ -278,7 +278,15 @@ const CheckoutPage = () => {
     let orderdata = null;
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
+
   async function onPlaceOrder() {
+
+    const minimumOrder = new AppConfig().getMinimumOrder();
+    if (parseFloat(total) < minimumOrder) {
+      alert(`Minimum order is ${minimumOrder} pesos`);
+      return;
+    }
+
     if (isInvoiceNeeded) {
       if (urlOfBir2303 === '') {
         alert(

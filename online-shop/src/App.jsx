@@ -198,10 +198,11 @@ function App() {
     setIsAndroidDevice(/android/.test(userAgent));
     setIsGoogleChrome(/chrome/.test(userAgent));
   }, []);
-
+  
   // GET USER BROWSER
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
+    console.log(userAgent)
     if (document.documentElement.classList.contains('in-app-browser')) {
       return false;
     }
@@ -224,9 +225,10 @@ function App() {
       userAgent.indexOf('MSIE ') > -1 ||
       userAgent.indexOf('Trident/') > -1
     ) {
+      console.log('supported browser')
       return true;
     }
-
+    console.log('unsupported browser last')
     return false;
   }
 
