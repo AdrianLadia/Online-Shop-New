@@ -1944,7 +1944,7 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
         // WRITE
         Object.keys(_stockOnHoldList).forEach((itemId) => {
           const itemRef = db.collection('Products').doc(itemId);
-          transaction.update(itemRef, { stocksOnHold: stockOnHoldList[itemId] });
+          transaction.update(itemRef, { stocksOnHold: _stockOnHoldList[itemId] });
         });
         // changedStockOnHold.forEach((stockOnHold) => {
         //   const itemRef = db.collection('Products').doc(stockOnHold.itemId);
