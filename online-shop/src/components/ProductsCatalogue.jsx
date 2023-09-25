@@ -431,7 +431,7 @@ const ProductsCatalogue = () => {
             <div className="rounded ">
               <img
                 onClick={onLogoClick}
-                src="/favicon.ico"
+                src="/android-chrome-512x512.png"
                 alt="logo"
                 className="rounded-full h-12 w-12 hover:cursor-pointer"
               />

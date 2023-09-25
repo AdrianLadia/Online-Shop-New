@@ -52,7 +52,6 @@ function delay(ms) {
     qrLink = 'https://paymaya.me/starpack';
   }
 
-  useEffect(() => {console.log(paymentMethodSelected)}, [paymentMethodSelected]);
 
   async function onUpload(url) {
     const timestamp = Timestamp.fromDate(date);

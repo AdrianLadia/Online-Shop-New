@@ -222,7 +222,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return res.data;
     } catch (error) {
       console.log(error);
-      console.log(productId)
       // throw new Error(error);
     }
   }
@@ -249,7 +248,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         const message = error.message + ' |||||| ' + jsonString;
         console.log(new AppConfig().getFirestoreDeveloperEmail());
         new AppConfig().getFirestoreDeveloperEmail().forEach(email => {
-          console.log(email);
           this.sendEmail({to:email,subject:'Error on productData',text:message})
         })
       }

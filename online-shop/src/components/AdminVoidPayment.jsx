@@ -36,12 +36,6 @@ const AdminVoidPayment = ({ users }) => {
     }
   }, [users]);
 
-  useEffect(() => {
-    console.log(allUsersData);
-  }, [allUsersData]);
-  useEffect(() => {
-    console.log(allUserNames);
-  }, [allUserNames]);
 
   useEffect(() => {
     if (selectedName != '') {
@@ -64,7 +58,6 @@ const AdminVoidPayment = ({ users }) => {
         }
       });
 
-      console.log(filteredPayments);
       setSelectedUserPayments(filteredPayments);
 
       setAllUserPaymentsIds(filteredPayments.map((data) => data.reference));
@@ -73,7 +66,6 @@ const AdminVoidPayment = ({ users }) => {
 
   useEffect(() => {
     if (selectedPaymentReference != '') {
-      console.log(selectedPaymentReference);
       const selectedPayment = selectedUserPayments.filter((data) => {
         if (data.reference === selectedPaymentReference) {
           return data;
