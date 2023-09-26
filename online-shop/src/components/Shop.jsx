@@ -46,7 +46,7 @@ const Shop = () => {
 
       {/* <OpeningSoonModal /> */}
       {/* HOW TO ORDER */}
-      <div className="flex w-full text-gray-700 flex-col gap-5 mt-5  justify-center">
+      <div className="flex w-full text-gray-700 flex-col gap-5 mt-5 justify-center">
         <Typography variant="h5"  className="text-center text font-bold">
           How to order
         </Typography>

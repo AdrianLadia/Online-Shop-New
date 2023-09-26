@@ -9,6 +9,19 @@ class storeProductsOrganizer {
   }
 
   getOrderOfProducts() {
+
+    if (this.productCategory == 'Roll Bag') {
+      this.orderOfProducts = [
+        'RB5X9MR','RB8X12TB','RB10X16TB','RB16X24'
+      ]
+    }
+
+    if (this.productCategory == 'Sando Bag') {
+      this.orderOfProducts = [
+        'SBAGWS','SBAGWM','SBAGWL','SBAGWXL'
+      ]
+    }
+
     if (this.productCategory == 'Paper Bag') {
       this.orderOfProducts = [
         'PPB#1',
