@@ -18,7 +18,7 @@ const ImageUploadButton = (props) => {
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
   const disableButton = props.disabled;
-  const setImageProof = props.setImageProof
+  const setImageProof = props.setImageProof;
 
   const [buttonColor, setButtonColor] = useState(false);
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -28,57 +28,78 @@ const ImageUploadButton = (props) => {
     setLoading(true);
     const file = event.target.files[0];
     if (file) {
+      console.log(`Original file size: ${file.size / 1024} KB`); // Logging the original file size
       const reader = new FileReader();
       reader.onloadend = () => {
         if (setPreviewImage !== undefined) {
           setPreviewImage(reader.result);
         }
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          const maxWidth = 800;
+          const maxHeight = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            async (blob) => {
+              console.log(`Compressed file size: ${blob.size / 1024} KB`); // Logging the compressed file size
+              if (fileName === undefined) {
+                fileName = file.name;
+              }
+              const ordersRefStorage = ref(storage, folderName + '/' + uuidv4() + fileName);
+              try {
+                await uploadBytes(ordersRefStorage, blob);
+
+                const downloadURL = await getDownloadURL(ordersRefStorage);
+
+                if (onUploadFunction !== undefined) {
+                  try {
+                    await onUploadFunction(downloadURL);
+                    setButtonText('Uploaded Successfully');
+                    setLoading(false);
+                  } catch (error) {
+                    alert('Error uploading image. Please try again.');
+                    return;
+                  }
+                }
+
+                const downloadUrlSchema = Joi.string().uri().required();
+                const { error } = downloadUrlSchema.validate(downloadURL);
+                if (error) {
+                  alert('Error uploading image. Please try again.');
+                } else {
+                  alert('Image uploaded successfully.');
+                }
+              } catch {
+                alert('Error uploading image. Please try again.');
+              }
+            },
+            'image/jpeg',
+            0.8
+          );
+        };
       };
       reader.readAsDataURL(file);
-      // Perform image upload operations here
-      if (fileName === undefined) {
-        fileName = file.name;
-      }
-
-      const ordersRefStorage = ref(storage, folderName + '/' + uuidv4() + fileName);
-
-      try {
-        
-        uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
-          setButtonColor(true);
-
-  
-          // GET IMAGE URL
-          const downloadURL = await getDownloadURL(ordersRefStorage);
-
-  
-          if (onUploadFunction !== undefined) {
-            try{
-              await onUploadFunction(downloadURL);
-              setButtonText('Uploaded Successfuly');
-              setLoading(false);
-            }
-            catch(error){
-              alert('Error uploading image. Please try again.');
-              return
-            }
-          }
-
-          const downloadUrlSchema = Joi.string().uri().required();
-
-          const {error} = downloadUrlSchema.validate(downloadURL);
-          if (error) {
-            alert('Error uploading image. Please try again.');
-          }
-          else {
-            alert('Image uploaded successfully.');
-    
-          }
-        });
-      }
-      catch {
-        alert('Error uploading image. Please try again.');
-      }
     } else {
       setLoading(false);
     }
