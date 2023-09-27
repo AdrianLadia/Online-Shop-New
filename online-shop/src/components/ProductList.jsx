@@ -111,7 +111,7 @@ const ProductList = (props) => {
   }
 
   return (
-    <div className="mb-16 mt-5 ">
+    <div className="mb-16 mt-5 h-screen">
       <div id="productList" className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
