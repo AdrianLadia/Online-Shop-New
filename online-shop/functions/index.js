@@ -1,6 +1,13 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const sharp = require('sharp');
 const cors = require('cors');
+const multer = require('multer');
+const storage = multer.memoryStorage(); // This will keep the uploaded image in memory
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 }  // Allow for 10MB files
+});
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({
   origin: [
@@ -1897,20 +1904,18 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
           cartItemReferences.push(itemRef);
         });
 
-        
-
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderDoc = await transaction.get(orderRef);
         const orderData = orderDoc.data();
 
-        console.log('cartItemReferences',cartItemReferences)
+        console.log('cartItemReferences', cartItemReferences);
 
         // await Promise.all(
         //   allCartItems.map(async (itemId) => {
         //     const productRef = db.collection('Products').doc(itemId);
         //     const productGet = await productRef.get();
         //     const prodData = productGet.data();
-    
+
         //     const stocksAvailable = prodData.stocksAvailable;
         //     const stocksOnHold = prodData.stocksOnHold;
         //     stocksToAdjust[itemId] = stocksAvailable;
@@ -1927,7 +1932,7 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
         const itemData = itemDocs.map((itemDoc) => itemDoc.data());
 
         // reference: reference, quantity: orderQuantity, userId: userid
-        const _stockOnHoldList = []
+        const _stockOnHoldList = [];
         itemData.forEach((item) => {
           const stockOnHoldList = item.stocksOnHold;
           stockOnHoldList.forEach((stockOnHold) => {
@@ -1935,11 +1940,11 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
               stockOnHold.quantity = cart[item.itemId];
             }
           });
-          console.log()
+          console.log();
           _stockOnHoldList[item.itemId] = stockOnHoldList;
         });
 
-        console.log('stockOnHoldList',_stockOnHoldList)
+        console.log('stockOnHoldList', _stockOnHoldList);
 
         // WRITE
         Object.keys(_stockOnHoldList).forEach((itemId) => {
@@ -1977,6 +1982,44 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
     } catch (error) {
       console.log(error);
       res.status(400).send('Error editing order');
+    }
+  });
+});
+
+exports.compressImage = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    try {
+      if (req.method !== 'POST') {
+        res.status(405).send('Method not allowed'); // Only allow POST requests
+        return;
+      }
+
+      upload.single('image')(req, res, async (err) => {
+        if (err instanceof multer.MulterError) {
+          // A Multer error occurred when uploading.
+          console.error('Multer error:', err);
+          res.status(500).send('Error uploading file');
+          return;
+        } else if (err) {
+          // An unknown error occurred when uploading.
+          console.error('Upload error:', err);
+          res.status(500).send('Error uploading file');
+          return;
+        }
+
+        // Access the uploaded file from req.file
+        const imageBuffer = req.file.buffer;
+
+        const compressedImageBuffer = await sharp(imageBuffer)
+          .jpeg({ quality: 80 }) // Or adapt based on the image type
+          .toBuffer();
+
+        res.contentType('image/jpeg');
+        res.send(compressedImageBuffer);
+      });
+    } catch (error) {
+      console.error('Error compressing image:', error);
+      res.status(500).send('Internal server error');
     }
   });
 });
