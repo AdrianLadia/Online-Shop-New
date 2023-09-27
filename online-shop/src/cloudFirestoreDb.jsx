@@ -594,30 +594,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error('Error editing order');
     }
   }
-
-  async compressImage(file) {
-    const formData = new FormData();
-    formData.append('image', file);
-    const res = await axios.post(`${this.url}compressImage`, formData, {
-      headers: {      
-        'Content-Type': 'multipart/form-data'
-      },
-      responseType: 'arraybuffer'  //
-    });
-    // const jsonData = JSON.stringify({ test: 'test' })
-    // const res = await axios.post(`${this.url}compressImage`, jsonData, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-
-    const compressedImage = new Blob([res.data], { type: 'image/jpeg' });
-    const compressedFile = new File([compressedImage], 'compressed_' + file.name, { type: 'image/jpeg' });
-
-    console.log('compressedFile', compressedFile);
-    return compressedFile;
-  }
-
 }
 
 export default cloudFirestoreDb;
