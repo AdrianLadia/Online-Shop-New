@@ -212,6 +212,13 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async readSelectedDataFromOnlineStore(productId) {
+    console.log(productId)
+
+    if (!productId) {
+      console.log('productId is null')
+      return
+    }
+
     try {
       const jsonData = JSON.stringify({ productId: productId });
       const res = await axios.post(`${this.url}readSelectedDataFromOnlineStore`, jsonData, {

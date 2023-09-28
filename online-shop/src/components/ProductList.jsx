@@ -58,12 +58,7 @@ const ProductList = (props) => {
       });
     }
   }, [modalSelected]);
-  useEffect(() => {
-    console.log('products', products);
-    if (products != []) {
-      setProductDataLoading(false);
-    }
-  }, [products]);
+
 
   function RenderSelectedProducts(product_category) {
     const selected_products = datamanipulation.getAllProductsInCategory(
@@ -129,6 +124,7 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
+            console.log(product)
             let stocksAvailable = null;
             let averageSalesPerDay = null;
             let product_chosen = null;
