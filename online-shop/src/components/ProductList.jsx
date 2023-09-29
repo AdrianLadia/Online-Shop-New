@@ -38,6 +38,8 @@ const ProductList = (props) => {
       setIsWholesale(false);
     }
   }, [wholesale, retail]);
+
+
   
   const [productdataloading, setProductDataLoading] = useState(true);
   const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
@@ -57,6 +59,7 @@ const ProductList = (props) => {
     }
   }, [modalSelected]);
   useEffect(() => {
+    console.log('products', products);
     if (products != []) {
       setProductDataLoading(false);
     }
