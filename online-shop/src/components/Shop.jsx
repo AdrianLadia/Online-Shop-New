@@ -9,6 +9,7 @@ import useWindowDimensions from './UseWindowDimensions';
 import { Helmet } from 'react-helmet';
 import ScrollTopButton from './ScrollTopButton';
 import ReactPlayer from 'react-player';
+import AnnouncementNotification from './AnnouncementNotification';
 
 const Shop = () => {
   const { width } = useWindowDimensions();
@@ -83,6 +84,7 @@ const Shop = () => {
       ) : (
         <ProductList wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
       )}
+      <AnnouncementNotification/>
     </div>
   );
 };

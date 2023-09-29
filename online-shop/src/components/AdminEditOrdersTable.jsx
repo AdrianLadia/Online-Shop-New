@@ -41,7 +41,7 @@ const AdminEditOrdersTable = ({
       const result = await Promise.all(promises);
 
       result.forEach((item) => {
-        console.log(item);
+
         const quantity = cart[item.itemId];
         const price = cartItemPrice[item.itemId];
         const image = item.imageLinks[0];
@@ -77,7 +77,7 @@ const AdminEditOrdersTable = ({
           <TableBody>
             {rowData
               ? rowData.map((item) => {
-                  console.log(item);
+                
                   //   const quantity = cart[itemId];
                   //   const price = cartItemPrice[itemId];
                   return (

@@ -10,28 +10,24 @@ const AdminEditOrdersTableRow = ({cart,setCart,image, itemName, quantity, price,
 
     useEffect(() => {
         cartTotal[itemId] = _quantity * price;
-        console.log(cartTotal);
+  
         setCartTotal(cartTotal);
         setChangedCartTotal(!changedCartTotal);
     }, [_quantity]);
 
     function handleIncrease(){
         cart[itemId] = cart[itemId] + 1;
-        console.log(cart);
         _setQuantity(_quantity + 1);
     }
 
     function handleDecrease(){
         if(_quantity > 1){
             cart[itemId] = cart[itemId] - 1;
-            console.log(cart);
             _setQuantity(_quantity - 1);
         }
     }
 
     useEffect(() => {
-        console.log('changed')
-
         setTotalPrice(cartTotal[itemId]);
     }, [changedCartTotal]);
 

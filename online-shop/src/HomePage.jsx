@@ -511,7 +511,7 @@ const HomePage = ({ isAffiliateLink }) => {
   }
 
   function responsiveImageList() {
-    console.log(width);
+
     if (width <= 850) {
       return 2;
     } else if (width <= 1400) {

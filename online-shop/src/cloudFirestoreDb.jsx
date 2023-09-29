@@ -215,8 +215,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     console.log(productId)
     
 
-    if (!productId) {
-      throw new Error('productId is null');
+    if (productId == 'null') {
+      return
     }
 
     try {

@@ -61,7 +61,6 @@ const ProductList = (props) => {
     }
   }, [modalSelected]);
   useEffect(() => {
-    console.log('products', products);
     if (products != []) {
       setProductDataLoading(false);
     }
