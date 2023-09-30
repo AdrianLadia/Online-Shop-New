@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
+import firebaseAnalytics from './firebaseAnalytics';
 import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
@@ -42,8 +43,8 @@ function App() {
   const app = initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
-  // add captcha for phone auth
-
+  // Get Analytics
+  const analytics = new firebaseAnalytics(app);
   // Get Storage
   const storage = getStorage(app);
 
@@ -193,6 +194,7 @@ function App() {
   // GET IF APPLE USER
   // IF APPLE USER USE AUTH POP UP IF NOT USE REDIRECT
   useEffect(() => {
+    
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
     setIsAndroidDevice(/android/.test(userAgent));
@@ -469,6 +471,7 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
+    analytics: analytics,
     cardSelected: cardSelected,
     setCardSelected: setCardSelected,
     changeCard: changeCard,

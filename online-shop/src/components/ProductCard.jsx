@@ -27,7 +27,7 @@ const ProductCard = (props) => {
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
   const calculations = new businessCalculations();
-  const { cart, updateCartInfo, setUpdateCartInfo, firestore, userId } = useContext(AppContext);
+  const { cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(false);
   const ref = useRef(null);
   const showTutorial = false
@@ -129,6 +129,9 @@ const ProductCard = (props) => {
       setOpen(true);
       // adds to cart
       props.addtocart(props.product.itemId, quantity);
+      //analytics
+      console.log('triggered add to cart event')
+      analytics.logAddToCartEvent(props.product.itemId,props.product.itemName,props.product.category,quantity,props.product.price)
       //back to 0
       setQuantity('');
       //shake cart

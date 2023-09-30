@@ -22,7 +22,7 @@ import CardMedia from '@mui/material/CardMedia';
 
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, categories } =
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics } =
     useContext(AppContext);
   const favorites =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c';
@@ -181,6 +181,9 @@ const HomePage = ({ isAffiliateLink }) => {
   const { pathname } = useLocation();
   const [photoUrl, setPhotoUrl] = useState('');
 
+
+
+
   function handleCategory(item) {
     if (item === 'Aluminum Foil') {
       setSelectedCategoryImage(
@@ -331,6 +334,10 @@ const HomePage = ({ isAffiliateLink }) => {
   function handleAff() {
     navigateTo('/signUp');
   }
+
+  useEffect(() => {
+    analytics.logOpenHomePageEvent()
+  }, []);
 
   useEffect(() => {
     if (selectedSlide === 0) {

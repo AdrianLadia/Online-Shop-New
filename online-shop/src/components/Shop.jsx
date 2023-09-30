@@ -16,8 +16,12 @@ const Shop = () => {
   const [retail, setRetail] = useState(true);
   const [loading, setLoading] = useState(true);
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
-  const { isSupportedBrowser, selectedCategory, setSelectedCategory, products } = useContext(AppContext);
+  const { isSupportedBrowser, selectedCategory, setSelectedCategory, products,analytics } = useContext(AppContext);
   const wholesaleOrRetailRef = useRef();
+
+  useEffect(() => {
+      analytics.logOpenStorePageEvent()
+  }, []);
 
   useEffect(() => {
     if (products != []) {

@@ -21,7 +21,7 @@ const OpenCartButton = (props) => {
   const setShakeCartAnimation = props.setShakeCartAnimation;
 
   const location = useLocation();
-  const { refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
+  const { analytics,refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
     useContext(AppContext);
 
   function onAddToCartClick(product) {
@@ -120,6 +120,7 @@ const OpenCartButton = (props) => {
   }
 
   function ViewCart() {
+    analytics.logOpenCartEvent(cart);
     setOpenCart(true);
   }
 

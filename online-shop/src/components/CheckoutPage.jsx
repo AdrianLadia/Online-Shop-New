@@ -74,6 +74,7 @@ const CheckoutPage = () => {
     openProfileUpdaterModal,
     firestore,
     orders,
+    analytics,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -142,6 +143,7 @@ const CheckoutPage = () => {
 
   // Get count of orders for this year
   useEffect(() => {
+    
     const yearToday = new Date().getFullYear();
 
     const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders, yearToday);
@@ -386,6 +388,12 @@ const CheckoutPage = () => {
     const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee);
     setGrandTotal(grandTotal);
   }, [total, vat, deliveryFee]);
+
+  useEffect(() => {
+    if (total > 0) {
+      analytics.logOpenCheckoutPageEvent(cart, total);
+    }
+  }, [total]);
 
   function searchAddress() {
     Geocode.fromAddress(addressGeocodeSearch, firebaseConfig.apiKey, 'en', 'ph').then(
