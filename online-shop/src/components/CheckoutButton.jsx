@@ -29,12 +29,13 @@ const CheckoutButton = (props) => {
   }
 
   function onCheckoutButtonClick() {
+
+    // if(totalCredit < 50000){
       const minimumOrder = new AppConfig().getMinimumOrder();
       if (totalPrice < minimumOrder) {
         alert("Minimum order is " + minimumOrder + " pesos.")
         return;
       }
-    // if(totalCredit < 50000){
 
       if (!isSupportedBrowser) {
    
