@@ -28,6 +28,21 @@ class firebaseAnalytics {
     });
   }
 
+  logPlaceOrderEvent() {
+    this.logEvent('placed_order', {});
+  }
+
+  logCheckoutInitiatedEvent(cart) {
+    this.logEvent('checkout_initiated', { cart: cart });
+  }
+
+  logOpenProductModalEvent(itemId, itemName) {
+    this.logEvent('view_product_modal', {
+      item_id: itemId,
+      item_name: itemName
+    });
+  }
+
   logOpenPaymentPageEvent(
     referenceNumber,
     itemsTotal,

@@ -283,6 +283,8 @@ const CheckoutPage = () => {
 
   async function onPlaceOrder() {
 
+    analytics.logPlaceOrderEvent();
+
     const minimumOrder = new AppConfig().getMinimumOrder();
     if (parseFloat(total) < minimumOrder) {
       alert(`Minimum order is ${minimumOrder} pesos`);
