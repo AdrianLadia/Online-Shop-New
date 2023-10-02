@@ -371,7 +371,6 @@ class businessCalculations {
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
 
-    console.log(needAssistance);
 
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
@@ -393,7 +392,7 @@ class businessCalculations {
     if (error4) {
       throw new Error('Data Validation Error');
     }
-    console.log(finalDelFee);
+
     return finalDelFee;
   }
 
@@ -465,8 +464,7 @@ class businessCalculations {
   }
 
   getValueAddedTax(totalPrice, urlOfBir2303, isInvoiceNeeded, noVat = new AppConfig().getNoVat()) {
-    console.log(isInvoiceNeeded);
-    console.log(urlOfBir2303);
+
     if (isInvoiceNeeded == false) {
       return 0;
     }
@@ -534,7 +532,7 @@ class businessCalculations {
     if (error1 || error2) {
       throw new Error('Data Validation Error');
     }
-    console.log(stocksAvailable);
+
     if (cart[product] === undefined) {
       cart[product] = 0;
     }

@@ -87,7 +87,7 @@ const InputField = (props) => {
   }
 
   async function sendMessage() {
-    console.log('selectedChatOrderId', selectedChatOrderId);
+
     const docRef = doc(db, 'ordersMessages', selectedChatOrderId);
     // Add data to the array field
     updateDoc(docRef, {

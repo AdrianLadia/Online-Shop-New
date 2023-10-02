@@ -193,8 +193,6 @@ const CheckoutPage = () => {
         urlOfBir2303,
         isInvoiceNeeded
       );
-      console.log(isInvoiceNeeded)
-      console.log(vat)
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
@@ -424,9 +422,6 @@ const CheckoutPage = () => {
     setUrlOfBir2303('');
   }
 
-  useEffect(() => {
-    console.log(deliveryVehicle)
-  }, [deliveryVehicle]);
 
   return (
     <ThemeProvider theme={theme}>

@@ -94,8 +94,6 @@ const ChatApp = (props) => {
         }
       });
 
-      console.log(data);
-
       return () => unsubscribe();
     }
   }, [selectedChatOrderId]);

@@ -11,7 +11,6 @@ class dataManipulation {
   constructor() {}
 
   convertTimestampToDateStringWithoutTime(timestamp) {
-    console.log(timestamp)
     const timestampInMilliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
 
     // Create a date object
@@ -551,7 +550,6 @@ class dataManipulation {
         }
       });
     });
-    console.log(rows_non_state);
     rows_non_state.sort((a, b) => {
       if (a.category < b.category) return -1;
       if (a.category > b.category) return 1;
@@ -572,7 +570,7 @@ class dataManipulation {
       throw new Error(error3);
     }
 
-    console.log(toReturn);
+    
 
     return toReturn;
   }

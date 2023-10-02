@@ -388,13 +388,6 @@ const ProductsCatalogue = () => {
     return false;
   }
 
-  window.addEventListener('scroll', () => {
-    if (didScrollUpDown()) {
-      console.log('Scrolled up or down!');
-      // Do something else if needed
-    }
-  });
-
   useEffect(() => {
     if (scrolledUpOrDown == true) {
       setTimeout(() => {

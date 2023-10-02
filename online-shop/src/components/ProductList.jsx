@@ -52,14 +52,15 @@ const ProductList = (props) => {
   
   useEffect(() => {
     if (modalSelected != null) {
+      
       cloudfirestore.readSelectedDataFromOnlineStore(modalSelected).then((data) => {
+
         setClickedProduct(data);
         setModal(true);
       });
     }
   }, [modalSelected]);
   useEffect(() => {
-    console.log('products', products);
     if (products != []) {
       setProductDataLoading(false);
     }

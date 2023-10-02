@@ -20,9 +20,9 @@ const AdminEditOrders = () => {
   const [rowData, setRowData] = useState([]);
 
   async function searchOrder() {
-    console.log('searchOrder');
+
     const orderDetails = await firestore.readSelectedOrder(orderReference);
-    console.log(orderDetails);
+
     setCart(orderDetails.cart);
     setDeliveryFee(orderDetails.shippingTotal);
     setCartItemPrice(orderDetails.cartItemsPrice);
