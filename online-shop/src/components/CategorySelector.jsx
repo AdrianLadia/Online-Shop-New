@@ -11,6 +11,7 @@ import theme from '../colorPalette/MaterialUITheme';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import AppConfig from '../AppConfig';
+import { set } from 'date-fns';
 
 function a11yProps(index) {
   return {
@@ -29,6 +30,7 @@ const CategorySelector = (props) => {
   const { firestore, categories, setCategories, categoryValue, setCategoryValue } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
   const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
+  const [categoryClickCount, setCategoryClickCount] = useState(0);
   const myElement = useRef(null);
 
   useEffect(() => {
@@ -73,6 +75,10 @@ const CategorySelector = (props) => {
   useEffect(() => {
     if (categories != null && categoryValue != null) {
       setSelectedCategory(categories[categoryValue]);
+      setCategoryClickCount(categoryClickCount + 1);
+      if (categoryClickCount > 0) {
+        console.log('clicked category')
+      }
     }
   }, [categoryValue]);
 
