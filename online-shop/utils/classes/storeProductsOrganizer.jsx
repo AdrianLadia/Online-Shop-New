@@ -22,6 +22,14 @@ class storeProductsOrganizer {
       ]
     }
 
+    if (this.productCategory == 'Bowls') {
+      this.orderOfProducts = [
+        'PBOWL390FP',
+        'LIDPBWL390',
+        'PBOWL520GL',
+        'LIDPBWL520',
+      ];
+    }
     if (this.productCategory == 'Paper Bag') {
       this.orderOfProducts = [
         'PPB#1',
