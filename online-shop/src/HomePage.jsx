@@ -20,9 +20,10 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
+
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics } =
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics,alertSnackbar } =
     useContext(AppContext);
   const favorites =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c';
@@ -182,6 +183,10 @@ const HomePage = ({ isAffiliateLink }) => {
   const [photoUrl, setPhotoUrl] = useState('');
 
 
+
+  function handleAlert(severity, message) {
+    alertSnackbar(severity, message);
+  }
 
 
   function handleCategory(item) {
@@ -1382,7 +1387,7 @@ const HomePage = ({ isAffiliateLink }) => {
               <span className="w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300">
                 <button
                   onClick={() => {
-                    alert('We are still testing our shop. We will accept affiliates soon. Stay in touch');
+                    handleAlert('info', 'We are still testing our shop. We will accept affiliates soon. Stay in touch')
                   }}
                   className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300"
                 >
@@ -1433,6 +1438,7 @@ const HomePage = ({ isAffiliateLink }) => {
           <div className="h-9/10 w-full flex justify-center items-center">Copyright © 2023 | Made by Paper Boy</div>
         </div>
       </div> */}
+      
     </div>
   );
 };

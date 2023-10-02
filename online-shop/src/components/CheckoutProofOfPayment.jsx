@@ -16,7 +16,7 @@ const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
   const datamanipulation = new dataManipulation();
-  const { storage, cloudfirestore, userId, userdata, firestore, refreshUser, setRefreshUser,analytics } = useContext(AppContext);
+  const { alertSnackbar,storage, cloudfirestore, userId, userdata, firestore, refreshUser, setRefreshUser,analytics } = useContext(AppContext);
   const location = useLocation();
   const {
     referenceNumber,
@@ -75,7 +75,7 @@ const CheckoutProofOfPayment = (props) => {
       await delay(5000);
       navigateTo('/myorders/orderList');
     } catch (error) {
-      alert('Failed to upload proof of payment. Please try again.');
+      alertSnackbar('error','Failed to upload proof of payment. Please try again.');
       return;
     }
   }

@@ -75,6 +75,7 @@ const CheckoutPage = () => {
     firestore,
     orders,
     analytics,
+    alertSnackbar
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -232,7 +233,7 @@ const CheckoutPage = () => {
         setRefreshUser(!refreshUser);
       }
       if (transactionStatus.status == 409) {
-        alert(transactionStatus.data);
+        alertSnackbar('info',transactionStatus.data);
       }
 
       setPlaceOrderLoading(false);
@@ -287,21 +288,21 @@ const CheckoutPage = () => {
 
     const minimumOrder = new AppConfig().getMinimumOrder();
     if (parseFloat(total) < minimumOrder) {
-      alert(`Minimum order is ${minimumOrder} pesos`);
+      alertSnackbar('error',`Minimum order is ${minimumOrder} pesos`);
       return;
     }
 
     if (isInvoiceNeeded) {
       if (urlOfBir2303 === '') {
-        alert(
-          'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
+        alertSnackbar(
+          'error','Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
         );
         return;
       }
     }
 
     if (paymentMethodSelected == null) {
-      alert('Please select a payment method');
+      alertSnackbar('error','Please select a payment method');
       setPlaceOrderLoading(false);
       return;
     }
@@ -346,7 +347,7 @@ const CheckoutPage = () => {
         setPlaceOrderLoading(false);
       }
     } else {
-      alert('You must be logged in');
+      alertSnackbar('error','You must be logged in');
     }
   }
 
@@ -408,7 +409,7 @@ const CheckoutPage = () => {
         setLocalDeliveryAddress('');
       },
       (error) => {
-        alert('Address not found. Be more specific.');
+        alertSnackbar('error','Address not found. Be more specific.');
       }
     );
   }

@@ -9,7 +9,7 @@ import AppConfig from '../AppConfig';
 const CheckoutButton = (props) => {
 
   const totalPrice = props.totalPrice
-  const { analytics,userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata,isSupportedBrowser } = useContext(AppContext);
+  const { analytics,userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata,isSupportedBrowser,alertSnackbar } = useContext(AppContext);
   const [openGuestSignInModal,setOpenGuestSignInModal] = useState(false);
   const [totalCredit, setTotalCredit] = useState(0);
   const [isSupportedBrowserModalOpen, setIsSupportedBrowserModalOpen] = useState(false);
@@ -33,7 +33,7 @@ const CheckoutButton = (props) => {
     // if(totalCredit < 50000){
       const minimumOrder = new AppConfig().getMinimumOrder();
       if (totalPrice < minimumOrder) {
-        alert("Minimum order is " + minimumOrder + " pesos.")
+        alertSnackbar('error',"Minimum order is " + minimumOrder + " pesos.")
         return;
       }
 

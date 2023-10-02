@@ -24,7 +24,7 @@ const style = {
 const ProfileUpdaterModal = (props) => {
   const openProfileUpdaterModal = props.openProfileUpdaterModal;
   const setOpenProfileUpdaterModal = props.setOpenProfileUpdaterModal;
-  const {firestore, userdata} = React.useContext(AppContext);
+  const {firestore, userdata,alertSnackbar} = React.useContext(AppContext);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
@@ -36,7 +36,7 @@ const ProfileUpdaterModal = (props) => {
         await firestore.updateDocumentFromCollection('Users', userdata.uid, {phoneNumber : '+' + phoneNumber});
       }
       catch(err){
-        alert('Failed to update phone number')
+        alertSnackbar('error','Failed to update phone number')
       }
     }
     if (email != '') {
@@ -44,7 +44,7 @@ const ProfileUpdaterModal = (props) => {
         await firestore.updateDocumentFromCollection('Users', userdata.uid, {email : email});
       }
       catch(err){
-        alert('Failed to update email')
+        alertSnackbar('error','Failed to update email')
       }
     }
     if (name != '') {
@@ -52,7 +52,7 @@ const ProfileUpdaterModal = (props) => {
         await firestore.updateDocumentFromCollection('Users', userdata.uid, {name : name});
       }
       catch(err){
-        alert('Failed to update name')
+        alertSnackbar('error','Failed to update name')
       }
     }
     window.location.reload();

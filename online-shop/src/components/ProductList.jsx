@@ -42,7 +42,7 @@ const ProductList = (props) => {
 
   
   const [productdataloading, setProductDataLoading] = useState(true);
-  const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
+  const { alertSnackbar,userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
   React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
   const [clickedProduct, setClickedProduct] = useState(null);
@@ -89,7 +89,7 @@ const ProductList = (props) => {
       try {
         firestore.createUserCart(cart, userdata.uid);
       } catch (e) {
-        alert('Failed to update cart info. Please try again.');
+        alertSnackbar('error','Failed to update cart info. Please try again.');
       }
     }
   }, [cart, updateCartInfo]);

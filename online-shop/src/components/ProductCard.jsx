@@ -27,7 +27,7 @@ const ProductCard = (props) => {
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
   const calculations = new businessCalculations();
-  const { cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics } = useContext(AppContext);
+  const { alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(false);
   const ref = useRef(null);
   const showTutorial = false
@@ -109,7 +109,7 @@ const ProductCard = (props) => {
     if (isWholesale) {
       if (totalOrder > calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
         setQuantity('');
-        alert('Not enough stocks available');
+        alertSnackbar('error','Not enough stocks available');
         return;
       }
     } else {
@@ -119,7 +119,7 @@ const ProductCard = (props) => {
         calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
       ) {
         setQuantity('');
-        alert('Not enough stocks available');
+        alertSnackbar('error','Not enough stocks available');
         return;
       }
     }
@@ -425,6 +425,7 @@ const ProductCard = (props) => {
             <Snackbar
               className="mb-5 lg:mb-5"
               variant="success"
+              autoHideDuration={5000}
               anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
               open={open}
               onClose={handleClose}

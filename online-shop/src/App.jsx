@@ -34,6 +34,7 @@ import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
+import Alert from './components/Alert';
 
 const devEnvironment = true;
 
@@ -114,6 +115,17 @@ function App() {
   const [favoriteProductData, setFavoriteProductData] = useState([]);
   const [categoryValue, setCategoryValue] = useState(null);
   const hiddenCategories = [];
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('');
+  const [alertDuration, setAlertDuration] = useState(null);
+
+  function alertSnackbar(severity,message,duration) {
+    setShowAlert(true);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setAlertDuration(duration);
+  }
 
   useEffect(() => {
     firestore.readAllCategories().then((categories) => {
@@ -170,7 +182,6 @@ function App() {
         firestore.readAllDataFromCollection('Users').then((users) => {
           setAllUserData(users);
         });
-        
       }
     }
   }, [isadmin]);
@@ -194,17 +205,16 @@ function App() {
   // GET IF APPLE USER
   // IF APPLE USER USE AUTH POP UP IF NOT USE REDIRECT
   useEffect(() => {
-    
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
     setIsAndroidDevice(/android/.test(userAgent));
     setIsGoogleChrome(/chrome/.test(userAgent));
   }, []);
-  
+
   // GET USER BROWSER
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
-    console.log(userAgent)
+    console.log(userAgent);
     if (document.documentElement.classList.contains('in-app-browser')) {
       return false;
     }
@@ -227,10 +237,10 @@ function App() {
       userAgent.indexOf('MSIE ') > -1 ||
       userAgent.indexOf('Trident/') > -1
     ) {
-      console.log('supported browser')
+      console.log('supported browser');
       return true;
     }
-    console.log('unsupported browser last')
+    console.log('unsupported browser last');
     return false;
   }
 
@@ -249,7 +259,6 @@ function App() {
             return;
           } else {
             async function createNewUser() {
-        
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -317,13 +326,10 @@ function App() {
         });
         setCategoryProductsData(combinedProductsList);
       }
-
     }
 
     readAllProductsForOnlineStore();
   }, [selectedCategory]);
-
-
 
   useEffect(() => {
     if (userdata != null) {
@@ -352,7 +358,7 @@ function App() {
         });
 
         const favoriteProductsData = await Promise.all(favoriteProductPromises);
-        
+
         setFavoriteProductData(favoriteProductsData);
       };
 
@@ -360,13 +366,14 @@ function App() {
     }
   }, [userdata]);
 
-
   useEffect(() => {
     const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData];
     //remove duplicates
-    const uniqueProducts = combinedProductsList.filter((thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index);
+    const uniqueProducts = combinedProductsList.filter(
+      (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
+    );
     setProducts(uniqueProducts);
-  }, [cartProductsData,categoryProductsData,favoriteProductData]);
+  }, [cartProductsData, categoryProductsData, favoriteProductData]);
 
   useEffect(() => {
     if (userdata) {
@@ -436,14 +443,13 @@ function App() {
   useEffect(() => {
     if (userOrderReference != null) {
       const orderPromises = userOrderReference.map(async (order) => {
-        const orderData = await cloudfirestore.readSelectedOrder(order.reference,userId);
+        const orderData = await cloudfirestore.readSelectedOrder(order.reference, userId);
         return orderData;
       });
       Promise.all(orderPromises).then((data) => {
         setOrders(data);
       });
     }
-
   }, [userOrderReference]);
 
   useEffect(() => {
@@ -471,6 +477,7 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
+    alertSnackbar:alertSnackbar,
     analytics: analytics,
     cardSelected: cardSelected,
     setCardSelected: setCardSelected,
@@ -766,7 +773,7 @@ function App() {
             </AppContext.Provider>
           }
         />
-                <Route
+        <Route
           path="/products"
           element={
             <AppContext.Provider value={appContextValue}>
@@ -775,6 +782,7 @@ function App() {
           }
         />
       </Routes>
+      <Alert severity={alertSeverity} message={alertMessage} open={showAlert} setOpen={setShowAlert} />
     </div>
   );
 }

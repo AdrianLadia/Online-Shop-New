@@ -7,7 +7,7 @@ import AffiliateAddPaymentMethodModal from './AffiliateAddPaymentMethodModal';
 
 const AdminAffiliatePage = () => {
 
-    const { userdata, cloudfirestore, refreshUser,firestore } = useContext(AppContext);
+    const { userdata, cloudfirestore, refreshUser,firestore,alertSnackbar} = useContext(AppContext);
     const { height} = useWindowDimensions()
     const [paymentMethods, setPaymentMethods] = useState([]);
     
@@ -66,11 +66,11 @@ const AdminAffiliatePage = () => {
         }
         cloudfirestore.onAffiliateClaim(data).then(res=>{
           if(res.request.status==200){
-            alert("Your Claim Request is Submitted Successfully.")
+            alertSnackbar('success',"Your Claim Request is Submitted Successfully.")
             window.location.reload()
             setLoading(false)
           }else{
-            alert("Something went wrong. Please try again.")
+            alertSnackbar('error',"Something went wrong. Please try again.")
             setLoading(false)
           }
         })

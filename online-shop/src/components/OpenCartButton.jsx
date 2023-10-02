@@ -21,7 +21,7 @@ const OpenCartButton = (props) => {
   const setShakeCartAnimation = props.setShakeCartAnimation;
 
   const location = useLocation();
-  const { analytics,refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
+  const { alertSnackbar,analytics,refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
     useContext(AppContext);
 
   function onAddToCartClick(product) {
@@ -39,6 +39,11 @@ const OpenCartButton = (props) => {
       }
     });
     const newCart = businesscalculations.addToCart(cart, product, stocksAvailable);
+    
+    if (newCart == 'no_stocks') {
+      alertSnackbar('error','Stocks are not available');
+    }
+
     setUpdateCartInfo(!updateCartInfo);
     setCart(newCart);
   }

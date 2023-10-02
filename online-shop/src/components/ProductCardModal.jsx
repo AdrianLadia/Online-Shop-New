@@ -73,7 +73,7 @@ const ProductCardModal = (props) => {
   const { width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
-  const { analytics,userdata, firestore, favoriteitems, setFavoriteItems, userId } = React.useContext(AppContext);
+  const { alertSnackbar,analytics,userdata, firestore, favoriteitems, setFavoriteItems, userId } = React.useContext(AppContext);
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const date = new Date();
 
@@ -110,7 +110,7 @@ const ProductCardModal = (props) => {
   }
 
   function onHeartClick() {
-    if (userId === null) return alert('Login to add items to favorites');
+    if (userId === null) return alertSnackbar('info','Login to add items to favorites');
 
     if (heart) {
       setHeart(!heart);

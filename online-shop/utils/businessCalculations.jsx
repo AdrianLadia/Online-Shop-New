@@ -542,7 +542,7 @@ class businessCalculations {
     if (cart[product] + 1 <= stocksAvailable) {
       cart[product] += 1;
     } else {
-      alert('Not enough stocks available');
+      return 'no_stocks'
     }
 
     const newCartSchema = Joi.object().required();
