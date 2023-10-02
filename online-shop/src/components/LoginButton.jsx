@@ -89,8 +89,6 @@ const LoginButton = (props) => {
     handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
   }
 
-  
-
   async function setUpRecaptcha(number) {
     recaptchaVerifier = new RecaptchaVerifier(
       'captcha',
@@ -162,7 +160,6 @@ const LoginButton = (props) => {
       return 'right'
     }
   }
-
 
   return (
     <div>

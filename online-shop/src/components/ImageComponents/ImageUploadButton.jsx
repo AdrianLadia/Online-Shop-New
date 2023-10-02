@@ -124,7 +124,7 @@ const ImageUploadButton = (props) => {
           {loading ? (
             <CircularProgress size={30} color="inherit" />
           ) : buttonText ? (
-            <span className="gap-2 flex">
+            <span className="flex gap-2">
               <CloudUploadIcon /> {buttonText}
             </span>
           ) : (
