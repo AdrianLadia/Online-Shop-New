@@ -28,6 +28,7 @@ const express = require('express');
 const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
+const fetch = require('node-fetch');
 
 admin.initializeApp();
 
@@ -187,13 +188,92 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     .update({ ['orders']: orders });
 }
 
-exports.onPaymentsChange = functions
-  .region('asia-southeast1')
-  .firestore.document('Payments/{paymentId}')
-  .onWrite(async (change, context) => {
-    const beforeData = change.before.data();
-    const afterData = change.after.data();
+exports.postToConversionApi = functions.region('asia-southeast1').https.onRequest((req, res) => {
+  corsHandler(req, res, async () => {
 
+    function processIPAddress(ip) {
+      if (ip.startsWith('::ffff:')) {
+        const potentialIPv4 = ip.split('::ffff:')[1];
+  
+        // Simple validation to check if the extracted part is likely an IPv4
+        const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+        if (ipv4Pattern.test(potentialIPv4)) {
+          return potentialIPv4; // Return the extracted IPv4 address
+        }
+      }
+      return ip; // Return the original IP (be it IPv6 or any other format)
+    }
+    
+    const data = req.body;
+    const apiVersion = 'v18.0'
+    const nekot = 'EAACZBZA8LIcZBkBO7nFSSJwMZBrQGMPRtADRUVaWD1sxsMYRLHssadWok8XZAAmy2ea60Re54L6I0DMF9EZAEU8OQU1v75OBVS9KZBqR6eviE0LlIWDbZCDRxMV9qCaq2tTPFsT3I6BP4f3A69Ry6eo8nMmpJErZAZBFoTStVEnJ6ZBWkCW6ZBkGwjQzrdc5qFPh2VU0WgZDZD'
+    const pixelId = '699964975514234'
+    const url = `https://graph.facebook.com/${apiVersion}/${pixelId}/events?access_token=${nekot}`;
+  
+    const event_name = data.event_name;
+    const event_time = Math.floor(Date.now() / 1000)
+    const event_source_url = data.event_source_url;
+    const custom_parameters = data.custom_parameters;
+    const action_source = 'website'
+    
+    let ipAddress = req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
+    const userAgent = req.headers['user-agent'];
+    ipAddress = processIPAddress(ipAddress);
+    
+    console.log('event_name',event_name)
+    console.log(`IP Address: ${ipAddress}`);
+    console.log(`User Agent: ${userAgent}`);
+    
+    let payload = {
+      data: [
+        {
+          event_name: event_name,
+          event_time: event_time,
+          action_source: action_source,
+          event_source_url: event_source_url,
+          user_data: {
+            client_ip_address: ipAddress,
+            client_user_agent: userAgent,   
+          },
+          custom_data: {
+            ...custom_parameters
+          }
+        },
+      ],
+       test_event_code: "TEST29483" 
+    };
+    
+    payload = JSON.stringify(payload);
+
+    console.log(payload)
+  
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+        res.status(200).send(data)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        res.status(400).send(data)
+      });
+  });
+  
+});
+
+exports.onPaymentsChange = functions
+.region('asia-southeast1')
+.firestore.document('Payments/{paymentId}')
+.onWrite(async (change, context) => {
+  const beforeData = change.before.data();
+  const afterData = change.after.data();
+  
     let created = null;
     if (beforeData == undefined) {
       created = true;
@@ -1897,20 +1977,18 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
           cartItemReferences.push(itemRef);
         });
 
-        
-
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderDoc = await transaction.get(orderRef);
         const orderData = orderDoc.data();
 
-        console.log('cartItemReferences',cartItemReferences)
+        console.log('cartItemReferences', cartItemReferences);
 
         // await Promise.all(
         //   allCartItems.map(async (itemId) => {
         //     const productRef = db.collection('Products').doc(itemId);
         //     const productGet = await productRef.get();
         //     const prodData = productGet.data();
-    
+
         //     const stocksAvailable = prodData.stocksAvailable;
         //     const stocksOnHold = prodData.stocksOnHold;
         //     stocksToAdjust[itemId] = stocksAvailable;
@@ -1927,7 +2005,7 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
         const itemData = itemDocs.map((itemDoc) => itemDoc.data());
 
         // reference: reference, quantity: orderQuantity, userId: userid
-        const _stockOnHoldList = []
+        const _stockOnHoldList = [];
         itemData.forEach((item) => {
           const stockOnHoldList = item.stocksOnHold;
           stockOnHoldList.forEach((stockOnHold) => {
@@ -1935,11 +2013,11 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
               stockOnHold.quantity = cart[item.itemId];
             }
           });
-          console.log()
+          console.log();
           _stockOnHoldList[item.itemId] = stockOnHoldList;
         });
 
-        console.log('stockOnHoldList',_stockOnHoldList)
+        console.log('stockOnHoldList', _stockOnHoldList);
 
         // WRITE
         Object.keys(_stockOnHoldList).forEach((itemId) => {

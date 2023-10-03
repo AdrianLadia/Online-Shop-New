@@ -250,6 +250,7 @@ const CheckoutPage = () => {
   }, []);
 
   useEffect(() => {
+    
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -258,8 +259,12 @@ const CheckoutPage = () => {
     );
     const kilometers = businesscalculations.convertTotalDifferenceToKilometers(totaldifference);
     const areasInsideDeliveryLocation = businesscalculations.getLocationsInPoint(locallatitude, locallongitude);
-    const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
-    const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
+    let vehicleObject = 'motorcycle';
+    let deliveryFee = 0;
+    if (totalWeight) {
+      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
+      deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
+    }
     setArea(areasInsideDeliveryLocation);
     const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
@@ -282,7 +287,7 @@ const CheckoutPage = () => {
 
   async function onPlaceOrder() {
 
-    analytics.logPlaceOrderEvent();
+    
 
     const minimumOrder = new AppConfig().getMinimumOrder();
     if (parseFloat(total) < minimumOrder) {
@@ -338,9 +343,11 @@ const CheckoutPage = () => {
           countOfOrdersThisYear: countOfOrdersThisYear,
           deliveryDate : startDate.toISOString()
         });
-
+        
         setTransactionStatus(res);
         setPlacedOrder(!placedOrder);
+        analytics.logPlaceOrderEvent(cart,grandTotal);
+        
       } catch (err) {
         setPlaceOrderLoading(false);
       }

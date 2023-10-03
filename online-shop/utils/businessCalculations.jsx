@@ -287,6 +287,7 @@ class businessCalculations {
   }
 
   getVehicleForDelivery(weightOfItems) {
+    console.log('weightOfItems', weightOfItems)
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {

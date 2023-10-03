@@ -193,6 +193,7 @@ const ProductCard = (props) => {
     setModal(true);
     setClickedProduct(product);
     firestore.updateProductClicks(product.itemId, userId);
+    analytics.logOpenProductModalEvent(product.itemId, product.itemName,product.category)
   }
 
   function responsiveStyle() {

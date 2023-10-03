@@ -1,24 +1,29 @@
 import { getAnalytics, logEvent } from 'firebase/analytics';
+import cloudFirestoreDb from './cloudFirestoreDb';
 
 class firebaseAnalytics {
   constructor(app) {
     this.analytics = getAnalytics(app);
+    this.cloudFirestoreDb = new cloudFirestoreDb(app);
   }
 
   logEvent(eventName, eventParams) {
-    window.fbq('trackCustom', eventName, eventParams)
     logEvent(this.analytics, eventName, eventParams);
   }
 
   logChangeCategoryEvent(category) {
-    this.logEvent('change_category', { category: category });
+    // window.fbq('trackCustom', 'change_category' , { category: category });
+    this.cloudFirestoreDb.postToConversionApi('change_category', { category: category });
+    this.logEvent('change_category', { category: category }, false);
   }
 
   logOpenHomePageEvent() {
+    this.cloudFirestoreDb.postToConversionApi('open_home_page', {});
     this.logEvent('open_home_page', {});
   }
 
   logOpenStorePageEvent() {
+    this.cloudFirestoreDb.postToConversionApi('open_store_page', {});
     this.logEvent('open_store_page', {});
   }
 
@@ -33,19 +38,32 @@ class firebaseAnalytics {
     });
   }
 
-  logPlaceOrderEvent() {
-    this.logEvent('placed_order', {});
+  logPlaceOrderEvent(cart, grandTotal) {
+    this.cloudFirestoreDb.postToConversionApi('Purchase', { currency: 'PHP', value: grandTotal, cart: cart });
+    this.logEvent('placed_order', { cart: cart, grand_total: grandTotal });
   }
 
   logCheckoutInitiatedEvent(cart) {
+    
     this.logEvent('checkout_initiated', { cart: cart });
   }
 
-  logOpenProductModalEvent(itemId, itemName) {
-    this.logEvent('view_product_modal', {
+  logOpenProductModalEvent(itemId, itemName, category) {
+    // window.fbq('trackCustom', 'view_modal', { item_id: itemId, item_name: itemName, category: category });
+    this.cloudFirestoreDb.postToConversionApi('view_modal', {
       item_id: itemId,
-      item_name: itemName
+      item_name: itemName,
+      category: category,
     });
+    this.logEvent(
+      'view_product_modal',
+      {
+        item_id: itemId,
+        item_name: itemName,
+        category: category,
+      },
+      false
+    );
   }
 
   logOpenPaymentPageEvent(
@@ -73,6 +91,13 @@ class firebaseAnalytics {
   }
 
   logAddToCartEvent(itemId, itemName, itemCategory, quantity, price) {
+    this.cloudFirestoreDb.postToConversionApi('add_to_cart', {
+      item_id: itemId,
+      item_name: itemName,
+      item_category: itemCategory,
+      quantity: quantity,
+      price: price,
+    });
     this.logEvent('add_to_cart', {
       item_id: itemId,
       item_name: itemName,

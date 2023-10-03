@@ -73,7 +73,7 @@ const ProductCardModal = (props) => {
   const { width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
-  const { alertSnackbar,analytics,userdata, firestore, favoriteitems, setFavoriteItems, userId } = React.useContext(AppContext);
+  const { alertSnackbar,userdata, firestore, favoriteitems, setFavoriteItems, userId } = React.useContext(AppContext);
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const date = new Date();
 
@@ -123,10 +123,6 @@ const ProductCardModal = (props) => {
       firestore.addItemToFavorites(userdata.uid, props.product.itemId);
     }
   }
-
-  useEffect(() => {
-    analytics.logOpenProductModalEvent(itemId, itemName)
-  }, []);
 
   useEffect(() => {
     if (favoriteitems.includes(props.product.itemId)) {

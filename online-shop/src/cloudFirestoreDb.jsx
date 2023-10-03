@@ -601,6 +601,27 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error('Error editing order');
     }
   }
+  async postToConversionApi(event_name,custom_parameters) {
+
+    const data = {
+      event_name: event_name,
+      event_source_url: window.location.href,
+      custom_parameters: custom_parameters
+    };
+
+
+    // const encodedData = encodeURIComponent(JSON.stringify(data));
+
+    
+    const res = await axios.post(`${this.url}postToConversionApi`,data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    return res
+    
+  }
 }
 
 export default cloudFirestoreDb;
