@@ -219,8 +219,8 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     let ipAddress = req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
     const userAgent = req.headers['user-agent'];
     ipAddress = processIPAddress(ipAddress);
-    
-    console.log('event_name',event_name)
+    console.log('_____________________________________________________________________________')
+    console.log('event_name',event_name,custom_parameters)
     console.log(`IP Address: ${ipAddress}`);
     console.log(`User Agent: ${userAgent}`);
     
@@ -244,8 +244,6 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     };
     
     payload = JSON.stringify(payload);
-
-    console.log(payload)
   
     fetch(url, {
       method: 'POST',
@@ -256,8 +254,14 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Success:', data);
-        res.status(200).send(data)
+        if (data.events_received == 1) {
+          console.log('success')
+          res.status(200).send(data)
+        }
+        else {
+          console.log('error')
+          res.status(400).send(data)
+        }
       })
       .catch((error) => {
         console.error('Error:', error);
