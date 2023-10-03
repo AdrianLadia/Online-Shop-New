@@ -35,6 +35,7 @@ import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
+import conversionsApi from './conversionsApi'
 
 const devEnvironment = true;
 
@@ -51,6 +52,8 @@ function App() {
 
   const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
   const navigateTo = useNavigate();
+
+
 
   useEffect(() => {
     if (appConfig.getIsDevEnvironment() == true) {
@@ -119,6 +122,16 @@ function App() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
   const [alertDuration, setAlertDuration] = useState(null);
+  const [ipAddress, setIpAddress] = useState(null);
+  const [userAgent, setUserAgent] = useState(null);
+
+  useEffect(() => {
+    if (ipAddress && userAgent) {
+      console.log('ipAddress',ipAddress);
+      console.log('userAgent',userAgent);
+      new conversionsApi().post('AddToCart');
+    }
+  }, [ipAddress,userAgent]);
 
   function alertSnackbar(severity,message,duration) {
     setShowAlert(true);
@@ -142,6 +155,7 @@ function App() {
         pageOpened: window.location.href,
       };
       firestore.addDataToPageOpens(data);
+      setIpAddress(ipAddress);
     });
   }, []);
 
@@ -209,6 +223,7 @@ function App() {
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
     setIsAndroidDevice(/android/.test(userAgent));
     setIsGoogleChrome(/chrome/.test(userAgent));
+    setUserAgent(userAgent);
   }, []);
 
   // GET USER BROWSER

@@ -27,7 +27,7 @@ const CategorySelector = (props) => {
   const setSelectedCategory = props.setSelectedCategory;
   const selectedCategory = props.selectedCategory;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
-  const { firestore, categories, setCategories, categoryValue, setCategoryValue } = useContext(AppContext);
+  const { analytics,firestore, categories, setCategories, categoryValue, setCategoryValue } = useContext(AppContext);
   const datamanipulation = new dataManipulation();
   const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
   const [categoryClickCount, setCategoryClickCount] = useState(0);
@@ -77,7 +77,7 @@ const CategorySelector = (props) => {
       setSelectedCategory(categories[categoryValue]);
       setCategoryClickCount(categoryClickCount + 1);
       if (categoryClickCount > 0) {
-        console.log('clicked category')
+        analytics.logChangeCategoryEvent(categories[categoryValue])
       }
     }
   }, [categoryValue]);
@@ -90,7 +90,6 @@ const CategorySelector = (props) => {
     return rect.bottom < 0 || rect.right < 0 || rect.left > window.innerWidth || rect.top > window.innerHeight;
   }
 
-  useEffect(() => {}, []);
 
   useEffect(() => {
     const handleScroll = () => {

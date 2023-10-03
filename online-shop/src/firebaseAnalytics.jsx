@@ -6,7 +6,12 @@ class firebaseAnalytics {
   }
 
   logEvent(eventName, eventParams) {
+    window.fbq('trackCustom', eventName, eventParams)
     logEvent(this.analytics, eventName, eventParams);
+  }
+
+  logChangeCategoryEvent(category) {
+    this.logEvent('change_category', { category: category });
   }
 
   logOpenHomePageEvent() {
