@@ -21,6 +21,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
 
+
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
   const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics,alertSnackbar } =
@@ -341,6 +342,7 @@ const HomePage = ({ isAffiliateLink }) => {
   }
 
   useEffect(() => {
+    
     analytics.logOpenHomePageEvent()
   }, []);
 
