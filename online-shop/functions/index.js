@@ -240,7 +240,7 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
           }
         },
       ],
-       test_event_code: "TEST29483" 
+      //  test_event_code: "TEST29483" 
     };
     
     payload = JSON.stringify(payload);
