@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Button, Divider } from '@mui/material';
+import ReactPlayer from 'react-player';
 
 const style = {
   position: 'absolute',
@@ -25,6 +26,7 @@ const style = {
 function UnsupportedBrowserRedirect(props) {
   const isSupportedBrowser = props.isSupportedBrowser;
   const open = props.open;
+  // const open = true
   const setOpen = props.setOpen;
 
 
@@ -64,6 +66,7 @@ function UnsupportedBrowserRedirect(props) {
             bgcolor: '#e1fadd',
             borderRadius: '1rem',
             boxShadow: 3,
+        
           }}
         >
           <Typography variant="h4" component="h2" gutterBottom className="font-bold mb-6 text-center">
@@ -92,11 +95,22 @@ function UnsupportedBrowserRedirect(props) {
             <strong>Paste the URL </strong>
             in the address bar and press enter.
           </Typography>
-          <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
+          {/* <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
           <Typography variant="body1" gutterBottom className="mb-2 text-center">
             Note: Logging in via Facebook / Instagram / Messenger in-app browser isn't supported by Google
             Authentication. Please use authorized browsers to login.
+          </Typography> */}
+          <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
+          <Typography variant="h5" gutterBottom className="mb-5 font-bold text-center">
+            Video Tutorial
           </Typography>
+          <div className="w-full flex justify-center h-20 mb-20">
+          <ReactPlayer
+            url="https://www.youtube.com/watch?v=ogJ1XgR2bQo"
+            controls={true}
+            // ... other props
+          />
+        </div>
         </Box>
       </Modal>
     </div>

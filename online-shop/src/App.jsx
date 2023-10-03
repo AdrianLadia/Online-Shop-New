@@ -52,8 +52,6 @@ function App() {
   const [authEmulatorConnected, setAuthEmulatorConnected] = useState(false);
   const navigateTo = useNavigate();
 
-
-
   useEffect(() => {
     if (appConfig.getIsDevEnvironment() == true) {
       if (!authEmulatorConnected) {
@@ -124,7 +122,7 @@ function App() {
   const [ipAddress, setIpAddress] = useState(null);
   const [userAgent, setUserAgent] = useState(null);
 
-  function alertSnackbar(severity,message,duration) {
+  function alertSnackbar(severity, message, duration) {
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
@@ -221,33 +219,29 @@ function App() {
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
     console.log(userAgent);
+    const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP'];
+
+    const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
+
+    if (containsAnyFBString) {
+      return false;
+    }
     if (document.documentElement.classList.contains('in-app-browser')) {
       return false;
     }
-    if (typeof FB_IAB !== 'undefined') {
+    if (userAgent.includes('MessengerLite')) {
       return false;
     }
-
+    if (userAgent.includes('Instagram')) {
+      return false;
+    }
     if (userAgent.match(/FBAN|FBAV/i)) {
       return false;
     }
-
     if (userAgent.indexOf('FBAN') > -1) {
       return false;
     }
-    if (
-      userAgent.indexOf('Chrome') > -1 ||
-      userAgent.indexOf('Firefox') > -1 ||
-      userAgent.indexOf('Safari') > -1 ||
-      userAgent.indexOf('Edge') > -1 ||
-      userAgent.indexOf('MSIE ') > -1 ||
-      userAgent.indexOf('Trident/') > -1
-    ) {
-      console.log('supported browser');
-      return true;
-    }
-    console.log('unsupported browser last');
-    return false;
+    return true;
   }
 
   useEffect(() => {
@@ -483,7 +477,7 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
-    alertSnackbar:alertSnackbar,
+    alertSnackbar: alertSnackbar,
     analytics: analytics,
     cardSelected: cardSelected,
     setCardSelected: setCardSelected,

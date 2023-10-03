@@ -27,26 +27,20 @@ const HomePage = ({ isAffiliateLink }) => {
   const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics,alertSnackbar } =
     useContext(AppContext);
   const favorites =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c&_gl=1*e9kma0*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc0OTA3LjM3LjAuMA..';
   const autoCalculate =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDALL%C2%B7E%202023-08-23%2011.29.52%20-%20A%20vector%20illustration%20of%20a%20person%20using%20a%20calculator.png?alt=media&token=710cc90e-15bf-4ab9-a6d9-8946fc52009c';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDALL%C2%B7E%202023-08-23%2011.29.52%20-%20A%20vector%20illustration%20of%20a%20person%20using%20a%20calculator.png?alt=media&token=710cc90e-15bf-4ab9-a6d9-8946fc52009c&_gl=1*18n3y0l*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc0OTYwLjQ0LjAuMA..';
   const pinpoint =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Flocation_icon-star-copy-02.svg?alt=media&token=0cc4139c-4e2f-4e24-abe4-b4f34e9a9a8d';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Flocation_icon-star-copy-02.svg?alt=media&token=0cc4139c-4e2f-4e24-abe4-b4f34e9a9a8d&_gl=1*1aufqaa*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc0OTkxLjEzLjAuMA..';
   const customerChat =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fchaticon-star-copy-03.svg?alt=media&token=51a46c08-a673-4d16-ba73-56c5c1f931a0';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fchaticon-star-copy-03.svg?alt=media&token=51a46c08-a673-4d16-ba73-56c5c1f931a0&_gl=1*jnbm3j*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc1MDEzLjYwLjAuMA..';
   const saved =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FSave-Map_icon-star-copy-04.svg?alt=media&token=2fa494fc-5387-4e49-9f49-1e2166fe67f3';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FSave-Map_icon-star-copy-04.svg?alt=media&token=2fa494fc-5387-4e49-9f49-1e2166fe67f3&_gl=1*1nbp2b8*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc1MDQxLjMyLjAuMA..';
   const multiple =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fmultiplepayment-05%20(1).svg?alt=media&token=3cd6fdfd-9d71-4ce4-afc2-3feec5891d93';
+    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fmultiplepayment-05%20(1).svg?alt=media&token=3cd6fdfd-9d71-4ce4-afc2-3feec5891d93&_gl=1*cajvd3*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc1MDY1LjguMC4w';
   const backgroundImageUrl =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fpaper%20products.jpg?alt=media&token=65a433cd-ba8c-40f6-ad3f-00f5348e217d';
-  const contactsImage =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fkraft%20background.png?alt=media&token=87967b75-1ca4-4d7e-bac3-4dab5a6a7315';
-  const logo =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fstarpack.png?alt=media&token=e108388d-74f7-45a1-8344-9c6af612f053';
-  const videoAd =
-    'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/Videos%2FStarpack_Trimmed.mp4?alt=media&token=bc6b257e-7ba9-4568-b843-b32c4927a5fb&_gl=1*1pcfpf3*_ga*MTk5NDU4NTY2OC4xNjc4NDI0NDg0*_ga_CW55HF8NVT*MTY4NjE5NjY5Ny4xOC4xLjE2ODYxOTY3NjguMC4wLjA';
-  const about =
+   const about =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ff4b3d1ee-cd04-4b70-8255-e4a4594d5aabhome-page-01.png?alt=media&token=c3efbd67-95ce-42c0-8786-f0a6f06fd5de';
   const page1 = useRef();
   const page2 = useRef();
