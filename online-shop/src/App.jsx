@@ -225,7 +225,6 @@ function App() {
   // GET USER BROWSER
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
-<<<<<<< HEAD
     console.log(userAgent);
     const fbStrings = [
       'FBAN',
@@ -242,9 +241,6 @@ function App() {
       'Instagram',
       'facebook',
     ];
-=======
-    const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP','MessengerLite','Instagram','facebook'];
->>>>>>> 5177d25cd7161867f4ea2658ecb88f42c7ec2aca
     const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
     if (containsAnyFBString) {
       return false;

@@ -480,15 +480,13 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function handleMessageClick() {
     if (userdata) {
-      // navigateTo('/orderChat', {
-      //   state: { orderReference: userdata.uid, isInquiry: true, backButtonRedirect: pathname, fromHomePage: false },
-      // });
-      window.open('https://m.me/starpackph', '_blank');
+      navigateTo('/orderChat', {
+        state: { orderReference: userdata.uid, isInquiry: true, backButtonRedirect: pathname, fromHomePage: false },
+      });
     } else {
-      // navigateTo('/orderChat', {
-      //   state: { orderReference: null, isInquiry: true, backButtonRedirect: pathname, fromHomePage: true },
-      // });
-      window.open('https://m.me/starpackph', '_blank');
+      navigateTo('/orderChat', {
+        state: { orderReference: null, isInquiry: true, backButtonRedirect: pathname, fromHomePage: true },
+      });
     }
   }
 

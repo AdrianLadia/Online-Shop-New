@@ -113,6 +113,7 @@ class firestorefunctions {
 
   async updateDocumentFromCollection(collectionname, id, data) {
     const docRef = doc(this.db, collectionname + '/', id);
+    console.log(collectionname, id, data)
     await updateDoc(docRef, data)
       .then(() => {
         if (consolelog) {

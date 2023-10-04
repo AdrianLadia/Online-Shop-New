@@ -15,12 +15,13 @@ const ScrollTopButton = (props) => {
   }
 
 
-  const {categorySelectorInView,topPromotionsInView} = props;
+  const {categorySelectorInView} = props;
 
   return (
     <div className="flex fixed top-5 w-full justify-center z-50">
       {/* <button className='position fixed bottom-2 content-center bg-color10b'> */}
-      {categorySelectorInView || topPromotionsInView ? null : 
+      {categorySelectorInView ? null : 
+      
       <button onClick={scrollUp} className="rounded-full bg-color10b px-3 py-1">
         <div className="flex flex-row hover:">
           <BsFillArrowUpCircleFill color="white" />

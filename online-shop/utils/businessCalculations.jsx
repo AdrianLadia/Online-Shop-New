@@ -284,13 +284,10 @@ class businessCalculations {
     if (areas.includes('lalamoveServiceArea')) {
       return true;
     }
-    else{
-      return false;
-    }
   }
 
-  getVehicleForDelivery(weightOfItems,inLalamoveSericeArea) {
-    
+  getVehicleForDelivery(weightOfItems) {
+    console.log('weightOfItems', weightOfItems)
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -298,10 +295,6 @@ class businessCalculations {
     }
 
     const vehicleSchema = Joi.object().required();
-
-    if (inLalamoveSericeArea == false) {
-      return this.lalamovedeliveryvehicles.shippingLines
-    }
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
@@ -382,10 +375,6 @@ class businessCalculations {
 
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
-    }
-
-    if (vehicleObject.name === 'Shipping Lines') {
-      return 0
     }
 
     let finalDelFee = null;

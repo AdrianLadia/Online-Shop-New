@@ -65,8 +65,7 @@ const GoogleMapsModalSelectContactModal = (props) => {
                 );
               })}
             </div>
-            <div className='flex justify-center text-center w-full mt-10'>Contacts from your past orders will be saved here</div>
-
+            <>Delivery addresses from your past orders will be saved here</>
           </div>
         </Box>
       </Modal>

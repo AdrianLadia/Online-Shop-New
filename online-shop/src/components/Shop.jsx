@@ -8,9 +8,8 @@ import { CircularProgress, Typography } from '@mui/material';
 import useWindowDimensions from './UseWindowDimensions';
 import { Helmet } from 'react-helmet';
 import ScrollTopButton from './ScrollTopButton';
-
+import ReactPlayer from 'react-player';
 import AnnouncementNotification from './AnnouncementNotification';
-import ShopTopPromotions from './ShopTopPromotions';
 
 const Shop = () => {
   const { width } = useWindowDimensions();
@@ -20,8 +19,6 @@ const Shop = () => {
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
   const { isSupportedBrowser, selectedCategory, setSelectedCategory, products,analytics } = useContext(AppContext);
   const wholesaleOrRetailRef = useRef();
-  const [topPromotionsInView, setTopPromotionsInView] = useState(false);
-  
 
   useEffect(() => {
       analytics.logOpenStorePageEvent()
@@ -32,10 +29,6 @@ const Shop = () => {
       setLoading(false);
     }
   }, [products]);
-
-  function howToOrderInView() {
-
-  }
 
   return (
     <div className="flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 ">
@@ -58,11 +51,21 @@ const Shop = () => {
 
       {/* <OpeningSoonModal /> */}
       {/* HOW TO ORDER */}
-      <ShopTopPromotions topPromotionsInView={topPromotionsInView} setTopPromotionsInView={setTopPromotionsInView}/>
-      
+      <div className="flex w-full text-gray-700 flex-col gap-5 mt-5 justify-center">
+        <Typography variant="h5"  className="text-center text font-bold">
+          How to order
+        </Typography>
+        <div className="w-full flex justify-center">
+          <ReactPlayer
+            url="https://youtu.be/Gf_teseuqGE"
+            controls={true}
+            // ... other props
+          />
+        </div>
+      </div>
 
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
-      <ScrollTopButton categorySelectorInView={categorySelectorInView} wholesaleOrRetailRef={wholesaleOrRetailRef} topPromotionsInView={topPromotionsInView} />
+      <ScrollTopButton categorySelectorInView={categorySelectorInView} wholesaleOrRetailRef={wholesaleOrRetailRef} />
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail wholesaleOrRetailRef={wholesaleOrRetailRef} setWholesale={setWholesale} setRetail={setRetail} wholesale={wholesale} retail={retail} />
       {/* CATEGORY */}

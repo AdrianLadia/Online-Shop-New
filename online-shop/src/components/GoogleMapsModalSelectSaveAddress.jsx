@@ -85,10 +85,8 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
               ) : (
                 <>Create an account to save</>
               )}
-              
             </div>
-            <div className='flex justify-center text-center w-full mt-10'>Delivery addresses from your past orders will be saved here</div>
-
+            <>Delivery addresses from your past orders will be saved here</>
           </div>
         </Box>
       </Modal>

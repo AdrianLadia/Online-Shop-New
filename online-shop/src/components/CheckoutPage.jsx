@@ -75,7 +75,7 @@ const CheckoutPage = () => {
     firestore,
     orders,
     analytics,
-    alertSnackbar,
+    alertSnackbar
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -130,17 +130,21 @@ const CheckoutPage = () => {
 
   const [countOfOrdersThisYear, setCountOfOrdersThisYear] = useState(0);
 
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate,setStartDate] = useState(new Date());
 
-  const allowedDates = new allowedDeliveryDates();
-  allowedDates.runMain();
-  const minDate = allowedDates.minDate;
-  const maxDate = allowedDates.maxDate;
-  const filterDate = allowedDates.excludeDates;
-  const holidays = allowedDates.holidays;
+  const allowedDates = new allowedDeliveryDates()
+  allowedDates.runMain()
+  const minDate = allowedDates.minDate
+  const maxDate = allowedDates.maxDate
+  const filterDate = allowedDates.excludeDates
+  const holidays = allowedDates.holidays
+
+  
+
 
   // Get count of orders for this year
   useEffect(() => {
+    
     const yearToday = new Date().getFullYear();
 
     const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders, yearToday);
@@ -196,7 +200,7 @@ const CheckoutPage = () => {
       setTotalWeight(total_weight_non_state);
     }
     getTableData();
-  }, [urlOfBir2303, isInvoiceNeeded]);
+  }, [urlOfBir2303,isInvoiceNeeded]);
 
   // PAYMENT METHODS
   useEffect(() => {
@@ -227,7 +231,7 @@ const CheckoutPage = () => {
         setRefreshUser(!refreshUser);
       }
       if (transactionStatus.status == 409) {
-        alertSnackbar('info', transactionStatus.data);
+        alertSnackbar('info',transactionStatus.data);
       }
 
       setPlaceOrderLoading(false);
@@ -246,6 +250,7 @@ const CheckoutPage = () => {
   }, []);
 
   useEffect(() => {
+    
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -254,14 +259,14 @@ const CheckoutPage = () => {
     );
     const kilometers = businesscalculations.convertTotalDifferenceToKilometers(totaldifference);
     const areasInsideDeliveryLocation = businesscalculations.getLocationsInPoint(locallatitude, locallongitude);
-    const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     let vehicleObject = 'motorcycle';
     let deliveryFee = 0;
     if (totalWeight) {
-      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight,inLalamoveSericeArea);
+      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
       deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
     }
     setArea(areasInsideDeliveryLocation);
+    const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
       if (total >= new AppConfig().getFreeDeliveryThreshold()) {
         setDeliveryFee(0);
@@ -272,33 +277,35 @@ const CheckoutPage = () => {
     }
 
     if (!areasInsideDeliveryLocation.includes('lalamoveServiceArea') && area.length > 0) {
-      setDeliveryFee(deliveryFee);
-      console.log(vehicleObject)
+      setDeliveryFee(500);
       setDeliveryVehicle(vehicleObject);
       setUseShippingLine(true);
     }
     let orderdata = null;
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
+
   async function onPlaceOrder() {
+
+    
+
     const minimumOrder = new AppConfig().getMinimumOrder();
     if (parseFloat(total) < minimumOrder) {
-      alertSnackbar('error', `Minimum order is ${minimumOrder} pesos`);
+      alertSnackbar('error',`Minimum order is ${minimumOrder} pesos`);
       return;
     }
 
     if (isInvoiceNeeded) {
       if (urlOfBir2303 === '') {
         alertSnackbar(
-          'error',
-          'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
+          'error','Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
         );
         return;
       }
     }
 
     if (paymentMethodSelected == null) {
-      alertSnackbar('error', 'Please select a payment method');
+      alertSnackbar('error','Please select a payment method');
       setPlaceOrderLoading(false);
       return;
     }
@@ -334,19 +341,21 @@ const CheckoutPage = () => {
           isInvoiceNeeded: isInvoiceNeeded,
           urlOfBir2303: urlOfBir2303,
           countOfOrdersThisYear: countOfOrdersThisYear,
-          deliveryDate: startDate.toISOString(),
+          deliveryDate : startDate.toISOString()
         });
-
+        
         setTransactionStatus(res);
         setPlacedOrder(!placedOrder);
-        analytics.logPlaceOrderEvent(cart, grandTotal);
+        analytics.logPlaceOrderEvent(cart,grandTotal);
+        
       } catch (err) {
         setPlaceOrderLoading(false);
       }
     } else {
-      alertSnackbar('error', 'You must be logged in');
+      alertSnackbar('error','You must be logged in');
     }
   }
+
 
   useEffect(() => {
     setRefreshUser(!refreshUser);
@@ -405,7 +414,7 @@ const CheckoutPage = () => {
         setLocalDeliveryAddress('');
       },
       (error) => {
-        alertSnackbar('error', 'Address not found. Be more specific.');
+        alertSnackbar('error','Address not found. Be more specific.');
       }
     );
   }
@@ -419,6 +428,7 @@ const CheckoutPage = () => {
     await firestore.deleteBir2303Link(userdata.uid);
     setUrlOfBir2303('');
   }
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -545,7 +555,7 @@ const CheckoutPage = () => {
             value={localname || ''}
           />
         </div>
-
+        
         {allowShipping == false ? (
           <div className="flex justify-center my-5">
             <Typography variant="h7" color="red">
@@ -562,7 +572,8 @@ const CheckoutPage = () => {
               </div>
             ) : (
               <>
-                {area.includes('lalamoveServiceArea') && deliveryVehicle.name != 'motorcycle' ? (
+                {(area.includes('lalamoveServiceArea') && deliveryVehicle.name != 'motorcycle') ? (
+                  
                   <div>
                     <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
                     <div className="flex justify-center mt-7">
@@ -702,13 +713,6 @@ const CheckoutPage = () => {
                     <Typography variant="h6">We can ship to Leyte Palompon Port via Cokaliong</Typography>
                   </div>
                 ) : null}
-                {area.includes('lalamoveServiceArea') ? null : (
-                  <div className="flex text-center justify-center mt-5">
-                    <Typography>
-                      Shipping fee will be added to the cost once waybill has been provided by shipping lines.
-                    </Typography>
-                  </div>
-                )}
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 
@@ -800,14 +804,7 @@ const CheckoutPage = () => {
                     </Typography>
                   </div>
                   <div className="flex justify-center mt-5 mb-5">
-                    <OrdersCalendar
-                      startDate={startDate}
-                      setStartDate={setStartDate}
-                      minDate={minDate}
-                      maxDate={maxDate}
-                      filterDate={filterDate}
-                      disabledDates={holidays}
-                    />
+                    <OrdersCalendar startDate={startDate} setStartDate={setStartDate} minDate={minDate} maxDate={maxDate} filterDate={filterDate} disabledDates={holidays} />
                   </div>
                 </div>
 

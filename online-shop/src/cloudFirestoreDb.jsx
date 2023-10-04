@@ -211,7 +211,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async readSelectedDataFromOnlineStore(productId) {  
+  async readSelectedDataFromOnlineStore(productId) {
+    console.log(productId)
+    
 
     if (productId == 'null') {
       return
