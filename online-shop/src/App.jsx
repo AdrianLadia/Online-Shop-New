@@ -219,29 +219,15 @@ function App() {
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
     console.log(userAgent);
-    const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP'];
-
+    const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP','MessengerLite','Instagram','facebook'];
     const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
-
     if (containsAnyFBString) {
       return false;
     }
-    if (document.documentElement.classList.contains('in-app-browser')) {
-      return false;
+    else {
+      return true;
     }
-    if (userAgent.includes('MessengerLite')) {
-      return false;
-    }
-    if (userAgent.includes('Instagram')) {
-      return false;
-    }
-    if (userAgent.match(/FBAN|FBAV/i)) {
-      return false;
-    }
-    if (userAgent.indexOf('FBAN') > -1) {
-      return false;
-    }
-    return true;
+
   }
 
   useEffect(() => {
