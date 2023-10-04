@@ -215,7 +215,6 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     const event_source_url = data.event_source_url;
     const custom_parameters = data.custom_parameters;
     const action_source = 'website'
-    const fbc = data.fbc;
     
     let ipAddress = req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
     const userAgent = req.headers['user-agent'];
@@ -234,9 +233,7 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
           event_source_url: event_source_url,
           user_data: {
             client_ip_address: ipAddress,
-            client_user_agent: userAgent,  
-            fbc: fbc ,
-            country: 'PH',
+            client_user_agent: userAgent,   
           },
           custom_data: {
             ...custom_parameters
