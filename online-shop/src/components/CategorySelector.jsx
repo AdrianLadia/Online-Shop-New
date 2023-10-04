@@ -138,6 +138,8 @@ const CategorySelector = (props) => {
                 textColor="primary"
                 variant="scrollable"
                 scrollButtons="auto"
+                allowScrollButtonsMobile
+              
               >
                 {categories &&
                   categories.map((category, index) => {

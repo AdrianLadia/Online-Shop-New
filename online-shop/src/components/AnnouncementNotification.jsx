@@ -36,17 +36,17 @@ const AnnouncementNotification = () => {
         {/* <Box sx={style}> */}
         <div className="top-2/4 left-2/4 absolute -translate-x-1/2 -translate-y-1/2 w-9/10 md:w-1/2 lg:w-1/6">
           <Card sx={{ width:'full', flexShrink: 0, height: '100%' }} elevation={20}>
-            <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FDALL%C2%B7E%202023-09-28%2015.04.02%20-%20A%20vector%20illustration%20of%20a%20delivery%20truck%20driving%20in%20the%20city.png?alt=media&token=bf03d424-7559-4eb7-9e07-eede1a80e5a0&_gl=1*tdbmg6*_ga*MTQxNzMzMTk4Ny4xNjk1MDg5NTAy*_ga_CW55HF8NVT*MTY5NTg4NDY1Mi4xOS4xLjE2OTU4ODQ2NzguMzQuMC4w'} title="auto calculate" />
+            <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/announcementPhotos%2FYellow%20Simple%20Special%20Offer%20Instagram%20Post.png?alt=media&token=5dc02577-c6c2-485c-84bf-9a6019b90faf&_gl=1*1ay4iug*_ga*MTQxNzMzMTk4Ny4xNjk1MDg5NTAy*_ga_CW55HF8NVT*MTY5NjM5NjEwMC4yNy4xLjE2OTYzOTYyMDcuMjIuMC4w'} title="auto calculate" />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
-                Free Delivery Until 10/31
+                10% off on all items
               </Typography>
               <Typography
                 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
                 variant="body2"
                 color="text.secondary"
               >
-               Shop now and enjoy the savings on delivery! Offer ends soon. 
+               Shop now and enjoy the savings on all items! Offer ends soon. 
               </Typography>
             </CardContent>
           </Card>

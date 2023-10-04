@@ -49,7 +49,7 @@ class storeProductsOrganizer {
     }
    
     if (this.productCategory == 'Meal Box') {
-      this.orderOfProducts = ['SPAG500PPB', 'SPAG600PPB', 'MB750TG', 'MB880TG', 'MB1300TG', 'MB1500PPB'];
+      this.orderOfProducts = ['SPAG500PPB', 'SPAG600PPB', 'MB750PPB', 'MB880TG', 'MB1300TG', 'MB1500PPB','2DIVTG','3DIVTG','4DIVTG','CLMHOTTGBS','CLMB350TG','CLMS500PPB','CLMB700TG','CLMSHL'];
     }
 
     if (this.productCategory == 'Aluminum Tray') {
