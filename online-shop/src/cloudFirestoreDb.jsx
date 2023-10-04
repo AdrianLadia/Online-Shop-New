@@ -6,9 +6,8 @@ import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app,userdata, test = false) {
+  constructor(app, test = false) {
     super();
-    this.userdata = userdata
     const appConfig = new AppConfig();
 
     if (appConfig.getIsDevEnvironment() || test) {
@@ -212,7 +211,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
-  async readSelectedDataFromOnlineStore(productId) {
+  async readSelectedDataFromOnlineStore(productId) {  
+
     if (productId == 'null') {
       return
     }
@@ -599,26 +599,31 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error('Error editing order');
     }
   }
-  async postToConversionApi(event_name,custom_parameters,fbc,fbp) {
+  async postToConversionApi(event_name,custom_parameters) {
 
-    var fbpValue = document.cookie.split('; ').find(row => row.startsWith('_fbp='))
-    let _fbc = undefined
-    if (fbc) {
-      const unixTime = Math.round(+new Date() / 1000);
-      _fbc = 'fb.1.' + unixTime.toString() + '.' + fbc;
+    let fbpValue = document.cookie.split('; ').find(row => row.startsWith('_fbp='))
+
+    if (fbpValue) {
+      fbpValue = fbpValue.split('=')[1];
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    console.log(urlParams)
+    const fbcValue = urlParams.get('fbclid');
+
     console.log(fbpValue)
-    console.log(this.userdata)
+    console.log(fbcValue)
 
     const data = {
       event_name: event_name,
       event_source_url: window.location.href,
       custom_parameters: custom_parameters,
-      fbp: fbp,
-      fbc: _fbc,
-      
+      fbp: fbpValue,
+      fbc: fbcValue
     };
+
+
+    // const encodedData = encodeURIComponent(JSON.stringify(data));
 
     
     const res = await axios.post(`${this.url}postToConversionApi`,data, {

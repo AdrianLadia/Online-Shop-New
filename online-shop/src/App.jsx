@@ -67,6 +67,11 @@ function App() {
   // Initialize firestore class
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
+  const [cloudfirestore, setCloudFirestore] = useState(null);
+  useEffect(() => {
+    const cloudfirestore = new cloudFirestoreDb(userdata);
+    setCloudFirestore(cloudfirestore);
+  }, [userdata]);
   const businesscalculation = new businessCalculations();
   const datamanipulation = new dataManipulation();
 
@@ -120,12 +125,9 @@ function App() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
-
-  const [cloudfirestore, setCloudFirestore] = useState(null);
-  useEffect(() => {
-    const cf = new cloudFirestoreDb(app,userdata);
-    setCloudFirestore(cf);
-  }, [userdata]);
+  const [alertDuration, setAlertDuration] = useState(null);
+  const [ipAddress, setIpAddress] = useState(null);
+  const [userAgent, setUserAgent] = useState(null);
 
   function alertSnackbar(severity, message, duration) {
     setShowAlert(true);
@@ -142,17 +144,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (cloudfirestore) {
-      cloudfirestore.getIpAddress().then((ipAddress) => {
-        const data = {
-          ipAddress: ipAddress,
-          dateTime: new Date(),
-          pageOpened: window.location.href,
-        };
-        firestore.addDataToPageOpens(data);
-  
-      });
-    }
+    cloudfirestore.getIpAddress().then((ipAddress) => {
+      const data = {
+        ipAddress: ipAddress,
+        dateTime: new Date(),
+        pageOpened: window.location.href,
+      };
+      firestore.addDataToPageOpens(data);
+      setIpAddress(ipAddress);
+    });
   }, []);
 
   useEffect(() => {
@@ -219,12 +219,32 @@ function App() {
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
     setIsAndroidDevice(/android/.test(userAgent));
     setIsGoogleChrome(/chrome/.test(userAgent));
+    setUserAgent(userAgent);
   }, []);
 
   // GET USER BROWSER
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
+<<<<<<< HEAD
+    console.log(userAgent);
+    const fbStrings = [
+      'FBAN',
+      'FBIOS',
+      'FBDV',
+      'FBMD',
+      'FBSN',
+      'FBSV',
+      'FBSS',
+      'FBID',
+      'FBLC',
+      'FBOP',
+      'MessengerLite',
+      'Instagram',
+      'facebook',
+    ];
+=======
     const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP','MessengerLite','Instagram','facebook'];
+>>>>>>> 5177d25cd7161867f4ea2658ecb88f42c7ec2aca
     const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
     if (containsAnyFBString) {
       return false;
@@ -310,11 +330,9 @@ function App() {
         }
       });
       if (!categoriesQueried.includes(selectedCategory)) {
-        if (cloudfirestore) {
-          await cloudfirestore.readAllProductsForOnlineStore(selectedCategory).then((selectedProducts) => {
-            combinedProductsList = [...categoryProductsData, ...selectedProducts];
-          });
-        }
+        await cloudfirestore.readAllProductsForOnlineStore(selectedCategory).then((selectedProducts) => {
+          combinedProductsList = [...categoryProductsData, ...selectedProducts];
+        });
         setCategoryProductsData(combinedProductsList);
       }
     }
