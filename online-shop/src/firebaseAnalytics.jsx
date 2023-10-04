@@ -2,9 +2,11 @@ import { getAnalytics, logEvent } from 'firebase/analytics';
 import cloudFirestoreDb from './cloudFirestoreDb';
 
 class firebaseAnalytics {
-  constructor(app) {
+  constructor(app,fbc,fbp) {
     this.analytics = getAnalytics(app);
     this.cloudFirestoreDb = new cloudFirestoreDb(app);
+    this.fbc = fbc;
+    this.fbp = fbp;
   }
 
   logEvent(eventName, eventParams) {
@@ -13,17 +15,17 @@ class firebaseAnalytics {
 
   logChangeCategoryEvent(category) {
     // window.fbq('trackCustom', 'change_category' , { category: category });
-    this.cloudFirestoreDb.postToConversionApi('change_category', { category: category });
+    this.cloudFirestoreDb.postToConversionApi('change_category', { category: category },this.fbc);
     this.logEvent('change_category', { category: category }, false);
   }
 
   logOpenHomePageEvent() {
-    this.cloudFirestoreDb.postToConversionApi('open_home_page', {});
+    this.cloudFirestoreDb.postToConversionApi('open_home_page', {},this.fbc);
     this.logEvent('open_home_page', {});
   }
 
   logOpenStorePageEvent() {
-    this.cloudFirestoreDb.postToConversionApi('open_store_page', {});
+    this.cloudFirestoreDb.postToConversionApi('open_store_page', {},this.fbc);
     this.logEvent('open_store_page', {});
   }
 
@@ -39,7 +41,7 @@ class firebaseAnalytics {
   }
 
   logPlaceOrderEvent(cart, grandTotal) {
-    this.cloudFirestoreDb.postToConversionApi('Purchase', { currency: 'PHP', value: grandTotal, cart: cart });
+    this.cloudFirestoreDb.postToConversionApi('Purchase', { currency: 'PHP', value: grandTotal, cart: cart },this.fbc);
     this.logEvent('placed_order', { cart: cart, grand_total: grandTotal });
   }
 
@@ -54,7 +56,7 @@ class firebaseAnalytics {
       item_id: itemId,
       item_name: itemName,
       category: category,
-    });
+    },this.fbc);
     this.logEvent(
       'view_product_modal',
       {
@@ -97,7 +99,7 @@ class firebaseAnalytics {
       item_category: itemCategory,
       quantity: quantity,
       price: price,
-    });
+    },this.fbc);
     this.logEvent('add_to_cart', {
       item_id: itemId,
       item_name: itemName,
