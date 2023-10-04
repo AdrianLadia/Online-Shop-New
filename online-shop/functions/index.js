@@ -215,6 +215,9 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     const event_source_url = data.event_source_url;
     const custom_parameters = data.custom_parameters;
     const action_source = 'website'
+    const fbc = data.fbc
+    const fbp = data.fbp
+    const userdata = data.userdata
     
     let ipAddress = req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
     const userAgent = req.headers['user-agent'];
@@ -223,6 +226,10 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     console.log('event_name',event_name,custom_parameters)
     console.log(`IP Address: ${ipAddress}`);
     console.log(`User Agent: ${userAgent}`);
+    console.log('fbc',fbc)
+    console.log('fbp',fbp)
+
+
     
     let payload = {
       data: [
@@ -234,13 +241,16 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
           user_data: {
             client_ip_address: ipAddress,
             client_user_agent: userAgent,   
+            fbc: fbc,
+            fbp: fbp,
+            // country: sha256hash('PH')
           },
           custom_data: {
             ...custom_parameters
           }
         },
       ],
-      //  test_event_code: "TEST29483" 
+      //  test_event_code: "TEST79909" 
     };
     
     payload = JSON.stringify(payload);

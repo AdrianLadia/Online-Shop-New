@@ -602,11 +602,34 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
   async postToConversionApi(event_name,custom_parameters) {
+    // get fbp
+    let fbp 
+    try{
+      fbp = document.cookie.split('; ').find(row => row.startsWith('_fbp=')).split('=')[1];
+    }
+    catch{
+      fbp = undefined
+    }
+
+    // get fbclid
+    const urlParams = new URLSearchParams(window.location.search);
+    let fbc = urlParams.get('fbclid');
+    if (fbc == null) {
+      fbc = undefined
+    }
+    else {
+      const unixTimestamp = Math.round(+new Date() / 1000);
+      fbc = 'fb.1.' + unixTimestamp.toString() + '.' + fbc
+    }
+
+
 
     const data = {
       event_name: event_name,
       event_source_url: window.location.href,
-      custom_parameters: custom_parameters
+      custom_parameters: custom_parameters,
+      fbc: fbc,
+      fbp: fbp,
     };
 
 

@@ -12,17 +12,19 @@ class firebaseAnalytics {
   }
 
   logChangeCategoryEvent(category) {
-    // window.fbq('trackCustom', 'change_category' , { category: category });
+    window.fbq('trackCustom', 'change_category', { category: category });
     this.cloudFirestoreDb.postToConversionApi('change_category', { category: category });
     this.logEvent('change_category', { category: category }, false);
   }
 
   logOpenHomePageEvent() {
+    window.fbq('trackCustom', 'open_home_page', {});
     this.cloudFirestoreDb.postToConversionApi('open_home_page', {});
     this.logEvent('open_home_page', {});
   }
 
   logOpenStorePageEvent() {
+    window.fbq('trackCustom', 'open_store_page', {});
     this.cloudFirestoreDb.postToConversionApi('open_store_page', {});
     this.logEvent('open_store_page', {});
   }
@@ -39,17 +41,17 @@ class firebaseAnalytics {
   }
 
   logPlaceOrderEvent(cart, grandTotal) {
+    window.fbq('trackCustom', 'Purchase', { currency: 'PHP', value: grandTotal, cart: cart });
     this.cloudFirestoreDb.postToConversionApi('Purchase', { currency: 'PHP', value: grandTotal, cart: cart });
     this.logEvent('placed_order', { cart: cart, grand_total: grandTotal });
   }
 
   logCheckoutInitiatedEvent(cart) {
-    
     this.logEvent('checkout_initiated', { cart: cart });
   }
 
   logOpenProductModalEvent(itemId, itemName, category) {
-    // window.fbq('trackCustom', 'view_modal', { item_id: itemId, item_name: itemName, category: category });
+    window.fbq('trackCustom', 'view_modal', { item_id: itemId, item_name: itemName, category: category });
     this.cloudFirestoreDb.postToConversionApi('view_modal', {
       item_id: itemId,
       item_name: itemName,
@@ -91,6 +93,13 @@ class firebaseAnalytics {
   }
 
   logAddToCartEvent(itemId, itemName, itemCategory, quantity, price) {
+    window.fbq('trackCustom', 'add_to_cart', {
+      item_id: itemId,
+      item_name: itemName,
+      item_category: itemCategory,
+      quantity: quantity,
+      price: price,
+    });
     this.cloudFirestoreDb.postToConversionApi('add_to_cart', {
       item_id: itemId,
       item_name: itemName,

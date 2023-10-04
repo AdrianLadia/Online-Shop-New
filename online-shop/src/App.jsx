@@ -65,7 +65,6 @@ function App() {
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
   const cloudfirestore = new cloudFirestoreDb();
-  const businesscalculation = new businessCalculations();
   const datamanipulation = new dataManipulation();
 
   const [userId, setUserId] = useState(null);
@@ -118,9 +117,7 @@ function App() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
-  const [alertDuration, setAlertDuration] = useState(null);
-  const [ipAddress, setIpAddress] = useState(null);
-  const [userAgent, setUserAgent] = useState(null);
+  
 
   function alertSnackbar(severity, message, duration) {
     setShowAlert(true);
@@ -144,7 +141,6 @@ function App() {
         pageOpened: window.location.href,
       };
       firestore.addDataToPageOpens(data);
-      setIpAddress(ipAddress);
     });
   }, []);
 
@@ -212,7 +208,6 @@ function App() {
     setIsAppleDevice(/iphone|ipad|ipod|macintosh/.test(userAgent));
     setIsAndroidDevice(/android/.test(userAgent));
     setIsGoogleChrome(/chrome/.test(userAgent));
-    setUserAgent(userAgent);
   }, []);
 
   // GET USER BROWSER
