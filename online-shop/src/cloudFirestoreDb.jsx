@@ -603,25 +603,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
   async postToConversionApi(event_name,custom_parameters) {
 
-    let fbpValue = document.cookie.split('; ').find(row => row.startsWith('_fbp='))
-
-    if (fbpValue) {
-      fbpValue = fbpValue.split('=')[1];
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    console.log(urlParams)
-    const fbcValue = urlParams.get('fbclid');
-
-    console.log(fbpValue)
-    console.log(fbcValue)
-
     const data = {
       event_name: event_name,
       event_source_url: window.location.href,
-      custom_parameters: custom_parameters,
-      fbp: fbpValue,
-      fbc: fbcValue
+      custom_parameters: custom_parameters
     };
 
 

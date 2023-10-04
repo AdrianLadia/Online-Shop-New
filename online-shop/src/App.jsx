@@ -39,16 +39,13 @@ import Alert from './components/Alert';
 const devEnvironment = true;
 
 function App() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const fbc = urlParams.get('fbclid');
-
   const appConfig = new AppConfig();
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
   // Get Analytics
-  const analytics = new firebaseAnalytics(app, fbc);
+  const analytics = new firebaseAnalytics(app);
   // Get Storage
   const storage = getStorage(app);
 
@@ -67,11 +64,7 @@ function App() {
   // Initialize firestore class
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
-  const [cloudfirestore, setCloudFirestore] = useState(null);
-  useEffect(() => {
-    const cloudfirestore = new cloudFirestoreDb(userdata);
-    setCloudFirestore(cloudfirestore);
-  }, [userdata]);
+  const cloudfirestore = new cloudFirestoreDb();
   const businesscalculation = new businessCalculations();
   const datamanipulation = new dataManipulation();
 
@@ -226,27 +219,15 @@ function App() {
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
     console.log(userAgent);
-    const fbStrings = [
-      'FBAN',
-      'FBIOS',
-      'FBDV',
-      'FBMD',
-      'FBSN',
-      'FBSV',
-      'FBSS',
-      'FBID',
-      'FBLC',
-      'FBOP',
-      'MessengerLite',
-      'Instagram',
-      'facebook',
-    ];
+    const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP','MessengerLite','Instagram','facebook'];
     const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
     if (containsAnyFBString) {
       return false;
-    } else {
+    }
+    else {
       return true;
     }
+
   }
 
   useEffect(() => {
