@@ -385,7 +385,6 @@ class businessCalculations {
     }
 
     if (vehicleObject.name === 'Shipping Lines') {
-      console.log('returning 0');
       return 0
     }
 
