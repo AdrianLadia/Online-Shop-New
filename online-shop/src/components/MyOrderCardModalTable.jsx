@@ -96,7 +96,7 @@ const MyOrderCardModalTable = (props) => {
                 <TableCell align="right">{row.pieces}</TableCell>
                 <TableCell align="right">{'₱' + row.itemprice}</TableCell>
                 <TableCell align="right">{'₱' + row.itemtotal}</TableCell>
-                <TableCell align="right">{row.weighttotal + ' Kg'}</TableCell>
+                <TableCell align="right">{Math.round(row.weighttotal * 100) / 100 + ' Kg'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
