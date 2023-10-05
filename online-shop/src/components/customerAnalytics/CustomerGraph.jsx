@@ -9,12 +9,17 @@ const CustomerGraph = ({data, firestore, products}) => {
     const [ productData, setProductData ] = useState([])
 
     useEffect(()=>{
+      console.log(data)
+    },[data])
+
+    useEffect(()=>{
       const productsData = products.filter((info) => info.itemName == data.name);
       setProductData(productsData[0])
     },[])
 
     const monthNames = [ 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
     const filteredData = datamanipulation.filterDataForGraph(data);
+    console.log(filteredData)
     filteredData.sort((a, b) => {if (a[0] !== b[0]) {return a[0] - b[0]; } if (a[1] !== b[1]) {return a[1] - b[1];}});
     const barLowestPoint = productData.stocksLowestPoint && productData.stocksLowestPoint.map((bar, index) => {if(bar.lowestPoint >= 0) {return bar.lowestPoint} else if(bar.lowestPoint < 0 || bar.lowestPoint == undefined) {return 0}});
     try{
