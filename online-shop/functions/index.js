@@ -29,6 +29,7 @@ const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
 const fetch = require('node-fetch');
+const crypto = require('crypto');
 
 admin.initializeApp();
 
@@ -203,6 +204,28 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
       }
       return ip; // Return the original IP (be it IPv6 or any other format)
     }
+
+    function getFirstAndLastName(name) {
+      if (!name) { // This checks for undefined, null, and empty string.
+        return [undefined, undefined];
+      }
+      
+      let names = name.trim().split(' ');
+      
+      const firstName = names[0] || undefined;
+      const lastName = names.length > 1 ? names[names.length - 1] : undefined;
+      
+      return [hashString(firstName), hashString(lastName)];
+    }
+
+    function hashString(string) {
+        if (!string) {
+            return undefined
+        }
+        const hash = crypto.createHash('sha256').update(string).digest('hex');
+        return hash
+    };
+    
     
     const data = req.body;
     const apiVersion = 'v18.0'
@@ -217,7 +240,11 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     const action_source = 'website'
     const fbc = data.fbc
     const fbp = data.fbp
-    const userdata = data.userdata
+    const email = hashString(data.email)
+    const phone = data.phone ? hashString(data.phone.replace(/\D+/g, '')) : undefined;
+    const name = data.name
+    const [firstName, lastName] = getFirstAndLastName(name);
+
     
     let ipAddress = req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
     const userAgent = req.headers['user-agent'];
@@ -226,10 +253,24 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     console.log('event_name',event_name,custom_parameters)
     console.log(`IP Address: ${ipAddress}`);
     console.log(`User Agent: ${userAgent}`);
-    console.log('fbc',fbc)
-    console.log('fbp',fbp)
-
-
+    if (fbc != undefined) {
+      console.log('fbc',fbc)
+    }
+    if (fbp != undefined) {
+      console.log('fbp',fbp)
+    }
+    if (email != undefined) {
+      console.log('email',email)
+    }
+    if (phone != undefined) {
+      console.log('phone',phone)
+    }
+    if (firstName != undefined) {
+      console.log('firstName',firstName)
+    }
+    if (lastName != undefined) {
+      console.log('lastName',lastName)
+    }
     
     let payload = {
       data: [
@@ -243,7 +284,11 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
             client_user_agent: userAgent,   
             fbc: fbc,
             fbp: fbp,
-            // country: sha256hash('PH')
+            country: hashString('PH'),
+            fn: firstName,
+            ln: lastName,
+            em: email,
+            ph: phone
           },
           custom_data: {
             ...custom_parameters

@@ -6,9 +6,10 @@ import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app, test = false,fbclid=undefined) {
+  constructor(app, test = false,fbclid=undefined,userdata=undefined) {
     super();
     this.fbclid = fbclid
+    this.userdata = userdata
     // console.log('fbclid',fbclid)
     const appConfig = new AppConfig();
 
@@ -610,10 +611,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       fbp = undefined
     }
 
-    // // get fbclid
-
-    // const urlParams = new URLSearchParams(window.location.search);
-    // let fbc = urlParams.get('fbclid');
+    // // get fbc
     let fbc 
     if (this.fbclid == null) {
       fbc = undefined
@@ -630,12 +628,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       custom_parameters: custom_parameters,
       fbc: fbc,
       fbp: fbp,
+      email: this.userdata?.email,
+      phone: this.userdata?.phoneNumber,
+      name: this.userdata?.name,
     };
 
-
-    // const encodedData = encodeURIComponent(JSON.stringify(data));
-
-    
     const res = await axios.post(`${this.url}postToConversionApi`,data, {
       headers: {
         'Content-Type': 'application/json',

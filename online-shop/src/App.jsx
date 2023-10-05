@@ -70,6 +70,7 @@ function App() {
   }, [authEmulatorConnected]);
 
   // Initialize firestore class
+  const [userdata, setUserData] = useState(null);
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
   const [cloudfirestore, setCloudFirestore] = useState(new cloudFirestoreDb(app));
@@ -77,7 +78,7 @@ function App() {
   const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations))
   const [analytics, setAnalytics] = useState(new firebaseAnalytics(app, cloudfirestore))
   useEffect(() => {
-    const cloudfirestore = new cloudFirestoreDb(app,false,fbclid);
+    const cloudfirestore = new cloudFirestoreDb(app,false,fbclid,userdata);
     const businesscalculations = new businessCalculations(cloudfirestore);
     const datamanipulation = new dataManipulation(businesscalculations);
       // Get Analytics
@@ -87,11 +88,11 @@ function App() {
     setDataManipulation(datamanipulation);
     setAnalytics(analytics);
     
-  }, [fbclid]);
+  }, [fbclid,userdata]);
 
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
-  const [userdata, setUserData] = useState(null);
+ 
   const [isadmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
   const [cart, setCart] = useState({});
