@@ -12,8 +12,6 @@ import dataManipulation from '../../utils/dataManipulation';
 import AppConfig from '../AppConfig';
 
 const OpenCartButton = (props) => {
-  const businesscalculations = new businessCalculations();
-  const datamanipulation = new dataManipulation();
   let [totalPrice, setTotalPrice] = useState(0);
   let [openCart, setOpenCart] = useState(false);
   let [finalCartData, setFinalCartData] = useState([]);
@@ -21,7 +19,7 @@ const OpenCartButton = (props) => {
   const setShakeCartAnimation = props.setShakeCartAnimation;
 
   const location = useLocation();
-  const { alertSnackbar,analytics,refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
+  const { businesscalculations,alertSnackbar,analytics,refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
     useContext(AppContext);
 
   function onAddToCartClick(product) {

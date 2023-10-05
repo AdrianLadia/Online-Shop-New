@@ -17,12 +17,14 @@ const Shop = () => {
   const [retail, setRetail] = useState(true);
   const [loading, setLoading] = useState(true);
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
-  const { isSupportedBrowser, selectedCategory, setSelectedCategory, products,analytics } = useContext(AppContext);
+  const {fbclid, isSupportedBrowser, selectedCategory, setSelectedCategory, products,analytics } = useContext(AppContext);
   const wholesaleOrRetailRef = useRef();
 
-  useEffect(() => {
+   useEffect(() => {
+    if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
       analytics.logOpenStorePageEvent()
-  }, []);
+    }
+  }, [fbclid,analytics]);
 
   useEffect(() => {
     if (products != []) {

@@ -39,13 +39,21 @@ import Alert from './components/Alert';
 const devEnvironment = true;
 
 function App() {
+  // get fbclid for faccebook pixel conversion api
+  const [fbclid, setFbclid] = useState(undefined);
+  useEffect(() => {
+    const fbc = new URLSearchParams(window.location.search).get('fbclid');
+    setFbclid(fbc);
+  }, []);
+
+
+
   const appConfig = new AppConfig();
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
-  // Get Analytics
-  const analytics = new firebaseAnalytics(app);
+
   // Get Storage
   const storage = getStorage(app);
 
@@ -64,8 +72,22 @@ function App() {
   // Initialize firestore class
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
-  const cloudfirestore = new cloudFirestoreDb();
-  const datamanipulation = new dataManipulation();
+  const [cloudfirestore, setCloudFirestore] = useState(new cloudFirestoreDb(app));
+  const [businesscalculations, setBusinessCalculations] = useState(new businessCalculations(cloudfirestore))
+  const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations))
+  const [analytics, setAnalytics] = useState(new firebaseAnalytics(app, cloudfirestore))
+  useEffect(() => {
+    const cloudfirestore = new cloudFirestoreDb(app,false,fbclid);
+    const businesscalculations = new businessCalculations(cloudfirestore);
+    const datamanipulation = new dataManipulation(businesscalculations);
+      // Get Analytics
+    const analytics = new firebaseAnalytics(app, cloudfirestore);
+    setCloudFirestore(cloudfirestore);
+    setBusinessCalculations(businesscalculations);
+    setDataManipulation(datamanipulation);
+    setAnalytics(analytics);
+    
+  }, [fbclid]);
 
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
@@ -118,6 +140,7 @@ function App() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
   
+  
 
   function alertSnackbar(severity, message, duration) {
     setShowAlert(true);
@@ -125,6 +148,8 @@ function App() {
     setAlertSeverity(severity);
     setAlertDuration(duration);
   }
+
+  
 
   useEffect(() => {
     firestore.readAllCategories().then((categories) => {
@@ -213,7 +238,6 @@ function App() {
   // GET USER BROWSER
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
-    console.log(userAgent);
     const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP','MessengerLite','Instagram','facebook'];
     const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
     if (containsAnyFBString) {
@@ -458,6 +482,9 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
+    datamanipulation:datamanipulation,
+    businesscalculations:businesscalculations,
+    fbclid: fbclid,
     alertSnackbar: alertSnackbar,
     analytics: analytics,
     cardSelected: cardSelected,

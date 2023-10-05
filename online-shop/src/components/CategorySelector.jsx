@@ -27,8 +27,7 @@ const CategorySelector = (props) => {
   const setSelectedCategory = props.setSelectedCategory;
   const selectedCategory = props.selectedCategory;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
-  const { analytics,firestore, categories, setCategories, categoryValue, setCategoryValue } = useContext(AppContext);
-  const datamanipulation = new dataManipulation();
+  const { analytics,firestore, categories, setCategories, categoryValue, setCategoryValue,datamanipulation } = useContext(AppContext);
   const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
   const [categoryClickCount, setCategoryClickCount] = useState(0);
   const myElement = useRef(null);

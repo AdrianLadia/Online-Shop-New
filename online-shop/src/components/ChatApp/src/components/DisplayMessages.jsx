@@ -8,13 +8,12 @@ import db from '../firebase';
 import dataManipulation from '../../../../../utils/dataManipulation';
 
 const DisplayMessages = (props) => {
-  const { chatSwitch, selectedChatOrderId, userdata, firestore } = useContext(AppContext);
+  const { datamanipulation,chatSwitch, selectedChatOrderId, userdata, firestore } = useContext(AppContext);
   const messages = props.messageDetails.messages;
   const ownerReadAll = props.messageDetails.ownerReadAll;
   const leftNameIfMemberIsOnRight = props.messageDetails.ownerName;
   const chatData = props.chatData;
   const setChatData = props.setChatData;
-  const datamanipulation = new dataManipulation();
 
   const messagesRef = useRef(null);
 

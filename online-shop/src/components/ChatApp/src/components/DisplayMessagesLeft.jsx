@@ -8,10 +8,10 @@ import dataManipulation from '../../../../../utils/dataManipulation';
 import Image from '../../../ImageComponents/Image';
 
 const DisplayMessagesLeft = (props) => {
-  const { selectedChatOrderId, firestore, isadmin, allUserData,userdata } = useContext(AppContext);
+  const { datamanipulation,selectedChatOrderId, firestore, isadmin, allUserData,userdata } = useContext(AppContext);
   const message = props.message;
   const dateTime = props.dateTime;
-  const datamanipulation = new dataManipulation();
+
   const convertedDate = datamanipulation.convertDateTimeStampToDateString(dateTime);
   const userName = props.userName;
   const userRole = props.userRole;

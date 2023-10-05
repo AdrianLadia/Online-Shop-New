@@ -24,7 +24,7 @@ import CardMedia from '@mui/material/CardMedia';
 
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics,alertSnackbar } =
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics,alertSnackbar,fbclid } =
     useContext(AppContext);
   const favorites =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c&_gl=1*e9kma0*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc0OTA3LjM3LjAuMA..';
@@ -336,9 +336,10 @@ const HomePage = ({ isAffiliateLink }) => {
   }
 
   useEffect(() => {
-    
-    analytics.logOpenHomePageEvent()
-  }, []);
+    if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
+      analytics.logOpenHomePageEvent()
+    }
+  }, [fbclid,analytics]);
 
   useEffect(() => {
     if (selectedSlide === 0) {

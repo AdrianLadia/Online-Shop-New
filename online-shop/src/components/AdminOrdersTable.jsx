@@ -12,8 +12,7 @@ import AppContext from '../AppContext';
 import { de } from 'date-fns/locale';
 
 const AdminOrdersTable = (props) => {
-  const datamanipulation = new dataManipulation();
-  const { userdata } = useContext(AppContext);
+  const { userdata,datamanipulation } = useContext(AppContext);
   function createData(
     referenceNumber,
     orderDate,

@@ -15,8 +15,7 @@ import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
 const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
-  const datamanipulation = new dataManipulation();
-  const { alertSnackbar,storage, cloudfirestore, userId, userdata, firestore, refreshUser, setRefreshUser,analytics } = useContext(AppContext);
+  const { alertSnackbar,storage, cloudfirestore, userId, userdata, firestore, refreshUser, setRefreshUser,analytics,datamanipulation } = useContext(AppContext);
   const location = useLocation();
   const {
     referenceNumber,

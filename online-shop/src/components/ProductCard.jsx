@@ -26,8 +26,7 @@ const ProductCard = (props) => {
   const [outofstock, setOutOfStock] = useState(false);
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
-  const calculations = new businessCalculations();
-  const { alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics } = useContext(AppContext);
+  const { businesscalculations,alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(false);
   const ref = useRef(null);
   const showTutorial = false
@@ -61,10 +60,10 @@ const ProductCard = (props) => {
   
   let safetyStock;
   if (product.averageSalesPerDay != undefined) {
-    safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
+    safetyStock = businesscalculations.getSafetyStock(product.averageSalesPerDay);
   }
   if (product.averageSalesPerDay === undefined) {
-    safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
+    safetyStock = businesscalculations.getSafetyStock(retailAverageSalesPerDay);
   }
   
   
@@ -107,7 +106,7 @@ const ProductCard = (props) => {
     }
 
     if (isWholesale) {
-      if (totalOrder > calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
+      if (totalOrder > businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
         setQuantity('');
         alertSnackbar('error','Not enough stocks available');
         return;
@@ -116,7 +115,7 @@ const ProductCard = (props) => {
   
        if (
         totalOrder >
-        calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
+        businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
       ) {
         setQuantity('');
         alertSnackbar('error','Not enough stocks available');

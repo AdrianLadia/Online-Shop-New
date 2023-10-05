@@ -24,11 +24,10 @@ import menuRules from '../../utils/classes/menuRules';
 import NotificationSound from '../sounds/delivery.mp3';
 
 const AdminOrders = (props) => {
-  const { userdata, cloudfirestore, db, firestore } = React.useContext(AppContext);
+  const { userdata, cloudfirestore, db, firestore,datamanipulation } = React.useContext(AppContext);
 
   const styles = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
-  const datamanipulation = new dataManipulation();
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const [orders, setOrders] = React.useState([]);
   const [startDate, setStartDate] = useState('');
