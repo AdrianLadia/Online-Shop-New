@@ -42,7 +42,7 @@ const style = {
 
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
-  const { firestore, storage, categories: initialCategories, userdata } = React.useContext(AppContext);
+  const { businesscalculations,firestore, storage, categories: initialCategories, userdata } = React.useContext(AppContext);
   const [categories, setCategories] = React.useState(initialCategories);
 
   useEffect(() => {
@@ -124,7 +124,6 @@ const AdminAddOrEditItem = (props) => {
     });
   }, []);
 
-  const businesscalculations = new businessCalculations();
 
   function checkDimensions(throwError = true) {
     if ([null, ''].includes(dimensions) == false) {

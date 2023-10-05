@@ -40,8 +40,7 @@ const MyOrderCardModal = (props) => {
   });
 
   const hidePricing = props.hidePricing;
-  const datamanipulation = new dataManipulation();
-  const { storage, userId, cloudfirestore, userdata } = useContext(AppContext);
+  const { storage, userId, cloudfirestore, userdata,datamanipulation } = useContext(AppContext);
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;

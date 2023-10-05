@@ -3,7 +3,7 @@ import { useState, useContext } from 'react';
 import { useEffect, useRef } from 'react';
 import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
-import Tabs from '@mui/material/Tabs';
+import Tabs, { tabsClasses } from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { ThemeProvider } from '@mui/material/styles';
@@ -27,8 +27,8 @@ const CategorySelector = (props) => {
   const setSelectedCategory = props.setSelectedCategory;
   const selectedCategory = props.selectedCategory;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
-  const { analytics,firestore, categories, setCategories, categoryValue, setCategoryValue } = useContext(AppContext);
-  const datamanipulation = new dataManipulation();
+  const { analytics, firestore, categories, setCategories, categoryValue, setCategoryValue, datamanipulation } =
+    useContext(AppContext);
   const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
   const [categoryClickCount, setCategoryClickCount] = useState(0);
   const myElement = useRef(null);
@@ -77,7 +77,7 @@ const CategorySelector = (props) => {
       setSelectedCategory(categories[categoryValue]);
       setCategoryClickCount(categoryClickCount + 1);
       if (categoryClickCount > 0) {
-        analytics.logChangeCategoryEvent(categories[categoryValue])
+        analytics.logChangeCategoryEvent(categories[categoryValue]);
       }
     }
   }, [categoryValue]);
@@ -89,7 +89,6 @@ const CategorySelector = (props) => {
 
     return rect.bottom < 0 || rect.right < 0 || rect.left > window.innerWidth || rect.top > window.innerHeight;
   }
-
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,7 +105,6 @@ const CategorySelector = (props) => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []); // The empty dependency array ensures the useEffect runs once when the component mounts and not on every re-render.
-
 
   useEffect(() => {
     if (myElement.current) {
@@ -131,13 +129,19 @@ const CategorySelector = (props) => {
           <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>
               <Tabs
+                sx={{
+                  [`& .${tabsClasses.scrollButtons}`]: {
+                    '&.Mui-disabled': { opacity: 0.3 },
+                  },
+                }}
                 value={categoryValue}
                 onChange={handleChange}
                 aria-label="basic tabs example"
                 indicatorColor="primary"
                 textColor="primary"
                 variant="scrollable"
-                scrollButtons="auto"
+                scrollButtons
+                allowScrollButtonsMobile
               >
                 {categories &&
                   categories.map((category, index) => {

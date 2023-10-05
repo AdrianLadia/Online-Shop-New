@@ -7,10 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import AppConfig from '../src/AppConfig';
 
 class businessCalculations {
-  constructor() {
+  constructor(cloudfirestore) {
     this.serviceareas = new serviceAreas();
     this.lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
-    this.cloudfirestore = new cloudFirestoreDb();
+    this.cloudfirestore = cloudfirestore;
   }
 
   readAllParentProductsFromOnlineStoreProducts(products) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import PaymentMethods from './PaymentMethods';
 import CheckoutContext from '../context/CheckoutContext';
 import { Typography, Button } from '@mui/material';
-import businessCalculations from '../../utils/businessCalculations';
+
 import { HiCash } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
 import PaymayaSdk from './PaymayaSdk';
@@ -13,9 +13,9 @@ const AccountStatementPayment = (props) => {
   const { setSelectedChatOrderId } = useContext(AppContext);
   // const { userdata, cart, setCart, userstate } = React.useContext(AppContext);
 
-  const { setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
+  const { businesscalculations,setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
   const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
-  const businesscalculations = new businessCalculations();
+
   const location = useLocation();
   const navigateTo = useNavigate();
   const { eMail, phoneNumber, totalPrice, userId, fullname, orderReference, date } = location.state;

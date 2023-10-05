@@ -21,8 +21,6 @@ const ProductList = (props) => {
   const wholesale = props.wholesale;
   const retail = props.retail;
   const selectedCategory = props.selectedCategory;
-  const datamanipulation = new dataManipulation();
-  const businesscalculations = new businessCalculations();
   const [isWholesale, setIsWholesale] = useState(false);
   const [modal, setModal] = useState(false);
   const location = useLocation();
@@ -42,7 +40,7 @@ const ProductList = (props) => {
 
   
   const [productdataloading, setProductDataLoading] = useState(true);
-  const { alertSnackbar,userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
+  const { datamanipulation,businesscalculations,alertSnackbar,userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
   React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
   const [clickedProduct, setClickedProduct] = useState(null);

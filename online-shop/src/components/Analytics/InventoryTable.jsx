@@ -10,7 +10,6 @@ import StockInsButton from "./StockInsButton";
 import RecentOrdersButton from "./RecentOrdersButton";
 import Graph from "./Graph";
 import useWindowDimensions from "./utils/UseWindowDimensions";
-import businessCalculation from "./bussinessCalculation/businessCalculation";
 import { SimpleMovingAverage } from "./SimpleMovingAverage";
 import { Clicks } from "./Clicks";
 import { RateOfChange } from "./RateOfChange";
@@ -22,7 +21,6 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 export function InventoryTable({name, category, customized, callback}) {
   const datamanipulation = new dataManipulation();
   const businesslogic = new businessLogic();
-  const businesscalculation = new businessCalculation();
   const [productsData, setProductsData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [dataUsedForTable, setDataUsedForTable] = useState([]);

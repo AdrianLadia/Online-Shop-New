@@ -57,8 +57,10 @@ const CheckoutPage = () => {
     setReferenceNumber,
   } = useContext(CheckoutContext);
 
-  const datamanipulation = new dataManipulation();
+  
   const {
+    datamanipulation,
+    cloudfirestore,
     userdata,
     cart,
     setCart,
@@ -75,7 +77,8 @@ const CheckoutPage = () => {
     firestore,
     orders,
     analytics,
-    alertSnackbar
+    alertSnackbar,
+    businesscalculations
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -85,7 +88,6 @@ const CheckoutPage = () => {
   const [localphonenumber, setLocalPhoneNumber] = React.useState('');
 
   const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
-  const cloudfirestoredb = new cloudFirestoreDb();
 
   const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
   const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
@@ -107,7 +109,6 @@ const CheckoutPage = () => {
   const [useShippingLine, setUseShippingLine] = useState(false);
 
   const paperboylocation = new paperBoyLocation();
-  const businesscalculations = new businessCalculations();
 
   const paperboylatitude = paperboylocation.latitude;
   const paperboylongitude = paperboylocation.longitude;
@@ -317,7 +318,7 @@ const CheckoutPage = () => {
       try {
         const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
-        const res = await cloudfirestoredb.transactionPlaceOrder({
+        const res = await cloudfirestore.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
           locallatitude: locallatitude,

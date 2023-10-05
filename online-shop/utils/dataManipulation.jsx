@@ -8,7 +8,9 @@ import dateConverter from '../functions/utils/dateConverter';
 import AppConfig from '../src/AppConfig';
 
 class dataManipulation {
-  constructor() {}
+  constructor(businesscalculations) {
+    this.businesscalculations = businesscalculations;
+  }
 
   convertTimestampToDateStringWithoutTime(timestamp) {
     const timestampInMilliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
@@ -556,8 +558,7 @@ class dataManipulation {
       return 0;
     });
 
-    const businesscalculations = new businessCalculations();
-    const vat = businesscalculations.getValueAddedTax(total_non_state, urlOfBir2303, isInvoiceNeeded);
+    const vat = this.businesscalculations.getValueAddedTax(total_non_state, urlOfBir2303, isInvoiceNeeded);
     const items_total = total_non_state - vat;
 
     const toReturn = [rows_non_state, items_total, total_weight_non_state, vat];

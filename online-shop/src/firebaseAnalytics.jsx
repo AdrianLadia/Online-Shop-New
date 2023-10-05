@@ -2,9 +2,9 @@ import { getAnalytics, logEvent } from 'firebase/analytics';
 import cloudFirestoreDb from './cloudFirestoreDb';
 
 class firebaseAnalytics {
-  constructor(app) {
+  constructor(app,cloudfirestore) {
     this.analytics = getAnalytics(app);
-    this.cloudFirestoreDb = new cloudFirestoreDb(app);
+    this.cloudFirestoreDb = cloudfirestore;
   }
 
   logEvent(eventName, eventParams) {

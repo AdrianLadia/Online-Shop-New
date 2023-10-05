@@ -6,8 +6,10 @@ import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app, test = false) {
+  constructor(app, test = false,fbclid=undefined) {
     super();
+    this.fbclid = fbclid
+    // console.log('fbclid',fbclid)
     const appConfig = new AppConfig();
 
     if (appConfig.getIsDevEnvironment() || test) {
@@ -212,9 +214,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async readSelectedDataFromOnlineStore(productId) {
-    console.log(productId)
-    
-
     if (productId == 'null') {
       return
     }
@@ -611,17 +610,18 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       fbp = undefined
     }
 
-    // get fbclid
-    const urlParams = new URLSearchParams(window.location.search);
-    let fbc = urlParams.get('fbclid');
-    if (fbc == null) {
+    // // get fbclid
+
+    // const urlParams = new URLSearchParams(window.location.search);
+    // let fbc = urlParams.get('fbclid');
+    let fbc 
+    if (this.fbclid == null) {
       fbc = undefined
     }
     else {
       const unixTimestamp = Math.round(+new Date() / 1000);
-      fbc = 'fb.1.' + unixTimestamp.toString() + '.' + fbc
+      fbc = 'fb.1.' + unixTimestamp.toString() + '.' + this.fbclid
     }
-
 
 
     const data = {

@@ -8,10 +8,9 @@ import {AiFillCheckCircle} from 'react-icons/ai';
 
 const DisplayMessagesRight = (props) => {
 
-  const { isadmin,userdata } = useContext(AppContext);
+  const { isadmin,userdata,datamanipulation } = useContext(AppContext);
   const message = props.message;
   let dateTime = props.dateTime;
-  const datamanipulation = new dataManipulation(); 
   dateTime = datamanipulation.convertDateTimeStampToDateString(dateTime)
   
   

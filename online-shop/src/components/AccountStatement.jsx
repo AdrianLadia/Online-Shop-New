@@ -10,9 +10,9 @@ import { BsBookHalf } from 'react-icons/bs';
 import UseWindowDimensions from './useWindowDimensions';
 
 const AccountStatement = () => {
-  const { orders, payments, userdata } = useContext(AppContext);
+  const { orders, payments, userdata,datamanipulation} = useContext(AppContext);
   const navigateTo = useNavigate();
-  const datamanipulation = new dataManipulation();
+
   const [orderInfoData, setOrderInfoData] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [open, setOpen] = React.useState(false);
