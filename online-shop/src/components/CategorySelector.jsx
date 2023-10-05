@@ -38,7 +38,10 @@ const CategorySelector = (props) => {
     const getCategoryFromURL = () => {
       const params = new URLSearchParams(location.search);
       const category = params.get('category');
-      setCategoryFromUrl(category);
+      console.log('category', category);
+      if (category) {
+        setCategoryFromUrl(category);
+      }
       // You can now use the "category" value in your component logic
     };
 
