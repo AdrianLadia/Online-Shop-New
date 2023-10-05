@@ -39,9 +39,6 @@ import Alert from './components/Alert';
 const devEnvironment = true;
 
 function App() {
-  const urlParams = new URLSearchParams(window.location.search);
-  let fbc = urlParams.get('fbclid');
-
   const appConfig = new AppConfig();
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
@@ -67,7 +64,7 @@ function App() {
   // Initialize firestore class
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
-  const cloudfirestore = new cloudFirestoreDb(app,fbc=fbc);
+  const cloudfirestore = new cloudFirestoreDb();
   const datamanipulation = new dataManipulation();
 
   const [userId, setUserId] = useState(null);

@@ -6,10 +6,9 @@ import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app, test = false,fbc=null) {
+  constructor(app, test = false) {
     super();
     const appConfig = new AppConfig();
-    this.fbc = fbc
 
     if (appConfig.getIsDevEnvironment() || test) {
       this.url = 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/';
@@ -235,7 +234,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async readAllProductsForOnlineStore(category) {
-    console.log(category);
     try {
       const response = await axios.request(`${this.url}readAllProductsForOnlineStore?category=${category}`);
       const toReturn = response.data;
@@ -614,17 +612,15 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     // get fbclid
-    // conso
-    let _fbc
-    if (this.fbc == null) {
-      _fbc = undefined
+    const urlParams = new URLSearchParams(window.location.search);
+    let fbc = urlParams.get('fbclid');
+    if (fbc == null) {
+      fbc = undefined
     }
     else {
       const unixTimestamp = Math.round(+new Date() / 1000);
-      _fbc = 'fb.1.' + unixTimestamp.toString() + '.' + fbc
+      fbc = 'fb.1.' + unixTimestamp.toString() + '.' + fbc
     }
-
-    console.log(_fbc)
 
 
 
@@ -632,7 +628,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       event_name: event_name,
       event_source_url: window.location.href,
       custom_parameters: custom_parameters,
-      fbc: _fbc,
+      fbc: fbc,
       fbp: fbp,
     };
 
