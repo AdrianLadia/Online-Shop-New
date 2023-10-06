@@ -124,12 +124,12 @@ const CheckoutSummary = (props) => {
             }}
           >
             <div className="grid grid-cols-2 md:grid-cols-6 justify-start items-start gap-5 xs:gap-10 ">
-              {deliveryVehicle ? (
+              {deliveryVehicle && deliveryVehicle != 'storePickUp' ? (
                 <ListItem>
                   <ListItemText primary="Delivery Vehicle:" secondary={deliveryVehicle} />
                 </ListItem>
               ) : null}
-              {maxWeight ? (
+              {maxWeight && deliveryVehicle != 'storePickUp' ? (
                 <ListItem>
                   <ListItemText primary="Max Weight:" secondary={maxWeight + ' Kg'} />
                 </ListItem>

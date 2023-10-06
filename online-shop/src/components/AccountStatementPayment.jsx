@@ -66,6 +66,7 @@ const AccountStatementPayment = (props) => {
       navigateTo: navigateTo,
       itemsTotal: null,
       date: checkIfDateExists(),
+      deliveryVehicle: null,
     });
   }
 

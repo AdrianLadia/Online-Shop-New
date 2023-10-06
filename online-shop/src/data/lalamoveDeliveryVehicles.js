@@ -4,6 +4,7 @@ import mpv from "./lalamoveDeliveryVehicles/mpv";
 import pickup from "./lalamoveDeliveryVehicles/pickup";
 import van from "./lalamoveDeliveryVehicles/van";
 import closedvan from "./lalamoveDeliveryVehicles/closedvan";
+import storePickUp from "./lalamoveDeliveryVehicles/storePickUp";
 
 class lalamoveDeliveryVehicles {
     constructor() {
@@ -14,9 +15,10 @@ class lalamoveDeliveryVehicles {
             this.pickup = new pickup()
             this.van = new van()
             this.closedvan = new closedvan()
+            this.storePickUp = new storePickUp()
         }
         catch{
-            return 'No Vehicl'
+            return 'No Vehicle'
         }
     }
 }

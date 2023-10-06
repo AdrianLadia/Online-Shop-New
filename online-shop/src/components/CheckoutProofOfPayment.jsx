@@ -11,11 +11,21 @@ import { Timestamp } from 'firebase/firestore';
 import dataManipulation from '../../utils/dataManipulation';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
+import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
 
 const CheckoutProofOfPayment = (props) => {
-  // const referenceNumber = props.referenceNumber
-  // const cloudfirestore = new cloudFirestoreDb();
-  const { alertSnackbar,storage, cloudfirestore, userId, userdata, firestore, refreshUser, setRefreshUser,analytics,datamanipulation } = useContext(AppContext);
+  const {
+    alertSnackbar,
+    storage,
+    cloudfirestore,
+    userId,
+    userdata,
+    firestore,
+    refreshUser,
+    setRefreshUser,
+    analytics,
+    datamanipulation,
+  } = useContext(AppContext);
   const location = useLocation();
   const {
     referenceNumber,
@@ -27,16 +37,29 @@ const CheckoutProofOfPayment = (props) => {
     area,
     paymentMethodSelected,
     date,
+    deliveryVehicle,
   } = location.state;
   const orderDateObject = new Date(date);
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
   const dateNow = new Date();
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
   const navigateTo = useNavigate();
-  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [containerClassName, setContainerClassName ] = useState("w-full h-[calc(100vh-200px)]") 
+  const latitude = deliveryVehicle?.latitude;
+  const longitude = deliveryVehicle?.longitude;
 
   useEffect(() => {
-    analytics.logOpenPaymentPageEvent(referenceNumber,itemsTotal,deliveryFee, grandTotal, vat,area, paymentMethodSelected, date,rows) 
+    analytics.logOpenPaymentPageEvent(
+      referenceNumber,
+      itemsTotal,
+      deliveryFee,
+      grandTotal,
+      vat,
+      area,
+      paymentMethodSelected,
+      date,
+      rows
+    );
   }, []);
 
   function delay(ms) {
@@ -74,7 +97,7 @@ const CheckoutProofOfPayment = (props) => {
       await delay(5000);
       navigateTo('/myorders/orderList');
     } catch (error) {
-      alertSnackbar('error','Failed to upload proof of payment. Please try again.');
+      alertSnackbar('error', 'Failed to upload proof of payment. Please try again.');
       return;
     }
   }
@@ -101,7 +124,6 @@ const CheckoutProofOfPayment = (props) => {
           <div className="bg-white shadow-lg rounded-lg p-8">
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
-
             {qrLink != null ? (
               <div className="mb-8">
                 <p>
@@ -131,7 +153,6 @@ const CheckoutProofOfPayment = (props) => {
                 </div>
               </>
             )}
-
             <p>
               Once you have completed the payment, please{' '}
               <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
@@ -140,7 +161,24 @@ const CheckoutProofOfPayment = (props) => {
               We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
               frame, your order will be cancelled.
             </p>
-
+            <Divider className="mt-5 mb-5"></Divider>
+            {deliveryVehicle?.name == 'storePickUp' ? (
+              <>
+                <Typography variant="h6" className="mb-4">
+                  Store Pick Location
+                </Typography>
+                <GoogleMap
+                  clickableIcons={false}
+                  zoom={17}
+                  center={{ lat: latitude, lng: longitude }}
+                  mapContainerClassName={containerClassName}
+                  disableDefaultUI={true}
+                  mapTypeControl={false}
+                >
+                  <MarkerF position={{ lat: latitude, lng: longitude }} />
+                </GoogleMap>
+              </>
+            ) : null}
             <Divider className="mt-5 mb-5"></Divider>
             {/* <CheckoutSummary/> */}
             {rows != null ? (
@@ -157,7 +195,6 @@ const CheckoutProofOfPayment = (props) => {
                 <Typography>{`Total : ₱ ${grandTotal}`}</Typography>
               </div>
             )}
-
             <div className="flex flex-col justify-center">
               <div className="flex flex-row justify-center mt-5">
                 <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
@@ -169,7 +206,6 @@ const CheckoutProofOfPayment = (props) => {
                 <Typography variant="h7" sx={{ marginRight: 1 }}></Typography>
               </div>
             </div>
-
             <div className="flex justify-center mt-6">
               <ImageUploadButton
                 onUploadFunction={onUpload}

@@ -49,14 +49,14 @@ const AnnouncementNotification = () => {
             ></CardMedia>
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
-                Free Delivery Until 10/31
+                10% off on all items
               </Typography>
               <Typography
                 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
                 variant="body2"
                 color="text.secondary"
               >
-                Shop now and enjoy the savings on delivery! Offer ends soon.
+                Shop now and enjoy the savings! Offer ends soon.
               </Typography>
             </CardContent>
           </Card>

@@ -286,7 +286,7 @@ class businessCalculations {
     }
   }
 
-  getVehicleForDelivery(weightOfItems) {
+  getVehicleForDelivery(weightOfItems,pickUpOrDeliver) {
     console.log('weightOfItems', weightOfItems)
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
@@ -295,6 +295,14 @@ class businessCalculations {
     }
 
     const vehicleSchema = Joi.object().required();
+
+    if (pickUpOrDeliver === 'pickup') {
+      const { error8 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.pickup);
+      if (error8) {
+        throw new Error('Data Validation Error');
+      }
+      return this.lalamovedeliveryvehicles.storePickUp;
+    }
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
@@ -629,6 +637,7 @@ class businessCalculations {
       navigateTo: Joi.func(),
       itemsTotal: Joi.number().required().allow(null),
       date: Joi.date().required(),
+      deliveryVehicle: Joi.object().required().allow(null),
     }).required();
 
     const { error } = dataSchema.validate(data);
@@ -680,6 +689,7 @@ class businessCalculations {
           rows: data.rows,
           area: data.area,
           date: data.date,
+          deliveryVehicle: data.deliveryVehicle,
         },
       });
     } else {
