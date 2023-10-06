@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import { BiExit } from 'react-icons/bi';
 
 const style = {
   position: 'absolute',
@@ -23,8 +24,6 @@ const AnnouncementNotification = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-
-
   return (
     <div>
       <Modal
@@ -35,8 +34,19 @@ const AnnouncementNotification = () => {
       >
         {/* <Box sx={style}> */}
         <div className="top-2/4 left-2/4 absolute -translate-x-1/2 -translate-y-1/2 w-9/10 md:w-1/2 lg:w-1/6">
-          <Card sx={{ width:'full', flexShrink: 0, height: '100%' }} elevation={20}>
-            <CardMedia sx={{ height: 210, backgroundColor: '#e1fadd' }} image={'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/announcementPhotos%2FYellow%20Simple%20Special%20Offer%20Instagram%20Post.png?alt=media&token=5dc02577-c6c2-485c-84bf-9a6019b90faf&_gl=1*pbq9md*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjQyMzYzMy4xNDYuMS4xNjk2NDIzNjkwLjMuMC4w'} title="auto calculate" />
+          <Card sx={{ width: 'full', flexShrink: 0, height: '100%' }} elevation={20}>
+            <div className="flex justify-end absolute right-2 top-2">
+              <button onClick={handleClose} className='bg-red-500 text-white rounded-full px-3 py-1.5'>
+                X
+              </button>
+            </div>
+            <CardMedia
+              sx={{ height: 210, backgroundColor: '#e1fadd', display: 'flex' }}
+              image={
+                'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/announcementPhotos%2FYellow%20Simple%20Special%20Offer%20Instagram%20Post.png?alt=media&token=5dc02577-c6c2-485c-84bf-9a6019b90faf&_gl=1*pbq9md*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjQyMzYzMy4xNDYuMS4xNjk2NDIzNjkwLjMuMC4w'
+              }
+              title="auto calculate"
+            ></CardMedia>
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
                 Free Delivery Until 10/31
@@ -46,7 +56,7 @@ const AnnouncementNotification = () => {
                 variant="body2"
                 color="text.secondary"
               >
-               Shop now and enjoy the savings on delivery! Offer ends soon. 
+                Shop now and enjoy the savings on delivery! Offer ends soon.
               </Typography>
             </CardContent>
           </Card>
