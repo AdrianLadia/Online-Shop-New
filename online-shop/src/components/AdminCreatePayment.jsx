@@ -29,11 +29,10 @@ import { CircularProgress } from '@mui/material';
 import menuRules from '../../utils/classes/menuRules';
 
 const AdminCreatePayment = (props) => {
-  const { cloudfirestore, storage, firestore, userdata } = useContext(AppContext);
+  const { cloudfirestore, storage, firestore, userdata,datamanipulation } = useContext(AppContext);
 
   const style = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
-  const datamanipulation = new dataManipulation();
   const users = props.users;
   const [selectedName, setSelectedName] = React.useState('');
   const [allUserNames, setAllUserNames] = React.useState([]);

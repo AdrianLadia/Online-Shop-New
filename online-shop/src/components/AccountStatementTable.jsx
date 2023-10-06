@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useContext } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Link, Typography } from '@mui/material';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import dataManipulation from '../../utils/dataManipulation';
+import AppContext from '../AppContext';
 
 const AccountStatementTable = (props) => {
   const tableData = props.tableData;
@@ -16,7 +17,8 @@ const AccountStatementTable = (props) => {
   const orders = props.orders;
   const setOrderInfoData = props.setOrderInfoData;
   const setOpen = props.setOpen;
-  const datamanipulation = new dataManipulation();
+  const {datamanipulation} = useContext(AppContext);
+
 
   useEffect(() => {
     const rowsdata = datamanipulation.accountStatementTable(tableData);

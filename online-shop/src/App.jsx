@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
+import firebaseAnalytics from './firebaseAnalytics';
 import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import AdminSecurity from './components/AdminSecurity';
@@ -33,16 +34,25 @@ import AffiliatePage from './components/AffiliatePage';
 import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
+import Alert from './components/Alert';
 
 const devEnvironment = true;
 
 function App() {
+  // get fbclid for faccebook pixel conversion api
+  const [fbclid, setFbclid] = useState(undefined);
+  useEffect(() => {
+    const fbc = new URLSearchParams(window.location.search).get('fbclid');
+    setFbclid(fbc);
+  }, []);
+
+
+
   const appConfig = new AppConfig();
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   // Get Authentication
   const auth = getAuth(app);
-  // add captcha for phone auth
 
   // Get Storage
   const storage = getStorage(app);
@@ -60,15 +70,29 @@ function App() {
   }, [authEmulatorConnected]);
 
   // Initialize firestore class
+  const [userdata, setUserData] = useState(null);
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
-  const cloudfirestore = new cloudFirestoreDb();
-  const businesscalculation = new businessCalculations();
-  const datamanipulation = new dataManipulation();
+  const [cloudfirestore, setCloudFirestore] = useState(new cloudFirestoreDb(app));
+  const [businesscalculations, setBusinessCalculations] = useState(new businessCalculations(cloudfirestore))
+  const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations))
+  const [analytics, setAnalytics] = useState(new firebaseAnalytics(app, cloudfirestore))
+  useEffect(() => {
+    const cloudfirestore = new cloudFirestoreDb(app,false,fbclid,userdata);
+    const businesscalculations = new businessCalculations(cloudfirestore);
+    const datamanipulation = new dataManipulation(businesscalculations);
+      // Get Analytics
+    const analytics = new firebaseAnalytics(app, cloudfirestore);
+    setCloudFirestore(cloudfirestore);
+    setBusinessCalculations(businesscalculations);
+    setDataManipulation(datamanipulation);
+    setAnalytics(analytics);
+    
+  }, [fbclid,userdata]);
 
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
-  const [userdata, setUserData] = useState(null);
+ 
   const [isadmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
   const [cart, setCart] = useState({});
@@ -113,6 +137,20 @@ function App() {
   const [favoriteProductData, setFavoriteProductData] = useState([]);
   const [categoryValue, setCategoryValue] = useState(null);
   const hiddenCategories = [];
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('');
+  
+  
+
+  function alertSnackbar(severity, message, duration) {
+    setShowAlert(true);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setAlertDuration(duration);
+  }
+
+  
 
   useEffect(() => {
     firestore.readAllCategories().then((categories) => {
@@ -169,7 +207,6 @@ function App() {
         firestore.readAllDataFromCollection('Users').then((users) => {
           setAllUserData(users);
         });
-        
       }
     }
   }, [isadmin]);
@@ -202,32 +239,15 @@ function App() {
   // GET USER BROWSER
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
-    if (document.documentElement.classList.contains('in-app-browser')) {
+    const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP','MessengerLite','Instagram','facebook'];
+    const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
+    if (containsAnyFBString) {
       return false;
     }
-    if (typeof FB_IAB !== 'undefined') {
-      return false;
-    }
-
-    if (userAgent.match(/FBAN|FBAV/i)) {
-      return false;
-    }
-
-    if (userAgent.indexOf('FBAN') > -1) {
-      return false;
-    }
-    if (
-      userAgent.indexOf('Chrome') > -1 ||
-      userAgent.indexOf('Firefox') > -1 ||
-      userAgent.indexOf('Safari') > -1 ||
-      userAgent.indexOf('Edge') > -1 ||
-      userAgent.indexOf('MSIE ') > -1 ||
-      userAgent.indexOf('Trident/') > -1
-    ) {
+    else {
       return true;
     }
 
-    return false;
   }
 
   useEffect(() => {
@@ -245,7 +265,6 @@ function App() {
             return;
           } else {
             async function createNewUser() {
-        
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
@@ -313,13 +332,10 @@ function App() {
         });
         setCategoryProductsData(combinedProductsList);
       }
-
     }
 
     readAllProductsForOnlineStore();
   }, [selectedCategory]);
-
-
 
   useEffect(() => {
     if (userdata != null) {
@@ -348,7 +364,7 @@ function App() {
         });
 
         const favoriteProductsData = await Promise.all(favoriteProductPromises);
-        
+
         setFavoriteProductData(favoriteProductsData);
       };
 
@@ -356,13 +372,14 @@ function App() {
     }
   }, [userdata]);
 
-
   useEffect(() => {
     const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData];
     //remove duplicates
-    const uniqueProducts = combinedProductsList.filter((thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index);
+    const uniqueProducts = combinedProductsList.filter(
+      (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
+    );
     setProducts(uniqueProducts);
-  }, [cartProductsData,categoryProductsData,favoriteProductData]);
+  }, [cartProductsData, categoryProductsData, favoriteProductData]);
 
   useEffect(() => {
     if (userdata) {
@@ -432,14 +449,13 @@ function App() {
   useEffect(() => {
     if (userOrderReference != null) {
       const orderPromises = userOrderReference.map(async (order) => {
-        const orderData = await cloudfirestore.readSelectedOrder(order.reference,userId);
+        const orderData = await cloudfirestore.readSelectedOrder(order.reference, userId);
         return orderData;
       });
       Promise.all(orderPromises).then((data) => {
         setOrders(data);
       });
     }
-
   }, [userOrderReference]);
 
   useEffect(() => {
@@ -467,6 +483,11 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
+    datamanipulation:datamanipulation,
+    businesscalculations:businesscalculations,
+    fbclid: fbclid,
+    alertSnackbar: alertSnackbar,
+    analytics: analytics,
     cardSelected: cardSelected,
     setCardSelected: setCardSelected,
     changeCard: changeCard,
@@ -761,7 +782,7 @@ function App() {
             </AppContext.Provider>
           }
         />
-                <Route
+        <Route
           path="/products"
           element={
             <AppContext.Provider value={appContextValue}>
@@ -770,6 +791,7 @@ function App() {
           }
         />
       </Routes>
+      <Alert severity={alertSeverity} message={alertMessage} open={showAlert} setOpen={setShowAlert} />
     </div>
   );
 }

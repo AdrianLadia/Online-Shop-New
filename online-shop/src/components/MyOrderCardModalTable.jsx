@@ -14,7 +14,7 @@ import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
 
-  const {cloudfirestore } = React.useContext(AppContext);
+  const {cloudfirestore,datamanipulation } = React.useContext(AppContext);
   
   const [products, setProducts] = React.useState([]);
   const { width, height } = useWindowDimensions();
@@ -24,7 +24,6 @@ const MyOrderCardModalTable = (props) => {
   const order = props.order;
   const urlOfBir2303 = order.urlOfBir2303
   const cartItemsPrice = order.cartItemsPrice;
-  const datamanipulation = new dataManipulation();
 
 
   const [rows, setRows] = React.useState([]);

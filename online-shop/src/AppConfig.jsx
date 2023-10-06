@@ -6,9 +6,14 @@ class AppConfig {
         this.isPaymentSandBox = true
         this.noVat = false
         this.retailSafetyStock = 0
-        this.freeDeliveryThreshold = 10000
+        this.freeDeliveryThreshold = 200
         this.featuredCategory = 'Meal Box'
         this.firestoreDeveloperEmail = ['ladia.adrian@gmail.com']
+        this.minimumOrder = 200
+    }
+
+    getMinimumOrder() {
+        return this.minimumOrder
     }
 
     getFirestoreDeveloperEmail() {

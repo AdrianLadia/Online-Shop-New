@@ -4,11 +4,12 @@ import AppContext from '../AppContext';
 import GuestSignInModal from './GuestSignInModal';
 import { CircularProgress } from '@mui/material';
 import UnsupportedBrowserRedirect from './UnsupportedBrowserRedirect';
+import AppConfig from '../AppConfig';
 
 const CheckoutButton = (props) => {
 
   const totalPrice = props.totalPrice
-  const { userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata,isSupportedBrowser } = useContext(AppContext);
+  const { analytics,userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata,isSupportedBrowser,alertSnackbar } = useContext(AppContext);
   const [openGuestSignInModal,setOpenGuestSignInModal] = useState(false);
   const [totalCredit, setTotalCredit] = useState(0);
   const [isSupportedBrowserModalOpen, setIsSupportedBrowserModalOpen] = useState(false);
@@ -28,7 +29,13 @@ const CheckoutButton = (props) => {
   }
 
   function onCheckoutButtonClick() {
+    analytics.logCheckoutInitiatedEvent(cart)
     // if(totalCredit < 50000){
+      const minimumOrder = new AppConfig().getMinimumOrder();
+      if (totalPrice < minimumOrder) {
+        alertSnackbar('error',"Minimum order is " + minimumOrder + " pesos.")
+        return;
+      }
 
       if (!isSupportedBrowser) {
    

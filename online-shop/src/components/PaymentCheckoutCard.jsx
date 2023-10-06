@@ -6,7 +6,7 @@ import AppContext from '../AppContext';
 
 const PaymentCheckoutCard = (props) => {
   const [cardElevate, setCardElevate] = useState(false);
-  const {changeCard, setChangeCard} = useContext(AppContext);
+  const {changeCard, setChangeCard,alertSnackbar} = useContext(AppContext);
 
   
   const paymentOption = props.paymentOption;
@@ -79,7 +79,7 @@ const PaymentCheckoutCard = (props) => {
   
   function onClick() {
     if (paymentOption === 'bitcoin') {
-      alert('Bitcoin is not yet available. Please choose another payment option.');
+      alertSnackbar('info','Bitcoin is not yet available. Please choose another payment option.');
       return
     }
 

@@ -28,6 +28,8 @@ const express = require('express');
 const app = express();
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
+const fetch = require('node-fetch');
+const crypto = require('crypto');
 
 admin.initializeApp();
 
@@ -187,13 +189,150 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     .update({ ['orders']: orders });
 }
 
-exports.onPaymentsChange = functions
-  .region('asia-southeast1')
-  .firestore.document('Payments/{paymentId}')
-  .onWrite(async (change, context) => {
-    const beforeData = change.before.data();
-    const afterData = change.after.data();
+exports.postToConversionApi = functions.region('asia-southeast1').https.onRequest((req, res) => {
+  corsHandler(req, res, async () => {
 
+    function processIPAddress(ip) {
+      if (ip.startsWith('::ffff:')) {
+        const potentialIPv4 = ip.split('::ffff:')[1];
+  
+        // Simple validation to check if the extracted part is likely an IPv4
+        const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+        if (ipv4Pattern.test(potentialIPv4)) {
+          return potentialIPv4; // Return the extracted IPv4 address
+        }
+      }
+      return ip; // Return the original IP (be it IPv6 or any other format)
+    }
+
+    function getFirstAndLastName(name) {
+      if (!name) { // This checks for undefined, null, and empty string.
+        return [undefined, undefined];
+      }
+      
+      let names = name.trim().split(' ');
+      
+      const firstName = names[0] || undefined;
+      const lastName = names.length > 1 ? names[names.length - 1] : undefined;
+      
+      return [hashString(firstName), hashString(lastName)];
+    }
+
+    function hashString(string) {
+        if (!string) {
+            return undefined
+        }
+        const hash = crypto.createHash('sha256').update(string).digest('hex');
+        return hash
+    };
+    
+    
+    const data = req.body;
+    const apiVersion = 'v18.0'
+    const nekot = 'EAACZBZA8LIcZBkBO7nFSSJwMZBrQGMPRtADRUVaWD1sxsMYRLHssadWok8XZAAmy2ea60Re54L6I0DMF9EZAEU8OQU1v75OBVS9KZBqR6eviE0LlIWDbZCDRxMV9qCaq2tTPFsT3I6BP4f3A69Ry6eo8nMmpJErZAZBFoTStVEnJ6ZBWkCW6ZBkGwjQzrdc5qFPh2VU0WgZDZD'
+    const pixelId = '699964975514234'
+    const url = `https://graph.facebook.com/${apiVersion}/${pixelId}/events?access_token=${nekot}`;
+  
+    const event_name = data.event_name;
+    const event_time = Math.floor(Date.now() / 1000)
+    const event_source_url = data.event_source_url;
+    const custom_parameters = data.custom_parameters;
+    const action_source = 'website'
+    const fbc = data.fbc
+    const fbp = data.fbp
+    const email = hashString(data.email)
+    const phone = data.phone ? hashString(data.phone.replace(/\D+/g, '')) : undefined;
+    const name = data.name
+    const [firstName, lastName] = getFirstAndLastName(name);
+
+    
+    let ipAddress = req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
+    const userAgent = req.headers['user-agent'];
+    ipAddress = processIPAddress(ipAddress);
+    console.log('_____________________________________________________________________________')
+    console.log('event_name',event_name,custom_parameters)
+    console.log(`IP Address: ${ipAddress}`);
+    console.log(`User Agent: ${userAgent}`);
+    if (fbc != undefined) {
+      console.log('fbc',fbc)
+    }
+    if (fbp != undefined) {
+      console.log('fbp',fbp)
+    }
+    if (email != undefined) {
+      console.log('email',email)
+    }
+    if (phone != undefined) {
+      console.log('phone',phone)
+    }
+    if (firstName != undefined) {
+      console.log('firstName',firstName)
+    }
+    if (lastName != undefined) {
+      console.log('lastName',lastName)
+    }
+    
+    let payload = {
+      data: [
+        {
+          event_name: event_name,
+          event_time: event_time,
+          action_source: action_source,
+          event_source_url: event_source_url,
+          user_data: {
+            client_ip_address: ipAddress,
+            client_user_agent: userAgent,   
+            fbc: fbc,
+            fbp: fbp,
+            country: hashString('PH'),
+            fn: firstName,
+            ln: lastName,
+            em: email,
+            ph: phone
+          },
+          custom_data: {
+            ...custom_parameters
+          }
+        },
+      ],
+      //  test_event_code: "TEST79909" 
+    };
+    
+    payload = JSON.stringify(payload);
+  
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.events_received == 1) {
+          console.log('success')
+          res.status(200).send(data)
+        }
+        else {
+          console.log('error')
+          res.status(400).send(data)
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        res.status(400).send(data)
+      });
+  });
+  
+});
+
+exports.onPaymentsChange = functions
+.region('asia-southeast1')
+.firestore.document('Payments/{paymentId}')
+.onWrite(async (change, context) => {
+  const beforeData = change.before.data();
+  const afterData = change.after.data();
+  
     let created = null;
     if (beforeData == undefined) {
       created = true;
@@ -608,6 +747,7 @@ exports.transactionPlaceOrder = functions
                 const productdoc = await transaction.get(productRef);
                 // currentInventory.push(productdoc.data().stocksAvailable)
                 ordersOnHold[c] = productdoc.data().stocksOnHold;
+
                 currentInventory[c] = productdoc.data().stocksAvailable;
               })
             );
@@ -1884,19 +2024,69 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
           })
         );
 
-        console.log(itemDetails);
-
         let newItemsTotal = 0;
+        const cartItemReferences = [];
+
         Object.keys(cart).forEach((itemId) => {
           const itemData = itemDetails.find((item) => item.itemId == itemId);
           const quantity = cart[itemId];
           const total = itemData.price * quantity;
           newItemsTotal += total;
+          const itemRef = db.collection('Products').doc(itemId);
+          cartItemReferences.push(itemRef);
         });
 
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderDoc = await transaction.get(orderRef);
         const orderData = orderDoc.data();
+
+        console.log('cartItemReferences', cartItemReferences);
+
+        // await Promise.all(
+        //   allCartItems.map(async (itemId) => {
+        //     const productRef = db.collection('Products').doc(itemId);
+        //     const productGet = await productRef.get();
+        //     const prodData = productGet.data();
+
+        //     const stocksAvailable = prodData.stocksAvailable;
+        //     const stocksOnHold = prodData.stocksOnHold;
+        //     stocksToAdjust[itemId] = stocksAvailable;
+        //     stocksOnHoldToAdjust[itemId] = stocksOnHold;
+        //   })
+        // );
+
+        const promises = cartItemReferences.map(async (itemRef) => {
+          return transaction.get(itemRef);
+        });
+
+        const itemDocs = await Promise.all(promises);
+
+        const itemData = itemDocs.map((itemDoc) => itemDoc.data());
+
+        // reference: reference, quantity: orderQuantity, userId: userid
+        const _stockOnHoldList = [];
+        itemData.forEach((item) => {
+          const stockOnHoldList = item.stocksOnHold;
+          stockOnHoldList.forEach((stockOnHold) => {
+            if (stockOnHold.reference == orderReference) {
+              stockOnHold.quantity = cart[item.itemId];
+            }
+          });
+          console.log();
+          _stockOnHoldList[item.itemId] = stockOnHoldList;
+        });
+
+        console.log('stockOnHoldList', _stockOnHoldList);
+
+        // WRITE
+        Object.keys(_stockOnHoldList).forEach((itemId) => {
+          const itemRef = db.collection('Products').doc(itemId);
+          transaction.update(itemRef, { stocksOnHold: _stockOnHoldList[itemId] });
+        });
+        // changedStockOnHold.forEach((stockOnHold) => {
+        //   const itemRef = db.collection('Products').doc(stockOnHold.itemId);
+        //   transaction.update(itemRef, { stocksOnHold: stockOnHold });
+        // })
 
         if (orderData.vat == 0) {
           const newGrandTotal = newItemsTotal + orderData.shippingTotal + orderData.vat;
@@ -1907,11 +2097,18 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
           const itemsTotalLessVat = newItemsTotal / 1.12;
           const vat = newItemsTotal - itemsTotalLessVat;
           const newGrandTotal = itemsTotalLessVat + orderData.shippingTotal + vat;
-          transaction.update(orderRef, { cart: cart, itemsTotal: itemsTotalLessVat, grandTotal: newGrandTotal, vat: vat });
+          console.log('newItemsTotal', newItemsTotal);
+          console.log('itemsTotalLessVat', itemsTotalLessVat);
+          console.log('vat', vat);
+          console.log('newGrandTotal', newGrandTotal);
+
+          transaction.update(orderRef, {
+            cart: cart,
+            itemsTotal: itemsTotalLessVat,
+            grandTotal: newGrandTotal,
+            vat: vat,
+          });
         }
-
-        // WRITE
-
       });
       res.status(200).send('Order edited successfully');
     } catch (error) {

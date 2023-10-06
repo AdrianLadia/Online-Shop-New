@@ -26,8 +26,7 @@ const ProductCard = (props) => {
   const [outofstock, setOutOfStock] = useState(false);
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
-  const calculations = new businessCalculations();
-  const { cart, updateCartInfo, setUpdateCartInfo, firestore, userId } = useContext(AppContext);
+  const { businesscalculations,alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(false);
   const ref = useRef(null);
   const showTutorial = false
@@ -61,10 +60,10 @@ const ProductCard = (props) => {
   
   let safetyStock;
   if (product.averageSalesPerDay != undefined) {
-    safetyStock = calculations.getSafetyStock(product.averageSalesPerDay);
+    safetyStock = businesscalculations.getSafetyStock(product.averageSalesPerDay);
   }
   if (product.averageSalesPerDay === undefined) {
-    safetyStock = calculations.getSafetyStock(retailAverageSalesPerDay);
+    safetyStock = businesscalculations.getSafetyStock(retailAverageSalesPerDay);
   }
   
   
@@ -107,19 +106,19 @@ const ProductCard = (props) => {
     }
 
     if (isWholesale) {
-      if (totalOrder > calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
+      if (totalOrder > businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
         setQuantity('');
-        alert('Not enough stocks available');
+        alertSnackbar('error','Not enough stocks available');
         return;
       }
     } else {
   
        if (
         totalOrder >
-        calculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
+        businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
       ) {
         setQuantity('');
-        alert('Not enough stocks available');
+        alertSnackbar('error','Not enough stocks available');
         return;
       }
     }
@@ -129,6 +128,9 @@ const ProductCard = (props) => {
       setOpen(true);
       // adds to cart
       props.addtocart(props.product.itemId, quantity);
+      //analytics
+      console.log('triggered add to cart event')
+      analytics.logAddToCartEvent(props.product.itemId,props.product.itemName,props.product.category,quantity,props.product.price)
       //back to 0
       setQuantity('');
       //shake cart
@@ -190,6 +192,7 @@ const ProductCard = (props) => {
     setModal(true);
     setClickedProduct(product);
     firestore.updateProductClicks(product.itemId, userId);
+    analytics.logOpenProductModalEvent(product.itemId, product.itemName,product.category)
   }
 
   function responsiveStyle() {
@@ -422,6 +425,7 @@ const ProductCard = (props) => {
             <Snackbar
               className="mb-5 lg:mb-5"
               variant="success"
+              autoHideDuration={5000}
               anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
               open={open}
               onClose={handleClose}

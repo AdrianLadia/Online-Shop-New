@@ -73,7 +73,7 @@ const ProductCardModal = (props) => {
   const { width } = UseWindowDimensions();
   const classes = useStyles();
   const [heart, setHeart] = useState(false);
-  const { userdata, firestore, favoriteitems, setFavoriteItems, userId } = React.useContext(AppContext);
+  const { alertSnackbar,userdata, firestore, favoriteitems, setFavoriteItems, userId } = React.useContext(AppContext);
   const [screenMobile, setScreenSizeMobile] = useState(null);
   const date = new Date();
 
@@ -91,6 +91,7 @@ const ProductCardModal = (props) => {
   const piecesPerPack = props.product.piecesPerPack;
   const packsPerBox = props.product.packsPerBox;
   const centerImage = lengthOfImageList === 1;
+  console.log(props.product);
 
   const specs = {
     size: size,
@@ -110,7 +111,7 @@ const ProductCardModal = (props) => {
   }
 
   function onHeartClick() {
-    if (userId === null) return alert('Login to add items to favorites');
+    if (userId === null) return alertSnackbar('info','Login to add items to favorites');
 
     if (heart) {
       setHeart(!heart);
@@ -175,45 +176,51 @@ const ProductCardModal = (props) => {
   }, [props.modal]);
 
   return (
-    <Modal open={props.modal} onClose={closeModal} >
-        <Fade in={props.modal}>
-          <Box sx={style} className="bg-colorbackground border-color60 overflow-x-hidden overflow-y-auto">
-            <div className="flex flex-col">
-              {/* HEART AND X BUTTON*/}
-              <div className="flex flex-row justify-between mb-5">
-                {/* HEART */}
-                {heart ? (
-                  <AiFillHeart id={itemId} size={40} onClick={onHeartClick} className=" cursor-pointer text-red-500 " />
-                ) : (
-                  <AiOutlineHeart size={40} onClick={onHeartClick} className=" cursor-pointer hover:text-red-500" />
-                )}
-                {/* X BUTTON */}
-                <button
-                  onClick={closeModal}
-                  className=" bg-red1 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
-                >
-                  X
-                </button>
-              </div>
-              <div className="">
-                {/* TITLE */}
-                <Typography variant={responsiveVariant()} className="mb-10 text-black" align="center">
-                  {props.product.itemName}
+    <Modal open={props.modal} onClose={closeModal}>
+      <Fade in={props.modal}>
+        <Box sx={style} className="bg-colorbackground border-color60 overflow-x-hidden overflow-y-auto">
+          <div className="flex flex-col">
+            {/* HEART AND X BUTTON*/}
+            <div className="flex flex-row justify-between mb-5">
+              {/* HEART */}
+              {heart ? (
+                <AiFillHeart id={itemId} size={40} onClick={onHeartClick} className=" cursor-pointer text-red-500 " />
+              ) : (
+                <AiOutlineHeart size={40} onClick={onHeartClick} className=" cursor-pointer hover:text-red-500" />
+              )}
+              {/* X BUTTON */}
+              <div className="flex w-full items-center justify-center">
+                <Typography variant="h4" className="text-color10b">
+                  ₱ {props.product.price}
                 </Typography>
+              </div>
 
-                <Divider sx={{ border: '1px solid black' }} />
-                <ImageSlider id={itemId} imageLinks={props.product.imageLinks} />
-                {/* Description */}
-                <div className="flex flex-col-reverse items-center">
-                  {screenMobile ? (
-                    <Typography className="mt-8 ml-1 w-full 2xs:w-11/12 text-sm 2xs:text-lg indent-5 tracking-wide first-letter:text-xl first-letter:font-semibold">
-                      {props.product.description}
-                    </Typography>
-                  ) : null}
+              <button
+                onClick={closeModal}
+                className=" bg-red1 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
+              >
+                X
+              </button>
+            </div>
+            <div className="">
+              {/* TITLE */}
+              <Typography variant={responsiveVariant()} className="mb-10 text-black" align="center">
+                {props.product.itemName}
+              </Typography>
 
-                  {/* IMAGE */}
-                  
-                  {/* <ImageList
+              <Divider sx={{ border: '1px solid black' }} />
+              <ImageSlider id={itemId} imageLinks={props.product.imageLinks} />
+              {/* Description */}
+              <div className="flex flex-col-reverse items-center">
+                {screenMobile ? (
+                  <Typography className="mt-8 ml-1 w-full 2xs:w-11/12 text-sm 2xs:text-lg indent-5 tracking-wide first-letter:text-xl first-letter:font-semibold">
+                    {props.product.description}
+                  </Typography>
+                ) : null}
+
+                {/* IMAGE */}
+
+                {/* <ImageList
                     className={classes.imageList}
                     cols={responsiveimagemodal()}
                     rowHeight="auto"
@@ -228,42 +235,42 @@ const ProductCardModal = (props) => {
                     ))}
                   </ImageList> */}
 
-                  <Divider sx={{ border: '1px solid lightgray' }} className="w-full mb-8 " />
+                <Divider sx={{ border: '1px solid lightgray' }} className="w-full mb-8 " />
 
-                  <div className="flex flex-col lg:flex-row-reverse my-10 mx-3 gap-3 items-center lg:items-start w-full">
-                    {/* Description */}
-                    {screenMobile === false && props.product.description ? (
-                      <>
-                        <div className="lg:w-2/4 flex self-start ">
-                          <Typography
-                            className="w-11/12 ml-2 font-light text-green-800 hyphens-auto
+                <div className="flex flex-col lg:flex-row-reverse my-10 mx-3 gap-3 items-center lg:items-start w-full">
+                  {/* Description */}
+                  {screenMobile === false && props.product.description ? (
+                    <>
+                      <div className="lg:w-2/4 flex self-start ">
+                        <Typography
+                          className="w-11/12 ml-2 font-light text-green-800 hyphens-auto
                                                   text-sm lg:text-md xl:text-lg 2xl:text-xl 3xl:text-2xl 
                                                   indent:2 lg:indent-4 2xl:indent-7 text-left
                                                   tracking-widest lg:tracking-tight xl:tracking-tighter 2xl:tracking-tightest 
                                                   first-letter:text-xl xl:first-letter:text-2xl 2xl:first-letter:text-3xl first-letter:font-semibold"
-                          >
-                            {props.product.description}
-                          </Typography>
+                        >
+                          {props.product.description}
+                        </Typography>
 
-                          {/* <Divider sx={{border:"1px solid lightgray"}} className="w-full mb-8 "/>  */}
-                        </div>
-                        <div className="w-full 2md:w-11/12 lg:w-7/12 ml-0 lg:ml-4 border-2 border-color60 rounded-sm">
-                          {/* SPECIFICATION TABLE */}
-                          <ProductCardModalTable specs={specs} />
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full ml-0 lg:ml-4 border-2 border-color60 rounded-sm">
+                        {/* <Divider sx={{border:"1px solid lightgray"}} className="w-full mb-8 "/>  */}
+                      </div>
+                      <div className="w-full 2md:w-11/12 lg:w-7/12 ml-0 lg:ml-4 border-2 border-color60 rounded-sm">
                         {/* SPECIFICATION TABLE */}
                         <ProductCardModalTable specs={specs} />
                       </div>
-                    )}
-                  </div>
+                    </>
+                  ) : (
+                    <div className="w-full ml-0 lg:ml-4 border-2 border-color60 rounded-sm">
+                      {/* SPECIFICATION TABLE */}
+                      <ProductCardModalTable specs={specs} />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          </Box>
-        </Fade>
+          </div>
+        </Box>
+      </Fade>
     </Modal>
   );
 };

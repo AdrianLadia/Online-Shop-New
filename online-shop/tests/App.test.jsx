@@ -276,7 +276,7 @@ describe('Business Calcualtions', () => {
       expected = 10.71;
     }
 
-    const vat = businesscalculations.getValueAddedTax(subtotal,'www.imageurl.com', false);
+    const vat = businesscalculations.getValueAddedTax(subtotal,'www.imageurl.com','testUrl' ,false);
     expect(vat).toBe(expected);
   });
   test('getValueAddedTaxNoVat', () => {
@@ -4174,10 +4174,10 @@ describe.only('test edit customer order function' , () => {
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
       cart: { 'test': 12,'test2':5 },
-      itemstotal: 22000,
-      vat: 1000,
+      itemstotal: 19642.86,
+      vat: 2357.14,
       shippingtotal: 2000,
-      grandTotal: 25000,
+      grandTotal: 24000,
       reference: 'testref1234',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -4187,15 +4187,15 @@ describe.only('test edit customer order function' , () => {
       eMail: 'starpackph@gmail.com',
       sendEmail: false,
       isInvoiceNeeded: true,
-      urlOfBir2303: '',
+      urlOfBir2303: 'testurl.com',
       countOfOrdersThisYear: 0,
     });
-    await delay(1000)
+    await delay(2000)
   })
   test('create payment', async () => {
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
-      amount: 25000,
+      amount: 24000,
       reference: 'testref1234',
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
@@ -4215,12 +4215,29 @@ describe.only('test edit customer order function' , () => {
   })
   test('check values', async () => {
     const order = await firestore.readSelectedDataFromCollection('Orders','testref1234')
+    const item1 = await firestore.readSelectedDataFromCollection('Products','test')
+    const item2 = await firestore.readSelectedDataFromCollection('Products','test2')
     await delay(300)
 
     expect(order.cart).toEqual({ 'test': 24,'test2':10 })
-    expect(order.itemsTotal).toEqual(44000)
-    expect(order.grandTotal).toEqual(47000)
+    expect(order.itemsTotal).toEqual(39285.71428571428)
+    expect(order.grandTotal).toEqual(46000)
     expect(order.paid).toEqual(false)
+    expect(order.vat).toBeGreaterThan(0)
+
+    item1.stocksOnHold.forEach((stock) => {
+      if (stock.reference === 'testref1234') {
+        expect(stock.quantity).toEqual(24)
+      }
+    })
+
+    item2.stocksOnHold.forEach((stock) => {
+      if (stock.reference === 'testref1234') {
+        expect(stock.quantity).toEqual(10)
+      }
+    })
+
+
   })
   test('create another payment', async () => {
     await cloudfirestore.transactionCreatePayment({
@@ -4236,9 +4253,71 @@ describe.only('test edit customer order function' , () => {
   test('check values 2', async () => {
     const order =await cloudfirestore.readSelectedDataFromCollection('Orders','testref1234')
     expect(order.paid).toEqual(true)
+
   })
+  test('create another order with no vat', async () => {
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'test': 12,'test2':5 },
+      itemstotal: 22000,
+      vat: 0,
+      shippingtotal: 2000,
+      grandTotal: 24000,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+    });
+    await delay(2000)
+  })
+  test('create Payment', async () => {
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 24000,
+      reference: 'testref12345',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink4',
+    });
+    await delay(5000)
+    const order = await cloudfirestore.readSelectedDataFromCollection('Orders','testref12345')
+    expect(order.paid).toEqual(true)
+  })
+
+  test('Invoke edit order function', async () => {
+    await cloudfirestore.editCustomerOrder({
+      orderReference:'testref12345',
+      cart : { 'test': 24,'test2':10 },
+    })
+    await delay(5000)
+  })
+
+  test('check values 3', async () => {
+    const order = await cloudfirestore.readSelectedDataFromCollection('Orders','testref12345')
+    expect(order.paid).toEqual(false)
+    expect(order.vat).toEqual(0)
+    expect(order.shippingTotal).toEqual(2000)
+    expect(order.itemsTotal).toEqual(44000)
+    expect(order.grandTotal).toEqual(46000)
+  })
+
   test('clean data', async () => {
     await firestore.deleteDocumentFromCollection('Orders','testref1234')
+    await firestore.deleteDocumentFromCollection('Orders','testref12345')
     await firestore.deleteDocumentFromCollection('Products','test')
     await firestore.deleteDocumentFromCollection('Products','test2')
   })

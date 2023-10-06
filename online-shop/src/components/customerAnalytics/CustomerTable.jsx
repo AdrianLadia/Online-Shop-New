@@ -12,6 +12,7 @@ const CustomerTable = ({ data, chosenCustomer, firestore, products }) => {
 
   useEffect(()=>{
     const info = datamanipulation.getDataOfChosenCustomer( data, chosenCustomer, products )
+    console.log(info)
     setCustomerData(info)
   },[chosenCustomer])
 

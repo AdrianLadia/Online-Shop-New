@@ -15,7 +15,7 @@ import menuRules from '../../utils/classes/menuRules';
 import { set } from 'date-fns';
 
 const AdminVoidPayment = ({ users }) => {
-  const { cloudfirestore, userdata } = useContext(AppContext);
+  const { cloudfirestore, userdata,datamanipulation } = useContext(AppContext);
   const style = textFieldStyle();
   const labelStyle = textFieldLabelStyle();
   const [allUsersData, setAllUsersData] = useState([]);
@@ -25,7 +25,6 @@ const AdminVoidPayment = ({ users }) => {
   const [allUserPaymentsIds, setAllUserPaymentsIds] = useState([]); //allUserPayments is the customer data
   const [selectedPaymentReference, setSelectedPaymentReference] = useState(''); //selectedPaymentId is the payment id
   const [selectedPaymentDetails, setSelectedPaymentDetails] = useState(null); //selectedPaymentDetails is the payment details
-  const datamanipulation = new dataManipulation();
   const [loading, setLoading] = useState(false);
   const rules = new menuRules(userdata.userRole);
 
@@ -36,12 +35,6 @@ const AdminVoidPayment = ({ users }) => {
     }
   }, [users]);
 
-  useEffect(() => {
-    console.log(allUsersData);
-  }, [allUsersData]);
-  useEffect(() => {
-    console.log(allUserNames);
-  }, [allUserNames]);
 
   useEffect(() => {
     if (selectedName != '') {
@@ -64,7 +57,6 @@ const AdminVoidPayment = ({ users }) => {
         }
       });
 
-      console.log(filteredPayments);
       setSelectedUserPayments(filteredPayments);
 
       setAllUserPaymentsIds(filteredPayments.map((data) => data.reference));
@@ -73,7 +65,6 @@ const AdminVoidPayment = ({ users }) => {
 
   useEffect(() => {
     if (selectedPaymentReference != '') {
-      console.log(selectedPaymentReference);
       const selectedPayment = selectedUserPayments.filter((data) => {
         if (data.reference === selectedPaymentReference) {
           return data;

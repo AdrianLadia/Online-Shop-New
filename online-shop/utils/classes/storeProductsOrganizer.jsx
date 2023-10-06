@@ -9,6 +9,27 @@ class storeProductsOrganizer {
   }
 
   getOrderOfProducts() {
+
+    if (this.productCategory == 'Roll Bag') {
+      this.orderOfProducts = [
+        'RB5X9MR','RB8X12TB','RB10X16TB','RB16X24'
+      ]
+    }
+
+    if (this.productCategory == 'Sando Bag') {
+      this.orderOfProducts = [
+        'SBAGWS','SBAGWM','SBAGWL','SBAGWXL'
+      ]
+    }
+
+    if (this.productCategory == 'Bowls') {
+      this.orderOfProducts = [
+        'PBOWL390FP',
+        'LIDPBWL390',
+        'PBOWL520GL',
+        'LIDPBWL520',
+      ];
+    }
     if (this.productCategory == 'Paper Bag') {
       this.orderOfProducts = [
         'PPB#1',

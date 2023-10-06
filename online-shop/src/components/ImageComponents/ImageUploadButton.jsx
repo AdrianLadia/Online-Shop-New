@@ -8,8 +8,9 @@ import AppContext from '../../AppContext';
 import Joi from 'joi';
 import { v4 as uuidv4 } from 'uuid';
 
+
 const ImageUploadButton = (props) => {
-  const { selectedChatOrderId, payments } = useContext(AppContext);
+  const { selectedChatOrderId, payments ,alertSnackbar} = useContext(AppContext);
   const id = props.id;
   const folderName = props.folderName;
   let fileName = props.fileName;
@@ -59,7 +60,7 @@ const ImageUploadButton = (props) => {
               setLoading(false);
             }
             catch(error){
-              alert('Error uploading image. Please try again.');
+              alertSnackbar('error','Error uploading image. Please try again.');
               return
             }
           }
@@ -68,16 +69,16 @@ const ImageUploadButton = (props) => {
 
           const {error} = downloadUrlSchema.validate(downloadURL);
           if (error) {
-            alert('Error uploading image. Please try again.');
+            alertSnackbar('error','Error uploading image. Please try again.');
           }
           else {
-            alert('Image uploaded successfully.');
+            alertSnackbar('success','Image uploaded successfully.');
     
           }
         });
       }
       catch {
-        alert('Error uploading image. Please try again.');
+        alertSnackbar('error','Error uploading image. Please try again.');
       }
     } else {
       setLoading(false);

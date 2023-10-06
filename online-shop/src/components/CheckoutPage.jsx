@@ -57,8 +57,10 @@ const CheckoutPage = () => {
     setReferenceNumber,
   } = useContext(CheckoutContext);
 
-  const datamanipulation = new dataManipulation();
+  
   const {
+    datamanipulation,
+    cloudfirestore,
     userdata,
     cart,
     setCart,
@@ -74,6 +76,9 @@ const CheckoutPage = () => {
     openProfileUpdaterModal,
     firestore,
     orders,
+    analytics,
+    alertSnackbar,
+    businesscalculations
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -83,7 +88,6 @@ const CheckoutPage = () => {
   const [localphonenumber, setLocalPhoneNumber] = React.useState('');
 
   const [localDeliveryAddress, setLocalDeliveryAddress] = React.useState('');
-  const cloudfirestoredb = new cloudFirestoreDb();
 
   const [openModalSavedAddress, setOpenModalSavedAddress] = React.useState(false);
   const handleOpenModalSavedAddress = () => setOpenModalSavedAddress(true);
@@ -105,7 +109,6 @@ const CheckoutPage = () => {
   const [useShippingLine, setUseShippingLine] = useState(false);
 
   const paperboylocation = new paperBoyLocation();
-  const businesscalculations = new businessCalculations();
 
   const paperboylatitude = paperboylocation.latitude;
   const paperboylongitude = paperboylocation.longitude;
@@ -142,6 +145,7 @@ const CheckoutPage = () => {
 
   // Get count of orders for this year
   useEffect(() => {
+    
     const yearToday = new Date().getFullYear();
 
     const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders, yearToday);
@@ -190,8 +194,6 @@ const CheckoutPage = () => {
         urlOfBir2303,
         isInvoiceNeeded
       );
-      console.log(isInvoiceNeeded)
-      console.log(vat)
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
@@ -230,7 +232,7 @@ const CheckoutPage = () => {
         setRefreshUser(!refreshUser);
       }
       if (transactionStatus.status == 409) {
-        alert(transactionStatus.data);
+        alertSnackbar('info',transactionStatus.data);
       }
 
       setPlaceOrderLoading(false);
@@ -249,6 +251,7 @@ const CheckoutPage = () => {
   }, []);
 
   useEffect(() => {
+    
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -257,8 +260,12 @@ const CheckoutPage = () => {
     );
     const kilometers = businesscalculations.convertTotalDifferenceToKilometers(totaldifference);
     const areasInsideDeliveryLocation = businesscalculations.getLocationsInPoint(locallatitude, locallongitude);
-    const vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
-    const deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
+    let vehicleObject = 'motorcycle';
+    let deliveryFee = 0;
+    if (totalWeight) {
+      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
+      deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
+    }
     setArea(areasInsideDeliveryLocation);
     const inLalamoveSericeArea = businesscalculations.checkIfAreasHasLalamoveServiceArea(areasInsideDeliveryLocation);
     if (inLalamoveSericeArea) {
@@ -278,18 +285,28 @@ const CheckoutPage = () => {
     let orderdata = null;
   }, [locallatitude, locallongitude, totalWeight, needAssistance]);
 
+
   async function onPlaceOrder() {
+
+    
+
+    const minimumOrder = new AppConfig().getMinimumOrder();
+    if (parseFloat(total) < minimumOrder) {
+      alertSnackbar('error',`Minimum order is ${minimumOrder} pesos`);
+      return;
+    }
+
     if (isInvoiceNeeded) {
       if (urlOfBir2303 === '') {
-        alert(
-          'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
+        alertSnackbar(
+          'error','Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
         );
         return;
       }
     }
 
     if (paymentMethodSelected == null) {
-      alert('Please select a payment method');
+      alertSnackbar('error','Please select a payment method');
       setPlaceOrderLoading(false);
       return;
     }
@@ -301,7 +318,7 @@ const CheckoutPage = () => {
       try {
         const orderReferenceNumber = businesscalculations.generateOrderReference();
         setReferenceNumber(orderReferenceNumber);
-        const res = await cloudfirestoredb.transactionPlaceOrder({
+        const res = await cloudfirestore.transactionPlaceOrder({
           userid: userdata.uid,
           localDeliveryAddress: localDeliveryAddress,
           locallatitude: locallatitude,
@@ -327,14 +344,16 @@ const CheckoutPage = () => {
           countOfOrdersThisYear: countOfOrdersThisYear,
           deliveryDate : startDate.toISOString()
         });
-
+        
         setTransactionStatus(res);
         setPlacedOrder(!placedOrder);
+        analytics.logPlaceOrderEvent(cart,grandTotal);
+        
       } catch (err) {
         setPlaceOrderLoading(false);
       }
     } else {
-      alert('You must be logged in');
+      alertSnackbar('error','You must be logged in');
     }
   }
 
@@ -379,6 +398,12 @@ const CheckoutPage = () => {
     setGrandTotal(grandTotal);
   }, [total, vat, deliveryFee]);
 
+  useEffect(() => {
+    if (total > 0) {
+      analytics.logOpenCheckoutPageEvent(cart, total);
+    }
+  }, [total]);
+
   function searchAddress() {
     Geocode.fromAddress(addressGeocodeSearch, firebaseConfig.apiKey, 'en', 'ph').then(
       (response) => {
@@ -390,7 +415,7 @@ const CheckoutPage = () => {
         setLocalDeliveryAddress('');
       },
       (error) => {
-        alert('Address not found. Be more specific.');
+        alertSnackbar('error','Address not found. Be more specific.');
       }
     );
   }
@@ -405,9 +430,6 @@ const CheckoutPage = () => {
     setUrlOfBir2303('');
   }
 
-  useEffect(() => {
-    console.log(deliveryVehicle)
-  }, [deliveryVehicle]);
 
   return (
     <ThemeProvider theme={theme}>

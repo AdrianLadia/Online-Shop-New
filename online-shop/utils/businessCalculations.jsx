@@ -7,10 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import AppConfig from '../src/AppConfig';
 
 class businessCalculations {
-  constructor() {
+  constructor(cloudfirestore) {
     this.serviceareas = new serviceAreas();
     this.lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
-    this.cloudfirestore = new cloudFirestoreDb();
+    this.cloudfirestore = cloudfirestore;
   }
 
   readAllParentProductsFromOnlineStoreProducts(products) {
@@ -287,6 +287,7 @@ class businessCalculations {
   }
 
   getVehicleForDelivery(weightOfItems) {
+    console.log('weightOfItems', weightOfItems)
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -371,7 +372,6 @@ class businessCalculations {
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
 
-    console.log(needAssistance);
 
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
@@ -393,7 +393,7 @@ class businessCalculations {
     if (error4) {
       throw new Error('Data Validation Error');
     }
-    console.log(finalDelFee);
+
     return finalDelFee;
   }
 
@@ -465,8 +465,7 @@ class businessCalculations {
   }
 
   getValueAddedTax(totalPrice, urlOfBir2303, isInvoiceNeeded, noVat = new AppConfig().getNoVat()) {
-    console.log(isInvoiceNeeded);
-    console.log(urlOfBir2303);
+
     if (isInvoiceNeeded == false) {
       return 0;
     }
@@ -534,7 +533,7 @@ class businessCalculations {
     if (error1 || error2) {
       throw new Error('Data Validation Error');
     }
-    console.log(stocksAvailable);
+
     if (cart[product] === undefined) {
       cart[product] = 0;
     }
@@ -542,7 +541,7 @@ class businessCalculations {
     if (cart[product] + 1 <= stocksAvailable) {
       cart[product] += 1;
     } else {
-      alert('Not enough stocks available');
+      return 'no_stocks'
     }
 
     const newCartSchema = Joi.object().required();

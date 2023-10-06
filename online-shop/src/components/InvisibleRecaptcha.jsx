@@ -6,7 +6,7 @@ import { Typography, TextField, CircularProgress } from '@mui/material';
 
 const InvisibleRecaptcha = (props) => {
   const recaptchaVerifierRef = useRef(null);
-  const { auth } = useContext(AppContext);
+  const { auth,alertSnackbar } = useContext(AppContext);
   const phoneNumber = props.phoneNumber;
   const [code, setCode] = useState('');
   const confirmationResult = props.confirmationResult;
@@ -29,12 +29,12 @@ const InvisibleRecaptcha = (props) => {
   function signIn() {
 
       if (phoneNumber == '') {
-          alert('Please enter a valid phone number');
+        alertSnackbar('error','Please enter a valid phone number');
           return;
         }
         
         if (phoneNumber.length != 12) {
-            alert('Please enter a valid phone number');
+          alertSnackbar('error','Please enter a valid phone number');
             return;
         }
         

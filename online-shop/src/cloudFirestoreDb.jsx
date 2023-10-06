@@ -6,8 +6,11 @@ import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app, test = false) {
+  constructor(app, test = false,fbclid=undefined,userdata=undefined) {
     super();
+    this.fbclid = fbclid
+    this.userdata = userdata
+    // console.log('fbclid',fbclid)
     const appConfig = new AppConfig();
 
     if (appConfig.getIsDevEnvironment() || test) {
@@ -212,6 +215,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async readSelectedDataFromOnlineStore(productId) {
+    if (productId == 'null') {
+      return
+    }
+
     try {
       const jsonData = JSON.stringify({ productId: productId });
       const res = await axios.post(`${this.url}readSelectedDataFromOnlineStore`, jsonData, {
@@ -222,7 +229,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return res.data;
     } catch (error) {
       console.log(error);
-      console.log(productId)
       // throw new Error(error);
     }
   }
@@ -249,7 +255,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         const message = error.message + ' |||||| ' + jsonString;
         console.log(new AppConfig().getFirestoreDeveloperEmail());
         new AppConfig().getFirestoreDeveloperEmail().forEach(email => {
-          console.log(email);
           this.sendEmail({to:email,subject:'Error on productData',text:message})
         })
       }
@@ -595,6 +600,47 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     catch{
       throw new Error('Error editing order');
     }
+  }
+  async postToConversionApi(event_name,custom_parameters) {
+    // get fbp
+    let fbp 
+    try{
+      fbp = document.cookie.split('; ').find(row => row.startsWith('_fbp=')).split('=')[1];
+    }
+    catch{
+      fbp = undefined
+    }
+
+    // // get fbc
+    let fbc 
+    if (this.fbclid == null) {
+      fbc = undefined
+    }
+    else {
+      const unixTimestamp = Math.round(+new Date() / 1000);
+      fbc = 'fb.1.' + unixTimestamp.toString() + '.' + this.fbclid
+    }
+
+
+    const data = {
+      event_name: event_name,
+      event_source_url: window.location.href,
+      custom_parameters: custom_parameters,
+      fbc: fbc,
+      fbp: fbp,
+      email: this.userdata?.email,
+      phone: this.userdata?.phoneNumber,
+      name: this.userdata?.name,
+    };
+
+    const res = await axios.post(`${this.url}postToConversionApi`,data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    return res
+    
   }
 }
 

@@ -20,7 +20,7 @@ const style = {
 };
 
 const AffiliateAddPaymentMethodModal = (props) => {
-  const {firestore,userdata} = useContext(AppContext);
+  const {firestore,userdata,alertSnackbar} = useContext(AppContext);
   const open = props.open;
   const setOpen = props.setOpen;
   const paymentMethodData = props.paymentMethodData;
@@ -55,7 +55,7 @@ const AffiliateAddPaymentMethodModal = (props) => {
   async function handleUpdateAndSave(){
 
     if (accountName == '' || accountNumber == '' || chosenMethod == '') {
-      alert('Please fill out all fields')
+      alertSnackbar('error','Please fill out all fields')
       return;
     }
 
@@ -69,11 +69,11 @@ const AffiliateAddPaymentMethodModal = (props) => {
     
 
     if (res) {
-      alert('Updated Payment Method')
+      alertSnackbar('success','Updated Payment Method')
       window.location.reload();
     }
     else {
-      alert('Failed to Update Payment Method')
+      alertSnackbar('error','Failed to Update Payment Method')
     }
   }
 

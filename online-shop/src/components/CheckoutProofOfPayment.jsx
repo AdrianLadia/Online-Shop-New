@@ -15,11 +15,19 @@ import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
 const CheckoutProofOfPayment = (props) => {
   // const referenceNumber = props.referenceNumber
   // const cloudfirestore = new cloudFirestoreDb();
-  const datamanipulation = new dataManipulation();
-  const { storage, cloudfirestore, userId, userdata, firestore , refreshUser,setRefreshUser} = useContext(AppContext);
+  const { alertSnackbar,storage, cloudfirestore, userId, userdata, firestore, refreshUser, setRefreshUser,analytics,datamanipulation } = useContext(AppContext);
   const location = useLocation();
-  const { referenceNumber, itemsTotal, deliveryFee, grandTotal, vat, rows, area, paymentMethodSelected, date } =
-    location.state;
+  const {
+    referenceNumber,
+    itemsTotal,
+    deliveryFee,
+    grandTotal,
+    vat,
+    rows,
+    area,
+    paymentMethodSelected,
+    date,
+  } = location.state;
   const orderDateObject = new Date(date);
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
   const dateNow = new Date();
@@ -27,7 +35,11 @@ const CheckoutProofOfPayment = (props) => {
   const navigateTo = useNavigate();
   const [paymentMethods, setPaymentMethods] = useState([]);
 
-function delay(ms) {
+  useEffect(() => {
+    analytics.logOpenPaymentPageEvent(referenceNumber,itemsTotal,deliveryFee, grandTotal, vat,area, paymentMethodSelected, date,rows) 
+  }, []);
+
+  function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
@@ -47,25 +59,23 @@ function delay(ms) {
     accountNumber = '109355469422';
   }
 
-  if (['maya', 'visa', 'mastercard', 'gcash','shoppeepay','wechatpay'].includes(paymentMethodSelected)) {
+  if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected)) {
     bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
   }
 
-  useEffect(() => {console.log(paymentMethodSelected)}, [paymentMethodSelected]);
-
   async function onUpload(url) {
     const timestamp = Timestamp.fromDate(date);
     const timestampString = timestamp.toDate().toLocaleString();
-    try{
-      setRefreshUser(!refreshUser)
-      await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName)
-      await delay(5000)
-      navigateTo('/myorders/orderList')
-    }
-    catch(error){
-      alert('Failed to upload proof of payment. Please try again.')
-      return
+
+    try {
+      setRefreshUser(!refreshUser);
+      await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
+      await delay(5000);
+      navigateTo('/myorders/orderList');
+    } catch (error) {
+      alertSnackbar('error','Failed to upload proof of payment. Please try again.');
+      return;
     }
   }
 
@@ -93,13 +103,24 @@ function delay(ms) {
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
 
             {qrLink != null ? (
-              <div className='mb-8'>
-              <p>Please scan QR code or click the payment link to send us a payment of : <strong>₱ {grandTotal}</strong></p>
-              <img src='https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55' alt='proof of payment container'></img>
-              <a  className=" ml-11 text-blue-600 underline hover:text-blue-800 visited:text-purple-600 " href={qrLink} target="_blank" rel="noopener noreferrer">{qrLink}</a>
-
+              <div className="mb-8">
+                <p>
+                  Please scan QR code or click the payment link to send us a payment of :{' '}
+                  <strong>₱ {grandTotal}</strong>
+                </p>
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55"
+                  alt="proof of payment container"
+                ></img>
+                <a
+                  className=" ml-11 text-blue-600 underline hover:text-blue-800 visited:text-purple-600 "
+                  href={qrLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {qrLink}
+                </a>
               </div>
-
             ) : (
               <>
                 <p>Please send your payment to the following bank account:</p>
@@ -111,8 +132,14 @@ function delay(ms) {
               </>
             )}
 
-            <p>Once you have completed the payment, please <strong>submit proof of payment using the button below or in My Orders Menu</strong>.</p>
-            <p>We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time frame, your order will be cancelled.</p>
+            <p>
+              Once you have completed the payment, please{' '}
+              <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
+            </p>
+            <p>
+              We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
+              frame, your order will be cancelled.
+            </p>
 
             <Divider className="mt-5 mb-5"></Divider>
             {/* <CheckoutSummary/> */}
@@ -139,9 +166,7 @@ function delay(ms) {
                 <CountdownTimer initialTime={dateDifference} />
               </div>
               <div className="flex justify-center mt-2">
-                <Typography variant="h7" sx={{ marginRight: 1 }}>
-                  
-                </Typography>
+                <Typography variant="h7" sx={{ marginRight: 1 }}></Typography>
               </div>
             </div>
 

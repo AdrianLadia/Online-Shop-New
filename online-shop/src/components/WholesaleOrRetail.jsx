@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import isFirstDayOfMonth from 'date-fns/isFirstDayOfMonth/index';
-import React, { useContext } from 'react';
+import React, { useContext,useRef } from 'react';
 import { useState } from 'react';
 import AppContext from '../AppContext';
 import { AiFillHeart } from 'react-icons/ai';
@@ -12,6 +12,7 @@ const WholesaleOrRetail = (props) => {
   const wholesale = props.wholesale;
   const retail = props.retail;
   const { setSelectedCategory,selectedCategory,setCategoryValue,categories} = useContext(AppContext);
+  const wholesaleOrRetailRef = props.wholesaleOrRetailRef;
 
   function onWholesaleClick() {
     setWholesale(true);
@@ -88,7 +89,7 @@ const WholesaleOrRetail = (props) => {
 
   return (
     <div className="from-colorbackground  via-color2 to-color1 flex flex-col items-center drop-shadow-xl  ">
-      <div className="flex">
+      <div ref={wholesaleOrRetailRef} className="flex">
         <Typography className="text-2xl font-semibold mt-5 mb-5 text-gray-700">Purchase items by</Typography>
       </div>
       <div className="flex flex-row justify-center">

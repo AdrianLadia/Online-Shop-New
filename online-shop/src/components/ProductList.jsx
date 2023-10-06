@@ -21,8 +21,6 @@ const ProductList = (props) => {
   const wholesale = props.wholesale;
   const retail = props.retail;
   const selectedCategory = props.selectedCategory;
-  const datamanipulation = new dataManipulation();
-  const businesscalculations = new businessCalculations();
   const [isWholesale, setIsWholesale] = useState(false);
   const [modal, setModal] = useState(false);
   const location = useLocation();
@@ -38,9 +36,11 @@ const ProductList = (props) => {
       setIsWholesale(false);
     }
   }, [wholesale, retail]);
+
+
   
   const [productdataloading, setProductDataLoading] = useState(true);
-  const { userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
+  const { datamanipulation,businesscalculations,alertSnackbar,userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
   React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
   const [clickedProduct, setClickedProduct] = useState(null);
@@ -50,9 +50,9 @@ const ProductList = (props) => {
   
   useEffect(() => {
     if (modalSelected != null) {
-      console.log(modalSelected);
+      
       cloudfirestore.readSelectedDataFromOnlineStore(modalSelected).then((data) => {
-        console.log(data);
+
         setClickedProduct(data);
         setModal(true);
       });
@@ -88,7 +88,7 @@ const ProductList = (props) => {
       try {
         firestore.createUserCart(cart, userdata.uid);
       } catch (e) {
-        alert('Failed to update cart info. Please try again.');
+        alertSnackbar('error','Failed to update cart info. Please try again.');
       }
     }
   }, [cart, updateCartInfo]);
@@ -113,7 +113,7 @@ const ProductList = (props) => {
   }
 
   return (
-    <div className="mb-16 mt-5 ">
+    <div className="mb-16 mt-5 h-screen">
       <div id="productList" className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
