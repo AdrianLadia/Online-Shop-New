@@ -2,7 +2,7 @@
 
 class AppConfig {
     constructor() {
-        this.isDevEnvironment = false
+        this.isDevEnvironment = true
         this.isPaymentSandBox = true
         this.noVat = false
         this.retailSafetyStock = 0

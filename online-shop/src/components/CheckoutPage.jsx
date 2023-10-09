@@ -160,10 +160,10 @@ const CheckoutPage = () => {
 
   // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
   useEffect(() => {
-    if (openProfileUpdaterModal || userdata === null) {
+    if (openProfileUpdaterModal) {
       navigateTo('/shop');
     }
-  }, [openProfileUpdaterModal, userdata]);
+  }, [openProfileUpdaterModal]);
 
   // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
   useEffect(() => {
@@ -214,14 +214,14 @@ const CheckoutPage = () => {
           vat: vat,
           rows: rows,
           area: area,
-          fullName: userdata.name,
-          eMail: userdata.email,
-          phoneNumber: userdata.phoneNumber,
+          fullName: userdata ? userdata.name : 'Guest',
+          eMail: localemail,
+          phoneNumber: userdata ? userdata.phoneNumber : localphonenumber,
           setMayaRedirectUrl: setMayaRedirectUrl,
           setMayaCheckoutId: setMayaCheckoutId,
           localDeliveryAddress: localDeliveryAddress,
           addressText: addressText,
-          userId: userdata.uid,
+          userId: userdata ? userdata.uid : 'GUEST',
           navigateTo: navigateTo,
           itemsTotal: total,
           date: new Date(),
@@ -261,7 +261,7 @@ const CheckoutPage = () => {
     let vehicleObject = 'motorcycle';
     let deliveryFee = 0;
     if (totalWeight) {
-      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight,pickUpOrDeliver);
+      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight, pickUpOrDeliver);
       deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
     }
     setArea(areasInsideDeliveryLocation);
@@ -282,14 +282,14 @@ const CheckoutPage = () => {
       setUseShippingLine(true);
     }
     let orderdata = null;
-  }, [locallatitude, locallongitude, totalWeight, needAssistance,pickUpOrDeliver]);
+  }, [locallatitude, locallongitude, totalWeight, needAssistance, pickUpOrDeliver]);
 
   useEffect(() => {
     if (deliveryVehicle?.name == 'storePickUp') {
-      setLocalLatitude(deliveryVehicle.latitude)
-      setLocalLongitude(deliveryVehicle.longitude)
+      setLocalLatitude(deliveryVehicle.latitude);
+      setLocalLongitude(deliveryVehicle.longitude);
     }
-  },[deliveryVehicle])
+  }, [deliveryVehicle]);
 
   async function onPlaceOrder() {
     const minimumOrder = new AppConfig().getMinimumOrder();
@@ -317,45 +317,44 @@ const CheckoutPage = () => {
     setPlaceOrderLoading(true);
 
     // Check if userstate is userloaded
-    if (userstate === 'userloaded') {
-      try {
-        const orderReferenceNumber = businesscalculations.generateOrderReference();
-        setReferenceNumber(orderReferenceNumber);
-        const res = await cloudfirestore.transactionPlaceOrder({
-          userid: userdata.uid,
-          localDeliveryAddress: localDeliveryAddress,
-          locallatitude: locallatitude,
-          locallongitude: locallongitude,
-          userphonenumber: userdata.phoneNumber,
-          username: userdata.name,
-          localname: localname,
-          localphonenumber: localphonenumber,
-          cart: cart,
-          itemstotal: total,
-          vat: vat,
-          shippingtotal: deliveryFee,
-          grandTotal: grandTotal,
-          reference: orderReferenceNumber,
-          deliveryNotes: deliveryNotes,
-          totalWeight: totalWeight,
-          deliveryVehicle: deliveryVehicle.name,
-          needAssistance: needAssistance,
-          eMail: localemail,
-          sendEmail: true,
-          isInvoiceNeeded: isInvoiceNeeded,
-          urlOfBir2303: urlOfBir2303,
-          countOfOrdersThisYear: countOfOrdersThisYear,
-          deliveryDate: startDate.toISOString(),
-        });
 
-        setTransactionStatus(res);
-        setPlacedOrder(!placedOrder);
-        analytics.logPlaceOrderEvent(cart, grandTotal);
-      } catch (err) {
-        setPlaceOrderLoading(false);
-      }
-    } else {
-      alertSnackbar('error', 'You must be logged in');
+    try {
+      const orderReferenceNumber = businesscalculations.generateOrderReference();
+      setReferenceNumber(orderReferenceNumber);
+      
+      const res = await cloudfirestore.transactionPlaceOrder({
+        userid: userdata ? userdata.uid : null,
+        localDeliveryAddress: localDeliveryAddress,
+        locallatitude: locallatitude,
+        locallongitude: locallongitude,
+        userphonenumber: userdata ? userdata.phoneNumber : localphonenumber,
+        username: userdata ? userdata.name : localname,
+        localname: localname,
+        localphonenumber: localphonenumber,
+        cart: cart,
+        itemstotal: total,
+        vat: vat,
+        shippingtotal: deliveryFee,
+        grandTotal: grandTotal,
+        reference: orderReferenceNumber,
+        deliveryNotes: deliveryNotes,
+        totalWeight: totalWeight,
+        deliveryVehicle: deliveryVehicle.name,
+        needAssistance: needAssistance,
+        eMail: localemail,
+        sendEmail: true,
+        isInvoiceNeeded: isInvoiceNeeded,
+        urlOfBir2303: urlOfBir2303,
+        countOfOrdersThisYear: countOfOrdersThisYear,
+        deliveryDate: startDate.toISOString(),
+      });
+
+      setTransactionStatus(res);
+      setPlacedOrder(!placedOrder);
+      analytics.logPlaceOrderEvent(cart, grandTotal);
+    } catch (err) {
+      console.log(err);
+      setPlaceOrderLoading(false);
     }
   }
 
@@ -442,13 +441,11 @@ const CheckoutPage = () => {
     }
   }
 
-
-
   return (
     <ThemeProvider theme={theme}>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
-        <div className='flex flex-col justify-center w-full items-center'>
+        <div className="flex flex-col justify-center w-full items-center">
           <Typography variant="h6">Would you like to pick up items?</Typography>
           <Switch {...label} color="secondary" onClick={handlePickUpOrDeliverSwitch} />
         </div>
@@ -567,6 +564,15 @@ const CheckoutPage = () => {
             onChange={(event) => setLocalName(event.target.value)}
             value={localname || ''}
           />
+          <TextField
+            id="emailAddressEntry"
+            label="E-mail (required)"
+            InputLabelProps={labelStyle}
+            variant="filled"
+            className=" w-11/12 mt-1 bg-white"
+            onChange={(event) => setLocalEmail(event.target.value)}
+            value={localemail || ''}
+          />
         </div>
 
         {allowShipping == false ? (
@@ -585,7 +591,9 @@ const CheckoutPage = () => {
               </div>
             ) : (
               <>
-                {area.includes('lalamoveServiceArea') && deliveryVehicle.name != 'motorcycle' && deliveryVehicle.name != 'storePickUp' ? (
+                {area.includes('lalamoveServiceArea') &&
+                deliveryVehicle.name != 'motorcycle' &&
+                deliveryVehicle.name != 'storePickUp' ? (
                   <div>
                     <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
                     <div className="flex justify-center mt-7">
@@ -741,7 +749,6 @@ const CheckoutPage = () => {
 
                 {area.length == 0 ? null : (
                   <CheckoutSummary
-                    
                     total={total}
                     setTotal={setTotal}
                     vat={vat}
@@ -813,7 +820,7 @@ const CheckoutPage = () => {
                 <div className="flex flex-col justify-center m-5">
                   <div className=" flex justify-center">
                     <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                      {pickUpOrDeliver == 'deliver'?  <>Delivery Date</> : <>Pick Up Date</>}
+                      {pickUpOrDeliver == 'deliver' ? <>Delivery Date</> : <>Pick Up Date</>}
                     </Typography>
                   </div>
                   <div className="flex justify-center mt-5 mb-5">

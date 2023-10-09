@@ -677,7 +677,17 @@ class businessCalculations {
     //   }
     // }
 
+    let isGuestCheckout
+    if (data.userId === 'GUEST') {
+      isGuestCheckout = true
+    } 
+    else {
+      isGuestCheckout = false
+    }
+
     if (testing === false) {
+      
+
       data.navigateTo('/checkout/proofOfPayment', {
         state: {
           paymentMethodSelected: paymentMethodSelected,
@@ -690,6 +700,7 @@ class businessCalculations {
           area: data.area,
           date: data.date,
           deliveryVehicle: data.deliveryVehicle,
+          isGuestCheckout : isGuestCheckout,
         },
       });
     } else {

@@ -191,11 +191,10 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
 
 exports.postToConversionApi = functions.region('asia-southeast1').https.onRequest((req, res) => {
   corsHandler(req, res, async () => {
-
     function processIPAddress(ip) {
       if (ip.startsWith('::ffff:')) {
         const potentialIPv4 = ip.split('::ffff:')[1];
-  
+
         // Simple validation to check if the extracted part is likely an IPv4
         const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
         if (ipv4Pattern.test(potentialIPv4)) {
@@ -206,72 +205,73 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     }
 
     function getFirstAndLastName(name) {
-      if (!name) { // This checks for undefined, null, and empty string.
+      if (!name) {
+        // This checks for undefined, null, and empty string.
         return [undefined, undefined];
       }
-      
+
       let names = name.trim().split(' ');
-      
+
       const firstName = names[0] || undefined;
       const lastName = names.length > 1 ? names[names.length - 1] : undefined;
-      
+
       return [hashString(firstName), hashString(lastName)];
     }
 
     function hashString(string) {
-        if (!string) {
-            return undefined
-        }
-        const hash = crypto.createHash('sha256').update(string).digest('hex');
-        return hash
-    };
-    
-    
+      if (!string) {
+        return undefined;
+      }
+      const hash = crypto.createHash('sha256').update(string).digest('hex');
+      return hash;
+    }
+
     const data = req.body;
-    const apiVersion = 'v18.0'
-    const nekot = 'EAACZBZA8LIcZBkBO7nFSSJwMZBrQGMPRtADRUVaWD1sxsMYRLHssadWok8XZAAmy2ea60Re54L6I0DMF9EZAEU8OQU1v75OBVS9KZBqR6eviE0LlIWDbZCDRxMV9qCaq2tTPFsT3I6BP4f3A69Ry6eo8nMmpJErZAZBFoTStVEnJ6ZBWkCW6ZBkGwjQzrdc5qFPh2VU0WgZDZD'
-    const pixelId = '699964975514234'
+    const apiVersion = 'v18.0';
+    const nekot =
+      'EAACZBZA8LIcZBkBO7nFSSJwMZBrQGMPRtADRUVaWD1sxsMYRLHssadWok8XZAAmy2ea60Re54L6I0DMF9EZAEU8OQU1v75OBVS9KZBqR6eviE0LlIWDbZCDRxMV9qCaq2tTPFsT3I6BP4f3A69Ry6eo8nMmpJErZAZBFoTStVEnJ6ZBWkCW6ZBkGwjQzrdc5qFPh2VU0WgZDZD';
+    const pixelId = '699964975514234';
     const url = `https://graph.facebook.com/${apiVersion}/${pixelId}/events?access_token=${nekot}`;
-  
+
     const event_name = data.event_name;
-    const event_time = Math.floor(Date.now() / 1000)
+    const event_time = Math.floor(Date.now() / 1000);
     const event_source_url = data.event_source_url;
     const custom_parameters = data.custom_parameters;
-    const action_source = 'website'
-    const fbc = data.fbc
-    const fbp = data.fbp
-    const email = hashString(data.email)
+    const action_source = 'website';
+    const fbc = data.fbc;
+    const fbp = data.fbp;
+    const email = hashString(data.email);
     const phone = data.phone ? hashString(data.phone.replace(/\D+/g, '')) : undefined;
-    const name = data.name
+    const name = data.name;
     const [firstName, lastName] = getFirstAndLastName(name);
 
-    
-    let ipAddress = req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
+    let ipAddress =
+      req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
     const userAgent = req.headers['user-agent'];
     ipAddress = processIPAddress(ipAddress);
-    console.log('_____________________________________________________________________________')
-    console.log('event_name',event_name,custom_parameters)
+    console.log('_____________________________________________________________________________');
+    console.log('event_name', event_name, custom_parameters);
     console.log(`IP Address: ${ipAddress}`);
     console.log(`User Agent: ${userAgent}`);
     if (fbc != undefined) {
-      console.log('fbc',fbc)
+      console.log('fbc', fbc);
     }
     if (fbp != undefined) {
-      console.log('fbp',fbp)
+      console.log('fbp', fbp);
     }
     if (email != undefined) {
-      console.log('email',email)
+      console.log('email', email);
     }
     if (phone != undefined) {
-      console.log('phone',phone)
+      console.log('phone', phone);
     }
     if (firstName != undefined) {
-      console.log('firstName',firstName)
+      console.log('firstName', firstName);
     }
     if (lastName != undefined) {
-      console.log('lastName',lastName)
+      console.log('lastName', lastName);
     }
-    
+
     let payload = {
       data: [
         {
@@ -281,25 +281,25 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
           event_source_url: event_source_url,
           user_data: {
             client_ip_address: ipAddress,
-            client_user_agent: userAgent,   
+            client_user_agent: userAgent,
             fbc: fbc,
             fbp: fbp,
             country: hashString('PH'),
             fn: firstName,
             ln: lastName,
             em: email,
-            ph: phone
+            ph: phone,
           },
           custom_data: {
-            ...custom_parameters
-          }
+            ...custom_parameters,
+          },
         },
       ],
-      //  test_event_code: "TEST79909" 
+      //  test_event_code: "TEST79909"
     };
-    
+
     payload = JSON.stringify(payload);
-  
+
     fetch(url, {
       method: 'POST',
       headers: {
@@ -310,29 +310,27 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
       .then((response) => response.json())
       .then((data) => {
         if (data.events_received == 1) {
-          console.log('success')
-          res.status(200).send(data)
-        }
-        else {
-          console.log('error')
-          res.status(400).send(data)
+          console.log('success');
+          res.status(200).send(data);
+        } else {
+          console.log('error');
+          res.status(400).send(data);
         }
       })
       .catch((error) => {
         console.error('Error:', error);
-        res.status(400).send(data)
+        res.status(400).send(data);
       });
   });
-  
 });
 
 exports.onPaymentsChange = functions
-.region('asia-southeast1')
-.firestore.document('Payments/{paymentId}')
-.onWrite(async (change, context) => {
-  const beforeData = change.before.data();
-  const afterData = change.after.data();
-  
+  .region('asia-southeast1')
+  .firestore.document('Payments/{paymentId}')
+  .onWrite(async (change, context) => {
+    const beforeData = change.before.data();
+    const afterData = change.after.data();
+
     let created = null;
     if (beforeData == undefined) {
       created = true;
@@ -362,6 +360,12 @@ exports.onPaymentsChange = functions
 
     const db = admin.firestore();
     const userId = afterData.userId;
+
+    if (userId == 'GUEST') {
+      console.log('userId is null');
+      return;
+    }
+
     const paymentsSnapshot = await db
       .collection('Payments')
       .where('status', '==', 'approved')
@@ -418,6 +422,12 @@ exports.onOrdersChange = functions
 
       const db = admin.firestore();
       const userId = afterData.userId;
+
+      if (userId == 'GUEST') {
+        console.log('userId is null');
+        return;
+      }
+
       const orderSnapshot = await db.collection('Orders').where('userId', '==', userId).get();
       const userOrders = orderSnapshot.docs.map((doc) => doc.data());
       const paymentsSnapshot = await db
@@ -597,7 +607,7 @@ exports.transactionPlaceOrder = functions
   .https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
       const data = parseData(req.query.data);
-      const userid = data.userid;
+      let userid = data.userid;
       const username = data.username;
       const localDeliveryAddress = data.localDeliveryAddress;
       const locallatitude = data.locallatitude;
@@ -617,7 +627,7 @@ exports.transactionPlaceOrder = functions
       const deliveryVehicle = data.deliveryVehicle;
       const needAssistance = data.needAssistance;
       const eMail = data.eMail;
-      const sendMail = data.sendEmail;
+      let sendMail = data.sendEmail;
       const isInvoiceNeeded = data.isInvoiceNeeded;
       const urlOfBir2303 = data.urlOfBir2303;
       const countOfOrdersThisYear = data.countOfOrdersThisYear;
@@ -733,6 +743,13 @@ exports.transactionPlaceOrder = functions
         await db.runTransaction(async (transaction) => {
           try {
             // read user data
+
+            // If guest checkout
+            if (userid == null) {
+              userid = 'GUEST';
+              sendMail = false;
+            }
+
             const userRef = db.collection('Users').doc(userid);
             const user = await transaction.get(userRef);
             const userData = user.data();
@@ -922,7 +939,7 @@ exports.transactionPlaceOrder = functions
 
             res.send('SUCCESS');
           } catch (e) {
-            console.log(error);
+            console.log(e);
             res.status(400).send('FAILED');
           }
         });
@@ -965,12 +982,30 @@ exports.deleteDocumentFromCollection = functions.region('asia-southeast1').https
 
 exports.updateDocumentFromCollection = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const data = parseData(req.query.data);
+    const data = req.body;
     const collectionName = data.collectionName;
     const id = data.id;
     const firestoreData = data.firestoreData;
     const db = admin.firestore();
 
+    function isValidDate(d) {
+      return d instanceof Date && !isNaN(d);
+    }
+    
+    Object.keys(firestoreData).forEach((key) => {
+      const potentialDateString = firestoreData[key];
+      
+      // Check if the string matches the ISO 8601 format
+      if (typeof potentialDateString === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(potentialDateString)) {
+        const dateObject = new Date(potentialDateString);
+        
+        // Validate if it's a valid date
+        if (isValidDate(dateObject)) {
+          firestoreData[key] = dateObject;
+        }
+      }
+    });
+    
     try {
       await db.collection(collectionName).doc(id).update(firestoreData);
       res.json({ result: `Document with ID: ${id} updated.` });
@@ -1101,6 +1136,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     const db = admin.firestore();
     const userId = data.userId;
 
+    let paymentNotAccepted = false;
     try {
       await db.runTransaction(async (transaction) => {
         // READ
@@ -1112,6 +1148,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
         const shippingTotal = orderDetail.shippingTotal;
+        const grandTotal = orderDetail.grandTotal;
         const oldOrderProofOfPaymentLinks = orderDetail.proofOfPaymentLink;
         const newOrderPayments = [...oldOrderProofOfPaymentLinks, proofOfPaymentLink];
         let doNotAddProofOfPaymentLink = false;
@@ -1161,9 +1198,9 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
-        const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
-        const ordersObject = await transaction.get(allUserOrdersQuery);
-        const orders = ordersObject.docs.map((doc) => doc.data());
+        // const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
+        // const ordersObject = await transaction.get(allUserOrdersQuery);
+        // const orders = ordersObject.docs.map((doc) => doc.data());
 
         // const toUpdateOrders = updateAccountStatement(newPayments, orders)
 
@@ -1173,6 +1210,15 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         //   const ref = db.collection('Orders').doc(order.reference);
         //   transaction.update(ref, { paid: order.paid });
         // });
+        if (userId == 'GUEST') {
+          if (depositAmount < grandTotal) {
+            console.log('payment not accepted in transaction');
+            paymentNotAccepted = true;
+            return;
+          } else {
+            transaction.update(orderRef, { paid: true });
+          }
+        }
 
         if (doNotAddProofOfPaymentLink == false) {
           transaction.update(orderRef, { proofOfPaymentLink: newOrderPayments });
@@ -1201,6 +1247,12 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
         }
         transaction.update(userRef, { payments: newPayments });
       });
+
+      if (paymentNotAccepted == true) {
+        console.log('payment not accepted returned');
+        res.status(200).send('Error creating payment. Payment is less than total');
+        return;
+      }
       res.status(200).send('success');
     } catch (error) {
       console.log(error);

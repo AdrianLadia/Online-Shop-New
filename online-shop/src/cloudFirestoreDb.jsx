@@ -133,8 +133,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async transactionPlaceOrder(data) {
+    
     const schema = Joi.object({
-      userid: Joi.string().required(),
+      userid: Joi.string().required().allow(null),
       username: Joi.string().required(),
       localDeliveryAddress: Joi.string().required(),
       locallatitude: Joi.number().required(),
@@ -167,13 +168,14 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const { error } = schema.validate(data);
 
     const encodedData = encodeURIComponent(JSON.stringify(data));
-
+    
     if (error) {
       alert(error.message);
       throw new Error(error.message);
     }
 
     try {
+   
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
       alert('Order placed successfully');
       return response;
@@ -643,5 +645,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     
   }
 }
+
 
 export default cloudFirestoreDb;

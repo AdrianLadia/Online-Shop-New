@@ -268,6 +268,7 @@ function App() {
               await cloudfirestore.createNewUser(
                 {
                   uid: user.uid,
+                  // uid: 'GUEST',
                   name: user.displayName,
                   email: user.email,
                   emailVerified: user.emailVerified,
@@ -291,6 +292,7 @@ function App() {
                   joinedDate: new Date(),
                 },
                 user.uid
+                // 'GUEST'
               );
             }
 

@@ -8,8 +8,9 @@ import { CircularProgress, Typography } from '@mui/material';
 import useWindowDimensions from './UseWindowDimensions';
 import { Helmet } from 'react-helmet';
 import ScrollTopButton from './ScrollTopButton';
-import ReactPlayer from 'react-player';
+import ShopHero from './ShopHero';
 import AnnouncementNotification from './AnnouncementNotification';
+
 
 const Shop = () => {
   const { width } = useWindowDimensions();
@@ -19,6 +20,9 @@ const Shop = () => {
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
   const {fbclid, isSupportedBrowser, selectedCategory, setSelectedCategory, products,analytics } = useContext(AppContext);
   const wholesaleOrRetailRef = useRef();
+  const [shopHeroInView, setShopHeroInView] = useState(true);
+
+
 
    useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
@@ -53,26 +57,15 @@ const Shop = () => {
 
       {/* <OpeningSoonModal /> */}
       {/* HOW TO ORDER */}
-      <div className="flex w-full text-gray-700 flex-col gap-5 mt-5 justify-center">
-        <Typography variant="h5"  className="text-center text font-bold">
-          How to order
-        </Typography>
-        <div className="w-full flex justify-center">
-          <ReactPlayer
-            url="https://youtu.be/Gf_teseuqGE"
-            controls={true}
-            // ... other props
-          />
-        </div>
-      </div>
+      <ShopHero shopHeroInView={shopHeroInView} setShopHeroInView={setShopHeroInView} />
+      
 
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
-      <ScrollTopButton categorySelectorInView={categorySelectorInView} wholesaleOrRetailRef={wholesaleOrRetailRef} />
+      <ScrollTopButton categorySelectorInView={categorySelectorInView} wholesaleOrRetailRef={wholesaleOrRetailRef} shopHeroInView={shopHeroInView}/>
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail wholesaleOrRetailRef={wholesaleOrRetailRef} setWholesale={setWholesale} setRetail={setRetail} wholesale={wholesale} retail={retail} />
       {/* CATEGORY */}
       <CategorySelector
-      
         setSelectedCategory={setSelectedCategory}
         selectedCategory={selectedCategory}
         setWholesale={setWholesale}

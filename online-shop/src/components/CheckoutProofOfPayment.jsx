@@ -38,13 +38,14 @@ const CheckoutProofOfPayment = (props) => {
     paymentMethodSelected,
     date,
     deliveryVehicle,
+    isGuestCheckout,
   } = location.state;
   const orderDateObject = new Date(date);
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
   const dateNow = new Date();
   const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
   const navigateTo = useNavigate();
-  const [containerClassName, setContainerClassName ] = useState("w-full h-[calc(100vh-200px)]") 
+  const [containerClassName, setContainerClassName] = useState('w-full h-[calc(100vh-200px)]');
   const latitude = deliveryVehicle?.latitude;
   const longitude = deliveryVehicle?.longitude;
 
@@ -102,6 +103,10 @@ const CheckoutProofOfPayment = (props) => {
     }
   }
 
+  useEffect(() => {
+    console.log(isGuestCheckout);
+  }, []);
+
   return (
     <div>
       {referenceNumber == null ? (
@@ -153,14 +158,29 @@ const CheckoutProofOfPayment = (props) => {
                 </div>
               </>
             )}
-            <p>
-              Once you have completed the payment, please{' '}
-              <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
-            </p>
-            <p>
-              We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
-              frame, your order will be cancelled.
-            </p>
+            {isGuestCheckout ? (
+              <>
+                <p>
+                  Once you have completed the payment, please{' '}
+                  <strong>submit proof of payment using the button below</strong>.
+                </p>
+                <p>
+                  We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
+                  frame, your order will be cancelled.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  Once you have completed the payment, please{' '}
+                  <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
+                </p>
+                <p>
+                  We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
+                  frame, your order will be cancelled.
+                </p>
+              </>
+            )}
             <Divider className="mt-5 mb-5"></Divider>
             {deliveryVehicle?.name == 'storePickUp' ? (
               <>
@@ -206,31 +226,47 @@ const CheckoutProofOfPayment = (props) => {
                 <Typography variant="h7" sx={{ marginRight: 1 }}></Typography>
               </div>
             </div>
-            <div className="flex justify-center mt-6">
-              <ImageUploadButton
-                onUploadFunction={onUpload}
-                storage={storage}
-                folderName={'Orders/' + userId + '/' + referenceNumber}
-                buttonTitle={'Upload Proof Of Payment'}
-              />
-            </div>
+
+            {isGuestCheckout ? null : (
+              <div className="flex justify-center mt-6">
+                <ImageUploadButton
+                  onUploadFunction={onUpload}
+                  storage={storage}
+                  folderName={'Orders/' + userId + '/' + referenceNumber}
+                  buttonTitle={'Upload Proof Of Payment'}
+                />
+              </div>
+            )}
             <div className="flex justify-center mt-5">
-              <button
-                onClick={() =>
-                  navigateTo('/orderChat', {
-                    state: {
-                      orderReference: referenceNumber,
-                      isInquiry: false,
-                      backButtonRedirect: '/myorders/orderList',
-                    },
-                  })
-                }
-                variant="contained"
-                className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
-              >
-                <HiChatBubbleLeftEllipsis />
-                <Typography sx={{ marginLeft: 1 }}>Message us</Typography>
-              </button>
+              {isGuestCheckout ? (
+                <button
+                  onClick={() =>
+                    window.open('https://www.m.me/starpackph', '_blank')
+                  }
+                  variant="contained"
+                  className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
+                >
+                  <HiChatBubbleLeftEllipsis />
+                  <Typography sx={{ marginLeft: 1 }}>Upload Proof Of Payment</Typography>
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    navigateTo('/orderChat', {
+                      state: {
+                        orderReference: referenceNumber,
+                        isInquiry: false,
+                        backButtonRedirect: '/myorders/orderList',
+                      },
+                    })
+                  }
+                  variant="contained"
+                  className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
+                >
+                  <HiChatBubbleLeftEllipsis />
+                  <Typography sx={{ marginLeft: 1 }}>Message us</Typography>
+                </button>
+              )}
             </div>
           </div>
         </div>
