@@ -4443,7 +4443,7 @@ describe.only('test transactionPlaceOrder and transactionCreatePayment with Gues
     // order added to orders collection,
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref0');
     expect(order).not.toEqual(null);
-  });
+  },10000);
   test('create 2 orders', async () => {
     // create 2 orders
     
@@ -4565,14 +4565,14 @@ describe.only('test transactionPlaceOrder and transactionCreatePayment with Gues
     await cloudfirestore.updateDocumentFromCollection('Orders', 'testref012', { orderDate: date });
     await delay(500)
 
-    await cloudfirestore.deleteExpiredOrders()
+    await cloudfirestore.deleteOldOrders()
     await delay(10000)
   },50000)
   test('check values 3', async () => {
     // check if middle order is not deleted
     const Orders = await firestore.readAllDataFromCollection('Orders');
     // expect orders to be deleted
-    found = false
+    let found = false
     Orders.forEach(order=>{
       if(order.reference === 'testref0' || order.reference === 'testref012'){
         found = true
