@@ -4,6 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { Typography } from '@mui/material';
 
+
 const HomePageCardSection = ({ propRef, propRef2, className, hide }) => {
   const favorites =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ficon-star-copy-01.svg?alt=media&token=c1e2cd13-58b4-440f-b01f-1169202c253c&_gl=1*e9kma0*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjM3NDgyNC4xNDQuMS4xNjk2Mzc0OTA3LjM3LjAuMA..';
