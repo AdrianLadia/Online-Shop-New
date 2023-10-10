@@ -22,6 +22,8 @@ const CheckoutButton = (props) => {
   const [openGuestSignInModal, setOpenGuestSignInModal] = useState(false);
   const [totalCredit, setTotalCredit] = useState(0);
   const [isSupportedBrowserModalOpen, setIsSupportedBrowserModalOpen] = useState(false);
+  const [openGuestCheckOutModal, setOpenGuestCheckOutModal] = useState(false);
+
 
   useEffect(() => {
     if (userdata != null) {
@@ -50,14 +52,14 @@ const CheckoutButton = (props) => {
     //   return;
     // }
 
-    // if (userId === null) {
+    if (userId === null) {
     localStorage.setItem('cart', JSON.stringify(cart));
-    // setOpenGuestSignInModal(true);
-    // setGuestLoginClicked(true);
-    // }
-    // if (userId !== null) {
+    setOpenGuestSignInModal(true);
+    setGuestLoginClicked(true);
+    }
+    if (userId !== null) {
     setGoToCheckoutPage(true);
-    // }
+    }
   }
 
   return (
@@ -78,7 +80,10 @@ const CheckoutButton = (props) => {
       <GuestSignInModal
         handleCloseGuestSignInModal={handleCloseGuestSignInModal}
         openGuestSignInModal={openGuestSignInModal}
+        setGoToCheckoutPage={setGoToCheckoutPage}
       />
+
+      
     </div>
   );
 };

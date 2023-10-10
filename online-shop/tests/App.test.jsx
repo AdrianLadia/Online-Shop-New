@@ -20,11 +20,12 @@ import storeProductsOrganizer from '../utils/classes/storeProductsOrganizer';
 import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
 
 //
-const datamanipulation = new dataManipulation();
 const app = initializeApp(firebaseConfig);
 const firestore = new firestoredb(app, true);
 const cloudfirestorefunctions = new cloudFirestoreFunctions(app, true);
 const cloudfirestore = new cloudFirestoreDb(app, true);
+const businesscalculations = new businessCalculations(cloudfirestore);
+const datamanipulation = new dataManipulation(businesscalculations);
 await cloudfirestore.createNewUser(
   {
     uid: 'TESTAFFILIATE',
@@ -103,7 +104,7 @@ await cloudfirestore.createNewUser(
   },
   'NOAFFILIATETESTUSER'
 );
-const businesscalculations = new businessCalculations();
+
 const paperboylocation = new paperBoyLocation();
 const lalamovedeliveryvehicles = new lalamoveDeliveryVehicles();
 const userTestId = 'TESTUSER';
@@ -293,7 +294,9 @@ describe('Business Calcualtions', () => {
     const grandTotal = businesscalculations.getGrandTotal(subtotal, vat, deliveryfee);
     expect(grandTotal).toBe(expected);
   });
-  test('addToCart and removeFromCart', () => {
+  test('addToCart and removeFromCart', async () => {
+    await firestore.updateDocumentFromCollection('Products', 'PPB#1', { stocksAvailable: 100 });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#2', { stocksAvailable: 100 });
     const cart = user.cart;
     let newCart = businesscalculations.addToCart(cart, 'PPB#1', 5);
     expect(newCart).toEqual({ 'PPB#1': 1 });
@@ -302,7 +305,7 @@ describe('Business Calcualtions', () => {
     const newCart3 = businesscalculations.removeFromCart(newCart2, 'PPB#2', 5);
     expect(newCart3).toEqual({ 'PPB#1': 1 });
     const newCart4 = businesscalculations.addToCart(newCart3, 'PPB#1', 0);
-    expect(newCart4).toEqual({ 'PPB#1': 1 });
+    expect(newCart4).toEqual('no_stocks');
   });
   test('addToCartWithQuantity', () => {
     const cart = {};
@@ -527,7 +530,7 @@ describe('Data Manipulation', async () => {
     const products = await firestore.readAllProducts();
     await delay(100);
 
-    const data = datamanipulation.getCheckoutPageTableDate(products, cart, cartItemsPrice);
+    const data = datamanipulation.getCheckoutPageTableDate(products, cart, cartItemsPrice,'www.test.com' ,false);
     const rows = data[0];
 
     await cloudfirestore.deleteDocumentFromCollection('Orders', 'testref1234');
@@ -2393,10 +2396,11 @@ describe('sendEmail', async () => {
 
 describe('afterCheckoutRedirectLogic', () => {
   class testCheckout {
-    constructor() {}
+    constructor() {
+      this.deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle
+    }
 
     mockFunction() {}
-
     runFunction(paymentMethodSelected) {
       const res = businesscalculations.afterCheckoutRedirectLogic(
         {
@@ -2417,6 +2421,7 @@ describe('afterCheckoutRedirectLogic', () => {
           userId: 'userId',
           itemsTotal: 1000,
           date: new Date(),
+          deliveryVehicle: this.deliveryVehicle
         },
         true
       );
@@ -4058,7 +4063,7 @@ describe('Void payment', () => {
   });
 }, 100000);
 
-describe('test edit customer order function', () => {
+describe.only('test edit customer order function', () => {
   test('setup test', async () => {
     resetOrdersAndPayments();
     await firestore.createProduct(
@@ -4292,7 +4297,7 @@ describe('test edit customer order function', () => {
   });
 }, 100000000);
 
-describe.only('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
+describe('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
       {
@@ -4587,6 +4592,8 @@ describe.only('test transactionPlaceOrder and transactionCreatePayment with Gues
     await firestore.deleteDocumentFromCollection('Products', 'test');
     await firestore.deleteDocumentFromCollection('Products', 'test2');
     await firestore.deleteDocumentFromCollection('Users', 'GUEST');
+    await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref0');
+    await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref01');
   });
 });
 
