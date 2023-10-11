@@ -80,6 +80,7 @@ const CheckoutButton = (props) => {
       <GuestSignInModal
         handleCloseGuestSignInModal={handleCloseGuestSignInModal}
         openGuestSignInModal={openGuestSignInModal}
+        setOpenGuestSignInModal={setOpenGuestSignInModal}
         setGoToCheckoutPage={setGoToCheckoutPage}
       />
 

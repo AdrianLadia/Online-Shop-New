@@ -27,11 +27,13 @@ const GuestSignInModal = (props) => {
   const openGuestSignInModal = props.openGuestSignInModal;
   const handleCloseGuestSignInModal = props.handleCloseGuestSignInModal;
   const setGoToCheckoutPage = props.setGoToCheckoutPage;
+  const setOpenGuestSignInModal = props.setOpenGuestSignInModal;
   const [loading,setLoading] = useState(false);
 
   function onCheckoutButtonClick() {
     setLoading(true);
     setGoToCheckoutPage(true);
+    setOpenGuestSignInModal(false);
   }
 
   return (

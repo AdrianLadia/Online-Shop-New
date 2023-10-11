@@ -4066,6 +4066,7 @@ describe('Void payment', () => {
 describe.only('test edit customer order function', () => {
   test('setup test', async () => {
     resetOrdersAndPayments();
+    await delay(5000)
     await firestore.createProduct(
       {
         itemId: 'test',

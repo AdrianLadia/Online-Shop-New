@@ -747,7 +747,6 @@ exports.transactionPlaceOrder = functions
             // If guest checkout
             if (userid == null) {
               userid = 'GUEST';
-              sendMail = false;
             }
 
             const userRef = db.collection('Users').doc(userid);
@@ -901,16 +900,17 @@ exports.transactionPlaceOrder = functions
 
             if (sendMail == true) {
               try {
-                sendmail(
-                  newOrder.eMail,
-                  'Order Confirmation',
-                  `<p>Dear Customer,</p>
+                if (userid != 'GUEST') {
+                  sendmail(
+                    newOrder.eMail,
+                    'Order Confirmation',
+                    `<p>Dear Customer,</p>
+                    
+                    <p>We are pleased to inform you that your order has been confirmed.</p>
+                    
+                    <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
               
-              <p>We are pleased to inform you that your order has been confirmed.</p>
-              
-              <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
-              
-              <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
+                    <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
               
               <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
               
@@ -918,14 +918,15 @@ exports.transactionPlaceOrder = functions
               
               <p>Best Regards,<br>
               The Star Pack Team</p>`
-                );
+                  );
+                }
 
                 sendmail(
                   'ladiaadrian@gmail.com',
                   'Order Received',
                   `<p>Order received,</p>
-              
-              <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+                
+                <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
               <p><strong>Customer:</strong> ${newOrder.userName}</p>
               <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
       
@@ -991,21 +992,24 @@ exports.updateDocumentFromCollection = functions.region('asia-southeast1').https
     function isValidDate(d) {
       return d instanceof Date && !isNaN(d);
     }
-    
+
     Object.keys(firestoreData).forEach((key) => {
       const potentialDateString = firestoreData[key];
-      
+
       // Check if the string matches the ISO 8601 format
-      if (typeof potentialDateString === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(potentialDateString)) {
+      if (
+        typeof potentialDateString === 'string' &&
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(potentialDateString)
+      ) {
         const dateObject = new Date(potentialDateString);
-        
+
         // Validate if it's a valid date
         if (isValidDate(dateObject)) {
           firestoreData[key] = dateObject;
         }
       }
     });
-    
+
     try {
       await db.collection(collectionName).doc(id).update(firestoreData);
       res.json({ result: `Document with ID: ${id} updated.` });
