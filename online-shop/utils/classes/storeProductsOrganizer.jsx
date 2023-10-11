@@ -10,6 +10,12 @@ class storeProductsOrganizer {
 
   getOrderOfProducts() {
 
+    if (this.productCategory == 'Utensils') {
+      this.orderOfProducts = [
+        'SPNMWSKZ','FRKMWSKZ','CHOPSSUK','PLASGLOV'
+      ]
+    }
+
     if (this.productCategory == 'Roll Bag') {
       this.orderOfProducts = [
         'RB5X9MR','RB8X12TB','RB10X16TB','RB16X24'
