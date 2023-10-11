@@ -241,7 +241,6 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     const fbc = data.fbc;
     const fbp = data.fbp;
     const email = hashString(data.email);
-    console.log(data.phone)
     const phone = data.phone ? hashString(data.phone.replace(/\D+/g, '')) : undefined;
     const name = data.name;
     const [firstName, lastName] = getFirstAndLastName(name);
