@@ -20,20 +20,8 @@ const CheckoutButton = (props) => {
     alertSnackbar,
   } = useContext(AppContext);
   const [openGuestSignInModal, setOpenGuestSignInModal] = useState(false);
-  const [totalCredit, setTotalCredit] = useState(0);
   const [isSupportedBrowserModalOpen, setIsSupportedBrowserModalOpen] = useState(false);
-  const [openGuestCheckOutModal, setOpenGuestCheckOutModal] = useState(false);
 
-
-  useEffect(() => {
-    if (userdata != null) {
-      let credit = 0;
-      userdata.orders.map((s) => {
-        credit += s.grandTotal;
-      });
-      setTotalCredit(credit + totalPrice);
-    }
-  }, []);
 
   function handleCloseGuestSignInModal() {
     setOpenGuestSignInModal(false);

@@ -125,22 +125,25 @@ const CheckoutProofOfPayment = (props) => {
           </div>
         </div>
       ) : (
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto  py-16">
           <div className="bg-white shadow-lg rounded-lg p-8">
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
             {qrLink != null ? (
-              <div className="mb-8">
+              <div className="flex flex-col mb-8 justify-center lg:justify-start">
                 <p>
                   Please scan QR code or click the payment link to send us a payment of :{' '}
                   <strong>₱ {grandTotal}</strong>
                 </p>
-                <img
-                  src="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55"
-                  alt="proof of payment container"
-                ></img>
+                <div className='container  '>
+                  <img
+                    src="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55"
+                    alt="proof of payment container"
+                    className="max-h-40"
+                  ></img>
+                </div>
                 <a
-                  className=" ml-11 text-blue-600 underline hover:text-blue-800 visited:text-purple-600 "
+                  className=" flex text-blue-600 underline hover:text-blue-800 visited:text-purple-600 "
                   href={qrLink}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -162,8 +165,9 @@ const CheckoutProofOfPayment = (props) => {
               <>
                 <p>
                   Once you have completed the payment, please{' '}
-                  <strong>submit proof of payment using the button below</strong>.
+                  <strong>submit proof of payment using the button below or send it in our facebook messenger</strong>.
                 </p>
+                <Divider className='my-5'/>
                 <p>
                   We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
                   frame, your order will be cancelled.
@@ -240,9 +244,7 @@ const CheckoutProofOfPayment = (props) => {
             <div className="flex justify-center mt-5">
               {isGuestCheckout ? (
                 <button
-                  onClick={() =>
-                    window.open('https://www.m.me/starpackph', '_blank')
-                  }
+                  onClick={() => window.open('https://www.m.me/starpackph', '_blank')}
                   variant="contained"
                   className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
                 >

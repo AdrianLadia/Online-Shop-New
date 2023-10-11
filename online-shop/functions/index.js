@@ -241,6 +241,7 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
     const fbc = data.fbc;
     const fbp = data.fbp;
     const email = hashString(data.email);
+    console.log(data.phone)
     const phone = data.phone ? hashString(data.phone.replace(/\D+/g, '')) : undefined;
     const name = data.name;
     const [firstName, lastName] = getFirstAndLastName(name);
@@ -260,16 +261,16 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
       console.log('fbp', fbp);
     }
     if (email != undefined) {
-      console.log('email', email);
+      console.log('email', data.email,email);
     }
     if (phone != undefined) {
-      console.log('phone', phone);
+      console.log('phone',data.phone, phone);
     }
     if (firstName != undefined) {
-      console.log('firstName', firstName);
+      console.log('firstName', data.name,firstName);
     }
     if (lastName != undefined) {
-      console.log('lastName', lastName);
+      console.log('lastName', data.lastName,lastName);
     }
 
     let payload = {

@@ -61,7 +61,7 @@ const GuestSignInModal = (props) => {
               </button>
             </div>
             <div className='flex w-full justify-center mb-5'>
-            <Typography variant="p" fontWeight={'bold'} className="mt-5">
+            <Typography variant="p" align='center' fontWeight={'bold'} className="mt-5">
               Create an account to enjoy these features.
             </Typography>
             </div>

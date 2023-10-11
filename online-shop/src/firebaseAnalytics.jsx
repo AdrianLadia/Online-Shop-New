@@ -40,9 +40,9 @@ class firebaseAnalytics {
     });
   }
 
-  logPlaceOrderEvent(cart, grandTotal) {
+  logPlaceOrderEvent(cart, grandTotal,guestEmail,guestPhone,guestName) {
     window.fbq('trackCustom', 'Purchase', { currency: 'PHP', value: grandTotal, cart: cart });
-    this.cloudFirestoreDb.postToConversionApi('Purchase', { currency: 'PHP', value: grandTotal, cart: cart });
+    this.cloudFirestoreDb.postToConversionApi('Purchase', { currency: 'PHP', value: grandTotal, cart: cart },guestEmail,guestPhone,guestName);
     this.logEvent('placed_order', { cart: cart, grand_total: grandTotal });
   }
 

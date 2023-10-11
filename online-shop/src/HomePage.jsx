@@ -791,7 +791,7 @@ const HomePage = ({ isAffiliateLink }) => {
       >
         <header
           ref={p1}
-          className="w-screen h-screen flex flex-col my-6 md:mt-0 md:flex-row justify-center items-center "
+          className="w-screen h-screen flex flex-col my-6 md:mt-0 md:flex-row  justify-center items-center "
         >
           <article className="h-1/2 md:h-full w-full md:w-4/10 items-start xs:items-center gap-5 flex flex-col justify-center ">
             <div className="mt-2 md:mt-0 justify-end md:justify-center items-center md:items-end h-full w-5/6 flex flex-col ">

@@ -603,7 +603,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error('Error editing order');
     }
   }
-  async postToConversionApi(event_name,custom_parameters) {
+  async postToConversionApi(event_name,custom_parameters,guestEmail,guestPhone,guestName) {
     // get fbp
     let fbp 
     try{
@@ -623,16 +623,15 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       fbc = 'fb.1.' + unixTimestamp.toString() + '.' + this.fbclid
     }
 
-
     const data = {
       event_name: event_name,
       event_source_url: window.location.href,
       custom_parameters: custom_parameters,
       fbc: fbc,
       fbp: fbp,
-      email: this.userdata?.email,
-      phone: this.userdata?.phoneNumber,
-      name: this.userdata?.name,
+      email: this.userdata?.email || guestEmail,
+      phone: this.userdata?.phoneNumber || guestPhone,
+      name: this.userdata?.name || guestName,
     };
 
     const res = await axios.post(`${this.url}postToConversionApi`,data, {
