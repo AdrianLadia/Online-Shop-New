@@ -16,6 +16,7 @@ import Divider from '@mui/material/Divider';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Timestamp } from 'firebase/firestore';
 import ImageSlider from './ImageSlider';
+import {RiShareBoxLine} from 'react-icons/ri';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -181,13 +182,17 @@ const ProductCardModal = (props) => {
         <Box sx={style} className="bg-colorbackground border-color60 overflow-x-hidden overflow-y-auto">
           <div className="flex flex-col">
             {/* HEART AND X BUTTON*/}
-            <div className="flex flex-row justify-between mb-5">
+            <div className="flex flex-row justify-evenly  mb-5">
               {/* HEART */}
-              {heart ? (
-                <AiFillHeart id={itemId} size={40} onClick={onHeartClick} className=" cursor-pointer text-red-500 " />
-              ) : (
-                <AiOutlineHeart size={40} onClick={onHeartClick} className=" cursor-pointer hover:text-red-500" />
-              )}
+              <div className='flex flex-row'>
+                {heart ? (
+                  <AiFillHeart id={itemId} size={40} onClick={onHeartClick} className=" cursor-pointer text-red-500 " />
+                ) : (
+                  <AiOutlineHeart size={40} onClick={onHeartClick} className=" cursor-pointer hover:text-red-500" />
+                )}
+                <RiShareBoxLine size={40} className=" cursor-pointer hover:text-red-500" />
+
+              </div>
               {/* X BUTTON */}
               <div className="flex w-full items-center justify-center">
                 <Typography variant="h4" className="text-color10b">
