@@ -25,6 +25,8 @@ const CheckoutProofOfPayment = (props) => {
     setRefreshUser,
     analytics,
     datamanipulation,
+    mayaRedirectUrl,
+    setMayaRedirectUrl
   } = useContext(AppContext);
   const location = useLocation();
   const {
@@ -48,6 +50,15 @@ const CheckoutProofOfPayment = (props) => {
   const [containerClassName, setContainerClassName] = useState('w-full h-[calc(100vh-200px)]');
   const latitude = deliveryVehicle?.latitude;
   const longitude = deliveryVehicle?.longitude;
+
+  useEffect(() => {
+    console.log(mayaRedirectUrl);
+    if (mayaRedirectUrl != null) {
+      // window.location.href = mayaRedirectUrl;
+      window.open(mayaRedirectUrl, '_blank')
+      setMayaRedirectUrl(null);
+    }
+  }, [mayaRedirectUrl]);
 
   useEffect(() => {
     analytics.logOpenPaymentPageEvent(

@@ -9,6 +9,7 @@ import CartTable from './CartTable';
 import Fade from '@mui/material/Fade';
 import AppContext from '../AppContext';
 import QuotationCreatorButton from './QuotationCreatorButton';
+import { CircularProgress } from '@material-ui/core';
 
 const CartModal = (props) => {
   const openCart = props.openCart;
@@ -19,8 +20,16 @@ const CartModal = (props) => {
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
   const { userdata, firestore, setCart } = React.useContext(AppContext);
+  const [outStocksLoading, setOutStocksLoading] = useState(false);
+  const { userdata, firestore, setCart } = React.useContext(AppContext);
 
   const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    height: '80%',
+    transform: 'translate(-50%, -50%)',
+    width: '95%',
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -32,6 +41,8 @@ const CartModal = (props) => {
       width: '85%',
     },
 
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -56,14 +67,25 @@ const CartModal = (props) => {
     setCart({});
     firestore.createUserCart({ cart: [] }, userdata.uid);
   }
+    firestore.createUserCart({ cart: [] }, userdata.uid);
+  }
 
   useEffect(() => {
     CheckIfCartIsEmpty();
     console.log(finalCartData);
   }, [finalCartData]);
 
+  async function outStocksClick() {
+    setOutStocksLoading(true);
+    await firestore.transactionOutStocks(finalCartData);
+    console.log(finalCartData);
+    setCart({});
+    setOutStocksLoading(false);
+  }
+
   return (
     <Modal open={openCart} onClose={CloseCart}>
+      <Fade in={openCart}>
       <Fade in={openCart}>
         <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-y-auto bg-colorbackground border-color60">
           <div className="flex flex-row justify-between mb-4">
@@ -73,6 +95,19 @@ const CartModal = (props) => {
               companyName="Star Pack"
               senderName=""
             />
+          </div>
+          <div className="flex">
+            {userdata?.userRole === 'superAdmin' ? (
+              <button
+                onClick={outStocksClick}
+                className="p-3 bg-color10b rounded-lg text-white"
+                disabled={outStocksLoading}
+              >
+                {outStocksLoading ? <CircularProgress size={20} /> : <>Out Stocks</>}
+              </button>
+            ) : null}
+          </div>
+          <div className="flex flex-row-reverse mb-4">
             <button
               id="closeCartButton"
               onClick={CloseCart}

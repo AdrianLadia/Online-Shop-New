@@ -3,7 +3,7 @@
 class AppConfig {
     constructor() {
         this.isDevEnvironment = false
-        this.isPaymentSandBox = true
+        this.isPaymentSandBox = false
         this.noVat = false
         this.retailSafetyStock = 0
         this.freeDeliveryThreshold = 200

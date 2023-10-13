@@ -16,6 +16,7 @@ import Divider from '@mui/material/Divider';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Timestamp } from 'firebase/firestore';
 import ImageSlider from './ImageSlider';
+import {RiShareBoxLine} from 'react-icons/ri';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -175,6 +176,11 @@ const ProductCardModal = (props) => {
     productInteraction();
   }, [props.modal]);
 
+  function shareButton() {
+    navigator.clipboard.writeText('https://starpack.ph/shop?modal=' + props.product.itemId)
+    alertSnackbar('success', 'Link copied to clipboard');
+  }
+
   return (
     <Modal open={props.modal} onClose={closeModal}>
       <Fade in={props.modal}>
@@ -183,18 +189,24 @@ const ProductCardModal = (props) => {
             {/* HEART AND X BUTTON*/}
             <div className="flex flex-row justify-between mb-5">
               {/* HEART */}
-              {heart ? (
-                <AiFillHeart id={itemId} size={40} onClick={onHeartClick} className=" cursor-pointer text-red-500 " />
-              ) : (
-                <AiOutlineHeart size={40} onClick={onHeartClick} className=" cursor-pointer hover:text-red-500" />
-              )}
-              {/* X BUTTON */}
-              <div className="flex w-full items-center justify-center">
+              <div className='flex flex-row gap-5'>
+                {heart ? (
+                  <AiFillHeart id={itemId} size={40} onClick={onHeartClick} className=" cursor-pointer text-red-500 " />
+                ) : (
+                  <AiOutlineHeart size={40} onClick={onHeartClick} className=" cursor-pointer hover:text-red-500" />
+                )}
+                {/* {SHARE} */}
+                <RiShareBoxLine onClick={shareButton} size={40} className=" cursor-pointer hover:text-red-500" />
+
+              </div>
+              {/* PRICE */}
+              <div className="flex ">
                 <Typography variant="h4" className="text-color10b">
                   ₱ {props.product.price}
                 </Typography>
               </div>
 
+              {/* X BUTTON */}
               <button
                 onClick={closeModal}
                 className=" bg-red1 hover:bg-red-800 cursor-pointer p-2 rounded-full w-10 text-white"
