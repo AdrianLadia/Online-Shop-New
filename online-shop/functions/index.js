@@ -30,6 +30,7 @@ const Joi = require('joi');
 const nodemailer = require('nodemailer');
 const fetch = require('node-fetch');
 const crypto = require('crypto');
+const axios = require('axios');
 
 admin.initializeApp();
 
@@ -752,8 +753,8 @@ exports.transactionPlaceOrder = functions
             const userRef = db.collection('Users').doc(userid);
             const user = await transaction.get(userRef);
             const userData = user.data();
-            const deliveryAddress = userData.deliveryAddress;
-            const contactPerson = userData.contactPerson;
+            const deliveryAddress = userData.deliveryAddress ? userData.deliveryAddress : [];
+            const contactPerson = userData.contactPerson ? userData.contactPerson : [];
             const ordersOnHold = {};
             const currentInventory = {};
 
@@ -1264,6 +1265,47 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
     }
   });
 });
+
+// Paymaya create checkout request
+exports.payMayaCheckout = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+
+      function convertToBase64(key) {
+        return btoa(key + ':');
+      }
+    
+      const data = req.body;
+      const payload = data.payload
+      const isSandbox = data.isSandbox
+
+      let url;
+      let publicKey;
+      let secretKey;
+
+      if (isSandbox) {
+        url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+        publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
+        secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
+      }
+      else {
+        url = 'https://pg.maya.ph/checkout/v1/checkouts';
+        publicKey = 'pk-DKpOh7gQI1sjjeE4pzTenb8B2n1I3chEmu6UKlJCzYE'
+        secretKey = 'sk-c6YLzDpPYtd3AQZNm4i8gcnKQV0FioKXEjyuS074gEj'
+      }
+
+      const headers = {
+        Accept: 'application/json',
+        Authorization: `Basic ${convertToBase64(publicKey)}`,
+        'Content-Type': 'application/json',
+      };
+
+      const response = await axios.post(url, payload, { headers });
+      console.log(response.data);
+      res.send(response.data);
+  });
+});
+
+
 
 // Expose the Express app as a Cloud Function
 exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequest(async (req, res) => {

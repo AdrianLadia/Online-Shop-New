@@ -530,7 +530,7 @@ describe('Data Manipulation', async () => {
     const products = await firestore.readAllProducts();
     await delay(100);
 
-    const data = datamanipulation.getCheckoutPageTableDate(products, cart, cartItemsPrice,'www.test.com' ,false);
+    const data = datamanipulation.getCheckoutPageTableDate(products, cart, cartItemsPrice, 'www.test.com', false);
     const rows = data[0];
 
     await cloudfirestore.deleteDocumentFromCollection('Orders', 'testref1234');
@@ -2397,7 +2397,7 @@ describe('sendEmail', async () => {
 describe('afterCheckoutRedirectLogic', () => {
   class testCheckout {
     constructor() {
-      this.deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle
+      this.deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle;
     }
 
     mockFunction() {}
@@ -2421,7 +2421,7 @@ describe('afterCheckoutRedirectLogic', () => {
           userId: 'userId',
           itemsTotal: 1000,
           date: new Date(),
-          deliveryVehicle: this.deliveryVehicle
+          deliveryVehicle: this.deliveryVehicle,
         },
         true
       );
@@ -4063,10 +4063,10 @@ describe('Void payment', () => {
   });
 }, 100000);
 
-describe.only('test edit customer order function', () => {
+describe('test edit customer order function', () => {
   test('setup test', async () => {
     resetOrdersAndPayments();
-    await delay(5000)
+    await delay(5000);
     await firestore.createProduct(
       {
         itemId: 'test',
@@ -4418,7 +4418,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'test': 10, 'test2': 5 },
+      cart: { test: 10, test2: 5 },
       itemstotal: 15000,
       vat: 0,
       shippingtotal: 2000,
@@ -4436,7 +4436,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       countOfOrdersThisYear: 0,
     });
     await delay(5000);
-  },10000);
+  }, 10000);
   test('check values', async () => {
     // expect cart stocks to be minused,
     const testProduct1 = await firestore.readSelectedDataFromCollection('Products', 'test');
@@ -4449,10 +4449,10 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
     // order added to orders collection,
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref0');
     expect(order).not.toEqual(null);
-  },10000);
+  }, 10000);
   test('create 2 orders', async () => {
     // create 2 orders
-    
+
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       testing: true,
@@ -4463,7 +4463,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'test': 10, 'test2': 5 },
+      cart: { test: 10, test2: 5 },
       itemstotal: 15000,
       vat: 0,
       shippingtotal: 2000,
@@ -4490,7 +4490,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'test': 10, 'test2': 5 },
+      cart: { test: 10, test2: 5 },
       itemstotal: 15000,
       vat: 0,
       shippingtotal: 2000,
@@ -4508,7 +4508,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       countOfOrdersThisYear: 0,
     });
     await delay(5000);
-  },20000);
+  }, 20000);
   test('createPayment less than total', async () => {
     // create payment less than total
     // expect error
@@ -4520,7 +4520,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
-    console.log(res)
+    console.log(res);
     await delay(500);
     // expect error
     expect(res.data).toEqual('Error creating payment. Payment is less than total');
@@ -4545,46 +4545,45 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
     expect(secondOrder.paid).toEqual(true);
     expect(thirdOrder.paid).toEqual(false);
   });
-  test('editOrder',async()=>{
+  test('editOrder', async () => {
     // edit order
     await cloudfirestore.editCustomerOrder({
       orderReference: 'testref0',
-      cart: { 'test': 1, 'test2': 1 },
+      cart: { test: 1, test2: 1 },
     });
-    await delay(500)
-  })
+    await delay(500);
+  });
   test('check values 3', async () => {
     const editedOrder = await cloudfirestore.readSelectedDataFromCollection('Orders', 'testref0');
     const editedOrderCart = editedOrder.cart;
     const editedOrderGrandTotal = editedOrder.grandTotal;
-    expect(editedOrderCart).toEqual({ 'test': 1, 'test2': 1 });
+    expect(editedOrderCart).toEqual({ test: 1, test2: 1 });
     expect(editedOrderGrandTotal).toEqual(4000);
     expect(editedOrder.itemsTotal).toEqual(2000);
   });
-  test('deleteExpiredOrders',async()=>{
+  test('deleteExpiredOrders', async () => {
     // create date object 2 days ago
     const date = new Date();
     date.setDate(date.getDate() - 2);
 
-
     await cloudfirestore.updateDocumentFromCollection('Orders', 'testref0', { orderDate: date });
     await cloudfirestore.updateDocumentFromCollection('Orders', 'testref012', { orderDate: date });
-    await delay(500)
+    await delay(500);
 
-    await cloudfirestore.deleteOldOrders()
-    await delay(10000)
-  },50000)
+    await cloudfirestore.deleteOldOrders();
+    await delay(10000);
+  }, 50000);
   test('check values 3', async () => {
     // check if middle order is not deleted
     const Orders = await firestore.readAllDataFromCollection('Orders');
     // expect orders to be deleted
-    let found = false
-    Orders.forEach(order=>{
-      if(order.reference === 'testref0' || order.reference === 'testref012'){
-        found = true
+    let found = false;
+    Orders.forEach((order) => {
+      if (order.reference === 'testref0' || order.reference === 'testref012') {
+        found = true;
       }
-    })
-    expect(found).toEqual(false)
+    });
+    expect(found).toEqual(false);
   });
   test('clean test data', async () => {
     await firestore.deleteDocumentFromCollection('Orders', 'testref0');
@@ -4598,4 +4597,39 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
   });
 });
 
-describe('test transactionCreatePayment with Guest User', () => {});
+describe.only('test paymaya checkout request', async () => {
+  test('invoke function', async () => {
+    const req = {
+      totalAmount: {
+        value: 1000,
+        currency: 'PHP',
+      },
+      buyer: {
+        contact: {
+          email: 'test@gmail.com',
+          phone: '09178927206',
+        },
+        shippingAddress: {
+          line1: 'test address',
+          line2: 'address test 2',
+          countryCode: 'PH',
+        },
+        firstName: 'Adrian',
+        lastName: 'Ladia',
+      },
+      redirectUrl: {
+        success: 'https://starpack.ph/checkoutSuccess',
+        failure: 'https://starpack.ph/checkoutFailed',
+        cancel: 'https://starpack.ph/checkoutCancelled',
+      },
+      requestReferenceNumber: '1243545746587',
+      // "metadata": {
+      //   "userId" : userId
+      // }
+    };
+    const res = await cloudfirestore.payMayaCheckout({ payload: req, isSandbox: true });
+    const url = res.data.redirectUrl;
+    const website = url.slice(0, 8);
+    expect(website).toEqual('https://');
+  });
+});

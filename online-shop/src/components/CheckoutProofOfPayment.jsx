@@ -12,6 +12,7 @@ import dataManipulation from '../../utils/dataManipulation';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
 import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
+import { set } from 'date-fns';
 
 const CheckoutProofOfPayment = (props) => {
   const {
@@ -26,7 +27,7 @@ const CheckoutProofOfPayment = (props) => {
     analytics,
     datamanipulation,
     mayaRedirectUrl,
-    setMayaRedirectUrl
+    setMayaRedirectUrl,
   } = useContext(AppContext);
   const location = useLocation();
   const {
@@ -45,17 +46,17 @@ const CheckoutProofOfPayment = (props) => {
   const orderDateObject = new Date(date);
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
   const dateNow = new Date();
-  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
+  let dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
   const navigateTo = useNavigate();
   const [containerClassName, setContainerClassName] = useState('w-full h-[calc(100vh-200px)]');
   const latitude = deliveryVehicle?.latitude;
   const longitude = deliveryVehicle?.longitude;
+  const [_mayaRedirectUrl, set_mayaRedirectUrl] = useState(null);
 
   useEffect(() => {
     console.log(mayaRedirectUrl);
     if (mayaRedirectUrl != null) {
-      // window.location.href = mayaRedirectUrl;
-      window.open(mayaRedirectUrl, '_blank')
+      set_mayaRedirectUrl(mayaRedirectUrl);
       setMayaRedirectUrl(null);
     }
   }, [mayaRedirectUrl]);
@@ -82,6 +83,7 @@ const CheckoutProofOfPayment = (props) => {
   let accountName;
   let accountNumber;
   let qrLink;
+  let isMaya = false;
 
   if (paymentMethodSelected == 'bdo') {
     bankName = 'BDO';
@@ -97,6 +99,8 @@ const CheckoutProofOfPayment = (props) => {
   if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected)) {
     bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
+    isMaya = true;
+    dateDifference = 3600;
   }
 
   async function onUpload(url) {
@@ -140,22 +144,15 @@ const CheckoutProofOfPayment = (props) => {
           <div className="bg-white shadow-lg rounded-lg p-8">
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
-            {qrLink != null ? (
+            {_mayaRedirectUrl != null ? (
               <div className="flex flex-col mb-8 justify-center lg:justify-start">
                 <p>
-                  Please scan QR code or click the payment link to send us a payment of :{' '}
-                  <strong>₱ {grandTotal}</strong>
+                  You have been automatically redirected to the payment page. If you are not redirected, please click
+                  the link below.
                 </p>
-                <div className='container  '>
-                  <img
-                    src="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55"
-                    alt="proof of payment container"
-                    className="max-h-40"
-                  ></img>
-                </div>
                 <a
                   className=" flex text-blue-600 underline hover:text-blue-800 visited:text-purple-600 "
-                  href={qrLink}
+                  href={_mayaRedirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -172,13 +169,21 @@ const CheckoutProofOfPayment = (props) => {
                 </div>
               </>
             )}
-            {isGuestCheckout ? (
+
+            {_mayaRedirectUrl != null ? (
+              <>
+                <p>
+                  Please complete the payment within 1 hour. We will <strong>reserve your items</strong> for 1 hour. If
+                  payment is not received within the time frame, your order will be cancelled.
+                </p>
+              </>
+            ) : isGuestCheckout ? (
               <>
                 <p>
                   Once you have completed the payment, please{' '}
                   <strong>submit proof of payment using the button below or send it in our facebook messenger</strong>.
                 </p>
-                <Divider className='my-5'/>
+                <Divider className="my-5" />
                 <p>
                   We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
                   frame, your order will be cancelled.
@@ -196,6 +201,7 @@ const CheckoutProofOfPayment = (props) => {
                 </p>
               </>
             )}
+
             <Divider className="mt-5 mb-5"></Divider>
             {deliveryVehicle?.name == 'storePickUp' ? (
               <>
@@ -242,7 +248,7 @@ const CheckoutProofOfPayment = (props) => {
               </div>
             </div>
 
-            {isGuestCheckout ? null : (
+            {isMaya ? null : isGuestCheckout ? null : (
               <div className="flex justify-center mt-6">
                 <ImageUploadButton
                   onUploadFunction={onUpload}
@@ -252,6 +258,7 @@ const CheckoutProofOfPayment = (props) => {
                 />
               </div>
             )}
+
             <div className="flex justify-center mt-5">
               {isGuestCheckout ? (
                 <button

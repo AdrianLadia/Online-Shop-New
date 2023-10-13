@@ -615,7 +615,7 @@ class businessCalculations {
     return cart;
   }
 
-  afterCheckoutRedirectLogic(data, testing = false) {
+  async afterCheckoutRedirectLogic(data, testing = false) {
     const dataSchema = Joi.object({
       paymentMethodSelected: Joi.string().required(),
       referenceNumber: Joi.string().required().allow(''),
@@ -664,20 +664,56 @@ class businessCalculations {
         const phoneNumber = data.phoneNumber;
         const totalPrice = data.grandTotal;
         if (testing === false) {
-          PaymayaSdk(
-            data.setMayaRedirectUrl,
-            data.setMayaCheckoutId,
-            firstName,
-            lastName,
-            eMail,
-            phoneNumber,
-            totalPrice,
-            data.localDeliveryAddress,
-            data.addressText,
-            data.referenceNumber,
-            data.userId,
-            isGuestCheckout
-          );
+          // PaymayaSdk(
+          //   data.setMayaRedirectUrl,
+          //   data.setMayaCheckoutId,
+          //   firstName,
+          //   lastName,
+          //   eMail,
+          //   phoneNumber,
+          //   totalPrice,
+          //   data.localDeliveryAddress,
+          //   data.addressText,
+          //   data.referenceNumber,
+          //   data.userId,
+          //   isGuestCheckout
+          // );
+          const req = {
+            "totalAmount": {
+                 "value": parseFloat(totalPrice),
+                 "currency": "PHP"
+            },
+            "buyer": {
+                 "contact": {
+                      "email": eMail,
+                      "phone": phoneNumber
+                 },
+                 "shippingAddress": {
+                      "line1": data.localDeliveryAddress,
+                      "line2": data.addressText,
+                      "countryCode": "PH"
+                 },
+                 "firstName": firstName,
+                 "lastName": lastName ? lastName : '',
+            },
+            "redirectUrl": {
+                 "success": "https://starpack.ph/checkoutSuccess",
+                 "failure": "https://starpack.ph/checkoutFailed",
+                 "cancel": "https://starpack.ph/checkoutCancelled"
+            },
+            "requestReferenceNumber": data.referenceNumber,
+            // "metadata": {
+            //   "userId" : userId
+            // }
+        }
+          const isSandbox = new AppConfig().getIsPaymentSandBox()
+          const res = await this.cloudfirestore.payMayaCheckout({payload:req,isSandbox:isSandbox})
+          const url = res.data.redirectUrl;
+          const checkoutId = res.data.checkoutId;
+
+          return url
+          // data.setMayaRedirectUrl(url)
+          // data.setMayaCheckoutId(checkoutId)
         } else {
           return paymentMethodSelected;
         }

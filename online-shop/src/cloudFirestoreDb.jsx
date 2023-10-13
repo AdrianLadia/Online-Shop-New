@@ -6,10 +6,10 @@ import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
-  constructor(app, test = false,fbclid=undefined,userdata=undefined) {
+  constructor(app, test = false, fbclid = undefined, userdata = undefined) {
     super();
-    this.fbclid = fbclid
-    this.userdata = userdata
+    this.fbclid = fbclid;
+    this.userdata = userdata;
     // console.log('fbclid',fbclid)
     const appConfig = new AppConfig();
 
@@ -70,7 +70,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       } else {
         return toReturn;
       }
-
     } catch (error) {
       // Handle the 400 error messages
       const errorMessage = error.response.data;
@@ -98,7 +97,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           isInquiry: true,
           adminReadAll: true,
           ownerReadAll: true,
-          delivered: false
+          delivered: false,
         },
         userId,
         'ordersMessages'
@@ -133,7 +132,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async transactionPlaceOrder(data) {
-    
     const schema = Joi.object({
       userid: Joi.string().required().allow(null),
       username: Joi.string().required(),
@@ -168,14 +166,13 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const { error } = schema.validate(data);
 
     const encodedData = encodeURIComponent(JSON.stringify(data));
-    
+
     if (error) {
       alert(error.message);
       throw new Error(error.message);
     }
 
     try {
-   
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
       alert('Order placed successfully');
       return response;
@@ -218,7 +215,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async readSelectedDataFromOnlineStore(productId) {
     if (productId == 'null') {
-      return
+      return;
     }
 
     try {
@@ -246,19 +243,19 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       if (error) {
         console.log(error);
         const indexMatch = error.message.match(/\[(\d+)\]/);
-        let index
+        let index;
         if (indexMatch) {
           index = parseInt(indexMatch[1], 10);
         } else {
-          console.log("Index not found in the error message.");
+          console.log('Index not found in the error message.');
         }
 
         const jsonString = JSON.stringify(toReturn[index]);
         const message = error.message + ' |||||| ' + jsonString;
         console.log(new AppConfig().getFirestoreDeveloperEmail());
-        new AppConfig().getFirestoreDeveloperEmail().forEach(email => {
-          this.sendEmail({to:email,subject:'Error on productData',text:message})
-        })
+        new AppConfig().getFirestoreDeveloperEmail().forEach((email) => {
+          this.sendEmail({ to: email, subject: 'Error on productData', text: message });
+        });
       }
 
       return toReturn;
@@ -372,7 +369,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       throw new Error(error.message);
     }
 
-    
     try {
       const jsonData = JSON.stringify(data);
       // console.log('RUNNING');
@@ -575,19 +571,17 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async voidPayment(data) {
     const jsonData = JSON.stringify(data);
-    try{
+    try {
       const res = await axios.post(`${this.url}voidPayment`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
       return res.data;
-    }
-    catch{
+    } catch {
       throw new Error('Error voiding payment');
     }
   }
-
 
   async editCustomerOrder(data) {
     const jsonData = JSON.stringify(data);
@@ -598,29 +592,29 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
         },
       });
       return res.data;
-    }
-    catch{
+    } catch {
       throw new Error('Error editing order');
     }
   }
-  async postToConversionApi(event_name,custom_parameters,guestEmail,guestPhone,guestName) {
+  async postToConversionApi(event_name, custom_parameters, guestEmail, guestPhone, guestName) {
     // get fbp
-    let fbp 
-    try{
-      fbp = document.cookie.split('; ').find(row => row.startsWith('_fbp=')).split('=')[1];
-    }
-    catch{
-      fbp = undefined
+    let fbp;
+    try {
+      fbp = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('_fbp='))
+        .split('=')[1];
+    } catch {
+      fbp = undefined;
     }
 
     // // get fbc
-    let fbc 
+    let fbc;
     if (this.fbclid == null) {
-      fbc = undefined
-    }
-    else {
+      fbc = undefined;
+    } else {
       const unixTimestamp = Math.round(+new Date() / 1000);
-      fbc = 'fb.1.' + unixTimestamp.toString() + '.' + this.fbclid
+      fbc = 'fb.1.' + unixTimestamp.toString() + '.' + this.fbclid;
     }
 
     const data = {
@@ -634,16 +628,29 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       name: this.userdata?.name || guestName,
     };
 
-    const res = await axios.post(`${this.url}postToConversionApi`,data, {
+    const res = await axios.post(`${this.url}postToConversionApi`, data, {
       headers: {
         'Content-Type': 'application/json',
       },
-    })
+    });
 
-    return res
-    
+    return res;
+  }
+
+  async payMayaCheckout({ payload, isSandbox }) {
+    const data = {
+      payload: payload,
+      isSandbox: isSandbox,
+    };
+
+    const res = await axios.post(`${this.url}payMayaCheckout`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return res;
   }
 }
-
 
 export default cloudFirestoreDb;

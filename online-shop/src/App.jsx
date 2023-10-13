@@ -147,7 +147,10 @@ function App() {
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
-    setAlertDuration(duration);
+    if (duration != null) {
+      setAlertDuration(duration);
+    }
+    
   }
 
   

@@ -19,19 +19,6 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
   let publicKey 
   let secretKey;
 
-
-  if (appConfig.getIsPaymentSandBox()) {
-    url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
-    publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
-    secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
-  }
-  else {
-    url = 'https://pg.maya.ph';
-    publicKey = 'pk-DKpOh7gQI1sjjeE4pzTenb8B2n1I3chEmu6UKlJCzYE'
-    secretKey = 'sk-c6YLzDpPYtd3AQZNm4i8gcnKQV0FioKXEjyuS074gEj'
-  }
- 
-
   const req = {
     "totalAmount": {
          "value": parseFloat(totalPrice),

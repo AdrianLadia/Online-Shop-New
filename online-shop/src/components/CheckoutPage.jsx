@@ -32,6 +32,7 @@ import firebaseConfig from '../firebase_config';
 import OrdersCalendar from './OrdersCalendar';
 import allowedDeliveryDates from '../../utils/classes/allowedDeliveryDates';
 import { set } from 'date-fns';
+import Joi from 'joi';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -226,6 +227,10 @@ const CheckoutPage = () => {
           itemsTotal: total,
           date: new Date(),
           deliveryVehicle: deliveryVehicle,
+        }).then((url) => {
+          if (url) {
+            window.location.href = url;
+          }
         });
         setRefreshUser(!refreshUser);
       }
@@ -236,8 +241,6 @@ const CheckoutPage = () => {
       setPlaceOrderLoading(false);
     }
   }, [placedOrder]);
-
-
 
   useEffect(() => {
     setRefreshUser(!refreshUser);
@@ -288,8 +291,10 @@ const CheckoutPage = () => {
 
   async function onPlaceOrder() {
     const minimumOrder = new AppConfig().getMinimumOrder();
+    setPlaceOrderLoading(true);
     if (parseFloat(total) < minimumOrder) {
       alertSnackbar('error', `Minimum order is ${minimumOrder} pesos`);
+      setPlaceOrderLoading(false);
       return;
     }
 
@@ -299,6 +304,7 @@ const CheckoutPage = () => {
           'error',
           'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
         );
+        setPlaceOrderLoading(false);
         return;
       }
     }
@@ -308,15 +314,61 @@ const CheckoutPage = () => {
       setPlaceOrderLoading(false);
       return;
     }
-    // Check if order has enough stocks
-    setPlaceOrderLoading(true);
 
-    // Check if userstate is userloaded
+    function isValidPhilippinePhoneNumber(phoneNumber) {
+      // This regex checks for:
+      // 1. Mobile numbers that start with 09 and followed by 9 digits
+      // 2. Landline numbers that might start with an area code in parentheses and then followed by 6-8 digits
+      const regexPattern = /^((\+63)|0)9\d{9}$|^\(0\d{2}\)\s?\d{6,8}$/;
+
+      const schema = Joi.string().pattern(regexPattern);
+      const { error } = schema.validate(phoneNumber);
+
+      if (error) {
+        return false;
+      }
+
+      return true;
+    }
+
+    if (!isValidPhilippinePhoneNumber(localphonenumber)) {
+      alertSnackbar('error', 'Please enter a valid Philippine phone number');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    function isValidEmail(email) {
+      // Regular expression pattern to validate email address
+      const pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      
+      return pattern.test(email);
+    }
+
+  
+    if (!isValidEmail(localemail)) {
+      alertSnackbar('error', 'Please enter a valid email');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    if (localname === '') {
+      alertSnackbar('error', 'Please enter your name');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    if (localDeliveryAddress === '') {
+      alertSnackbar('error', 'Please enter your address');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    
 
     try {
       const orderReferenceNumber = businesscalculations.generateOrderReference();
       setReferenceNumber(orderReferenceNumber);
-      
+
       const res = await cloudfirestore.transactionPlaceOrder({
         userid: userdata ? userdata.uid : null,
         localDeliveryAddress: localDeliveryAddress,
@@ -346,7 +398,7 @@ const CheckoutPage = () => {
 
       setTransactionStatus(res);
       setPlacedOrder(!placedOrder);
-      analytics.logPlaceOrderEvent(cart, grandTotal,localemail,localphonenumber,localname);
+      analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);
     } catch (err) {
       console.log(err);
       setPlaceOrderLoading(false);
