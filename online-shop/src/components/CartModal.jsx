@@ -19,17 +19,10 @@ const CartModal = (props) => {
 
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
-  const { userdata, firestore, setCart } = React.useContext(AppContext);
   const [outStocksLoading, setOutStocksLoading] = useState(false);
   const { userdata, firestore, setCart } = React.useContext(AppContext);
 
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    height: '80%',
-    transform: 'translate(-50%, -50%)',
-    width: '95%',
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -67,8 +60,6 @@ const CartModal = (props) => {
     setCart({});
     firestore.createUserCart({ cart: [] }, userdata.uid);
   }
-    firestore.createUserCart({ cart: [] }, userdata.uid);
-  }
 
   useEffect(() => {
     CheckIfCartIsEmpty();
@@ -85,7 +76,6 @@ const CartModal = (props) => {
 
   return (
     <Modal open={openCart} onClose={CloseCart}>
-      <Fade in={openCart}>
       <Fade in={openCart}>
         <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-y-auto bg-colorbackground border-color60">
           <div className="flex flex-row justify-between mb-4">
