@@ -79,25 +79,23 @@ const CartModal = (props) => {
       <Fade in={openCart}>
         <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-y-auto bg-colorbackground border-color60">
           <div className="flex flex-row justify-between mb-4">
-            <QuotationCreatorButton
-              arrayOfProductData={finalCartData}
-              deliveryFee={0}
-              companyName="Star Pack"
-              senderName=""
-            />
-          </div>
-          <div className="flex">
-            {userdata?.userRole === 'superAdmin' ? (
-              <button
-                onClick={outStocksClick}
-                className="p-3 bg-color10b rounded-lg text-white"
-                disabled={outStocksLoading}
-              >
-                {outStocksLoading ? <CircularProgress size={20} /> : <>Out Stocks</>}
-              </button>
-            ) : null}
-          </div>
-          <div className="flex flex-row-reverse mb-4">
+            <div className='flex flex-row gap-5'>
+              <QuotationCreatorButton
+                arrayOfProductData={finalCartData}
+                deliveryFee={0}
+                companyName="Star Pack"
+                senderName=""
+              />
+              {userdata?.userRole === 'superAdmin' ? (
+                <button
+                  onClick={outStocksClick}
+                  className="py-2 px-3 bg-color10b rounded text-white hover:bg-blue-700 "
+                  disabled={outStocksLoading}
+                >
+                  {outStocksLoading ? <CircularProgress size={20} /> : <>Out Stocks</>}
+                </button>
+              ) : null}
+            </div>
             <button
               id="closeCartButton"
               onClick={CloseCart}
@@ -106,6 +104,10 @@ const CartModal = (props) => {
               X
             </button>
           </div>
+          {/* <div className="flex">
+           
+          </div> */}
+          <div className="flex flex-row-reverse mb-4"></div>
           <div className="flex flex-row justify-between p-2">
             <FaShoppingCart size={35} />
             <Typography id="modal-modal-title" variant="h6" component="h2" className="ml-auto font-bold">
