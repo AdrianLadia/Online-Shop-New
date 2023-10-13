@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
-import { Modal, Typography } from "@material-ui/core";
-import Box from "@mui/material/Box";
-import { useContext, useState } from "react";
-import { FaShoppingCart } from "react-icons/fa";
-import useWindowDimensions from "./UseWindowDimensions";
-import CheckoutButton from "./CheckoutButton";
-import CartTable from "./CartTable";
-import Fade from "@mui/material/Fade";
-import AppContext from "../AppContext";
+import React, { useEffect } from 'react';
+import { Modal, Typography } from '@material-ui/core';
+import Box from '@mui/material/Box';
+import { useContext, useState } from 'react';
+import { FaShoppingCart } from 'react-icons/fa';
+import useWindowDimensions from './UseWindowDimensions';
+import CheckoutButton from './CheckoutButton';
+import CartTable from './CartTable';
+import Fade from '@mui/material/Fade';
+import AppContext from '../AppContext';
+import { CircularProgress } from '@material-ui/core';
 
 const CartModal = (props) => {
   const openCart = props.openCart;
@@ -17,26 +18,23 @@ const CartModal = (props) => {
 
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
-  const {
-    userdata,
-    firestore,
-    setCart,
-   } = React.useContext(AppContext);
+  const { userdata, firestore, setCart } = React.useContext(AppContext);
+  const [outStocksLoading, setOutStocksLoading] = useState(false);
 
   const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    height: "80%",
-    transform: "translate(-50%, -50%)",
-    width: "95%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    height: '80%',
+    transform: 'translate(-50%, -50%)',
+    width: '95%',
 
-    "@media (min-width: 1024px)": {
-      width: "85%",
+    '@media (min-width: 1024px)': {
+      width: '85%',
     },
 
-    bgcolor: "background.paper",
-    border: "2px solid #000",
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
     boxShadow: 24,
     p: 4,
   };
@@ -57,34 +55,48 @@ const CartModal = (props) => {
 
   function clearCart() {
     setCart({});
-    firestore.createUserCart({cart:[]},userdata.uid)
-    }
+    firestore.createUserCart({ cart: [] }, userdata.uid);
+  }
 
   useEffect(() => {
     CheckIfCartIsEmpty();
   }, [finalCartData]);
 
+  async function outStocksClick() {
+    setOutStocksLoading(true);
+    await firestore.transactionOutStocks(finalCartData);
+    console.log(finalCartData);
+    setCart({});
+    setOutStocksLoading(false);
+  }
+
   return (
     <Modal open={openCart} onClose={CloseCart}>
-      <Fade in={openCart} >
+      <Fade in={openCart}>
         <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-y-auto bg-colorbackground border-color60">
-            <div className="flex flex-row-reverse mb-4">   
+          <div className="flex">
+            {userdata?.userRole === 'superAdmin' ? (
               <button
-                id = 'closeCartButton'
-                onClick={CloseCart}
-                className="bg-red1 hover:bg-red-400 p-2 rounded-full w-10 text-white"
+                onClick={outStocksClick}
+                className="p-3 bg-color10b rounded-lg text-white"
+                disabled={outStocksLoading}
               >
-                X
+                {outStocksLoading ? <CircularProgress size={20} /> : <>Out Stocks</>}
               </button>
-            </div>
-          <div className="flex flex-row justify-between p-2">
-            <FaShoppingCart size={35}/>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              className="ml-auto font-bold"
+            ) : null}
+          </div>
+          <div className="flex flex-row-reverse mb-4">
+            <button
+              id="closeCartButton"
+              onClick={CloseCart}
+              className="bg-red1 hover:bg-red-400 p-2 rounded-full w-10 text-white"
             >
+              X
+            </button>
+          </div>
+          <div className="flex flex-row justify-between p-2">
+            <FaShoppingCart size={35} />
+            <Typography id="modal-modal-title" variant="h6" component="h2" className="ml-auto font-bold">
               Cart Total: ₱ {totalPrice.toLocaleString()}
             </Typography>
           </div>
@@ -99,7 +111,7 @@ const CartModal = (props) => {
               <div className="flex flex-row justify-between w-full p-4">
                 <div>
                   <button
-                  id='clearCartButton'
+                    id="clearCartButton"
                     onClick={clearCart}
                     className="bg-red1h-10 mt-5 hover:bg-red-400 bg-red1 p-2 rounded-lg text-white "
                   >
