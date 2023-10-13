@@ -286,8 +286,8 @@ class businessCalculations {
     }
   }
 
-  getVehicleForDelivery(weightOfItems,pickUpOrDeliver) {
-    console.log('weightOfItems', weightOfItems)
+  getVehicleForDelivery(weightOfItems, pickUpOrDeliver) {
+    console.log('weightOfItems', weightOfItems);
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -379,7 +379,6 @@ class businessCalculations {
     const { error1 } = kilometersSchema.validate(kilometers);
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
-
 
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
@@ -473,7 +472,6 @@ class businessCalculations {
   }
 
   getValueAddedTax(totalPrice, urlOfBir2303, isInvoiceNeeded, noVat = new AppConfig().getNoVat()) {
-
     if (isInvoiceNeeded == false) {
       return 0;
     }
@@ -549,7 +547,7 @@ class businessCalculations {
     if (cart[product] + 1 <= stocksAvailable) {
       cart[product] += 1;
     } else {
-      return 'no_stocks'
+      return 'no_stocks';
     }
 
     const newCartSchema = Joi.object().required();
@@ -648,45 +646,42 @@ class businessCalculations {
 
     const paymentMethodSelected = data.paymentMethodSelected;
 
-    // FOR MAYA WITH WEBHOOK
-    // I DISABLED THIS FEATURE BECAUSE MAYA TAKES SO LONG TO GIVE ME AN API KEY I WILL USE ANOTHER MAYA FEATURE INSTEAD
-    // if (['maya','visa','mastercard','gcash'].includes(paymentMethodSelected)) {
-    //   const fullName = data.fullName;
-    //   const firstName = fullName.split(' ')[0];
-    //   const lastName = fullName.split(' ')[1];
-    //   const eMail = data.eMail;
-    //   const phoneNumber = data.phoneNumber;
-    //   const totalPrice = data.grandTotal;
-    //   if (testing === false) {
-    //     PaymayaSdk(
-    //       data.setMayaRedirectUrl,
-    //       data.setMayaCheckoutId,
-    //       firstName,
-    //       lastName,
-    //       eMail,
-    //       phoneNumber,
-    //       totalPrice,
-    //       data.localDeliveryAddress,
-    //       data.addressText,
-    //       data.referenceNumber,
-    //       data.userId
-    //     );
-    //   }
-    //   else {
-    //     return paymentMethodSelected
-    //   }
-    // }
-
-    let isGuestCheckout
+    let isGuestCheckout;
     if (data.userId === 'GUEST') {
-      isGuestCheckout = true
-    } 
-    else {
-      isGuestCheckout = false
+      isGuestCheckout = true;
+    } else {
+      isGuestCheckout = false;
     }
 
     if (testing === false) {
-      
+      // FOR MAYA WITH WEBHOOK
+      console.log('paymentMethodSelected', paymentMethodSelected);
+      if (['maya', 'visa', 'mastercard', 'gcash'].includes(paymentMethodSelected)) {
+        const fullName = data.fullName;
+        const firstName = fullName.split(' ')[0];
+        const lastName = fullName.split(' ')[1];
+        const eMail = data.eMail;
+        const phoneNumber = data.phoneNumber;
+        const totalPrice = data.grandTotal;
+        if (testing === false) {
+          PaymayaSdk(
+            data.setMayaRedirectUrl,
+            data.setMayaCheckoutId,
+            firstName,
+            lastName,
+            eMail,
+            phoneNumber,
+            totalPrice,
+            data.localDeliveryAddress,
+            data.addressText,
+            data.referenceNumber,
+            data.userId,
+            isGuestCheckout
+          );
+        } else {
+          return paymentMethodSelected;
+        }
+      }
 
       data.navigateTo('/checkout/proofOfPayment', {
         state: {
@@ -700,7 +695,7 @@ class businessCalculations {
           area: data.area,
           date: data.date,
           deliveryVehicle: data.deliveryVehicle,
-          isGuestCheckout : isGuestCheckout,
+          isGuestCheckout: isGuestCheckout,
         },
       });
     } else {

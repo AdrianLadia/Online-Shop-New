@@ -237,12 +237,7 @@ const CheckoutPage = () => {
     }
   }, [placedOrder]);
 
-  useEffect(() => {
-    if (mayaRedirectUrl != null) {
-      window.location.href = mayaRedirectUrl;
-      setMayaRedirectUrl(null);
-    }
-  }, [mayaRedirectUrl]);
+
 
   useEffect(() => {
     setRefreshUser(!refreshUser);
