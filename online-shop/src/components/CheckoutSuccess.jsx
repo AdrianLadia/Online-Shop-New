@@ -1,9 +1,15 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
+import CheckoutSummary from './CheckoutSummary';
 
 const CheckoutSuccess = () => {
 
   const navigateTo = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const stringData = queryParams.get('data');
+  const data = JSON.parse(stringData);
+
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -22,16 +28,23 @@ const CheckoutSuccess = () => {
           <h2 className="mt-6 text-2xl font-semibold text-gray-800">Checkout Success</h2>
           <p className="mt-4 text-gray-600">Thank you for your purchase!</p>
 
-          <p className="mt-4 text-gray-600">
+          <p className="mt-4 text-gray-600 mb-5">
             We've sent a confirmation email to your Email Address.
-            If you have any questions, please contact our support team in My Orders Menu.
+            If you have any questions, please us in our facebook page.
           </p>
         </div>
+        <CheckoutSummary
+           total={data.itemsTotal}
+           vat={data.vat}
+           deliveryFee={data.deliveryFee}
+           grandTotal={data.grandTotal}
+           rows={data.rows}
+        />
         <button
           className="mt-6 bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-          onClick={() => navigateTo('/myorders/orderList')}
+          onClick={() => navigateTo('/shop')}
         >
-          View My Orders
+          Back to shop
         </button>
       </div>
     </div>

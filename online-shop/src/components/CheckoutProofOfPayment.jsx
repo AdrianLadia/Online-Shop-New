@@ -224,12 +224,19 @@ const CheckoutProofOfPayment = (props) => {
             {/* <CheckoutSummary/> */}
             {rows != null ? (
               <CheckoutSummary
-                total={itemsTotal}
+                total={total}
+                setTotal={setTotal}
+                vat={vat}
                 deliveryFee={deliveryFee}
                 grandTotal={grandTotal}
-                vat={vat}
-                rows={rows}
+                totalWeight={totalWeight}
+                setTotalWeight={setTotalWeight}
+                deliveryVehicleObject={deliveryVehicle}
+                setDeliveryVehicle={setDeliveryVehicle}
+                setVat={setVat}
                 area={area}
+                setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
+                rows={rows}
               />
             ) : (
               <div className="flex justify-center mt-5">

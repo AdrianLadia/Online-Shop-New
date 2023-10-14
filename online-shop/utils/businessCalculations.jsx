@@ -653,6 +653,32 @@ class businessCalculations {
       isGuestCheckout = false;
     }
 
+    // Preparing data to be passed to checkout redirect pages
+    let checkoutParameter
+    const parameters = {
+      rows: data.rows,
+      vat: data.vat,
+      deliveryFee: data.deliveryFee,
+      referenceNumber : data.referenceNumber,
+      itemsTotal: data.itemsTotal,
+      grandTotal: data.grandTotal,
+      date: data.date,
+    }
+    const stringify = JSON.stringify(parameters)
+    checkoutParameter = encodeURIComponent(stringify)
+
+    console.log('checkoutParameter', checkoutParameter);
+
+    // setting redirect url if its for production or testing
+    const isDevEnvironment = new AppConfig().getIsDevEnvironment()
+    let redirectUrl
+    if (isDevEnvironment) {
+      redirectUrl = 'http://localhost:5173'}
+    else {
+      redirectUrl = 'https://starpack.ph'
+    }
+  
+
     if (testing === false) {
       // FOR MAYA WITH WEBHOOK
       console.log('paymentMethodSelected', paymentMethodSelected);
@@ -664,20 +690,6 @@ class businessCalculations {
         const phoneNumber = data.phoneNumber;
         const totalPrice = data.grandTotal;
         if (testing === false) {
-          // PaymayaSdk(
-          //   data.setMayaRedirectUrl,
-          //   data.setMayaCheckoutId,
-          //   firstName,
-          //   lastName,
-          //   eMail,
-          //   phoneNumber,
-          //   totalPrice,
-          //   data.localDeliveryAddress,
-          //   data.addressText,
-          //   data.referenceNumber,
-          //   data.userId,
-          //   isGuestCheckout
-          // );
           const req = {
             "totalAmount": {
                  "value": parseFloat(totalPrice),
@@ -697,9 +709,9 @@ class businessCalculations {
                  "lastName": lastName ? lastName : '',
             },
             "redirectUrl": {
-                 "success": "https://starpack.ph/checkoutSuccess",
-                 "failure": "https://starpack.ph/checkoutFailed",
-                 "cancel": "https://starpack.ph/checkoutCancelled"
+                 "success": redirectUrl + "/checkoutSuccess" + "?data=" + checkoutParameter,
+                 "failure": redirectUrl + "/checkoutFailed"+ "?data=" + checkoutParameter,
+                 "cancel": redirectUrl + "/checkoutCancelled" + "?data=" + checkoutParameter
             },
             "requestReferenceNumber": data.referenceNumber,
             // "metadata": {
