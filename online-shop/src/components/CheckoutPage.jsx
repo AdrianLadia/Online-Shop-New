@@ -31,6 +31,8 @@ import AppConfig from '../AppConfig';
 import firebaseConfig from '../firebase_config';
 import OrdersCalendar from './OrdersCalendar';
 import allowedDeliveryDates from '../../utils/classes/allowedDeliveryDates';
+import { set } from 'date-fns';
+import Joi from 'joi';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -57,7 +59,6 @@ const CheckoutPage = () => {
     setReferenceNumber,
   } = useContext(CheckoutContext);
 
-  
   const {
     datamanipulation,
     cloudfirestore,
@@ -78,7 +79,7 @@ const CheckoutPage = () => {
     orders,
     analytics,
     alertSnackbar,
-    businesscalculations
+    businesscalculations,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
@@ -131,21 +132,18 @@ const CheckoutPage = () => {
 
   const [countOfOrdersThisYear, setCountOfOrdersThisYear] = useState(0);
 
-  const [startDate,setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
+  const [pickUpOrDeliver, setPickUpOrDeliver] = useState('deliver');
 
-  const allowedDates = new allowedDeliveryDates()
-  allowedDates.runMain()
-  const minDate = allowedDates.minDate
-  const maxDate = allowedDates.maxDate
-  const filterDate = allowedDates.excludeDates
-  const holidays = allowedDates.holidays
-
-  
-
+  const allowedDates = new allowedDeliveryDates();
+  allowedDates.runMain();
+  const minDate = allowedDates.minDate;
+  const maxDate = allowedDates.maxDate;
+  const filterDate = allowedDates.excludeDates;
+  const holidays = allowedDates.holidays;
 
   // Get count of orders for this year
   useEffect(() => {
-    
     const yearToday = new Date().getFullYear();
 
     const count = datamanipulation.countAllOrdersOfUserInASpecificYear(orders, yearToday);
@@ -163,10 +161,10 @@ const CheckoutPage = () => {
 
   // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
   useEffect(() => {
-    if (openProfileUpdaterModal || userdata === null) {
+    if (openProfileUpdaterModal) {
       navigateTo('/shop');
     }
-  }, [openProfileUpdaterModal, userdata]);
+  }, [openProfileUpdaterModal]);
 
   // IF CHECKOUT SUMMARY IS EMPTY REDIRECT TO SHOP
   useEffect(() => {
@@ -201,7 +199,7 @@ const CheckoutPage = () => {
       setTotalWeight(total_weight_non_state);
     }
     getTableData();
-  }, [urlOfBir2303,isInvoiceNeeded]);
+  }, [urlOfBir2303, isInvoiceNeeded]);
 
   // PAYMENT METHODS
   useEffect(() => {
@@ -217,22 +215,27 @@ const CheckoutPage = () => {
           vat: vat,
           rows: rows,
           area: area,
-          fullName: userdata.name,
-          eMail: userdata.email,
-          phoneNumber: userdata.phoneNumber,
+          fullName: userdata ? userdata.name : 'Guest',
+          eMail: localemail,
+          phoneNumber: userdata ? userdata.phoneNumber : localphonenumber,
           setMayaRedirectUrl: setMayaRedirectUrl,
           setMayaCheckoutId: setMayaCheckoutId,
           localDeliveryAddress: localDeliveryAddress,
           addressText: addressText,
-          userId: userdata.uid,
+          userId: userdata ? userdata.uid : 'GUEST',
           navigateTo: navigateTo,
           itemsTotal: total,
           date: new Date(),
+          deliveryVehicle: deliveryVehicle,
+        }).then((url) => {
+          if (url) {
+            window.location.href = url;
+          }
         });
         setRefreshUser(!refreshUser);
       }
       if (transactionStatus.status == 409) {
-        alertSnackbar('info',transactionStatus.data);
+        alertSnackbar('info', transactionStatus.data);
       }
 
       setPlaceOrderLoading(false);
@@ -240,18 +243,11 @@ const CheckoutPage = () => {
   }, [placedOrder]);
 
   useEffect(() => {
-    if (mayaRedirectUrl != null) {
-      window.location.href = mayaRedirectUrl;
-      setMayaRedirectUrl(null);
-    }
-  }, [mayaRedirectUrl]);
-
-  useEffect(() => {
     setRefreshUser(!refreshUser);
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
       paperboylongitude,
@@ -263,7 +259,7 @@ const CheckoutPage = () => {
     let vehicleObject = 'motorcycle';
     let deliveryFee = 0;
     if (totalWeight) {
-      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight);
+      vehicleObject = businesscalculations.getVehicleForDelivery(totalWeight, pickUpOrDeliver);
       deliveryFee = businesscalculations.getDeliveryFee(kilometers, vehicleObject, needAssistance);
     }
     setArea(areasInsideDeliveryLocation);
@@ -274,6 +270,7 @@ const CheckoutPage = () => {
       } else {
         setDeliveryFee(deliveryFee);
       }
+      console.log(vehicleObject);
       setDeliveryVehicle(vehicleObject);
     }
 
@@ -283,80 +280,130 @@ const CheckoutPage = () => {
       setUseShippingLine(true);
     }
     let orderdata = null;
-  }, [locallatitude, locallongitude, totalWeight, needAssistance]);
+  }, [locallatitude, locallongitude, totalWeight, needAssistance, pickUpOrDeliver]);
 
+  useEffect(() => {
+    if (deliveryVehicle?.name == 'storePickUp') {
+      setLocalLatitude(deliveryVehicle.latitude);
+      setLocalLongitude(deliveryVehicle.longitude);
+    }
+  }, [deliveryVehicle]);
 
   async function onPlaceOrder() {
-
-    
-
     const minimumOrder = new AppConfig().getMinimumOrder();
+    setPlaceOrderLoading(true);
     if (parseFloat(total) < minimumOrder) {
-      alertSnackbar('error',`Minimum order is ${minimumOrder} pesos`);
+      alertSnackbar('error', `Minimum order is ${minimumOrder} pesos`);
+      setPlaceOrderLoading(false);
       return;
     }
 
     if (isInvoiceNeeded) {
       if (urlOfBir2303 === '') {
         alertSnackbar(
-          'error','Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
+          'error',
+          'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
         );
+        setPlaceOrderLoading(false);
         return;
       }
     }
 
     if (paymentMethodSelected == null) {
-      alertSnackbar('error','Please select a payment method');
+      alertSnackbar('error', 'Please select a payment method');
       setPlaceOrderLoading(false);
       return;
     }
-    // Check if order has enough stocks
-    setPlaceOrderLoading(true);
 
-    // Check if userstate is userloaded
-    if (userstate === 'userloaded') {
-      try {
-        const orderReferenceNumber = businesscalculations.generateOrderReference();
-        setReferenceNumber(orderReferenceNumber);
-        const res = await cloudfirestore.transactionPlaceOrder({
-          userid: userdata.uid,
-          localDeliveryAddress: localDeliveryAddress,
-          locallatitude: locallatitude,
-          locallongitude: locallongitude,
-          userphonenumber: userdata.phoneNumber,
-          username: userdata.name,
-          localname: localname,
-          localphonenumber: localphonenumber,
-          cart: cart,
-          itemstotal: total,
-          vat: vat,
-          shippingtotal: deliveryFee,
-          grandTotal: grandTotal,
-          reference: orderReferenceNumber,
-          deliveryNotes: deliveryNotes,
-          totalWeight: totalWeight,
-          deliveryVehicle: deliveryVehicle.name,
-          needAssistance: needAssistance,
-          eMail: localemail,
-          sendEmail: true,
-          isInvoiceNeeded: isInvoiceNeeded,
-          urlOfBir2303: urlOfBir2303,
-          countOfOrdersThisYear: countOfOrdersThisYear,
-          deliveryDate : startDate.toISOString()
-        });
-        
-        setTransactionStatus(res);
-        setPlacedOrder(!placedOrder);
-        analytics.logPlaceOrderEvent(cart,grandTotal);
-        
-      } catch (err) {
-        setPlaceOrderLoading(false);
+    function isValidPhilippinePhoneNumber(phoneNumber) {
+      // This regex checks for:
+      // 1. Mobile numbers that start with 09 and followed by 9 digits
+      // 2. Landline numbers that might start with an area code in parentheses and then followed by 6-8 digits
+      const regexPattern = /^((\+63)|0)9\d{9}$|^\(0\d{2}\)\s?\d{6,8}$/;
+
+      const schema = Joi.string().pattern(regexPattern);
+      const { error } = schema.validate(phoneNumber);
+
+      if (error) {
+        return false;
       }
-    } else {
-      alertSnackbar('error','You must be logged in');
+
+      return true;
+    }
+
+    if (!isValidPhilippinePhoneNumber(localphonenumber)) {
+      alertSnackbar('error', 'Please enter a valid Philippine phone number');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    function isValidEmail(email) {
+      // Regular expression pattern to validate email address
+      const pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      
+      return pattern.test(email);
+    }
+
+  
+    if (!isValidEmail(localemail)) {
+      alertSnackbar('error', 'Please enter a valid email');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    if (localname === '') {
+      alertSnackbar('error', 'Please enter your name');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    if (localDeliveryAddress === '') {
+      alertSnackbar('error', 'Please enter your address');
+      setPlaceOrderLoading(false);
+      return;
+    }
+
+    
+
+    try {
+      const orderReferenceNumber = businesscalculations.generateOrderReference();
+      setReferenceNumber(orderReferenceNumber);
+
+      const res = await cloudfirestore.transactionPlaceOrder({
+        userid: userdata ? userdata.uid : null,
+        localDeliveryAddress: localDeliveryAddress,
+        locallatitude: locallatitude,
+        locallongitude: locallongitude,
+        userphonenumber: userdata ? userdata.phoneNumber : localphonenumber,
+        username: userdata ? userdata.name : localname,
+        localname: localname,
+        localphonenumber: localphonenumber,
+        cart: cart,
+        itemstotal: total,
+        vat: vat,
+        shippingtotal: deliveryFee,
+        grandTotal: grandTotal,
+        reference: orderReferenceNumber,
+        deliveryNotes: deliveryNotes,
+        totalWeight: totalWeight,
+        deliveryVehicle: deliveryVehicle.name,
+        needAssistance: needAssistance,
+        eMail: localemail,
+        sendEmail: true,
+        isInvoiceNeeded: isInvoiceNeeded,
+        urlOfBir2303: urlOfBir2303,
+        countOfOrdersThisYear: countOfOrdersThisYear,
+        deliveryDate: startDate.toISOString(),
+      });
+
+      setTransactionStatus(res);
+      setPlacedOrder(!placedOrder);
+      analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);
+    } catch (err) {
+      console.log(err);
+      setPlaceOrderLoading(false);
     }
   }
-
 
   useEffect(() => {
     setRefreshUser(!refreshUser);
@@ -415,7 +462,7 @@ const CheckoutPage = () => {
         setLocalDeliveryAddress('');
       },
       (error) => {
-        alertSnackbar('error','Address not found. Be more specific.');
+        alertSnackbar('error', 'Address not found. Be more specific.');
       }
     );
   }
@@ -430,94 +477,103 @@ const CheckoutPage = () => {
     setUrlOfBir2303('');
   }
 
+  function handlePickUpOrDeliverSwitch() {
+    if (pickUpOrDeliver == 'pickup') {
+      setPickUpOrDeliver('deliver');
+      setLocalDeliveryAddress('');
+    }
+    if (pickUpOrDeliver == 'deliver') {
+      setPickUpOrDeliver('pickup');
+      setLocalDeliveryAddress('Pick Up at Store');
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
-        <div className="flex flex-col self-center items-center gap-6 w-full">
-          <div className="flex flex-row w-full justify-between ml-4 my-5">
-            <div className="flex justify-center w-full p-3">
-              <Typography variant="h4" className="font-bold">
-                Delivery Address
-              </Typography>
-            </div>
-            <div className="flex justify-center w-full">
-              <button
-                id="selectFromSavedAddressButton"
-                className="hover:bg-blue1 bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
-                onClick={handleOpenModalSavedAddress}
-              >
-                Select From Saved Address
-              </button>
-            </div>
-          </div>
-        </div>
-        {/* <TextField
-          // disabled
-          id="googleAddress"
-          label="Google Pinpoint Address"
-          InputLabelProps={labelStyle}
-          variant="filled"
-          className=" w-11/12 self-center bg-white"
-          value={addressText}
-          // onChange={(e) => setAddressText(e.target.value)}
-        /> */}
-        <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
-        <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
-          <Typography>
-            • <strong>Click on the map</strong> to change the delivery point.
-          </Typography>
-          <Typography>
-            • Please <strong>pinpoint</strong> your delivery address below.
-          </Typography>
-          <Typography>
-            • Use the <strong>search button</strong> to easily find your address and <strong>adjust the pin</strong> to
-            your address.
-          </Typography>
+        <div className="flex flex-col justify-center w-full items-center">
+          <Typography variant="h6">Would you like to pick up items?</Typography>
+          <Switch {...label} color="secondary" onClick={handlePickUpOrDeliverSwitch} />
         </div>
 
-        <div className="gap-2 p-2 flex flex-row-reverse justify-between w-11/12 self-center">
-          <button
-            onClick={searchAddress}
-            className="p-4 text-white font-bold bg-color10b hover:bg-blue1 rounded-lg mr-2 lg:mr-5"
-          >
-            Search
-          </button>
-          <TextField
-            // disabled
-            id="address search"
-            label="Search for a landmark"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className="w-full self-center bg-white"
-            value={addressGeocodeSearch}
-            onChange={(e) => setAddressGeocodeSearch(e.target.value)}
-          />
-        </div>
-        <div className="lg:mx-14 mt-5">
-          <GoogleMaps
-            selectedAddress={selectedAddress}
-            setSelectedAddress={setSelectedAddress}
-            locallatitude={locallatitude}
-            setLocalLatitude={setLocalLatitude}
-            locallongitude={locallongitude}
-            setLocalLongitude={setLocalLongitude}
-            setLocalDeliveryAddress={setLocalDeliveryAddress}
-            zoom={zoom}
-            setZoom={setZoom}
-            setAddressText={setAddressText}
-          />
-        </div>
-        <TextField
-          id="addressEntry"
-          label="Address (required)"
-          InputLabelProps={labelStyle}
-          variant="filled"
-          className=" w-11/12 self-center bg-white mt-7"
-          onChange={(event) => setLocalDeliveryAddress(event.target.value)}
-          value={localDeliveryAddress}
-        />
+        {pickUpOrDeliver == 'deliver' ? (
+          <>
+            <div className="flex flex-col self-center items-center gap-6 w-full">
+              <div className="flex flex-row w-full justify-between ml-4 my-5">
+                <div className="flex justify-center w-full p-3">
+                  <Typography variant="h4" className="font-bold">
+                    Delivery Address
+                  </Typography>
+                </div>
+                <div className="flex justify-center w-full">
+                  <button
+                    id="selectFromSavedAddressButton"
+                    className="hover:bg-blue1 bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                    onClick={handleOpenModalSavedAddress}
+                  >
+                    Select From Saved Address
+                  </button>
+                </div>
+              </div>
+            </div>
+            <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
+            <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
+              <Typography>
+                • <strong>Click on the map</strong> to change the delivery point.
+              </Typography>
+              <Typography>
+                • Please <strong>pinpoint</strong> your delivery address below.
+              </Typography>
+              <Typography>
+                • Use the <strong>search button</strong> to easily find your address and <strong>adjust the pin</strong>{' '}
+                to your address.
+              </Typography>
+            </div>
+
+            <div className="gap-2 p-2 flex flex-row-reverse justify-between w-11/12 self-center">
+              <button
+                onClick={searchAddress}
+                className="p-4 text-white font-bold bg-color10b hover:bg-blue1 rounded-lg mr-2 lg:mr-5"
+              >
+                Search
+              </button>
+              <TextField
+                // disabled
+                id="address search"
+                label="Search for a landmark"
+                InputLabelProps={labelStyle}
+                variant="filled"
+                className="w-full self-center bg-white"
+                value={addressGeocodeSearch}
+                onChange={(e) => setAddressGeocodeSearch(e.target.value)}
+              />
+            </div>
+            <div className="lg:mx-14 mt-5">
+              <GoogleMaps
+                selectedAddress={selectedAddress}
+                setSelectedAddress={setSelectedAddress}
+                locallatitude={locallatitude}
+                setLocalLatitude={setLocalLatitude}
+                locallongitude={locallongitude}
+                setLocalLongitude={setLocalLongitude}
+                setLocalDeliveryAddress={setLocalDeliveryAddress}
+                zoom={zoom}
+                setZoom={setZoom}
+                setAddressText={setAddressText}
+              />
+            </div>
+            <TextField
+              id="addressEntry"
+              label="Address (required)"
+              InputLabelProps={labelStyle}
+              variant="filled"
+              className=" w-11/12 self-center bg-white mt-7"
+              onChange={(event) => setLocalDeliveryAddress(event.target.value)}
+              value={localDeliveryAddress}
+            />
+          </>
+        ) : null}
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
         <div className="flex flex-col self-center items-center gap-6 w-full">
           <div className="flex flex-row w-full justify-between ml-4 my-5">
@@ -555,8 +611,17 @@ const CheckoutPage = () => {
             onChange={(event) => setLocalName(event.target.value)}
             value={localname || ''}
           />
+          <TextField
+            id="emailAddressEntry"
+            label="E-mail (required)"
+            InputLabelProps={labelStyle}
+            variant="filled"
+            className=" w-11/12 mt-1 bg-white"
+            onChange={(event) => setLocalEmail(event.target.value)}
+            value={localemail || ''}
+          />
         </div>
-        
+
         {allowShipping == false ? (
           <div className="flex justify-center my-5">
             <Typography variant="h7" color="red">
@@ -573,8 +638,9 @@ const CheckoutPage = () => {
               </div>
             ) : (
               <>
-                {(area.includes('lalamoveServiceArea') && deliveryVehicle.name != 'motorcycle') ? (
-                  
+                {area.includes('lalamoveServiceArea') &&
+                deliveryVehicle.name != 'motorcycle' &&
+                deliveryVehicle.name != 'storePickUp' ? (
                   <div>
                     <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
                     <div className="flex justify-center mt-7">
@@ -801,11 +867,18 @@ const CheckoutPage = () => {
                 <div className="flex flex-col justify-center m-5">
                   <div className=" flex justify-center">
                     <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                      Delivery Date
+                      {pickUpOrDeliver == 'deliver' ? <>Delivery Date</> : <>Pick Up Date</>}
                     </Typography>
                   </div>
                   <div className="flex justify-center mt-5 mb-5">
-                    <OrdersCalendar startDate={startDate} setStartDate={setStartDate} minDate={minDate} maxDate={maxDate} filterDate={filterDate} disabledDates={holidays} />
+                    <OrdersCalendar
+                      startDate={startDate}
+                      setStartDate={setStartDate}
+                      minDate={minDate}
+                      maxDate={maxDate}
+                      filterDate={filterDate}
+                      disabledDates={holidays}
+                    />
                   </div>
                 </div>
 

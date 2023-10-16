@@ -21,7 +21,7 @@ function PaymentMethods() {
 
   function overFlow(){
     if (width < 366) {
-      return " grid-flow-col overflow-x-auto bg-color2 rounded-2xl "
+      return " grid-flow-col overflow-x-auto bg-color2 rounded-2xl pt-14"
     }else{
       return " 3xl:grid-cols-8 2xl:grid-cols-7 xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 2xs:grid-cols-2"
     }

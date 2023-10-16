@@ -13,25 +13,11 @@ import axios from 'axios';
 
 // https://github.com/PayMaya/PayMaya-JS-SDK-v2
 
-async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,customerAddress,geocodeAddress,referenceNumber,userId) {
+async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastName,eMail,phoneNumber,totalPrice,customerAddress,geocodeAddress,referenceNumber,userId,guestCheckout) {
   const appConfig = new AppConfig();  
   let url 
   let publicKey 
   let secretKey;
-
-
-  if (appConfig.getIsPaymentSandBox()) {
-    url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
-    publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
-    secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
-  }
-  else {
-    url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
-    publicKey = 'pk-FmPLGj9c19bHptc5Am0DnKMgzmARrH7fUn6GlHrGedf'
-    secretKey = 'sk-XMouqWJRSYr4CuNkFRQ5DcJaLSPhA0lJLX3A7YQ7LSj'
-  }
-
- 
 
   const req = {
     "totalAmount": {
@@ -57,9 +43,9 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
          "cancel": "https://starpack.ph/checkoutCancelled"
     },
     "requestReferenceNumber": referenceNumber,
-    "metadata": {
-      "userId" : userId
-    }
+    // "metadata": {
+    //   "userId" : userId
+    // }
 }
 
   function convertToBase64(key) {
@@ -67,10 +53,11 @@ async function PaymayaSdk(setMayaRedirectUrl,setMayaCheckoutId,firstName,lastNam
   }
 
   const headers = {
-    accept: 'application/json',
-    authorization: `Basic ${convertToBase64(publicKey)}`,
-    'content-type': 'application/json',
+    Accept: 'application/json',
+    Authorization: `Basic ${convertToBase64(publicKey)}`,
+    'Content-Type': 'application/json',
   };
+
 
   const response = await axios.post(url, req, { headers });
   const checkout = response.data;

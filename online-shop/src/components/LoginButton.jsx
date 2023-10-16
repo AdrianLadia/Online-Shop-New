@@ -23,11 +23,11 @@ import 'react-phone-input-2/lib/style.css';
 import { GiSmartphone } from 'react-icons/gi';
 import InvisibleRecaptcha from './InvisibleRecaptcha';
 
-
 const ReactPhoneInput = PhoneInput.default ? PhoneInput.default : PhoneInput;
 
 const LoginButton = (props) => {
-  const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser,cloudfirestore,setAffiliate } = useContext(AppContext);
+  const { auth, isAppleDevice, isAndroidDevice, isGoogleChrome, isSupportedBrowser, cloudfirestore, setAffiliate } =
+    useContext(AppContext);
   const position = props.position;
   const isAffiliateLink = props.isAffiliateLink;
   const [openUnsupportedBrowserModal, setOpenUnsupportedBrowserModal] = useState(false);
@@ -38,16 +38,15 @@ const LoginButton = (props) => {
   const [OTP, setOTP] = useState('');
   const [height, setHeight] = useState('40%');
   const [confirmationResult, setConfirmationResult] = useState(null);
-  const [loading,setLoading] = useState(false);
- 
+  const [loading, setLoading] = useState(false);
 
   const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    height: height,
+    // height: height,
     transform: 'translate(-50%, -50%)',
-    width: '95%',
+    // width: '95%',
     overflow: 'scroll',
 
     '@media (min-width: 1024px)': {
@@ -62,11 +61,9 @@ const LoginButton = (props) => {
   };
 
   useEffect(() => {
-  
     if (isAffiliateLink) {
       let params = new URLSearchParams(window.location.search);
       let affiliateId = params.get('aid');
-
 
       cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
         affiliateUsers.forEach((affiliateUser) => {
@@ -75,7 +72,7 @@ const LoginButton = (props) => {
           }
         });
       });
-      
+
       return;
     }
   }, [isAffiliateLink]);
@@ -108,7 +105,6 @@ const LoginButton = (props) => {
     setOpenPhoneNumberModal(true);
   }
 
-
   async function signIn(signInProvider) {
     handleCloseGuestSignInModal();
     setAnchorEl(null);
@@ -127,7 +123,7 @@ const LoginButton = (props) => {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  
+
   const handleClick = (event) => {
     if (!isSupportedBrowser) {
       setOpenUnsupportedBrowserModal(true);
@@ -136,28 +132,29 @@ const LoginButton = (props) => {
 
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  function isLink(){
-    if(isAffiliateLink){
-      return ''
-    }else if(isAffiliateLink == false){
-      return ''
-    }else{
-      return 'visible'
+  function isLink() {
+    if (isAffiliateLink) {
+      return '';
+    } else if (isAffiliateLink == false) {
+      return '';
+    } else {
+      return 'visible';
     }
   }
 
-  function isAffLink(){
-    if(isAffiliateLink){
-      return 'left'
-    }if(isAffiliateLink == false){
-      return 'center'
-    }else{
-      return 'right'
+  function isAffLink() {
+    if (isAffiliateLink) {
+      return 'left';
+    }
+    if (isAffiliateLink == false) {
+      return 'center';
+    } else {
+      return 'right';
     }
   }
 
@@ -174,9 +171,11 @@ const LoginButton = (props) => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        className={"bg-color10b p-1 sm:p-2 text-white xs:font-bold hover:bg-color10c rounded-r-lg sm:rounded-lg mr-1 2xs:ml-0"}
+        className={
+          'bg-color10b py-2 px-4 rounded-lg font-bold text-white hover:bg-color10c '
+        }
       >
-        {isAffiliateLink? "Sign up":'Login'}
+        {isAffiliateLink ? 'Sign up' : 'Login'}
       </Button>
       <Menu
         id="demo-positioned-menu"
@@ -255,9 +254,11 @@ const LoginButton = (props) => {
         >
           <Box sx={style}>
             <div className="flex flex-col">
-              {(confirmationResult == null) ? 
-              <ReactPhoneInput country={'ph'} value={phoneNumber} onChange={setPhoneNumber} />
-              : null }
+              {confirmationResult == null ? (
+                <div className='flex overflow-hidden w-9/10'>
+                  <ReactPhoneInput country={'ph'} value={phoneNumber} onChange={setPhoneNumber} />
+                </div>
+              ) : null}
               <div className="flex justify-center mt-5 mb-5">
                 <InvisibleRecaptcha
                   phoneNumber={phoneNumber}

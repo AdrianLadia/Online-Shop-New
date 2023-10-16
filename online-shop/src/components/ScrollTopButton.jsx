@@ -5,6 +5,7 @@ import { BsFillArrowUpCircleFill } from 'react-icons/bs';
 const ScrollTopButton = (props) => {
 
   const wholesaleOrRetailRef = props.wholesaleOrRetailRef
+  
 
   function scrollUp() {
     // window.scrollTo({
@@ -14,13 +15,12 @@ const ScrollTopButton = (props) => {
     wholesaleOrRetailRef.current.scrollIntoView({ behavior: 'smooth' });
   }
 
-
-  const {categorySelectorInView} = props;
+  const {categorySelectorInView, shopHeroInView} = props;
 
   return (
     <div className="flex fixed top-5 w-full justify-center z-50">
       {/* <button className='position fixed bottom-2 content-center bg-color10b'> */}
-      {categorySelectorInView ? null : 
+      {categorySelectorInView || shopHeroInView ? null : 
       
       <button onClick={scrollUp} className="rounded-full bg-color10b px-3 py-1">
         <div className="flex flex-row hover:">

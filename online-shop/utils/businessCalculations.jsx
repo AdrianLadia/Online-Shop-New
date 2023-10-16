@@ -286,8 +286,8 @@ class businessCalculations {
     }
   }
 
-  getVehicleForDelivery(weightOfItems) {
-    console.log('weightOfItems', weightOfItems)
+  getVehicleForDelivery(weightOfItems, pickUpOrDeliver) {
+    console.log('weightOfItems', weightOfItems);
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -295,6 +295,14 @@ class businessCalculations {
     }
 
     const vehicleSchema = Joi.object().required();
+
+    if (pickUpOrDeliver === 'pickup') {
+      const { error8 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.pickup);
+      if (error8) {
+        throw new Error('Data Validation Error');
+      }
+      return this.lalamovedeliveryvehicles.storePickUp;
+    }
 
     if (weightOfItems <= this.lalamovedeliveryvehicles.motorcycle.maxWeight) {
       const { error2 } = vehicleSchema.validate(this.lalamovedeliveryvehicles.motorcycle);
@@ -371,7 +379,6 @@ class businessCalculations {
     const { error1 } = kilometersSchema.validate(kilometers);
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
-
 
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
@@ -465,7 +472,6 @@ class businessCalculations {
   }
 
   getValueAddedTax(totalPrice, urlOfBir2303, isInvoiceNeeded, noVat = new AppConfig().getNoVat()) {
-
     if (isInvoiceNeeded == false) {
       return 0;
     }
@@ -541,7 +547,7 @@ class businessCalculations {
     if (cart[product] + 1 <= stocksAvailable) {
       cart[product] += 1;
     } else {
-      return 'no_stocks'
+      return 'no_stocks';
     }
 
     const newCartSchema = Joi.object().required();
@@ -609,7 +615,7 @@ class businessCalculations {
     return cart;
   }
 
-  afterCheckoutRedirectLogic(data, testing = false) {
+  async afterCheckoutRedirectLogic(data, testing = false) {
     const dataSchema = Joi.object({
       paymentMethodSelected: Joi.string().required(),
       referenceNumber: Joi.string().required().allow(''),
@@ -629,6 +635,7 @@ class businessCalculations {
       navigateTo: Joi.func(),
       itemsTotal: Joi.number().required().allow(null),
       date: Joi.date().required(),
+      deliveryVehicle: Joi.object().required().allow(null),
     }).required();
 
     const { error } = dataSchema.validate(data);
@@ -639,36 +646,91 @@ class businessCalculations {
 
     const paymentMethodSelected = data.paymentMethodSelected;
 
-    // FOR MAYA WITH WEBHOOK
-    // I DISABLED THIS FEATURE BECAUSE MAYA TAKES SO LONG TO GIVE ME AN API KEY I WILL USE ANOTHER MAYA FEATURE INSTEAD
-    // if (['maya','visa','mastercard','gcash'].includes(paymentMethodSelected)) {
-    //   const fullName = data.fullName;
-    //   const firstName = fullName.split(' ')[0];
-    //   const lastName = fullName.split(' ')[1];
-    //   const eMail = data.eMail;
-    //   const phoneNumber = data.phoneNumber;
-    //   const totalPrice = data.grandTotal;
-    //   if (testing === false) {
-    //     PaymayaSdk(
-    //       data.setMayaRedirectUrl,
-    //       data.setMayaCheckoutId,
-    //       firstName,
-    //       lastName,
-    //       eMail,
-    //       phoneNumber,
-    //       totalPrice,
-    //       data.localDeliveryAddress,
-    //       data.addressText,
-    //       data.referenceNumber,
-    //       data.userId
-    //     );
-    //   }
-    //   else {
-    //     return paymentMethodSelected
-    //   }
-    // }
+    let isGuestCheckout;
+    if (data.userId === 'GUEST') {
+      isGuestCheckout = true;
+    } else {
+      isGuestCheckout = false;
+    }
+
+    // Preparing data to be passed to checkout redirect pages
+    let checkoutParameter
+    const parameters = {
+      rows: data.rows,
+      vat: data.vat,
+      deliveryFee: data.deliveryFee,
+      referenceNumber : data.referenceNumber,
+      itemsTotal: data.itemsTotal,
+      grandTotal: data.grandTotal,
+      date: data.date,
+    }
+    const stringify = JSON.stringify(parameters)
+    checkoutParameter = encodeURIComponent(stringify)
+
+    console.log('checkoutParameter', checkoutParameter);
+
+    // setting redirect url if its for production or testing
+    const isDevEnvironment = new AppConfig().getIsDevEnvironment()
+    let redirectUrl
+    if (isDevEnvironment) {
+      redirectUrl = 'http://localhost:5173'}
+    else {
+      redirectUrl = 'https://starpack.ph'
+    }
+  
 
     if (testing === false) {
+      // FOR MAYA WITH WEBHOOK
+      console.log('paymentMethodSelected', paymentMethodSelected);
+      if (['maya', 'visa', 'mastercard', 'gcash'].includes(paymentMethodSelected)) {
+        const fullName = data.fullName;
+        const firstName = fullName.split(' ')[0];
+        const lastName = fullName.split(' ')[1];
+        const eMail = data.eMail;
+        const phoneNumber = data.phoneNumber;
+        const totalPrice = data.grandTotal;
+        if (testing === false) {
+          const req = {
+            "totalAmount": {
+                 "value": parseFloat(totalPrice),
+                 "currency": "PHP"
+            },
+            "buyer": {
+                 "contact": {
+                      "email": eMail,
+                      "phone": phoneNumber
+                 },
+                 "shippingAddress": {
+                      "line1": data.localDeliveryAddress,
+                      "line2": data.addressText,
+                      "countryCode": "PH"
+                 },
+                 "firstName": firstName,
+                 "lastName": lastName ? lastName : '',
+            },
+            "redirectUrl": {
+                 "success": redirectUrl + "/checkoutSuccess" + "?data=" + checkoutParameter,
+                 "failure": redirectUrl + "/checkoutFailed"+ "?data=" + checkoutParameter,
+                 "cancel": redirectUrl + "/checkoutCancelled" + "?data=" + checkoutParameter
+            },
+            "requestReferenceNumber": data.referenceNumber,
+            // "metadata": {
+            //   "userId" : userId
+            // }
+        }
+          const isSandbox = new AppConfig().getIsPaymentSandBox()
+          const res = await this.cloudfirestore.payMayaCheckout({payload:req,isSandbox:isSandbox})
+          const url = res.data.redirectUrl;
+          const checkoutId = res.data.checkoutId;
+
+          return url
+          // data.setMayaRedirectUrl(url)
+          // data.setMayaCheckoutId(checkoutId)
+        } else {
+          return paymentMethodSelected;
+        }
+      }
+
       data.navigateTo('/checkout/proofOfPayment', {
         state: {
           paymentMethodSelected: paymentMethodSelected,
@@ -680,6 +742,8 @@ class businessCalculations {
           rows: data.rows,
           area: data.area,
           date: data.date,
+          deliveryVehicle: data.deliveryVehicle,
+          isGuestCheckout: isGuestCheckout,
         },
       });
     } else {

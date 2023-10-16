@@ -7,71 +7,72 @@ import UnsupportedBrowserRedirect from './UnsupportedBrowserRedirect';
 import AppConfig from '../AppConfig';
 
 const CheckoutButton = (props) => {
-
-  const totalPrice = props.totalPrice
-  const { analytics,userId, cart, setGuestLoginClicked, goToCheckoutPage, setGoToCheckoutPage, userdata,isSupportedBrowser,alertSnackbar } = useContext(AppContext);
-  const [openGuestSignInModal,setOpenGuestSignInModal] = useState(false);
-  const [totalCredit, setTotalCredit] = useState(0);
+  const totalPrice = props.totalPrice;
+  const {
+    analytics,
+    userId,
+    cart,
+    setGuestLoginClicked,
+    goToCheckoutPage,
+    setGoToCheckoutPage,
+    userdata,
+    isSupportedBrowser,
+    alertSnackbar,
+  } = useContext(AppContext);
+  const [openGuestSignInModal, setOpenGuestSignInModal] = useState(false);
   const [isSupportedBrowserModalOpen, setIsSupportedBrowserModalOpen] = useState(false);
 
-  useEffect(()=>{
-    if (userdata != null) {
-      let credit = 0
-      userdata.orders.map((s)=>{
-        credit += s.grandTotal;
-      })
-      setTotalCredit(credit + totalPrice)
-    }
-  },[])
 
-  function handleCloseGuestSignInModal(){
-    setOpenGuestSignInModal(false)
+  function handleCloseGuestSignInModal() {
+    setOpenGuestSignInModal(false);
   }
 
   function onCheckoutButtonClick() {
-    analytics.logCheckoutInitiatedEvent(cart)
-    // if(totalCredit < 50000){
-      const minimumOrder = new AppConfig().getMinimumOrder();
-      if (totalPrice < minimumOrder) {
-        alertSnackbar('error',"Minimum order is " + minimumOrder + " pesos.")
-        return;
-      }
+    analytics.logCheckoutInitiatedEvent(cart);
+    const minimumOrder = new AppConfig().getMinimumOrder();
+    if (totalPrice < minimumOrder) {
+      alertSnackbar('error', 'Minimum order is ' + minimumOrder + ' pesos.');
+      return;
+    }
 
-      if (!isSupportedBrowser) {
-   
-        setIsSupportedBrowserModalOpen(true);
-        return;
-      }
-
-      if (userId === null) {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        setOpenGuestSignInModal(true);
-        setGuestLoginClicked(true);
-      }
-      if (userId !== null) {
-        setGoToCheckoutPage(true)
-      }
-    // }else{
-    //   alert("Your total credit will be " + totalCredit + ". You cannot make a purchase if your total credit is 50,000 and above.")
+    // if (!isSupportedBrowser) {
+    //   setIsSupportedBrowserModalOpen(true);
+    //   return;
     // }
+
+    if (userId === null) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    setOpenGuestSignInModal(true);
+    setGuestLoginClicked(true);
+    }
+    if (userId !== null) {
+    setGoToCheckoutPage(true);
+    }
   }
 
   return (
     <div>
-      <UnsupportedBrowserRedirect open={isSupportedBrowserModalOpen} isSupportedBrowser={isSupportedBrowser} setOpen={setIsSupportedBrowserModalOpen}/>
+      <UnsupportedBrowserRedirect
+        open={isSupportedBrowserModalOpen}
+        isSupportedBrowser={isSupportedBrowser}
+        setOpen={setIsSupportedBrowserModalOpen}
+      />
       <button
         id="cartcheckoutbutton"
         onClick={onCheckoutButtonClick}
         className="bg-color10b w-24 hover:bg-blue-700 hover:animate-bounce text-white p-2 rounded-md mt-5"
       >
-        {goToCheckoutPage ? 
-         <CircularProgress className="text-white" size="2vh" />
-         : "Checkout"}
-        
+        {goToCheckoutPage ? <CircularProgress className="text-white" size="2vh" /> : 'Checkout'}
       </button>
 
-      <GuestSignInModal handleCloseGuestSignInModal={handleCloseGuestSignInModal} openGuestSignInModal={openGuestSignInModal}/> 
+      <GuestSignInModal
+        handleCloseGuestSignInModal={handleCloseGuestSignInModal}
+        openGuestSignInModal={openGuestSignInModal}
+        setOpenGuestSignInModal={setOpenGuestSignInModal}
+        setGoToCheckoutPage={setGoToCheckoutPage}
+      />
+
+      
     </div>
   );
 };

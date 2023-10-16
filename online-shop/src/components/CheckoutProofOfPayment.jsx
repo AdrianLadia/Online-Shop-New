@@ -11,11 +11,24 @@ import { Timestamp } from 'firebase/firestore';
 import dataManipulation from '../../utils/dataManipulation';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
+import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
+import { set } from 'date-fns';
 
 const CheckoutProofOfPayment = (props) => {
-  // const referenceNumber = props.referenceNumber
-  // const cloudfirestore = new cloudFirestoreDb();
-  const { alertSnackbar,storage, cloudfirestore, userId, userdata, firestore, refreshUser, setRefreshUser,analytics,datamanipulation } = useContext(AppContext);
+  const {
+    alertSnackbar,
+    storage,
+    cloudfirestore,
+    userId,
+    userdata,
+    firestore,
+    refreshUser,
+    setRefreshUser,
+    analytics,
+    datamanipulation,
+    mayaRedirectUrl,
+    setMayaRedirectUrl,
+  } = useContext(AppContext);
   const location = useLocation();
   const {
     referenceNumber,
@@ -27,16 +40,39 @@ const CheckoutProofOfPayment = (props) => {
     area,
     paymentMethodSelected,
     date,
+    deliveryVehicle,
+    isGuestCheckout,
   } = location.state;
   const orderDateObject = new Date(date);
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
   const dateNow = new Date();
-  const dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
+  let dateDifference = datamanipulation.getSecondsDifferenceBetweentTwoDates(dateNow, orderExpiryDate);
   const navigateTo = useNavigate();
-  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [containerClassName, setContainerClassName] = useState('w-full h-[calc(100vh-200px)]');
+  const latitude = deliveryVehicle?.latitude;
+  const longitude = deliveryVehicle?.longitude;
+  const [_mayaRedirectUrl, set_mayaRedirectUrl] = useState(null);
 
   useEffect(() => {
-    analytics.logOpenPaymentPageEvent(referenceNumber,itemsTotal,deliveryFee, grandTotal, vat,area, paymentMethodSelected, date,rows) 
+    console.log(mayaRedirectUrl);
+    if (mayaRedirectUrl != null) {
+      set_mayaRedirectUrl(mayaRedirectUrl);
+      setMayaRedirectUrl(null);
+    }
+  }, [mayaRedirectUrl]);
+
+  useEffect(() => {
+    analytics.logOpenPaymentPageEvent(
+      referenceNumber,
+      itemsTotal,
+      deliveryFee,
+      grandTotal,
+      vat,
+      area,
+      paymentMethodSelected,
+      date,
+      rows
+    );
   }, []);
 
   function delay(ms) {
@@ -47,6 +83,7 @@ const CheckoutProofOfPayment = (props) => {
   let accountName;
   let accountNumber;
   let qrLink;
+  let isMaya = false;
 
   if (paymentMethodSelected == 'bdo') {
     bankName = 'BDO';
@@ -62,6 +99,8 @@ const CheckoutProofOfPayment = (props) => {
   if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected)) {
     bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
+    isMaya = true;
+    dateDifference = 3600;
   }
 
   async function onUpload(url) {
@@ -74,10 +113,14 @@ const CheckoutProofOfPayment = (props) => {
       await delay(5000);
       navigateTo('/myorders/orderList');
     } catch (error) {
-      alertSnackbar('error','Failed to upload proof of payment. Please try again.');
+      alertSnackbar('error', 'Failed to upload proof of payment. Please try again.');
       return;
     }
   }
+
+  useEffect(() => {
+    console.log(isGuestCheckout);
+  }, []);
 
   return (
     <div>
@@ -97,24 +140,19 @@ const CheckoutProofOfPayment = (props) => {
           </div>
         </div>
       ) : (
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto  py-16">
           <div className="bg-white shadow-lg rounded-lg p-8">
             <h2 className="text-2xl font-semibold mb-4">Thank you for your order!</h2>
             {referenceNumber != '' ? <h3 className="text-2xl mb-4">Reference # : {referenceNumber}</h3> : null}
-
-            {qrLink != null ? (
-              <div className="mb-8">
+            {_mayaRedirectUrl != null ? (
+              <div className="flex flex-col mb-8 justify-center lg:justify-start">
                 <p>
-                  Please scan QR code or click the payment link to send us a payment of :{' '}
-                  <strong>₱ {grandTotal}</strong>
+                  You have been automatically redirected to the payment page. If you are not redirected, please click
+                  the link below.
                 </p>
-                <img
-                  src="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/mayaQR%2Fframe.png?alt=media&token=640b5674-bd14-4d65-99d2-9b5705b84c55"
-                  alt="proof of payment container"
-                ></img>
                 <a
-                  className=" ml-11 text-blue-600 underline hover:text-blue-800 visited:text-purple-600 "
-                  href={qrLink}
+                  className=" flex text-blue-600 underline hover:text-blue-800 visited:text-purple-600 "
+                  href={_mayaRedirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -132,32 +170,79 @@ const CheckoutProofOfPayment = (props) => {
               </>
             )}
 
-            <p>
-              Once you have completed the payment, please{' '}
-              <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
-            </p>
-            <p>
-              We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
-              frame, your order will be cancelled.
-            </p>
+            {_mayaRedirectUrl != null ? (
+              <>
+                <p>
+                  Please complete the payment within 1 hour. We will <strong>reserve your items</strong> for 1 hour. If
+                  payment is not received within the time frame, your order will be cancelled.
+                </p>
+              </>
+            ) : isGuestCheckout ? (
+              <>
+                <p>
+                  Once you have completed the payment, please{' '}
+                  <strong>submit proof of payment using the button below or send it in our facebook messenger</strong>.
+                </p>
+                <Divider className="my-5" />
+                <p>
+                  We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
+                  frame, your order will be cancelled.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  Once you have completed the payment, please{' '}
+                  <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
+                </p>
+                <p>
+                  We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
+                  frame, your order will be cancelled.
+                </p>
+              </>
+            )}
 
+            <Divider className="mt-5 mb-5"></Divider>
+            {deliveryVehicle?.name == 'storePickUp' ? (
+              <>
+                <Typography variant="h6" className="mb-4">
+                  Store Pick Location
+                </Typography>
+                <GoogleMap
+                  clickableIcons={false}
+                  zoom={17}
+                  center={{ lat: latitude, lng: longitude }}
+                  mapContainerClassName={containerClassName}
+                  disableDefaultUI={true}
+                  mapTypeControl={false}
+                >
+                  <MarkerF position={{ lat: latitude, lng: longitude }} />
+                </GoogleMap>
+              </>
+            ) : null}
             <Divider className="mt-5 mb-5"></Divider>
             {/* <CheckoutSummary/> */}
             {rows != null ? (
               <CheckoutSummary
-                total={itemsTotal}
+                total={total}
+                setTotal={setTotal}
+                vat={vat}
                 deliveryFee={deliveryFee}
                 grandTotal={grandTotal}
-                vat={vat}
-                rows={rows}
+                totalWeight={totalWeight}
+                setTotalWeight={setTotalWeight}
+                deliveryVehicleObject={deliveryVehicle}
+                setDeliveryVehicle={setDeliveryVehicle}
+                setVat={setVat}
                 area={area}
+                setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
+                rows={rows}
               />
             ) : (
               <div className="flex justify-center mt-5">
                 <Typography>{`Total : ₱ ${grandTotal}`}</Typography>
               </div>
             )}
-
             <div className="flex flex-col justify-center">
               <div className="flex flex-row justify-center mt-5">
                 <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
@@ -170,31 +255,45 @@ const CheckoutProofOfPayment = (props) => {
               </div>
             </div>
 
-            <div className="flex justify-center mt-6">
-              <ImageUploadButton
-                onUploadFunction={onUpload}
-                storage={storage}
-                folderName={'Orders/' + userId + '/' + referenceNumber}
-                buttonTitle={'Upload Proof Of Payment'}
-              />
-            </div>
+            {isMaya ? null : isGuestCheckout ? null : (
+              <div className="flex justify-center mt-6">
+                <ImageUploadButton
+                  onUploadFunction={onUpload}
+                  storage={storage}
+                  folderName={'Orders/' + userId + '/' + referenceNumber}
+                  buttonTitle={'Upload Proof Of Payment'}
+                />
+              </div>
+            )}
+
             <div className="flex justify-center mt-5">
-              <button
-                onClick={() =>
-                  navigateTo('/orderChat', {
-                    state: {
-                      orderReference: referenceNumber,
-                      isInquiry: false,
-                      backButtonRedirect: '/myorders/orderList',
-                    },
-                  })
-                }
-                variant="contained"
-                className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
-              >
-                <HiChatBubbleLeftEllipsis />
-                <Typography sx={{ marginLeft: 1 }}>Message us</Typography>
-              </button>
+              {isGuestCheckout ? (
+                <button
+                  onClick={() => window.open('https://www.m.me/starpackph', '_blank')}
+                  variant="contained"
+                  className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
+                >
+                  <HiChatBubbleLeftEllipsis />
+                  <Typography sx={{ marginLeft: 1 }}>Upload Proof Of Payment</Typography>
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    navigateTo('/orderChat', {
+                      state: {
+                        orderReference: referenceNumber,
+                        isInquiry: false,
+                        backButtonRedirect: '/myorders/orderList',
+                      },
+                    })
+                  }
+                  variant="contained"
+                  className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
+                >
+                  <HiChatBubbleLeftEllipsis />
+                  <Typography sx={{ marginLeft: 1 }}>Message us</Typography>
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -10,6 +10,12 @@ class storeProductsOrganizer {
 
   getOrderOfProducts() {
 
+    if (this.productCategory == 'Utensils') {
+      this.orderOfProducts = [
+        'SPNMWSKZ','FRKMWSKZ','CHOPSSUK','PLASGLOV'
+      ]
+    }
+
     if (this.productCategory == 'Roll Bag') {
       this.orderOfProducts = [
         'RB5X9MR','RB8X12TB','RB10X16TB','RB16X24'
@@ -49,7 +55,7 @@ class storeProductsOrganizer {
     }
    
     if (this.productCategory == 'Meal Box') {
-      this.orderOfProducts = ['SPAG500PPB', 'SPAG600PPB', 'MB750TG', 'MB880TG', 'MB1300TG', 'MB1500PPB'];
+      this.orderOfProducts = ['SPAG500PPB', 'SPAG600PPB', 'MB750PPB', 'MB880TG', 'MB1300TG', 'MB1500PPB'];
     }
 
     if (this.productCategory == 'Aluminum Tray') {

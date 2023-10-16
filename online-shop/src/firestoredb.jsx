@@ -640,6 +640,34 @@ class firestoredb extends firestorefunctions {
       throw new Error('Order not found');
     }
   }
+
+  async transactionOutStocks(cartFinalData) {
+    try {
+      await runTransaction(this.db, async (transaction) => {
+        const stocks = {};
+        const promises = cartFinalData.map(async (item) => {
+          const itemRef = doc(this.db, 'Products/', item.itemId);
+          const itemDoc = await transaction.get(itemRef)
+          const itemData = itemDoc.data();
+          const oldStocks = itemData.stocksAvailable;
+          const newStocks = oldStocks - item.quantity;
+          stocks[item.itemId] = newStocks;
+        });
+
+        await Promise.all(promises);
+
+        console.log(stocks);
+
+
+        Object.keys(stocks).forEach((key) => {
+          transaction.update(doc(this.db, 'Products/', key), { stocksAvailable: stocks[key] });
+        });
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+    
+  }
   
   // async markCommissionPending(data, date, id){
   //   const updatedData = []
