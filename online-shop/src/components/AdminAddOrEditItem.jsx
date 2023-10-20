@@ -42,7 +42,13 @@ const style = {
 
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
-  const { businesscalculations,firestore, storage, categories: initialCategories, userdata } = React.useContext(AppContext);
+  const {
+    businesscalculations,
+    firestore,
+    storage,
+    categories: initialCategories,
+    userdata,
+  } = React.useContext(AppContext);
   const [categories, setCategories] = React.useState(initialCategories);
 
   useEffect(() => {
@@ -116,14 +122,13 @@ const AdminAddOrEditItem = (props) => {
   const [freightCost, setFreightCost] = useState(0);
   const [timeoutId, setTimeoutId] = useState(null);
   const rules = new menuRules(userdata.userRole);
-  const [forOnlineStore,setForOnlineStore] = useState(true);
+  const [forOnlineStore, setForOnlineStore] = useState(true);
 
   useEffect(() => {
     firestore.readAllMachines().then((machines) => {
       setMachines(machines);
     });
   }, []);
-
 
   function checkDimensions(throwError = true) {
     if ([null, ''].includes(dimensions) == false) {
@@ -302,7 +307,6 @@ const AdminAddOrEditItem = (props) => {
       return;
     }
 
-    
     if (parseFloat(price) <= 0) {
       alert('Price must be greater than 0');
       setLoading(false);
@@ -427,7 +431,6 @@ const AdminAddOrEditItem = (props) => {
       setIsThisRetail(false);
     }
   }
-
 
   useEffect(() => {
     if (addOrEditItem == 'Edit' && selectedItemToEdit !== null) {
@@ -562,18 +565,20 @@ const AdminAddOrEditItem = (props) => {
                 sx={{ width: 'fullWidth' }}
                 renderInput={(params) => <TextField {...params} label="Item Name" />}
               />
-            ) : <TextField
-            required
-            disabled={addOrEditItem == 'Edit' ? true : false}
-            id="outlined-basic123"
-            label="Item Name"
-            variant="outlined"
-            sx={{ marginTop: 3 }}
-            value={itemName}
-            onChange={(event) => {
-              setItemName(event.target.value);
-            }}
-          />}
+            ) : (
+              <TextField
+                required
+                disabled={addOrEditItem == 'Edit' ? true : false}
+                id="outlined-basic123"
+                label="Item Name"
+                variant="outlined"
+                sx={{ marginTop: 3 }}
+                value={itemName}
+                onChange={(event) => {
+                  setItemName(event.target.value);
+                }}
+              />
+            )}
 
             <TextField
               required
@@ -878,7 +883,6 @@ const AdminAddOrEditItem = (props) => {
             <label htmlFor="iscustom" className='mt-2.5'> Is this Customized?</label> */}
             </div>
 
-
             <div className="flex flex-row ">
               <FormControlLabel
                 control={
@@ -897,6 +901,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2 py-4 border-y border-dotted border-gray-400">
               <ImageUploadButton
+                resize
                 id={'boxImage'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -916,6 +921,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2 pt-4">
               <ImageUploadButton
+                resize
                 id={'imageLink1'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -933,6 +939,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink2'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -950,6 +957,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink3'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -967,6 +975,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink4'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -984,6 +993,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink5'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -1001,6 +1011,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink6'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -1018,6 +1029,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink7'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -1035,6 +1047,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink8'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -1052,6 +1065,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink9'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -1069,6 +1083,7 @@ const AdminAddOrEditItem = (props) => {
 
             <div className="flex flex-row items-center gap-2">
               <ImageUploadButton
+                resize
                 id={'imageLink10'}
                 folderName={'ProductImages/' + itemID}
                 storage={storage}
@@ -1118,7 +1133,9 @@ const AdminAddOrEditItem = (props) => {
             </div>
           </div>
         </div>
-      ) : 'UNAUTHORIZED'}
+      ) : (
+        'UNAUTHORIZED'
+      )}
     </>
   );
 };

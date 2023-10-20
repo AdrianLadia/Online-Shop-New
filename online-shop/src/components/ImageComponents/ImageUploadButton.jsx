@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Button } from '@mui/material';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes,deleteObject } from 'firebase/storage';
 import CircularProgress from '@mui/material/CircularProgress';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { FaImage } from 'react-icons/fa';
@@ -8,9 +8,8 @@ import AppContext from '../../AppContext';
 import Joi from 'joi';
 import { v4 as uuidv4 } from 'uuid';
 
-
 const ImageUploadButton = (props) => {
-  const { selectedChatOrderId, payments ,alertSnackbar} = useContext(AppContext);
+  const { selectedChatOrderId, payments, alertSnackbar } = useContext(AppContext);
   const id = props.id;
   const folderName = props.folderName;
   let fileName = props.fileName;
@@ -19,7 +18,8 @@ const ImageUploadButton = (props) => {
   const setPreviewImage = props.setPreviewImage;
   const onUploadFunction = props.onUploadFunction;
   const disableButton = props.disabled;
-  const setImageProof = props.setImageProof
+  const setImageProof = props.setImageProof;
+  const resize = props.resize;
 
   const [buttonColor, setButtonColor] = useState(false);
   const [buttonText, setButtonText] = useState(buttonTitle);
@@ -41,44 +41,74 @@ const ImageUploadButton = (props) => {
         fileName = file.name;
       }
 
-      const ordersRefStorage = ref(storage, folderName + '/' + uuidv4() + fileName);
+      const _uuidv4 = uuidv4();
+
+      const ordersRefStorage = ref(storage, folderName + '/' + _uuidv4 + fileName);
 
       try {
-        
         uploadBytes(ordersRefStorage, file).then(async (snapshot) => {
           setButtonColor(true);
 
-  
           // GET IMAGE URL
-          const downloadURL = await getDownloadURL(ordersRefStorage);
 
-  
-          if (onUploadFunction !== undefined) {
-            try{
-              await onUploadFunction(downloadURL);
-              setButtonText('Uploaded Successfuly');
-              setLoading(false);
+          const downloadURL = await getDownloadURL(ordersRefStorage);
+          let downloadURLResized;
+
+          if (resize) {
+            console.log('RESIZING');
+            console.log('FILE NAME', _uuidv4 + fileName)
+            const resizedFileName = fileName.split('.')[0] + '_612x820.' + fileName.split('.')[1];
+            console.log('RESIZED FILE NAME', resizedFileName);
+            const resizedRefStorage = ref(storage, folderName + '/' + _uuidv4 + resizedFileName);
+            console.log('RESIZED REF STORAGE', _uuidv4 + resizedFileName);
+            let retries = 0;
+            while (downloadURLResized === undefined) {
+              console.log('RETRIES', retries);
+              if (retries > 10) {
+                alertSnackbar('error', 'Error uploading image. Please try again.');
+                setLoading(false);
+                return;
+              }
+              console.log('RESIZING');
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              try {
+                downloadURLResized = await getDownloadURL(resizedRefStorage);
+                deleteObject(ordersRefStorage);
+                // throw new Error('Not found');
+              }
+              catch {
+                retries++;
+              }
             }
-            catch(error){
-              alertSnackbar('error','Error uploading image. Please try again.');
-              return
+          }
+
+          if (onUploadFunction !== undefined) {
+            try {
+              if (resize) {
+                console.log('UPLOAD RESIZED');
+                await onUploadFunction(downloadURLResized);
+              } else {
+                await onUploadFunction(downloadURL);
+              }
+              setButtonText('Uploaded Successfully');
+              setLoading(false);
+            } catch (error) {
+              alertSnackbar('error', 'Error uploading image. Please try again.');
+              return;
             }
           }
 
           const downloadUrlSchema = Joi.string().uri().required();
 
-          const {error} = downloadUrlSchema.validate(downloadURL);
+          const { error } = downloadUrlSchema.validate(downloadURL);
           if (error) {
-            alertSnackbar('error','Error uploading image. Please try again.');
-          }
-          else {
-            alertSnackbar('success','Image uploaded successfully.');
-    
+            alertSnackbar('error', 'Error uploading image. Please try again.');
+          } else {
+            alertSnackbar('success', 'Image uploaded successfully.');
           }
         });
-      }
-      catch {
-        alertSnackbar('error','Error uploading image. Please try again.');
+      } catch {
+        alertSnackbar('error', 'Error uploading image. Please try again.');
       }
     } else {
       setLoading(false);
