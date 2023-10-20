@@ -224,18 +224,11 @@ const CheckoutProofOfPayment = (props) => {
             {/* <CheckoutSummary/> */}
             {rows != null ? (
               <CheckoutSummary
-                total={total}
-                setTotal={setTotal}
+                total={itemsTotal}
                 vat={vat}
                 deliveryFee={deliveryFee}
                 grandTotal={grandTotal}
-                totalWeight={totalWeight}
-                setTotalWeight={setTotalWeight}
-                deliveryVehicleObject={deliveryVehicle}
-                setDeliveryVehicle={setDeliveryVehicle}
-                setVat={setVat}
                 area={area}
-                setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
                 rows={rows}
               />
             ) : (
