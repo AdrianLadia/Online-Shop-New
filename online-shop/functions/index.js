@@ -261,16 +261,16 @@ exports.postToConversionApi = functions.region('asia-southeast1').https.onReques
       console.log('fbp', fbp);
     }
     if (email != undefined) {
-      console.log('email', data.email,email);
+      console.log('email', data.email, email);
     }
     if (phone != undefined) {
-      console.log('phone',data.phone, phone);
+      console.log('phone', data.phone, phone);
     }
     if (firstName != undefined) {
-      console.log('firstName', data.name,firstName);
+      console.log('firstName', data.name, firstName);
     }
     if (lastName != undefined) {
-      console.log('lastName', data.lastName,lastName);
+      console.log('lastName', data.lastName, lastName);
     }
 
     let payload = {
@@ -901,36 +901,60 @@ exports.transactionPlaceOrder = functions
 
             if (sendMail == true) {
               try {
-                if (userid != 'GUEST') {
+                
                   sendmail(
                     newOrder.eMail,
                     'Order Confirmation',
                     `<p>Dear Customer,</p>
-                    
-                    <p>We are pleased to inform you that your order has been confirmed.</p>
-                    
-                    <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
-              
-                    <p>Please note that payment should be made within <strong>24 hours</strong> to secure your order. You can view and complete payment for your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
-              
-              <p>If you have any questions or concerns, feel free to reach out to our support team.</p>
-              
-              <p>Thank you for choosing Star Pack!</p>
-              
-              <p>Best Regards,<br>
-              The Star Pack Team</p>`
+                      
+                      <p>We are thrilled to confirm that your order has been successfully placed.</p>
+                      
+                      <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+                
+                      <p>Kindly note that payment must be processed within <strong>24 hours</strong> to secure your order. If you have selected Cash on Delivery (COD) as your payment method, please disregard this reminder.</p> 
+  
+                      <p>If you have an account with us, you can conveniently track your order by visiting the "<strong>My Orders</strong>" page on our website: <a href="https://www.starpack.ph">www.starpack.ph</a>.</p>
+                
+                <p>If you have any questions or need assistance, please don't hesitate to reach out to our dedicated support team.</p>
+                
+                <p>Thank you for choosing Star Pack!</p>
+                
+                <p>Best Regards,<br>
+                The Star Pack Team</p>`
                   );
-                }
+                
 
                 sendmail(
                   'ladiaadrian@gmail.com',
                   'Order Received',
                   `<p>Order received,</p>
                 
-                <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
+              <p><strong>Order Reference:</strong> ${newOrder.reference}</p>
               <p><strong>Customer:</strong> ${newOrder.userName}</p>
+              <p><strong>Customer Phone Number:</strong> ${newOrder.userPhoneNumber}</p>
               <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
-      
+              
+              <p><strong>Delivery Date:</strong> ${newOrder.deliveryDate}</p>
+              <p><strong>Delivery Address:</strong></p><a href='https://www.google.com/maps?q=${newOrder.deliveryAddressLatitude},${newOrder.deliveryAddressLongitude}'>${newOrder.deliveryAddress}</a> 
+              <p><strong>Delivery Vehicle:</strong> ${newOrder.deliveryVehicle}</p>
+              <p><strong>Delivery Notes:</strong> ${newOrder.deliveryNotes}</p>
+              <p><strong>Need Assistance:</strong> ${newOrder.needAssistance}</p>
+              <p><strong>Contact Name:</strong> ${newOrder.contactName}</p>
+              <p><strong>Contact Phone Number:</strong> ${newOrder.contactPhoneNumber}</p>
+              <p><strong>Items:</strong></p>
+              <ul>
+              ${Object.keys(newOrder.cart)
+                .map((key) => {
+                  return `<li>${key} - ${newOrder.cart[key]}</li>`;
+                })
+                .join('')}
+              </ul>
+              <p><strong>Items Total:</strong> ${newOrder.itemsTotal}</p>
+              <p><strong>VAT:</strong> ${newOrder.vat}</p>
+              <p><strong>Shipping Total:</strong> ${newOrder.shippingTotal}</p>
+              <p><strong>Grand Total:</strong> ${newOrder.grandTotal}</p>
+
+
               <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
               
               <p>Best Regards,<br>
@@ -1269,43 +1293,39 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
 // Paymaya create checkout request
 exports.payMayaCheckout = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    function convertToBase64(key) {
+      return btoa(key + ':');
+    }
 
-      function convertToBase64(key) {
-        return btoa(key + ':');
-      }
-    
-      const data = req.body;
-      const payload = data.payload
-      const isSandbox = data.isSandbox
+    const data = req.body;
+    const payload = data.payload;
+    const isSandbox = data.isSandbox;
 
-      let url;
-      let publicKey;
-      let secretKey;
+    let url;
+    let publicKey;
+    let secretKey;
 
-      if (isSandbox) {
-        url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
-        publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah'
-        secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl'
-      }
-      else {
-        url = 'https://pg.maya.ph/checkout/v1/checkouts';
-        publicKey = 'pk-DKpOh7gQI1sjjeE4pzTenb8B2n1I3chEmu6UKlJCzYE'
-        secretKey = 'sk-c6YLzDpPYtd3AQZNm4i8gcnKQV0FioKXEjyuS074gEj'
-      }
+    if (isSandbox) {
+      url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+      publicKey = 'pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah';
+      secretKey = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl';
+    } else {
+      url = 'https://pg.maya.ph/checkout/v1/checkouts';
+      publicKey = 'pk-DKpOh7gQI1sjjeE4pzTenb8B2n1I3chEmu6UKlJCzYE';
+      secretKey = 'sk-c6YLzDpPYtd3AQZNm4i8gcnKQV0FioKXEjyuS074gEj';
+    }
 
-      const headers = {
-        Accept: 'application/json',
-        Authorization: `Basic ${convertToBase64(publicKey)}`,
-        'Content-Type': 'application/json',
-      };
+    const headers = {
+      Accept: 'application/json',
+      Authorization: `Basic ${convertToBase64(publicKey)}`,
+      'Content-Type': 'application/json',
+    };
 
-      const response = await axios.post(url, payload, { headers });
-      console.log(response.data);
-      res.send(response.data);
+    const response = await axios.post(url, payload, { headers });
+    console.log(response.data);
+    res.send(response.data);
   });
 });
-
-
 
 // Expose the Express app as a Cloud Function
 exports.payMayaWebHookSuccess = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
