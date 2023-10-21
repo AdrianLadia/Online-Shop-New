@@ -5,7 +5,8 @@ function CheckoutCancelled() {
   const navigateTo = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const data = queryParams.get('data');
+  const stringData = queryParams.get('data');
+  const data = JSON.parse(stringData);
 
   function handleHome() {
     navigateTo('/shop');

@@ -30,7 +30,7 @@ const CheckoutSuccess = () => {
 
           <p className="mt-4 text-gray-600 mb-5">
             We've sent a confirmation email to your Email Address.
-            If you have any questions, please us in our facebook page.
+            If you have any questions, please message us in our facebook page.
           </p>
         </div>
         <CheckoutSummary
