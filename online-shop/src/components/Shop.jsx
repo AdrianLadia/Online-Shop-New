@@ -37,7 +37,7 @@ const Shop = () => {
   }, [products]);
 
   return (
-    <div className="flex flex-col w-full justify-center bg-gradient-to-r from-colorbackground via-color2 to-color1 ">
+    <div className="flex flex-col w-full justify-center h-full ">
       <Helmet>
         <meta
           name="description"

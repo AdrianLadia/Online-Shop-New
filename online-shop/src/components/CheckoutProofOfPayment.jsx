@@ -96,6 +96,12 @@ const CheckoutProofOfPayment = (props) => {
     accountNumber = '109355469422';
   }
 
+  if (paymentMethodSelected == 'cod') {
+    bankName = 'CASH ON DELIVERY';
+    accountName = 'CASH ON DELIVERY';
+    accountNumber = 'CASH ON DELIVERY';
+  }
+
   if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected)) {
     bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
@@ -117,10 +123,6 @@ const CheckoutProofOfPayment = (props) => {
       return;
     }
   }
-
-  useEffect(() => {
-    console.log(isGuestCheckout);
-  }, []);
 
   return (
     <div>
@@ -161,44 +163,58 @@ const CheckoutProofOfPayment = (props) => {
               </div>
             ) : (
               <>
-                <p>Please send your payment to the following bank account:</p>
+                {paymentMethodSelected == 'cod' ? null : <p>Please send your payment to the following bank account:</p>}
                 <div className="bg-gray-200 rounded p-4 my-4">
-                  <Typography>Bank Name: {bankName}</Typography>
-                  <Typography>Account Name: {accountName}</Typography>
-                  <Typography>Account Number: {accountNumber}</Typography>
+                  {paymentMethodSelected === 'cod' ? (
+                    deliveryVehicle?.name === 'storePickUp' ? (
+                      <p>Please pick up your order at our store and prepare payment.</p>
+                    ) : (
+                      <p>Please prepare your payment for the delivery.</p>
+                    )
+                  ) : (
+                    <>
+                      <Typography>Bank Name: {bankName}</Typography>
+                      <Typography>Account Name: {accountName}</Typography>
+                      <Typography>Account Number: {accountNumber}</Typography>
+                    </>
+                  )}
                 </div>
               </>
             )}
-
-            {_mayaRedirectUrl != null ? (
+            {paymentMethodSelected === 'cod' ? null : (
               <>
-                <p>
-                  Please complete the payment within 1 hour. We will <strong>reserve your items</strong> for 1 hour. If
-                  payment is not received within the time frame, your order will be cancelled.
-                </p>
-              </>
-            ) : isGuestCheckout ? (
-              <>
-                <p>
-                  Once you have completed the payment, please{' '}
-                  <strong>submit proof of payment using the button below or send it in our facebook messenger</strong>.
-                </p>
-                <Divider className="my-5" />
-                <p>
-                  We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
-                  frame, your order will be cancelled.
-                </p>
-              </>
-            ) : (
-              <>
-                <p>
-                  Once you have completed the payment, please{' '}
-                  <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
-                </p>
-                <p>
-                  We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the time
-                  frame, your order will be cancelled.
-                </p>
+                {_mayaRedirectUrl !== null ? (
+                  <p>
+                    Please complete the payment within 1 hour. We will <strong>reserve your items</strong> for 1 hour.
+                    If payment is not received within the time frame, your order will be cancelled.
+                  </p>
+                ) : isGuestCheckout ? (
+                  <>
+                    <p>
+                      Once you have completed the payment, please{' '}
+                      <strong>
+                        submit proof of payment using the button below or send it in our Facebook Messenger
+                      </strong>
+                      .
+                    </p>
+                    <Divider className="my-5" />
+                    <p>
+                      We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the
+                      time frame, your order will be cancelled.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      Once you have completed the payment, please{' '}
+                      <strong>submit proof of payment using the button below or in My Orders Menu</strong>.
+                    </p>
+                    <p>
+                      We will <strong>reserve your items</strong> for 24 hours. If payment is not received within the
+                      time frame, your order will be cancelled.
+                    </p>
+                  </>
+                )}
               </>
             )}
 
@@ -206,7 +222,7 @@ const CheckoutProofOfPayment = (props) => {
             {deliveryVehicle?.name == 'storePickUp' ? (
               <>
                 <Typography variant="h6" className="mb-4">
-                  Store Pick Location
+                  Store Pickup Location
                 </Typography>
                 <GoogleMap
                   clickableIcons={false}
@@ -238,17 +254,21 @@ const CheckoutProofOfPayment = (props) => {
             )}
             <div className="flex flex-col justify-center">
               <div className="flex flex-row justify-center mt-5">
-                <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
-                  Order will expire in :
-                </Typography>
-                <CountdownTimer initialTime={dateDifference} />
+                {paymentMethodSelected === 'cod' ? null : (
+                  <>
+                    <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
+                      Order will expire in :
+                    </Typography>
+                    <CountdownTimer initialTime={dateDifference} />
+                  </>
+                )}
               </div>
               <div className="flex justify-center mt-2">
                 <Typography variant="h7" sx={{ marginRight: 1 }}></Typography>
               </div>
             </div>
 
-            {isMaya ? null : isGuestCheckout ? null : (
+            {isMaya ? null : isGuestCheckout ? null : paymentMethodSelected == 'cod' ? null : (
               <div className="flex justify-center mt-6">
                 <ImageUploadButton
                   onUploadFunction={onUpload}
@@ -260,7 +280,7 @@ const CheckoutProofOfPayment = (props) => {
             )}
 
             <div className="flex justify-center mt-5">
-              {isGuestCheckout ? (
+              {isGuestCheckout && paymentMethodSelected != 'cod' ? (
                 <button
                   onClick={() => window.open('https://www.m.me/starpackph', '_blank')}
                   variant="contained"
@@ -271,15 +291,17 @@ const CheckoutProofOfPayment = (props) => {
                 </button>
               ) : (
                 <button
-                  onClick={() =>
-                    navigateTo('/orderChat', {
-                      state: {
-                        orderReference: referenceNumber,
-                        isInquiry: false,
-                        backButtonRedirect: '/myorders/orderList',
-                      },
-                    })
-                  }
+                  // onClick={() => {
+                  //   navigateTo('/orderChat', {
+                  //     state: {
+                  //       orderReference: referenceNumber,
+                  //       isInquiry: false,
+                  //       backButtonRedirect: '/myorders/orderList',
+                  //     },
+                  //   })
+                  // }
+                  // }
+                  onClick={() => window.open('https://www.m.me/starpackph', '_blank')}
                   variant="contained"
                   className="flex flex-row items-center bg-color10c text-white px-6 py-2 rounded hover:bg-color10a"
                 >

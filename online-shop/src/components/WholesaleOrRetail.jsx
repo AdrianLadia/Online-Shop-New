@@ -88,7 +88,7 @@ const WholesaleOrRetail = (props) => {
   }
 
   return (
-    <div className="from-colorbackground  via-color2 to-color1 flex flex-col items-center drop-shadow-xl  ">
+    <div className="from-colorbackground  via-color2 to-color1 flex flex-col items-center drop-shadow-xl h-full  ">
       <div ref={wholesaleOrRetailRef} className="flex">
         <Typography className="text-2xl font-semibold mt-5 mb-5 text-gray-700">Purchase items by</Typography>
       </div>

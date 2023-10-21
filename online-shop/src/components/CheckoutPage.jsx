@@ -82,8 +82,6 @@ const CheckoutPage = () => {
     businesscalculations,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
-  const [payMayaCardSelected, setPayMayaCardSelected] = useState(false);
-
   const [localname, setLocalName] = React.useState('');
   const [localemail, setLocalEmail] = React.useState('');
   const [localphonenumber, setLocalPhoneNumber] = React.useState('');
@@ -890,7 +888,7 @@ const CheckoutPage = () => {
                   </Typography>
                 </div>
 
-                <PaymentMethods />
+                <PaymentMethods itemsTotal={total} />
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 

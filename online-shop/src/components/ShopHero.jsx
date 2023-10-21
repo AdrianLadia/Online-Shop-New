@@ -31,7 +31,7 @@ const ShopHero = ({ shopHeroInView, setShopHeroInView }) => {
   }, []);
 
   return (
-    <div ref={shopHeroRef} className="flex w-full text-gray-700 flex-col gap-5 mt-5 justify-center">
+    <div ref={shopHeroRef} className="flex w-full h-full text-gray-700 flex-col gap-5 mt-5 justify-center">
       <Typography variant="h5" className="text-center text font-bold">
         How to order
       </Typography>

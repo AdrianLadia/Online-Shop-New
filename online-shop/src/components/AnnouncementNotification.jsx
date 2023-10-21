@@ -43,20 +43,20 @@ const AnnouncementNotification = () => {
             <CardMedia
               sx={{ height: 210, backgroundColor: '#e1fadd', display: 'flex' }}
               image={
-                'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/announcementPhotos%2FYellow%20Simple%20Special%20Offer%20Instagram%20Post.png?alt=media&token=5dc02577-c6c2-485c-84bf-9a6019b90faf&_gl=1*pbq9md*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5NjQyMzYzMy4xNDYuMS4xNjk2NDIzNjkwLjMuMC4w'
+                'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2FCODorCOP.png?alt=media&token=71d22fc9-475f-4f40-b898-f83f455f5d71&_gl=1*1d5kl93*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5Nzg2NDM1Ni4xNjAuMS4xNjk3ODY0NDE1LjEuMC4w'
               }
               title="auto calculate"
             ></CardMedia>
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
-                10% off on all items
+                Cash On Delivery
               </Typography>
               <Typography
                 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
                 variant="body2"
                 color="text.secondary"
               >
-                Shop now and enjoy the savings! Offer ends soon.
+                Cash on delivery is now available. Enjoy this method together with our FREE DELIVERY promo. The free delivery promo lasts until November.
               </Typography>
             </CardContent>
           </Card>
