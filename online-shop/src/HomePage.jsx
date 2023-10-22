@@ -19,15 +19,23 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 import HomePageCardSection from './HomePageCardSection';
 
-
-
 const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, analytics,alertSnackbar,fbclid } =
-    useContext(AppContext);
-   const backgroundImageUrl =
+  const {
+    userdata,
+    setUserData,
+    auth,
+    setUserLoaded,
+    setUserState,
+    setUserId,
+    setCart,
+    analytics,
+    alertSnackbar,
+    fbclid,
+  } = useContext(AppContext);
+  const backgroundImageUrl =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Fpaper%20products.jpg?alt=media&token=65a433cd-ba8c-40f6-ad3f-00f5348e217d';
-   const about =
+  const about =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2Ff4b3d1ee-cd04-4b70-8255-e4a4594d5aabhome-page-01.png?alt=media&token=c3efbd67-95ce-42c0-8786-f0a6f06fd5de';
   const page1 = useRef();
   const page2 = useRef();
@@ -164,12 +172,9 @@ const HomePage = ({ isAffiliateLink }) => {
   const { pathname } = useLocation();
   const [photoUrl, setPhotoUrl] = useState('');
 
-
-
   function handleAlert(severity, message) {
     alertSnackbar(severity, message);
   }
-
 
   function handleCategory(item) {
     if (item === 'Aluminum Foil') {
@@ -324,9 +329,9 @@ const HomePage = ({ isAffiliateLink }) => {
 
   useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
-      analytics.logOpenHomePageEvent()
+      analytics.logOpenHomePageEvent();
     }
-  }, [fbclid,analytics]);
+  }, [fbclid, analytics]);
 
   useEffect(() => {
     if (selectedSlide === 0) {
@@ -385,9 +390,9 @@ const HomePage = ({ isAffiliateLink }) => {
 
   function buttonStyle(page) {
     if (p1inView == true && p2inView == false && page == 'page1') {
-      return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
+      return ' lg:w-28 h-20  text-white border-color10b ease-in-out duration-100 font-semibold';
     } else if (p2inView == true && p3inView == false && page == 'page2') {
-      return 'w-28 lg:lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold ';
+      return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold ';
     } else if (p3inView == true && p4inView == false && page == 'page3') {
       return 'w-28 lg:w-32 h-20 border-b-4 text-color10b border-color10b ease-in-out duration-100 font-semibold';
     } else if (p4inView == true && page == 'page4') {
@@ -413,17 +418,9 @@ const HomePage = ({ isAffiliateLink }) => {
     }
   }
 
-  function navStyle() {
-    if (p1inView && p2inView === false) {
-      return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-gradient-to-r from-color10c via-color10c to-color60   ease-in-out duration-300 w-full z-50';
-    } else {
-      return ' fixed flex justify-between items-center p-1 lg:p-10 h-1/10 bg-gradient-to-r from-color10c via-color10c to-color60 ease-in-out duration-300 w-full z-50';
-    }
-  }
-
   function menuButtonStyle(page) {
     if (p1inView == true && p2inView == false && page == 'page1') {
-      return ' w-full h-14 text-green2 bg-black rounded-t-xl';
+      return ' w-full h-14 text-white font-bold';
     } else if (p2inView == true && p3inView == false && page == 'page2') {
       return ' w-full h-14 text-green2 bg-black';
     } else if (p3inView == true && p4inView == false && page == 'page3') {
@@ -436,8 +433,6 @@ const HomePage = ({ isAffiliateLink }) => {
       return ' w-full h-14 hover:text-white hover:bg-green2';
     }
   }
-
-
 
   function menuStyle() {
     if (showMenu == false) {
@@ -471,12 +466,12 @@ const HomePage = ({ isAffiliateLink }) => {
       // navigateTo('/orderChat', {
       //   state: { orderReference: userdata.uid, isInquiry: true, backButtonRedirect: pathname, fromHomePage: false },
       // });
-      window.open('https://m.me/starpackph', '_blank')
+      window.open('https://m.me/starpackph', '_blank');
     } else {
       // navigateTo('/orderChat', {
       //   state: { orderReference: null, isInquiry: true, backButtonRedirect: pathname, fromHomePage: true },
       // });
-      window.open('https://m.me/starpackph', '_blank')
+      window.open('https://m.me/starpackph', '_blank');
     }
   }
 
@@ -509,7 +504,6 @@ const HomePage = ({ isAffiliateLink }) => {
   }
 
   function responsiveImageList() {
-
     if (width <= 850) {
       return 2;
     } else if (width <= 1400) {
@@ -523,7 +517,7 @@ const HomePage = ({ isAffiliateLink }) => {
 
   return (
     <div
-      className=" flex flex-col h-screen w-screen  overflow-y-scroll overflow-x-hidden bg-cover bg-center"
+      className=" flex flex-col h-screen w-screen overflow-x-hidden "
       // style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.1)),' + `url(${contactsImage})` }}
       style={{ backgroundColor: '#a3886c' }}
     >
@@ -532,23 +526,27 @@ const HomePage = ({ isAffiliateLink }) => {
       </Helmet>
 
       {/* Navigation Bar */}
-      <nav className={navStyle()}>
+      <nav
+        className={
+          'p-3 flex flex-row justify-between items-center h-full bg-gradient-to-r from-color10c via-color10c to-color60  ease-in-out duration-300 w-full '
+        }
+      >
         {/* Logo */}
-        <div className="w-3/12 sm:w-2/12 xl:w-1/12 h-full flex justify-center items-center gap-4 ">
-          <img
-            src={'/android-chrome-512x512.png'}
-            alt="logo"
-            className=" h-14 w-14  rounded-full cursor-pointer"
-            // onClick={()=>{scroll("page1")}}
-            onClick={() => {
-              isAffiliateLink ? navigateTo('/') : scroll('page1');
-            }}
-          />
-        </div>
+
+        <img
+          src={'/android-chrome-512x512.png'}
+          alt="logo"
+          className=" h-14 w-14  rounded-full cursor-pointer"
+          // onClick={()=>{scroll("page1")}}
+          onClick={() => {
+            isAffiliateLink ? navigateTo('/') : scroll('page1');
+          }}
+        />
+
         {/* Menu */}
-        <div className="w-full flex-row-reverse md:flex-row justify-start md:justify-between flex">
+        <div className="justify-between flex flex-row  ">
           {/* SMall Screen Menu */}
-          <div className="block md:hidden text-3xl h-20 p-2 ">
+          <div className="flex md:hidden text-3xl ">
             <div className=" flex justify-center items-center w-full h-full">
               {showMenu == false ? (
                 <BsList
@@ -567,17 +565,19 @@ const HomePage = ({ isAffiliateLink }) => {
               )}
             </div>
             {showMenu === true ? (
-              <div className="absolute top-20 sm:top-20 right-4 h-9/10 w-3/5 xs:w-1/2 sm:w-1/3 ease-in-out duration-300">
-                <ul className="py-2 px-0.5 gap-2 divide-y divide-green3 rounded-xl flex flex-col w-full justify-start items-center bg-green2 border border-green3 bg-opacity-90">
+              <div className="absolute top-24 sm:top-20 right-4 h-9/10 w-3/5 xs:w-1/2 sm:w-1/3 ease-in-out duration-300">
+                <ul className="py-2 gap-2 divide-y divide-green3  rounded-xl flex flex-col w-full justify-start items-center bg-green2 border border-green3 ">
                   <li>
                     <button
                       onClick={() => {
-                        scroll('page1');
-                        setShowMenu(false);
+                        navigateTo('/shop');
                       }}
-                      className={'text-xl  ' + menuButtonStyle('page1')}
+                      className={'text-2xl  ' + menuButtonStyle('page1')}
                     >
-                      Home
+                      <div className="flex flex-row gap-2">
+                        Shop
+                        <FaShoppingBag size={25} className="text-white" />
+                      </div>
                     </button>
                   </li>
                   <li>
@@ -642,11 +642,14 @@ const HomePage = ({ isAffiliateLink }) => {
           <div className="hidden md:block text-base md:text-lg xl:text-xl h-20 gap-0.5 justify-evenly items-start">
             <button
               onClick={() => {
-                scroll('page1');
+                navigateTo('/shop');
               }}
               className={buttonStyle('page1')}
             >
-              Home
+              <div className="flex flex-row gap-2">
+                Shop
+                <FaShoppingBag size={25} className="text-white" />
+              </div>
             </button>
             <button
               onClick={() => {
@@ -784,7 +787,7 @@ const HomePage = ({ isAffiliateLink }) => {
       {/* Page 1 Home*/}
       <section
         ref={page1}
-        className=" w-screen h-screen bg-cover bg-center  "
+        className=" w-screen h-screen  bg-cover bg-center  "
         style={{
           backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + `url(${backgroundImageUrl})`,
         }}
@@ -1173,8 +1176,11 @@ const HomePage = ({ isAffiliateLink }) => {
         </div>
       </section>
 
-      <HomePageCardSection propRef={p4} propRef2={page4} className={" flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 mt-40 shadow-xl "}/>
-      
+      <HomePageCardSection
+        propRef={p4}
+        propRef2={page4}
+        className={' flex flex-row overflow-x-auto w-full gap-5 px-5 lg:px-24 mt-40 shadow-xl '}
+      />
 
       <section
         ref={p5}
@@ -1283,7 +1289,7 @@ const HomePage = ({ isAffiliateLink }) => {
               <span className="w-30 sm:w-32 md:w-36 h-10 md:h-14 hover:w-0 md:mt-3 bg-color30 rounded-r-full ease-in-out duration-300">
                 <button
                   onClick={() => {
-                    handleAlert('info', 'We are still testing our shop. We will accept affiliates soon. Stay in touch')
+                    handleAlert('info', 'We are still testing our shop. We will accept affiliates soon. Stay in touch');
                   }}
                   className="w-30 sm:w-32 md:w-36 h-10 md:h-14 text-xs sm:text-sm p-2 text-white border-color30 hover:text-yellow-500 hover:border-yellow-500 tracking-tighter sm:tracking-normal font-normal lg:font-semibold border flex justify-start items-center rounded-r-full ease-in-out duration-300"
                 >
@@ -1318,7 +1324,7 @@ const HomePage = ({ isAffiliateLink }) => {
             <h1 className="text-color60 text-xl 2xs:text-2xl font-bold">Follow Us</h1>
             <div className="flex justify-around items-center gap-1 bg-slate-100 rounded-t-xl w-full mt-1 p-2 h-full">
               <a href="https://www.facebook.com/StarPackPh" target="_blank" rel="noopener noreferrer">
-                <div className='w-full p-5 xs:p-2 rounded-full bg-color60 hover:bg-green1 cursor-pointer'>
+                <div className="w-full p-5 xs:p-2 rounded-full bg-color60 hover:bg-green1 cursor-pointer">
                   <FaFacebookF className="text-white" />
                 </div>
               </a>
@@ -1334,7 +1340,6 @@ const HomePage = ({ isAffiliateLink }) => {
           <div className="h-9/10 w-full flex justify-center items-center">Copyright © 2023 | Made by Paper Boy</div>
         </div>
       </div> */}
-      
     </div>
   );
 };
