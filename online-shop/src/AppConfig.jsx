@@ -10,6 +10,11 @@ class AppConfig {
         this.featuredCategory = 'Meal Box'
         this.firestoreDeveloperEmail = ['ladia.adrian@gmail.com']
         this.minimumOrder = 200
+        this.cashEnabledThreshold = 2000
+    }
+
+    getCashEnabledThreshold() {
+        return this.cashEnabledThreshold
     }
 
     getMinimumOrder() {

@@ -3,16 +3,23 @@ import { Paper } from '@material-ui/core';
 import { useState } from 'react';
 import CheckoutContext from '../context/CheckoutContext';
 import AppContext from '../AppContext';
+import AppConfig from '../AppConfig';
 
 const PaymentCheckoutCard = (props) => {
   const [cardElevate, setCardElevate] = useState(false);
   const {changeCard, setChangeCard,alertSnackbar} = useContext(AppContext);
+  const disabled = props.disabled;
 
   
   const paymentOption = props.paymentOption;
   let logoLink = null;
   let cardStyle = null;
   let id = null;
+  if (paymentOption === 'cod') { 
+    logoLink = 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2FCODorCOP.png?alt=media&token=71d22fc9-475f-4f40-b898-f83f455f5d71&_gl=1*1iomi2e*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5Nzg1ODc0OC4xNTkuMS4xNjk3ODU5MDMzLjU2LjAuMA..'
+    
+    cardStyle = '';
+  }
   if (paymentOption === 'bdo') {
     logoLink =
     'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2Fbdo.png?alt=media&token=a2714b8c-954d-42c3-bbe3-457ae5f36003';
@@ -80,6 +87,11 @@ const PaymentCheckoutCard = (props) => {
   function onClick() {
     if (paymentOption === 'bitcoin') {
       alertSnackbar('info','Bitcoin is not yet available. Please choose another payment option.');
+      return
+    }
+
+    if (disabled === true) {
+      alertSnackbar('info',`COD is not available for orders above ${new AppConfig().getCashEnabledThreshold()} pesos. Please choose another payment option.`);
       return
     }
 

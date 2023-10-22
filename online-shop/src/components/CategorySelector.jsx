@@ -115,7 +115,7 @@ const CategorySelector = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div ref={myElement} className="w-full">
+      <div ref={myElement} className="w-full h-full">
         {categories && categories[categoryValue] ? (
           <Helmet>
             <title>{categories[categoryValue]} - Star Pack: Packaging Supplies</title>
@@ -125,7 +125,7 @@ const CategorySelector = (props) => {
             />
           </Helmet>
         ) : null}
-        <div className="flex flex-col items-center mt-5 from-colorbackground via-color2 to-color1">
+        <div className="flex flex-col h-full items-center mt-5 from-colorbackground via-color2 to-color1">
           <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider', justifyContent: 'center' }}>
               <Tabs

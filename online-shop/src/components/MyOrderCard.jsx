@@ -65,13 +65,13 @@ function MyOrderCard(props) {
 
 
   function onMessageClick() {
-    setUnRead(false)
-    firestore.updateOrderMessagesAsReadForUser(order.reference);
-
-    setSelectedChatOrderId(order.reference);
-    navigateTo('/orderChat', {
-      state: { orderReference: order.reference, isInquiry: false, backButtonRedirect: pathname },
-    });
+    // setUnRead(false)
+    // firestore.updateOrderMessagesAsReadForUser(order.reference);
+    // setSelectedChatOrderId(order.reference);
+    // navigateTo('/orderChat', {
+    //   state: { orderReference: order.reference, isInquiry: false, backButtonRedirect: pathname },
+    // });
+    window.open('https://www.m.me/starpackph', '_blank')
   }
 
   function handleCancel() {

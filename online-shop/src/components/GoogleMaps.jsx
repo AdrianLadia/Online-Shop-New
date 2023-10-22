@@ -9,14 +9,13 @@ import Geocode from 'react-geocode';
 import dataManipulation from '../../utils/dataManipulation';
 import UpdateMapMarkerModal from './UpdateMapMarkerModal';
 import firebaseConfig from '../firebase_config';
-
+import { set } from 'date-fns';
 
 // NOTES
 // How to set up marker on click
 // https://react-google-maps-api-docs.netlify.app/
 
 const GoogleMaps = (props) => {
-
   let { isLoaded } = useLoadScript({
     // googleMapsApiKey: 'AIzaSyAM-GEFgvP7ge4_P15OOSjYslrC-Seroro',
     googleMapsApiKey: firebaseConfig.apiKey,
@@ -36,28 +35,23 @@ const GoogleMaps = (props) => {
   const setZoom = props.setZoom;
   const setLocalDeliveryAddress = props.setLocalDeliveryAddress;
   const setAddressText = props.setAddressText;
-  const [containerClassName, setContainerClassName ] = useState("w-full h-[calc(100vh-200px)]") 
+  const [containerClassName, setContainerClassName] = useState('w-full h-[calc(100vh-200px)]');
 
-  const { datamanipulation,firestore, userId, deliveryaddress, latitude, setLatitude, longitude, setLongitude } =
+  const { datamanipulation, firestore, userId, deliveryaddress, latitude, setLatitude, longitude, setLongitude } =
     React.useContext(AppContext);
 
-  useEffect(()=>{
-    if(props.forFooter){
-      setContainerClassName("w-full h-[calc(28vh)]") 
+  useEffect(() => {
+    if (props.forFooter) {
+      setContainerClassName('w-full h-[calc(28vh)]');
     }
-  },[props.forFooter])
+  }, [props.forFooter]);
 
   let getLocation = () => {
-    if(locallatitude && locallongitude) {
-      setLocalLatitude(10.3622224);
-      setLocalLongitude(123.9192341);
-      setZoom(7);
-    }else{
-      navigator.geolocation.getCurrentPosition((position) => {
-        setLocalLatitude(position.coords.latitude);
-        setLocalLongitude(position.coords.longitude);
-      });
-    }
+    
+    navigator.geolocation.getCurrentPosition((position) => {
+      setLocalLatitude(position.coords.latitude);
+      setLocalLongitude(position.coords.longitude);
+    });
   };
 
   function onMapClick(e) {
@@ -83,7 +77,7 @@ const GoogleMaps = (props) => {
     if (latitude === 0 && longitude === 0) {
       getLocation();
       setSelectedAddress(false);
-      setZoom(7);
+      setZoom(18);
     } else {
       setLocalLatitude(latitude);
       setLocalLongitude(longitude);

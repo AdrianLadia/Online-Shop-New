@@ -35,7 +35,7 @@ const NavBar = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between flex-wrap bg-gradient-to-r from-color10c via-color10c to-color60 w-full h-16 ">
+      <div className="flex items-center justify-between  bg-gradient-to-r from-color10c via-color10c to-color60 w-full h-16 ">
         <Logo onClick={storeClick} />
         <div className='hover:cursor-pointer' onClick={homeClick}>
           <AiFillHome size={35} color='#6bd0ff'/>

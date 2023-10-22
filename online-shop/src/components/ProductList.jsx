@@ -113,7 +113,7 @@ const ProductList = (props) => {
   }
 
   return (
-    <div className="mb-16 mt-5 h-screen">
+    <div className=" mt-5 mb-40 h-full">
       <div id="productList" className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
@@ -160,6 +160,7 @@ const ProductList = (props) => {
           })
         )}
       </div>
+      
       <OpenCartButton shakeCartAnimation={shakeCartAnimation} setShakeCartAnimation={setShakeCartAnimation} />
       {clickedProduct != null ? <ProductCardModal modal={modal} setModal={setModal} product={clickedProduct} /> : null}
     </div>

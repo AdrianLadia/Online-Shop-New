@@ -46,8 +46,6 @@ function App() {
     setFbclid(fbc);
   }, []);
 
-
-
   const appConfig = new AppConfig();
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
@@ -74,25 +72,24 @@ function App() {
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
   const [cloudfirestore, setCloudFirestore] = useState(new cloudFirestoreDb(app));
-  const [businesscalculations, setBusinessCalculations] = useState(new businessCalculations(cloudfirestore))
-  const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations))
-  const [analytics, setAnalytics] = useState(new firebaseAnalytics(app, cloudfirestore))
+  const [businesscalculations, setBusinessCalculations] = useState(new businessCalculations(cloudfirestore));
+  const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations));
+  const [analytics, setAnalytics] = useState(new firebaseAnalytics(app, cloudfirestore));
   useEffect(() => {
-    const cloudfirestore = new cloudFirestoreDb(app,false,fbclid,userdata);
+    const cloudfirestore = new cloudFirestoreDb(app, false, fbclid, userdata);
     const businesscalculations = new businessCalculations(cloudfirestore);
     const datamanipulation = new dataManipulation(businesscalculations);
-      // Get Analytics
+    // Get Analytics
     const analytics = new firebaseAnalytics(app, cloudfirestore);
     setCloudFirestore(cloudfirestore);
     setBusinessCalculations(businesscalculations);
     setDataManipulation(datamanipulation);
     setAnalytics(analytics);
-    
-  }, [fbclid,userdata]);
+  }, [fbclid, userdata]);
 
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
- 
+
   const [isadmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
   const [cart, setCart] = useState({});
@@ -140,8 +137,6 @@ function App() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
-  
-  
 
   function alertSnackbar(severity, message, duration) {
     setShowAlert(true);
@@ -150,10 +145,7 @@ function App() {
     if (duration != null) {
       setAlertDuration(duration);
     }
-    
   }
-
-  
 
   useEffect(() => {
     firestore.readAllCategories().then((categories) => {
@@ -242,15 +234,27 @@ function App() {
   // GET USER BROWSER
   function checkIfBrowserSupported() {
     let userAgent = navigator.userAgent;
-    const fbStrings = ['FBAN', 'FBIOS', 'FBDV', 'FBMD', 'FBSN', 'FBSV', 'FBSS', 'FBID', 'FBLC', 'FBOP','MessengerLite','Instagram','facebook'];
+    const fbStrings = [
+      'FBAN',
+      'FBIOS',
+      'FBDV',
+      'FBMD',
+      'FBSN',
+      'FBSV',
+      'FBSS',
+      'FBID',
+      'FBLC',
+      'FBOP',
+      'MessengerLite',
+      'Instagram',
+      'facebook',
+    ];
     const containsAnyFBString = fbStrings.some((str) => userAgent.includes(str));
     if (containsAnyFBString) {
       return false;
-    }
-    else {
+    } else {
       return true;
     }
-
   }
 
   useEffect(() => {
@@ -486,8 +490,8 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
-    datamanipulation:datamanipulation,
-    businesscalculations:businesscalculations,
+    datamanipulation: datamanipulation,
+    businesscalculations: businesscalculations,
     fbclid: fbclid,
     alertSnackbar: alertSnackbar,
     analytics: analytics,
@@ -586,7 +590,7 @@ function App() {
   };
 
   return (
-    <div id="app">
+    <div className="flex flex-col h-full " id="app">
       <Routes>
         <Route
           path="/"
@@ -601,13 +605,7 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <NavBar />
-              {products != [] || categories != null ? (
-                <Shop />
-              ) : (
-                <div className="flex justify-center w-full h-96 mt-80">
-                  <CircularProgress size={150} />
-                </div>
-              )}
+              <Shop />
               {userdata ? (
                 <ProfileUpdaterModal
                   userdata={userdata}

@@ -682,10 +682,11 @@ class businessCalculations {
     if (testing === false) {
       // FOR MAYA WITH WEBHOOK
       console.log('paymentMethodSelected', paymentMethodSelected);
-      if (['maya', 'visa', 'mastercard', 'gcash'].includes(paymentMethodSelected)) {
+      if (['maya', 'visa', 'mastercard', 'gcash','shoppeepay','wechatpay'].includes(paymentMethodSelected)) {
         const fullName = data.fullName;
-        const firstName = fullName.split(' ')[0];
-        const lastName = fullName.split(' ')[1];
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts[nameParts.length - 1];
         const eMail = data.eMail;
         const phoneNumber = data.phoneNumber;
         const totalPrice = data.grandTotal;

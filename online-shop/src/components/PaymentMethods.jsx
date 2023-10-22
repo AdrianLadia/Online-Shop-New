@@ -4,8 +4,9 @@ import PaymentCheckoutCard from "./PaymentCheckoutCard";
 
 import useWindowDimensions from "./UseWindowDimensions";
 import AppContext from "../AppContext"
+import AppConfig from "../AppConfig";
 
-function PaymentMethods() {
+function PaymentMethods({itemsTotal}) {
   const { width } = useWindowDimensions();
   const {firestore,cardSelected,setCardSelected,setPaymentMethodSelected} = useContext(AppContext)
   const [paymentMethods,setPaymentMethods] = useState([])
@@ -33,8 +34,14 @@ function PaymentMethods() {
         // ONLY SHOW CARD IF ENABLED
         if (payments.enabled === true) {
           const id = payments.id
+          let disabled = false
+          if (payments.id === 'cod') {
+            if (itemsTotal > new AppConfig().getCashEnabledThreshold()) {
+              disabled = true
+            }
+          }
           return(
-            <PaymentCheckoutCard paymentOption={payments.id} cardSelected={cardSelected} setCardSelected={setCardSelected} setPaymentMethodSelected={setPaymentMethodSelected} />
+            <PaymentCheckoutCard disabled={disabled} paymentOption={payments.id} cardSelected={cardSelected} setCardSelected={setCardSelected} setPaymentMethodSelected={setPaymentMethodSelected} />
           )
         }
 
