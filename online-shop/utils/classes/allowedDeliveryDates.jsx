@@ -1,14 +1,15 @@
 class allowedDeliveryDates {
-  constructor() {
+  constructor(date = new Date()) {
     this.holidays = [
         "8/22/2023",
     ]
     this.daysAfterAllowed = 6
-    this.cutOffTime = 12
-    this.today = new Date();
+    this.cutOffTime = 14
+    this.today = date;
     this.minDate = new Date();
-    this.maxDate = new Date(this.minDate);
+    this.maxDate = new Date();
     this.maxDate.setDate(this.minDate.getDate() + this.daysAfterAllowed);
+    this.isStoreOpen = null
 }
   
     excludeDates = (date) => {
@@ -24,13 +25,15 @@ class allowedDeliveryDates {
     }
 
     getMinDate = () => {
-        const currentDate = new Date();
+        const currentDate = this.today
         const currentHour = currentDate.getHours();
         if (currentHour >= this.cutOffTime) {
             this.minDate.setDate(currentDate.getDate() + 1);
+            this.isStoreOpen = false
         } // 15 is the 24-hour representation of 3 PM
         else {
             this.minDate = currentDate;
+            this.isStoreOpen = true
         }
     }
  

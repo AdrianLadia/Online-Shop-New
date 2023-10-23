@@ -4684,7 +4684,7 @@ describe('test paymaya checkout request', async () => {
   });
 });
 
-describe.only('test transactionPlaceOrder must include paymentMethod', () => {
+describe('test transactionPlaceOrder must include paymentMethod', () => {
   test('Create Order', async () => {
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4723,4 +4723,41 @@ describe.only('test transactionPlaceOrder must include paymentMethod', () => {
   test('clean test data', async () => {
     await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
   });
-},100000);
+}, 100000);
+
+describe.only('test closing hours', async () => {
+  test('test if closed', async () => {
+    const currentDate = new Date();
+    const GMT_OFFSET = 8; // for GMT+8
+    const HOUR_IN_MS = 3600000; // number of milliseconds in an hour
+    // Adjust current date to GMT+8
+    const adjustedDate = new Date(currentDate.getTime() + GMT_OFFSET * HOUR_IN_MS);
+    // Set the time to 4:01 PM
+    adjustedDate.setHours(16, 1, 0, 0);
+    const allowedDates = new allowedDeliveryDates(adjustedDate);
+    const date = new Date();
+    allowedDates.runMain();
+    const minDate = allowedDates.minDate
+    const isStoreOpen = allowedDates.isStoreOpen
+    expect(minDate.getDate()).toEqual(date.getDate() + 1);
+    expect(isStoreOpen).toEqual(false);
+    console.log('test');
+  });
+  test ('test if open', async () => {
+    const currentDate = new Date();
+    const GMT_OFFSET = 8; // for GMT+8
+    const HOUR_IN_MS = 3600000; // number of milliseconds in an hour
+    // Adjust current date to GMT+8
+    const adjustedDate = new Date(currentDate.getTime() + GMT_OFFSET * HOUR_IN_MS);
+    // Set the time to 4:01 PM
+    adjustedDate.setHours(12, 1, 0, 0);
+    const allowedDates = new allowedDeliveryDates(adjustedDate);
+    const date = new Date();
+    allowedDates.runMain();
+    const minDate = allowedDates.minDate
+    const isStoreOpen = allowedDates.isStoreOpen
+    expect(minDate.getDate()).toEqual(date.getDate());
+    expect(isStoreOpen).toEqual(true);
+    console.log('test');
+  })
+});
