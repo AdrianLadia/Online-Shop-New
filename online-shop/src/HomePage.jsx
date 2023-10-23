@@ -897,12 +897,12 @@ const HomePage = ({ isAffiliateLink }) => {
             className=" w-11/12 h-9/10 flex-col md:flex-row p-5 sm:p-16 md:p-5 gap-2 sm:gap-4 flex items-center justify-evenly rounded-3xl bg-local bg-cover bg-center"
             //  style={{backgroundImage: 'linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),' + "url('./vids/pexel.jpg')"}}
           >
-            <header className="bg-colorbackground w-19/20 sm:w-9/10 md:w-4/10 h-1/2 md:h-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl shadow-lg   ">
+            <header className="bg-colorbackground lg:w-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl shadow-lg   ">
               {/* <h1 className='h-2/10 text-2xl sm:text-4xl font-bold'>Star Pack is</h1> */}
               <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
                 Star Pack is...
               </Typography>
-              <p className="h-6/10 tracking-tighter sm:tracking-normal text-sm w-full md:w-10/12 text-black indent-2 overflow-y-auto">
+              <p className=" text-sm w-full  text-black indent-2 ">
                 <Typography variant={responsiveText()}>
                   "Empowering Businesses, Simplifying Success.
                   <br />
