@@ -205,15 +205,29 @@ const ProductCard = (props) => {
     }
   }
 
+  function responsivePieces() {
+    if (width < 300) {
+      return '12px';
+    } else if (width < 768) {
+      return '13px';
+    } else if (width < 1024) {
+      return '14px';
+    } else if (width < 1536) {
+      return '15px';
+    } else {
+      return '16px';
+    }
+  }
+
   function responsivePrice() {
     if (width < 300) {
-      return '13px';
+      return '20px';
     } else if (width < 768) {
-      return '16px';
+      return '20px';
     } else if (width < 1024) {
-      return '16px';
+      return '20px';
     } else if (width < 1536) {
-      return '18px';
+      return '20px';
     } else {
       return '20px';
     }
@@ -252,6 +266,8 @@ const ProductCard = (props) => {
   function responsiveWidth() {
     return 'max-w-lg';
   }
+
+  
 
 
   if (product.imageLinks.length === 0) {
@@ -334,15 +350,17 @@ const ProductCard = (props) => {
               ) : (
                 <>
                   {lowstock === true ? (
-                    <div className="flex flex-row h-1/12">
-                      <Typography fontSize={responsiveFont()} color="red">
-                        Stocks left
-                      </Typography>
-                      <span className="flex h-3 w-3 ml-1 ">
-                        <span className="inline-flex items-center justify-center mt-0 2xl:mt-1 py-2 px-1.5 text-xs font-semibold text-white bg-red-600 rounded-full">
+                    <div className="flex flex-row h-1/12 mt-1">
+                      <span className="flex h-3 w-3 mr-1 ">
+                        <span className="flex items-center justify-center 2xl:mt-1 py-2 px-1.5 text-xs font-semibold text-white bg-red-600 rounded-full">
                           {(product.unit == 'Pack') ? retailStocksAvailable : wholesaleStocksAvailable}
                         </span>
                       </span>
+                      <div className='ml-4'>
+                      <Typography fontSize={responsiveFont()} color="red">
+                        {isWholesale ? 'Boxes' : 'Packs'} left
+                      </Typography>
+                      </div>
                     </div>
                   ) : (
                     <div className="h-1/12"> </div>
@@ -357,19 +375,17 @@ const ProductCard = (props) => {
 
               <div className="h-1/9 w-max mt-2 2xs:mt-0 ">
                 <Typography
-                  sx={{ fontSize: responsivePrice(), mt: 2, cursor: 'help' }}
+                  sx={{ fontSize: responsivePieces(), mt: 2, cursor: 'help' }}
                   className="tracking-tight"
                   onClick={showModal}
                 >
-                  Pieces: {props.product.pieces}
+                  {props.product.pieces} Pieces / {isWholesale ? 'Box' : 'Pack'}
                 </Typography>
               </div>
 
               <div className="h-1/6 flex items-center">
+        
                 <Typography sx={{ fontSize: responsivePrice(), mb: 1, cursor: 'text' }} className="tracking-tight">
-                  Price : 
-                </Typography>
-                <Typography sx={{ fontSize: responsivePrice(), mb: 1,ml:1, cursor: 'text' }} className="tracking-tight">
                   {'₱ ' + props.product.price}
                 </Typography>
               </div>
