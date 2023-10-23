@@ -361,6 +361,7 @@ describe('Data Manipulation', async () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -407,6 +408,7 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -518,6 +520,7 @@ describe('Data Manipulation', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     const orders = await firestore.readUserById(userTestId);
@@ -1104,6 +1107,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(200);
 
@@ -1198,6 +1202,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(200);
 
@@ -1227,6 +1232,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await delay(200);
@@ -1257,6 +1263,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await delay(200);
@@ -1318,6 +1325,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await delay(100);
@@ -1386,6 +1394,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await delay(300);
@@ -1485,6 +1494,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
 
@@ -1568,6 +1578,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1596,6 +1607,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1624,6 +1636,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     const req3 = {
@@ -1803,6 +1816,7 @@ describe('cloudfirestoredb', async () => {
         manufactured: true,
         machinesThatCanProduce: '',
         stocksLowestPoint: [],
+        paymentMethod: 'cod',
       },
       'test',
       allProducts
@@ -1904,6 +1918,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(500);
 
@@ -1952,6 +1967,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(500);
 
@@ -1990,6 +2006,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
 
@@ -2155,6 +2172,7 @@ describe('deleteOrderFromUserFirestore', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2183,6 +2201,7 @@ describe('deleteOrderFromUserFirestore', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2211,6 +2230,7 @@ describe('deleteOrderFromUserFirestore', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     test('check if reference is added to orderMessages collection', async () => {
@@ -2312,6 +2332,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
   }, 100000);
@@ -2394,15 +2415,15 @@ describe('sendEmail', async () => {
   });
 }, 100000);
 
-describe('afterCheckoutRedirectLogic', () => {
+describe('afterCheckoutRedirectLogic', async () => {
   class testCheckout {
     constructor() {
       this.deliveryVehicle = new lalamoveDeliveryVehicles().motorcycle;
     }
 
     mockFunction() {}
-    runFunction(paymentMethodSelected) {
-      const res = businesscalculations.afterCheckoutRedirectLogic(
+    async runFunction(paymentMethodSelected) {
+      const res = await businesscalculations.afterCheckoutRedirectLogic(
         {
           paymentMethodSelected: paymentMethodSelected,
           referenceNumber: 'testref1234',
@@ -2433,37 +2454,37 @@ describe('afterCheckoutRedirectLogic', () => {
 
   test('Test BDO', async () => {
     let res;
-    res = testRedirect.runFunction('bdo');
+    res = await testRedirect.runFunction('bdo');
     expect(res).toEqual('bdo');
   });
 
   test('Test Unionbank', async () => {
     let res;
-    res = testRedirect.runFunction('unionbank');
+    res = await testRedirect.runFunction('unionbank');
     expect(res).toEqual('unionbank');
   });
 
   test('Test Maya', async () => {
     let res;
-    res = testRedirect.runFunction('maya');
+    res = await testRedirect.runFunction('maya');
     expect(res).toEqual('maya');
   });
 
   test('Test Maya', async () => {
     let res;
-    res = testRedirect.runFunction('gcash');
+    res = await testRedirect.runFunction('gcash');
     expect(res).toEqual('gcash');
   });
 
   test('Test Maya', async () => {
     let res;
-    res = testRedirect.runFunction('visa');
+    res = await testRedirect.runFunction('visa');
     expect(res).toEqual('visa');
   });
 
   test('Test Maya', async () => {
     let res;
-    res = testRedirect.runFunction('mastercard');
+    res = await testRedirect.runFunction('mastercard');
     expect(res).toEqual('mastercard');
   });
 
@@ -2509,6 +2530,7 @@ describe('updatePaymentStatus', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
   });
   test('create Test Payment Proof Upload', async () => {
@@ -2571,6 +2593,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
@@ -2599,6 +2622,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
@@ -2627,6 +2651,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
@@ -2655,6 +2680,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
     await cloudfirestore.transactionPlaceOrder({
@@ -2683,6 +2709,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await firestore.updateDocumentFromCollection('Orders', 'testref1234', { orderDate: twoDaysAgo });
     await firestore.updateDocumentFromCollection('Orders', 'testref12345', { orderDate: twoDaysAgo });
@@ -2769,6 +2796,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await delay(300);
@@ -2807,6 +2835,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(2000);
   }, 100000);
@@ -2899,6 +2928,7 @@ describe('transactionPlaceOrder test retail', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
     const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2948,6 +2978,7 @@ describe('deleteDeclinedPayments', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -3037,6 +3068,7 @@ describe('testCancelOrder', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
   });
 
@@ -3176,6 +3208,7 @@ describe('testRetailTransactionPlaceOrder', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     await delay(200);
@@ -3298,6 +3331,7 @@ describe('test commission system', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
@@ -3450,6 +3484,7 @@ describe('test commission system', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
   });
   test('pay order with vat', async () => {
@@ -3593,6 +3628,7 @@ describe('count all orders of a specific year', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -3620,6 +3656,7 @@ describe('count all orders of a specific year', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
   });
@@ -3672,6 +3709,7 @@ describe('test transaction create payment without an affiliate', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(5000);
     await cloudfirestore.transactionPlaceOrder({
@@ -3700,6 +3738,7 @@ describe('test transaction create payment without an affiliate', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(5000);
   }, 1000000);
@@ -3789,6 +3828,7 @@ describe('test transactionPlaceOrder should not allow order if cart stocks is mo
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     expect(res.status).toEqual(409);
@@ -3822,6 +3862,7 @@ describe('test transactionPlaceOrder data validation', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
 
     expect([400, 409].includes(res.status)).toEqual(true);
@@ -3857,6 +3898,7 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
   });
@@ -3924,6 +3966,7 @@ describe('Void payment', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -3951,6 +3994,7 @@ describe('Void payment', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -3978,6 +4022,7 @@ describe('Void payment', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(300);
   }, 10000);
@@ -4167,6 +4212,7 @@ describe('test edit customer order function', () => {
       isInvoiceNeeded: true,
       urlOfBir2303: 'testurl.com',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(2000);
   });
@@ -4257,6 +4303,7 @@ describe('test edit customer order function', () => {
       isInvoiceNeeded: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(2000);
   });
@@ -4434,6 +4481,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(5000);
   }, 10000);
@@ -4479,6 +4527,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4506,6 +4555,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       isInvoiceNeeded: true,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
     });
     await delay(5000);
   }, 20000);
@@ -4597,7 +4647,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
   });
 });
 
-describe.only('test paymaya checkout request', async () => {
+describe('test paymaya checkout request', async () => {
   test('invoke function', async () => {
     const req = {
       totalAmount: {
@@ -4633,3 +4683,44 @@ describe.only('test paymaya checkout request', async () => {
     expect(website).toEqual('https://');
   });
 });
+
+describe.only('test transactionPlaceOrder must include paymentMethod', () => {
+  test('Create Order', async () => {
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 20000,
+      vat: 2000,
+      shippingtotal: 3000,
+      grandTotal: 25000,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      isInvoiceNeeded: true,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+    });
+    await delay(5000);
+  });
+  test('check values', async () => {
+    const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+    expect(order.paymentMethod).toEqual('cod');
+  });
+  test('clean test data', async () => {
+    await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
+  });
+},100000);

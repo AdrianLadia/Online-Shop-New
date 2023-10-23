@@ -63,9 +63,11 @@ const GoogleMaps = (props) => {
     setLocalDeliveryAddress('');
 
     let address = undefined;
-    firestore.updateLatitudeLongitude(userId, e.latLng.lat(), e.latLng.lng());
+    if (userId) {
+      firestore.updateLatitudeLongitude(userId, e.latLng.lat(), e.latLng.lng());
+    }
 
-    if (deliveryaddress.address === undefined) {
+    if (deliveryaddress?.address === undefined) {
       address = deliveryaddress.address;
     } else {
       address = '';

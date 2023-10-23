@@ -146,7 +146,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       shippingtotal: Joi.number().required(),
       grandTotal: Joi.number().required(),
       reference: Joi.string().required(),
-      userphonenumber: Joi.string().allow(''),
+      userphonenumber: Joi.string().required().allow(''),
       deliveryNotes: Joi.string().allow(''),
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
@@ -158,6 +158,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       urlOfBir2303: Joi.string().allow('', null),
       countOfOrdersThisYear: Joi.number().required(),
       deliveryDate: Joi.date().required(),
+      paymentMethod: Joi.string().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {
