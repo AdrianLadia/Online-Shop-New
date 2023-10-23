@@ -633,6 +633,7 @@ exports.transactionPlaceOrder = functions
       const urlOfBir2303 = data.urlOfBir2303;
       const countOfOrdersThisYear = data.countOfOrdersThisYear;
       const deliveryDate = new Date(data.deliveryDate);
+      const paymentMethod = data.paymentMethod;
 
       let cartUniqueItems = [];
 
@@ -875,6 +876,7 @@ exports.transactionPlaceOrder = functions
               countOfOrdersThisYear: countOfOrdersThisYear,
               proofOfDeliveryLink: [],
               deliveryDate: deliveryDate,
+              paymentMethod: paymentMethod,
             };
             const userOrderObject = { reference: reference, date: new Date() };
             const updatedOrders = [userOrderObject, ...oldOrders];
@@ -941,6 +943,7 @@ exports.transactionPlaceOrder = functions
               <p><strong>Need Assistance:</strong> ${newOrder.needAssistance}</p>
               <p><strong>Contact Name:</strong> ${newOrder.contactName}</p>
               <p><strong>Contact Phone Number:</strong> ${newOrder.contactPhoneNumber}</p>
+              
               <p><strong>Items:</strong></p>
               <ul>
               ${Object.keys(newOrder.cart)
@@ -948,11 +951,12 @@ exports.transactionPlaceOrder = functions
                   return `<li>${key} - ${newOrder.cart[key]}</li>`;
                 })
                 .join('')}
-              </ul>
-              <p><strong>Items Total:</strong> ${newOrder.itemsTotal}</p>
-              <p><strong>VAT:</strong> ${newOrder.vat}</p>
-              <p><strong>Shipping Total:</strong> ${newOrder.shippingTotal}</p>
-              <p><strong>Grand Total:</strong> ${newOrder.grandTotal}</p>
+                </ul>
+                <p><strong>Items Total:</strong> ${newOrder.itemsTotal}</p>
+                <p><strong>VAT:</strong> ${newOrder.vat}</p>
+                <p><strong>Shipping Total:</strong> ${newOrder.shippingTotal}</p>
+                <p><strong>Grand Total:</strong> ${newOrder.grandTotal}</p>
+                <p><strong>Payment Method: </strong> ${newOrder.paymentMethod}</p>
 
 
               <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>

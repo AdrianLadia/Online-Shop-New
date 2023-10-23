@@ -392,6 +392,7 @@ const CheckoutPage = () => {
         urlOfBir2303: urlOfBir2303,
         countOfOrdersThisYear: countOfOrdersThisYear,
         deliveryDate: startDate.toISOString(),
+        paymentMethod: paymentMethodSelected,
       });
 
       setTransactionStatus(res);
