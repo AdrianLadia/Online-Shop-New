@@ -536,9 +536,15 @@ class firestoredb extends firestorefunctions {
     );
   }
 
-  async readAllOrdersByUserId(userId) {
-    const userData = await this.readUserById(userId);
-    return userData.orders;
+  async readAllUnpaidOrdersByUserId(userId) {
+    const orderRef = collection(this.db, 'Orders')
+    const q = query(orderRef, where('userId', '==', userId), where('paid', '==', false));
+    const querySnapshot = await getDocs(q);
+    const orders = [];
+    querySnapshot.forEach((doc) => {
+      orders.push(doc.data());
+    })
+    return orders; 
   }
 
   async readAllAvailableAffiliateBankAccounts(userId) {

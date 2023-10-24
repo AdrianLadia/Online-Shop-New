@@ -58,6 +58,7 @@ const AdminCreatePayment = (props) => {
 
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
+    console.log(customers);
     setAllUserNames(customers);
   }, [users]);
 
@@ -67,24 +68,17 @@ const AdminCreatePayment = (props) => {
       if (selectedName !== '') {
         const userId = datamanipulation.getUserUidFromUsers(users, selectedName);
         setUserid(userId);
-        const result = await firestore.readAllOrdersByUserId(userId);
+        const result = await firestore.readAllUnpaidOrdersByUserId(userId);
         const unpaidOrdersReference = [];
-
-        const promises = result.map(async (orderData) => {
-          const data = await cloudfirestore.readSelectedOrder(orderData.reference, userdata.uid);
-          return data;
+        result.forEach((data) => {
+          if (data.paid == false) {
+            unpaidOrdersReference.push(data.reference);
+          }
         });
-
-        Promise.all(promises).then((res) => {
-          const unpaidOrdersReference = [];
-          res.forEach((data) => {
-            if (data.paid == false) {
-              unpaidOrdersReference.push(data.reference);
-            }
-          });
-          setUnpaidOrdersReference(unpaidOrdersReference);
+        console.log(unpaidOrdersReference);
+        setUnpaidOrdersReference(unpaidOrdersReference);
           // You may want to set the result to your state or do something else with it
-        });
+        
       }
     }
     getReferences();
@@ -117,19 +111,31 @@ const AdminCreatePayment = (props) => {
       setLoading(false);
     }
 
+    console.log(data)
+
     cloudfirestore
       .transactionCreatePayment(data)
       .then((res) => {
+
+        if (res.data != 'success') {
+          alert(res.data);
+          setLoading(false);
+          return;
+        }
+
+
         alert('Payment Created Successfully');
         setAmount('');
         setReference('');
         setPaymentLink('');
         setLoading(false);
-        cloudfirestore.sendEmail({
-          to: customerEmail,
-          subject: 'Payment Created',
-          text: 'Payment of PHP ' + amount + ' has been accepted by us. Please check your account for more details.',
-        });
+        if (customerEmail !== '') {
+          cloudfirestore.sendEmail({
+            to: customerEmail,
+            subject: 'Payment Created',
+            text: 'Payment of PHP ' + amount + ' has been accepted by us. Please check your account for more details.',
+          });
+        }
       })
       .catch((err) => {
         alert('Failed to create payment. Please try again later.');

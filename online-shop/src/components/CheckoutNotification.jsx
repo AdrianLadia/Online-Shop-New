@@ -5,9 +5,12 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
 const CheckoutNotification = ({ allowedDates }) => {
-  //   const [open, setOpen] = React.useState(!allowedDates.isStoreOpen);
-  // console.log(allowedDates)
-  const [open, setOpen] = React.useState(true);
+
+  if (!allowedDates) {
+    return null;
+  }
+
+  const [open, setOpen] = React.useState(!allowedDates.isStoreOpen);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -15,9 +18,6 @@ const CheckoutNotification = ({ allowedDates }) => {
     console.log(allowedDates);
   }, [allowedDates]);
 
-  if (!allowedDates) {
-    return null;
-  }
 
   return (
     <div>

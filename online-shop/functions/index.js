@@ -362,8 +362,10 @@ exports.onPaymentsChange = functions
     const db = admin.firestore();
     const userId = afterData.userId;
 
+    // WE DONT DO ANYTHING IF USERID IS GUEST BECAUSE 
+    // GUEST DOES NOT HAVE AN ACCOUNT STATEMENT
     if (userId == 'GUEST') {
-      console.log('userId is null');
+      console.log('userId is GUEST');
       return;
     }
 
@@ -389,7 +391,6 @@ exports.onPaymentsChange = functions
     });
 
     const toUpdate = updateAccountStatement(userPayments, orders);
-    console.log(toUpdate);
     toUpdate.forEach(async (_toUpdate) => {
       const orderRef = db.collection('Orders').doc(_toUpdate.reference);
       await orderRef.update({ paid: _toUpdate.paid });
@@ -810,15 +811,17 @@ exports.transactionPlaceOrder = functions
               }
             });
             if (addressexists == false || latitudeexists == false || longitudeexists == false) {
-              const newAddress = [
-                {
-                  latitude: locallatitude,
-                  longitude: locallongitude,
-                  address: localDeliveryAddress,
-                },
-              ];
-              const updatedAddressList = [...newAddress, ...deliveryAddress];
-              transaction.update(userRef, { deliveryAddress: updatedAddressList });
+              if (userid != 'GUEST') {
+                const newAddress = [
+                  {
+                    latitude: locallatitude,
+                    longitude: locallongitude,
+                    address: localDeliveryAddress,
+                  },
+                ];
+                const updatedAddressList = [...newAddress, ...deliveryAddress];
+                transaction.update(userRef, { deliveryAddress: updatedAddressList });
+              }
             }
 
             // WRITE TO CONTACT NUMBER
@@ -835,10 +838,11 @@ exports.transactionPlaceOrder = functions
               }
             });
             if (phonenumberexists == false || nameexists == false) {
-              const newContact = [{ name: localname, phoneNumber: localphonenumber }];
-              const updatedContactList = [...newContact, ...contactPerson];
-
-              transaction.update(userRef, { contactPerson: updatedContactList });
+              if (userid != 'GUEST') {
+                const newContact = [{ name: localname, phoneNumber: localphonenumber }];
+                const updatedContactList = [...newContact, ...contactPerson];
+                transaction.update(userRef, { contactPerson: updatedContactList });
+              }
             }
 
             const oldOrders = userData.orders;
@@ -1249,6 +1253,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
             paymentNotAccepted = true;
             return;
           } else {
+            console.log('setting order to paid : ' + orderReference )
             transaction.update(orderRef, { paid: true });
           }
         }
