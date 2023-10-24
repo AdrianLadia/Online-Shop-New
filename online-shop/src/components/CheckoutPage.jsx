@@ -33,6 +33,8 @@ import OrdersCalendar from './OrdersCalendar';
 import allowedDeliveryDates from '../../utils/classes/allowedDeliveryDates';
 import { set } from 'date-fns';
 import Joi from 'joi';
+import AnnouncementNotification from './AnnouncementNotification';
+import CheckoutNotification from './CheckoutNotification';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -132,13 +134,18 @@ const CheckoutPage = () => {
 
   const [startDate, setStartDate] = useState(new Date());
   const [pickUpOrDeliver, setPickUpOrDeliver] = useState('deliver');
+  const [allowedDates,setAllowedDates] = useState(null)
+  useEffect(() => {
+    const ad = new allowedDeliveryDates();
+    ad.runMain();
+    const minDate = ad.minDate;
+    const maxDate = ad.maxDate;
+    const filterDate = ad.excludeDates;
+    const holidays = ad.holidays;
+    const isStoreOpen = ad.isStoreOpen;
+    setAllowedDates(ad)
+  }, []);
 
-  const allowedDates = new allowedDeliveryDates();
-  allowedDates.runMain();
-  const minDate = allowedDates.minDate;
-  const maxDate = allowedDates.maxDate;
-  const filterDate = allowedDates.excludeDates;
-  const holidays = allowedDates.holidays;
 
   // Get count of orders for this year
   useEffect(() => {
@@ -268,7 +275,6 @@ const CheckoutPage = () => {
       } else {
         setDeliveryFee(deliveryFee);
       }
-      console.log(vehicleObject);
       setDeliveryVehicle(vehicleObject);
     }
 
@@ -873,10 +879,10 @@ const CheckoutPage = () => {
                     <OrdersCalendar
                       startDate={startDate}
                       setStartDate={setStartDate}
-                      minDate={minDate}
-                      maxDate={maxDate}
-                      filterDate={filterDate}
-                      disabledDates={holidays}
+                      minDate={allowedDates ? allowedDates.minDate : null}
+                      maxDate={allowedDates? allowedDates.maxDate : null}
+                      filterDate={allowedDates? allowedDates.excludeDates: null}
+                      disabledDates={allowedDates? allowedDates.holidays : null}
                     />
                   </div>
                 </div>
@@ -942,6 +948,7 @@ const CheckoutPage = () => {
           setLocalName={setLocalName}
           setLocalPhoneNumber={setLocalPhoneNumber}
         />
+        <CheckoutNotification allowedDates={allowedDates}/>
       </div>
     </ThemeProvider>
   );
