@@ -2098,6 +2098,8 @@ exports.voidPayment = functions
             }
           });
 
+          console.log(updatedPayments)
+
           transaction.update(userRef, { payments: updatedPayments });
 
           // delete proof of payment link in order
@@ -2106,6 +2108,8 @@ exports.voidPayment = functions
               return link;
             }
           });
+
+          console.log(updatedOrderProofOfPaymentLink)
 
           transaction.update(orderRef, { proofOfPaymentLink: updatedOrderProofOfPaymentLink });
 
