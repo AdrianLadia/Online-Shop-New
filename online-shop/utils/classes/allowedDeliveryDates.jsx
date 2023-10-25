@@ -2,6 +2,7 @@ class allowedDeliveryDates {
   constructor(date = new Date()) {
     this.holidays = [
         "8/22/2023",
+        ""
     ]
     this.daysAfterAllowed = 6
     this.cutOffTime = 14

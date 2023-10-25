@@ -4345,7 +4345,7 @@ describe('test edit customer order function', () => {
   });
 }, 100000000);
 
-describe('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
+describe.only('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
       {
@@ -4486,7 +4486,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
     await delay(5000);
   }, 10000);
   test('check values', async () => {
-    // expect cart stocks to be minused,
+    // expect stocks to be minused,
     const testProduct1 = await firestore.readSelectedDataFromCollection('Products', 'test');
     const testProduct2 = await firestore.readSelectedDataFromCollection('Products', 'test2');
     expect(testProduct1.stocksAvailable).toEqual(10);
@@ -4500,7 +4500,6 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
   }, 10000);
   test('create 2 orders', async () => {
     // create 2 orders
-
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       testing: true,
@@ -4758,6 +4757,19 @@ describe.only('test closing hours', async () => {
     const isStoreOpen = allowedDates.isStoreOpen
     expect(minDate.getDate()).toEqual(date.getDate());
     expect(isStoreOpen).toEqual(true);
+    console.log('test');
+  })
+  test.only ('test sundays', async () => {
+    // create date sunday
+    const sunday = new Date();
+    sunday.setDate(sunday.getDate() + 1);
+    const allowedDates = new allowedDeliveryDates(sunday);
+    const date = new Date();
+    allowedDates.runMain();
+    const minDate = allowedDates.minDate
+    const isStoreOpen = allowedDates.isStoreOpen
+    expect(minDate.getDate()).toEqual(date.getDate() + 2);
+    expect(isStoreOpen).toEqual(false);
     console.log('test');
   })
 });

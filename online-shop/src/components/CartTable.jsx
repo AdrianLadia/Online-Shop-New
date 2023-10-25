@@ -13,7 +13,7 @@ const CartTable = (props) => {
 
     const {width, height} = useWindowDimensions();
     function getMaxHeightTable() {
-        return height - 355
+        return height - 390
     }
 
     const rows = props.rows
@@ -60,7 +60,7 @@ const CartTable = (props) => {
 
   return (
     <Paper elevation={10} className="mt-4 border-2 border-color60" >
-      <TableContainer sx={{ maxHeight: 430}} >
+      <TableContainer sx={{ maxHeight: getMaxHeightTable()}} >
         <Table stickyHeader aria-label="sticky table">
           <TableHead >
             <TableRow >

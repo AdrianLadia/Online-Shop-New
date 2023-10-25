@@ -26,7 +26,7 @@ const ProductCard = (props) => {
   const [outofstock, setOutOfStock] = useState(false);
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
-  const { businesscalculations,alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics } = useContext(AppContext);
+  const { businesscalculations,alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics,userdata } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(false);
   const ref = useRef(null);
   const showTutorial = false
@@ -75,6 +75,8 @@ const ProductCard = (props) => {
     setOpen(false);
   };
 
+  
+
   function AddToCart() {
     
     setUpdateCartInfo(!updateCartInfo);
@@ -105,21 +107,30 @@ const ProductCard = (props) => {
       }
     }
 
+    
+    console.log( businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay()))
+    console.log(getStocksAvailable())
+    console.log(getAverageSalesPerDay())
+
     if (isWholesale) {
-      if (totalOrder > businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
-        setQuantity('');
-        alertSnackbar('error','Not enough stocks available');
-        return;
+      if (userdata?.userRole != 'superAdmin') {
+        if (totalOrder > businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
+          setQuantity('');
+          alertSnackbar('error','Not enough stocks available');
+          return;
+        }
       }
     } else {
-  
-       if (
-        totalOrder >
-        businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true)
-      ) {
-        setQuantity('');
-        alertSnackbar('error','Not enough stocks available');
-        return;
+      
+      if (userdata?.userRole != 'superAdmin') {
+        if (
+         totalOrder >
+         businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay(),true) 
+       ) {
+         setQuantity('');
+         alertSnackbar('error','Not enough stocks available');
+         return;
+       }
       }
     }
 

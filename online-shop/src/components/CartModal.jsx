@@ -77,7 +77,7 @@ const CartModal = (props) => {
   return (
     <Modal open={openCart} onClose={CloseCart}>
       <Fade in={openCart}>
-        <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-y-auto bg-colorbackground border-color60">
+        <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-y-auto h-9/10 bg-colorbackground border-color60">
           <div className="flex flex-row justify-between mb-4">
             <div className='flex flex-row gap-5'>
               <QuotationCreatorButton
