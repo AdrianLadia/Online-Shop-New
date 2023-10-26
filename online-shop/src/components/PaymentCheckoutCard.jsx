@@ -96,9 +96,6 @@ const PaymentCheckoutCard = (props) => {
     }
 
     Object.keys(cardSelected).forEach((key) => {
-
-    
-
       if (key == paymentOption) {
         cardSelected[key] = true;
       }
@@ -107,6 +104,8 @@ const PaymentCheckoutCard = (props) => {
       }
     });
 
+    console.log(paymentOption)
+    console.log(cardSelected)
     setPaymentMethodSelected(paymentOption);
     setCardSelected(cardSelected);
     setChangeCard(!changeCard);

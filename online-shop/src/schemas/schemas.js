@@ -55,6 +55,7 @@ class schemas {
       affiliateId : Joi.string().required().allow(null,''),
       affiliateBankAccounts: Joi.array().required().allow(null,''),
       joinedDate: Joi.date().required(),
+      codBanned : Joi.boolean().required(),
     }).unknown(false);
   }
 

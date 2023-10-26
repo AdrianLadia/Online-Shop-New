@@ -36,6 +36,7 @@ import Joi from 'joi';
 import AnnouncementNotification from './AnnouncementNotification';
 import CheckoutNotification from './CheckoutNotification';
 
+
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
 
@@ -904,7 +905,7 @@ const CheckoutPage = () => {
                   </Typography>
                 </div>
 
-                <PaymentMethods itemsTotal={total} />
+                <PaymentMethods itemsTotalPrice={total} userdata={userdata} email={localemail} phoneNumber={localphonenumber}  />
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 

@@ -18,6 +18,7 @@ import { fi } from 'date-fns/locale';
 import AppConfig from '../src/AppConfig';
 import storeProductsOrganizer from '../utils/classes/storeProductsOrganizer';
 import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
+import disableCodHandler from '../utils/classes/disableCodHandler';
 
 //
 const app = initializeApp(firebaseConfig);
@@ -49,6 +50,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
+    codBanned: false,
   },
   'TESTAFFILIATE'
 );
@@ -75,6 +77,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
+    codBanned: false,
   },
   'TESTUSER'
 );
@@ -101,6 +104,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
+    codBanned: false,
   },
   'NOAFFILIATETESTUSER'
 );
@@ -686,6 +690,7 @@ describe('Transaction Create Payment', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'testuser'
     );
@@ -734,6 +739,7 @@ describe('firestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'test'
     );
@@ -761,6 +767,7 @@ describe('firestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'testuser'
     );
@@ -1749,6 +1756,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'testuser'
     );
@@ -1881,6 +1889,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'testuser'
     );
@@ -2048,6 +2057,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'testuser'
     );
@@ -2083,6 +2093,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'testuser2'
     );
@@ -3276,6 +3287,7 @@ describe('test commission system', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'TESTAFFILIATE'
     );
@@ -3302,6 +3314,7 @@ describe('test commission system', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'TESTUSER'
     );
@@ -4345,7 +4358,7 @@ describe('test edit customer order function', () => {
   });
 }, 100000000);
 
-describe.only('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
+describe('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
       {
@@ -4370,6 +4383,7 @@ describe.only('test transactionPlaceOrder and transactionCreatePayment with Gues
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
+        codBanned: false,
       },
       'GUEST'
     );
@@ -4724,7 +4738,7 @@ describe('test transactionPlaceOrder must include paymentMethod', () => {
   });
 }, 100000);
 
-describe.only('test closing hours', async () => {
+describe('test closing hours', async () => {
   test('test if closed', async () => {
     const currentDate = new Date();
     const GMT_OFFSET = 8; // for GMT+8
@@ -4759,7 +4773,7 @@ describe.only('test closing hours', async () => {
     expect(isStoreOpen).toEqual(true);
     console.log('test');
   })
-  test.only ('test sundays', async () => {
+  test ('test sundays', async () => {
     // create date sunday
     const sunday = new Date();
     sunday.setDate(sunday.getDate() + 1);
@@ -4771,5 +4785,109 @@ describe.only('test closing hours', async () => {
     expect(minDate.getDate()).toEqual(date.getDate() + 2);
     expect(isStoreOpen).toEqual(false);
     console.log('test');
+  })
+});
+
+describe.only('test banned cod users', async () => {
+
+  test('test user with cod_banned key if banned', async () => {
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'codBannedUser',
+        name: 'affiliate user',
+        email: 'affiliate@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'affiliate',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: true,
+      },
+      'codBannedUser'
+    );
+
+    const userdata = await cloudfirestore.readSelectedDataFromCollection('Users', 'codBannedUser');
+    const _disableCodHandler = new disableCodHandler({userdata})
+    _disableCodHandler.runMain()
+    const isBanned = _disableCodHandler.isCodBanned
+    expect(isBanned).toEqual(true)
+
+  })
+  test('test user without cod_banned key', async () => {
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'noCodBannedUser',
+        name: 'affiliate user',
+        email: 'affiliate@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'affiliate',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: false,
+      },
+      'noCodBannedUser'
+    );
+    const userdata = await cloudfirestore.readSelectedDataFromCollection('Users', 'noCodBannedUser');
+    const _disableCodHandler = new disableCodHandler({userdata})
+    _disableCodHandler.runMain()
+    const isBanned = _disableCodHandler.isCodBanned
+    expect(isBanned).toEqual(false)
+  })
+  test('phoneNumber is banned', async () => {
+    const phoneNumber = '09178927206'
+    const _disableCodHandler = new disableCodHandler({phoneNumber})
+    _disableCodHandler.test_addBannedPhoneNumber('09178927206')
+    _disableCodHandler.runMain()
+    const isBanned = _disableCodHandler.isCodBanned
+    expect(isBanned).toEqual(true)
+  })
+  test('email is banned', async () => {
+    const email = 'test@gmail.com'
+    const _disableCodHandler = new disableCodHandler({email})
+    _disableCodHandler.test_addBannedEmail('test@gmail.com')
+    _disableCodHandler.runMain()
+    const isBanned = _disableCodHandler.isCodBanned
+    expect(isBanned).toEqual(true)
+  })
+  test('price is greater than cod threshold', async () => {
+    const itemsTotalPrice = 9999999999
+    const _disableCodHandler = new disableCodHandler({itemsTotalPrice})
+    _disableCodHandler.runMain()
+    const isBanned = _disableCodHandler.isCodBanned
+    expect(isBanned).toEqual(true)
+  })
+  test('price is less than cod threshold', async () => {
+    const itemsTotalPrice = 1000
+    const _disableCodHandler = new disableCodHandler({itemsTotalPrice})
+    _disableCodHandler.runMain()
+    const isBanned = _disableCodHandler.isCodBanned
+    expect(isBanned).toEqual(false)
   })
 });

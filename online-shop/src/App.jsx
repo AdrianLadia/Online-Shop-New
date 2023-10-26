@@ -299,6 +299,7 @@ function App() {
                   affiliateId: null,
                   affiliateBankAccounts: [],
                   joinedDate: new Date(),
+                  codBanned: false,
                 },
                 user.uid
               );

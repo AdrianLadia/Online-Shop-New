@@ -5,11 +5,13 @@ import PaymentCheckoutCard from "./PaymentCheckoutCard";
 import useWindowDimensions from "./UseWindowDimensions";
 import AppContext from "../AppContext"
 import AppConfig from "../AppConfig";
+import disableCodHandler from "../../utils/classes/disableCodHandler";
 
-function PaymentMethods({itemsTotal}) {
+function PaymentMethods({userdata,itemsTotalPrice,email,phoneNumber}) {
   const { width } = useWindowDimensions();
   const {firestore,cardSelected,setCardSelected,setPaymentMethodSelected} = useContext(AppContext)
   const [paymentMethods,setPaymentMethods] = useState([])
+  const [isCodBanned,setIsCodBanned] = useState(false)
   
 
   useEffect(() => {
@@ -18,6 +20,14 @@ function PaymentMethods({itemsTotal}) {
       setPaymentMethods(providers)
      })
   },[])
+
+  useEffect(() => {
+    const _disableCodHandler = new disableCodHandler({userdata,phoneNumber,email,itemsTotalPrice})
+    _disableCodHandler.runMain()
+    const isCodBanned = _disableCodHandler.isCodBanned
+    console.log("isCodBanned",isCodBanned)
+    setIsCodBanned(isCodBanned)
+  },[userdata,itemsTotalPrice,email,phoneNumber])
 
 
   function overFlow(){
@@ -36,7 +46,7 @@ function PaymentMethods({itemsTotal}) {
           const id = payments.id
           let disabled = false
           if (payments.id === 'cod') {
-            if (itemsTotal > new AppConfig().getCashEnabledThreshold()) {
+            if (isCodBanned === true) {
               disabled = true
             }
           }
