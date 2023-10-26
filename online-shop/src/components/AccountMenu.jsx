@@ -127,6 +127,7 @@ const AccountMenu = (props) => {
                   {userstate == 'userloaded' ? (
                     <p className="mt-0.5">{userdata.name ? userdata.name[0].toUpperCase() : '?'}</p>
                   ) : (
+                  
                     <ClipLoader size={20} color="#ffffff" />
                   )}
                 </Typography>

@@ -373,6 +373,15 @@ const CheckoutPage = () => {
       const orderReferenceNumber = businesscalculations.generateOrderReference();
       setReferenceNumber(orderReferenceNumber);
 
+      let sendEmail 
+      if (new AppConfig().getIsDevEnvironment()) {
+        sendEmail = false;
+      }
+      else {
+        sendEmail = true;
+      }
+
+
       const res = await cloudfirestore.transactionPlaceOrder({
         userid: userdata ? userdata.uid : null,
         localDeliveryAddress: localDeliveryAddress,
@@ -393,7 +402,7 @@ const CheckoutPage = () => {
         deliveryVehicle: deliveryVehicle.name,
         needAssistance: needAssistance,
         eMail: localemail,
-        sendEmail: true,
+        sendEmail: sendEmail,
         isInvoiceNeeded: isInvoiceNeeded,
         urlOfBir2303: urlOfBir2303,
         countOfOrdersThisYear: countOfOrdersThisYear,

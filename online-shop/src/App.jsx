@@ -166,36 +166,38 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    if (userdata != null) {
-      let unreadCustomerServiceMessages = 0;
-      firestore.readOrderMessageByReference(userdata.uid).then((messages) => {
-        messages.messages.forEach((message) => {
-          if (message.userId != userdata.uid) {
-            if (message.read === false) {
-              unreadCustomerServiceMessages += 1;
-            }
-          }
-        });
-        setUnreadCustomerServiceMessages(unreadCustomerServiceMessages);
-      });
+  // TEMPORARY DISABLED THIS BECAUSE WE ARE NOT USING THE CHAT FEATURE YET  
+  // DO NOT DELETE THIS CODE
+  // useEffect(() => {
+  //   if (userdata != null) {
+  //     let unreadCustomerServiceMessages = 0;
+  //     firestore.readOrderMessageByReference(userdata.uid).then((messages) => {
+  //       messages.messages.forEach((message) => {
+  //         if (message.userId != userdata.uid) {
+  //           if (message.read === false) {
+  //             unreadCustomerServiceMessages += 1;
+  //           }
+  //         }
+  //       });
+  //       setUnreadCustomerServiceMessages(unreadCustomerServiceMessages);
+  //     });
 
-      let unreadOrderMessages = 0;
+  //     let unreadOrderMessages = 0;
 
-      orders.map((order) => {
-        firestore.readOrderMessageByReference(order.reference).then((messages) => {
-          messages.messages.forEach((message) => {
-            if (message.userId != userdata.uid) {
-              if (message.read === false) {
-                unreadOrderMessages += 1;
-              }
-            }
-          });
-          setUnreadOrderMessages(unreadOrderMessages);
-        });
-      });
-    }
-  }, [userdata, orders]);
+  //     orders.map((order) => {
+  //       firestore.readOrderMessageByReference(order.reference).then((messages) => {
+  //         messages.messages.forEach((message) => {
+  //           if (message.userId != userdata.uid) {
+  //             if (message.read === false) {
+  //               unreadOrderMessages += 1;
+  //             }
+  //           }
+  //         });
+  //         setUnreadOrderMessages(unreadOrderMessages);
+  //       });
+  //     });
+  //   }
+  // }, [userdata, orders]);
 
   useEffect(() => {
     if (userdata != null) {
