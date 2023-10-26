@@ -137,6 +137,7 @@ function App() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   function alertSnackbar(severity, message, duration) {
     setShowAlert(true);
@@ -401,6 +402,7 @@ function App() {
 
   useEffect(() => {
     // FLOW FOR GUEST LOGIN
+    console.log(userId)
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
@@ -433,6 +435,12 @@ function App() {
         } else {
           setIsAffiliate(false);
         }
+        if (userRole === 'superAdmin') {
+          setIsSuperAdmin(true);
+        } else {
+          setIsSuperAdmin(false);
+        }
+
         // ADMIN CHECK
 
         setDeliveryAddress(data.deliveryAddress);
@@ -490,6 +498,7 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
+    isSuperAdmin: isSuperAdmin,
     datamanipulation: datamanipulation,
     businesscalculations: businesscalculations,
     fbclid: fbclid,

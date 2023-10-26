@@ -21,17 +21,32 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { useLocation } from 'react-router-dom';
 import Badge from '@mui/material/Badge';
-import { TbAffiliate } from "react-icons/tb";
+import { TbAffiliate } from 'react-icons/tb';
 import menuRules from '../../utils/classes/menuRules';
+import TextField from '@mui/material/TextField';
 
 const AccountMenu = (props) => {
   const { pathname } = useLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const { userdata, isAffiliate, isadmin, refreshUser, setRefreshUser, setUserState, userstate, userId,unreadOrderMessages, unreadCustomerServiceMessages } = useContext(AppContext);
-  
+  const {
+    userdata,
+    isAffiliate,
+    isadmin,
+    isSuperAdmin,
+    refreshUser,
+    setRefreshUser,
+    setUserState,
+    userstate,
+    userId,
+    unreadOrderMessages,
+    unreadCustomerServiceMessages,
+    setUserId,
+  } = useContext(AppContext);
+
+  const [userIdEntry, setUserIdEntry] = React.useState('');
+
   const totalUnreadMessages = unreadOrderMessages + unreadCustomerServiceMessages;
   const rules = new menuRules(userdata.userRole);
-
 
   const open = Boolean(anchorEl);
 
@@ -57,26 +72,37 @@ const AccountMenu = (props) => {
     // setUserState('userloading');
     // setRefreshUser(!refreshUser);
     navigateTo('/shop');
+    handleClose();
   }
 
   function myOrdersClick() {
     // setUserState('userloading');
     // setRefreshUser(!refreshUser);
     navigateTo('/myorders/orderList');
+    handleClose();
   }
 
   function accountStatementCLick() {
     // setUserState('userloading');
     // setRefreshUser(!refreshUser);
     navigateTo('/accountstatement');
+    handleClose();
   }
 
   function customerServiceClick() {
-    navigateTo('/orderChat', { state: { orderReference: userId, isInquiry: true, backButtonRedirect: pathname } });
+    // navigateTo('/orderChat', { state: { orderReference: userId, isInquiry: true, backButtonRedirect: pathname } });
+    window.open('https://m.me/starpackph', '_blank');
+    handleClose();
   }
 
-  function affiliateClick(){
-    navigateTo('/affiliate')
+  function affiliateClick() {
+    navigateTo('/affiliate');
+    handleClose();
+  }
+
+  function useCustomerAccountClick() {
+    setUserId(userIdEntry);
+    handleClose();
   }
 
   return (
@@ -114,7 +140,6 @@ const AccountMenu = (props) => {
         id="account-menu"
         open={open}
         onClose={handleClose}
-        onClick={handleClose}
         PaperProps={{
           elevation: 1,
           sx: {
@@ -158,8 +183,8 @@ const AccountMenu = (props) => {
 
         <MenuItem id="myOrdersMenu" onClick={myOrdersClick} className="hover:bg-color10b">
           <Badge badgeContent={unreadOrderMessages} color="error">
-            <div className='mr-2'>
-            <AiOutlineHistory  size={17} />
+            <div className="mr-2">
+              <AiOutlineHistory size={17} />
             </div>
           </Badge>
           <span className="ml-3">My Orders</span>
@@ -187,14 +212,14 @@ const AccountMenu = (props) => {
         <Divider className="mt-1 mb-1" />
         <MenuItem id="adminMenu" onClick={customerServiceClick} className="hover:bg-slate-300">
           <Badge badgeContent={unreadCustomerServiceMessages} color="error">
-            <div className='mr-1'>
+            <div className="mr-1">
               <AiOutlineMessage size={21} className=" font-bold text-color60" />
             </div>
           </Badge>
           <span className="ml-3 mt-0.5 text-color60">Customer Service</span>
         </MenuItem>
-        
-        {isadmin? (
+
+        {isadmin ? (
           <div>
             <Divider className="mt-1 mb-1" />
             <MenuItem id="adminMenu" onClick={adminClick} className="hover:bg-slate-300">
@@ -202,7 +227,8 @@ const AccountMenu = (props) => {
               <span className="ml-5 mt-1 text-blue1">Admin</span>
             </MenuItem>
           </div>
-        ) : isAffiliate ?
+        ) : null}
+        {isAffiliate ? (
           <div>
             <Divider className="mt-1 mb-1" />
             <MenuItem id="adminMenu" onClick={affiliateClick} className="hover:bg-slate-300">
@@ -210,7 +236,32 @@ const AccountMenu = (props) => {
               <span className="ml-5 mt-1 text-color30">Affiliate</span>
             </MenuItem>
           </div>
-          :null}
+        ) : null}
+        {isSuperAdmin ? (
+          <div>
+          <Divider className="mt-1 mb-1" />
+          <MenuItem id="adminMenu"  className="hover:bg-slate-300">
+            <div className='flex flex-col'>
+            <TextField
+                required
+
+                id="outlined-basic123"
+                label="Customer Id"
+                variant="outlined"
+                sx={{ marginTop: 1 }}
+                value={userIdEntry}
+                onChange={(event) => {
+                  setUserIdEntry(event.target.value);
+                }}
+              />
+            <div className='flex flex-row p-2 mt-2'>
+            <TbAffiliate size={21} className="-ml-.5 mt-1.5 font-bold text-color10b" />
+            <span className="ml-5 mt-1 text-color10b" onClick={useCustomerAccountClick} >Use Customer Account</span>
+            </div>
+            </div>
+          </MenuItem>
+        </div>
+        ) : null}
       </Menu>
     </React.Fragment>
   );
