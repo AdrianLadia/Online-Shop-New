@@ -299,7 +299,7 @@ function App() {
                   affiliateId: null,
                   affiliateBankAccounts: [],
                   joinedDate: new Date(),
-                  codBanned: false,
+                  codBanned: {reason : null, isBanned : false},
                 },
                 user.uid
               );

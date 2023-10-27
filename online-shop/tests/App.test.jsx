@@ -50,7 +50,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
-    codBanned: false,
+    codBanned : {reason : null, isBanned : false},
   },
   'TESTAFFILIATE'
 );
@@ -77,7 +77,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
-    codBanned: false,
+    codBanned : {reason : null, isBanned : false},
   },
   'TESTUSER'
 );
@@ -104,7 +104,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
-    codBanned: false,
+    codBanned : {reason : null, isBanned : false},
   },
   'NOAFFILIATETESTUSER'
 );
@@ -690,7 +690,7 @@ describe('Transaction Create Payment', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'testuser'
     );
@@ -739,7 +739,7 @@ describe('firestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'test'
     );
@@ -767,7 +767,7 @@ describe('firestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'testuser'
     );
@@ -1756,7 +1756,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'testuser'
     );
@@ -1889,7 +1889,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'testuser'
     );
@@ -2057,7 +2057,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'testuser'
     );
@@ -2093,7 +2093,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'testuser2'
     );
@@ -3287,7 +3287,7 @@ describe('test commission system', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'TESTAFFILIATE'
     );
@@ -3314,7 +3314,7 @@ describe('test commission system', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'TESTUSER'
     );
@@ -4383,7 +4383,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'GUEST'
     );
@@ -4814,7 +4814,7 @@ describe.only('test banned cod users', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: true,
+        codBanned: {reason : 'did not receive', isBanned : true},
       },
       'codBannedUser'
     );
@@ -4850,7 +4850,7 @@ describe.only('test banned cod users', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: false,
+        codBanned : {reason : null, isBanned : false},
       },
       'noCodBannedUser'
     );
@@ -4863,7 +4863,7 @@ describe.only('test banned cod users', async () => {
   test('phoneNumber is banned', async () => {
     const phoneNumber = '09178927206'
     const _disableCodHandler = new disableCodHandler({phoneNumber})
-    _disableCodHandler.test_addBannedPhoneNumber('09178927206')
+    _disableCodHandler.test_addBannedPhoneNumber({number:'09178927206', reason:'test'})
     _disableCodHandler.runMain()
     const isBanned = _disableCodHandler.isCodBanned
     expect(isBanned).toEqual(true)
@@ -4871,7 +4871,7 @@ describe.only('test banned cod users', async () => {
   test('email is banned', async () => {
     const email = 'test@gmail.com'
     const _disableCodHandler = new disableCodHandler({email})
-    _disableCodHandler.test_addBannedEmail('test@gmail.com')
+    _disableCodHandler.test_addBannedEmail({email:'test@gmail.com',reason:'test'})
     _disableCodHandler.runMain()
     const isBanned = _disableCodHandler.isCodBanned
     expect(isBanned).toEqual(true)
@@ -4889,5 +4889,6 @@ describe.only('test banned cod users', async () => {
     _disableCodHandler.runMain()
     const isBanned = _disableCodHandler.isCodBanned
     expect(isBanned).toEqual(false)
+    
   })
 });

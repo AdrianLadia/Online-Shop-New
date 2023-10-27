@@ -9,9 +9,10 @@ import disableCodHandler from "../../utils/classes/disableCodHandler";
 
 function PaymentMethods({userdata,itemsTotalPrice,email,phoneNumber}) {
   const { width } = useWindowDimensions();
-  const {firestore,cardSelected,setCardSelected,setPaymentMethodSelected} = useContext(AppContext)
+  const {firestore,cardSelected,setCardSelected,setPaymentMethodSelected,setChangeCard,changeCard} = useContext(AppContext)
   const [paymentMethods,setPaymentMethods] = useState([])
   const [isCodBanned,setIsCodBanned] = useState(false)
+  const [reason,setReason] = useState(null)
   
 
   useEffect(() => {
@@ -22,11 +23,26 @@ function PaymentMethods({userdata,itemsTotalPrice,email,phoneNumber}) {
   },[])
 
   useEffect(() => {
+    console.log("cardSelected",cardSelected)
+
+  },[cardSelected])
+
+  useEffect(() => {
     const _disableCodHandler = new disableCodHandler({userdata,phoneNumber,email,itemsTotalPrice})
     _disableCodHandler.runMain()
     const isCodBanned = _disableCodHandler.isCodBanned
     console.log("isCodBanned",isCodBanned)
     setIsCodBanned(isCodBanned)
+    if (isCodBanned === true) {
+      // setCardSelected(cardSelected['cod'] = false)
+      cardSelected['cod'] = false
+      console.log("cardSelected",cardSelected)
+      const reason = _disableCodHandler.reason
+      setReason(reason)
+      setCardSelected(cardSelected)
+      setChangeCard(!changeCard)
+      setPaymentMethodSelected(null)
+    }
   },[userdata,itemsTotalPrice,email,phoneNumber])
 
 
@@ -51,7 +67,7 @@ function PaymentMethods({userdata,itemsTotalPrice,email,phoneNumber}) {
             }
           }
           return(
-            <PaymentCheckoutCard disabled={disabled} paymentOption={payments.id} cardSelected={cardSelected} setCardSelected={setCardSelected} setPaymentMethodSelected={setPaymentMethodSelected} />
+            <PaymentCheckoutCard key={payments.id} reason={reason} disabled={disabled} paymentOption={payments.id} cardSelected={cardSelected} setCardSelected={setCardSelected} setPaymentMethodSelected={setPaymentMethodSelected} />
           )
         }
 

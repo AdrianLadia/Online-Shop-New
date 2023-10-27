@@ -71,6 +71,7 @@ const PaymentCheckoutCard = (props) => {
   const cardSelected = props.cardSelected;
   const setCardSelected = props.setCardSelected;
   const setPaymentMethodSelected = props.setPaymentMethodSelected;
+  const reason = props.reason;
   const [elevation, setElevation] = useState(5);
   
 
@@ -91,11 +92,14 @@ const PaymentCheckoutCard = (props) => {
     }
 
     if (disabled === true) {
-      alertSnackbar('info',`COD is not available for orders above ${new AppConfig().getCashEnabledThreshold()} pesos. Please choose another payment option.`);
+      alertSnackbar('info','COD is not available, Reason : ' + reason + '. Please choose another payment option.');
       return
     }
 
     Object.keys(cardSelected).forEach((key) => {
+
+    
+
       if (key == paymentOption) {
         cardSelected[key] = true;
       }
@@ -103,9 +107,7 @@ const PaymentCheckoutCard = (props) => {
         cardSelected[key] = false;
       }
     });
-
-    console.log(paymentOption)
-    console.log(cardSelected)
+    console.log("cardSelected",cardSelected)
     setPaymentMethodSelected(paymentOption);
     setCardSelected(cardSelected);
     setChangeCard(!changeCard);
