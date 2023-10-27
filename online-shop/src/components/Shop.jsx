@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useState, useContext,useRef } from 'react';
+import { useState, useContext, useRef } from 'react';
 import CategorySelector from './CategorySelector';
 import WholesaleOrRetail from './WholesaleOrRetail';
 import ProductList from './ProductList';
@@ -10,7 +10,9 @@ import { Helmet } from 'react-helmet';
 import ScrollTopButton from './ScrollTopButton';
 import ShopHero from './ShopHero';
 import AnnouncementNotification from './AnnouncementNotification';
+import SearchBarAlgolia from './SearchBarAlgolia';
 
+// Use `searchAlgolia` in your React component to get search results
 
 const Shop = () => {
   const { width } = useWindowDimensions();
@@ -18,17 +20,16 @@ const Shop = () => {
   const [retail, setRetail] = useState(true);
   const [loading, setLoading] = useState(true);
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
-  const {fbclid, isSupportedBrowser, selectedCategory, setSelectedCategory, products,analytics } = useContext(AppContext);
+  const { fbclid, isSupportedBrowser, selectedCategory, setSelectedCategory, products, analytics } =
+    useContext(AppContext);
   const wholesaleOrRetailRef = useRef();
   const [shopHeroInView, setShopHeroInView] = useState(true);
 
-
-
-   useEffect(() => {
+  useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
-      analytics.logOpenStorePageEvent()
+      analytics.logOpenStorePageEvent();
     }
-  }, [fbclid,analytics]);
+  }, [fbclid, analytics]);
 
   useEffect(() => {
     if (products != []) {
@@ -58,12 +59,22 @@ const Shop = () => {
       {/* <OpeningSoonModal /> */}
       {/* HOW TO ORDER */}
       <ShopHero shopHeroInView={shopHeroInView} setShopHeroInView={setShopHeroInView} />
-      
 
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
-      <ScrollTopButton categorySelectorInView={categorySelectorInView} wholesaleOrRetailRef={wholesaleOrRetailRef} shopHeroInView={shopHeroInView}/>
+      <ScrollTopButton
+        categorySelectorInView={categorySelectorInView}
+        wholesaleOrRetailRef={wholesaleOrRetailRef}
+        shopHeroInView={shopHeroInView}
+      />
+      <searchBarAlgolia />
       {/* WHOLESALE RETAIL */}
-      <WholesaleOrRetail wholesaleOrRetailRef={wholesaleOrRetailRef} setWholesale={setWholesale} setRetail={setRetail} wholesale={wholesale} retail={retail} />
+      <WholesaleOrRetail
+        wholesaleOrRetailRef={wholesaleOrRetailRef}
+        setWholesale={setWholesale}
+        setRetail={setRetail}
+        wholesale={wholesale}
+        retail={retail}
+      />
       {/* CATEGORY */}
       <CategorySelector
         setSelectedCategory={setSelectedCategory}
@@ -74,6 +85,7 @@ const Shop = () => {
         retail={retail}
         setCategorySelectorInView={setCategorySelectorInView}
       />
+      <SearchBarAlgolia />
       {/* PRODUCTS */}
 
       {loading ? (
@@ -83,7 +95,7 @@ const Shop = () => {
       ) : (
         <ProductList wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
       )}
-      <AnnouncementNotification/>
+      <AnnouncementNotification />
     </div>
   );
 };

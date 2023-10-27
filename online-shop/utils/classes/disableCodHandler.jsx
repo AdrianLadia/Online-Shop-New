@@ -7,8 +7,14 @@ class disableCodHandler {
     this.email = email;
     this.itemsTotalPrice = itemsTotalPrice;
 
-    this.bannedPhoneNumbers = [{ number: '+639178927206', reason: 'Phone' }];
-    this.bannedEmails = [{ email: 'test@gmail.com', reason: 'Email' }];
+    this.bannedPhoneNumbers = [
+      { number: '+639178927202', reason: 'test' },
+      { number: '+639654000844', reason: 'Order on 10/25 was not received' },
+    ];
+    this.bannedEmails = [
+      { email: 'test@gmail.com', reason: 'test' },
+      { email: 'kjanine.delfino28@gmail.com', reason: 'Order on 10/25 was not received' },
+    ];
 
     this.maxPriceForCod = new AppConfig().getCashEnabledThreshold();
 
@@ -84,30 +90,28 @@ class disableCodHandler {
     // we control this feature by using the key "cod_banned" in the user's profile
 
     function convertPhoneNumberToInternationalFormat(phoneNumber) {
-        if (phoneNumber.substring(0, 1) === '+') {
-            return phoneNumber;
-        }
-        if (phoneNumber.substring(0, 1) === '0') {
-            phoneNumber = phoneNumber.substring(1);
-        }
-        phoneNumber = '+63' + phoneNumber;
+      if (phoneNumber.substring(0, 1) === '+') {
         return phoneNumber;
+      }
+      if (phoneNumber.substring(0, 1) === '0') {
+        phoneNumber = phoneNumber.substring(1);
+      }
+      phoneNumber = '+63' + phoneNumber;
+      return phoneNumber;
     }
 
-    
-    
     if (this.phoneNumber == undefined) {
-        this.phoneNumberIsCodBanned = false;
-        return;
+      this.phoneNumberIsCodBanned = false;
+      return;
     }
-    
+
     this.phoneNumber = convertPhoneNumberToInternationalFormat(this.phoneNumber);
     console.log('this.phoneNumber', this.phoneNumber);
-    
-    const bannedNumbers = this.bannedPhoneNumbers.map(x => x.number);
+
+    const bannedNumbers = this.bannedPhoneNumbers.map((x) => x.number);
     if (bannedNumbers.includes(this.phoneNumber)) {
       this.phoneNumberIsCodBanned = true;
-      this.reason = this.bannedPhoneNumbers.find(x => x.number == this.phoneNumber).reason;
+      this.reason = this.bannedPhoneNumbers.find((x) => x.number == this.phoneNumber).reason;
       return;
     } else {
       this.phoneNumberIsCodBanned = false;
@@ -124,11 +128,10 @@ class disableCodHandler {
       return;
     }
 
-
-    const bannedEmails = this.bannedEmails.map(x => x.email);
+    const bannedEmails = this.bannedEmails.map((x) => x.email);
     if (bannedEmails.includes(this.email)) {
       this.emailIsCodBanned = true;
-        this.reason = this.bannedEmails.find(x => x.email == this.email).reason;
+      this.reason = this.bannedEmails.find((x) => x.email == this.email).reason;
       return;
     } else {
       this.emailIsCodBanned = false;
