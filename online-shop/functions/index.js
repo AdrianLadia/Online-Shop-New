@@ -2248,3 +2248,63 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
     }
   });
 });
+
+
+exports.updateProductSearchIndex = functions
+  .region('asia-southeast1')
+  .pubsub.schedule('every 24 hours')
+  .onRun(async (context) => {
+    const db = admin.firestore();
+    const productsRef = db.collection('Products');
+    const snapshot = await productsRef.get();
+    const products = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      products.push(data);
+    });
+    const searchIndex = [];
+    products.forEach((product) => {
+      const productSearchIndex = {
+        itemId: product.itemId,
+        name: product.itemName,
+        category: product.category
+      };
+
+      if (product.forOnlineStore) {
+        searchIndex.push(productSearchIndex);
+      }
+    });
+    const searchIndexRef = db.collection('Index').doc('ProductSearchIndex');
+    await searchIndexRef.set({ search: searchIndex });
+  });
+
+
+  exports.updateProductSearchIndex = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+    corsHandler(req, res, async () => {
+      const db = admin.firestore();
+      const productsRef = db.collection('Products');
+      const snapshot = await productsRef.get();
+      const products = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        products.push(data);
+      });
+      const searchIndex = [];
+      products.forEach((product) => {
+        const productSearchIndex = {
+          itemId: product.itemId,
+          name: product.itemName,
+          category: product.category,
+          imageLinks: product.imageLinks,
+          unit : product.unit
+        };
+  
+        if (product.forOnlineStore) {
+          searchIndex.push(productSearchIndex);
+        }
+      });
+      const searchIndexRef = db.collection('Index').doc('ProductSearchIndex');
+      await searchIndexRef.set({ search: searchIndex });
+      res.status(200).send('Product search index updated');
+    });
+  });

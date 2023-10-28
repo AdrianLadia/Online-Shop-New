@@ -23,9 +23,10 @@ function a11yProps(index) {
 const CategorySelector = (props) => {
   const location = useLocation();
   const featuredCategory = new AppConfig().getFeaturedCategory();
-
+  const setSearchedItemId = props.setSearchedItemId;
   const setSelectedCategory = props.setSelectedCategory;
   const selectedCategory = props.selectedCategory;
+  const setSelectedName = props.setSelectedName;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
   const { analytics, firestore, categories, setCategories, categoryValue, setCategoryValue, datamanipulation } =
     useContext(AppContext);
@@ -60,6 +61,8 @@ const CategorySelector = (props) => {
 
         if (category === categoryToUse) {
           setCategoryValue(index);
+          setSearchedItemId(null);
+          setSelectedName('');
         }
       });
     }

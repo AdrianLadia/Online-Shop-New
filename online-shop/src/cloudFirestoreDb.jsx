@@ -28,6 +28,12 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     // }
   }
 
+  async updateProductSearchIndex() {
+    console.log(this.url)
+    const res = await axios.get(`${this.url}updateProductSearchIndex`);
+    // return res;
+  }
+
   async changeUserRole(userId, role) {
     const userIdSchema = Joi.string();
     const roleSchema = Joi.string();
@@ -652,6 +658,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     return res;
   }
+
+
 }
 
 export default cloudFirestoreDb;

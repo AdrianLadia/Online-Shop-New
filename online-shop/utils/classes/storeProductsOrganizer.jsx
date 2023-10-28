@@ -1,14 +1,36 @@
 class storeProductsOrganizer {
-  constructor(productList) {
+  constructor(productList,searchedItemId) {
     this.productList = productList;
     this.productCategory = null;
     this.finalData = [];
     this.orderOfProducts = [];
     this.sortedData = null;
     this.isRetail = null;
+    this.searchItemId = searchedItemId;
   }
 
+
   getOrderOfProducts() {
+
+    let hasSearch = false
+    // We run this function when we are searching for a specific item
+    if (this.searchItemId != null) {
+      console.log('SEARCHED ITEM ID', this.searchItemId)
+      if (this.searchItemId.includes('-RET')) {
+        this.searchItemId = this.searchItemId.slice(0, -4);
+      }
+  
+      this.orderOfProducts = [this.searchItemId]
+      hasSearch = true
+    }
+
+    if (hasSearch) {
+      console.log('HAS SEARCH')
+      return
+    }
+
+    
+
 
     if (this.productCategory == 'Utensils') {
       this.orderOfProducts = [
@@ -72,6 +94,7 @@ class storeProductsOrganizer {
     this.getIfRetail();
     // We need to get the order of products so we can sort it
     this.getOrderOfProducts();
+    // console.log('ORDER OF PRODUCTS', this.orderOfProducts);
     // Organize Data
     this.organizeData();
     // Check if order of products is available and set final data

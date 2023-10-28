@@ -138,6 +138,7 @@ function App() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [searchList, setSearchList] = useState([]);
 
   function alertSnackbar(severity, message, duration) {
     setShowAlert(true);
@@ -501,6 +502,8 @@ function App() {
   }, [userdata]);
 
   const appContextValue = {
+    searchList: searchList,
+    setSearchList: setSearchList,
     isSuperAdmin: isSuperAdmin,
     datamanipulation: datamanipulation,
     businesscalculations: businesscalculations,

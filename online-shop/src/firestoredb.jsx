@@ -672,7 +672,17 @@ class firestoredb extends firestorefunctions {
     } catch (error) {
       throw new Error(error);
     }
+
+ 
     
+  }
+
+  async readProductsSearchIndex() {
+    const products = await retryApi(async () => await super.readSelectedDataFromCollection('Index','ProductSearchIndex'));
+    console.log(products);
+    const data = products.search
+    console.log(data);
+    return data
   }
   
   // async markCommissionPending(data, date, id){

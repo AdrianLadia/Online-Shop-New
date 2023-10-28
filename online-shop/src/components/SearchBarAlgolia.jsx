@@ -8,7 +8,7 @@ const searchClient = algoliasearch('76EORE6QK0', '0e6dc7a5569e2944b1acc6ed629966
 function SearchBarAlgolia() {
   return (
     <InstantSearch searchClient={searchClient} indexName="starPackProducts">
-        <SearchBox classNames='mt-10'/>
+        <SearchBox/>
         <Hits/>
         {/* <Highlight attribute="name" hit={hit} /> */}
       {/* ... */}

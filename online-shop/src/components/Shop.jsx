@@ -10,7 +10,7 @@ import { Helmet } from 'react-helmet';
 import ScrollTopButton from './ScrollTopButton';
 import ShopHero from './ShopHero';
 import AnnouncementNotification from './AnnouncementNotification';
-import SearchBarAlgolia from './SearchBarAlgolia';
+import ProductsSearchBar from './ProductsSearchBar';
 
 // Use `searchAlgolia` in your React component to get search results
 
@@ -20,10 +20,12 @@ const Shop = () => {
   const [retail, setRetail] = useState(true);
   const [loading, setLoading] = useState(true);
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
-  const { fbclid, isSupportedBrowser, selectedCategory, setSelectedCategory, products, analytics } =
+  const [selectedName, setSelectedName] = useState('')
+  const { fbclid, cloudfirestore,isSupportedBrowser, selectedCategory, setSelectedCategory, products, analytics } =
     useContext(AppContext);
   const wholesaleOrRetailRef = useRef();
   const [shopHeroInView, setShopHeroInView] = useState(true);
+  const [searchedItemId, setSearchedItemId] = useState(null);
 
   useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
@@ -58,6 +60,7 @@ const Shop = () => {
 
       {/* <OpeningSoonModal /> */}
       {/* HOW TO ORDER */}
+      {/* <button onClick={async() => {await cloudfirestore.updateProductSearchIndex()}} >update</button> */}
       <ShopHero shopHeroInView={shopHeroInView} setShopHeroInView={setShopHeroInView} />
 
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
@@ -66,7 +69,7 @@ const Shop = () => {
         wholesaleOrRetailRef={wholesaleOrRetailRef}
         shopHeroInView={shopHeroInView}
       />
-      <searchBarAlgolia />
+
       {/* WHOLESALE RETAIL */}
       <WholesaleOrRetail
         wholesaleOrRetailRef={wholesaleOrRetailRef}
@@ -77,6 +80,7 @@ const Shop = () => {
       />
       {/* CATEGORY */}
       <CategorySelector
+        setSearchedItemId={setSearchedItemId}
         setSelectedCategory={setSelectedCategory}
         selectedCategory={selectedCategory}
         setWholesale={setWholesale}
@@ -84,8 +88,11 @@ const Shop = () => {
         setRetail={setRetail}
         retail={retail}
         setCategorySelectorInView={setCategorySelectorInView}
+        setSelectedName={setSelectedName}
       />
-      <SearchBarAlgolia />
+
+      <ProductsSearchBar selectedName={selectedName} setSelectedName={setSelectedName} searchedItemId={searchedItemId} setSearchedItemId={setSearchedItemId} setSelectedCategory={setSelectedCategory} setWholesale={setWholesale} setRetail={setRetail} />
+
       {/* PRODUCTS */}
 
       {loading ? (
@@ -93,7 +100,7 @@ const Shop = () => {
           <CircularProgress size={200} />
         </div>
       ) : (
-        <ProductList wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
+        <ProductList searchedItemId={searchedItemId} wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
       )}
       <AnnouncementNotification />
     </div>

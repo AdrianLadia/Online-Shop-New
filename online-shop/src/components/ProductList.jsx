@@ -20,6 +20,7 @@ import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
 const ProductList = (props) => {
   const wholesale = props.wholesale;
   const retail = props.retail;
+  const searchedItemId = props.searchedItemId;
   const selectedCategory = props.selectedCategory;
   const [isWholesale, setIsWholesale] = useState(false);
   const [modal, setModal] = useState(false);
@@ -72,7 +73,7 @@ const ProductList = (props) => {
       retail,
       favoriteitems
     );
-    const spo = new storeProductsOrganizer(selected_products);
+    const spo = new storeProductsOrganizer(selected_products,searchedItemId);
     const organizedProducts = spo.runMain();
 
     return organizedProducts;
@@ -113,7 +114,7 @@ const ProductList = (props) => {
   }
 
   return (
-    <div className=" mt-5 mb-40 h-full">
+    <div className=" mt-5 mb-40 h-screen">
       <div id="productList" className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
         {productdataloading ? (
           <div className="flex w-full justify-center items-center mt-40">
