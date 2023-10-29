@@ -6,6 +6,9 @@ class allowedDeliveryDates {
         '10/31/2023',
         '11/01/2023',
         '11/02/2023',
+        '11/03/2023',
+        '11/04/2023',
+        '11/05/2023',
     ]
     this.daysAfterAllowed = 6
     this.cutOffTime = 14

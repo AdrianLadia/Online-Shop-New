@@ -400,8 +400,6 @@ const ProductsCatalogue = () => {
     navigateTo('/');
   }
 
-  console.log(refs)
-
   return (
     <div className="flex flex-col">
        <Helmet>

@@ -18,6 +18,7 @@ import AppConfig from '../AppConfig';
 const ProductCard = (props) => {
   const product = props.product;
   const setModal = props.setModal;
+  const isLastItem = props.isLastItem;
   const [quantity, setQuantity] = useState('');
   const [open, setOpen] = useState(false);
   // const [modal, setModal] = useState(false);
@@ -278,12 +279,23 @@ const ProductCard = (props) => {
     return 'max-w-lg';
   }
 
+  function cssIfLastItemCard() {
+    console.log(isLastItem)
+    if (isLastItem) {
+      return ' mb-20';
+    }
+    else {
+      return '';
+    }
+  }
+
   
 
 
   if (product.imageLinks.length === 0) {
     return (
-      <div id={product.itemId} key={product.itemId} className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 ' + responsiveWidth()}>
+      // DO NOT REMOVE MB-20 BECAUSE IT WILL MESS UP THE LAYOUT
+      <div id={product.itemId} key={product.itemId} className={'flex justify-center h-80 lg:w-11/12 2xs:w-96 ' + responsiveWidth() + cssIfLastItemCard()}>
         {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
         <Paper
           elevation={10}
@@ -305,7 +317,8 @@ const ProductCard = (props) => {
   } else {
     return (
       <ThemeProvider theme={theme}>
-        <div id={product.itemId} key={product.itemId}  className={' flex justify-center h-80 lg:w-11/12 2xs:w-96 hover:mb-5' + responsiveWidth()}>
+        {/* // DO NOT REMOVE MB-20 BECAUSE IT WILL MESS UP THE LAYOUT */}
+        <div id={product.itemId} key={product.itemId}  className={'flex justify-center h-80 lg:w-11/12 2xs:w-96 hover:mb-5' + responsiveWidth() + cssIfLastItemCard()}>
           {/* <div className="flex justify-center h-80 w-full 2xs:w-96 2xs:max-w-lg"> */}
           <Paper
             elevation={10}

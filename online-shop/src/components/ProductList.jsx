@@ -1,20 +1,13 @@
-import React, { useEffect } from 'react';
-// import products from './product_info'
-import { useContext, useState, createContext } from 'react';
-import SelectedCategoryContext from './SelectedCategoryContext';
+import React, { useEffect,useState } from 'react';
 import ProductCard from './ProductCard';
 import OpenCartButton from './OpenCartButton';
-import { CartContext } from './CartContext';
-import firestoredb from '../firestoredb';
 import AppContext from '../AppContext';
 import CircularProgress from '@mui/material/CircularProgress';
-import dataManipulation from '../../utils/dataManipulation';
-import businessCalculations from '../../utils/businessCalculations';
-import cloudFirestoreDb from '../cloudFirestoreDb';
 import UseWindowDimensions from './UseWindowDimensions';
 import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
 import ProductCardModal from './ProductCardModal';
 import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
+
 
 
 const ProductList = (props) => {
@@ -27,6 +20,8 @@ const ProductList = (props) => {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const modalSelected = query.get('modal') + location.hash;
+
+
 
   
   useEffect(() => {
@@ -75,7 +70,6 @@ const ProductList = (props) => {
     );
     const spo = new storeProductsOrganizer(selected_products,searchedItemId);
     const organizedProducts = spo.runMain();
-
     return organizedProducts;
   }
 
@@ -129,6 +123,9 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
+
+            let isLastItem = index === RenderSelectedProducts(selectedCategory).length - 1;
+
             let stocksAvailable = null;
             let averageSalesPerDay = null;
             let product_chosen = null;
@@ -143,7 +140,7 @@ const ProductList = (props) => {
               });
             }
             return (
-              <div className="flex justify-evenly">
+              <div key={product.itemId} className="flex justify-evenly">
                 <ProductCard
                   setClickedProduct={setClickedProduct}
                   setModal={setModal}
@@ -155,6 +152,7 @@ const ProductList = (props) => {
                   setShakeCartAnimation={setShakeCartAnimation}
                   stocksAvailable={product.stocksAvailable}
                   averageSalesPerDay={averageSalesPerDay}
+                  isLastItem={isLastItem}
                 />
               </div>
             );

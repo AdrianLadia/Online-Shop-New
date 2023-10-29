@@ -15,7 +15,6 @@ class storeProductsOrganizer {
     let hasSearch = false
     // We run this function when we are searching for a specific item
     if (this.searchItemId != null) {
-      console.log('SEARCHED ITEM ID', this.searchItemId)
       if (this.searchItemId.includes('-RET')) {
         this.searchItemId = this.searchItemId.slice(0, -4);
       }
@@ -25,7 +24,6 @@ class storeProductsOrganizer {
     }
 
     if (hasSearch) {
-      console.log('HAS SEARCH')
       return
     }
 

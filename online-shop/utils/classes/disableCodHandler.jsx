@@ -4,7 +4,7 @@ class disableCodHandler {
   constructor({ userdata, phoneNumber, email, itemsTotalPrice }) {
     this.userdata = userdata;
     this.phoneNumber = phoneNumber;
-    this.email = email;
+    this.email = email.toLowerCase();
     this.itemsTotalPrice = itemsTotalPrice;
 
     this.bannedPhoneNumbers = [
@@ -106,7 +106,6 @@ class disableCodHandler {
     }
 
     this.phoneNumber = convertPhoneNumberToInternationalFormat(this.phoneNumber);
-    console.log('this.phoneNumber', this.phoneNumber);
 
     const bannedNumbers = this.bannedPhoneNumbers.map((x) => x.number);
     if (bannedNumbers.includes(this.phoneNumber)) {
@@ -128,7 +127,7 @@ class disableCodHandler {
       return;
     }
 
-    const bannedEmails = this.bannedEmails.map((x) => x.email);
+    const bannedEmails = this.bannedEmails.map((x) => x.email.toLowerCase());
     if (bannedEmails.includes(this.email)) {
       this.emailIsCodBanned = true;
       this.reason = this.bannedEmails.find((x) => x.email == this.email).reason;
