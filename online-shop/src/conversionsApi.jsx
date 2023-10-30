@@ -29,7 +29,7 @@ class conversionsApi {
       });
     }
 
-    console.log(sha256('US'))
+
     
     const payload = {
       data: [
@@ -56,7 +56,6 @@ class conversionsApi {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Success:', data);
         console.log(data.error.error_user_msg)
       })
       .catch((error) => {

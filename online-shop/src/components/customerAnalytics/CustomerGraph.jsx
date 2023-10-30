@@ -9,10 +9,6 @@ const CustomerGraph = ({data, firestore, products}) => {
     const [ productData, setProductData ] = useState([])
 
     useEffect(()=>{
-      console.log(data)
-    },[data])
-
-    useEffect(()=>{
       const productsData = products.filter((info) => info.itemName == data.name);
       setProductData(productsData[0])
     },[])

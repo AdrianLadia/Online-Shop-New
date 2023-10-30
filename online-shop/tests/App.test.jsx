@@ -4583,7 +4583,6 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
-    console.log(res);
     await delay(500);
     // expect error
     expect(res.data).toEqual('Error creating payment. Payment is less than total');
@@ -4754,7 +4753,6 @@ describe('test closing hours', async () => {
     const isStoreOpen = allowedDates.isStoreOpen
     expect(minDate.getDate()).toEqual(date.getDate() + 1);
     expect(isStoreOpen).toEqual(false);
-    console.log('test');
   });
   test ('test if open', async () => {
     const currentDate = new Date();
@@ -4771,7 +4769,6 @@ describe('test closing hours', async () => {
     const isStoreOpen = allowedDates.isStoreOpen
     expect(minDate.getDate()).toEqual(date.getDate());
     expect(isStoreOpen).toEqual(true);
-    console.log('test');
   })
   test ('test sundays', async () => {
     // create date sunday
@@ -4784,7 +4781,6 @@ describe('test closing hours', async () => {
     const isStoreOpen = allowedDates.isStoreOpen
     expect(minDate.getDate()).toEqual(date.getDate() + 2);
     expect(isStoreOpen).toEqual(false);
-    console.log('test');
   })
 });
 

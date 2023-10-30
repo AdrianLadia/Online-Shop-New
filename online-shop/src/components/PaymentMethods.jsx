@@ -23,20 +23,13 @@ function PaymentMethods({userdata,itemsTotalPrice,email,phoneNumber}) {
   },[])
 
   useEffect(() => {
-    console.log("cardSelected",cardSelected)
-
-  },[cardSelected])
-
-  useEffect(() => {
     const _disableCodHandler = new disableCodHandler({userdata,phoneNumber,email,itemsTotalPrice})
     _disableCodHandler.runMain()
     const isCodBanned = _disableCodHandler.isCodBanned
-    console.log("isCodBanned",isCodBanned)
     setIsCodBanned(isCodBanned)
     if (isCodBanned === true) {
       // setCardSelected(cardSelected['cod'] = false)
       cardSelected['cod'] = false
-      console.log("cardSelected",cardSelected)
       const reason = _disableCodHandler.reason
       setReason(reason)
       setCardSelected(cardSelected)

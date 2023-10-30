@@ -63,13 +63,11 @@ const CartModal = (props) => {
 
   useEffect(() => {
     CheckIfCartIsEmpty();
-    console.log(finalCartData);
   }, [finalCartData]);
 
   async function outStocksClick() {
     setOutStocksLoading(true);
     await firestore.transactionOutStocks(finalCartData);
-    console.log(finalCartData);
     setCart({});
     setOutStocksLoading(false);
   }

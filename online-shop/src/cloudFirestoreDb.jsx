@@ -10,7 +10,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     super();
     this.fbclid = fbclid;
     this.userdata = userdata;
-    // console.log('fbclid',fbclid)
     const appConfig = new AppConfig();
 
     if (appConfig.getIsDevEnvironment() || test) {
@@ -29,7 +28,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async updateProductSearchIndex() {
-    console.log(this.url)
     const res = await axios.get(`${this.url}updateProductSearchIndex`);
     // return res;
   }
@@ -259,7 +257,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
         const jsonString = JSON.stringify(toReturn[index]);
         const message = error.message + ' |||||| ' + jsonString;
-        console.log(new AppConfig().getFirestoreDeveloperEmail());
         new AppConfig().getFirestoreDeveloperEmail().forEach((email) => {
           this.sendEmail({ to: email, subject: 'Error on productData', text: message });
         });
@@ -360,7 +357,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async transactionCreatePayment(data) {
-    console.log('RUNNING');
     const dataSchema = Joi.object({
       userId: Joi.string().required(),
       amount: Joi.number().required(),
@@ -378,7 +374,6 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       const jsonData = JSON.stringify(data);
-      // console.log('RUNNING');
       const response = await axios.post(`${this.url}transactionCreatePayment`, jsonData, {
         headers: {
           'Content-Type': 'application/json',

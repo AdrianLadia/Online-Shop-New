@@ -15,16 +15,13 @@ const QuotationCreatorButton = ({ arrayOfProductData, deliveryFee, companyName, 
   useEffect(() => {
     if (userdata) {
         if (userdata.userRole === 'superAdmin') {
-            console.log('notHidden');
             setDownloadButtonHidden('');
         }
         else {
-            console.log('hidden');
             setDownloadButtonHidden('hidden');
         }
     }
     else {
-        console.log('hidden no user role');
         setDownloadButtonHidden('hidden');
     }
   }, [userdata]);

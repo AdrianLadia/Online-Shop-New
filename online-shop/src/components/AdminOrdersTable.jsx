@@ -59,8 +59,6 @@ const AdminOrdersTable = (props) => {
   useEffect(() => {
     const localrows = [];
     orders.map((order) => {
-      console.log(order.countOfOrdersThisYear)
-
       let withInvoice = null
       if ([0,1].includes(order.countOfOrdersThisYear)) {
         withInvoice = 'Yes'

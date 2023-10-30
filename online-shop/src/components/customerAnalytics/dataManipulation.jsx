@@ -120,9 +120,6 @@ class dataManipulation {
     const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
 
     const toReturn = toFilter.filter(([year, month, _]) => year !== currentYear || month !== currentMonth);
-
-    console.log(toReturn);
-    // ['2022','09',100]
     return toReturn;
   }
 

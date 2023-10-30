@@ -662,9 +662,6 @@ class firestoredb extends firestorefunctions {
 
         await Promise.all(promises);
 
-        console.log(stocks);
-
-
         Object.keys(stocks).forEach((key) => {
           transaction.update(doc(this.db, 'Products/', key), { stocksAvailable: stocks[key] });
         });
@@ -679,9 +676,7 @@ class firestoredb extends firestorefunctions {
 
   async readProductsSearchIndex() {
     const products = await retryApi(async () => await super.readSelectedDataFromCollection('Index','ProductSearchIndex'));
-    console.log(products);
     const data = products.search
-    console.log(data);
     return data
   }
   

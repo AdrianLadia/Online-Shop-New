@@ -92,7 +92,6 @@ const ProductCardModal = (props) => {
   const piecesPerPack = props.product.piecesPerPack;
   const packsPerBox = props.product.packsPerBox;
   const centerImage = lengthOfImageList === 1;
-  console.log(props.product);
 
   const specs = {
     size: size,

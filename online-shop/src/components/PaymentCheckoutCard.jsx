@@ -107,7 +107,7 @@ const PaymentCheckoutCard = (props) => {
         cardSelected[key] = false;
       }
     });
-    console.log("cardSelected",cardSelected)
+
     setPaymentMethodSelected(paymentOption);
     setCardSelected(cardSelected);
     setChangeCard(!changeCard);

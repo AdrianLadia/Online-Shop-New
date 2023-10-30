@@ -55,21 +55,15 @@ const ImageUploadButton = (props) => {
           let downloadURLResized;
 
           if (resize) {
-            console.log('RESIZING');
-            console.log('FILE NAME', _uuidv4 + fileName)
             const resizedFileName = fileName.split('.')[0] + '_612x820.' + fileName.split('.')[1];
-            console.log('RESIZED FILE NAME', resizedFileName);
             const resizedRefStorage = ref(storage, folderName + '/' + _uuidv4 + resizedFileName);
-            console.log('RESIZED REF STORAGE', _uuidv4 + resizedFileName);
             let retries = 0;
             while (downloadURLResized === undefined) {
-              console.log('RETRIES', retries);
               if (retries > 10) {
                 alertSnackbar('error', 'Error uploading image. Please try again.');
                 setLoading(false);
                 return;
               }
-              console.log('RESIZING');
               await new Promise((resolve) => setTimeout(resolve, 1000));
               try {
                 downloadURLResized = await getDownloadURL(resizedRefStorage);
@@ -85,7 +79,6 @@ const ImageUploadButton = (props) => {
           if (onUploadFunction !== undefined) {
             try {
               if (resize) {
-                console.log('UPLOAD RESIZED');
                 await onUploadFunction(downloadURLResized);
               } else {
                 await onUploadFunction(downloadURL);

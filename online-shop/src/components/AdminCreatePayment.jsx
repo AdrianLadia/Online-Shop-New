@@ -58,7 +58,6 @@ const AdminCreatePayment = (props) => {
 
   useEffect(() => {
     const customers = datamanipulation.getAllCustomerNamesFromUsers(users);
-    console.log(customers);
     setAllUserNames(customers);
   }, [users]);
 
@@ -75,7 +74,7 @@ const AdminCreatePayment = (props) => {
             unpaidOrdersReference.push(data.reference);
           }
         });
-        console.log(unpaidOrdersReference);
+
         setUnpaidOrdersReference(unpaidOrdersReference);
           // You may want to set the result to your state or do something else with it
         
@@ -110,8 +109,6 @@ const AdminCreatePayment = (props) => {
       alert(error.message);
       setLoading(false);
     }
-
-    console.log(data)
 
     cloudfirestore
       .transactionCreatePayment(data)

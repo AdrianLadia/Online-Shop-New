@@ -287,7 +287,6 @@ class businessCalculations {
   }
 
   getVehicleForDelivery(weightOfItems, pickUpOrDeliver) {
-    console.log('weightOfItems', weightOfItems);
     const weightOfItemsSchema = Joi.number().required();
     const { error } = weightOfItemsSchema.validate(weightOfItems);
     if (error) {
@@ -667,8 +666,6 @@ class businessCalculations {
     const stringify = JSON.stringify(parameters)
     checkoutParameter = encodeURIComponent(stringify)
 
-    console.log('checkoutParameter', checkoutParameter);
-
     // setting redirect url if its for production or testing
     const isDevEnvironment = new AppConfig().getIsDevEnvironment()
     let redirectUrl
@@ -681,7 +678,6 @@ class businessCalculations {
 
     if (testing === false) {
       // FOR MAYA WITH WEBHOOK
-      console.log('paymentMethodSelected', paymentMethodSelected);
       if (['maya', 'visa', 'mastercard', 'gcash','shoppeepay','wechatpay'].includes(paymentMethodSelected)) {
         const fullName = data.fullName;
         const nameParts = fullName.split(' ');

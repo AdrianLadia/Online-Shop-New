@@ -54,7 +54,6 @@ const CheckoutProofOfPayment = (props) => {
   const [_mayaRedirectUrl, set_mayaRedirectUrl] = useState(null);
 
   useEffect(() => {
-    console.log(mayaRedirectUrl);
     if (mayaRedirectUrl != null) {
       set_mayaRedirectUrl(mayaRedirectUrl);
       setMayaRedirectUrl(null);

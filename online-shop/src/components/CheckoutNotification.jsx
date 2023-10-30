@@ -14,11 +14,6 @@ const CheckoutNotification = ({ allowedDates }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  useEffect(() => {
-    console.log(allowedDates);
-  }, [allowedDates]);
-
-
   return (
     <div>
       <Modal

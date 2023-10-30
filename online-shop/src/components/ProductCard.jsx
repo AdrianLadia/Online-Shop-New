@@ -108,11 +108,6 @@ const ProductCard = (props) => {
       }
     }
 
-    
-    console.log( businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay()))
-    console.log(getStocksAvailable())
-    console.log(getAverageSalesPerDay())
-
     if (isWholesale) {
       if (userdata?.userRole != 'superAdmin') {
         if (totalOrder > businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())) {
@@ -141,7 +136,6 @@ const ProductCard = (props) => {
       // adds to cart
       props.addtocart(props.product.itemId, quantity);
       //analytics
-      console.log('triggered add to cart event')
       analytics.logAddToCartEvent(props.product.itemId,props.product.itemName,props.product.category,quantity,props.product.price)
       //back to 0
       setQuantity('');
@@ -280,7 +274,6 @@ const ProductCard = (props) => {
   }
 
   function cssIfLastItemCard() {
-    console.log(isLastItem)
     if (isLastItem) {
       return ' mb-20';
     }

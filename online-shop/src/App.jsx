@@ -406,7 +406,6 @@ function App() {
 
   useEffect(() => {
     // FLOW FOR GUEST LOGIN
-    console.log(userId)
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (userId) {
