@@ -905,7 +905,7 @@ const CheckoutPage = () => {
                   </Typography>
                 </div>
 
-                <PaymentMethods itemsTotalPrice={total} userdata={userdata} email={localemail} phoneNumber={localphonenumber}  />
+                <PaymentMethods pickUpOrDeliver={pickUpOrDeliver} itemsTotalPrice={total} userdata={userdata} email={localemail} phoneNumber={localphonenumber}  />
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 

@@ -7,36 +7,45 @@ import AppContext from "../AppContext"
 import AppConfig from "../AppConfig";
 import disableCodHandler from "../../utils/classes/disableCodHandler";
 
-function PaymentMethods({userdata,itemsTotalPrice,email,phoneNumber}) {
+function PaymentMethods({pickUpOrDeliver,userdata,itemsTotalPrice,email,phoneNumber}) {
   const { width } = useWindowDimensions();
   const {firestore,cardSelected,setCardSelected,setPaymentMethodSelected,setChangeCard,changeCard} = useContext(AppContext)
   const [paymentMethods,setPaymentMethods] = useState([])
   const [isCodBanned,setIsCodBanned] = useState(false)
   const [reason,setReason] = useState(null)
-  
 
   useEffect(() => {
      firestore.readAllPaymentProviders().then((providers) => {
-   
       setPaymentMethods(providers)
      })
   },[])
 
   useEffect(() => {
-    const _disableCodHandler = new disableCodHandler({userdata,phoneNumber,email,itemsTotalPrice})
-    _disableCodHandler.runMain()
-    const isCodBanned = _disableCodHandler.isCodBanned
-    setIsCodBanned(isCodBanned)
-    if (isCodBanned === true) {
-      // setCardSelected(cardSelected['cod'] = false)
-      cardSelected['cod'] = false
-      const reason = _disableCodHandler.reason
-      setReason(reason)
-      setCardSelected(cardSelected)
-      setChangeCard(!changeCard)
-      setPaymentMethodSelected(null)
+    console.log('pickUpOrDeliver',pickUpOrDeliver)
+  },[pickUpOrDeliver])
+
+  useEffect(() => {
+    console.log('pickUpOrDeliver',pickUpOrDeliver)
+    if (pickUpOrDeliver === 'deliver') {
+      const _disableCodHandler = new disableCodHandler({userdata,phoneNumber,email,itemsTotalPrice})
+      _disableCodHandler.runMain()
+      const isCodBanned = _disableCodHandler.isCodBanned
+      setIsCodBanned(isCodBanned)
+      if (isCodBanned === true) {
+        // setCardSelected(cardSelected['cod'] = false)
+        cardSelected['cod'] = false
+        const reason = _disableCodHandler.reason
+        setReason(reason)
+        setCardSelected(cardSelected)
+        setChangeCard(!changeCard)
+        setPaymentMethodSelected(null)
+      }
+    } 
+    if (pickUpOrDeliver === 'pickup') {
+      // setCardSelected(cardSelected['cod'] = true)
+      setIsCodBanned(false)
     }
-  },[userdata,itemsTotalPrice,email,phoneNumber])
+  },[userdata,itemsTotalPrice,email,phoneNumber,pickUpOrDeliver])
 
 
   function overFlow(){
@@ -55,6 +64,7 @@ function PaymentMethods({userdata,itemsTotalPrice,email,phoneNumber}) {
           const id = payments.id
           let disabled = false
           if (payments.id === 'cod') {
+            
             if (isCodBanned === true) {
               disabled = true
             }
