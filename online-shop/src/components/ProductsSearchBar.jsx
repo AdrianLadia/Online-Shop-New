@@ -108,11 +108,12 @@ const ProductsSearchBar = ({
 
           noOptionsText={'No products found'}
           disablePortal
+          ListboxProps={{ style: { maxHeight: 150 } }}
           value={selectedName}
           id="combo-box-demo"
           options={productNames}
           sx={{ width: 300, margin: 'auto', marginTop: '20px' }}
-          renderInput={(params) => <TextField className='bg-white' {...params} label="Search Item" />}
+          renderInput={(params) => <TextField  className='bg-white' {...params} label="Search Item" />}
           filterOptions={(options, { inputValue }) => {
             const results = fuse.search(inputValue);
             return results.map((res) => [res.item.name, `  (${res.item.unit})`]); // Convert back to array format for Autocomplete

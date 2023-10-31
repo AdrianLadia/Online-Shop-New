@@ -22,7 +22,6 @@ const OrdersCalendar = (props) => {
           minDate = {minDate}
           maxDate = {maxDate}
           filterDate = {filterDate}
-
           />
     </div>
   )

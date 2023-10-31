@@ -98,7 +98,6 @@ const AdminCreatePaymentTableRow = (props) => {
     console.log('order',order)
     setOrder(order)
     setOpenModal(true)
-    
   }
 
 

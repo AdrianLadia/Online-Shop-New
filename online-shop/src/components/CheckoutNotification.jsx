@@ -57,7 +57,7 @@ const CheckoutNotification = ({ allowedDates }) => {
                   {allowedDates.cutOffTime}:00. Your understanding and cooperation are highly appreciated.
                 </p>
                 <br></br>
-                <p>Orders placed now will be scheduled for delivery on {allowedDates.minDate.toLocaleDateString()}.</p>
+                <p>Orders placed now will be scheduled for delivery on {allowedDates.minDate.toLocaleDateString()} or later.</p>
               </Typography>
             </CardContent>
           </Card>

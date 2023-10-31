@@ -21,7 +21,7 @@ import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import CheckoutContext from '../context/CheckoutContext';
 import { useNavigate } from 'react-router-dom';
 import dataManipulation from '../../utils/dataManipulation';
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';CheckoutNotification
 import ClipLoader from 'react-spinners/ClipLoader';
 import Geocode from 'react-geocode';
 import Button from '@mui/material/Button';
@@ -144,6 +144,7 @@ const CheckoutPage = () => {
     const filterDate = ad.excludeDates;
     const holidays = ad.holidays;
     const isStoreOpen = ad.isStoreOpen;
+    setStartDate(minDate);
     setAllowedDates(ad)
   }, []);
 
