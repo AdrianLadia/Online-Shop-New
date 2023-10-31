@@ -44,17 +44,9 @@ class allowedDeliveryDates {
       this.isStoreOpen = true;
     }
 
-    // create a while loop and check if holiday if it is still a holiday add 1 day to minDate
-    console.log(this.minDate);
-
-    // function convertDateObjectToDateString(dateString) {
-    //     const dateObj = new Date(dateString);
-    //     const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-11 in JavaScript, so we add 1
-    //     const day = String(dateObj.getDate()).padStart(2, '0');
-    //     const year = dateObj.getFullYear();
-    //     const formattedDate = `${month}/${day}/${year}`;
-    //     return formattedDate;
-    // }
+    // We create a while loop to check if the minDate is a holiday
+    // if it is a holiday, we add one day to the minDate
+    // until we find a date that is not a holiday
     let foundMinDate
     while (foundMinDate != true) {
         console.log(this.minDate.toLocaleDateString())
