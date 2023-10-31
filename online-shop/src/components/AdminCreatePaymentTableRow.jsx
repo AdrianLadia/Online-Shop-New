@@ -1,20 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TableRow, TableCell } from '@mui/material';
 import { useState, useContext } from 'react';
 import AppContext from '../AppContext';
 import CircularProgress from '@mui/material/CircularProgress';
+
 
 const AdminCreatePaymentTableRow = (props) => {
   const proofOfPaymentLink = props.proofOfPaymentLink;
   const orderReference = props.orderReference;
   const userId = props.userId;
   const userName = props.userName;
+  const setOrder = props.setOrder;
+  const setOpenModal = props.setOpenModal;
   const setPaymentsData = props.setPaymentsData;
   const [amount, setAmount] = useState('');
   const { cloudfirestore, firestore } = useContext(AppContext);
   const paymentsData = props.paymentsData;
   const paymentMethod = props.paymentMethod;
   const [loading, setLoading] = useState(false);
+
+  // if amount exists, set it to amount state
+  // amount exists when guest created an order
+  // we automatically add the payment so that it will be more efficient
+  useEffect(() => {
+    if(props.amount) {
+      setAmount(props.amount);
+    }
+  }, [props.amount]);
   
 
   const handleNewTab = (link) => {
@@ -81,7 +93,13 @@ const AdminCreatePaymentTableRow = (props) => {
     // setPaymentsData(newPaymentsData);
   }
 
-  
+  async function onReferenceClick() {
+    const order = await firestore.readSelectedDataFromCollection('Orders',orderReference)
+    console.log('order',order)
+    setOrder(order)
+    setOpenModal(true)
+    
+  }
 
 
   return (
@@ -93,7 +111,7 @@ const AdminCreatePaymentTableRow = (props) => {
           className="rounded-xl cursor-pointer"
         />
       </TableCell>
-      <TableCell align="right">{orderReference}</TableCell>
+      <TableCell align="right"><span onClick={onReferenceClick} class="text-blue-500 underline cursor-pointer">{orderReference}</span> </TableCell>
       <TableCell align="right">{userId}</TableCell>
       <TableCell align="right">{userName}</TableCell>
       <TableCell align="right">{paymentMethod}</TableCell>

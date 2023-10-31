@@ -393,6 +393,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     proofOfPaymentLink,
     userName,
     paymentMethod,
+    amount = null,
     forTesting = false
   ) {
     const json = {
@@ -401,6 +402,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       proofOfPaymentLink: proofOfPaymentLink,
       userName: userName,
       paymentMethod: paymentMethod,
+      amount: amount,
       forTesting: forTesting,
     };
 

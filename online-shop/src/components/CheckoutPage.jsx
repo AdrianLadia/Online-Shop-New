@@ -411,6 +411,10 @@ const CheckoutPage = () => {
         paymentMethod: paymentMethodSelected,
       });
 
+
+      await cloudfirestore.updateOrderProofOfPaymentLink(orderReferenceNumber, userdata ? userdata.userId : 'GUEST', paymentMethodSelected, userdata ? userdata.name : localname, paymentMethodSelected,grandTotal);
+
+
       setTransactionStatus(res);
       setPlacedOrder(!placedOrder);
       analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);

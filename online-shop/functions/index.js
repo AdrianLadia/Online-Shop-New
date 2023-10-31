@@ -1431,6 +1431,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
       const orderReference = data.orderReference;
       const userId = data.userId;
       const proofOfPaymentLink = data.proofOfPaymentLink;
+      const amount = data.amount;
       const forTesting = data.forTesting;
 
       // VALIDATE DATA
@@ -1440,6 +1441,7 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
         proofOfPaymentLink: Joi.string().required(),
         paymentMethod: Joi.string().required().allow(''),
         userName: Joi.string().required(),
+        amount: Joi.number().required().allow(null),
         forTesting: Joi.boolean(),
       });
 
@@ -1498,12 +1500,12 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
             userName: userName,
             paymentMethod: paymentMethod,
             paymentId: newPaymentRef.id,
-            amount: null,
+            amount: amount,
           });
 
           const paymentId = newPaymentRef.id;
-
-          if (forTesting == false) {
+          // we dont run sendemail if amount is not equal to null because it means that payment is made by guest
+          if (forTesting == false && amount == null) {
             sendmail(
               'ladiaadrian@gmail.com',
               'Payment Uploaded',
