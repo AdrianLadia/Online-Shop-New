@@ -362,7 +362,7 @@ exports.onPaymentsChange = functions
     const db = admin.firestore();
     const userId = afterData.userId;
 
-    // WE DONT DO ANYTHING IF USERID IS GUEST BECAUSE 
+    // WE DONT DO ANYTHING IF USERID IS GUEST BECAUSE
     // GUEST DOES NOT HAVE AN ACCOUNT STATEMENT
     if (userId == 'GUEST') {
       console.log('userId is GUEST');
@@ -645,7 +645,7 @@ exports.transactionPlaceOrder = functions
 
       const cartItemsPrice = {};
       const stocksAvailableList = [];
-
+      const cartEmailData = [];
       for (const key of itemKeys) {
         const itemId = key;
         const itemQuantity = cart[key];
@@ -654,9 +654,11 @@ exports.transactionPlaceOrder = functions
         const total = price * itemQuantity;
         const stocksAvailable = item.data().stocksAvailable;
         const itemName = item.data().itemName;
+        const itemUnit = item.data().unit;
         itemsTotalBackEnd += total;
         cartUniqueItems.push(itemId);
         cartItemsPrice[itemId] = price;
+        cartEmailData.push({itemName:itemName, itemQuantity:itemQuantity, itemUnit:itemUnit})
         stocksAvailableList.push({ itemId, stocksAvailable, itemName });
       }
 
@@ -907,11 +909,10 @@ exports.transactionPlaceOrder = functions
 
             if (sendMail == true) {
               try {
-                
-                  sendmail(
-                    newOrder.eMail,
-                    'Order Confirmation',
-                    `<p>Dear Customer,</p>
+                sendmail(
+                  newOrder.eMail,
+                  'Order Confirmation',
+                  `<p>Dear Customer,</p>
                       
                       <p>We are thrilled to confirm that your order has been successfully placed.</p>
                       
@@ -927,8 +928,7 @@ exports.transactionPlaceOrder = functions
                 
                 <p>Best Regards,<br>
                 The Star Pack Team</p>`
-                  );
-                
+                );
 
                 sendmail(
                   'ladiaadrian@gmail.com',
@@ -941,7 +941,9 @@ exports.transactionPlaceOrder = functions
               <p><strong>Total:</strong> ${newOrder.grandTotal}</p>
               
               <p><strong>Delivery Date:</strong> ${newOrder.deliveryDate}</p>
-              <p><strong>Delivery Address:</strong></p><a href='https://www.google.com/maps?q=${newOrder.deliveryAddressLatitude},${newOrder.deliveryAddressLongitude}'>${newOrder.deliveryAddress}</a> 
+              <p><strong>Delivery Address:</strong></p><a href='https://www.google.com/maps?q=${
+                newOrder.deliveryAddressLatitude
+              },${newOrder.deliveryAddressLongitude}'>${newOrder.deliveryAddress}</a> 
               <p><strong>Delivery Vehicle:</strong> ${newOrder.deliveryVehicle}</p>
               <p><strong>Delivery Notes:</strong> ${newOrder.deliveryNotes}</p>
               <p><strong>Need Assistance:</strong> ${newOrder.needAssistance}</p>
@@ -950,9 +952,8 @@ exports.transactionPlaceOrder = functions
               
               <p><strong>Items:</strong></p>
               <ul>
-              ${Object.keys(newOrder.cart)
-                .map((key) => {
-                  return `<li>${key} - ${newOrder.cart[key]}</li>`;
+              ${cartEmailData.map((item) => {
+                  return `<li>${item.itemName} - ${item.itemQuantity} ${item.itemUnit}</li>`;
                 })
                 .join('')}
                 </ul>
@@ -962,13 +963,24 @@ exports.transactionPlaceOrder = functions
                 <p><strong>Grand Total:</strong> ${newOrder.grandTotal}</p>
                 <p><strong>Payment Method: </strong> ${newOrder.paymentMethod}</p>
 
+              
+              <br>
+              <br>
+              <p> <strong> Delivery Note to driver </strong></p> <br>
+              <p> Pick up at Paper Boy, Red Gate, Naa sulat Pustanan Printers Cebu. Deliver to ${
+                newOrder.deliveryAddress
+              }, ${newOrder.contactPhoneNumber}, ${newOrder.contactName} </p>
+
 
               <p>Please check <strong>ADMIN ORDER MENU</strong> to view the order content</p>
               
               <p>Best Regards,<br>
               Star Pack Head</p>`
                 );
-              } catch {}
+              } catch(error) {
+                console.log(error)
+                console.log('error sending email');
+              }
             }
 
             res.send('SUCCESS');
@@ -1253,7 +1265,7 @@ exports.transactionCreatePayment = functions.region('asia-southeast1').https.onR
             paymentNotAccepted = true;
             return;
           } else {
-            console.log('setting order to paid : ' + orderReference )
+            console.log('setting order to paid : ' + orderReference);
             transaction.update(orderRef, { paid: true });
           }
         }
@@ -1455,6 +1467,27 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
 
       const db = admin.firestore();
 
+      async function getOrderWithRetry(transaction, orderRef, retries, delay) {
+        let orderData = null;
+
+        for (let i = 0; i < retries; i++) {
+          const ordersObject = await transaction.get(orderRef);
+          orderData = ordersObject.data();
+          if (orderData) {
+            break;
+          }
+
+          // If orderData is null, wait for the specified delay before trying again
+          await sleep(delay);
+        }
+
+        return orderData;
+      }
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
       await db.runTransaction(async (transaction) => {
         try {
           // READ
@@ -1463,8 +1496,9 @@ exports.updateOrderProofOfPaymentLink = functions.region('asia-southeast1').http
           const userDoc = await transaction.get(userRef);
           const userData = userDoc.data();
           const orderRef = db.collection('Orders').doc(orderReference);
-          const ordersObject = await transaction.get(orderRef);
-          const order = ordersObject.data();
+          const order = await getOrderWithRetry(transaction, orderRef, 3, 500);
+          // const ordersObject = await transaction.get(orderRef);
+          // const order = ordersObject.data();
           const proofOfPayments = order.proofOfPaymentLink;
           const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
           const orderMessages = await transaction.get(orderMessagesRef);
@@ -2100,7 +2134,7 @@ exports.voidPayment = functions
             }
           });
 
-          console.log(updatedPayments)
+          console.log(updatedPayments);
 
           transaction.update(userRef, { payments: updatedPayments });
 
@@ -2111,7 +2145,7 @@ exports.voidPayment = functions
             }
           });
 
-          console.log(updatedOrderProofOfPaymentLink)
+          console.log(updatedOrderProofOfPaymentLink);
 
           transaction.update(orderRef, { proofOfPaymentLink: updatedOrderProofOfPaymentLink });
 
@@ -2251,7 +2285,6 @@ exports.editCustomerOrder = functions.region('asia-southeast1').https.onRequest(
   });
 });
 
-
 exports.updateProductSearchIndex = functions
   .region('asia-southeast1')
   .pubsub.schedule('every 24 hours')
@@ -2269,7 +2302,7 @@ exports.updateProductSearchIndex = functions
       const productSearchIndex = {
         itemId: product.itemId,
         name: product.itemName,
-        category: product.category
+        category: product.category,
       };
 
       if (product.forOnlineStore) {
@@ -2280,33 +2313,32 @@ exports.updateProductSearchIndex = functions
     await searchIndexRef.set({ search: searchIndex });
   });
 
-
-  exports.updateProductSearchIndex = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
-    corsHandler(req, res, async () => {
-      const db = admin.firestore();
-      const productsRef = db.collection('Products');
-      const snapshot = await productsRef.get();
-      const products = [];
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        products.push(data);
-      });
-      const searchIndex = [];
-      products.forEach((product) => {
-        const productSearchIndex = {
-          itemId: product.itemId,
-          name: product.itemName,
-          category: product.category,
-          imageLinks: product.imageLinks,
-          unit : product.unit
-        };
-  
-        if (product.forOnlineStore) {
-          searchIndex.push(productSearchIndex);
-        }
-      });
-      const searchIndexRef = db.collection('Index').doc('ProductSearchIndex');
-      await searchIndexRef.set({ search: searchIndex });
-      res.status(200).send('Product search index updated');
+exports.updateProductSearchIndex = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const db = admin.firestore();
+    const productsRef = db.collection('Products');
+    const snapshot = await productsRef.get();
+    const products = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      products.push(data);
     });
+    const searchIndex = [];
+    products.forEach((product) => {
+      const productSearchIndex = {
+        itemId: product.itemId,
+        name: product.itemName,
+        category: product.category,
+        imageLinks: product.imageLinks,
+        unit: product.unit,
+      };
+
+      if (product.forOnlineStore) {
+        searchIndex.push(productSearchIndex);
+      }
+    });
+    const searchIndexRef = db.collection('Index').doc('ProductSearchIndex');
+    await searchIndexRef.set({ search: searchIndex });
+    res.status(200).send('Product search index updated');
   });
+});

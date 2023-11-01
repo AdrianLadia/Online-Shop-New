@@ -254,6 +254,7 @@ const CheckoutPage = () => {
     window.scrollTo(0, 0);
   }, []);
 
+
   useEffect(() => {
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
       paperboylatitude,
@@ -412,9 +413,8 @@ const CheckoutPage = () => {
         paymentMethod: paymentMethodSelected,
       });
 
-
-      await cloudfirestore.updateOrderProofOfPaymentLink(orderReferenceNumber, userdata ? userdata.userId : 'GUEST', paymentMethodSelected, userdata ? userdata.name : localname, paymentMethodSelected,grandTotal);
-
+      
+      await cloudfirestore.updateOrderProofOfPaymentLink(orderReferenceNumber, userdata ? userdata.uid : 'GUEST', paymentMethodSelected, userdata ? userdata.name : localname, paymentMethodSelected,grandTotal);
 
       setTransactionStatus(res);
       setPlacedOrder(!placedOrder);

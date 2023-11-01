@@ -18,7 +18,7 @@ const CartTable = (props) => {
 
     const rows = props.rows
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(rows.length);
 
     const columns = [
         { id: 'itemimage', label: 'Image', minWidth: 120},
