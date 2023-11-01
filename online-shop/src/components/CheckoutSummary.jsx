@@ -117,13 +117,14 @@ const CheckoutSummary = (props) => {
             sx={{
               width: responsiveWidth(),
               bgcolor: 'background.paper',
+              // bgcolor: 'red',
               marginLeft: -2,
               borderRadius: '8px',
               border: 1,
               borderColor: '#99A98F',
             }}
           >
-            <div className="grid grid-cols-2 md:grid-cols-6 justify-start items-start gap-5 xs:gap-10 ">
+            <div className="flex flex-row flex-wrap -m-1">
               {deliveryVehicle && deliveryVehicle != 'storePickUp' ? (
                 <ListItem>
                   <ListItemText primary="Delivery Vehicle:" secondary={deliveryVehicle} />
