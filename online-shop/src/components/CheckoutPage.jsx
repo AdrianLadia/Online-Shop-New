@@ -236,16 +236,20 @@ const CheckoutPage = () => {
           deliveryVehicle: deliveryVehicle,
         }).then((url) => {
           if (url) {
+            // this is used for paymaya url
+            alertSnackbar('info','Moving you to the payment page. Do not exit this page.')
             window.location.href = url;
+            setPlaceOrderLoading(false);
           }
         });
         setRefreshUser(!refreshUser);
       }
-      if (transactionStatus.status == 409) {
+      if (transactionStatus.status == 409 || transactionStatus.status == 400) {
         alertSnackbar('info', transactionStatus.data);
+        setPlaceOrderLoading(false);
       }
 
-      setPlaceOrderLoading(false);
+      
     }
   }, [placedOrder]);
 
@@ -384,7 +388,6 @@ const CheckoutPage = () => {
         sendEmail = true;
       }
 
-
       const res = await cloudfirestore.transactionPlaceOrder({
         userid: userdata ? userdata.uid : null,
         localDeliveryAddress: localDeliveryAddress,
@@ -412,7 +415,6 @@ const CheckoutPage = () => {
         deliveryDate: startDate.toISOString(),
         paymentMethod: paymentMethodSelected,
       });
-
       
       await cloudfirestore.updateOrderProofOfPaymentLink(orderReferenceNumber, userdata ? userdata.uid : 'GUEST', paymentMethodSelected, userdata ? userdata.name : localname, paymentMethodSelected,grandTotal);
 
