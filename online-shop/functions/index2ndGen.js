@@ -1,4 +1,5 @@
-const functions = require('firebase-functions');
+// const functions = require('firebase-functions');
+// explicitly import each trigger
 const { onRequest } = require('firebase-functions/v2/https');
 const { onDocumentWritten } = require('firebase-functions/v2/firestore');
 const { setGlobalOptions } = require('firebase-functions/v2');
@@ -7,7 +8,7 @@ const {logger} = require("firebase-functions");
 const PromisePool = require('es6-promise-pool').default;
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
-setGlobalOptions({ region: 'asia-southeast1' ,maxInstances: 10});
+setGlobalOptions({ region: 'asia-southeast1' });
 
 const admin = require('firebase-admin');
 const cors = require('cors');
@@ -28,8 +29,9 @@ const corsHandler = cors({
     'http://127.0.0.1:5174',
     'https://127.0.0.1:5173',
     'https://127.0.0.1:5174',
-    
-  ]
+  ],
+  // origin: true
+  // origin: ['http://localhost:9099']
 });
 
 const express = require('express');
@@ -45,7 +47,6 @@ admin.initializeApp();
 app.use(corsHandler);
 app.use(express.json());
 
-// Use CORS middleware to enable Cross-Origin Resource Sharing
 async function sendmail(to, subject, htmlContent) {
   try {
     const transporter = nodemailer.createTransport({
@@ -199,9 +200,7 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
     .update({ ['orders']: orders });
 }
 
-// 2nd gen
-
-exports.postToConversionApiV2 = onRequest((req, res) => {
+exports.postToConversionApi = onRequest((req, res) => {
   corsHandler(req, res, async () => {
     function processIPAddress(ip) {
       if (ip.startsWith('::ffff:')) {
@@ -336,7 +335,7 @@ exports.postToConversionApiV2 = onRequest((req, res) => {
   });
 });
 
-exports.onPaymentsChangeV2 = onDocumentWritten('Payments/{paymentId}', async (change, context) => {
+exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (change, context) => {
   const beforeData = change.before.data();
   const afterData = change.after.data();
 
@@ -405,7 +404,7 @@ exports.onPaymentsChangeV2 = onDocumentWritten('Payments/{paymentId}', async (ch
   });
 });
 
-exports.onOrdersChangeV2 = onDocumentWritten('Orders/{orderId}', async (change, context) => {
+exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (change, context) => {
   try {
     const beforeData = change.before.data();
     const afterData = change.after.data();
@@ -458,7 +457,7 @@ exports.onOrdersChangeV2 = onDocumentWritten('Orders/{orderId}', async (change, 
   }
 });
 
-exports.getIPAddressV2 = onRequest(async (req, res) => {
+exports.getIPAddress = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const clientIP =
       req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
@@ -467,7 +466,7 @@ exports.getIPAddressV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readUserRoleV2 = onRequest(async (req, res) => {
+exports.readUserRole = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const userid = req.query.data;
@@ -483,7 +482,7 @@ exports.readUserRoleV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readSelectedDataFromOnlineStoreV2 = onRequest(async (req, res) => {
+exports.readSelectedDataFromOnlineStore = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const body = req.body;
@@ -524,7 +523,7 @@ exports.readSelectedDataFromOnlineStoreV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readAllProductsForOnlineStoreV2 = onRequest(async (req, res) => {
+exports.readAllProductsForOnlineStore = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       // Create a query for products where forOnlineStore is true
@@ -576,7 +575,7 @@ exports.readAllProductsForOnlineStoreV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.createPaymentV2 = onRequest(async (req, res) => {
+exports.createPayment = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const data = parseData(req.query.data);
@@ -590,7 +589,7 @@ exports.createPaymentV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.updateOrdersAsPaidOrNotPaidV2 = onRequest(async (req, res) => {
+exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const db = admin.firestore();
@@ -608,7 +607,7 @@ exports.updateOrdersAsPaidOrNotPaidV2 = onRequest(async (req, res) => {
 
 // ##############
 
-exports.transactionPlaceOrderV2 = onRequest(async (req, res) => {
+exports.transactionPlaceOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     let userid = data.userid;
@@ -997,7 +996,7 @@ exports.transactionPlaceOrderV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.checkIfUserIdAlreadyExistV2 = onRequest(async (req, res) => {
+exports.checkIfUserIdAlreadyExist = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const userId = req.query.userId;
     const db = admin.firestore();
@@ -1010,7 +1009,7 @@ exports.checkIfUserIdAlreadyExistV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.deleteDocumentFromCollectionV2 = onRequest(async (req, res) => {
+exports.deleteDocumentFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collectionName = data.collectionName;
@@ -1027,7 +1026,7 @@ exports.deleteDocumentFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.updateDocumentFromCollectionV2 = onRequest(async (req, res) => {
+exports.updateDocumentFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const collectionName = data.collectionName;
@@ -1066,7 +1065,7 @@ exports.updateDocumentFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readAllIdsFromCollectionV2 = onRequest(async (req, res) => {
+exports.readAllIdsFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
@@ -1088,7 +1087,7 @@ exports.readAllIdsFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readAllDataFromCollectionV2 = onRequest(async (req, res) => {
+exports.readAllDataFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
@@ -1110,7 +1109,7 @@ exports.readAllDataFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.createDocumentV2= onRequest(async (req, res) => {
+exports.createDocument = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collection = data.collection;
@@ -1128,7 +1127,7 @@ exports.createDocumentV2= onRequest(async (req, res) => {
   });
 });
 
-exports.readSelectedDataFromCollectionV2 = onRequest(async (req, res) => {
+exports.readSelectedDataFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     // Your function logic here
     const data = parseData(req.query.data);
@@ -1152,7 +1151,7 @@ exports.readSelectedDataFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.loginV2 = onRequest(async (req, res) => {
+exports.login = onRequest(async (req, res) => {
   try {
     const allUsersSnapshot = await admin.firestore().collection('Users').get();
     const usersData = [];
@@ -1171,7 +1170,7 @@ exports.loginV2 = onRequest(async (req, res) => {
   }
 });
 
-exports.transactionCreatePaymentV2 = onRequest(async (req, res) => {
+exports.transactionCreatePayment = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
 
@@ -1313,7 +1312,7 @@ exports.transactionCreatePaymentV2 = onRequest(async (req, res) => {
 });
 
 // Paymaya create checkout request
-exports.payMayaCheckoutV2 = onRequest(async (req, res) => {
+exports.payMayaCheckout = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     function convertToBase64(key) {
       return btoa(key + ':');
@@ -1350,7 +1349,7 @@ exports.payMayaCheckoutV2 = onRequest(async (req, res) => {
 });
 
 // Expose the Express app as a Cloud Function
-exports.payMayaWebHookSuccessV2 = onRequest(async (req, res) => {
+exports.payMayaWebHookSuccess = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     if (req.method != 'POST') {
       res.status(405).send('Method Not Allowed');
@@ -1407,7 +1406,7 @@ exports.payMayaWebHookSuccessV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.payMayaWebHookFailedV2 = onRequest(async (req, res) => {
+exports.payMayaWebHookFailed = onRequest(async (req, res) => {
   if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
@@ -1420,7 +1419,7 @@ exports.payMayaWebHookFailedV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.payMayaWebHookExpiredV2 = onRequest(async (req, res) => {
+exports.payMayaWebHookExpired = onRequest(async (req, res) => {
   if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
@@ -1433,7 +1432,7 @@ exports.payMayaWebHookExpiredV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.updateOrderProofOfPaymentLinkV2 = onRequest(async (req, res) => {
+exports.updateOrderProofOfPaymentLink = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       // Get the user document
@@ -1571,7 +1570,7 @@ exports.updateOrderProofOfPaymentLinkV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.sendEmailV2 = onRequest(async (req, res) => {
+exports.sendEmail = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     // get the recipient email address and message content from the client-side
     const data = req.body;
@@ -1757,7 +1756,7 @@ async function deleteOldOrders() {
   }
 }
 
-exports.deleteOldOrdersV2 = onRequest(async (req, res) => {
+exports.deleteOldOrders = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       deleteOldOrders();
@@ -1769,7 +1768,7 @@ exports.deleteOldOrdersV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.giveAffiliateCommissionV2 = onRequest(async (req, res) => {
+exports.giveAffiliateCommission = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       giveAffiliateCommission();
@@ -1781,14 +1780,14 @@ exports.giveAffiliateCommissionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.deleteOldOrdersScheduledV2 = onSchedule('every 1 hours', async (context) => {
+exports.deleteOldOrdersScheduled = onSchedule('every 1 hours', async (context) => {
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
   const promisePool = new PromisePool(() => deleteOldOrders(), MAX_CONCURRENT);
   await promisePool.start();
   logger.log('delete old orders finished')
 });
 
-exports.transactionCancelOrderV2 = onRequest(async (req, res) => {
+exports.transactionCancelOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const { userId, orderReference } = data;
@@ -1856,7 +1855,7 @@ exports.transactionCancelOrderV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.addDepositToAffiliateV2 = onRequest(async (req, res) => {
+exports.addDepositToAffiliate = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const affiliateUserId = data.affiliateUserId;
@@ -1928,7 +1927,7 @@ exports.addDepositToAffiliateV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.onAffiliateClaimV2 = onRequest(async (req, res) => {
+exports.onAffiliateClaim = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const data = req.body;
@@ -1977,7 +1976,7 @@ exports.onAffiliateClaimV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.addDepositToAffiliateDepositsV2 = onRequest(async (req, res) => {
+exports.addDepositToAffiliateDeposits = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const info = req.body;
     const amountDeposited = info.amountDeposited;
@@ -2008,7 +2007,7 @@ exports.addDepositToAffiliateDepositsV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.markAffiliateClaimDoneV2 = onRequest(async (req, res) => {
+exports.markAffiliateClaimDone = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const claimId = data.claimId;
@@ -2054,7 +2053,7 @@ exports.markAffiliateClaimDoneV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.getAllAffiliateUsersV2 = onRequest(async (req, res) => {
+exports.getAllAffiliateUsers = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
@@ -2070,7 +2069,7 @@ exports.getAllAffiliateUsersV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readSelectedOrderV2 = onRequest(async (req, res) => {
+exports.readSelectedOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const reference = data.reference;
@@ -2097,7 +2096,7 @@ exports.readSelectedOrderV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.voidPaymentV2 = functions
+exports.voidPayment = functions
   .region('asia-southeast1')
   .runWith({ memory: '2GB' })
   .https.onRequest(async (req, res) => {
@@ -2174,7 +2173,7 @@ exports.voidPaymentV2 = functions
     });
   });
 
-exports.editCustomerOrderV2 = onRequest(async (req, res) => {
+exports.editCustomerOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const data = req.body;
@@ -2286,7 +2285,7 @@ exports.editCustomerOrderV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.updateProductSearchIndexV2 = functions
+exports.updateProductSearchIndex = functions
   .region('asia-southeast1')
   .pubsub.schedule('every 24 hours')
   .onRun(async (context) => {
@@ -2314,7 +2313,7 @@ exports.updateProductSearchIndexV2 = functions
     await searchIndexRef.set({ search: searchIndex });
   });
 
-exports.updateProductSearchIndexV2 = onRequest(async (req, res) => {
+exports.updateProductSearchIndex = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const productsRef = db.collection('Products');
