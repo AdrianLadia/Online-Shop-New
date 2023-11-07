@@ -69,7 +69,7 @@ async function sendmail(to, subject, htmlContent) {
       html: htmlContent,
     });
   } catch (error) {
-    console.log(error);
+    logger.log(error);
   }
 }
 
@@ -89,11 +89,11 @@ function updateAccountStatement(payments, orders) {
   let totalPayments = 0;
 
   payments.map((payment) => {
-    console.log(payment);
+    logger.log(payment);
     totalPayments += parseFloat(payment.amount);
   });
 
-  console.log(totalPayments);
+  logger.log(totalPayments);
 
   orders.sort((a, b) => {
     const timeA = a.orderDate.seconds * 1e9 + a.orderDate.nanoseconds;
@@ -201,7 +201,7 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
 
 // 2nd gen
 
-exports.postToConversionApiV2 = onRequest((req, res) => {
+exports.postToConversionApi = onRequest((req, res) => {
   corsHandler(req, res, async () => {
     function processIPAddress(ip) {
       if (ip.startsWith('::ffff:')) {
@@ -261,27 +261,27 @@ exports.postToConversionApiV2 = onRequest((req, res) => {
       req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
     const userAgent = req.headers['user-agent'];
     ipAddress = processIPAddress(ipAddress);
-    console.log('_____________________________________________________________________________');
-    console.log('event_name', event_name, custom_parameters);
-    console.log(`IP Address: ${ipAddress}`);
-    console.log(`User Agent: ${userAgent}`);
+    logger.log('_____________________________________________________________________________');
+    logger.log('event_name', event_name, custom_parameters);
+    logger.log(`IP Address: ${ipAddress}`);
+    logger.log(`User Agent: ${userAgent}`);
     if (fbc != undefined) {
-      console.log('fbc', fbc);
+      logger.log('fbc', fbc);
     }
     if (fbp != undefined) {
-      console.log('fbp', fbp);
+      logger.log('fbp', fbp);
     }
     if (email != undefined) {
-      console.log('email', data.email, email);
+      logger.log('email', data.email, email);
     }
     if (phone != undefined) {
-      console.log('phone', data.phone, phone);
+      logger.log('phone', data.phone, phone);
     }
     if (firstName != undefined) {
-      console.log('firstName', data.name, firstName);
+      logger.log('firstName', data.name, firstName);
     }
     if (lastName != undefined) {
-      console.log('lastName', data.lastName, lastName);
+      logger.log('lastName', data.lastName, lastName);
     }
 
     let payload = {
@@ -322,10 +322,10 @@ exports.postToConversionApiV2 = onRequest((req, res) => {
       .then((response) => response.json())
       .then((data) => {
         if (data.events_received == 1) {
-          console.log('success');
+          logger.log('success');
           res.status(200).send(data);
         } else {
-          console.log('error');
+          logger.log('error');
           res.status(400).send(data);
         }
       })
@@ -336,15 +336,21 @@ exports.postToConversionApiV2 = onRequest((req, res) => {
   });
 });
 
-exports.onPaymentsChangeV2 = onDocumentWritten('Payments/{paymentId}', async (change, context) => {
-  const beforeData = change.before.data();
-  const afterData = change.after.data();
+exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (event) => {
+  const beforeData = event.data.before.data();
+  const afterData = event.data.after.data();
+  logger.log('beforeData', beforeData);
+  logger.log('afterData',afterData)
 
   let created = null;
   if (beforeData == undefined) {
     created = true;
   } else {
     created = false;
+  }
+
+  if (!afterData) {
+    return
   }
 
   if (!('amount' in afterData)) {
@@ -355,14 +361,14 @@ exports.onPaymentsChangeV2 = onDocumentWritten('Payments/{paymentId}', async (ch
     let checkPayments = false;
     if (beforeData.amount != afterData.amount) {
       checkPayments = true;
-      console.log('amount changed');
+      logger.log('amount changed');
     }
     if (beforeData.status != afterData.status) {
       checkPayments = true;
-      console.log('status changed');
+      logger.log('status changed');
     }
     if (checkPayments == false) {
-      console.log('not updating account statement');
+      logger.log('not updating account statement');
       return;
     }
   }
@@ -373,7 +379,7 @@ exports.onPaymentsChangeV2 = onDocumentWritten('Payments/{paymentId}', async (ch
   // WE DONT DO ANYTHING IF USERID IS GUEST BECAUSE
   // GUEST DOES NOT HAVE AN ACCOUNT STATEMENT
   if (userId == 'GUEST') {
-    console.log('userId is GUEST');
+    logger.log('userId is GUEST');
     return;
   }
 
@@ -405,24 +411,29 @@ exports.onPaymentsChangeV2 = onDocumentWritten('Payments/{paymentId}', async (ch
   });
 });
 
-exports.onOrdersChangeV2 = onDocumentWritten('Orders/{orderId}', async (change, context) => {
+exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => {
   try {
-    const beforeData = change.before.data();
-    const afterData = change.after.data();
+    const beforeData = event.data.before.data();
+    const afterData = event.data.after.data();
+
+    
     let created = null;
     if (beforeData == undefined) {
       created = true;
     } else {
       created = false;
     }
-
+    
+    if (!afterData) {
+      return;
+    }
     if (!('grandTotal' in afterData)) {
       return;
     }
 
     if (created == false) {
       if (beforeData.grandTotal == afterData.grandTotal) {
-        console.log('grandTotal did not change so not changing paid');
+        logger.log('grandTotal did not change so not changing paid');
         return;
       }
     }
@@ -431,7 +442,7 @@ exports.onOrdersChangeV2 = onDocumentWritten('Orders/{orderId}', async (change, 
     const userId = afterData.userId;
 
     if (userId == 'GUEST') {
-      console.log('userId is null');
+      logger.log('userId is null');
       return;
     }
 
@@ -444,21 +455,21 @@ exports.onOrdersChangeV2 = onDocumentWritten('Orders/{orderId}', async (change, 
       .get();
     const userPayments = paymentsSnapshot.docs.map((doc) => doc.data());
 
-    // console.log('userOrders',userOrders)
-    // console.log('userPayments' ,userPayments)
+    // logger.log('userOrders',userOrders)
+    // logger.log('userPayments' ,userPayments)
 
     const toUpdate = updateAccountStatement(userPayments, userOrders);
-    console.log(toUpdate);
+    logger.log(toUpdate);
     toUpdate.forEach(async (_toUpdate) => {
       const orderRef = db.collection('Orders').doc(_toUpdate.reference);
       await orderRef.update({ paid: _toUpdate.paid });
     });
   } catch (error) {
-    console.log(error);
+    logger.log(error);
   }
 });
 
-exports.getIPAddressV2 = onRequest(async (req, res) => {
+exports.getIPAddress = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const clientIP =
       req.headers['x-appengine-user-ip'] || req.headers['fastly-client-ip'] || req.headers['x-forwarded-for'];
@@ -467,7 +478,7 @@ exports.getIPAddressV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readUserRoleV2 = onRequest(async (req, res) => {
+exports.readUserRole = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const userid = req.query.data;
@@ -483,7 +494,7 @@ exports.readUserRoleV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readSelectedDataFromOnlineStoreV2 = onRequest(async (req, res) => {
+exports.readSelectedDataFromOnlineStore = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const body = req.body;
@@ -518,13 +529,13 @@ exports.readSelectedDataFromOnlineStoreV2 = onRequest(async (req, res) => {
 
       res.send(productObject);
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('Error reading selected data. Please try again later');
     }
   });
 });
 
-exports.readAllProductsForOnlineStoreV2 = onRequest(async (req, res) => {
+exports.readAllProductsForOnlineStore = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       // Create a query for products where forOnlineStore is true
@@ -569,14 +580,14 @@ exports.readAllProductsForOnlineStoreV2 = onRequest(async (req, res) => {
       // Send the products array as a JSON response
       res.status(200).send(products);
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('Error reading products. Please try again later');
     }
     // return res.json({status: 'ok'})
   });
 });
 
-exports.createPaymentV2 = onRequest(async (req, res) => {
+exports.createPayment = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const data = parseData(req.query.data);
@@ -584,13 +595,13 @@ exports.createPaymentV2 = onRequest(async (req, res) => {
       await createPayment(data, db);
       res.status(200).send('success');
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('Error creating payment. Please try again later');
     }
   });
 });
 
-exports.updateOrdersAsPaidOrNotPaidV2 = onRequest(async (req, res) => {
+exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       const db = admin.firestore();
@@ -600,7 +611,7 @@ exports.updateOrdersAsPaidOrNotPaidV2 = onRequest(async (req, res) => {
 
       res.status(200).send('success');
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send(error);
     }
   });
@@ -608,7 +619,7 @@ exports.updateOrdersAsPaidOrNotPaidV2 = onRequest(async (req, res) => {
 
 // ##############
 
-exports.transactionPlaceOrderV2 = onRequest(async (req, res) => {
+exports.transactionPlaceOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     let userid = data.userid;
@@ -688,13 +699,13 @@ exports.transactionPlaceOrderV2 = onRequest(async (req, res) => {
       }
 
       if (itemsTotalBackEnd != itemstotal + vat) {
-        console.log('itemsTotalBackEnd != itemstotal');
+        logger.log('itemsTotalBackEnd != itemstotal');
         res.status(400).send('Invalid data submitted. Please try again later');
         return;
       }
 
       if (vat + itemstotal + shippingtotal != grandTotal) {
-        console.log('vat + itemstotal + shippingtotal != grandTotal');
+        logger.log('vat + itemstotal + shippingtotal != grandTotal');
         res.status(400).send('Invalid data submitted. Please try again later');
         return;
       }
@@ -979,25 +990,25 @@ exports.transactionPlaceOrderV2 = onRequest(async (req, res) => {
               Star Pack Head</p>`
               );
             } catch (error) {
-              console.log(error);
-              console.log('error sending email');
+              logger.log(error);
+              logger.log('error sending email');
             }
           }
 
           res.send('SUCCESS');
         } catch (e) {
-          console.log(e);
+          logger.log(e);
           res.status(400).send('FAILED');
         }
       });
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('FAILED');
     }
   });
 });
 
-exports.checkIfUserIdAlreadyExistV2 = onRequest(async (req, res) => {
+exports.checkIfUserIdAlreadyExist = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const userId = req.query.userId;
     const db = admin.firestore();
@@ -1010,7 +1021,7 @@ exports.checkIfUserIdAlreadyExistV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.deleteDocumentFromCollectionV2 = onRequest(async (req, res) => {
+exports.deleteDocumentFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collectionName = data.collectionName;
@@ -1027,7 +1038,7 @@ exports.deleteDocumentFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.updateDocumentFromCollectionV2 = onRequest(async (req, res) => {
+exports.updateDocumentFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const collectionName = data.collectionName;
@@ -1066,7 +1077,7 @@ exports.updateDocumentFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readAllIdsFromCollectionV2 = onRequest(async (req, res) => {
+exports.readAllIdsFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
@@ -1088,7 +1099,7 @@ exports.readAllIdsFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readAllDataFromCollectionV2 = onRequest(async (req, res) => {
+exports.readAllDataFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
@@ -1110,7 +1121,7 @@ exports.readAllDataFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.createDocumentV2= onRequest(async (req, res) => {
+exports.createDocument= onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collection = data.collection;
@@ -1128,7 +1139,7 @@ exports.createDocumentV2= onRequest(async (req, res) => {
   });
 });
 
-exports.readSelectedDataFromCollectionV2 = onRequest(async (req, res) => {
+exports.readSelectedDataFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     // Your function logic here
     const data = parseData(req.query.data);
@@ -1152,7 +1163,7 @@ exports.readSelectedDataFromCollectionV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.loginV2 = onRequest(async (req, res) => {
+exports.login = onRequest(async (req, res) => {
   try {
     const allUsersSnapshot = await admin.firestore().collection('Users').get();
     const usersData = [];
@@ -1171,7 +1182,7 @@ exports.loginV2 = onRequest(async (req, res) => {
   }
 });
 
-exports.transactionCreatePaymentV2 = onRequest(async (req, res) => {
+exports.transactionCreatePayment = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
 
@@ -1182,7 +1193,7 @@ exports.transactionCreatePaymentV2 = onRequest(async (req, res) => {
     const commissionPercentage = 0.03;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
-    console.log('Proof of payment link', proofOfPaymentLink);
+    logger.log('Proof of payment link', proofOfPaymentLink);
     const db = admin.firestore();
     const userId = data.userId;
 
@@ -1262,11 +1273,11 @@ exports.transactionCreatePaymentV2 = onRequest(async (req, res) => {
         // });
         if (userId == 'GUEST') {
           if (depositAmount < grandTotal) {
-            console.log('payment not accepted in transaction');
+            logger.log('payment not accepted in transaction');
             paymentNotAccepted = true;
             return;
           } else {
-            console.log('setting order to paid : ' + orderReference);
+            logger.log('setting order to paid : ' + orderReference);
             transaction.update(orderRef, { paid: true });
           }
         }
@@ -1300,20 +1311,20 @@ exports.transactionCreatePaymentV2 = onRequest(async (req, res) => {
       });
 
       if (paymentNotAccepted == true) {
-        console.log('payment not accepted returned');
+        logger.log('payment not accepted returned');
         res.status(200).send('Error creating payment. Payment is less than total');
         return;
       }
       res.status(200).send('success');
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('Error adding document.');
     }
   });
 });
 
 // Paymaya create checkout request
-exports.payMayaCheckoutV2 = onRequest(async (req, res) => {
+exports.payMayaCheckout = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     function convertToBase64(key) {
       return btoa(key + ':');
@@ -1344,13 +1355,13 @@ exports.payMayaCheckoutV2 = onRequest(async (req, res) => {
     };
 
     const response = await axios.post(url, payload, { headers });
-    console.log(response.data);
+    logger.log(response.data);
     res.send(response.data);
   });
 });
 
 // Expose the Express app as a Cloud Function
-exports.payMayaWebHookSuccessV2 = onRequest(async (req, res) => {
+exports.payMayaWebHookSuccess = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     if (req.method != 'POST') {
       res.status(405).send('Method Not Allowed');
@@ -1407,7 +1418,7 @@ exports.payMayaWebHookSuccessV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.payMayaWebHookFailedV2 = onRequest(async (req, res) => {
+exports.payMayaWebHookFailed = onRequest(async (req, res) => {
   if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
@@ -1420,7 +1431,7 @@ exports.payMayaWebHookFailedV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.payMayaWebHookExpiredV2 = onRequest(async (req, res) => {
+exports.payMayaWebHookExpired = onRequest(async (req, res) => {
   if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
@@ -1433,7 +1444,7 @@ exports.payMayaWebHookExpiredV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.updateOrderProofOfPaymentLinkV2 = onRequest(async (req, res) => {
+exports.updateOrderProofOfPaymentLink = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       // Get the user document
@@ -1571,7 +1582,7 @@ exports.updateOrderProofOfPaymentLinkV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.sendEmailV2 = onRequest(async (req, res) => {
+exports.sendEmail = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     // get the recipient email address and message content from the client-side
     const data = req.body;
@@ -1601,7 +1612,7 @@ async function deleteOldOrders() {
       // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
       let paymentLinks;
       const order = orderObj.data();
-      console.log(order);
+      logger.log(order);
       paymentLinks = order.proofOfPaymentLink;
       if (paymentLinks == null) {
         paymentLinks = [];
@@ -1634,7 +1645,7 @@ async function deleteOldOrders() {
         return;
       }
 
-      console.log(`order ${order.reference} is expired and will be deleted`);
+      logger.log(`order ${order.reference} is expired and will be deleted`);
       // foundExpiredOrders = true;
       // WE PASS THE ORDER TO THE ARRAY ADD THE ORDER CART BACK TO THE INVENTORY
       deletedOrders.push(order);
@@ -1752,43 +1763,43 @@ async function deleteOldOrders() {
       });
     });
   } catch (error) {
-    console.log(error);
+    logger.log(error);
     throw error;
   }
 }
 
-exports.deleteOldOrdersV2 = onRequest(async (req, res) => {
+exports.deleteOldOrders = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       deleteOldOrders();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('failed to delete old orders');
     }
   });
 });
 
-exports.giveAffiliateCommissionV2 = onRequest(async (req, res) => {
+exports.giveAffiliateCommission = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     try {
       giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('failed to delete old orders');
     }
   });
 });
 
-exports.deleteOldOrdersScheduledV2 = onSchedule('every 1 hours', async (context) => {
+exports.deleteOldOrdersScheduled = onSchedule('every 1 hours', async (context) => {
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
   const promisePool = new PromisePool(() => deleteOldOrders(), MAX_CONCURRENT);
   await promisePool.start();
   logger.log('delete old orders finished')
 });
 
-exports.transactionCancelOrderV2 = onRequest(async (req, res) => {
+exports.transactionCancelOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const { userId, orderReference } = data;
@@ -1845,18 +1856,18 @@ exports.transactionCancelOrderV2 = onRequest(async (req, res) => {
           transaction.delete(cancelledOrderRef);
           res.status(200).send('success');
         } catch (error) {
-          console.log(error);
+          logger.log(error);
           res.status(400).send('Error deleting order.');
         }
       });
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('Error deleting order.');
     }
   });
 });
 
-exports.addDepositToAffiliateV2 = onRequest(async (req, res) => {
+exports.addDepositToAffiliate = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const affiliateUserId = data.affiliateUserId;
@@ -1914,21 +1925,21 @@ exports.addDepositToAffiliateV2 = onRequest(async (req, res) => {
             transaction.update(userRef, { affiliateCommissions: updatedCommissionData });
           });
         } catch (e) {
-          console.log(e);
+          logger.log(e);
           res.status(400).send('Error adding deposit to affiliate.');
         }
       } else {
         res.status(401);
       }
     } catch (e) {
-      console.log(e);
+      logger.log(e);
     }
 
     res.status(200).send(data);
   });
 });
 
-exports.onAffiliateClaimV2 = onRequest(async (req, res) => {
+exports.onAffiliateClaim = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const data = req.body;
@@ -1971,13 +1982,13 @@ exports.onAffiliateClaimV2 = onRequest(async (req, res) => {
         res.status(200).send(data);
       });
     } catch (e) {
-      console.log(e);
+      logger.log(e);
       res.status(400).send('Error on affiliate claim.');
     }
   });
 });
 
-exports.addDepositToAffiliateDepositsV2 = onRequest(async (req, res) => {
+exports.addDepositToAffiliateDeposits = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const info = req.body;
     const amountDeposited = info.amountDeposited;
@@ -2002,13 +2013,13 @@ exports.addDepositToAffiliateDepositsV2 = onRequest(async (req, res) => {
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
     } catch (e) {
-      console.log(e);
+      logger.log(e);
       res.status(400).send('Error adding deposit to affiliate.');
     }
   });
 });
 
-exports.markAffiliateClaimDoneV2 = onRequest(async (req, res) => {
+exports.markAffiliateClaimDone = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const claimId = data.claimId;
@@ -2048,13 +2059,13 @@ exports.markAffiliateClaimDoneV2 = onRequest(async (req, res) => {
       await userRef.update({ affiliateClaims: updatedData });
       res.status(200).send(data);
     } catch (e) {
-      console.log(e);
+      logger.log(e);
       res.status(400).send('Error marking affiliate claim done.');
     }
   });
 });
 
-exports.getAllAffiliateUsersV2 = onRequest(async (req, res) => {
+exports.getAllAffiliateUsers = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
@@ -2070,7 +2081,7 @@ exports.getAllAffiliateUsersV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.readSelectedOrderV2 = onRequest(async (req, res) => {
+exports.readSelectedOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = req.body;
     const reference = data.reference;
@@ -2097,7 +2108,7 @@ exports.readSelectedOrderV2 = onRequest(async (req, res) => {
   });
 });
 
-exports.voidPaymentV2 = functions
+exports.voidPayment = functions
   .region('asia-southeast1')
   .runWith({ memory: '2GB' })
   .https.onRequest(async (req, res) => {
@@ -2135,7 +2146,7 @@ exports.voidPaymentV2 = functions
             }
           });
 
-          console.log(updatedPayments);
+          logger.log(updatedPayments);
 
           transaction.update(userRef, { payments: updatedPayments });
 
@@ -2146,7 +2157,7 @@ exports.voidPaymentV2 = functions
             }
           });
 
-          console.log(updatedOrderProofOfPaymentLink);
+          logger.log(updatedOrderProofOfPaymentLink);
 
           transaction.update(orderRef, { proofOfPaymentLink: updatedOrderProofOfPaymentLink });
 
@@ -2168,13 +2179,13 @@ exports.voidPaymentV2 = functions
           res.status(200).send('Payment voided successfully');
         });
       } catch (error) {
-        console.log(error);
+        logger.log(error);
         res.status(400).send('Error voiding payment');
       }
     });
   });
 
-exports.editCustomerOrderV2 = onRequest(async (req, res) => {
+exports.editCustomerOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const data = req.body;
@@ -2185,7 +2196,7 @@ exports.editCustomerOrderV2 = onRequest(async (req, res) => {
       await db.runTransaction(async (transaction) => {
         const itemDetails = await Promise.all(
           Object.keys(cart).map(async (itemId) => {
-            console.log(itemId);
+            logger.log(itemId);
             const productRef = db.collection('Products').doc(itemId);
             const productDoc = await transaction.get(productRef);
             return productDoc.data();
@@ -2208,7 +2219,7 @@ exports.editCustomerOrderV2 = onRequest(async (req, res) => {
         const orderDoc = await transaction.get(orderRef);
         const orderData = orderDoc.data();
 
-        console.log('cartItemReferences', cartItemReferences);
+        logger.log('cartItemReferences', cartItemReferences);
 
         // await Promise.all(
         //   allCartItems.map(async (itemId) => {
@@ -2240,11 +2251,11 @@ exports.editCustomerOrderV2 = onRequest(async (req, res) => {
               stockOnHold.quantity = cart[item.itemId];
             }
           });
-          console.log();
+          logger.log();
           _stockOnHoldList[item.itemId] = stockOnHoldList;
         });
 
-        console.log('stockOnHoldList', _stockOnHoldList);
+        logger.log('stockOnHoldList', _stockOnHoldList);
 
         // WRITE
         Object.keys(_stockOnHoldList).forEach((itemId) => {
@@ -2265,10 +2276,10 @@ exports.editCustomerOrderV2 = onRequest(async (req, res) => {
           const itemsTotalLessVat = newItemsTotal / 1.12;
           const vat = newItemsTotal - itemsTotalLessVat;
           const newGrandTotal = itemsTotalLessVat + orderData.shippingTotal + vat;
-          console.log('newItemsTotal', newItemsTotal);
-          console.log('itemsTotalLessVat', itemsTotalLessVat);
-          console.log('vat', vat);
-          console.log('newGrandTotal', newGrandTotal);
+          logger.log('newItemsTotal', newItemsTotal);
+          logger.log('itemsTotalLessVat', itemsTotalLessVat);
+          logger.log('vat', vat);
+          logger.log('newGrandTotal', newGrandTotal);
 
           transaction.update(orderRef, {
             cart: cart,
@@ -2280,13 +2291,13 @@ exports.editCustomerOrderV2 = onRequest(async (req, res) => {
       });
       res.status(200).send('Order edited successfully');
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       res.status(400).send('Error editing order');
     }
   });
 });
 
-exports.updateProductSearchIndexV2 = functions
+exports.updateProductSearchIndex = functions
   .region('asia-southeast1')
   .pubsub.schedule('every 24 hours')
   .onRun(async (context) => {
@@ -2314,7 +2325,7 @@ exports.updateProductSearchIndexV2 = functions
     await searchIndexRef.set({ search: searchIndex });
   });
 
-exports.updateProductSearchIndexV2 = onRequest(async (req, res) => {
+exports.updateProductSearchIndex = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const db = admin.firestore();
     const productsRef = db.collection('Products');

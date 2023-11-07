@@ -1074,8 +1074,8 @@ describe('getCartCount', () => {
   });
 });
 
-describe('cloudfirestoredb', async () => {
-  test('transactionCreatePayment', async () => {
+describe.only('cloudfirestoredb', async () => {
+  test.only('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     await firestore.deleteDocumentFromCollectionByFieldValue('Payments', 'orderReference', 'testref1234');
@@ -4784,7 +4784,7 @@ describe('test closing hours', async () => {
   })
 });
 
-describe.only('test banned cod users', async () => {
+describe('test banned cod users', async () => {
 
   test('test user with cod_banned key if banned', async () => {
     await cloudfirestore.createNewUser(
