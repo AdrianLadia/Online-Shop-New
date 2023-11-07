@@ -1074,7 +1074,7 @@ describe('getCartCount', () => {
   });
 });
 
-describe.only('cloudfirestoredb', async () => {
+describe('cloudfirestoredb', async () => {
   test.only('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
