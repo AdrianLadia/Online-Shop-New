@@ -3,11 +3,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
-import PhoneInput from 'react-phone-input-2'
+import { TextField, alertClasses } from '@mui/material';
+import PhoneInput from 'react-phone-input-2';
 const ReactPhoneInput = PhoneInput.default ? PhoneInput.default : PhoneInput;
-import 'react-phone-input-2/lib/style.css'
+import 'react-phone-input-2/lib/style.css';
 import AppContext from '../AppContext';
+import isValidPhilippinePhoneNumber from '../../utils/isValidPhilippinePhoneNumber';
 
 const style = {
   position: 'absolute',
@@ -24,37 +25,39 @@ const style = {
 const ProfileUpdaterModal = (props) => {
   const openProfileUpdaterModal = props.openProfileUpdaterModal;
   const setOpenProfileUpdaterModal = props.setOpenProfileUpdaterModal;
-  const {firestore, userdata,alertSnackbar} = React.useContext(AppContext);
+  const { firestore, userdata, alertSnackbar } = React.useContext(AppContext);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
- 
+
   async function updateProfile() {
-    setOpenProfileUpdaterModal(false);
-    if (phoneNumber != '') {
-      try{
-        await firestore.updateDocumentFromCollection('Users', userdata.uid, {phoneNumber : '+' + phoneNumber});
-      }
-      catch(err){
-        alertSnackbar('error','Failed to update phone number')
+    const _phoneNumber = '+' + phoneNumber 
+    if (isValidPhilippinePhoneNumber(_phoneNumber) == false) {
+      alertSnackbar('error', 'Please Enter A Valid Phone Number');
+      return;
+    } else {
+      try {
+        await firestore.updateDocumentFromCollection('Users', userdata.uid, { phoneNumber: _phoneNumber });
+      } catch (err) {
+        alertSnackbar('error', 'Failed to update phone number');
       }
     }
+
     if (email != '') {
-      try{
-        await firestore.updateDocumentFromCollection('Users', userdata.uid, {email : email});
-      }
-      catch(err){
-        alertSnackbar('error','Failed to update email')
+      try {
+        await firestore.updateDocumentFromCollection('Users', userdata.uid, { email: email });
+      } catch (err) {
+        alertSnackbar('error', 'Failed to update email');
       }
     }
     if (name != '') {
-      try{
-        await firestore.updateDocumentFromCollection('Users', userdata.uid, {name : name});
-      }
-      catch(err){
-        alertSnackbar('error','Failed to update name')
+      try {
+        await firestore.updateDocumentFromCollection('Users', userdata.uid, { name: name });
+      } catch (err) {
+        alertSnackbar('error', 'Failed to update name');
       }
     }
+    setOpenProfileUpdaterModal(false);
     window.location.reload();
   }
 
@@ -97,9 +100,9 @@ const ProfileUpdaterModal = (props) => {
           ) : null}
 
           {userdata.phoneNumber == null || userdata.phoneNumber == '' ? (
-            <div className='mt-5'>
-              <label className='text-sm'>Phone Number</label>
-              <ReactPhoneInput  country={'ph'} value={phoneNumber} onChange={setPhoneNumber} />
+            <div className="mt-5">
+              <label className="text-sm">Phone Number</label>
+              <ReactPhoneInput country={'ph'} value={phoneNumber} onChange={setPhoneNumber} />
             </div>
           ) : null}
 

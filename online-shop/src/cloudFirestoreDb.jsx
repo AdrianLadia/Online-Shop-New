@@ -4,6 +4,7 @@ import Joi from 'joi';
 import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import mayaCheckoutPaymentOptions from './data/mayaCheckoutPaymentOptions';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false, fbclid = undefined, userdata = undefined) {
@@ -192,8 +193,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     
     try {
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
-      const paymentId = generateRandomString(30);
-      await this.updateOrderProofOfPaymentLink(data.reference,data.userid ? data.userid : 'GUEST',paymentId,data.localname,data.paymentMethod,data.grandTotal)
+      const paymentOptions = new mayaCheckoutPaymentOptions().getMayaCheckoutPaymentOptions()
+      if (!paymentOptions.includes(data.paymentMethod)) {
+        const paymentId = generateRandomString(30);
+        await this.updateOrderProofOfPaymentLink(data.reference,data.userid ? data.userid : 'GUEST',paymentId,data.localname,data.paymentMethod,data.grandTotal)
+      }
       return response;
     } catch (error) {
       // Handle other errors

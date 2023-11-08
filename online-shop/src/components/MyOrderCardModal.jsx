@@ -13,6 +13,7 @@ import dataManipulation from '../../utils/dataManipulation';
 import useWindowDimensions from './UseWindowDimensions';
 import Image from './ImageComponents/Image';
 import firebaseConfig from '../firebase_config';
+import isUrl from '../../utils/isUrl';
 
 const MyOrderCardModal = (props) => {
   const style = {
@@ -68,6 +69,16 @@ const MyOrderCardModal = (props) => {
         return z;
       }
     }
+  }
+
+  function countOrderProofOfPaymentLinks() {
+    let count = 0;
+    order.proofOfPaymentLink.map((link) => {
+      if (isUrl(link)) {
+        count++;
+      }
+    });
+    return count;
   }
 
   return (
@@ -211,13 +222,16 @@ const MyOrderCardModal = (props) => {
               </ListItem>
               <Divider />
 
-              {order.proofOfPaymentLink.length > 0 ? (
+              {countOrderProofOfPaymentLinks() > 0 ? (
                 <ListItem>
                   <ListItemText primary="Payments Made" />
                 </ListItem>
               ) : null}
 
               {order.proofOfPaymentLink.map((link) => {
+                if (!isUrl(link)) {
+                  return;
+                }
                 if (hidePricing) {
                   return;
                 }

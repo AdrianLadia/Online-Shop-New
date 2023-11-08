@@ -12,6 +12,7 @@ import { Timestamp } from 'firebase/firestore';
 import { AiOutlineFileSearch, AiOutlineSearch } from 'react-icons/ai';
 import { date } from 'joi';
 import { useLocation } from 'react-router-dom';
+import isUrl from '../../utils/isUrl';
 
 function MyOrderCard(props) {
   const { pathname } = useLocation();
@@ -50,14 +51,24 @@ function MyOrderCard(props) {
     readMessages();
   }, []);
 
+  function countOrderProofOfPaymentLinks() {
+    let count = 0;
+    order.proofOfPaymentLink.map((link) => {
+      if (isUrl(link)) {
+        count++;
+      }
+    });
+    return count;
+  }
+
   function getPaymentStatus(x, y, z) {
     if (order.paid) {
       return x;
     } else {
-      if (proofOfPaymentLinkCount > 0) {
+      if (countOrderProofOfPaymentLinks() > 0) {
         return y;
       }
-      if (proofOfPaymentLinkCount === 0) {
+      if (countOrderProofOfPaymentLinks() === 0) {
         return z;
       }
     }
@@ -182,10 +193,10 @@ function MyOrderCard(props) {
     if (order.paid) {
       return false;
     }
-    if (order.paid == false  && proofOfPaymentLinkCount <= 0) {
+    if (order.paid == false  && countOrderProofOfPaymentLinks() <= 0) {
       return true;
     }
-    if (order.paid == false && proofOfPaymentLinkCount > 0) {
+    if (order.paid == false && countOrderProofOfPaymentLinks() > 0) {
       return false;
     }
   }

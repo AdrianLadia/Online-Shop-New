@@ -13,7 +13,7 @@ const AccountStatementPayment = (props) => {
   const { setSelectedChatOrderId } = useContext(AppContext);
   // const { userdata, cart, setCart, userstate } = React.useContext(AppContext);
 
-  const { businesscalculations,setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
+  const { alertSnackbar,businesscalculations,setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
   const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
 
   const location = useLocation();
@@ -47,6 +47,7 @@ const AccountStatementPayment = (props) => {
   }
 
   function payTotal() {
+    console.log('ran')
     businesscalculations.afterCheckoutRedirectLogic({
       paymentMethodSelected: paymentMethodSelected,
       referenceNumber: getReference(),
@@ -67,6 +68,13 @@ const AccountStatementPayment = (props) => {
       itemsTotal: null,
       date: checkIfDateExists(),
       deliveryVehicle: null,
+    }).then((url) => {
+      if (url) {
+        // this is used for paymaya url
+        alertSnackbar('info','Moving you to the payment page. Do not exit this page.')
+        window.location.href = url;
+        setPlaceOrderLoading(false);
+      }
     });
   }
 

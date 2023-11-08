@@ -432,6 +432,10 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
       return;
     }
 
+    if (!beforeData.grandTotal) {
+      return
+    }
+
     if (created == false) {
       if (beforeData.grandTotal == afterData.grandTotal) {
         logger.log('grandTotal did not change so not changing paid');

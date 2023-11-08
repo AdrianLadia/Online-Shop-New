@@ -1404,7 +1404,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
-      paymentMethod: 'cod',
+      paymentMethod: 'gcash',
     });
 
     await delay(300);
@@ -1504,7 +1504,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
-      paymentMethod: 'cod',
+      paymentMethod: 'gcash',
     });
     await delay(300);
 
@@ -1588,7 +1588,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
-      paymentMethod: 'cod',
+      paymentMethod: 'gcash',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1617,7 +1617,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
-      paymentMethod: 'cod',
+      paymentMethod: 'gcash',
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1646,7 +1646,7 @@ describe('cloudfirestoredb', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
-      paymentMethod: 'cod',
+      paymentMethod: 'gcash',
     });
 
     const req3 = {
@@ -2118,7 +2118,7 @@ describe('cloudfirestoredb', async () => {
     userRoles.map((userRole) => {
       expect(roles.includes(userRole)).toEqual(true);
     });
-  }, 10000);
+  }, 100000);
 
   test('deleteProduct', async () => {
     await firestore.deleteProduct('test');
@@ -2345,7 +2345,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
-      paymentMethod: 'cod',
+      paymentMethod: 'bdo',
     });
     await delay(300);
   }, 100000);
@@ -2363,7 +2363,8 @@ describe('updateOrderProofOfPaymentLink', () => {
     await delay(300);
     const orderData = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
 
-    expect(orderData.proofOfPaymentLink).toEqual(['https://testlink.com']);
+    expect(orderData.proofOfPaymentLink).toContain('https://testlink.com');
+    expect(orderData.proofOfPaymentLink.length).toEqual(2);
   });
 
   test('Check if proof of payment is added to payments & orderMessages collection message field', async () => {
@@ -2393,7 +2394,10 @@ describe('updateOrderProofOfPaymentLink', () => {
     await delay(300);
 
     const orderData = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
-    expect(orderData.proofOfPaymentLink).toEqual(['https://testlink.com', 'https://testlink2.com']);
+    expect(orderData.proofOfPaymentLink).toContain('https://testlink.com');
+    expect(orderData.proofOfPaymentLink).toContain('https://testlink2.com');
+    expect(orderData.proofOfPaymentLink.length).toEqual(3);
+    
   });
 
   test('Check if proof of payment is added to payments 2', async () => {
@@ -2734,13 +2738,34 @@ describe('deleteOldOrders', async () => {
   }, 100000);
 
   test('check if order deleted', async () => {
-    const res = await cloudfirestore.deleteOldOrders();
+    // we simulate a 2 day old order and decline the payment so that it will be deleted
     await delay(3000);
-    const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
-    const orders = testUserData.orders;
+
     let found1 = false;
     let found2 = false;
     let found4 = false;
+    
+    const testref1234 = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+    const testref12345 = await firestore.readSelectedDataFromCollection('Orders', 'testref12345');
+    const testref123456 = await firestore.readSelectedDataFromCollection('Orders', 'testref123456');
+    const testref1234567 = await firestore.readSelectedDataFromCollection('Orders', 'testref1234567');
+    const testref12345678 = await firestore.readSelectedDataFromCollection('Orders', 'testref12345678');
+    const link1234 = testref1234.proofOfPaymentLink[0]
+    const link12345 = testref12345.proofOfPaymentLink[0]
+    const link123456 = testref123456.proofOfPaymentLink[0]
+    const link1234567 = testref1234567.proofOfPaymentLink[0]
+    const link12345678 = testref12345678.proofOfPaymentLink[0]
+    
+    await firestore.deleteDeclinedPayment('testref1234',userTestId,link1234)
+    await firestore.deleteDeclinedPayment('testref12345',userTestId,link12345)
+    await firestore.deleteDeclinedPayment('testref123456',userTestId,link123456)
+    await firestore.deleteDeclinedPayment('testref1234567',userTestId,link1234567)
+    await firestore.deleteDeclinedPayment('testref12345678',userTestId,link12345678)
+    const res = await cloudfirestore.deleteOldOrders();
+    await delay(1000)
+    const testUserData = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = testUserData.orders;
+    
     orders.map((order) => {
       if (order.reference == 'testref12345') {
         throw new Error('Order not deleted');
@@ -2812,7 +2837,7 @@ describe('deleteOldOrders', async () => {
       sendEmail: false,
       urlOfBir2303: '',
       countOfOrdersThisYear: 0,
-      paymentMethod: 'cod',
+      paymentMethod: 'gcash',
     });
 
     await delay(300);
@@ -3034,7 +3059,9 @@ describe('deleteDeclinedPayments', () => {
     let found = false;
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
     await delay(300);
-    expect(order.proofOfPaymentLink).toEqual(['https://testlink2.com', 'https://testlink3.com']);
+    expect(order.proofOfPaymentLink).toContain('https://testlink2.com');
+    expect(order.proofOfPaymentLink).toContain('https://testlink3.com');
+    expect(order.proofOfPaymentLink.length).toEqual(3);
 
     let found2 = false;
     payments.map((payment) => {
@@ -3796,11 +3823,12 @@ describe('test transaction create payment without an affiliate', () => {
 
     orders.map((order) => {
       if (order.reference === 'testref1234') {
-        expect(order.proofOfPaymentLink).toEqual(['testlink3']);
+        expect(order.proofOfPaymentLink).toContain('testlink3')
+        expect(order.proofOfPaymentLink.length).toEqual(2);
         expect(order.paid).toBe(true);
       }
       if (order.reference === 'testref12345') {
-        expect(order.proofOfPaymentLink).toEqual([]);
+        expect(order.proofOfPaymentLink.length).toEqual(1);
         expect(order.paid).toBe(false);
       }
     });
@@ -4102,7 +4130,7 @@ describe('Void payment', () => {
 
     // delete proof of payment link in order
     const order = await cloudfirestore.readSelectedDataFromCollection('Orders', 'testref123');
-    expect(order.proofOfPaymentLink).toEqual([]);
+    expect(order.proofOfPaymentLink.length).toEqual(1);
 
     // update payment object in payment to declines
     const allPaymentData = await cloudfirestore.readAllDataFromCollection('Payments');
@@ -4128,6 +4156,8 @@ describe('Void payment', () => {
     expect(testref123data.paid).toEqual(false);
   });
   test('clean test', async () => {
+    await cloudfirestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await cloudfirestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await resetOrdersAndPayments()
   })
 }, 100000);
@@ -4643,10 +4673,28 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
     await cloudfirestore.updateDocumentFromCollection('Orders', 'testref012', { orderDate: date });
     await delay(500);
 
+    const testref0  = await firestore.readSelectedDataFromCollection('Orders', 'testref0');
+    const testref01 = await firestore.readSelectedDataFromCollection('Orders', 'testref01');
+    const testref012 = await firestore.readSelectedDataFromCollection('Orders', 'testref012');
+
+    const testref0link = testref0.proofOfPaymentLink
+    const testref01link = testref01.proofOfPaymentLink
+    const testref012link = testref012.proofOfPaymentLink
+
+    await firestore.deleteDeclinedPayment('testref0',userTestId, testref0link);
+    await firestore.deleteDeclinedPayment('testref01',userTestId, testref01link);
+    await firestore.deleteDeclinedPayment('testref012',userTestId, testref012link);
+
+    await delay(500);
+
     await cloudfirestore.deleteOldOrders();
     await delay(10000);
   }, 50000);
   test('check values 3', async () => {
+
+
+
+
     // check if middle order is not deleted
     const Orders = await firestore.readAllDataFromCollection('Orders');
     // expect orders to be deleted
@@ -4707,7 +4755,7 @@ describe('test paymaya checkout request', async () => {
   });
 });
 
-describe.only('test transactionPlaceOrder must include paymentMethod and proofOfPaymentLink should be updated', () => {
+describe('test transactionPlaceOrder must include paymentMethod and proofOfPaymentLink should be updated', () => {
   test('Create Order', async () => {
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4759,7 +4807,7 @@ describe('test closing hours', async () => {
     const adjustedDate = new Date(currentDate.getTime() + GMT_OFFSET * HOUR_IN_MS);
     // Set the time to 4:01 PM
     adjustedDate.setHours(16, 1, 0, 0);
-    const allowedDates = new allowedDeliveryDates(adjustedDate);
+    const allowedDates = new allowedDelivdeleteOldOrderseryDates(adjustedDate);
     const date = new Date();
     allowedDates.runMain();
     const minDate = allowedDates.minDate;

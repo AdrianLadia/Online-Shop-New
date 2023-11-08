@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
 import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
 import { set } from 'date-fns';
+import mayaCheckoutPaymentOptions from '../data/mayaCheckoutPaymentOptions';
 
 const CheckoutProofOfPayment = (props) => {
   const {
@@ -100,8 +101,8 @@ const CheckoutProofOfPayment = (props) => {
     accountName = 'CASH ON DELIVERY';
     accountNumber = 'CASH ON DELIVERY';
   }
-
-  if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected)) {
+  const paymentOptions = new mayaCheckoutPaymentOptions().getMayaCheckoutPaymentOptions()
+  if (paymentOptions.includes(paymentMethodSelected)) {
     bankName = paymentMethodSelected.toUpperCase();
     qrLink = 'https://paymaya.me/starpack';
     isMaya = true;
