@@ -170,15 +170,30 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
     const { error } = schema.validate(data);
 
+    function generateRandomString(length) {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      const charactersLength = characters.length;
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return result;
+    }
+    
+    
+    
+    
     const encodedData = encodeURIComponent(JSON.stringify(data));
-
+    
     if (error) {
       alert(error.message);
       throw new Error(error.message);
     }
-
+    
     try {
       const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
+      const paymentId = generateRandomString(30);
+      await this.updateOrderProofOfPaymentLink(data.reference,data.userid ? data.userid : 'GUEST',paymentId,data.localname,data.paymentMethod,data.grandTotal)
       return response;
     } catch (error) {
       // Handle other errors

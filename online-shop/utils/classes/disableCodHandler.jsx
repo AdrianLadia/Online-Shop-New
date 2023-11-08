@@ -4,15 +4,15 @@ class disableCodHandler {
   constructor({ userdata, phoneNumber, email, itemsTotalPrice }) {
     this.userdata = userdata;
     this.phoneNumber = phoneNumber;
-    this.email = email.toLowerCase();
+    this.email = email ? email.toLowerCase() : null;
     this.itemsTotalPrice = itemsTotalPrice;
 
     this.bannedPhoneNumbers = [
-      { number: '+639178927202', reason: 'test' },
+      { number: '+639178927202', reason: 'test' }, //do not delete because this is used for testing
       { number: '+639654000844', reason: 'Order on 10/25 was not received' },
     ];
     this.bannedEmails = [
-      { email: 'test@gmail.com', reason: 'test' },
+      { email: 'test@gmail.com', reason: 'test' }, //do not delete because this is used for testing
       { email: 'kjanine.delfino28@gmail.com', reason: 'Order on 10/25 was not received' },
     ];
 

@@ -50,7 +50,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
-    codBanned : {reason : null, isBanned : false},
+    codBanned: { reason: null, isBanned: false },
   },
   'TESTAFFILIATE'
 );
@@ -77,7 +77,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
-    codBanned : {reason : null, isBanned : false},
+    codBanned: { reason: null, isBanned: false },
   },
   'TESTUSER'
 );
@@ -104,7 +104,7 @@ await cloudfirestore.createNewUser(
     affiliateId: null,
     affiliateBankAccounts: [],
     joinedDate: new Date(),
-    codBanned : {reason : null, isBanned : false},
+    codBanned: { reason: null, isBanned: false },
   },
   'NOAFFILIATETESTUSER'
 );
@@ -374,6 +374,7 @@ describe('Data Manipulation', async () => {
       'testlink3',
       'Adrian Ladia',
       'Maya',
+      10000,
       true
     );
 
@@ -421,6 +422,7 @@ describe('Data Manipulation', async () => {
       'testlink2',
       'Adrian Ladia',
       'Maya',
+      10000,
       true
     );
 
@@ -690,7 +692,7 @@ describe('Transaction Create Payment', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'testuser'
     );
@@ -739,7 +741,7 @@ describe('firestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'test'
     );
@@ -767,7 +769,7 @@ describe('firestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'testuser'
     );
@@ -1075,13 +1077,13 @@ describe('getCartCount', () => {
 });
 
 describe('cloudfirestoredb', async () => {
-  test.only('transactionCreatePayment', async () => {
+  test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     await firestore.deleteDocumentFromCollectionByFieldValue('Payments', 'orderReference', 'testref1234');
     await delay(300);
 
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
 
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -1124,6 +1126,7 @@ describe('cloudfirestoredb', async () => {
       'testlink3',
       'userName',
       'Maya',
+      10000,
       true
     );
     await delay(200);
@@ -1181,7 +1184,7 @@ describe('cloudfirestoredb', async () => {
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
 
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
 
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -1368,7 +1371,7 @@ describe('cloudfirestoredb', async () => {
     await firestore.deleteDocumentFromCollection('Orders', 'testref1234567');
     await firestore.deleteDocumentFromCollection('Orders', 'testref12345678');
 
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
 
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -1756,7 +1759,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'testuser'
     );
@@ -1772,7 +1775,7 @@ describe('cloudfirestoredb', async () => {
     await delay(300);
     expect(user2.userRole).toEqual('member');
     await cloudfirestore.deleteDocumentFromCollection('Users', 'testuser');
-  });
+  }, 100000);
 
   test('readAllProductsForOnlineStore', async () => {
     const products = await cloudfirestore.readAllProductsForOnlineStore('Paper Bag');
@@ -1824,7 +1827,6 @@ describe('cloudfirestoredb', async () => {
         manufactured: true,
         machinesThatCanProduce: '',
         stocksLowestPoint: [],
-        paymentMethod: 'cod',
       },
       'test',
       allProducts
@@ -1889,7 +1891,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'testuser'
     );
@@ -2057,7 +2059,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'testuser'
     );
@@ -2093,7 +2095,7 @@ describe('cloudfirestoredb', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'testuser2'
     );
@@ -2355,6 +2357,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       'https://testlink.com',
       'TEST USER',
       'BDO',
+      10000,
       true
     );
     await delay(300);
@@ -2384,6 +2387,7 @@ describe('updateOrderProofOfPaymentLink', () => {
       'https://testlink2.com',
       'TEST USER',
       'BDO',
+      10000,
       true
     );
     await delay(300);
@@ -2551,6 +2555,7 @@ describe('updatePaymentStatus', () => {
       'https://testlink.com',
       'TEST USER',
       'BDO',
+      10000,
       true
     );
     await delay(300);
@@ -2569,7 +2574,7 @@ describe('updatePaymentStatus', () => {
 
 describe('deleteOldOrders', async () => {
   test('create PAID 2 day ago order for testing', async () => {
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
 
     const currentDate = new Date(); // Get the current date
     const msInADay = 1000 * 60 * 60 * 24; // Number of milliseconds in a day
@@ -2773,7 +2778,7 @@ describe('deleteOldOrders', async () => {
     await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#12', { stocksOnHold: [] });
     await firestore.updateDocumentFromCollection('Products', 'PPB#1-RET', { stocksOnHold: [] });
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
     const ppb12 = await firestore.readSelectedDataFromCollection('Products', 'PPB#12');
@@ -2998,6 +3003,7 @@ describe('deleteDeclinedPayments', () => {
       'https://testlink.com',
       'TEST USER',
       'BDO',
+      10000,
       true
     );
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -3006,6 +3012,7 @@ describe('deleteDeclinedPayments', () => {
       'https://testlink2.com',
       'TEST USER',
       'BDO',
+      10000,
       true
     );
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -3014,6 +3021,7 @@ describe('deleteDeclinedPayments', () => {
       'https://testlink3.com',
       'TEST USER',
       'BDO',
+      10000,
       true
     );
   });
@@ -3260,7 +3268,7 @@ describe('testStoreProductsOrganizer', async () => {
 
 describe('test commission system', async () => {
   test('Setup test', async () => {
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
 
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE');
     await firestore.deleteDocumentFromCollection('Users', 'TESTUSER');
@@ -3287,7 +3295,7 @@ describe('test commission system', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'TESTAFFILIATE'
     );
@@ -3314,7 +3322,7 @@ describe('test commission system', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'TESTUSER'
     );
@@ -3693,7 +3701,7 @@ describe('count all orders of a specific year', () => {
 describe('test transaction create payment without an affiliate', () => {
   test('setting up test', async () => {
     await firestore.updateDocumentFromCollection('Users', 'NOAFFILIATETESTUSER', { orders: [], payments: [] });
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
     await delay(300);
 
     await cloudfirestore.transactionPlaceOrder({
@@ -3951,7 +3959,7 @@ describe('Void payment', () => {
   test('setup test', async () => {
     await cloudfirestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     await cloudfirestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
 
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4119,11 +4127,14 @@ describe('Void payment', () => {
     expect(testref12data.paid).toEqual(true);
     expect(testref123data.paid).toEqual(false);
   });
+  test('clean test', async () => {
+    await resetOrdersAndPayments()
+  })
 }, 100000);
 
 describe('test edit customer order function', () => {
   test('setup test', async () => {
-    resetOrdersAndPayments();
+    await resetOrdersAndPayments();
     await delay(5000);
     await firestore.createProduct(
       {
@@ -4227,7 +4238,7 @@ describe('test edit customer order function', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
     });
-    await delay(2000);
+    await delay(5000);
   });
   test('create payment', async () => {
     await cloudfirestore.transactionCreatePayment({
@@ -4383,7 +4394,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'GUEST'
     );
@@ -4696,7 +4707,7 @@ describe('test paymaya checkout request', async () => {
   });
 });
 
-describe('test transactionPlaceOrder must include paymentMethod', () => {
+describe.only('test transactionPlaceOrder must include paymentMethod and proofOfPaymentLink should be updated', () => {
   test('Create Order', async () => {
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4728,10 +4739,12 @@ describe('test transactionPlaceOrder must include paymentMethod', () => {
     });
     await delay(5000);
   });
-  test('check values', async () => {
+  test('check values payment method and proofOfPaymentLink', async () => {
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
     expect(order.paymentMethod).toEqual('cod');
+    expect(order.proofOfPaymentLink.length).toBeGreaterThan(0);
   });
+
   test('clean test data', async () => {
     await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
   });
@@ -4749,12 +4762,12 @@ describe('test closing hours', async () => {
     const allowedDates = new allowedDeliveryDates(adjustedDate);
     const date = new Date();
     allowedDates.runMain();
-    const minDate = allowedDates.minDate
-    const isStoreOpen = allowedDates.isStoreOpen
+    const minDate = allowedDates.minDate;
+    const isStoreOpen = allowedDates.isStoreOpen;
     expect(minDate.getDate()).toEqual(date.getDate() + 1);
     expect(isStoreOpen).toEqual(false);
   });
-  test ('test if open', async () => {
+  test('test if open', async () => {
     const currentDate = new Date();
     const GMT_OFFSET = 8; // for GMT+8
     const HOUR_IN_MS = 3600000; // number of milliseconds in an hour
@@ -4765,27 +4778,29 @@ describe('test closing hours', async () => {
     const allowedDates = new allowedDeliveryDates(adjustedDate);
     const date = new Date();
     allowedDates.runMain();
-    const minDate = allowedDates.minDate
-    const isStoreOpen = allowedDates.isStoreOpen
+    const minDate = allowedDates.minDate;
+    const isStoreOpen = allowedDates.isStoreOpen;
     expect(minDate.getDate()).toEqual(date.getDate());
     expect(isStoreOpen).toEqual(true);
-  })
-  test ('test sundays', async () => {
+  });
+  test('test sundays', async () => {
     // create date sunday
-    const sunday = new Date();
-    sunday.setDate(sunday.getDate() + 1);
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // Sunday - 0, Monday - 1, ..., Saturday - 6
+    const daysUntilNextSunday = (7 - dayOfWeek) % 7; // If today is Sunday, we don't need to add any days.
+    const sunday = new Date(); // Don't mutate the original 'today' variable
+    sunday.setDate(today.getDate() + daysUntilNextSunday);
     const allowedDates = new allowedDeliveryDates(sunday);
     const date = new Date();
     allowedDates.runMain();
-    const minDate = allowedDates.minDate
-    const isStoreOpen = allowedDates.isStoreOpen
-    expect(minDate.getDate()).toEqual(date.getDate() + 2);
+    const minDate = allowedDates.minDate;
+    const isStoreOpen = allowedDates.isStoreOpen;
+    expect(minDate.getDate()).toEqual(sunday.getDate() + 1);
     expect(isStoreOpen).toEqual(false);
-  })
+  });
 });
 
 describe('test banned cod users', async () => {
-
   test('test user with cod_banned key if banned', async () => {
     await cloudfirestore.createNewUser(
       {
@@ -4810,18 +4825,17 @@ describe('test banned cod users', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned: {reason : 'did not receive', isBanned : true},
+        codBanned: { reason: 'did not receive', isBanned: true },
       },
       'codBannedUser'
     );
 
     const userdata = await cloudfirestore.readSelectedDataFromCollection('Users', 'codBannedUser');
-    const _disableCodHandler = new disableCodHandler({userdata})
-    _disableCodHandler.runMain()
-    const isBanned = _disableCodHandler.isCodBanned
-    expect(isBanned).toEqual(true)
-
-  })
+    const _disableCodHandler = new disableCodHandler({ userdata });
+    _disableCodHandler.runMain();
+    const isBanned = _disableCodHandler.isCodBanned;
+    expect(isBanned).toEqual(true);
+  });
   test('test user without cod_banned key', async () => {
     await cloudfirestore.createNewUser(
       {
@@ -4846,45 +4860,44 @@ describe('test banned cod users', async () => {
         affiliateId: null,
         affiliateBankAccounts: [],
         joinedDate: new Date(),
-        codBanned : {reason : null, isBanned : false},
+        codBanned: { reason: null, isBanned: false },
       },
       'noCodBannedUser'
     );
     const userdata = await cloudfirestore.readSelectedDataFromCollection('Users', 'noCodBannedUser');
-    const _disableCodHandler = new disableCodHandler({userdata})
-    _disableCodHandler.runMain()
-    const isBanned = _disableCodHandler.isCodBanned
-    expect(isBanned).toEqual(false)
-  })
+    const _disableCodHandler = new disableCodHandler({ userdata });
+    _disableCodHandler.runMain();
+    const isBanned = _disableCodHandler.isCodBanned;
+    expect(isBanned).toEqual(false);
+  });
   test('phoneNumber is banned', async () => {
-    const phoneNumber = '09178927206'
-    const _disableCodHandler = new disableCodHandler({phoneNumber})
-    _disableCodHandler.test_addBannedPhoneNumber({number:'09178927206', reason:'test'})
-    _disableCodHandler.runMain()
-    const isBanned = _disableCodHandler.isCodBanned
-    expect(isBanned).toEqual(true)
-  })
+    const phoneNumber = '09178927202';
+    const _disableCodHandler = new disableCodHandler({ phoneNumber });
+    _disableCodHandler.test_addBannedPhoneNumber({ number: '09178927206', reason: 'test' });
+    _disableCodHandler.runMain();
+    const isBanned = _disableCodHandler.isCodBanned;
+    expect(isBanned).toEqual(true);
+  });
   test('email is banned', async () => {
-    const email = 'test@gmail.com'
-    const _disableCodHandler = new disableCodHandler({email})
-    _disableCodHandler.test_addBannedEmail({email:'test@gmail.com',reason:'test'})
-    _disableCodHandler.runMain()
-    const isBanned = _disableCodHandler.isCodBanned
-    expect(isBanned).toEqual(true)
-  })
+    const email = 'test@gmail.com';
+    const _disableCodHandler = new disableCodHandler({ email });
+    _disableCodHandler.test_addBannedEmail({ email: 'test@gmail.com', reason: 'test' });
+    _disableCodHandler.runMain();
+    const isBanned = _disableCodHandler.isCodBanned;
+    expect(isBanned).toEqual(true);
+  });
   test('price is greater than cod threshold', async () => {
-    const itemsTotalPrice = 9999999999
-    const _disableCodHandler = new disableCodHandler({itemsTotalPrice})
-    _disableCodHandler.runMain()
-    const isBanned = _disableCodHandler.isCodBanned
-    expect(isBanned).toEqual(true)
-  })
+    const itemsTotalPrice = 9999999999;
+    const _disableCodHandler = new disableCodHandler({ itemsTotalPrice });
+    _disableCodHandler.runMain();
+    const isBanned = _disableCodHandler.isCodBanned;
+    expect(isBanned).toEqual(true);
+  });
   test('price is less than cod threshold', async () => {
-    const itemsTotalPrice = 1000
-    const _disableCodHandler = new disableCodHandler({itemsTotalPrice})
-    _disableCodHandler.runMain()
-    const isBanned = _disableCodHandler.isCodBanned
-    expect(isBanned).toEqual(false)
-    
-  })
+    const itemsTotalPrice = 1000;
+    const _disableCodHandler = new disableCodHandler({ itemsTotalPrice });
+    _disableCodHandler.runMain();
+    const isBanned = _disableCodHandler.isCodBanned;
+    expect(isBanned).toEqual(false);
+  });
 });

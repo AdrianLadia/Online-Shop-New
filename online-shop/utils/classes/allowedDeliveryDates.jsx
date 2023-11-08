@@ -1,7 +1,7 @@
 import { ThirtyFpsOutlined } from '@mui/icons-material';
 
 class allowedDeliveryDates {
-  constructor(date = new Date()) {
+  constructor(dateToday = new Date()) {
     this.holidays = [
       '8/22/2023',
       '10/30/2023',
@@ -14,7 +14,7 @@ class allowedDeliveryDates {
     ];
     this.daysAfterAllowed = 6;
     this.cutOffTime = 14;
-    this.today = date;
+    this.today = dateToday;
     this.minDate = new Date();
     this.maxDate = new Date();
     this.maxDate.setDate(this.minDate.getDate() + this.daysAfterAllowed);
@@ -29,20 +29,34 @@ class allowedDeliveryDates {
   };
 
   runMain() {
+    this.getIsStoreOpen();
     this.getMinDate();
   }
 
-  getMinDate = () => {
+
+  getIsStoreOpen() {
     const currentDate = this.today;
     const currentHour = currentDate.getHours();
+
     if (currentHour >= this.cutOffTime) {
       this.minDate.setDate(currentDate.getDate() + 1);
       this.isStoreOpen = false;
+      return
     } // 15 is the 24-hour representation of 3 PM
-    else {
-      this.minDate = currentDate;
-      this.isStoreOpen = true;
+    if (currentDate.getDay() === 0) {
+      this.minDate.setDate(currentDate.getDate() + 1);
+      this.isStoreOpen = false;
+      return
     }
+    else {
+      this.minDate = new Date(currentDate.getTime())
+      this.isStoreOpen = true;
+      return
+    }
+  }
+
+  getMinDate = () => {
+  
 
     // We create a while loop to check if the minDate is a holiday
     // if it is a holiday, we add one day to the minDate
@@ -50,7 +64,8 @@ class allowedDeliveryDates {
     let foundMinDate
     while (foundMinDate != true) {
         console.log(this.minDate.toLocaleDateString())
-        if (this.holidays.includes(this.minDate.toLocaleDateString())) {
+        // if it is a holiday or a sunday
+        if (this.holidays.includes(this.minDate.toLocaleDateString()) || this.minDate.getDay() === 0) {
             this.minDate.setDate(this.minDate.getDate() + 1);
         }
         else {

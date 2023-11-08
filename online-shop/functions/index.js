@@ -424,6 +424,7 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
       created = false;
     }
     
+    // if afterdata is empty do not do anything
     if (!afterData) {
       return;
     }
@@ -1511,7 +1512,8 @@ exports.updateOrderProofOfPaymentLink = onRequest(async (req, res) => {
           const order = await getOrderWithRetry(transaction, orderRef, 3, 500);
           // const ordersObject = await transaction.get(orderRef);
           // const order = ordersObject.data();
-          const proofOfPayments = order.proofOfPaymentLink;
+          let proofOfPayments = order.proofOfPaymentLink;
+
           const newProofOfPayment = [...proofOfPayments, proofOfPaymentLink];
           const orderMessages = await transaction.get(orderMessagesRef);
           const orderMessagesData = orderMessages.data();
