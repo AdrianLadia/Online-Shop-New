@@ -4,7 +4,7 @@ const { onDocumentWritten } = require('firebase-functions/v2/firestore');
 const { setGlobalOptions } = require('firebase-functions/v2');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const {logger} = require("firebase-functions");
-const PromisePool = require('es6-promise-pool').default;
+const PromisePool = require('es6-promise-pool')
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 setGlobalOptions({ region: 'asia-southeast1' ,maxInstances: 10});
