@@ -9,6 +9,7 @@ const ReactPhoneInput = PhoneInput.default ? PhoneInput.default : PhoneInput;
 import 'react-phone-input-2/lib/style.css';
 import AppContext from '../AppContext';
 import isValidPhilippinePhoneNumber from '../../utils/isValidPhilippinePhoneNumber';
+import AppConfig from '../AppConfig';
 
 const style = {
   position: 'absolute',
@@ -29,6 +30,8 @@ const ProfileUpdaterModal = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
+  const [userRole, setUserRole] = React.useState(''); // [ADDED
+  const isDevEnvironment = new AppConfig().getIsDevEnvironment();
 
   async function updateProfile() {
     const _phoneNumber = '+' + phoneNumber 
@@ -57,11 +60,20 @@ const ProfileUpdaterModal = (props) => {
         alertSnackbar('error', 'Failed to update name');
       }
     }
+    if (userRole != '') { 
+      try {
+        await firestore.updateDocumentFromCollection('Users', userdata.uid, { userRole: userRole });
+      } catch (err) {
+        alertSnackbar('error', 'Failed to update user role');
+      }
+    }
+
     setOpenProfileUpdaterModal(false);
     window.location.reload();
   }
 
   return (
+    
     <div>
       <Modal
         open={openProfileUpdaterModal}
@@ -76,6 +88,17 @@ const ProfileUpdaterModal = (props) => {
           <Typography id="profile-update-modal-description" sx={{ mt: 2 }}>
             Your profile seems to be incomplete. Please fill in the details below to enhance your shopping experience.
           </Typography>
+
+          {isDevEnvironment ?
+                        <TextField
+                        required
+                        label="User Role"
+                        variant="outlined"
+                        placeholder="Enter user role"
+                        sx={{ width: '90%', marginTop: 3 }}
+                        onChange={(event) => setUserRole(event.target.value)}
+                      />
+          : null} 
 
           {userdata.name == null ? (
             <TextField
@@ -123,4 +146,4 @@ const ProfileUpdaterModal = (props) => {
   );
 };
 
-export default ProfileUpdaterModal;
+export default ProfileUpdaterModal
