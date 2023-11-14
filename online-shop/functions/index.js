@@ -578,6 +578,7 @@ exports.readAllProductsForOnlineStore = onRequest(async (req, res) => {
           packsPerBox: data.packsPerBox,
           piecesPerPack: data.piecesPerPack,
           boxImage: data.boxImage,
+          distributorPrice: data.distributorPrice
         };
         products.push(productObject);
       });
@@ -653,6 +654,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const countOfOrdersThisYear = data.countOfOrdersThisYear;
     const deliveryDate = new Date(data.deliveryDate);
     const paymentMethod = data.paymentMethod;
+    const userRole = data.userRole
 
     let cartUniqueItems = [];
 
@@ -668,7 +670,13 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       const itemId = key;
       const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
-      const price = item.data().price;
+      let price = null
+      if (userRole == 'distributor') {
+        price = item.data().distributorPrice;
+      }
+      else {
+        price = item.data().price;
+      }
       const total = price * itemQuantity;
       const stocksAvailable = item.data().stocksAvailable;
       const itemName = item.data().itemName;

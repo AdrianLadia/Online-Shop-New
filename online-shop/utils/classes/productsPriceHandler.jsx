@@ -6,14 +6,21 @@ class productsPriceHandler {
     this.userPrices = {
         'PPB#1' : 1000
     }
-    this.distributorPrices = {
-        'PPB#1' : 900,
-        'PPB#2' : 800,
-        'PPB#3' : 700,
-        'PPB#4' : 600,
-    }
+    
+    this.distributorPrice = {}
+
+    this.products.map(product => {
+      console.log(product)
+      const itemId = product.itemId;
+      const distributorPrice = product.distributorPrice;
+      this.distributorPrice[itemId] = distributorPrice;
+    })
+
+    console.log('distributorPrice',this.distributorPrice)
+    
     this.finalData = this.products
   }
+
 
   runMain() {
     // if user is distributor
@@ -38,7 +45,9 @@ class productsPriceHandler {
   getDistributorPrice() {
     const copyOfProducts = [...this.products]
     copyOfProducts.forEach(product => {
-        product.price = this.products.distributorPrice
+        const distributorPrice = this.distributorPrice[product.itemId]
+
+        product.price = distributorPrice ? distributorPrice : product.price
     })
     console.log('copyOfProducts',copyOfProducts)
     this.finalData = copyOfProducts
