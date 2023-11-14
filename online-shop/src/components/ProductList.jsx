@@ -36,7 +36,7 @@ const ProductList = (props) => {
 
   
   const [productdataloading, setProductDataLoading] = useState(true);
-  const { datamanipulation,businesscalculations,alertSnackbar,userdata, firestore, cart, setCart, favoriteitems, products, setProducts, updateCartInfo,cloudfirestore } =
+  const { datamanipulation,businesscalculations,alertSnackbar,userdata, firestore, cart, setCart, favoriteitems, products, updateCartInfo,cloudfirestore } =
   React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
   const [clickedProduct, setClickedProduct] = useState(null);
