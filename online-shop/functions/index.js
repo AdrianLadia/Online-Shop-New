@@ -671,12 +671,15 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
       let price = null
+      console.log(userRole)
       if (userRole == 'distributor') {
+        console.log('is distributor')
         price = item.data().distributorPrice;
       }
       else {
         price = item.data().price;
       }
+      console.log(price)
       const total = price * itemQuantity;
       const stocksAvailable = item.data().stocksAvailable;
       const itemName = item.data().itemName;
@@ -710,7 +713,9 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
           );
         return;
       }
-
+      console.log('itemsTotalBackEnd', itemsTotalBackEnd);
+      console.log('itemstotal', itemstotal);
+      console.log('vat',vat)
       if (itemsTotalBackEnd != itemstotal + vat) {
         logger.log('itemsTotalBackEnd != itemstotal');
         res.status(400).send('Invalid data submitted. Please try again later');

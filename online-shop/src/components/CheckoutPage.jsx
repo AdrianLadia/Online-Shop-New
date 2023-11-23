@@ -399,6 +399,7 @@ const CheckoutPage = () => {
         countOfOrdersThisYear: countOfOrdersThisYear,
         deliveryDate: startDate.toISOString(),
         paymentMethod: paymentMethodSelected,
+        userRole : userdata ? userdata.userRole : 'GUEST',
       });
       
 
