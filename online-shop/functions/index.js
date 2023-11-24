@@ -3,11 +3,11 @@ const { onRequest } = require('firebase-functions/v2/https');
 const { onDocumentWritten } = require('firebase-functions/v2/firestore');
 const { setGlobalOptions } = require('firebase-functions/v2');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
-const {logger} = require("firebase-functions");
-const PromisePool = require('es6-promise-pool')
+const { logger } = require('firebase-functions');
+const PromisePool = require('es6-promise-pool');
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
-setGlobalOptions({ region: 'asia-southeast1' ,maxInstances: 10});
+setGlobalOptions({ region: 'asia-southeast1', maxInstances: 10 });
 
 const admin = require('firebase-admin');
 const cors = require('cors');
@@ -28,8 +28,7 @@ const corsHandler = cors({
     'http://127.0.0.1:5174',
     'https://127.0.0.1:5173',
     'https://127.0.0.1:5174',
-    
-  ]
+  ],
 });
 
 const express = require('express');
@@ -340,7 +339,7 @@ exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (even
   const beforeData = event.data.before.data();
   const afterData = event.data.after.data();
   logger.log('beforeData', beforeData);
-  logger.log('afterData',afterData)
+  logger.log('afterData', afterData);
 
   let created = null;
   if (beforeData == undefined) {
@@ -350,7 +349,7 @@ exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (even
   }
 
   if (!afterData) {
-    return
+    return;
   }
 
   if (!('amount' in afterData)) {
@@ -416,14 +415,13 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
 
-    
     let created = null;
     if (beforeData == undefined) {
       created = true;
     } else {
       created = false;
     }
-    
+
     // if afterdata is empty do not do anything
     if (!afterData) {
       return;
@@ -433,7 +431,7 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
     }
 
     if (!beforeData.grandTotal) {
-      return
+      return;
     }
 
     if (created == false) {
@@ -1126,7 +1124,7 @@ exports.readAllDataFromCollection = onRequest(async (req, res) => {
   });
 });
 
-exports.createDocument= onRequest(async (req, res) => {
+exports.createDocument = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const data = parseData(req.query.data);
     const collection = data.collection;
@@ -1802,7 +1800,7 @@ exports.deleteOldOrdersScheduled = onSchedule('every 1 hours', async (context) =
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
   const promisePool = new PromisePool(() => deleteOldOrders(), MAX_CONCURRENT);
   await promisePool.start();
-  logger.log('delete old orders finished')
+  logger.log('delete old orders finished');
 });
 
 exports.transactionCancelOrder = onRequest(async (req, res) => {
@@ -2359,4 +2357,25 @@ exports.updateProductSearchIndex = onRequest(async (req, res) => {
     await searchIndexRef.set({ search: searchIndex });
     res.status(200).send('Product search index updated');
   });
+});
+
+exports.facebookMessengerWebhook = onRequest(async (req, res) => {
+  // Your verify token should be a secret and match the one you set in the Facebook webhook setup
+  const mode = req.query['hub.mode'];
+  const challenge = req.query['hub.challenge'];
+  const verifyToken = req.query['hub.verify_token'];
+
+  console.log('mode', mode);
+  console.log('challenge', challenge);
+  console.log('verifyToken', verifyToken);
+  
+  const data = req.body;
+
+  console.log('data', data);
+  logger.log('data', data)
+
+  console.log('data.entry', data.entry.messaging);
+
+  res.status(200).send(challenge);
+  
 });
