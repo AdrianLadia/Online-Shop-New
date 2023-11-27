@@ -1,3 +1,6 @@
+// if role is member check if user has its own userPrices. userPrices will be the proiority
+// if role is distributor use distributor price
+
 class productsPriceHandler {
   constructor(products,userPrices,userRole) {
     this.products = products;

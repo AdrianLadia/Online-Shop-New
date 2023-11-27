@@ -58,7 +58,9 @@ class schemas {
       codBanned : Joi.object({
         isBanned : Joi.boolean().required(),
         reason : Joi.string().required().allow(null,''),
-      }).required(),
+      }),
+      userPrices: Joi.object(),
+
     }).unknown(false);
   }
 
