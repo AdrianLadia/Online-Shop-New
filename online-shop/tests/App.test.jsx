@@ -19,6 +19,7 @@ import AppConfig from '../src/AppConfig';
 import storeProductsOrganizer from '../utils/classes/storeProductsOrganizer';
 import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
 import disableCodHandler from '../utils/classes/disableCodHandler';
+import productsPriceHandler from '../utils/classes/productsPriceHandler';
 
 //
 const app = initializeApp(firebaseConfig);
@@ -4850,16 +4851,14 @@ describe('test transactionPlaceOrder must include paymentMethod and proofOfPayme
   });
 }, 100000);
 
-describe.only('test closing hours', async () => {
+describe('test closing hours', async () => {
   test('test if closed', async () => {
     const currentDate = new Date();
     const GMT_OFFSET = 8; // for GMT+8
     const HOUR_IN_MS = 3600000; // number of milliseconds in an hour
-    // Adjust current date to GMT+8
-    const adjustedDate = new Date(currentDate.getTime() + GMT_OFFSET * HOUR_IN_MS);
     // Set the time to 4:01 PM
-    adjustedDate.setHours(16, 1, 0, 0);
-    const allowedDates = new allowedDeliveryDates(adjustedDate);
+    currentDate.setHours(16, 1, 0, 0);
+    const allowedDates = new allowedDeliveryDates(currentDate);
     const date = new Date();
     allowedDates.runMain();
     const minDate = allowedDates.minDate;
@@ -5002,8 +5001,8 @@ describe('test banned cod users', async () => {
   });
 });
 
-describe.only('test productsPriceHandler', async () => {
-  test('setuptest', async () => {
+describe('test productsPriceHandler', async () => {
+  test.only('setuptest', async () => {
     await firestore.createProduct(
       {
         itemId: 'test1',
@@ -5193,7 +5192,22 @@ describe.only('test productsPriceHandler', async () => {
   test('test member has special price',async () => {
 
   })
-  test('test member has no special price')
+  test.only('test member has no special price', async () => {
+    const products = await firestore.readAllDataFromCollection('Products')
+    const testMemberUser = await firestore.readSelectedDataFromCollection('Users', 'testMemberWithoutSpecialPrice')
+    const _productsPriceHandler = new productsPriceHandler(products,testMemberUser)
+    _productsPriceHandler.runMain()
+    const productsData = _productsPriceHandler.finalData
+
+    productsData.forEach((product) => {
+      if (product.itemId === 'test1') {
+        expect(product.price).toEqual(1000);
+      }
+      if (product.itemId === 'test2') {
+        expect(product.price).toEqual(2000);
+      }
+    });
+  })
   test('test distirubtor has special price')
   test('test distributor has no special price')
   test('clean test data', async () => {

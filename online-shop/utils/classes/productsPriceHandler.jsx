@@ -2,13 +2,12 @@
 // if role is distributor use distributor price
 
 class productsPriceHandler {
-  constructor(products,userPrices,userRole) {
+  constructor(products,userdata) {
     this.products = products;
-    this.userRole = userRole
+    console.log('userdata',userdata)
+    this.userRole = userdata ? userdata.userRole : 'GUEST'
     // this.userPrices = userPrices
-    this.userPrices = {
-        'PPB#1' : 1000
-    }
+    this.userPrices = userdata ? userdata.userPrices : {}
     
     this.distributorPrice = {}
 
@@ -19,8 +18,6 @@ class productsPriceHandler {
       this.distributorPrice[itemId] = distributorPrice;
     })
 
-    console.log('distributorPrice',this.distributorPrice)
-    
     this.finalData = this.products
   }
 

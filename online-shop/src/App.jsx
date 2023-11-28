@@ -392,7 +392,7 @@ function App() {
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
     );
     console.log('uniqueProducts', uniqueProducts)
-    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata.userPrices : null, userdata ? userdata.userRole : null);
+    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null);
     _productsPriceHandler.runMain();
     const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
     setProducts(productsPriceHandlerFinalData);

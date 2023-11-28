@@ -15,8 +15,8 @@ class allowedDeliveryDates {
     this.daysAfterAllowed = 6;
     this.cutOffTime = 14;
     this.today = dateToday;
-    this.minDate = new Date();
-    this.maxDate = new Date();
+    this.minDate =  new Date(JSON.parse(JSON.stringify(dateToday)));
+    this.maxDate = new Date(JSON.parse(JSON.stringify(dateToday)));
     this.maxDate.setDate(this.minDate.getDate() + this.daysAfterAllowed);
     this.isStoreOpen = null;
   }

@@ -60,7 +60,7 @@ class schemas {
         reason : Joi.string().required().allow(null,''),
       }),
       userPrices: Joi.object(),
-
+ 
     }).unknown(false);
   }
 

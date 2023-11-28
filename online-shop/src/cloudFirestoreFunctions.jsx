@@ -33,7 +33,10 @@ class cloudFirestoreFunctions {
     try {
       let response;
       await retryApi(async () => {
-        const response = await axios.post(`${this.url}createDocument?data=${encodedData}`);
+        const response = await axios.post(`${this.url}createDocument?data=${encodedData}`,{},{
+          headers: {
+            'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+          }});
       });
 
       return response.data;
@@ -54,7 +57,10 @@ class cloudFirestoreFunctions {
     try {
       let response;
       await retryApi(async () => {
-        response = await axios.get(`${this.url}readAllDataFromCollection?collectionName=${collectionName}`);
+        response = await axios.get(`${this.url}readAllDataFromCollection?collectionName=${collectionName}`,{
+          headers: {
+            'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+          }});
       });
       const toReturn = response.data;
       const toReturnSchema = Joi.array();
@@ -81,7 +87,10 @@ class cloudFirestoreFunctions {
     try {
       let response;
       await retryApi(async () => {
-        response = await axios.get(`${this.url}readAllIdsFromCollection?collectionName=${collectionName}`);
+        response = await axios.get(`${this.url}readAllIdsFromCollection?collectionName=${collectionName}`,{
+          headers: {
+            'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+          }});
       });
 
       const toReturn = response.data;
@@ -112,7 +121,10 @@ class cloudFirestoreFunctions {
     try {
       let response;
       await retryApi(async () => {
-        response = await axios.get(`${this.url}readSelectedDataFromCollection?data=${encodedData}`);
+        response = await axios.get(`${this.url}readSelectedDataFromCollection?data=${encodedData}`,{
+          headers: {
+            'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+          }});
       });
 
       const toReturn = response.data;
@@ -143,7 +155,10 @@ class cloudFirestoreFunctions {
     try {
       let response;
       await retryApi(async () => {
-        response = await axios.delete(`${this.url}deleteDocumentFromCollection?data=${encodedData}`);
+        response = await axios.delete(`${this.url}deleteDocumentFromCollection?data=${encodedData}`,{
+          headers: {
+            'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+          }});
       });
     } catch (error) {
       console.error('Error deleting document:', error);
@@ -171,6 +186,7 @@ class cloudFirestoreFunctions {
         response = await axios.post(`${this.url}updateDocumentFromCollection`, jsonData, {
           headers: {
             'Content-Type': 'application/json',
+            'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
           },
         });
       });
