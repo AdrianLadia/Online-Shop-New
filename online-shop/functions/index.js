@@ -2554,20 +2554,23 @@ exports.updateProductSearchIndex = onRequest(async (req, res) => {
 
 exports.facebookMessengerWebhook = onRequest(async (req, res) => {
   // Your verify token should be a secret and match the one you set in the Facebook webhook setup
-  const mode = req.query['hub.mode'];
-  const challenge = req.query['hub.challenge'];
-  const verifyToken = req.query['hub.verify_token'];
+  // const mode = req.query['hub.mode'];
+  // const challenge = req.query['hub.challenge'];
+  // const verifyToken = req.query['hub.verify_token'];
 
-  console.log('mode', mode);
-  console.log('challenge', challenge);
-  console.log('verifyToken', verifyToken);
   
   const data = req.body;
+  const entry = data.entry[0]
+  const entryId = entry.id
+  const entryTime = entry.time
+  const messaging = entry.messaging
 
   console.log('data', data);
   logger.log('data', data)
 
-  console.log('data.entry', data.entry.messaging);
+  console.log('entryId : ',entryId)
+  console.log('entryTime : ',entryTime)
+  console.log('messaging : ', messaging);
 
   res.status(200).send(challenge);
   
