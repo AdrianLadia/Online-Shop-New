@@ -10,6 +10,7 @@ const MAX_CONCURRENT = 3;
 setGlobalOptions({ region: 'asia-southeast1' ,maxInstances: 10});
 
 const admin = require('firebase-admin');
+admin.initializeApp();
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({
@@ -40,7 +41,7 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const axios = require('axios');
 
-admin.initializeApp();
+
 
 app.use(corsHandler);
 app.use(express.json());
