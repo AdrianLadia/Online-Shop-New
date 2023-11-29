@@ -4,7 +4,7 @@
 class productsPriceHandler {
   constructor(products,userdata) {
     this.products = products;
-    console.log('userdata',userdata)
+   
     this.userRole = userdata ? userdata.userRole : 'GUEST'
     // this.userPrices = userPrices
     this.userPrices = userdata ? userdata.userPrices : {}
@@ -28,16 +28,19 @@ class productsPriceHandler {
         this.getDistributorPrice()   
     }
     if (this.userPrices != null) {
-        if (this.userPrices.length > 0) {
+        if (Object.keys(this.userPrices).length > 0) {
             this.getUserSpecialPrices()
         }
     }
   }
 
   getUserSpecialPrices() {
-    Object.keys(this.userPrices).forEach(userPrice => {
+    Object.keys(this.userPrices).forEach(itemId => {
+      const userPrice = this.userPrices[itemId]
         this.finalData.forEach(product => {
-            product.price = this.userPrices[userPrice]
+          if (itemId == product.itemId) {
+            product.price = parseFloat(userPrice)
+          }
         })
     })
   }
@@ -47,9 +50,9 @@ class productsPriceHandler {
     copyOfProducts.forEach(product => {
         const distributorPrice = this.distributorPrice[product.itemId]
 
-        product.price = distributorPrice ? distributorPrice : product.price
+        product.price = distributorPrice ? parseFloat(distributorPrice) : product.price
     })
-    console.log('copyOfProducts',copyOfProducts)
+
     this.finalData = copyOfProducts
   }
 }

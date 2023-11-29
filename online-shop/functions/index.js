@@ -455,7 +455,7 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
     }
 
     if (!beforeData.grandTotal) {
-      return
+      returnuserid
     }
 
     if (created == false) {
@@ -683,6 +683,10 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     
     const data = parseData(req.query.data);
     let userid = data.userid;
+    // If guest checkout
+    if (userid == null) {
+      userid = 'GUEST';
+    }
     const username = data.username;
     const localDeliveryAddress = data.localDeliveryAddress;
     const locallatitude = data.locallatitude;
@@ -710,9 +714,15 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const paymentMethod = data.paymentMethod;
     const userRole = data.userRole
 
+    
     let cartUniqueItems = [];
-
+    
     const db = admin.firestore();
+    console.log(userid)
+    const userRef = db.collection('Users').doc(userid);
+    const userSnap = await userRef.get();
+    const userData = userSnap.data();
+    const userPrices = userData.userPrices ? userData.userPrices : {};
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cart);
@@ -733,7 +743,11 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       else {
         price = item.data().price;
       }
-      console.log(price)
+
+      if (userPrices[itemId]) {
+        price = parseFloat(userPrices[itemId]);
+      }
+
       const total = price * itemQuantity;
       const stocksAvailable = item.data().stocksAvailable;
       const itemName = item.data().itemName;
@@ -832,10 +846,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
         try {
           // read user data
 
-          // If guest checkout
-          if (userid == null) {
-            userid = 'GUEST';
-          }
+
 
           const userRef = db.collection('Users').doc(userid);
           const user = await transaction.get(userRef);
