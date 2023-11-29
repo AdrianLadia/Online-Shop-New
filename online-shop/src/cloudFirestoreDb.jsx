@@ -5,6 +5,7 @@ import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import mayaCheckoutPaymentOptions from './data/mayaCheckoutPaymentOptions';
+import App from './App';
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false, fbclid = undefined, userdata = undefined) {
@@ -29,7 +30,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async updateProductSearchIndex() {
-    const res = await axios.get(`${this.url}updateProductSearchIndex`);
+    const res = await axios.get(`${this.url}updateProductSearchIndex`,{
+      headers: {
+        'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+      }
+    });
     // return res;
   }
 
@@ -61,7 +66,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(`${this.url}checkIfUserIdAlreadyExist?userId=${userId}`);
+      const response = await axios.get(`${this.url}checkIfUserIdAlreadyExist?userId=${userId}`,{
+        headers: {
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+        }
+      });
 
       const toReturn = response.data;
 
@@ -164,6 +173,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       countOfOrdersThisYear: Joi.number().required(),
       deliveryDate: Joi.date().required(),
       paymentMethod: Joi.string().required(),
+      userRole : Joi.string().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -192,7 +202,16 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
     
     try {
-      const response = await axios.post(`${this.url}transactionPlaceOrder?data=${encodedData}`);
+      const response = await axios.post(
+        `${this.url}transactionPlaceOrder?data=${encodedData}`,
+        {}, // This is the body, which is empty in this case
+        {
+          headers: {
+            'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+          }
+        }
+      );
+      
       const paymentOptions = new mayaCheckoutPaymentOptions().getMayaCheckoutPaymentOptions()
       if (!paymentOptions.includes(data.paymentMethod)) {
         const paymentId = generateRandomString(30);
@@ -216,7 +235,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.get(`${this.url}readUserRole?data=${userId}`);
+      const response = await axios.get(`${this.url}readUserRole?data=${userId}`,{
+        headers: {
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+        }
+      });
 
       const toReturn = response.data;
       const userRoleSchema = Joi.string().required();
@@ -246,6 +269,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const res = await axios.post(`${this.url}readSelectedDataFromOnlineStore`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg',
         },
       });
       return res.data;
@@ -257,7 +281,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async readAllProductsForOnlineStore(category) {
     try {
-      const response = await axios.request(`${this.url}readAllProductsForOnlineStore?category=${category}`);
+      const response = await axios.request(`${this.url}readAllProductsForOnlineStore?category=${category}`,{
+        headers: {
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+        }});
       const toReturn = response.data;
       const schema = Joi.array().items(schemas.productSchema());
 
@@ -312,7 +339,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       const encodedData = encodeURIComponent(JSON.stringify(data));
-      const response = await axios.post(`${this.url}createPayment?data=${encodedData}`);
+      const response = await axios.post(`${this.url}createPayment?data=${encodedData}`,{},{
+        headers: {
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+        }});
       return response;
     } catch {
       console.log(error);
@@ -358,7 +388,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
 
     try {
-      const response = await axios.post(`${this.url}updateOrdersAsPaidOrNotPaid?data=${userId}`);
+      const response = await axios.post(`${this.url}updateOrdersAsPaidOrNotPaid?data=${userId}`,{},{
+        headers: {
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+        }});
       return response;
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -395,6 +428,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const response = await axios.post(`${this.url}transactionCreatePayment`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg',
         },
       });
 
@@ -430,6 +464,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const res = await axios.post(`${this.url}updateOrderProofOfPaymentLink`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg',
         },
       });
       const data = res.data;
@@ -459,6 +494,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const res = await axios.post(`${this.url}sendEmail`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
+          'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
         },
       });
       const resData = res.data;
@@ -472,7 +508,10 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async deleteOldOrders() {
     try {
-      const res = await axios.get(`${this.url}deleteOldOrders`);
+      const res = await axios.get(`${this.url}deleteOldOrders`,{
+        headers: {
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+        }});
       const data = res.data;
       return data;
     } catch (error) {
@@ -501,6 +540,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const res = await axios.post(`${this.url}transactionCancelOrder`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
+          'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
         },
       });
       const resData = res.data;
@@ -518,6 +558,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const res = await axios.post(`${this.url}addDepositToAffiliate`, jsonData, {
       headers: {
         'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
       },
     });
     return res;
@@ -528,6 +569,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const res = await axios.post(`${this.url}onAffiliateClaim`, jsonData, {
       headers: {
         'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
       },
     });
     return res;
@@ -558,6 +600,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const res = await axios.post(`${this.url}addDepositToAffiliateDeposits`, jsonData, {
       headers: {
         'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
       },
     });
     return res;
@@ -568,25 +611,33 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const res = await axios.post(`${this.url}markAffiliateClaimDone`, jsonData, {
       headers: {
         'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
       },
     });
     return res;
   }
 
   async getIpAddress() {
-    const res = await axios.get(`https://api64.ipify.org/?format=json`);
+    const res = await axios.get(`https://api64.ipify.org/?format=json`,{
+      headers: {
+        'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+      }});
     return res.data.ip;
   }
 
   async getAllAffiliateUsers() {
-    const res = await axios.get(`${this.url}getAllAffiliateUsers`);
+    const res = await axios.get(`${this.url}getAllAffiliateUsers`,{
+      headers: {
+        'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+      }});
     return res.data;
   }
 
   async readSelectedOrder(reference, userId) {
     const jsonData = JSON.stringify({ reference, userId });
     const res = await axios.post(`${this.url}readSelectedOrder`, jsonData, {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json',
+      'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' },
     });
     return res.data;
   }
@@ -597,6 +648,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const res = await axios.post(`${this.url}voidPayment`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
+          'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
         },
       });
       return res.data;
@@ -611,6 +663,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       const res = await axios.post(`${this.url}editCustomerOrder`, jsonData, {
         headers: {
           'Content-Type': 'application/json',
+          'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
         },
       });
       return res.data;
@@ -650,13 +703,15 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       name: this.userdata?.name || guestName,
     };
 
+    if (new AppConfig().getIsDevEnvironment() == false) {
     const res = await axios.post(`${this.url}postToConversionApi`, data, {
       headers: {
         'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
       },
-    });
-
+    });    
     return res;
+  }
   }
 
   async payMayaCheckout({ payload, isSandbox }) {
@@ -668,6 +723,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     const res = await axios.post(`${this.url}payMayaCheckout`, data, {
       headers: {
         'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
       },
     });
 

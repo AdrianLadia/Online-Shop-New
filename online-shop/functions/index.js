@@ -10,6 +10,7 @@ const MAX_CONCURRENT = 3;
 setGlobalOptions({ region: 'asia-southeast1', maxInstances: 10 });
 
 const admin = require('firebase-admin');
+admin.initializeApp();
 const cors = require('cors');
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 const corsHandler = cors({
@@ -39,10 +40,23 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const axios = require('axios');
 
-admin.initializeApp();
+
 
 app.use(corsHandler);
 app.use(express.json());
+
+
+const validApiKey = 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
+function handleApiKey(apiKey,res) {
+  // Check for API key in the request header
+  if (!apiKey || apiKey !== validApiKey) {
+    return false
+  }
+  else {
+    return true
+  }
+  
+}
 
 // Use CORS middleware to enable Cross-Origin Resource Sharing
 async function sendmail(to, subject, htmlContent) {
@@ -202,6 +216,12 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
 
 exports.postToConversionApi = onRequest((req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    console.log('postToConversionApi',apiKey)
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     function processIPAddress(ip) {
       if (ip.startsWith('::ffff:')) {
         const potentialIPv4 = ip.split('::ffff:')[1];
@@ -483,6 +503,11 @@ exports.getIPAddress = onRequest(async (req, res) => {
 
 exports.readUserRole = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
       const userid = req.query.data;
 
@@ -499,6 +524,11 @@ exports.readUserRole = onRequest(async (req, res) => {
 
 exports.readSelectedDataFromOnlineStore = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
       const body = req.body;
       const productId = body.productId;
@@ -540,6 +570,11 @@ exports.readSelectedDataFromOnlineStore = onRequest(async (req, res) => {
 
 exports.readAllProductsForOnlineStore = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
       // Create a query for products where forOnlineStore is true
       const category = req.query.category;
@@ -576,6 +611,7 @@ exports.readAllProductsForOnlineStore = onRequest(async (req, res) => {
           packsPerBox: data.packsPerBox,
           piecesPerPack: data.piecesPerPack,
           boxImage: data.boxImage,
+          distributorPrice: data.distributorPrice
         };
         products.push(productObject);
       });
@@ -592,6 +628,11 @@ exports.readAllProductsForOnlineStore = onRequest(async (req, res) => {
 
 exports.createPayment = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
       const data = parseData(req.query.data);
       const db = admin.firestore();
@@ -606,6 +647,11 @@ exports.createPayment = onRequest(async (req, res) => {
 
 exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
       const db = admin.firestore();
       const userId = req.query.data;
@@ -624,8 +670,19 @@ exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
 
 exports.transactionPlaceOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    console.log('API KEY',apiKey)
+    if (handleApiKey(apiKey, res) == false) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
+    
     const data = parseData(req.query.data);
     let userid = data.userid;
+    // If guest checkout
+    if (userid == null) {
+      userid = 'GUEST';
+    }
     const username = data.username;
     const localDeliveryAddress = data.localDeliveryAddress;
     const locallatitude = data.locallatitude;
@@ -651,10 +708,17 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const countOfOrdersThisYear = data.countOfOrdersThisYear;
     const deliveryDate = new Date(data.deliveryDate);
     const paymentMethod = data.paymentMethod;
+    const userRole = data.userRole
 
+    
     let cartUniqueItems = [];
-
+    
     const db = admin.firestore();
+    console.log(userid)
+    const userRef = db.collection('Users').doc(userid);
+    const userSnap = await userRef.get();
+    const userData = userSnap.data();
+    const userPrices = userData.userPrices ? userData.userPrices : {};
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cart);
@@ -666,7 +730,20 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       const itemId = key;
       const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
-      const price = item.data().price;
+      let price = null
+      console.log(userRole)
+      if (userRole == 'distributor') {
+        console.log('is distributor')
+        price = item.data().distributorPrice;
+      }
+      else {
+        price = item.data().price;
+      }
+
+      if (userPrices[itemId]) {
+        price = parseFloat(userPrices[itemId]);
+      }
+
       const total = price * itemQuantity;
       const stocksAvailable = item.data().stocksAvailable;
       const itemName = item.data().itemName;
@@ -700,7 +777,9 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
           );
         return;
       }
-
+      console.log('itemsTotalBackEnd', itemsTotalBackEnd);
+      console.log('itemstotal', itemstotal);
+      console.log('vat',vat)
       if (itemsTotalBackEnd != itemstotal + vat) {
         logger.log('itemsTotalBackEnd != itemstotal');
         res.status(400).send('Invalid data submitted. Please try again later');
@@ -763,10 +842,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
         try {
           // read user data
 
-          // If guest checkout
-          if (userid == null) {
-            userid = 'GUEST';
-          }
+
 
           const userRef = db.collection('Users').doc(userid);
           const user = await transaction.get(userRef);
@@ -1013,6 +1089,11 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
 
 exports.checkIfUserIdAlreadyExist = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const userId = req.query.userId;
     const db = admin.firestore();
     const user = await db.collection('Users').doc(userId).get();
@@ -1026,6 +1107,11 @@ exports.checkIfUserIdAlreadyExist = onRequest(async (req, res) => {
 
 exports.deleteDocumentFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = parseData(req.query.data);
     const collectionName = data.collectionName;
     const id = data.id;
@@ -1043,6 +1129,11 @@ exports.deleteDocumentFromCollection = onRequest(async (req, res) => {
 
 exports.updateDocumentFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = req.body;
     const collectionName = data.collectionName;
     const id = data.id;
@@ -1082,6 +1173,11 @@ exports.updateDocumentFromCollection = onRequest(async (req, res) => {
 
 exports.readAllIdsFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
     const list = [];
@@ -1104,6 +1200,11 @@ exports.readAllIdsFromCollection = onRequest(async (req, res) => {
 
 exports.readAllDataFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const collectionName = req.query.collectionName;
     const db = admin.firestore();
     const list = [];
@@ -1126,6 +1227,11 @@ exports.readAllDataFromCollection = onRequest(async (req, res) => {
 
 exports.createDocument = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = parseData(req.query.data);
     const collection = data.collection;
     const id = data.id;
@@ -1144,6 +1250,11 @@ exports.createDocument = onRequest(async (req, res) => {
 
 exports.readSelectedDataFromCollection = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     // Your function logic here
     const data = parseData(req.query.data);
     const collectionName = data.collectionName;
@@ -1167,6 +1278,11 @@ exports.readSelectedDataFromCollection = onRequest(async (req, res) => {
 });
 
 exports.login = onRequest(async (req, res) => {
+  const apiKey = req.headers['apikey'];
+  if (!handleApiKey(apiKey, res)) {
+    res.status(400).send('Invalid API Key');
+    return;
+  }
   try {
     const allUsersSnapshot = await admin.firestore().collection('Users').get();
     const usersData = [];
@@ -1187,6 +1303,11 @@ exports.login = onRequest(async (req, res) => {
 
 exports.transactionCreatePayment = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = req.body;
 
     const depositAmount = data.amount;
@@ -1329,6 +1450,11 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
 // Paymaya create checkout request
 exports.payMayaCheckout = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     function convertToBase64(key) {
       return btoa(key + ':');
     }
@@ -1449,6 +1575,11 @@ exports.payMayaWebHookExpired = onRequest(async (req, res) => {
 
 exports.updateOrderProofOfPaymentLink = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
       // Get the user document
       const data = req.body;
@@ -1588,6 +1719,11 @@ exports.updateOrderProofOfPaymentLink = onRequest(async (req, res) => {
 
 exports.sendEmail = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     // get the recipient email address and message content from the client-side
     const data = req.body;
     const { to, subject, text } = data;
@@ -1774,8 +1910,13 @@ async function deleteOldOrders() {
 
 exports.deleteOldOrders = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
-      deleteOldOrders();
+      await deleteOldOrders();
       res.status(200).send('successfully deleted all orders');
     } catch (error) {
       logger.log(error);
@@ -1786,6 +1927,11 @@ exports.deleteOldOrders = onRequest(async (req, res) => {
 
 exports.giveAffiliateCommission = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     try {
       giveAffiliateCommission();
       res.status(200).send('successfully deleted all orders');
@@ -1796,15 +1942,29 @@ exports.giveAffiliateCommission = onRequest(async (req, res) => {
   });
 });
 
-exports.deleteOldOrdersScheduled = onSchedule('every 1 hours', async (context) => {
-  // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
-  const promisePool = new PromisePool(() => deleteOldOrders(), MAX_CONCURRENT);
-  await promisePool.start();
-  logger.log('delete old orders finished');
-});
+// V2
+// exports.deleteOldOrdersScheduled = onSchedule('every 1 hours', async (context) => {
+//   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
+//   const promisePool = new PromisePool(async () => await deleteOldOrders(), MAX_CONCURRENT);
+//   await promisePool.start();
+//   logger.log('delete old orders finished')
+// });
+
+// V1
+exports.deleteOldOrdersScheduled = functions
+  .region('asia-southeast1')
+  .pubsub.schedule('every 1 hours')
+  .onRun(async (context) => {
+    deleteOldOrders();
+  });
 
 exports.transactionCancelOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = req.body;
     const { userId, orderReference } = data;
     const db = admin.firestore();
@@ -1873,6 +2033,11 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
 
 exports.addDepositToAffiliate = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = req.body;
     const affiliateUserId = data.affiliateUserId;
     const depositorUserRole = data.depositorUserRole;
@@ -1945,6 +2110,11 @@ exports.addDepositToAffiliate = onRequest(async (req, res) => {
 
 exports.onAffiliateClaim = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const db = admin.firestore();
     const data = req.body;
     try {
@@ -1994,6 +2164,11 @@ exports.onAffiliateClaim = onRequest(async (req, res) => {
 
 exports.addDepositToAffiliateDeposits = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const info = req.body;
     const amountDeposited = info.amountDeposited;
     const userId = info.userId;
@@ -2025,6 +2200,11 @@ exports.addDepositToAffiliateDeposits = onRequest(async (req, res) => {
 
 exports.markAffiliateClaimDone = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = req.body;
     const claimId = data.claimId;
     const userId = data.userId;
@@ -2071,6 +2251,11 @@ exports.markAffiliateClaimDone = onRequest(async (req, res) => {
 
 exports.getAllAffiliateUsers = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const db = admin.firestore();
     const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
     const snapshot = await usersRef.get();
@@ -2087,6 +2272,11 @@ exports.getAllAffiliateUsers = onRequest(async (req, res) => {
 
 exports.readSelectedOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const data = req.body;
     const reference = data.reference;
     const userId = data.userId;
@@ -2117,6 +2307,11 @@ exports.voidPayment = functions
   .runWith({ memory: '2GB' })
   .https.onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
+      const apiKey = req.headers['apikey'];
+      if (!handleApiKey(apiKey, res)) {
+        res.status(400).send('Invalid API Key');
+        return;
+      }
       const db = admin.firestore();
       const data = req.body;
       const orderReference = data.orderReference;
@@ -2191,6 +2386,11 @@ exports.voidPayment = functions
 
 exports.editCustomerOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
     const db = admin.firestore();
     const data = req.body;
     const orderReference = data.orderReference;
@@ -2361,20 +2561,23 @@ exports.updateProductSearchIndex = onRequest(async (req, res) => {
 
 exports.facebookMessengerWebhook = onRequest(async (req, res) => {
   // Your verify token should be a secret and match the one you set in the Facebook webhook setup
-  const mode = req.query['hub.mode'];
-  const challenge = req.query['hub.challenge'];
-  const verifyToken = req.query['hub.verify_token'];
+  // const mode = req.query['hub.mode'];
+  // const challenge = req.query['hub.challenge'];
+  // const verifyToken = req.query['hub.verify_token'];
 
-  console.log('mode', mode);
-  console.log('challenge', challenge);
-  console.log('verifyToken', verifyToken);
   
   const data = req.body;
+  const entry = data.entry[0]
+  const entryId = entry.id
+  const entryTime = entry.time
+  const messaging = entry.messaging
 
   console.log('data', data);
   logger.log('data', data)
 
-  console.log('data.entry', data.entry.messaging);
+  console.log('entryId : ',entryId)
+  console.log('entryTime : ',entryTime)
+  console.log('messaging : ', messaging);
 
   res.status(200).send(challenge);
   

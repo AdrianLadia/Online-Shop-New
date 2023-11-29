@@ -58,7 +58,10 @@ class schemas {
       codBanned : Joi.object({
         isBanned : Joi.boolean().required(),
         reason : Joi.string().required().allow(null,''),
-      }).required(),
+      }),
+      userPrices: Joi.object(),
+      
+ 
     }).unknown(false);
   }
 
@@ -97,6 +100,7 @@ class schemas {
       boxImage: Joi.string().allow('',null),
       costPrice: Joi.number().allow('',null),
       freightCost: Joi.number().allow('',null,'?'),
+      distributorPrice: Joi.number().allow('',null),
     }).unknown(false);
   }
 }

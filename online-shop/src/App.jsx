@@ -35,6 +35,7 @@ import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
+import productsPriceHandler from '../utils/classes/productsPriceHandler';
 
 const devEnvironment = true;
 
@@ -390,8 +391,12 @@ function App() {
     const uniqueProducts = combinedProductsList.filter(
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
     );
-    setProducts(uniqueProducts);
-  }, [cartProductsData, categoryProductsData, favoriteProductData]);
+    console.log('uniqueProducts', uniqueProducts)
+    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null);
+    _productsPriceHandler.runMain();
+    const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
+    setProducts(productsPriceHandlerFinalData);
+  }, [cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
 
   useEffect(() => {
     if (userdata) {
