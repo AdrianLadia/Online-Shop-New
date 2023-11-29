@@ -1664,11 +1664,11 @@ describe('cloudfirestoredb', async () => {
     };
 
     const res3 = await cloudfirestore.testPayMayaWebHookSuccess(req3);
-
+    await delay(1000);
     const data3 = res3.data;
     expect(data3).toEqual('success');
 
-    await delay(1000);
+
 
     const user4 = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const user4orders = user4.orders;
@@ -1702,6 +1702,7 @@ describe('cloudfirestoredb', async () => {
     expect(user4payments.length).toEqual(3);
 
     await cloudfirestore.testPayMayaWebHookSuccess();
+    await delay(1000);
 
     const payments2 = await firestore.readAllDataFromCollection('Payments');
 
@@ -2728,7 +2729,7 @@ describe('deleteOldOrders', async () => {
 
   test('check if order deleted', async () => {
     // we simulate a 2 day old order and decline the payment so that it will be deleted
-    await delay(3000);
+    await delay(1000);
 
     let found1 = false;
     let found2 = false;
@@ -3425,6 +3426,7 @@ describe('test commission system', async () => {
       data2: data2,
     };
     await cloudfirestore.onAffiliateClaim(data);
+    await delay(1000)
   });
   test('check if affiliate claims commission added to affiliate claims', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
@@ -4940,8 +4942,8 @@ describe('test banned cod users', async () => {
   });
 });
 
-describe.only('test productsPriceHandler', async () => {
-  test.only('setuptest', async () => {
+describe('test productsPriceHandler', async () => {
+  test('setuptest', async () => {
     await firestore.createProduct(
       {
         itemId: 'test1',
@@ -5188,7 +5190,7 @@ describe.only('test productsPriceHandler', async () => {
       }
     });
   });
-  test.only('test distirubtor has special price', async () => {
+  test('test distirubtor has special price', async () => {
     const products = await firestore.readAllDataFromCollection('Products');
     const testDistributorWithoutSpecialPrice = await firestore.readSelectedDataFromCollection(
       'Users',
@@ -5241,14 +5243,17 @@ describe.only('test productsPriceHandler', async () => {
         expect(product.price).toEqual(2000);
       }
     });
-    test.only('clean test data', async () => {
-      await firestore.deleteDocumentFromCollection('Products', 'test1');
-      await firestore.deleteDocumentFromCollection('Products', 'test2');
-      await firestore.deleteDocumentFromCollection('Users', 'testMemberWithSpecialPrice');
-      await firestore.deleteDocumentFromCollection('Users', 'testMemberWithoutSpecialPrice');
-      await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithSpecialPrice');
-      await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithoutSpecialPrice');
-      await firestore.deleteDocumentFromCollection('Users', 'GUEST');
-    });
+  });
+  test('transactionPlaceOrder on guests', async () => {
+
+  })
+  test('clean test data', async () => {
+    await firestore.deleteDocumentFromCollection('Products', 'test1');
+    await firestore.deleteDocumentFromCollection('Products', 'test2');
+    await firestore.deleteDocumentFromCollection('Users', 'testMemberWithSpecialPrice');
+    await firestore.deleteDocumentFromCollection('Users', 'testMemberWithoutSpecialPrice');
+    await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithSpecialPrice');
+    await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithoutSpecialPrice');
+    await firestore.deleteDocumentFromCollection('Users', 'GUEST');
   });
 });

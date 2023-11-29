@@ -12,7 +12,7 @@ class productsPriceHandler {
     this.distributorPrice = {}
 
     this.products.map(product => {
-      console.log(product)
+    
       const itemId = product.itemId;
       const distributorPrice = product.distributorPrice;
       this.distributorPrice[itemId] = distributorPrice;

@@ -50,8 +50,6 @@ app.use(express.json());
 const validApiKey = 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
 function handleApiKey(apiKey,res) {
   // Check for API key in the request header
-  console.log(validApiKey)
-  console.log(apiKey)
   if (!apiKey || apiKey !== validApiKey) {
     return false
   }
