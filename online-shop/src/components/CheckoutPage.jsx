@@ -21,7 +21,8 @@ import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import CheckoutContext from '../context/CheckoutContext';
 import { useNavigate } from 'react-router-dom';
 import dataManipulation from '../../utils/dataManipulation';
-import CircularProgress from '@mui/material/CircularProgress';CheckoutNotification
+import CircularProgress from '@mui/material/CircularProgress';
+CheckoutNotification;
 import ClipLoader from 'react-spinners/ClipLoader';
 import Geocode from 'react-geocode';
 import Button from '@mui/material/Button';
@@ -36,7 +37,6 @@ import Joi from 'joi';
 import AnnouncementNotification from './AnnouncementNotification';
 import CheckoutNotification from './CheckoutNotification';
 import isValidPhilippinePhoneNumber from '../../utils/isValidPhilippinePhoneNumber';
-
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -136,7 +136,7 @@ const CheckoutPage = () => {
 
   const [startDate, setStartDate] = useState(new Date());
   const [pickUpOrDeliver, setPickUpOrDeliver] = useState('deliver');
-  const [allowedDates,setAllowedDates] = useState(null)
+  const [allowedDates, setAllowedDates] = useState(null);
   useEffect(() => {
     const ad = new allowedDeliveryDates();
     ad.runMain();
@@ -146,9 +146,8 @@ const CheckoutPage = () => {
     const holidays = ad.holidays;
     const isStoreOpen = ad.isStoreOpen;
     setStartDate(minDate);
-    setAllowedDates(ad)
+    setAllowedDates(ad);
   }, []);
-
 
   // Get count of orders for this year
   useEffect(() => {
@@ -215,42 +214,42 @@ const CheckoutPage = () => {
       if (transactionStatus.data === 'SUCCESS') {
         setCart({});
 
-        businesscalculations.afterCheckoutRedirectLogic({
-          paymentMethodSelected: paymentMethodSelected,
-          referenceNumber: referenceNumber,
-          grandTotal: grandTotal,
-          deliveryFee: deliveryFee,
-          vat: vat,
-          rows: rows,
-          area: area,
-          fullName: userdata ? userdata.name : 'Guest',
-          eMail: localemail,
-          phoneNumber: userdata ? userdata.phoneNumber : localphonenumber,
-          setMayaRedirectUrl: setMayaRedirectUrl,
-          setMayaCheckoutId: setMayaCheckoutId,
-          localDeliveryAddress: localDeliveryAddress,
-          addressText: addressText,
-          userId: userdata ? userdata.uid : 'GUEST',
-          navigateTo: navigateTo,
-          itemsTotal: total,
-          date: new Date(),
-          deliveryVehicle: deliveryVehicle,
-        }).then((url) => {
-          if (url) {
-            // this is used for paymaya url
-            alertSnackbar('info','Moving you to the payment page. Do not exit this page.')
-            window.location.href = url;
-            setPlaceOrderLoading(false);
-          }
-        });
+        businesscalculations
+          .afterCheckoutRedirectLogic({
+            paymentMethodSelected: paymentMethodSelected,
+            referenceNumber: referenceNumber,
+            grandTotal: grandTotal,
+            deliveryFee: deliveryFee,
+            vat: vat,
+            rows: rows,
+            area: area,
+            fullName: userdata ? userdata.name : 'Guest',
+            eMail: localemail,
+            phoneNumber: userdata ? userdata.phoneNumber : localphonenumber,
+            setMayaRedirectUrl: setMayaRedirectUrl,
+            setMayaCheckoutId: setMayaCheckoutId,
+            localDeliveryAddress: localDeliveryAddress,
+            addressText: addressText,
+            userId: userdata ? userdata.uid : 'GUEST',
+            navigateTo: navigateTo,
+            itemsTotal: total,
+            date: new Date(),
+            deliveryVehicle: deliveryVehicle,
+          })
+          .then((url) => {
+            if (url) {
+              // this is used for paymaya url
+              alertSnackbar('info', 'Moving you to the payment page. Do not exit this page.');
+              window.location.href = url;
+              setPlaceOrderLoading(false);
+            }
+          });
         setRefreshUser(!refreshUser);
       }
       if (transactionStatus.status == 409 || transactionStatus.status == 400) {
         alertSnackbar('info', transactionStatus.data);
         setPlaceOrderLoading(false);
       }
-
-      
     }
   }, [placedOrder]);
 
@@ -258,7 +257,6 @@ const CheckoutPage = () => {
     setRefreshUser(!refreshUser);
     window.scrollTo(0, 0);
   }, []);
-
 
   useEffect(() => {
     const totaldifference = businesscalculations.getTotalDifferenceOfPaperboyAndSelectedLocation(
@@ -336,11 +334,10 @@ const CheckoutPage = () => {
     function isValidEmail(email) {
       // Regular expression pattern to validate email address
       const pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-      
+
       return pattern.test(email);
     }
 
-  
     if (!isValidEmail(localemail)) {
       alertSnackbar('error', 'Please enter a valid email');
       setPlaceOrderLoading(false);
@@ -359,17 +356,14 @@ const CheckoutPage = () => {
       return;
     }
 
-    
-
     try {
       const orderReferenceNumber = businesscalculations.generateOrderReference();
       setReferenceNumber(orderReferenceNumber);
 
-      let sendEmail 
+      let sendEmail;
       if (new AppConfig().getIsDevEnvironment()) {
         sendEmail = false;
-      }
-      else {
+      } else {
         sendEmail = true;
       }
 
@@ -399,9 +393,8 @@ const CheckoutPage = () => {
         countOfOrdersThisYear: countOfOrdersThisYear,
         deliveryDate: startDate.toISOString(),
         paymentMethod: paymentMethodSelected,
-        userRole : userdata ? userdata.userRole : 'GUEST',
+        userRole: userdata ? userdata.userRole : 'GUEST',
       });
-      
 
       setTransactionStatus(res);
       setPlacedOrder(!placedOrder);
@@ -475,12 +468,12 @@ const CheckoutPage = () => {
   }
 
   async function on2303Upload(url) {
-    await firestore.addBir2303Link(userdata.uid, url);
+    await firestore.addBir2303Link(userdata ? userdata.uid : 'GUEST', url);
     setUrlOfBir2303(url);
   }
 
   async function removeBir2303() {
-    await firestore.deleteBir2303Link(userdata.uid);
+    await firestore.deleteBir2303Link(userdata ? userdata.uid : 'GUEST');
     setUrlOfBir2303('');
   }
 
@@ -818,19 +811,21 @@ const CheckoutPage = () => {
                     rows={rows}
                   />
                 )}
-                <div className="flex flex-col lg:flex-row justify-center">
-                  <div className="flex justify-center m-5">
-                    <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
+                {userdata ? (
+                  <div className="flex flex-col lg:flex-row justify-center">
+                    <div className="flex justify-center m-5">
+                      <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
+                    </div>
+                    <div className="flex justify-center items-center">
+                      <Switch
+                        {...label}
+                        checked={isInvoiceNeeded}
+                        color="secondary"
+                        onClick={() => setIsInvoiceNeeded(!isInvoiceNeeded)}
+                      />
+                    </div>
                   </div>
-                  <div className="flex justify-center items-center">
-                    <Switch
-                      {...label}
-                      checked={isInvoiceNeeded}
-                      color="secondary"
-                      onClick={() => setIsInvoiceNeeded(!isInvoiceNeeded)}
-                    />
-                  </div>
-                </div>
+                ) : null}
 
                 {isInvoiceNeeded ? (
                   urlOfBir2303 != '' ? (
@@ -842,7 +837,7 @@ const CheckoutPage = () => {
                         <ImageUploadButton
                           buttonTitle={'Update BIR 2303 Form'}
                           storage={storage}
-                          folderName={`2303Forms/${userdata.uid}`}
+                          folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
                           onUploadFunction={on2303Upload}
                         >
                           update BIR 2303
@@ -860,7 +855,7 @@ const CheckoutPage = () => {
                       <ImageUploadButton
                         buttonTitle={'Upload BIR 2303 Form'}
                         storage={storage}
-                        folderName={`2303Forms/${userdata.uid}`}
+                        folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
                         onUploadFunction={on2303Upload}
                       />
                       <div className="flex justify-center mt-5 mx-5">
@@ -882,9 +877,9 @@ const CheckoutPage = () => {
                       startDate={startDate}
                       setStartDate={setStartDate}
                       minDate={allowedDates ? allowedDates.minDate : null}
-                      maxDate={allowedDates? allowedDates.maxDate : null}
-                      filterDate={allowedDates? allowedDates.excludeDates: null}
-                      disabledDates={allowedDates? allowedDates.holidays : null}
+                      maxDate={allowedDates ? allowedDates.maxDate : null}
+                      filterDate={allowedDates ? allowedDates.excludeDates : null}
+                      disabledDates={allowedDates ? allowedDates.holidays : null}
                     />
                   </div>
                 </div>
@@ -897,7 +892,13 @@ const CheckoutPage = () => {
                   </Typography>
                 </div>
 
-                <PaymentMethods pickUpOrDeliver={pickUpOrDeliver} itemsTotalPrice={total} userdata={userdata} email={localemail} phoneNumber={localphonenumber}  />
+                <PaymentMethods
+                  pickUpOrDeliver={pickUpOrDeliver}
+                  itemsTotalPrice={total}
+                  userdata={userdata}
+                  email={localemail}
+                  phoneNumber={localphonenumber}
+                />
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
 
@@ -950,7 +951,7 @@ const CheckoutPage = () => {
           setLocalName={setLocalName}
           setLocalPhoneNumber={setLocalPhoneNumber}
         />
-        <CheckoutNotification allowedDates={allowedDates}/>
+        <CheckoutNotification allowedDates={allowedDates} />
       </div>
     </ThemeProvider>
   );
