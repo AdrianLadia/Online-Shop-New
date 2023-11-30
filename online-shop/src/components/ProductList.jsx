@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import OpenCartButton from './OpenCartButton';
 import AppContext from '../AppContext';
@@ -7,8 +7,8 @@ import UseWindowDimensions from './UseWindowDimensions';
 import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
 import ProductCardModal from './ProductCardModal';
 import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
-
-
+import ProductCardV2 from './ProductCardV2';
+import ProductCardModalV2 from './ProductCardModalV2';
 
 const ProductList = (props) => {
   const wholesale = props.wholesale;
@@ -20,10 +20,8 @@ const ProductList = (props) => {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const modalSelected = query.get('modal') + location.hash;
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
-
-
-  
   useEffect(() => {
     if (wholesale) {
       setIsWholesale(true);
@@ -33,22 +31,28 @@ const ProductList = (props) => {
     }
   }, [wholesale, retail]);
 
-
-  
   const [productdataloading, setProductDataLoading] = useState(true);
-  const { datamanipulation,businesscalculations,alertSnackbar,userdata, firestore, cart, setCart, favoriteitems, products, updateCartInfo,cloudfirestore } =
-  React.useContext(AppContext);
+  const {
+    datamanipulation,
+    businesscalculations,
+    alertSnackbar,
+    userdata,
+    firestore,
+    cart,
+    setCart,
+    favoriteitems,
+    products,
+    updateCartInfo,
+    cloudfirestore,
+  } = React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
   const [clickedProduct, setClickedProduct] = useState(null);
-  
+
   const { width } = UseWindowDimensions();
-  
-  
+
   useEffect(() => {
     if (modalSelected != null) {
-      
       cloudfirestore.readSelectedDataFromOnlineStore(modalSelected).then((data) => {
-
         setClickedProduct(data);
         setModal(true);
       });
@@ -68,7 +72,7 @@ const ProductList = (props) => {
       retail,
       favoriteitems
     );
-    const spo = new storeProductsOrganizer(selected_products,searchedItemId);
+    const spo = new storeProductsOrganizer(selected_products, searchedItemId);
     const organizedProducts = spo.runMain();
     return organizedProducts;
   }
@@ -83,7 +87,7 @@ const ProductList = (props) => {
       try {
         firestore.createUserCart(cart, userdata.uid);
       } catch (e) {
-        alertSnackbar('error','Failed to update cart info. Please try again.');
+        alertSnackbar('error', 'Failed to update cart info. Please try again.');
       }
     }
   }, [cart, updateCartInfo]);
@@ -123,7 +127,6 @@ const ProductList = (props) => {
           </div>
         ) : (
           RenderSelectedProducts(selectedCategory).map((product, index) => {
-
             let isLastItem = index === RenderSelectedProducts(selectedCategory).length - 1;
 
             let stocksAvailable = null;
@@ -141,7 +144,16 @@ const ProductList = (props) => {
             }
             return (
               <div key={product.itemId} className="flex justify-evenly">
-                <ProductCard
+                <ProductCardV2
+                  itemData={product}
+                  setModal={setModal}
+                  setClickedProduct={setClickedProduct}
+                  openSnackbar={openSnackbar}
+                  setOpenSnackbar={setOpenSnackbar}
+                  isLastItem={isLastItem}
+                  
+                />
+                {/* <ProductCard
                   setClickedProduct={setClickedProduct}
                   setModal={setModal}
                   id={product.itemId}
@@ -153,15 +165,26 @@ const ProductList = (props) => {
                   stocksAvailable={product.stocksAvailable}
                   averageSalesPerDay={averageSalesPerDay}
                   isLastItem={isLastItem}
-                />
+                /> */}
               </div>
             );
           })
         )}
       </div>
-      
+
       <OpenCartButton shakeCartAnimation={shakeCartAnimation} setShakeCartAnimation={setShakeCartAnimation} />
-      {clickedProduct != null ? <ProductCardModal modal={modal} setModal={setModal} product={clickedProduct} /> : null}
+      {/* {clickedProduct != null ? <ProductCardModal modal={modal} setModal={setModal} product={clickedProduct} /> : null} */}
+      {clickedProduct != null ? (
+        <ProductCardModalV2
+          modal={modal}
+          setModal={setModal}
+          product={clickedProduct}
+          openSnackbar={openSnackbar}
+          setOpenSnackbar={setOpenSnackbar}
+          addtocart={AddToCart}
+          setShakeCartAnimation={setShakeCartAnimation}
+        />
+      ) : null}
     </div>
   );
 };

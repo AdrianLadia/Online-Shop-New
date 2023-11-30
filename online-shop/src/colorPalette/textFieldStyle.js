@@ -6,7 +6,7 @@ const textFieldStyle = () => ({
     borderRadius:"5px",
         '& .MuiOutlinedInput-notchedOutline': {
             border: 2,
-            color:"#6bd0ff",
+            color:"#69b05c",
         },
         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
             border:2,

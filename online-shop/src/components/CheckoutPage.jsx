@@ -490,7 +490,7 @@ const CheckoutPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="flex flex-col bg-gradient-to-r overflow-x-hidden from-colorbackground via-color2 to-color1 ">
+      <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
         <div className="flex flex-col justify-center w-full items-center">
           <Typography variant="h6">Would you like to pick up items?</Typography>

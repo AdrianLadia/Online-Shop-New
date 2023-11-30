@@ -165,18 +165,24 @@ const LoginButton = (props) => {
         isSupportedBrowser={isSupportedBrowser}
         setOpen={setOpenUnsupportedBrowserModal}
       />
-      <Button
+      {/* <Button
         id="loginButton"
         aria-controls={open ? 'demo-positioned-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        className={
-          'bg-color10b py-2 px-4 rounded-lg font-bold text-white hover:bg-color10c '
-        }
+        className={'hover:color10b  font-bold text-white hover:bg-color10c '}
       >
         {isAffiliateLink ? 'Sign up' : 'Login'}
-      </Button>
+      </Button> */}
+      <Typography
+        onClick={handleClick}
+        color="white"
+        sx={{ fontWeight: 600 }}
+        className="flex justify-center items-center cursor-pointer"
+      >
+        {isAffiliateLink ? 'Sign up' : 'LOGIN'}
+      </Typography>
       <Menu
         id="demo-positioned-menu"
         aria-labelledby="demo-positioned-button"
@@ -255,7 +261,7 @@ const LoginButton = (props) => {
           <Box sx={style}>
             <div className="flex flex-col">
               {confirmationResult == null ? (
-                <div className='flex overflow-hidden w-9/10'>
+                <div className="flex overflow-hidden w-9/10">
                   <ReactPhoneInput country={'ph'} value={phoneNumber} onChange={setPhoneNumber} />
                 </div>
               ) : null}

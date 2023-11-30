@@ -325,7 +325,7 @@ const ProductCard = (props) => {
                   <div className="">
                     <FaHandPointDown
                       onClick={showModal}
-                      color="#6bd0ff"
+                      color="#69b05c"
                       size={40}
                       className="animate-bounce-fade-5 mt-4"
                     />

@@ -899,7 +899,7 @@ const HomePage = ({ isAffiliateLink }) => {
           >
             <header className="bg-colorbackground lg:w-1/2 p-5 gap-3 flex flex-col justify-start items-start rounded-2xl shadow-lg   ">
               {/* <h1 className='h-2/10 text-2xl sm:text-4xl font-bold'>Star Pack is</h1> */}
-              <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>
+              <Typography variant={responsiveTitleText()} sx={{ fontWeight: 'bold', color: '#69b05c' }}>
                 Star Pack is...
               </Typography>
               <p className=" text-sm w-full  text-black indent-2 ">
@@ -926,7 +926,7 @@ const HomePage = ({ isAffiliateLink }) => {
           </div>
         </article>
         <article className="flex flex-col h-full  items-center mt-10 ">
-          {/* <Typography variant='h3' sx={{ fontWeight: 'bold', color: '#6bd0ff' }}>What We Do</Typography> */}
+          {/* <Typography variant='h3' sx={{ fontWeight: 'bold', color: '#69b05c' }}>What We Do</Typography> */}
           <div className="w-9/10  h-96 lg:h-60per border border-color60 mt-5 rounded-lg overflow-auto">
             <div className="p-5 lg:p-10">
               <ImageList variant="masonry" cols={responsiveImageList()} gap={8}>

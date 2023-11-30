@@ -71,13 +71,13 @@ const Shop = () => {
       />
 
       {/* WHOLESALE RETAIL */}
-      <WholesaleOrRetail
+      {/* <WholesaleOrRetail
         wholesaleOrRetailRef={wholesaleOrRetailRef}
         setWholesale={setWholesale}
         setRetail={setRetail}
         wholesale={wholesale}
         retail={retail}
-      />
+      /> */}
       {/* CATEGORY */}
       <CategorySelector
         setSearchedItemId={setSearchedItemId}

@@ -122,7 +122,7 @@ const AccountMenu = (props) => {
             sx={{ width: 48, height: 48 }}
           >
             <Badge badgeContent={totalUnreadMessages} color="error">
-              <Avatar sx={{ width: 36, height: 36, bgcolor: '#6bd0ff', justifyItems: 'end' }}>
+              <Avatar sx={{ width: 36, height: 36, bgcolor: '#69b05c', justifyItems: 'end' }}>
                 <Typography color="white" sx={{ fontWeight: 600 }} className="flex justify-center items-center">
                   {userstate == 'userloaded' ? (
                     <p className="mt-0.5">{userdata.name ? userdata.name[0].toUpperCase() : '?'}</p>

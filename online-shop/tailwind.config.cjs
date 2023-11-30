@@ -101,9 +101,12 @@ module.exports = {
         color60: '#69b05c', //logo green
         color30: '#bb9541', //logo brown
         color10a: '#6ab15d', // dark green
-        color10b: '#6bd0ff', //light blue
+        // color10b: '#6bd0ff', //light blue
+        color10b: '#69b05c',
+        
         color10c: '#B6E388', //light green
-        colorbackground: '#e1fadd', //bright green
+        // colorbackground: '#e1fadd', //bright green
+        colorbackground: 'white', 
         color1:"#d3eecf",
         color2:"#cceac7", //pale green
         blue1:"#429eff", //dark blue

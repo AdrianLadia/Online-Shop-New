@@ -14,12 +14,25 @@ function createData(key,value) {
 
 const ProductCardModalTable = (props) => {
 
+  const specs = {
+    size: size,
+    color: color,
+    material: material,
+    pieces: pieces,
+    brand: brand,
+    dimensions: dimensions,
+    weight: weight,
+    unit: unit,
+    piecesPerPack: piecesPerPack,
+    packsPerBox: packsPerBox,
+  };
+
     const { height, width } = useWindowDimensions();
     let rows = []
     let isPack = null
   
 
-    if (props.specs.unit == 'Pack') {
+    if (specs.unit == 'Pack') {
       isPack = true
     }
     else {
@@ -27,17 +40,17 @@ const ProductCardModalTable = (props) => {
     }
 
 
-    Object.keys(props.specs).map((key) => {
+    Object.keys(specs).map((key) => {
         if (isPack) {
           if (['piecesPerPack','packsPerBox','size'].includes(key)) {
             return
           }
         }
-        if ([null,'',,undefined].includes(props.specs[key])) { 
+        if ([null,'',,undefined].includes(specs[key])) { 
           return
         }
 
-        rows.push(createData(key,props.specs[key])) // key is the key of the object, props.specs[key] is the value of the key of the object
+        rows.push(createData(key,specs[key])) // key is the key of the object, specs[key] is the value of the key of the object
      
     })
 

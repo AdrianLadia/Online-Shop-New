@@ -57,7 +57,7 @@ const CountdownTimer = (props) => {
 
   return (
     <div id={props.reference} className={className}>
-      <Typography variant={getSize()} color={'#6bd0ff'} >{(timeLeft > 0) ? formatTime(timeLeft) : expiredText }</Typography>
+      <Typography variant={getSize()} color={'#69b05c'} >{(timeLeft > 0) ? formatTime(timeLeft) : expiredText }</Typography>
     </div>
   );
 };

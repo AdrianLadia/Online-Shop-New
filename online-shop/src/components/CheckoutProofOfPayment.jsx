@@ -256,7 +256,7 @@ const CheckoutProofOfPayment = (props) => {
               <div className="flex flex-row justify-center mt-5">
                 {paymentMethodSelected === 'cod' ? null : (
                   <>
-                    <Typography variant="h7" color={'#6bd0ff'} sx={{ marginRight: 1 }}>
+                    <Typography variant="h7" color={'#69b05c'} sx={{ marginRight: 1 }}>
                       Order will expire in :
                     </Typography>
                     <CountdownTimer initialTime={dateDifference} />
