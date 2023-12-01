@@ -34,19 +34,36 @@ const style = {
   },
 };
 
-const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModal, modal, setOpenSnackbar }) => {
+const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModal, modal, setOpenSnackbar,modalSelected }) => {
   const images = product.imageLinks;
-  const { products } = useContext(AppContext);
+  const { setProducts,products,cloudfirestore } = useContext(AppContext);
   const retailData = product;
   const [wholesaleData, setWholesaleData] = useState(null);
   const [radioButtonSelected, setRadioButtonSelected] = useState('Pack');
   const [count, setCount] = useState(0);
 
   useEffect(() => {
+    console.log(product.itemId)
     const wholesaleItemId = product.itemId.replace(/-RET$/, '');
     const find = products.find((product) => product.itemId === wholesaleItemId);
+
+    async function getRetailAndWholesaleDataOfModalProduct() {
+      const wholesaleData = await cloudfirestore.readSelectedDataFromOnlineStore(wholesaleItemId)
+      const reatailData = await cloudfirestore.readSelectedDataFromOnlineStore(product.itemId)
+      setProducts([...products, wholesaleData, reatailData]);
+      setWholesaleData(wholesaleData);
+    }
+   
+      
+    if (find === undefined) {
+      getRetailAndWholesaleDataOfModalProduct();
+    }
+    
+    // const find = products.find((product) => product.itemId === wholesaleItemId);
+    
     setWholesaleData(find);
-  }, [product]);
+
+  }, [product,modal]);
 
   const [itemDataSelected, setItemDataSelected] = useState(null); //this is the data of the item selected in the radio button
 
@@ -62,6 +79,11 @@ const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModa
     setModal(false);
     setCount(0);
   }
+
+  useEffect(() => {
+    console.log('wholesaleData', wholesaleData);
+    console.log('modal', modal);
+  }, [wholesaleData,modal]);
 
   return (
     <>

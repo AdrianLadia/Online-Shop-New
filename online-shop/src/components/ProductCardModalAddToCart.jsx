@@ -64,6 +64,7 @@ const ProductCardModalAddToCart = ({
       // opens snackbar
       setOpenSnackbar(true);
       // adds to cart
+      console.log(itemId,count)
       addtocart(itemId, count);
       //analytics
       analytics.logAddToCartEvent(itemId, itemData.itemName, itemData.category, count, itemData.price);
@@ -76,10 +77,6 @@ const ProductCardModalAddToCart = ({
     }
   }
 
-  useEffect(() => {
-    console.log('itemData', itemData);
-    console.log('itemData.price', itemData.price);
-  }, [itemData.price]);
 
   return (
     <div className="flex flex-col mt-5">

@@ -177,7 +177,7 @@ const LoginButton = (props) => {
       </Button> */}
       <Typography
         onClick={handleClick}
-        color="#69b05c"
+        color="white"
         sx={{ fontWeight: 600 }}
         className="flex justify-center items-center cursor-pointer"
       >

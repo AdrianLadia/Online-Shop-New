@@ -66,6 +66,11 @@ const ProductList = (props) => {
     }
   }, [products]);
 
+  useEffect(() => {
+    console.log('clickedProduct', clickedProduct);
+    console.log('modal', modal);
+  }, [clickedProduct,modal]);
+
   function RenderSelectedProducts(product_category) {
     const selected_products = datamanipulation.getAllProductsInCategory(
       products,
@@ -80,7 +85,11 @@ const ProductList = (props) => {
   }
 
   function AddToCart(item, quantity) {
+    console.log('item', item);
+    console.log('quantity', quantity);
+    console.log('cart', cart);
     const newCart = businesscalculations.addToCartWithQuantity(item, quantity, cart);
+    console.log('newCart', newCart);
     setCart(newCart);
   }
 

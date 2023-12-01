@@ -78,7 +78,7 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct, open
   return (
     <div className={"max-w-sm rounded overflow-hidden shadow-lg bg-white relative mx-10 my-10"}>
       <div className="relative" onClick={showModal}>
-        <img className="w-full h-96" src={imageUrl} alt={itemName} />
+        <img className="w-full h-96 object-cover" src={imageUrl} alt={itemName} />
         <button className="absolute bottom-4 right-4 rounded-full bg-color10b text-white h-12 w-12 flex items-center justify-center text-4xl">
           +
         </button>
