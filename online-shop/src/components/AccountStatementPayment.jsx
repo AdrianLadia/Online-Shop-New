@@ -47,7 +47,6 @@ const AccountStatementPayment = (props) => {
   }
 
   function payTotal() {
-    console.log('ran')
     businesscalculations.afterCheckoutRedirectLogic({
       paymentMethodSelected: paymentMethodSelected,
       referenceNumber: getReference(),

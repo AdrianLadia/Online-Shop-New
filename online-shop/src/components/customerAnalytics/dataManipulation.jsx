@@ -88,12 +88,10 @@ class dataManipulation {
     }
 
     const sales = data.sales;
-    // console.log(data.sales);
+
 
     const firstAndLast = getFirstAndLast(sales);
     const datesBetween = getDatesBetween(firstAndLast);
-    // console.log(datesBetween);
-    const toProcessObject = {};
 
     sales.forEach((sale) => {
       const year = sale.Year;
@@ -145,7 +143,7 @@ class dataManipulation {
 
       return filledArray;
     } catch (e) {
-      // console.log(e)
+      console.log(e)
     }
   }
 

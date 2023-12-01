@@ -50,7 +50,6 @@ const AdminCreatePaymentTableRow = (props) => {
         proofOfPaymentLink: proofOfPaymentLink
       };
       try{
-        // console.log('RAN transactionCreatePayment')
         await cloudfirestore.transactionCreatePayment(data);
       }
       catch(error){
@@ -95,7 +94,6 @@ const AdminCreatePaymentTableRow = (props) => {
 
   async function onReferenceClick() {
     const order = await firestore.readSelectedDataFromCollection('Orders',orderReference)
-    console.log('order',order)
     setOrder(order)
     setOpenModal(true)
   }

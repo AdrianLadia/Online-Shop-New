@@ -8,7 +8,7 @@ import dataManipulation from '../../../../../utils/dataManipulation';
 import Image from '../../../ImageComponents/Image';
 
 const DisplayMessagesLeft = (props) => {
-  const { datamanipulation,selectedChatOrderId, firestore, isadmin, allUserData,userdata } = useContext(AppContext);
+  const { datamanipulation,selectedChatOrderId, firestore, isAdmin, allUserData,userdata } = useContext(AppContext);
   const message = props.message;
   const dateTime = props.dateTime;
 
@@ -28,7 +28,7 @@ const DisplayMessagesLeft = (props) => {
 
   useEffect(() => {
     dummy.current.scrollIntoView({ behavior: 'smooth' });
-    if (isadmin === false) {
+    if (isAdmin === false) {
       setName('Admin');
     } else {
       setName(leftNameIfMemberIsOnRight);

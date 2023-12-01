@@ -16,6 +16,7 @@ const ProductCardModalRadioButton = ({
   setRadioButtonSelected,
   retailData,
   wholesaleData,
+  setCount,
 }) => {
   const { businesscalculations } = useContext(AppContext);
   const packPieces = retailData.pieces;
@@ -32,10 +33,9 @@ const ProductCardModalRadioButton = ({
     wholesaleData.averageSalesPerDay,
     false
   );
-  console.log('packStocksAvailable', packStocksAvailable);
-  console.log('boxStocksAvailable', boxStocksAvailable);
-
+ 
   const handleChange = (event) => {
+    setCount(0)
     setRadioButtonSelected(event.target.value);
   };
   return (

@@ -11,13 +11,12 @@ class storeProductsOrganizer {
 
 
   getOrderOfProducts() {
-
     let hasSearch = false
     // We run this function when we are searching for a specific item
     if (this.searchItemId != null) {
-      if (this.searchItemId.includes('-RET')) {
-        this.searchItemId = this.searchItemId.slice(0, -4);
-      }
+      // if (this.searchItemId.includes('-RET')) {
+      //   this.searchItemId = this.searchItemId.slice(0, -4);
+      // }
   
       this.orderOfProducts = [this.searchItemId]
       hasSearch = true
@@ -26,9 +25,6 @@ class storeProductsOrganizer {
     if (hasSearch) {
       return
     }
-
-    
-
 
     if (this.productCategory == 'Utensils') {
       this.orderOfProducts = [
@@ -83,6 +79,9 @@ class storeProductsOrganizer {
         'ATRE650J','LATRE650J','ATRE2300JK','LATRE2300J','ATRE3100J','LATRE3100J','ATRE4300J','LATRE4300J','ATRO8','LATRO8'
       ];
     }
+
+    
+    
   }
 
   runMain() {
@@ -92,7 +91,6 @@ class storeProductsOrganizer {
     this.getIfRetail();
     // We need to get the order of products so we can sort it
     this.getOrderOfProducts();
-    // console.log('ORDER OF PRODUCTS', this.orderOfProducts);
     // Organize Data
     this.organizeData();
     // Check if order of products is available and set final data
@@ -131,10 +129,10 @@ class storeProductsOrganizer {
     const data = this.productList;
     let order = [];
 
+    // console.log(this.isRetail);
     if (this.isRetail) {
       this.orderOfProducts.forEach((product) => {
-        const newItemId = product + '-RET';
-        order.push(newItemId);
+        order.push(product+'-RET');
       });
     } else {
       order = this.orderOfProducts;
@@ -156,6 +154,7 @@ class storeProductsOrganizer {
     });
 
     this.sortedData = sortedData;
+
   }
 }
 

@@ -6,11 +6,11 @@ import AppContext from '../../../../AppContext';
 const NavBarBackButton = (props) => {
   const backButtonRedirect = props.backButtonRedirect
   const navigateTo = useNavigate()
-  const { isadmin, setChatSwitch,refreshUser,setRefreshUser} = useContext(AppContext);
+  const { isAdmin, setChatSwitch,refreshUser,setRefreshUser} = useContext(AppContext);
 
   function onBackClick() {
     setRefreshUser(!refreshUser)
-    if(isadmin){
+    if(isAdmin){
       setChatSwitch(false)
     }else{  
       navigateTo(backButtonRedirect)

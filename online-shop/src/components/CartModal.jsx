@@ -77,9 +77,12 @@ const CartModal = (props) => {
   return (
     <Modal open={openCart} onClose={CloseCart}>
       <Fade in={openCart}>
-        <Box sx={style} className="flex flex-col p-8 rounded-2xl overflow-y-auto h-9/10 bg-colorbackground border-color60">
+        <Box
+          sx={style}
+          className="flex flex-col p-8 rounded-2xl overflow-y-auto h-9/10 bg-colorbackground border-color60"
+        >
           <div className="flex flex-row justify-between mb-4">
-            <div className='flex flex-row gap-5'>
+            <div className="flex flex-row gap-5">
               <QuotationCreatorButton
                 arrayOfProductData={finalCartData}
                 deliveryFee={0}
@@ -96,12 +99,8 @@ const CartModal = (props) => {
                 </button>
               ) : null}
             </div>
-            <button
-              id="closeCartButton"
-              onClick={CloseCart}
-              className="bg-red1 hover:bg-red-400 p-2 rounded-full w-10 text-white"
-            >
-              X
+            <button onClick={CloseCart} className="bg-gray-200 text-black rounded-full text-2xl h-10 w-10">
+              x
             </button>
           </div>
           {/* <div className="flex">
@@ -122,12 +121,13 @@ const CartModal = (props) => {
             {cartisempty ? (
               <> </>
             ) : (
+              
               <div className="flex flex-row justify-between w-full p-4">
                 <div>
                   <button
                     id="clearCartButton"
                     onClick={clearCart}
-                    className="bg-red1h-10 mt-5 hover:bg-red-400 bg-red1 p-2 rounded-lg text-white "
+                    className="bg-red1h-10 mt-5 hover:bg-gray-400 bg-gray-200 px-3 py-2 rounded-lg text-black "
                   >
                     Clear Cart
                   </button>

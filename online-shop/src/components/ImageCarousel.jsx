@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { HiArrowSmallRight } from "react-icons/hi2";
-import { HiArrowSmallLeft } from "react-icons/hi2";
+import { HiArrowSmallRight } from 'react-icons/hi2';
+import { HiArrowSmallLeft } from 'react-icons/hi2';
 
-const ImageCarousel = ({ images }) => {
+const ImageCarousel = ({ images, setModal }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const goToPrevious = () => {
@@ -19,12 +19,11 @@ const ImageCarousel = ({ images }) => {
 
   return (
     <div className="flex flex-col">
-      <img src={images[currentIndex]} alt={`Slide ${currentIndex}`} />
+      <img src={images[currentIndex]} alt={`Slide ${currentIndex}`}/>
+     
+
       <div className="flex flex-row justify-between mt-2 p-3">
-        {/* <button onClick={goToPrevious} disabled={currentIndex === 0}>
-          {'<'} Back
-        </button> */}
-        <HiArrowSmallLeft size={30} onClick={goToPrevious} disabled={currentIndex === 0}/>
+        <HiArrowSmallLeft size={30} onClick={goToPrevious} disabled={currentIndex === 0} />
         {images.map((_, index) => (
           <button
             key={index}
@@ -33,7 +32,7 @@ const ImageCarousel = ({ images }) => {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-        <HiArrowSmallRight size={30} onClick={goToNext} disabled={currentIndex === images.length - 1}/>
+        <HiArrowSmallRight size={30} onClick={goToNext} disabled={currentIndex === images.length - 1} />
       </div>
     </div>
   );

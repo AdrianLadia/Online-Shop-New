@@ -40,22 +40,17 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const axios = require('axios');
 
-
-
 app.use(corsHandler);
 app.use(express.json());
 
-
-const validApiKey = 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
-function handleApiKey(apiKey,res) {
+const validApiKey = 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg';
+function handleApiKey(apiKey, res) {
   // Check for API key in the request header
   if (!apiKey || apiKey !== validApiKey) {
-    return false
+    return false;
+  } else {
+    return true;
   }
-  else {
-    return true
-  }
-  
 }
 
 // Use CORS middleware to enable Cross-Origin Resource Sharing
@@ -217,7 +212,6 @@ async function updateOrdersAsPaidOrNotPaid(userId, db) {
 exports.postToConversionApi = onRequest((req, res) => {
   corsHandler(req, res, async () => {
     const apiKey = req.headers['apikey'];
-    console.log('postToConversionApi',apiKey)
     if (!handleApiKey(apiKey, res)) {
       res.status(400).send('Invalid API Key');
       return;
@@ -611,7 +605,7 @@ exports.readAllProductsForOnlineStore = onRequest(async (req, res) => {
           packsPerBox: data.packsPerBox,
           piecesPerPack: data.piecesPerPack,
           boxImage: data.boxImage,
-          distributorPrice: data.distributorPrice
+          distributorPrice: data.distributorPrice,
         };
         products.push(productObject);
       });
@@ -671,12 +665,12 @@ exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
 exports.transactionPlaceOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const apiKey = req.headers['apikey'];
-    console.log('API KEY',apiKey)
+    console.log('API KEY', apiKey);
     if (handleApiKey(apiKey, res) == false) {
       res.status(400).send('Invalid API Key');
       return;
     }
-    
+
     const data = parseData(req.query.data);
     let userid = data.userid;
     // If guest checkout
@@ -708,13 +702,11 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const countOfOrdersThisYear = data.countOfOrdersThisYear;
     const deliveryDate = new Date(data.deliveryDate);
     const paymentMethod = data.paymentMethod;
-    const userRole = data.userRole
+    const userRole = data.userRole;
 
-    
     let cartUniqueItems = [];
-    
+
     const db = admin.firestore();
-    console.log(userid)
     const userRef = db.collection('Users').doc(userid);
     const userSnap = await userRef.get();
     const userData = userSnap.data();
@@ -730,13 +722,10 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       const itemId = key;
       const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
-      let price = null
-      console.log(userRole)
+      let price = null;
       if (userRole == 'distributor') {
-        console.log('is distributor')
         price = item.data().distributorPrice;
-      }
-      else {
+      } else {
         price = item.data().price;
       }
 
@@ -779,7 +768,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       }
       console.log('itemsTotalBackEnd', itemsTotalBackEnd);
       console.log('itemstotal', itemstotal);
-      console.log('vat',vat)
+      console.log('vat', vat);
       if (itemsTotalBackEnd != itemstotal + vat) {
         logger.log('itemsTotalBackEnd != itemstotal');
         res.status(400).send('Invalid data submitted. Please try again later');
@@ -841,8 +830,6 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       await db.runTransaction(async (transaction) => {
         try {
           // read user data
-
-
 
           const userRef = db.collection('Users').doc(userid);
           const user = await transaction.get(userRef);
@@ -2501,20 +2488,18 @@ exports.editCustomerOrder = onRequest(async (req, res) => {
   });
 });
 
-exports.updateProductSearchIndex = functions
-  .region('asia-southeast1')
-  .pubsub.schedule('every 24 hours')
-  .onRun(async (context) => {
-    const db = admin.firestore();
-    const productsRef = db.collection('Products');
-    const snapshot = await productsRef.get();
-    const products = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      products.push(data);
-    });
-    const searchIndex = [];
-    products.forEach((product) => {
+async function internalUpdateProductSearchIndex() {
+  const db = admin.firestore();
+  const productsRef = db.collection('Products');
+  const snapshot = await productsRef.get();
+  const products = [];
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    products.push(data);
+  });
+  const searchIndex = [];
+  products.forEach((product) => {
+    if (product.unit == 'Pack') {
       const productSearchIndex = {
         itemId: product.itemId,
         name: product.itemName,
@@ -2524,38 +2509,27 @@ exports.updateProductSearchIndex = functions
       if (product.forOnlineStore) {
         searchIndex.push(productSearchIndex);
       }
-    });
-    const searchIndexRef = db.collection('Index').doc('ProductSearchIndex');
-    await searchIndexRef.set({ search: searchIndex });
+    }
+  });
+  const searchIndexRef = db.collection('Index').doc('ProductSearchIndex');
+  await searchIndexRef.set({ search: searchIndex });
+}
+
+exports.updateProductSearchIndexScheduled = functions
+  .region('asia-southeast1')
+  .pubsub.schedule('every 24 hours')
+  .onRun(async (context) => {
+    await internalUpdateProductSearchIndex();
   });
 
 exports.updateProductSearchIndex = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
-    const db = admin.firestore();
-    const productsRef = db.collection('Products');
-    const snapshot = await productsRef.get();
-    const products = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      products.push(data);
-    });
-    const searchIndex = [];
-    products.forEach((product) => {
-      const productSearchIndex = {
-        itemId: product.itemId,
-        name: product.itemName,
-        category: product.category,
-        imageLinks: product.imageLinks,
-        unit: product.unit,
-      };
-
-      if (product.forOnlineStore) {
-        searchIndex.push(productSearchIndex);
-      }
-    });
-    const searchIndexRef = db.collection('Index').doc('ProductSearchIndex');
-    await searchIndexRef.set({ search: searchIndex });
-    res.status(200).send('Product search index updated');
+    try {
+      await internalUpdateProductSearchIndex();
+      res.status(200).send('Product search index updated');
+    } catch {
+      res.status(400).send('Error updating product search index');
+    }
   });
 });
 
@@ -2565,20 +2539,18 @@ exports.facebookMessengerWebhook = onRequest(async (req, res) => {
   // const challenge = req.query['hub.challenge'];
   // const verifyToken = req.query['hub.verify_token'];
 
-  
   const data = req.body;
-  const entry = data.entry[0]
-  const entryId = entry.id
-  const entryTime = entry.time
-  const messaging = entry.messaging
+  const entry = data.entry[0];
+  const entryId = entry.id;
+  const entryTime = entry.time;
+  const messaging = entry.messaging;
 
   console.log('data', data);
-  logger.log('data', data)
+  logger.log('data', data);
 
-  console.log('entryId : ',entryId)
-  console.log('entryTime : ',entryTime)
+  console.log('entryId : ', entryId);
+  console.log('entryTime : ', entryTime);
   console.log('messaging : ', messaging);
 
   res.status(200).send(challenge);
-  
 });

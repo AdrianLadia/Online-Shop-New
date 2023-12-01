@@ -6,28 +6,51 @@ import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import { set } from 'date-fns';
 
-const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct,openSnackbar,setOpenSnackbar }) => {
+const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct, openSnackbar, setOpenSnackbar }) => {
   const [heart, setHeart] = useState(false);
-  const { firestore, analytics, alertSnackbar, userdata, favoriteitems, setFavoriteItems } = useContext(AppContext);
-  
+  const {
+    firestore,
+    analytics,
+    alertSnackbar,
+    userdata,
+    favoriteitems,
+    setFavoriteItems,
+    products,
+    isAdmin,
+    isSuperAdmin,
+  } = useContext(AppContext);
+
   const itemName = itemData.itemName;
   const imageUrl = itemData.imageLinks[0];
   const price = itemData.price;
   // const
   const itemId = itemData.itemId;
   const category = itemData.category;
+  const [wholesaleStocks, setWholesaleStocks] = useState(null);
+  const [wholesalePrice, setWholesalePrice] = useState(null);
+
+  useEffect(() => {
+    try{
+      const wholesaleItemId = itemData.itemId.replace(/-RET$/, '');
+      const find = products.find((product) => product.itemId === wholesaleItemId);
+      const stocksAvailable = find.stocksAvailable;
+      const p = find.price;
+      setWholesaleStocks(stocksAvailable);
+      setWholesalePrice(p);
+    }
+    catch {
+
+    }
+  }, []);
 
   function onHeartClick() {
-    console.log('clicked');
     if (userdata === null) return alertSnackbar('info', 'Login to add items to favorites');
 
     if (heart) {
-      console.log('heart');
       setHeart(!heart);
       setFavoriteItems(favoriteitems.filter((item) => item !== itemId));
       firestore.removeItemFromFavorites(userdata.uid, itemId);
     } else {
-      console.log('no heart');
       setHeart(!heart);
       setFavoriteItems([...favoriteitems, itemId]);
       firestore.addItemToFavorites(userdata.uid, itemId);
@@ -35,10 +58,9 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct,openS
   }
 
   function showModal() {
-    console.log('clicked modal');
     setModal(true);
     setClickedProduct(itemData);
-    firestore.updateProductClicks(itemId, userdata ? userdata.uid : 'GUEST');
+    firestore.updateProductClicks(itemId, userdata ? userdata.uid : 'GUEST', userdata?.userRole);
     analytics.logOpenProductModalEvent(itemId, itemName, category);
   }
 
@@ -50,19 +72,27 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct,openS
     }
   }, [itemData]);
 
+
+
+
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white relative mx-10 my-10">
+    <div className={"max-w-sm rounded overflow-hidden shadow-lg bg-white relative mx-10 my-10"}>
       <div className="relative" onClick={showModal}>
-        <img className="w-full" src={imageUrl} alt={itemName} />
+        <img className="w-full h-96" src={imageUrl} alt={itemName} />
         <button className="absolute bottom-4 right-4 rounded-full bg-color10b text-white h-12 w-12 flex items-center justify-center text-4xl">
           +
         </button>
       </div>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{itemName}</div>
-        {/* <p className="text-gray-700 text-base">
-              {price}
-            </p> */}
+        {isAdmin || isSuperAdmin ? (
+          <>
+            <p className="text-gray-700 text-base">Retail Stocks Available : {itemData.stocksAvailable} </p>
+            <p className="text-gray-700 text-base">Wholesale Stocks Available : {wholesaleStocks} </p>
+            <p className="text-gray-700 text-base">Retail Price : ₱ {price} </p>
+            <p className="text-gray-700 text-base">Wholesale Price : ₱ {wholesalePrice} </p>
+          </>
+        ) : null}
       </div>
       <div className="absolute top-0 right-0 p-4">
         <button className="text-gray-600 hover:text-gray-800">
@@ -89,10 +119,18 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct,openS
           autoHideDuration={5000}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={openSnackbar}
-          onClose={()=>{setOpenSnackbar(false)}}
+          onClose={() => {
+            setOpenSnackbar(false);
+          }}
           message={'Added to cart'}
           action={
-            <Button color="success" size="small" onClick={()=>{setOpenSnackbar(false)}}>
+            <Button
+              color="success"
+              size="small"
+              onClick={() => {
+                setOpenSnackbar(false);
+              }}
+            >
               {' '}
               Close{' '}
             </Button>

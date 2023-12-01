@@ -20,12 +20,10 @@ function PaymentMethods({pickUpOrDeliver,userdata,itemsTotalPrice,email,phoneNum
      })
   },[])
 
-  useEffect(() => {
-    console.log('pickUpOrDeliver',pickUpOrDeliver)
-  },[pickUpOrDeliver])
+
 
   useEffect(() => {
-    console.log('pickUpOrDeliver',pickUpOrDeliver)
+
     if (pickUpOrDeliver === 'deliver') {
       const _disableCodHandler = new disableCodHandler({userdata,phoneNumber,email,itemsTotalPrice})
       _disableCodHandler.runMain()

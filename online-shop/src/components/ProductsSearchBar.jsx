@@ -32,9 +32,8 @@ const ProductsSearchBar = ({
     if (productsData.length == 0) {
       return;
     }
-
     const fuse = new Fuse(productsData, {
-      keys: ['name', 'unit', 'category'], // THESE ARE THE KEYS THAT WILL BE SEARCHED
+      keys: ['name', 'category'], // THESE ARE THE KEYS THAT WILL BE SEARCHED
       threshold: 0.3,
       includeScore: true,
     });
@@ -62,10 +61,10 @@ const ProductsSearchBar = ({
     });
   }, []);
 
-  useEffect(() => {
-    const newProductNames = productsData.map((product) => [product.name, `  (${product.unit})`]);
-    setProductNames(newProductNames);
-  }, [productsData]);
+  // useEffect(() => {
+  //   const newProductNames = productsData.map((product) => [product.name, `  (${product.unit})`]);
+  //   setProductNames(newProductNames);
+  // }, [productsData]);
 
   useEffect(() => {
     return () => {
@@ -75,22 +74,15 @@ const ProductsSearchBar = ({
 
   const deboucedOnSearch = debounce(function (event, value) {
     setSelectedName(value);
-    const itemName = value[0];
-    const itemUnit = value[1].slice(3, -1);
-
     let matchedProduct = false;
     productsData.forEach((product) => {
-      if (itemName == product.name && itemUnit == product.unit) {
+   
+      if (value == product.name) {
+        // console.log(value, product)
         matchedProduct = true;
         setSelectedCategory(product.category);
         setSearchedItemId(product.itemId);
-        if (product.unit != 'Pack') {
-          setWholesale(true);
-          setRetail(false);
-        } else {
-          setWholesale(false);
-          setRetail(true);
-        }
+        
       }
     });
     if (matchedProduct == false) {
@@ -116,7 +108,7 @@ const ProductsSearchBar = ({
           renderInput={(params) => <TextField  className='bg-white' {...params} label="Search Item" />}
           filterOptions={(options, { inputValue }) => {
             const results = fuse.search(inputValue);
-            return results.map((res) => [res.item.name, `  (${res.item.unit})`]); // Convert back to array format for Autocomplete
+            return results.map((res) => res.item.name); // Convert back to array format for Autocomplete
           }}
         />
       </ThemeProvider>

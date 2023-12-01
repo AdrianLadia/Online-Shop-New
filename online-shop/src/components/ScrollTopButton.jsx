@@ -5,6 +5,7 @@ import { BsFillArrowUpCircleFill } from 'react-icons/bs';
 const ScrollTopButton = (props) => {
 
   const wholesaleOrRetailRef = props.wholesaleOrRetailRef
+  const categoryRef = props.categoryRef
   
 
   function scrollUp() {
@@ -12,7 +13,7 @@ const ScrollTopButton = (props) => {
     //   top: 0,
     //   behavior: 'smooth', // if you want a smooth scrolling effect
     // });
-    wholesaleOrRetailRef.current.scrollIntoView({ behavior: 'smooth' });
+    categoryRef.current.scrollIntoView({ behavior: 'smooth' });
   }
 
   const {categorySelectorInView, shopHeroInView} = props;

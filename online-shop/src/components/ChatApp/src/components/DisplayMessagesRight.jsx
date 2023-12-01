@@ -8,7 +8,7 @@ import {AiFillCheckCircle} from 'react-icons/ai';
 
 const DisplayMessagesRight = (props) => {
 
-  const { isadmin,userdata,datamanipulation } = useContext(AppContext);
+  const { isAdmin,userdata,datamanipulation } = useContext(AppContext);
   const message = props.message;
   let dateTime = props.dateTime;
   dateTime = datamanipulation.convertDateTimeStampToDateString(dateTime)
@@ -28,7 +28,7 @@ const DisplayMessagesRight = (props) => {
 
 
   useEffect(() => {
-    if(isadmin === false){
+    if(isAdmin === false){
       dummy.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);

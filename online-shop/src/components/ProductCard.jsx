@@ -197,7 +197,7 @@ const ProductCard = (props) => {
   function showModal() {
     setModal(true);
     setClickedProduct(product);
-    firestore.updateProductClicks(product.itemId, userId);
+    firestore.updateProductClicks(product.itemId, userId, userdata?.userRole);
     analytics.logOpenProductModalEvent(product.itemId, product.itemName,product.category)
   }
 
@@ -274,8 +274,9 @@ const ProductCard = (props) => {
   }
 
   function cssIfLastItemCard() {
+    console.log('isLastItem',isLastItem)
     if (isLastItem) {
-      return ' mb-20';
+      return ' mb-92';
     }
     else {
       return '';

@@ -509,7 +509,7 @@ const CheckoutPage = () => {
                 <div className="flex justify-center w-full">
                   <button
                     id="selectFromSavedAddressButton"
-                    className="hover:bg-blue1 bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                    className="hover:bg-color10c bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                     onClick={handleOpenModalSavedAddress}
                   >
                     Select From Saved Address
@@ -534,7 +534,7 @@ const CheckoutPage = () => {
             <div className="gap-2 p-2 flex flex-row-reverse justify-between w-11/12 self-center">
               <button
                 onClick={searchAddress}
-                className="p-4 text-white font-bold bg-color10b hover:bg-blue1 rounded-lg mr-2 lg:mr-5"
+                className="p-4 text-white font-bold bg-color10b hover:bg-color10c rounded-lg mr-2 lg:mr-5"
               >
                 Search
               </button>
@@ -585,7 +585,7 @@ const CheckoutPage = () => {
             <div className="flex justify-center w-full ">
               <button
                 id="selectFromSavedContactsButton"
-                className="bg-color10b hover:bg-blue1  text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                className="bg-color10b hover:bg-color10c text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
                 onClick={handleOpenContactModal}
               >
                 Select From Saved Contacts
@@ -920,7 +920,7 @@ const CheckoutPage = () => {
                   <button
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
-                    className="hover:bg-blue1 bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 "
+                    className="hover:bg-color10c bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 "
                     disabled={placeOrderLoading}
                   >
                     {placeOrderLoading ? (

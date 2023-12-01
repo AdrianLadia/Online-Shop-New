@@ -17,7 +17,7 @@ import isUrl from '../../utils/isUrl';
 function MyOrderCard(props) {
   const { pathname } = useLocation();
 
-  const { datamanipulation,storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isadmin, userdata,orders } =
+  const { datamanipulation,storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isAdmin, userdata,orders } =
     React.useContext(AppContext);
   const order = props.order;
   const paid = order.paid;

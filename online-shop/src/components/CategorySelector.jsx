@@ -27,12 +27,13 @@ const CategorySelector = (props) => {
   const setSelectedCategory = props.setSelectedCategory;
   const selectedCategory = props.selectedCategory;
   const setSelectedName = props.setSelectedName;
+  const categoryRef = props.categoryRef;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
   const { analytics, firestore, categories, setCategories, categoryValue, setCategoryValue, datamanipulation } =
     useContext(AppContext);
   const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
   const [categoryClickCount, setCategoryClickCount] = useState(0);
-  const myElement = useRef(null);
+
 
   useEffect(() => {
     // Function to extract the "category" parameter from the URL query string
@@ -95,8 +96,8 @@ const CategorySelector = (props) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (myElement.current) {
-        const outOfView = isElementOutOfView(myElement.current);
+      if (categoryRef.current) {
+        const outOfView = isElementOutOfView(categoryRef.current);
         setCategorySelectorInView(!outOfView);
       }
     };
@@ -110,15 +111,15 @@ const CategorySelector = (props) => {
   }, []); // The empty dependency array ensures the useEffect runs once when the component mounts and not on every re-render.
 
   useEffect(() => {
-    if (myElement.current) {
-      const outOfView = isElementOutOfView(myElement.current);
+    if (categoryRef.current) {
+      const outOfView = isElementOutOfView(categoryRef.current);
       setCategorySelectorInView(!outOfView);
     }
   }, []);
 
   return (
     <ThemeProvider theme={theme}>
-      <div ref={myElement} className="w-full h-full">
+      <div ref={categoryRef} className="w-full h-full">
         {categories && categories[categoryValue] ? (
           <Helmet>
             <title>{categories[categoryValue]} - Star Pack: Packaging Supplies</title>

@@ -14,8 +14,8 @@ const OrdersCalendar = (props) => {
   return (
     <div className='rounded-md'>
        <DatePicker 
-          className='h-14 w-44 sm:w-56 rounded-md outline-color10b border-2 border-blue1 indent-5 hover:border-color10b bg-white 
-                      placeholder:text-lg placeholder:text-blue1' 
+          className='h-14 w-44 sm:w-56 rounded-md outline-color10b border-2 border-color10a indent-5 hover:border-color10b bg-white 
+                      placeholder:text-lg placeholder:text-color10b' 
           placeholderText="Date"
           selected={startDate}
           onChange={(date) => setStartDate(date)}

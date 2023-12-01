@@ -479,13 +479,16 @@ class firestoredb extends firestorefunctions {
     this.addDocumentArrayFromCollection('ordersMessages', reference, messages, 'messages');
   }
 
-  async updateProductClicks(productid, userId = null) {
+  async updateProductClicks(productid, userId = null,isAdminOrSuperAdmin = false) {
     let id = productid;
     if (productid.endsWith('-RET')) {
       id = productid.substring(0, productid.length - 4);
     }
 
-    await super.addDocumentArrayFromCollection('Products', id, { date: new Date(), userId: userId }, 'clicks');
+    if (!isAdminOrSuperAdmin) {
+      console.log('updating clicks')
+      await super.addDocumentArrayFromCollection('Products', id, { date: new Date(), userId: userId }, 'clicks');
+    }
   }
 
   async readAllPaymentProviders() {

@@ -9,13 +9,13 @@ import Admin from './Admin'
 const AdminSecurity = () => {
     
     // Check if admin
-    const {isadmin} = useContext(AppContext)
+    const {isAdmin} = useContext(AppContext)
     
   
     return (
     <div>
         {
-        isadmin 
+        isAdmin 
             ? 
         <div className='flex flex-col'>
             {/* AdminNavBar */}

@@ -31,13 +31,9 @@ const AccountMenu = (props) => {
   const {
     userdata,
     isAffiliate,
-    isadmin,
+    isAdmin,
     isSuperAdmin,
-    refreshUser,
-    setRefreshUser,
-    setUserState,
     userstate,
-    userId,
     unreadOrderMessages,
     unreadCustomerServiceMessages,
     setUserId,
@@ -115,10 +111,11 @@ const AccountMenu = (props) => {
             id="accountMenu"
             onClick={handleClick}
             // size="small"
+            color="primary"
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
-            className="flex justify-center items-center hover:bg-blue1"
+            className="flex justify-center items-center"
             sx={{ width: 48, height: 48 }}
           >
             <Badge badgeContent={totalUnreadMessages} color="error">
@@ -220,7 +217,7 @@ const AccountMenu = (props) => {
           <span className="ml-3 mt-0.5 text-color60">Customer Service</span>
         </MenuItem>
 
-        {isadmin ? (
+        {isAdmin ? (
           <div>
             <Divider className="mt-1 mb-1" />
             <MenuItem id="adminMenu" onClick={adminClick} className="hover:bg-slate-300">

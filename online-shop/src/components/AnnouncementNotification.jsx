@@ -27,8 +27,8 @@ const AnnouncementNotification = () => {
         <div className="top-2/4 left-2/4 absolute -translate-x-1/2 -translate-y-1/2 w-9/10 md:w-1/2 lg:w-1/6">
           <Card sx={{ width: 'full', flexShrink: 0, height: '100%' }} elevation={20}>
             <div className="flex justify-end absolute right-2 top-2">
-              <button onClick={handleClose} className="bg-red-500 text-white rounded-full px-3 py-1.5">
-                X
+              <button onClick={handleClose} className="bg-gray-200 text-black rounded-full text-2xl h-10 w-10">
+                x
               </button>
             </div>
             <div style={{ height: 210, backgroundColor: '#e1fadd', display: 'flex' }}>

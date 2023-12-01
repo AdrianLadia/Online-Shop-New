@@ -44,6 +44,8 @@ const ProductList = (props) => {
     products,
     updateCartInfo,
     cloudfirestore,
+    isAdmin,
+    isSuperAdmin,
   } = React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
   const [clickedProduct, setClickedProduct] = useState(null);
@@ -111,6 +113,27 @@ const ProductList = (props) => {
     }
   }
 
+  function isLastRow(index) {
+    if (width < 640) {
+    } else if (width < 1070) {
+      return 'grid grid-cols-2 ';
+    } else if (width < 1500) {
+      return 'grid grid-cols-3 ';
+    } else if (width < 1921) {
+      return 'grid grid-cols-4';
+    } else {
+      return 'grid grid-cols-5';
+    }
+  }
+
+  function isAdminOrSuperAdmin() {
+    if (isAdmin || isSuperAdmin) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   return (
     <div className=" mt-5 mb-40 h-screen">
       <div id="productList" className={'flex justify-center ' + divCssIfProductNoteLoaded()}>
@@ -142,8 +165,17 @@ const ProductList = (props) => {
                 }
               });
             }
+
+            // if ()
+
+            if (!isAdminOrSuperAdmin()) {
+              if (product.imageLinks[0] == null) {
+                return;
+              }
+            }
+
             return (
-              <div key={product.itemId} className="flex justify-evenly">
+              <div key={product.itemId} className={'flex justify-evenly '}>
                 <ProductCardV2
                   itemData={product}
                   setModal={setModal}
@@ -151,7 +183,6 @@ const ProductList = (props) => {
                   openSnackbar={openSnackbar}
                   setOpenSnackbar={setOpenSnackbar}
                   isLastItem={isLastItem}
-                  
                 />
                 {/* <ProductCard
                   setClickedProduct={setClickedProduct}
@@ -172,6 +203,7 @@ const ProductList = (props) => {
         )}
       </div>
 
+        <div className='h-20'/>
       <OpenCartButton shakeCartAnimation={shakeCartAnimation} setShakeCartAnimation={setShakeCartAnimation} />
       {/* {clickedProduct != null ? <ProductCardModal modal={modal} setModal={setModal} product={clickedProduct} /> : null} */}
       {clickedProduct != null ? (

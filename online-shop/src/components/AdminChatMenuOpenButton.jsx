@@ -46,12 +46,6 @@ const AdminChatMenuOpenButton = (props) => {
     <TableRow key={chat.id}>
       <TableCell component="th">
         {openButton ? (
-          // <Button
-          //   onClick={() => handleCloseButton(chat.id)}
-          //   className=" rounded-full bg-red1 hover:bg-red-400 text-white"
-          // >
-          //   X
-          // </Button>
           <Button className=" rounded-full bg-color10b text-white">...</Button>
         ) : (
           <Button onClick={() => handleOpenButton(chat.id)} className=" bg-color60 hover:bg-color10c text-white ">

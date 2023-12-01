@@ -23,7 +23,8 @@ const Shop = () => {
   const [selectedName, setSelectedName] = useState('')
   const { fbclid, cloudfirestore,isSupportedBrowser, selectedCategory, setSelectedCategory, products, analytics } =
     useContext(AppContext);
-  const wholesaleOrRetailRef = useRef();
+  // const wholesaleOrRetailRef = useRef();
+  const categoryRef = useRef();
   const [shopHeroInView, setShopHeroInView] = useState(true);
   const [searchedItemId, setSearchedItemId] = useState(null);
 
@@ -66,7 +67,8 @@ const Shop = () => {
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
       <ScrollTopButton
         categorySelectorInView={categorySelectorInView}
-        wholesaleOrRetailRef={wholesaleOrRetailRef}
+        // wholesaleOrRetailRef={wholesaleOrRetailRef}
+        categoryRef={categoryRef}
         shopHeroInView={shopHeroInView}
       />
 
@@ -80,6 +82,7 @@ const Shop = () => {
       /> */}
       {/* CATEGORY */}
       <CategorySelector
+      categoryRef={categoryRef}
         setSearchedItemId={setSearchedItemId}
         setSelectedCategory={setSelectedCategory}
         selectedCategory={selectedCategory}

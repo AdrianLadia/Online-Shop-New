@@ -56,8 +56,8 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
               <button
                 id="closeModalButton"
                 onClick={props.handleClose}
-                className="bg-red1 hover:bg-red-800 p-2 rounded-full w-10 text-white"
-              > X
+                className="bg-gray-200 hover:bg-gray-400 h-10 text-2xl rounded-full w-10 text-black"
+              > x
               </button>
             </div>
 

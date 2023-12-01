@@ -13,7 +13,7 @@ import NotificationSound from '../sounds/chat.mp3';
 const AdminChatMenu = () => {
   const dummy = useRef(null);
   const [openChat, setOpenChat] = useState(false);
-  const { firestore, selectedChatOrderId, chatSwitch, isadmin, db, userdata } = useContext(AppContext);
+  const { firestore, selectedChatOrderId, chatSwitch, isAdmin, db, userdata } = useContext(AppContext);
   const [chatData, setChatData] = useState([]);
   const [chatButtonState, setChatButtonState] = useState(null);
   const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false);

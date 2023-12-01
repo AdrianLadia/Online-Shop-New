@@ -91,7 +91,7 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
 
-  const [isadmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [favoriteitems, setFavoriteItems] = useState([]);
   const [cart, setCart] = useState({});
   const [refreshUser, setRefreshUser] = useState(false);
@@ -203,13 +203,13 @@ function App() {
 
   useEffect(() => {
     if (userdata != null) {
-      if (isadmin) {
+      if (isAdmin) {
         firestore.readAllDataFromCollection('Users').then((users) => {
           setAllUserData(users);
         });
       }
     }
-  }, [isadmin]);
+  }, [isAdmin]);
 
   useEffect(() => {
     let paymentState = {};
@@ -391,7 +391,6 @@ function App() {
     const uniqueProducts = combinedProductsList.filter(
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
     );
-    console.log('uniqueProducts', uniqueProducts)
     const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null);
     _productsPriceHandler.runMain();
     const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
@@ -527,7 +526,7 @@ function App() {
     user: user,
     userdata: userdata,
     setUserData: setUserData,
-    isadmin: isadmin,
+    isAdmin: isAdmin,
     firestore: firestore,
     cloudfirestore: cloudfirestore,
     cart: cart,

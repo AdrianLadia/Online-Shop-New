@@ -8,7 +8,6 @@ const ProductCardModalTableV2 = ({ wholesaleData, retailData, radioButtonSelecte
   const [specs, setSpecs] = React.useState(null);
 
   function createDividerData(itemData) {
-    const price = itemData.price;
     const brand = itemData.brand;
     const color = itemData.color;
     const dimensions = itemData.dimensions;
