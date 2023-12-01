@@ -618,11 +618,13 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async getIpAddress() {
-    const res = await axios.get(`https://api64.ipify.org/?format=json`,{
-      headers: {
-        'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
-      }});
-    return res.data.ip;
+    if ( window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      const res = await axios.get(`https://api64.ipify.org/?format=json`,{
+        headers: {
+          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
+        }});
+      return res.data.ip;
+    }
   }
 
   async getAllAffiliateUsers() {

@@ -17,7 +17,6 @@ class storeProductsOrganizer {
       // if (this.searchItemId.includes('-RET')) {
       //   this.searchItemId = this.searchItemId.slice(0, -4);
       // }
-  
       this.orderOfProducts = [this.searchItemId]
       hasSearch = true
     }
@@ -128,11 +127,15 @@ class storeProductsOrganizer {
   organizeData() {
     const data = this.productList;
     let order = [];
-
-    // console.log(this.isRetail);
     if (this.isRetail) {
       this.orderOfProducts.forEach((product) => {
-        order.push(product+'-RET');
+        if (this.searchItemId) {
+          order.push(product);
+          return
+        }
+        else {
+          order.push(product+'-RET');
+        }
       });
     } else {
       order = this.orderOfProducts;
