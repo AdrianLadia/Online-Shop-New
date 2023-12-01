@@ -909,7 +909,7 @@ const CheckoutPage = () => {
                     rows={5}
                     onChange={(e) => setDeliveryNotes(e.target.value)}
                     label="Delivery Notes"
-                    color="secondary"
+                    color="primary"
                     InputLabelProps={labelStyle}
                     className="rounded-md w-9/12 2xl:w-2/6 xl:w-3/6  "
                     sx={style}
@@ -925,7 +925,7 @@ const CheckoutPage = () => {
                   >
                     {placeOrderLoading ? (
                       <div className="flex flex-col items-center justify-center h-full">
-                        <p>Processing Your Order.</p> 
+                        <p>Processing your order.</p> 
                         <p>Please wait and do not refresh the page.</p>
                         <CircularProgress size={50} style={{ color: 'white' }} sx={{ marginTop: 1 }} />
                       </div>
