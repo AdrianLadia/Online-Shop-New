@@ -417,7 +417,6 @@ function App() {
         const data = await cloudfirestore.readSelectedUserById(userId);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
-
         if (guestLoginClicked === true) {
           setCart(localStorageCart);
           firestore.createUserCart(localStorageCart, userId).then(() => {
@@ -458,6 +457,11 @@ function App() {
         setContactPerson(data.contactPerson);
         setUserState('userloaded');
         setUserLoaded(true);
+      }
+      else {
+        if (localStorageCart) {
+          setCart(localStorageCart);
+        }
       }
     }
     setAllUserData();
