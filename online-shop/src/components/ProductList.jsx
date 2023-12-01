@@ -66,11 +66,6 @@ const ProductList = (props) => {
     }
   }, [products]);
 
-  useEffect(() => {
-    console.log('clickedProduct', clickedProduct);
-    console.log('modal', modal);
-  }, [clickedProduct,modal]);
-
   function RenderSelectedProducts(product_category) {
     const selected_products = datamanipulation.getAllProductsInCategory(
       products,
@@ -85,12 +80,9 @@ const ProductList = (props) => {
   }
 
   function AddToCart(item, quantity) {
-    console.log('item', item);
-    console.log('quantity', quantity);
-    console.log('cart', cart);
     const newCart = businesscalculations.addToCartWithQuantity(item, quantity, cart);
-    console.log('newCart', newCart);
     setCart(newCart);
+    console.log('newCart', newCart);
   }
 
   useEffect(() => {
@@ -101,6 +93,8 @@ const ProductList = (props) => {
         alertSnackbar('error', 'Failed to update cart info. Please try again.');
       }
     }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart, updateCartInfo]);
 
   function divCssIfProductNoteLoaded() {
@@ -212,7 +206,7 @@ const ProductList = (props) => {
         )}
       </div>
 
-        <div className='h-20'/>
+      <div className="h-20" />
       <OpenCartButton shakeCartAnimation={shakeCartAnimation} setShakeCartAnimation={setShakeCartAnimation} />
       {/* {clickedProduct != null ? <ProductCardModal modal={modal} setModal={setModal} product={clickedProduct} /> : null} */}
       {clickedProduct != null ? (

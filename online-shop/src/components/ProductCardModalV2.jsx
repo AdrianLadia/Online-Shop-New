@@ -43,7 +43,6 @@ const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModa
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    console.log(product.itemId)
     const wholesaleItemId = product.itemId.replace(/-RET$/, '');
     const find = products.find((product) => product.itemId === wholesaleItemId);
 
@@ -80,10 +79,7 @@ const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModa
     setCount(0);
   }
 
-  useEffect(() => {
-    console.log('wholesaleData', wholesaleData);
-    console.log('modal', modal);
-  }, [wholesaleData,modal]);
+
 
   return (
     <>

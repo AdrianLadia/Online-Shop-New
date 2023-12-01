@@ -130,6 +130,7 @@ function App() {
   const [affiliate, setAffiliate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cartProductsData, setCartProductsData] = useState([]);
+  const [localCartProductsData, setLocalCartProductsData] = useState([]);
   const [categoryProductsData, setCategoryProductsData] = useState([]);
   const [userOrderReference, setUserOrderReference] = useState(null);
   const [favoriteProductData, setFavoriteProductData] = useState([]);
@@ -386,7 +387,7 @@ function App() {
   }, [userdata]);
 
   useEffect(() => {
-    const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData];
+    const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData, ...localCartProductsData];
     //remove duplicates
     const uniqueProducts = combinedProductsList.filter(
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
@@ -394,8 +395,11 @@ function App() {
     const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null);
     _productsPriceHandler.runMain();
     const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
+
+   
+    
     setProducts(productsPriceHandlerFinalData);
-  }, [cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
+  }, [localCartProductsData,cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
 
   useEffect(() => {
     if (userdata) {
@@ -409,9 +413,24 @@ function App() {
   }, [userdata]);
 
   useEffect(() => {
+    console.log('products', products);
+    products.map((product) => {
+      console.log('product', product.itemName);
+    });
+  }, [products]);
+
+  useEffect(() => {
     // FLOW FOR GUEST LOGIN
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
+      if (localStorageCart) {
+        const keys = Object.keys(localStorageCart);
+        const productDataPromises = keys.map(key => cloudfirestore.readSelectedDataFromOnlineStore(key));
+        const newProductData = await Promise.all(productDataPromises);
+        setLocalCartProductsData(newProductData);
+      }
+      
+
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
         setUserData(data);
@@ -458,9 +477,16 @@ function App() {
         setUserState('userloaded');
         setUserLoaded(true);
       }
+      else {
+        if (localStorageCart) {
+          setCart(localStorageCart);
+        }
+      }
     }
     setAllUserData();
   }, [userId, refreshUser]);
+
+
 
   useEffect(() => {
     if (userdata != null) {
