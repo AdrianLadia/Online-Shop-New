@@ -427,7 +427,6 @@ function App() {
         const keys = Object.keys(localStorageCart);
         const productDataPromises = keys.map(key => cloudfirestore.readSelectedDataFromOnlineStore(key));
         const newProductData = await Promise.all(productDataPromises);
-        
         setLocalCartProductsData(newProductData);
       }
       
