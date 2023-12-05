@@ -64,7 +64,6 @@ const ProductCardModalAddToCart = ({
       // opens snackbar
       setOpenSnackbar(true);
       // adds to cart
-      console.log(itemId,count)
       addtocart(itemId, count);
       //analytics
       analytics.logAddToCartEvent(itemId, itemData.itemName, itemData.category, count, itemData.price);

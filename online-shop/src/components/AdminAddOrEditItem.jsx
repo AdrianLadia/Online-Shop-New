@@ -254,7 +254,7 @@ const AdminAddOrEditItem = (props) => {
           price: parseFloat(retailPrice),
           description: description,
           weight: parseFloat(packWeight),
-          dimensions: dimensions,
+          dimensions: null,
           category: category,
           imageLinks: filteredimageLinks,
           brand: brand,
