@@ -412,12 +412,7 @@ function App() {
     }
   }, [userdata]);
 
-  useEffect(() => {
-    console.log('products', products);
-    products.map((product) => {
-      console.log('product', product.itemName);
-    });
-  }, [products]);
+
 
   useEffect(() => {
     // FLOW FOR GUEST LOGIN

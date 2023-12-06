@@ -82,7 +82,6 @@ const ProductList = (props) => {
   function AddToCart(item, quantity) {
     const newCart = businesscalculations.addToCartWithQuantity(item, quantity, cart);
     setCart(newCart);
-    console.log('newCart', newCart);
   }
 
   useEffect(() => {

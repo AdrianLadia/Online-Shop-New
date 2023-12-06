@@ -59,6 +59,7 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct, open
 
   function showModal() {
     setModal(true);
+    console.log('item clicked',itemData.itemId);
     setClickedProduct(itemData);
     firestore.updateProductClicks(itemId, userdata ? userdata.uid : 'GUEST', userdata?.userRole);
     analytics.logOpenProductModalEvent(itemId, itemName, category);

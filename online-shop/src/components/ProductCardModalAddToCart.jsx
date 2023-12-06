@@ -3,23 +3,54 @@ import { Typography } from '@mui/material';
 import { useState, useContext } from 'react';
 import AppContext from '../AppContext';
 import Divider from '@mui/material/Divider';
+import { set } from 'date-fns';
 
 const ProductCardModalAddToCart = ({
   setModal,
   addtocart,
   count,
   setCount,
-  itemData,
+  retailData,
+  wholesaleData,
   setOpenSnackbar,
   setShakeCartAnimation,
+  radioButtonSelected,
 }) => {
   const { analytics, cart, setUpdateCartInfo, updateCartInfo, alertSnackbar, userdata, businesscalculations } =
     useContext(AppContext);
-  const itemId = itemData.itemId;
-  const unit = itemData.unit;
 
-  const stocksAvailable = itemData.stocksAvailable;
-  const averageSalesPerDay = itemData.averageSalesPerDay;
+  
+    const [unit, setUnit] = useState('Pack');
+    const [stocksAvailable, setStocksAvailable] = useState(retailData.stocksAvailable);
+    const [averageSalesPerDay, setAverageSalesPerDay] = useState(retailData.averageSalesPerDay);
+    const [price, setPrice] = useState(retailData.price);
+    const [pieces, setPieces] = useState(retailData.pieces);
+    const [itemId, setItemId] = useState(retailData.itemId);
+    const [itemName, setItemName] = useState(retailData.itemName);
+    const [category, setCategory] = useState(retailData.category);
+    useEffect(() => {
+      if (radioButtonSelected === 'Pack') {
+        setUnit('Pack');
+        setStocksAvailable(retailData.stocksAvailable);
+        setAverageSalesPerDay(retailData.averageSalesPerDay);
+        setPrice(retailData.price);
+        setPieces(retailData.pieces);
+        setItemId(retailData.itemId);
+        setItemName(retailData.itemName);
+        setCategory(retailData.category);
+      } else {
+        setUnit('Box');
+        setStocksAvailable(wholesaleData.stocksAvailable);
+        setAverageSalesPerDay(wholesaleData.averageSalesPerDay);
+        setPrice(wholesaleData.price);
+        setPieces(wholesaleData.pieces);
+        setItemId(wholesaleData.itemId);
+        setItemName(wholesaleData.itemName);
+        setCategory(wholesaleData.category);
+      }
+    }, [radioButtonSelected,wholesaleData,retailData]);
+  
+
 
   function AddToCart() {
     setUpdateCartInfo(!updateCartInfo);
@@ -66,7 +97,7 @@ const ProductCardModalAddToCart = ({
       // adds to cart
       addtocart(itemId, count);
       //analytics
-      analytics.logAddToCartEvent(itemId, itemData.itemName, itemData.category, count, itemData.price);
+      analytics.logAddToCartEvent(itemId, itemName, category, count, price);
       //back to 0
       setCount(0);
       //close modal
@@ -80,9 +111,9 @@ const ProductCardModalAddToCart = ({
   return (
     <div className="flex flex-col mt-5">
       <div className="flex flex-row justify-evenly">
-        <Typography variant="h6">₱ {count * itemData.price}</Typography>
+        <Typography variant="h6">₱ {count * price}</Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="h6">{count * itemData.pieces} pieces</Typography>
+        <Typography variant="h6">{count * pieces} pieces</Typography>
       </div>
       <div className="flex w-full justify-center my-5">
         <div className="flex flex-col w-32 justify-center items-center">

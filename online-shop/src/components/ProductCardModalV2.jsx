@@ -42,44 +42,32 @@ const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModa
   const [radioButtonSelected, setRadioButtonSelected] = useState('Pack');
   const [count, setCount] = useState(0);
 
+
+
   useEffect(() => {
     const wholesaleItemId = product.itemId.replace(/-RET$/, '');
     const find = products.find((product) => product.itemId === wholesaleItemId);
-
+    
     async function getRetailAndWholesaleDataOfModalProduct() {
+      
       const wholesaleData = await cloudfirestore.readSelectedDataFromOnlineStore(wholesaleItemId)
       const reatailData = await cloudfirestore.readSelectedDataFromOnlineStore(product.itemId)
       setProducts([...products, wholesaleData, reatailData]);
       setWholesaleData(wholesaleData);
     }
    
-      
     if (find === undefined) {
       getRetailAndWholesaleDataOfModalProduct();
     }
-    
-    // const find = products.find((product) => product.itemId === wholesaleItemId);
-    
+  
     setWholesaleData(find);
 
   }, [product,modal]);
-
-  const [itemDataSelected, setItemDataSelected] = useState(null); //this is the data of the item selected in the radio button
-
-  useEffect(() => {
-    if (radioButtonSelected === 'Pack') {
-      setItemDataSelected(retailData);
-    } else {
-      setItemDataSelected(wholesaleData);
-    }
-  }, [radioButtonSelected, product]);
 
   function onModalClose() {
     setModal(false);
     setCount(0);
   }
-
-
 
   return (
     <>
@@ -118,7 +106,9 @@ const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModa
                 addtocart={addtocart}
                 count={count}
                 setCount={setCount}
-                itemData={itemDataSelected}
+                retailData={retailData}
+                wholesaleData={wholesaleData}
+                radioButtonSelected={radioButtonSelected}
                 setOpenSnackbar={setOpenSnackbar}
               />
             </Box>
