@@ -18,7 +18,7 @@ const ProductsSearchBar = ({
   selectedName,
   setSelectedName,
 }) => {
-  const { firestore, categories, setCategoryValue, selectedCategory, setSelectedCategory } = useContext(AppContext);
+  const { searchedItemSwitch,setSearchedItemSwitch, firestore, categories, setCategoryValue, selectedCategory, setSelectedCategory } = useContext(AppContext);
   const [productsData, setProductsData] = useState([]);
   const [productNames, setProductNames] = useState([]);
   const [fuse, setFuse] = useState(null);

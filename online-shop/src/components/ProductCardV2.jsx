@@ -6,7 +6,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import { set } from 'date-fns';
 
-const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct, openSnackbar, setOpenSnackbar }) => {
+const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, openSnackbar, setOpenSnackbar }) => {
   const [heart, setHeart] = useState(false);
   const {
     firestore,
@@ -29,7 +29,9 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct, open
   const [wholesaleStocks, setWholesaleStocks] = useState(null);
   const [wholesalePrice, setWholesalePrice] = useState(null);
 
+
   useEffect(() => {
+
     try{
       const wholesaleItemId = itemData.itemId.replace(/-RET$/, '');
       const find = products.find((product) => product.itemId === wholesaleItemId);
@@ -41,7 +43,7 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct, open
     catch {
 
     }
-  }, []);
+  }, [searchedItemId,products]);
 
   function onHeartClick() {
     if (userdata === null) return alertSnackbar('info', 'Login to add items to favorites');
@@ -72,7 +74,6 @@ const ProductCardV2 = ({ isLastItem, itemData, setModal, setClickedProduct, open
       setHeart(false);
     }
   }, [itemData]);
-
 
 
 

@@ -185,6 +185,7 @@ const ProductList = (props) => {
                   openSnackbar={openSnackbar}
                   setOpenSnackbar={setOpenSnackbar}
                   isLastItem={isLastItem}
+                  searchedItemId={searchedItemId}
                 />
                 {/* <ProductCard
                   setClickedProduct={setClickedProduct}
