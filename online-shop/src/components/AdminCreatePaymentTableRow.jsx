@@ -51,6 +51,7 @@ const AdminCreatePaymentTableRow = (props) => {
       };
       try{
         await cloudfirestore.transactionCreatePayment(data);
+        setLoading(false);
       }
       catch(error){
         alert('Error creating payment. Please try again.');
