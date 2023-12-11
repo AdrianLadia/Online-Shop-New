@@ -141,13 +141,19 @@ function App() {
   const [alertSeverity, setAlertSeverity] = useState('');
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [searchList, setSearchList] = useState([]);
+  const [isDistributor, setIsDistributor] = useState(false);
+  const [alertDuration, setAlertDuration] = useState(5000);
 
   function alertSnackbar(severity, message, duration) {
+    console.log(duration)
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
     if (duration != null) {
       setAlertDuration(duration);
+    }
+    else {
+      setAlertDuration(5000);
     }
   }
 
@@ -462,6 +468,12 @@ function App() {
           setIsSuperAdmin(false);
         }
 
+        if (userRole === 'distributor') {
+          setIsDistributor(true);
+        } else {
+          setIsDistributor(false);
+        }
+
         // ADMIN CHECK
 
         setDeliveryAddress(data.deliveryAddress);
@@ -626,6 +638,7 @@ function App() {
     setSelectedCategory: setSelectedCategory,
     categoryValue: categoryValue,
     setCategoryValue: setCategoryValue,
+    isDistributor: isDistributor,
   };
 
   return (
@@ -831,7 +844,7 @@ function App() {
           }
         />
       </Routes>
-      <Alert severity={alertSeverity} message={alertMessage} open={showAlert} setOpen={setShowAlert} />
+      <Alert severity={alertSeverity} message={alertMessage} open={showAlert} setOpen={setShowAlert} autoHideDuration={alertDuration} />
     </div>
   );
 }

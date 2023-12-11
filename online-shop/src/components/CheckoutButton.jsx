@@ -18,6 +18,7 @@ const CheckoutButton = (props) => {
     userdata,
     isSupportedBrowser,
     alertSnackbar,
+    isDistributor
   } = useContext(AppContext);
   const [openGuestSignInModal, setOpenGuestSignInModal] = useState(false);
   const [isSupportedBrowserModalOpen, setIsSupportedBrowserModalOpen] = useState(false);
@@ -30,6 +31,10 @@ const CheckoutButton = (props) => {
   function onCheckoutButtonClick() {
     analytics.logCheckoutInitiatedEvent(cart);
     const minimumOrder = new AppConfig().getMinimumOrder();
+    if(isDistributor) {
+      alertSnackbar('info', 'We are currently in the process of developing our distributor checkout system. In the meantime, for any orders, please reach out directly to your account manager. We appreciate your understanding and are here to assist with any of your ordering needs.',100000);
+      return;
+    }
     if (totalPrice < minimumOrder) {
       alertSnackbar('error', 'Minimum order is ' + minimumOrder + ' pesos.');
       return;

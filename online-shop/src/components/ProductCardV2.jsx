@@ -5,6 +5,7 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import { set } from 'date-fns';
+import { is } from 'date-fns/locale';
 
 const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, openSnackbar, setOpenSnackbar }) => {
   const [heart, setHeart] = useState(false);
@@ -18,6 +19,7 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
     products,
     isAdmin,
     isSuperAdmin,
+    isDistributor,
   } = useContext(AppContext);
 
   const itemName = itemData.itemName;
@@ -29,21 +31,16 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
   const [wholesaleStocks, setWholesaleStocks] = useState(null);
   const [wholesalePrice, setWholesalePrice] = useState(null);
 
-
   useEffect(() => {
-
-    try{
+    try {
       const wholesaleItemId = itemData.itemId.replace(/-RET$/, '');
       const find = products.find((product) => product.itemId === wholesaleItemId);
       const stocksAvailable = find.stocksAvailable;
       const p = find.price;
       setWholesaleStocks(stocksAvailable);
       setWholesalePrice(p);
-    }
-    catch {
-
-    }
-  }, [searchedItemId,products]);
+    } catch {}
+  }, [searchedItemId, products]);
 
   function onHeartClick() {
     if (userdata === null) return alertSnackbar('info', 'Login to add items to favorites');
@@ -61,7 +58,7 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
 
   function showModal() {
     setModal(true);
-    console.log('item clicked',itemData.itemId);
+    console.log('item clicked', itemData.itemId);
     setClickedProduct(itemData);
     firestore.updateProductClicks(itemId, userdata ? userdata.uid : 'GUEST', userdata?.userRole);
     analytics.logOpenProductModalEvent(itemId, itemName, category);
@@ -75,10 +72,8 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
     }
   }, [itemData]);
 
-
-
   return (
-    <div className={"max-w-sm rounded overflow-hidden shadow-lg bg-white relative mx-10 my-10"}>
+    <div className={'max-w-sm rounded overflow-hidden shadow-lg bg-white relative mx-10 my-10'}>
       <div className="relative" onClick={showModal}>
         <img className="w-full h-96 object-cover" src={imageUrl} alt={itemName} />
         <button className="absolute bottom-4 right-4 rounded-full bg-color10b text-white h-12 w-12 flex items-center justify-center text-4xl">
@@ -87,11 +82,17 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
       </div>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{itemName}</div>
-        {isAdmin || isSuperAdmin ? (
+        {isAdmin || isSuperAdmin || isDistributor ? (
           <>
-            <p className="text-gray-700 text-base">Retail Stocks Available : {itemData.stocksAvailable} </p>
-            <p className="text-gray-700 text-base">Wholesale Stocks Available : {wholesaleStocks} </p>
-            <p className="text-gray-700 text-base">Retail Price : ₱ {price} </p>
+            {!isDistributor ? (
+              <p className="text-gray-700 text-base">Retail Stocks Available : {itemData.stocksAvailable} </p>
+            ) : null}
+            <p className="text-gray-700 text-base">
+              <>
+                {!isDistributor ? <>Wholesale Stocks Available</> : <>Stocks Available</>} : {wholesaleStocks} 
+              </>
+              </p>
+            {!isDistributor ? <p className="text-gray-700 text-base">Retail Price : ₱ {price} </p> : null}
             <p className="text-gray-700 text-base">Wholesale Price : ₱ {wholesalePrice} </p>
           </>
         ) : null}
