@@ -44,13 +44,13 @@ const NavBar = () => {
       <div className="flex items-center justify-between  bg-color10c w-full h-16 ">
         <Logo onClick={storeClick} />
         <div className="flex flex-row items-center lg:gap-5 mr-5">
-          <Tooltip title="Cart">
+          <Tooltip title="Shop">
             <IconButton aria-label="Shop" size="large" color="primary">
               <FaShoppingCart className="cursor-pointer" size={35} color="#69b05c" onClick={cartClick} />
             </IconButton>
           </Tooltip>
           <div className="hover:cursor-pointer " onClick={homeClick}>
-            <Tooltip title="Cart">
+            <Tooltip title="Home">
               <IconButton aria-label="Home" size="large" color="primary">
                 <AiFillHome className="cursor-pointer" size={35} color="#69b05c" />
               </IconButton>
