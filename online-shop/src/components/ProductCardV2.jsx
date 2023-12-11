@@ -89,9 +89,9 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
             ) : null}
             <p className="text-gray-700 text-base">
               <>
-                {!isDistributor ? <>Wholesale Stocks Available</> : <>Stocks Available</>} : {wholesaleStocks} 
+                {!isDistributor ? <>Wholesale Stocks Available</> : <>Stocks Available</>} : {wholesaleStocks}
               </>
-              </p>
+            </p>
             {!isDistributor ? <p className="text-gray-700 text-base">Retail Price : ₱ {price} </p> : null}
             <p className="text-gray-700 text-base">Wholesale Price : ₱ {wholesalePrice} </p>
           </>
