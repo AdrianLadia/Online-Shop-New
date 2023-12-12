@@ -5,9 +5,7 @@ import AppContext from '../AppContext';
 
 const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee, companyName, senderName }) => {
   const grandTotal = arrayOfProductData.reduce((acc, product) => acc + product.total, 0);
-  const _deliveryFee = deliveryFee == '' ? 0 : parseFloat(deliveryFee);
-  const _balance = balance == '' ? 0 : parseFloat(balance);
-  const finalTotal = grandTotal + _deliveryFee + _balance;
+  const finalTotal = grandTotal + deliveryFee + balance;
   const contentRef = useRef(null);
   const { userdata } = useContext(AppContext);
   const [hidden, setHidden] = React.useState(true);
@@ -16,7 +14,7 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
 
   useEffect(() => {
     if (userdata) {
-      if (userdata.userRole === 'superAdmin' || userdata.userRole === 'distributor') {
+      if (userdata.userRole === 'superAdmin') {
         setDownloadButtonHidden('');
       } else {
         setDownloadButtonHidden('hidden');
@@ -103,19 +101,19 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
               <td colSpan="4" className="py-2 px-3 font-medium">
                 Grand Total
               </td>
-              <td className="py-2 px-3">₱{ grandTotal.toFixed(2)}</td>
+              <td className="py-2 px-3">₱{grandTotal.toFixed(2)}</td>
             </tr>
             <tr>
               <td colSpan="4" className="py-2 px-3 font-medium">
                 Delivery Fee
               </td>
-              <td className="py-2 px-3">₱{_deliveryFee}</td>
+              <td className="py-2 px-3">₱{deliveryFee.toFixed(2)}</td>
             </tr>
             <tr>
               <td colSpan="4" className="py-2 px-3 font-medium">
                 Balance
               </td>
-              <td className="py-2 px-3">₱{_balance}</td>
+              <td className="py-2 px-3">₱{balance.toFixed(2)}</td>
             </tr>
             <tr>
               <td colSpan="4" className="py-2 px-3 font-bold">

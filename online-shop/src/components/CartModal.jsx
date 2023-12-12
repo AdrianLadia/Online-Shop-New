@@ -23,8 +23,8 @@ const CartModal = (props) => {
   const [outStocksLoading, setOutStocksLoading] = useState(false);
   const { userdata, firestore, setCart } = React.useContext(AppContext);
   const [openCreateQuotationModal, setOpenCreateQuotationModal] = useState(false);
-  const [deliveryFee, setDeliveryFee] = useState('');
-  const [balance, setBalance] = useState('');
+  const [deliveryFee, setDeliveryFee] = useState(0);
+  const [balance, setBalance] = useState(0);
   const [note, setNote] = useState('');
 
   const style = {
@@ -177,7 +177,7 @@ const CartModal = (props) => {
                   variant="outlined"
                   sx={{ marginTop: 1 }}
                   value={deliveryFee}
-                  onChange={(e) => setDeliveryFee(e.target.value)}
+                  onChange={(e) => setDeliveryFee(parseFloat(e.target.value))}
                 />
                 <TextField
                   required
@@ -186,7 +186,7 @@ const CartModal = (props) => {
                   variant="outlined"
                   sx={{ marginTop: 1 }}
                   value={balance}
-                  onChange={(e) => setBalance(e.target.value)}
+                  onChange={(e) => setBalance(parseFloat(e.target.value))}
                 />
                 <TextField
                   required
