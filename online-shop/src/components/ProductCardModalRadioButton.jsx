@@ -18,7 +18,7 @@ const ProductCardModalRadioButton = ({
   wholesaleData,
   setCount,
 }) => {
-  const { businesscalculations } = useContext(AppContext);
+  const { businesscalculations,userdata } = useContext(AppContext);
   const packPieces = retailData.pieces;
   const boxPieces = wholesaleData.pieces;
   const packPrice = retailData.price;
@@ -28,11 +28,19 @@ const ProductCardModalRadioButton = ({
     retailData.averageSalesPerDay,
     true
   );
-  const boxStocksAvailable = businesscalculations.getStocksAvailableLessSafetyStock(
-    wholesaleData.stocksAvailable,
-    wholesaleData.averageSalesPerDay,
-    false
-  );
+
+  let boxStocksAvailable 
+
+  if (!['distributor','superAdmin'].includes(userdata ? userdata.userRole : 'GUEST') ) {
+    boxStocksAvailable = businesscalculations.getStocksAvailableLessSafetyStock(
+      wholesaleData.stocksAvailable,
+      wholesaleData.averageSalesPerDay,
+      false
+    );
+  }
+  else {
+    boxStocksAvailable = wholesaleData.stocksAvailable
+  }
  
   const handleChange = (event) => {
     setCount(0)
@@ -59,7 +67,7 @@ const ProductCardModalRadioButton = ({
           {radioButtonSelected === 'Pack' ? 
           <Typography color={'red'}>{packStocksAvailable} packs on hand</Typography>
           : 
-          <Typography color={'red'}>{boxStocksAvailable} boxes on hand</Typography>
+          <Typography color={'red'}>{boxStocksAvailable < 0 ? 0 : boxStocksAvailable} boxes on hand</Typography>
           }
         </div>
       </div>
