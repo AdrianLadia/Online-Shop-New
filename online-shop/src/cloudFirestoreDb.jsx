@@ -274,6 +274,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       });
       return res.data;
     } catch (error) {
+      console.log(productId);
       console.log(error);
       // throw new Error(error);
     }

@@ -396,13 +396,12 @@ function App() {
   let normalPriceCache = {}
   useEffect(() => {
     const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData, ...localCartProductsData];
-    console.log(combinedProductsList)
     //remove duplicates
     const uniqueProducts = combinedProductsList.filter(
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
     );
 
-    let _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null);
+    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null,useDistributorPrice,normalPriceCache);
     _productsPriceHandler.runMain();
     const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
  
@@ -411,7 +410,6 @@ function App() {
     //     console.log(product.price);
     //   }
     // });
-      console.log(productsPriceHandlerFinalData)
       setProducts(productsPriceHandlerFinalData);
   }, [useDistributorPrice,localCartProductsData,cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
 

@@ -40,6 +40,7 @@ const OpenCartButton = (props) => {
     
     if (newCart == 'no_stocks') {
       alertSnackbar('error','Stocks are not available');
+      return
     }
 
     setUpdateCartInfo(!updateCartInfo);
