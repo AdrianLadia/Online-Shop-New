@@ -143,6 +143,7 @@ function App() {
   const [searchList, setSearchList] = useState([]);
   const [isDistributor, setIsDistributor] = useState(false);
   const [alertDuration, setAlertDuration] = useState(5000);
+  const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
 
   function alertSnackbar(severity, message, duration) {
     console.log(duration)
@@ -392,20 +393,25 @@ function App() {
     }
   }, [userdata]);
 
+  let normalPriceCache = {}
   useEffect(() => {
     const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData, ...localCartProductsData];
     //remove duplicates
     const uniqueProducts = combinedProductsList.filter(
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
     );
-    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null);
+
+    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null,useDistributorPrice,normalPriceCache);
     _productsPriceHandler.runMain();
     const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
-
-   
-    
-    setProducts(productsPriceHandlerFinalData);
-  }, [localCartProductsData,cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
+ 
+    // productsPriceHandlerFinalData.forEach((product) => {
+    //   if (product.itemId == 'PPB#45') {
+    //     console.log(product.price);
+    //   }
+    // });
+      setProducts(productsPriceHandlerFinalData);
+  }, [useDistributorPrice,localCartProductsData,cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
 
   useEffect(() => {
     if (userdata) {
@@ -639,6 +645,8 @@ function App() {
     categoryValue: categoryValue,
     setCategoryValue: setCategoryValue,
     isDistributor: isDistributor,
+    useDistributorPrice: useDistributorPrice,
+    setUseDistributorPrice: setUseDistributorPrice,
   };
 
   return (

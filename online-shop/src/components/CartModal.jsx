@@ -10,6 +10,7 @@ import Fade from '@mui/material/Fade';
 import AppContext from '../AppContext';
 import QuotationCreatorButton from './QuotationCreatorButton';
 import { CircularProgress } from '@material-ui/core';
+import TextField from '@mui/material/TextField';
 
 const CartModal = (props) => {
   const openCart = props.openCart;
@@ -21,6 +22,10 @@ const CartModal = (props) => {
   const { width, height } = useWindowDimensions();
   const [outStocksLoading, setOutStocksLoading] = useState(false);
   const { userdata, firestore, setCart } = React.useContext(AppContext);
+  const [openCreateQuotationModal, setOpenCreateQuotationModal] = useState(false);
+  const [deliveryFee, setDeliveryFee] = useState('0');
+  const [balance, setBalance] = useState('0');
+  const [note, setNote] = useState('');
 
   const style = {
     position: 'absolute',
@@ -30,6 +35,24 @@ const CartModal = (props) => {
     transform: 'translate(-50%, -50%)',
     width: '95%',
 
+    '@media (min-width: 1024px)': {
+      width: '85%',
+    },
+
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const childModalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    height: '50%',
+    transform: 'translate(-50%, -50%)',
     '@media (min-width: 1024px)': {
       width: '85%',
     },
@@ -83,12 +106,14 @@ const CartModal = (props) => {
         >
           <div className="flex flex-row justify-between mb-4">
             <div className="flex flex-row gap-5">
-              <QuotationCreatorButton
-                arrayOfProductData={finalCartData}
-                deliveryFee={0}
-                companyName="Star Pack"
-                senderName=""
-              />
+              <button
+                onClick={() => setOpenCreateQuotationModal(true)}
+                className="py-2 px-3 bg-color10b rounded text-white hover:bg-blue-700 "
+                disabled={outStocksLoading}
+              >
+                Download as PDF
+              </button>
+
               {userdata?.userRole === 'superAdmin' ? (
                 <button
                   onClick={outStocksClick}
@@ -121,7 +146,6 @@ const CartModal = (props) => {
             {cartisempty ? (
               <> </>
             ) : (
-              
               <div className="flex flex-row justify-between w-full p-4">
                 <div>
                   <button
@@ -138,6 +162,55 @@ const CartModal = (props) => {
               </div>
             )}
           </div>
+          <Modal
+            open={openCreateQuotationModal}
+            onClose={() => setOpenCreateQuotationModal(false)}
+            aria-labelledby="child-modal-title"
+            aria-describedby="child-modal-description"
+          >
+            <Box sx={{ ...childModalStyle, width: '90%' }}>
+              <div className="flex flex-col justify-center gap-6">
+                <TextField
+                  required
+                  id="outlined-basic123"
+                  label="Delivery Fee"
+                  variant="outlined"
+                  sx={{ marginTop: 1 }}
+                  value={deliveryFee}
+                  onChange={(e) => setDeliveryFee(e.target.value)}
+                />
+                <TextField
+                  required
+                  id="outlined-basic123"
+                  label="Balance"
+                  variant="outlined"
+                  sx={{ marginTop: 1 }}
+                  value={balance}
+                  onChange={(e) => setBalance(e.target.value)}
+                />
+                <TextField
+                  required
+                  id="outlined-basic123"
+                  label="Note"
+                  variant="outlined"
+                  value={note}
+                  sx={{ marginTop: 1 }}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+                <div className="flex justify-center">
+                  {/* <QuotationCreatorButton
+                    arrayOfProductData={finalCartData}
+                    deliveryFee={deliveryFee}
+                    balance={balance}
+                    note={note}
+                    companyName="Star Pack"
+                    senderName=""
+                  /> */}
+                </div>
+              </div>
+              {/* <Button onClick={handleClose}>Close Child Modal</Button> */}
+            </Box>
+          </Modal>
         </Box>
       </Fade>
     </Modal>

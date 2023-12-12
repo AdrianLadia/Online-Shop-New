@@ -11,6 +11,7 @@ import ScrollTopButton from './ScrollTopButton';
 import ShopHero from './ShopHero';
 import AnnouncementNotification from './AnnouncementNotification';
 import ProductsSearchBar from './ProductsSearchBar';
+import AdminShopControls from './AdminShopControls';
 
 // Use `searchAlgolia` in your React component to get search results
 
@@ -20,9 +21,8 @@ const Shop = () => {
   const [retail, setRetail] = useState(true);
   const [loading, setLoading] = useState(true);
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
-  const [selectedName, setSelectedName] = useState('')
-  const { fbclid, cloudfirestore,isSupportedBrowser, selectedCategory, setSelectedCategory, products, analytics } =
-    useContext(AppContext);
+  const [selectedName, setSelectedName] = useState('');
+  const { fbclid, isSuperAdmin, selectedCategory, setSelectedCategory, products, analytics } = useContext(AppContext);
   // const wholesaleOrRetailRef = useRef();
   const categoryRef = useRef();
   const [shopHeroInView, setShopHeroInView] = useState(true);
@@ -59,10 +59,12 @@ const Shop = () => {
         />
       </Helmet>
 
-      {/* <OpeningSoonModal /> */}
-      {/* HOW TO ORDER */}
-      {/* <button onClick={async() => {await cloudfirestore.updateProductSearchIndex()}} >update</button> */}
       <ShopHero shopHeroInView={shopHeroInView} setShopHeroInView={setShopHeroInView} />
+      {isSuperAdmin ? (
+        <div className="flex justify-center">
+          <AdminShopControls  />
+        </div>
+      ) : null}
 
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
       <ScrollTopButton
@@ -72,17 +74,9 @@ const Shop = () => {
         shopHeroInView={shopHeroInView}
       />
 
-      {/* WHOLESALE RETAIL */}
-      {/* <WholesaleOrRetail
-        wholesaleOrRetailRef={wholesaleOrRetailRef}
-        setWholesale={setWholesale}
-        setRetail={setRetail}
-        wholesale={wholesale}
-        retail={retail}
-      /> */}
       {/* CATEGORY */}
       <CategorySelector
-      categoryRef={categoryRef}
+        categoryRef={categoryRef}
         setSearchedItemId={setSearchedItemId}
         setSelectedCategory={setSelectedCategory}
         selectedCategory={selectedCategory}
@@ -94,7 +88,15 @@ const Shop = () => {
         setSelectedName={setSelectedName}
       />
 
-      <ProductsSearchBar selectedName={selectedName} setSelectedName={setSelectedName} searchedItemId={searchedItemId} setSearchedItemId={setSearchedItemId} setSelectedCategory={setSelectedCategory} setWholesale={setWholesale} setRetail={setRetail} />
+      <ProductsSearchBar
+        selectedName={selectedName}
+        setSelectedName={setSelectedName}
+        searchedItemId={searchedItemId}
+        setSearchedItemId={setSearchedItemId}
+        setSelectedCategory={setSelectedCategory}
+        setWholesale={setWholesale}
+        setRetail={setRetail}
+      />
 
       {/* PRODUCTS */}
 
@@ -103,7 +105,12 @@ const Shop = () => {
           <CircularProgress size={200} />
         </div>
       ) : (
-        <ProductList searchedItemId={searchedItemId} wholesale={wholesale} retail={retail} selectedCategory={selectedCategory} />
+        <ProductList
+          searchedItemId={searchedItemId}
+          wholesale={wholesale}
+          retail={retail}
+          selectedCategory={selectedCategory}
+        />
       )}
       <AnnouncementNotification />
     </div>

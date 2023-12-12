@@ -20,6 +20,7 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
     isAdmin,
     isSuperAdmin,
     isDistributor,
+    useDistributorPrice
   } = useContext(AppContext);
 
   const itemName = itemData.itemName;
@@ -32,6 +33,7 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
   const [wholesalePrice, setWholesalePrice] = useState(null);
 
   useEffect(() => {
+    
     try {
       const wholesaleItemId = itemData.itemId.replace(/-RET$/, '');
       const find = products.find((product) => product.itemId === wholesaleItemId);
@@ -40,7 +42,7 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
       setWholesaleStocks(stocksAvailable);
       setWholesalePrice(p);
     } catch {}
-  }, [searchedItemId, products]);
+  }, [searchedItemId, products,useDistributorPrice]);
 
   function onHeartClick() {
     if (userdata === null) return alertSnackbar('info', 'Login to add items to favorites');

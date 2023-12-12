@@ -1,56 +1,50 @@
-import React, { useEffect, useRef,useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import html2pdf from 'html2pdf.js';
 import { set } from 'date-fns';
 import AppContext from '../AppContext';
 
-const QuotationCreatorButton = ({ arrayOfProductData, deliveryFee, companyName, senderName}) => {
+const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee, companyName, senderName }) => {
   const grandTotal = arrayOfProductData.reduce((acc, product) => acc + product.total, 0);
-  const finalTotal = grandTotal + deliveryFee;
+  const finalTotal = grandTotal + deliveryFee + balance;
   const contentRef = useRef(null);
-  const {userdata} = useContext(AppContext);
+  const { userdata } = useContext(AppContext);
   const [hidden, setHidden] = React.useState(true);
   const [contentCss, setContentCss] = React.useState('');
   const [downloadButtonHidden, setDownloadButtonHidden] = React.useState('hidden');
 
   useEffect(() => {
     if (userdata) {
-        if (userdata.userRole === 'superAdmin') {
-            setDownloadButtonHidden('');
-        }
-        else {
-            setDownloadButtonHidden('hidden');
-        }
-    }
-    else {
+      if (userdata.userRole === 'superAdmin') {
+        setDownloadButtonHidden('');
+      } else {
         setDownloadButtonHidden('hidden');
+      }
+    } else {
+      setDownloadButtonHidden('hidden');
     }
   }, [userdata]);
 
   const downloadPDF = () => {
-    setHidden(false)
+    setHidden(false);
     setTimeout(() => {
-        const content = contentRef.current;
-        const opt = {
-          margin: 10,
-          filename: 'quotation.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        };
-        html2pdf().from(content).set(opt).save();
-        setHidden(true)
-    }, 1000)
-        
- 
-    
+      const content = contentRef.current;
+      const opt = {
+        margin: 10,
+        filename: 'quotation.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      };
+      html2pdf().from(content).set(opt).save();
+      setHidden(true);
+    }, 1000);
   };
 
   useEffect(() => {
     if (hidden) {
-        setContentCss('hidden');
-    }
-    else {
-        setContentCss('');
+      setContentCss('hidden');
+    } else {
+      setContentCss('');
     }
   }, [hidden]);
 
@@ -59,7 +53,7 @@ const QuotationCreatorButton = ({ arrayOfProductData, deliveryFee, companyName, 
       {/* This is the visible button */}
       <button
         onClick={downloadPDF}
-        className="px-4 py-2 bg-color10b text-white rounded hover:bg-blue-700 focus:outline-none" 
+        className="px-4 py-2 bg-color10b text-white rounded hover:bg-blue-700 focus:outline-none"
       >
         Download as PDF
       </button>
@@ -77,7 +71,7 @@ const QuotationCreatorButton = ({ arrayOfProductData, deliveryFee, companyName, 
                 Item Name
               </th>
               <th className="py-2 px-3 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Quantity 
+                Quantity
               </th>
               <th className="py-2 px-3 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Total Pieces
@@ -115,6 +109,12 @@ const QuotationCreatorButton = ({ arrayOfProductData, deliveryFee, companyName, 
               <td className="py-2 px-3">₱{deliveryFee.toFixed(2)}</td>
             </tr>
             <tr>
+              <td colSpan="4" className="py-2 px-3 font-medium">
+                Balance
+              </td>
+              <td className="py-2 px-3">₱{balance.toFixed(2)}</td>
+            </tr>
+            <tr>
               <td colSpan="4" className="py-2 px-3 font-bold">
                 Final Total
               </td>
@@ -122,6 +122,10 @@ const QuotationCreatorButton = ({ arrayOfProductData, deliveryFee, companyName, 
             </tr>
           </tfoot>
         </table>
+
+        <div className="mt-6">
+          <p className="text-gray-600">Note: {note}</p>
+        </div>
       </div>
     </div>
   );
