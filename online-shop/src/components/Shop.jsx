@@ -11,7 +11,6 @@ import ScrollTopButton from './ScrollTopButton';
 import ShopHero from './ShopHero';
 import AnnouncementNotification from './AnnouncementNotification';
 import ProductsSearchBar from './ProductsSearchBar';
-import AdminShopControls from './AdminShopControls';
 
 // Use `searchAlgolia` in your React component to get search results
 
@@ -60,11 +59,7 @@ const Shop = () => {
       </Helmet>
 
       <ShopHero shopHeroInView={shopHeroInView} setShopHeroInView={setShopHeroInView} />
-      {isSuperAdmin ? (
-        <div className="flex justify-center">
-          <AdminShopControls  />
-        </div>
-      ) : null}
+
 
       {/* <div className='flex flex-col w-full justify-center bg-green1'> */}
       <ScrollTopButton

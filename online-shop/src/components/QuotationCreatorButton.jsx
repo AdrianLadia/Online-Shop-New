@@ -63,6 +63,7 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
         <header className="text-center mb-6">
           <h1 className="text-xl font-bold">{companyName}</h1>
           <p className="text-gray-600">Quotation prepared by: {senderName}</p>
+          
         </header>
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
@@ -120,12 +121,17 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
               </td>
               <td className="py-2 px-3">₱{finalTotal.toFixed(2)}</td>
             </tr>
+            <tr>
+              <td colSpan="4" className="py-2 px-3">
+                Note : {note}
+              </td>
+            </tr>
           </tfoot>
         </table>
 
-        <div className="mt-6">
-          <p className="text-gray-600">Note: {note}</p>
-        </div>
+        <footer className="">
+         
+        </footer>
       </div>
     </div>
   );
