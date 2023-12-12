@@ -69,7 +69,7 @@ const ProductCardModalAddToCart = ({
       return averageSalesPerDay;
     }
     if (unit == 'Pack') {
-      if (!['superAdmin','distributor'].includes(userdata.userRole)) {
+      if (userdata?.userRole != 'superAdmin') {
         if (
           totalOrder >
           businesscalculations.getStocksAvailableLessSafetyStock(getStocksAvailable(), getAverageSalesPerDay())
@@ -79,7 +79,7 @@ const ProductCardModalAddToCart = ({
         }
       }
     } else {
-      if (!['superAdmin','distributor'].includes(userdata.userRole)) {
+      if (userdata?.userRole != 'superAdmin') {
        
         if (
           totalOrder >

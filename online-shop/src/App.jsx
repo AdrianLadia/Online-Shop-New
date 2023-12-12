@@ -146,13 +146,14 @@ function App() {
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
 
   function alertSnackbar(severity, message, duration) {
-    console.log(duration);
+    console.log(duration)
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
     if (duration != null) {
       setAlertDuration(duration);
-    } else {
+    }
+    else {
       setAlertDuration(5000);
     }
   }
@@ -175,7 +176,7 @@ function App() {
     });
   }, []);
 
-  // TEMPORARY DISABLED THIS BECAUSE WE ARE NOT USING THE CHAT FEATURE YET
+  // TEMPORARY DISABLED THIS BECAUSE WE ARE NOT USING THE CHAT FEATURE YET  
   // DO NOT DELETE THIS CODE
   // useEffect(() => {
   //   if (userdata != null) {
@@ -308,7 +309,7 @@ function App() {
                   affiliateId: null,
                   affiliateBankAccounts: [],
                   joinedDate: new Date(),
-                  codBanned: { reason: null, isBanned: false },
+                  codBanned: {reason : null, isBanned : false},
                 },
                 user.uid
               );
@@ -361,7 +362,6 @@ function App() {
     if (userdata != null) {
       const fetchCartProductsData = async () => {
         const cartProductPromises = Object.keys(cart).map(async (key) => {
-          console.log(key);
           const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
           return productData;
         });
@@ -380,7 +380,6 @@ function App() {
     if (userdata != null) {
       const fetchFavoriteProductsData = async () => {
         const favoriteProductPromises = userdata.favoriteItems.map(async (key) => {
-          console.log(key);
           const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
           return productData;
         });
@@ -394,42 +393,25 @@ function App() {
     }
   }, [userdata]);
 
-  let normalPriceCache = {};
+  let normalPriceCache = {}
   useEffect(() => {
-    const combinedProductsList = [
-      ...categoryProductsData,
-      ...cartProductsData,
-      ...favoriteProductData,
-      ...localCartProductsData,
-    ];
+    const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData, ...localCartProductsData];
     //remove duplicates
     const uniqueProducts = combinedProductsList.filter(
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
     );
 
-    const _productsPriceHandler = new productsPriceHandler(
-      uniqueProducts,
-      userdata ? userdata : null,
-      useDistributorPrice,
-      normalPriceCache
-    );
+    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null,useDistributorPrice,normalPriceCache);
     _productsPriceHandler.runMain();
     const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
-
+ 
     // productsPriceHandlerFinalData.forEach((product) => {
     //   if (product.itemId == 'PPB#45') {
     //     console.log(product.price);
     //   }
     // });
-    setProducts(productsPriceHandlerFinalData);
-  }, [
-    useDistributorPrice,
-    localCartProductsData,
-    cartProductsData,
-    categoryProductsData,
-    favoriteProductData,
-    userdata ? userdata.userRole : null,
-  ]);
+      setProducts(productsPriceHandlerFinalData);
+  }, [useDistributorPrice,localCartProductsData,cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
 
   useEffect(() => {
     if (userdata) {
@@ -442,20 +424,19 @@ function App() {
     }
   }, [userdata]);
 
+
+
   useEffect(() => {
     // FLOW FOR GUEST LOGIN
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (localStorageCart) {
         const keys = Object.keys(localStorageCart);
-
-        const productDataPromises = keys.map((key) => {
-          console.log(key);
-          cloudfirestore.readSelectedDataFromOnlineStore(key);
-        });
+        const productDataPromises = keys.map(key => cloudfirestore.readSelectedDataFromOnlineStore(key));
         const newProductData = await Promise.all(productDataPromises);
         setLocalCartProductsData(newProductData);
       }
+      
 
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
@@ -475,7 +456,7 @@ function App() {
         }
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
-        const nonAdminRoles = ['member', 'affiliate', 'distributor'];
+        const nonAdminRoles = ['member', 'affiliate','distributor'];
         const userRole = await cloudfirestore.readUserRole(data.uid);
         if (nonAdminRoles.includes(userRole)) {
           setIsAdmin(false);
@@ -508,7 +489,8 @@ function App() {
         setContactPerson(data.contactPerson);
         setUserState('userloaded');
         setUserLoaded(true);
-      } else {
+      }
+      else {
         if (localStorageCart) {
           setCart(localStorageCart);
         }
@@ -516,6 +498,8 @@ function App() {
     }
     setAllUserData();
   }, [userId, refreshUser]);
+
+
 
   useEffect(() => {
     if (userdata != null) {
@@ -868,13 +852,7 @@ function App() {
           }
         />
       </Routes>
-      <Alert
-        severity={alertSeverity}
-        message={alertMessage}
-        open={showAlert}
-        setOpen={setShowAlert}
-        autoHideDuration={alertDuration}
-      />
+      <Alert severity={alertSeverity} message={alertMessage} open={showAlert} setOpen={setShowAlert} autoHideDuration={alertDuration} />
     </div>
   );
 }

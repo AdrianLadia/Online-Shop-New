@@ -49,8 +49,7 @@ const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModa
     const find = products.find((product) => product.itemId === wholesaleItemId);
     
     async function getRetailAndWholesaleDataOfModalProduct() {
-      console.log(wholesaleItemId)
-      console.log(product.itemId)
+      
       const wholesaleData = await cloudfirestore.readSelectedDataFromOnlineStore(wholesaleItemId)
       const reatailData = await cloudfirestore.readSelectedDataFromOnlineStore(product.itemId)
       setProducts([...products, wholesaleData, reatailData]);

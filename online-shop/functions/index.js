@@ -527,7 +527,6 @@ exports.readSelectedDataFromOnlineStore = onRequest(async (req, res) => {
       const body = req.body;
       const productId = body.productId;
       const db = admin.firestore();
-      console.log(productId)
       const selectedDataRef = db.collection('Products').doc(productId);
       const selectedData = await selectedDataRef.get();
       const data = selectedData.data();
@@ -2554,33 +2553,4 @@ exports.facebookMessengerWebhook = onRequest(async (req, res) => {
   console.log('messaging : ', messaging);
 
   res.status(200).send(challenge);
-});
-
-
-async function internalUpdateCustomerSearchIndex() {
-  const db = admin.firestore();
-  const usersRef = db.collection('Users');
-  const snapshot = await usersRef.get();
-  const users = [];
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    users.push(data);
-  });
-  const searchIndex = [];
-  users.forEach((user) => {
-    const userSearchIndex = {
-      userId: user.userId,
-      name: user.name
-    };
-    searchIndex.push(userSearchIndex);
-  });
-  const searchIndexRef = db.collection('Index').doc('CustomerSearchIndex');
-  await searchIndexRef.set({ search: searchIndex });
-}
-
-exports.updateCustomerSearchIndexScheduled = functions
-.region('asia-southeast1')
-.pubsub.schedule('every 24 hours')
-.onRun(async (context) => {
-  await internalUpdateCustomerSearchIndex();
 });

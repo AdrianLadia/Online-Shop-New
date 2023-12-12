@@ -54,7 +54,6 @@ const ProductList = (props) => {
 
   useEffect(() => {
     if (modalSelected != null) {
-      console.log(modalSelected);
       cloudfirestore.readSelectedDataFromOnlineStore(modalSelected).then((data) => {
         setClickedProduct(data);
         setModal(true);

@@ -23,13 +23,8 @@ const CartModal = (props) => {
   const [outStocksLoading, setOutStocksLoading] = useState(false);
   const { userdata, firestore, setCart } = React.useContext(AppContext);
   const [openCreateQuotationModal, setOpenCreateQuotationModal] = useState(false);
-<<<<<<< HEAD
   const [deliveryFee, setDeliveryFee] = useState('0');
   const [balance, setBalance] = useState('0');
-=======
-  const [deliveryFee, setDeliveryFee] = useState('');
-  const [balance, setBalance] = useState('');
->>>>>>> parent of de6ff25e (Revert ".")
   const [note, setNote] = useState('');
 
   const style = {
