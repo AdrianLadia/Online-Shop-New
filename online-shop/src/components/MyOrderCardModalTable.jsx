@@ -33,6 +33,7 @@ const MyOrderCardModalTable = (props) => {
 
     const fetchCartProductsData = async () => {
       const cartProductPromises = Object.keys(order.cart).map(async (key) => {
+        console.log(key)
         const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
         return productData;
       });

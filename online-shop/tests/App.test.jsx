@@ -2104,7 +2104,7 @@ describe('cloudfirestoredb', async () => {
       return await cloudfirestore.readUserRole(userId);
     });
     const userRoles = await Promise.all(userRolesPromises);
-    const roles = ['member', 'admin', 'superAdmin', 'affiliate'];
+    const roles = ['member', 'admin', 'superAdmin', 'affiliate','distributor'];
     userRoles.map((userRole) => {
       expect(roles.includes(userRole)).toEqual(true);
     });
