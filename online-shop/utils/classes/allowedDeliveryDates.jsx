@@ -11,6 +11,23 @@ class allowedDeliveryDates {
       '11/3/2023',
       '11/4/2023',
       '11/5/2023',
+      '12/20/2023',
+      '12/21/2023',
+      '12/22/2023',
+      '12/23/2023',
+      '12/24/2023',
+      '12/25/2023',
+      '12/26/2023',
+      '12/27/2023',
+      '12/28/2023',
+      '12/29/2023',
+      '12/30/2023',
+      '12/31/2023',
+      '1/1/2023',
+      '1/2/2023',
+      '1/3/2023',
+      '1/4/2023',
+      '1/5/2023',
     ];
     this.daysAfterAllowed = 6;
     this.cutOffTime = 14;
@@ -43,7 +60,7 @@ class allowedDeliveryDates {
       this.isStoreOpen = false;
       return
     } // 15 is the 24-hour representation of 3 PM
-    if (currentDate.getDay() === 0) {
+    if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
       this.minDate.setDate(currentDate.getDate() + 1);
       this.isStoreOpen = false;
       return
