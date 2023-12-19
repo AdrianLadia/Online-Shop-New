@@ -128,6 +128,7 @@ const CheckoutPage = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [pickUpOrDeliver, setPickUpOrDeliver] = useState('deliver');
   const [allowedDates, setAllowedDates] = useState(null);
+  const [kilometersFromStore, setKilometersFromStore] = useState(0);
   useEffect(() => {
     const ad = new allowedDeliveryDates();
     ad.runMain();
@@ -226,6 +227,7 @@ const CheckoutPage = () => {
             itemsTotal: total,
             date: new Date(),
             deliveryVehicle: deliveryVehicle,
+            kilometersFromStore: kilometersFromStore,
           })
           .then((url) => {
             if (url) {
@@ -257,6 +259,7 @@ const CheckoutPage = () => {
       locallongitude
     );
     const kilometers = businesscalculations.convertTotalDifferenceToKilometers(totaldifference);
+    setKilometersFromStore(kilometers);
     const areasInsideDeliveryLocation = businesscalculations.getLocationsInPoint(locallatitude, locallongitude);
     let vehicleObject = 'motorcycle';
     let deliveryFee = 0;
@@ -270,6 +273,7 @@ const CheckoutPage = () => {
       if (total >= new AppConfig().getFreeDeliveryThreshold()) {
         setDeliveryFee(0);
       } else {
+    
         setDeliveryFee(deliveryFee);
       }
       setDeliveryVehicle(vehicleObject);
@@ -800,6 +804,7 @@ const CheckoutPage = () => {
                     area={area}
                     setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
                     rows={rows}
+                    kilometersFromStore={kilometersFromStore}
                   />
                 )}
                 {userdata ? (

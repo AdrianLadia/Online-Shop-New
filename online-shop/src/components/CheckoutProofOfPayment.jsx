@@ -43,6 +43,7 @@ const CheckoutProofOfPayment = (props) => {
     date,
     deliveryVehicle,
     isGuestCheckout,
+    kilometersFromStore,
   } = location.state;
   const orderDateObject = new Date(date);
   const orderExpiryDate = new Date(orderDateObject.getTime() + 86400000);
@@ -231,6 +232,7 @@ const CheckoutProofOfPayment = (props) => {
                   mapContainerClassName={containerClassName}
                   disableDefaultUI={true}
                   mapTypeControl={false}
+                  
                 >
                   <MarkerF position={{ lat: latitude, lng: longitude }} />
                 </GoogleMap>
@@ -246,6 +248,7 @@ const CheckoutProofOfPayment = (props) => {
                 grandTotal={grandTotal}
                 area={area}
                 rows={rows}
+                kilometersFromStore={kilometersFromStore}
               />
             ) : (
               <div className="flex justify-center mt-5">

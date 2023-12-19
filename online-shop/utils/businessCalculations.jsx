@@ -379,6 +379,8 @@ class businessCalculations {
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
 
+    
+
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
     }
@@ -387,6 +389,7 @@ class businessCalculations {
     const delFeeWithoutMinimum = Math.round(kilometers * vehicleObject.deliveryFeePerKm);
     if (delFeeWithoutMinimum < vehicleObject.minDelFee) {
       finalDelFee = vehicleObject.minDelFee;
+      
     } else {
       finalDelFee = delFeeWithoutMinimum;
     }
@@ -394,12 +397,15 @@ class businessCalculations {
       finalDelFee = finalDelFee + vehicleObject.driverAssistsPrice;
     }
 
+    
+
     const finalDelFeeSchema = Joi.number().required();
     const { error4 } = finalDelFeeSchema.validate(finalDelFee);
     if (error4) {
       throw new Error('Data Validation Error');
     }
 
+    // round to nearest 
     return finalDelFee;
   }
 
@@ -635,6 +641,7 @@ class businessCalculations {
       itemsTotal: Joi.number().required().allow(null),
       date: Joi.date().required(),
       deliveryVehicle: Joi.object().required().allow(null),
+      kilometersFromStore: Joi.number().required().allow(null),
     }).required();
 
     const { error } = dataSchema.validate(data);
@@ -741,6 +748,7 @@ class businessCalculations {
           date: data.date,
           deliveryVehicle: data.deliveryVehicle,
           isGuestCheckout: isGuestCheckout,
+          kilometersFromStore: data.kilometersFromStore,
         },
       });
     } else {
