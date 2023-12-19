@@ -35,14 +35,16 @@ const ProfileUpdaterModal = (props) => {
 
   async function updateProfile() {
     const _phoneNumber = '+' + phoneNumber 
-    if (isValidPhilippinePhoneNumber(_phoneNumber) == false) {
-      alertSnackbar('error', 'Please Enter A Valid Phone Number');
-      return;
-    } else {
-      try {
-        await firestore.updateDocumentFromCollection('Users', userdata.uid, { phoneNumber: _phoneNumber });
-      } catch (err) {
-        alertSnackbar('error', 'Failed to update phone number');
+    if (userdata.phoneNumber == null) {
+      if (isValidPhilippinePhoneNumber(_phoneNumber) == false) {
+        alertSnackbar('error', 'Please Enter A Valid Phone Number');
+        return;
+      } else {
+        try {
+          await firestore.updateDocumentFromCollection('Users', userdata.uid, { phoneNumber: _phoneNumber });
+        } catch (err) {
+          alertSnackbar('error', 'Failed to update phone number');
+        }
       }
     }
 
