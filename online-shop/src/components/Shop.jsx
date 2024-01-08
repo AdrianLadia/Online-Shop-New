@@ -107,7 +107,7 @@ const Shop = () => {
           selectedCategory={selectedCategory}
         />
       )}
-      <AnnouncementNotification />
+      {/* <AnnouncementNotification /> */}
     </div>
   );
 };
