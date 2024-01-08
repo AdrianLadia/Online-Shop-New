@@ -41,7 +41,7 @@ const AnnouncementNotification = () => {
             </div>
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
-                We are closed for the Christmas and New Year Holidays
+                Happy Holidays!
               </Typography>
               <Typography
                 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
