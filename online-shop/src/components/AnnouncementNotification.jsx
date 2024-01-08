@@ -34,23 +34,21 @@ const AnnouncementNotification = () => {
             <div style={{ height: 210, backgroundColor: '#e1fadd', display: 'flex' }}>
               <img
                 src={
-                  'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Flogo%2FCODorCOP.png?alt=media&token=71d22fc9-475f-4f40-b898-f83f455f5d71&_gl=1*1d5kl93*_ga*NDM5ODMxODMzLjE2ODQ0MTcyMTE.*_ga_CW55HF8NVT*MTY5Nzg2NDM1Ni4xNjAuMS4xNjk3ODY0NDE1LjEuMC4w'
-                }
+                  "https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/announcementPhotos%2FDALL%C2%B7E%202023-12-19%2012.43.05%20-%20A%20festive%20and%20eye-catching%20design%20suitable%20for%20a%20food%20packaging%20supplier's%20holiday%20closure%20notice.%20The%20background%20depicts%20a%20charming%20winter%20landscape%20.png?alt=media&token=ddab97d4-ffe0-460f-97e5-70bf8c98fef9"                }
                 alt="auto calculate"
                 style={{ width: '100%', height: '100%', objectFit: 'fill' }}
               />
             </div>
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
-                Cash On Delivery
+                We are closed for the Christmas and New Year Holidays
               </Typography>
               <Typography
                 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
                 variant="body2"
                 color="text.secondary"
               >
-                Cash on delivery is now available. Enjoy this method together with our FREE DELIVERY promo. The free
-                delivery promo lasts until November.
+                We will resume our operations on January 5, 2024. Thank you
               </Typography>
             </CardContent>
           </Card>
