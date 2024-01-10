@@ -46,6 +46,7 @@ const ProductList = (props) => {
     cloudfirestore,
     isAdmin,
     isSuperAdmin,
+    isDistributor
   } = React.useContext(AppContext);
   const [shakeCartAnimation, setShakeCartAnimation] = useState(true);
   const [clickedProduct, setClickedProduct] = useState(null);
@@ -128,8 +129,8 @@ const ProductList = (props) => {
     }
   }
 
-  function isAdminOrSuperAdmin() {
-    if (isAdmin || isSuperAdmin) {
+  function isAdminOrSuperAdminOrDistributor() {
+    if (isAdmin || isSuperAdmin ||isDistributor ) {
       return true;
     } else {
       return false;
@@ -170,7 +171,7 @@ const ProductList = (props) => {
 
             // if ()
 
-            if (!isAdminOrSuperAdmin()) {
+            if (!isAdminOrSuperAdminOrDistributor()) {
               if (product.imageLinks[0] == null) {
                 return;
               }
