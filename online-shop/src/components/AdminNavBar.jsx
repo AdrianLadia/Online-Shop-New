@@ -203,7 +203,7 @@ const AdminNavBar = () => {
           {rules.checkIfUserAuthorized('addItem') ? (
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-              id="inventoryMenu"
+              id="addItem"
               onClick={handleClickAddItem}
             >
               {' '}
@@ -220,7 +220,7 @@ const AdminNavBar = () => {
               <BsBoxes size={19} />     <span>Edit Item</span>
             </MenuItem>
           ) : null}
-          {rules.checkIfUserAuthorized('inventory') ? (
+          {/* {rules.checkIfUserAuthorized('inventory') ? (
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
               id="inventoryMenu"
@@ -229,7 +229,7 @@ const AdminNavBar = () => {
               {' '}
               <BsBoxes size={19} />     <span>Inventory</span>
             </MenuItem>
-          ) : null}
+          ) : null} */}
           {/* <Divider className="mt-0.5"/>   */}
           {rules.checkIfUserAuthorized('createPayment') ? (
             <MenuItem

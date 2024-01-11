@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import AdminInventory from './AdminInventory';
+// import AdminInventory from './AdminInventory';
 import AdminCreatePayment from './AdminCreatePayment';
 import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';
@@ -28,7 +28,7 @@ const Admin = () => {
   return (
     <div>
       <Routes>
-        <Route
+        {/* <Route
           path="inventory"
           element={
             <div>
@@ -36,7 +36,7 @@ const Admin = () => {
               <AdminInventory products={products} categories={categories} refresh={refresh} setRefresh={setRefresh} />
             </div>
           }
-        />
+        /> */}
         <Route
           path="addItem"
           element={
