@@ -29,6 +29,7 @@ const CheckoutSummary = (props) => {
   const grandTotal = props.grandTotal;
   const vat = props.vat;
   const totalWeight = props.totalWeight;
+  const kilometersFromStore = props.kilometersFromStore;
 
   let deliveryVehicle;
   let maxWeight;
@@ -69,6 +70,15 @@ const CheckoutSummary = (props) => {
       return '45%';
     } else {
       return '40%';
+    }
+  }
+
+  function reactiveKilometersFromStore() {
+    if (kilometersFromStore == null) {
+      return '';
+    }
+    else {
+      return kilometersFromStore.toFixed(0).toLocaleString() + ' Kilometers'
     }
   }
 
@@ -155,7 +165,7 @@ const CheckoutSummary = (props) => {
               } */}
 
               <ListItem>
-                <ListItemText primary="Delivery Fee:" secondary={'₱' + deliveryFee.toLocaleString()} />
+                <ListItemText primary="Delivery Fee:" secondary={'₱' + deliveryFee.toLocaleString() + ' , ' + reactiveKilometersFromStore()  } />
               </ListItem>
               <ListItem>
                 <ListItemText primary="Grand Total:" secondary={'₱' + grandTotal.toLocaleString()} />
