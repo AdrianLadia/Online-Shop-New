@@ -1075,11 +1075,13 @@ describe('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksAvailable: 12, stocksOnHold: [{quantity:5,reference:'testref987','userID':'GUEST'}] });
     await firestore.deleteDocumentFromCollectionByFieldValue('Payments', 'orderReference', 'testref1234');
 
     await resetOrdersAndPayments();
 
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const oldStocksAvailable = ppb16.stocksAvailable;
     const ppb16Price = ppb16.price;
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
@@ -1162,6 +1164,18 @@ describe('cloudfirestoredb', async () => {
     expect(userOrders.length > 0).toEqual(true);
     expect(payments.length > 0).toEqual(true);
     expect(order.paid).toEqual(true);
+
+    const ppb16new = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
+    const ppb16newStocksOnHold = ppb16new.stocksOnHold;
+    const newStocksAvailable = ppb16new.stocksAvailable;
+
+    ppb16newStocksOnHold.forEach((stock) => {
+      if (stock.reference === 'testref1234') {
+        throw new Error('stocks on hold should be deleted');
+      }
+    });
+
+    expect(oldStocksAvailable - 12).toEqual(0);
 
     await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
@@ -2453,6 +2467,7 @@ describe('afterCheckoutRedirectLogic', async () => {
           itemsTotal: 1000,
           date: new Date(),
           deliveryVehicle: this.deliveryVehicle,
+          kilometersFromStore: 10,
         },
         true
       );
@@ -5265,3 +5280,95 @@ describe('test productsPriceHandler', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'GUEST');
   });
 });
+
+
+describe('test user creates 2 orders. The second order is bigger than the second order, and cancels the first order', async () => {
+  test('setup test', async () => {
+    await firestore.deleteDocumentFromCollection('Orders', 'testref1234');
+    await firestore.deleteDocumentFromCollection('Orders', 'testref12345');
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [], payments: [] });
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      isInvoiceNeeded: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 20000,
+      vat: 1000,
+      shippingtotal: 1000,
+      grandTotal: 22000,
+      reference: 'testref1234',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+    })
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      isInvoiceNeeded: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 18000,
+      vat: 1000,
+      shippingtotal: 1000,
+      grandTotal: 20000,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+    })
+    await delay(transactionCreatePaymentDelay);
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 20000,
+      reference: 'testref12345',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    })
+    await delay(transactionCreatePaymentDelay);
+  });
+  test('invoke function', async () => {
+    await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' })
+  });
+    await delay(transactionCreatePaymentDelay);
+  test('check values', async () => {
+    const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
+    expect(order).toEqual(undefined);
+    const secondOrder = await firestore.readSelectedDataFromCollection('Orders', 'testref12345');
+    expect(secondOrder.paid).toEqual(true);
+  });
+  test('clean test data', async () => {
+    await firestore.deleteDocumentFromCollection('Orders', 'testref12345');
+    await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref1234');
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [], payments: [] });
+
+  });
+},1000000000);

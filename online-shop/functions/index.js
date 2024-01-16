@@ -425,9 +425,14 @@ exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (even
 });
 
 exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => {
+  console.log('________________________');
+  console.log('RUNNING ON ORDERS CHANGE');
   try {
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
+
+    console.log(beforeData);
+    console.log(afterData);
 
     let created = null;
     if (beforeData == undefined) {
@@ -436,27 +441,27 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
       created = false;
     }
 
-    // if afterdata is empty do not do anything
-    if (!afterData) {
-      return;
-    }
-    if (!('grandTotal' in afterData)) {
-      return;
+    if (afterData) {
+      if (!('grandTotal' in afterData)) {
+        return;
+      }
     }
 
     if (!beforeData.grandTotal) {
       return;
     }
 
-    if (created == false) {
-      if (beforeData.grandTotal == afterData.grandTotal) {
-        logger.log('grandTotal did not change so not changing paid');
-        return;
+    try {
+      if (created == false) {
+        if (beforeData.grandTotal == afterData.grandTotal) {
+          logger.log('grandTotal did not change so not changing paid');
+          return;
+        }
       }
-    }
+    } catch {}
 
     const db = admin.firestore();
-    const userId = afterData.userId;
+    const userId = afterData ? afterData.userId : beforeData.userId;
 
     if (userId == 'GUEST') {
       logger.log('userId is null');
@@ -464,14 +469,17 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
     }
 
     const orderSnapshot = await db.collection('Orders').where('userId', '==', userId).get();
+    console.log('orderSnapshot', orderSnapshot);
     const userOrders = orderSnapshot.docs.map((doc) => doc.data());
+    console.log('userOrders', userOrders);
     const paymentsSnapshot = await db
       .collection('Payments')
       .where('status', '==', 'approved')
       .where('userId', '==', userId)
       .get();
+    console.log('paymentsSnapshot', paymentsSnapshot);
     const userPayments = paymentsSnapshot.docs.map((doc) => doc.data());
-
+    console.log('userPayments', userPayments);
     // logger.log('userOrders',userOrders)
     // logger.log('userPayments' ,userPayments)
 
@@ -527,7 +535,7 @@ exports.readSelectedDataFromOnlineStore = onRequest(async (req, res) => {
       const body = req.body;
       const productId = body.productId;
       const db = admin.firestore();
-      console.log(productId)
+      console.log(productId);
       const selectedDataRef = db.collection('Products').doc(productId);
       const selectedData = await selectedDataRef.get();
       const data = selectedData.data();
@@ -1316,18 +1324,20 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
-
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
         const shippingTotal = orderDetail.shippingTotal;
         const grandTotal = orderDetail.grandTotal;
+        const cart = orderDetail.cart;
         const oldOrderProofOfPaymentLinks = orderDetail.proofOfPaymentLink;
         const newOrderPayments = [...oldOrderProofOfPaymentLinks, proofOfPaymentLink];
         let doNotAddProofOfPaymentLink = false;
         if (oldOrderProofOfPaymentLinks.includes(proofOfPaymentLink)) {
           doNotAddProofOfPaymentLink = true;
         }
+
+        console.log('orderDetail', orderDetail)
 
         const lessCommissionToShipping = parseFloat((shippingTotal * (depositAmount / itemsTotal)).toFixed(2));
 
@@ -1371,18 +1381,35 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
 
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
-        // const allUserOrdersQuery = db.collection('Orders').where('userId', '==', userId);
-        // const ordersObject = await transaction.get(allUserOrdersQuery);
-        // const orders = ordersObject.docs.map((doc) => doc.data());
 
-        // const toUpdateOrders = updateAccountStatement(newPayments, orders)
+        const newStocksOnHold = {};
+
+        await Promise.all(
+          Object.keys(cart).map(async (itemId) => {
+            const ref = db.collection('Products').doc(itemId);
+            const doc = await transaction.get(ref);
+            const productData = doc.data();
+            const stocksOnHold = productData.stocksOnHold;
+
+            stocksOnHold.forEach((stock) => {
+              // Changed map to forEach
+              if (stock.reference != orderReference) {
+                // Initialize with empty array if not exist
+                if (!newStocksOnHold[itemId]) {
+                  newStocksOnHold[itemId] = [];
+                }
+                // Spread the existing array and add the new stock
+                newStocksOnHold[itemId] = [...newStocksOnHold[itemId], stock];
+              }
+            });
+          })
+        );
+
+
+        console.log('newStocksOnHold', newStocksOnHold);
 
         // WRITE
 
-        // toUpdateOrders.forEach((order) => {
-        //   const ref = db.collection('Orders').doc(order.reference);
-        //   transaction.update(ref, { paid: order.paid });
-        // });
         if (userId == 'GUEST') {
           if (depositAmount < grandTotal) {
             logger.log('payment not accepted in transaction');
@@ -1420,6 +1447,13 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           });
         }
         transaction.update(userRef, { payments: newPayments });
+
+        // delete ordersOnHold if paid
+        Object.keys(newStocksOnHold).forEach((itemId) => {
+          const newStocksOnHoldArray = newStocksOnHold[itemId];
+          const ref = db.collection('Products').doc(itemId);
+          transaction.update(ref, { stocksOnHold: newStocksOnHoldArray });
+        });
       });
 
       if (paymentNotAccepted == true) {
@@ -2556,7 +2590,6 @@ exports.facebookMessengerWebhook = onRequest(async (req, res) => {
   res.status(200).send(challenge);
 });
 
-
 async function internalUpdateCustomerSearchIndex() {
   const db = admin.firestore();
   const usersRef = db.collection('Users');
@@ -2570,7 +2603,7 @@ async function internalUpdateCustomerSearchIndex() {
   users.forEach((user) => {
     const userSearchIndex = {
       userId: user.userId,
-      name: user.name
+      name: user.name,
     };
     searchIndex.push(userSearchIndex);
   });
@@ -2579,8 +2612,8 @@ async function internalUpdateCustomerSearchIndex() {
 }
 
 exports.updateCustomerSearchIndexScheduled = functions
-.region('asia-southeast1')
-.pubsub.schedule('every 24 hours')
-.onRun(async (context) => {
-  await internalUpdateCustomerSearchIndex();
-});
+  .region('asia-southeast1')
+  .pubsub.schedule('every 24 hours')
+  .onRun(async (context) => {
+    await internalUpdateCustomerSearchIndex();
+  });
