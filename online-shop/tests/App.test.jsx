@@ -22,8 +22,7 @@ import disableCodHandler from '../utils/classes/disableCodHandler';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 
 // DELAYS
-const transactionCreatePaymentDelay = 500
-
+const transactionCreatePaymentDelay = 500;
 
 //
 const app = initializeApp(firebaseConfig);
@@ -391,7 +390,7 @@ describe('Data Manipulation', async () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
 
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -441,7 +440,7 @@ describe('Data Manipulation', async () => {
       proofOfPaymentLink: 'testlink2',
     });
 
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
 
     const testuser = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orderReferences = testuser.orders;
@@ -703,7 +702,7 @@ describe('Transaction Create Payment', async () => {
     );
 
     await firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     const user = await firestore.readUserById('testuser');
 
     const payments = user.payments;
@@ -1075,7 +1074,10 @@ describe('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
-    await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksAvailable: 12, stocksOnHold: [{quantity:5,reference:'testref987','userID':'GUEST'}] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16', {
+      stocksAvailable: 12,
+      stocksOnHold: [{ quantity: 5, reference: 'testref987', userID: 'GUEST' }],
+    });
     await firestore.deleteDocumentFromCollectionByFieldValue('Payments', 'orderReference', 'testref1234');
 
     await resetOrdersAndPayments();
@@ -1135,7 +1137,7 @@ describe('cloudfirestoredb', async () => {
     };
 
     await cloudfirestore.transactionCreatePayment(data);
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     const payments2 = await firestore.readAllDataFromCollection('Payments');
     let found2 = false;
     payments2.map((payment) => {
@@ -1289,7 +1291,7 @@ describe('cloudfirestoredb', async () => {
       proofOfPaymentLink: 'www.testlink.com',
     });
 
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     const userData = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const orders = userData.orders;
 
@@ -1350,7 +1352,7 @@ describe('cloudfirestoredb', async () => {
       proofOfPaymentLink: 'www.testlink.com',
     };
     await cloudfirestore.transactionCreatePayment(data);
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
 
     const user = await firestore.readUserById(userTestId);
     const payments = user.payments;
@@ -1685,8 +1687,6 @@ describe('cloudfirestoredb', async () => {
     await delay(1500);
     const data3 = res3.data;
     expect(data3).toEqual('success');
-
-
 
     const user4 = await firestore.readSelectedDataFromCollection('Users', userTestId);
     const user4orders = user4.orders;
@@ -2118,7 +2118,7 @@ describe('cloudfirestoredb', async () => {
       return await cloudfirestore.readUserRole(userId);
     });
     const userRoles = await Promise.all(userRolesPromises);
-    const roles = ['member', 'admin', 'superAdmin', 'affiliate','distributor'];
+    const roles = ['member', 'admin', 'superAdmin', 'affiliate', 'distributor'];
     userRoles.map((userRole) => {
       expect(roles.includes(userRole)).toEqual(true);
     });
@@ -3198,12 +3198,12 @@ describe('updateProductClicks', async () => {
   });
   test('invoking function', async () => {
     // isAdminOrSuperAdmin
-    await firestore.updateProductClicks('test', userTestId,true);
+    await firestore.updateProductClicks('test', userTestId, true);
     const products = await firestore.readAllDataFromCollection('Products');
     const testProduct = products.filter((product) => product.itemId == 'test')[0];
     expect(testProduct.clicks.length).toEqual(0);
     // isNotAdminOrSuperAdmin
-    await firestore.updateProductClicks('test', userTestId,false);
+    await firestore.updateProductClicks('test', userTestId, false);
     const products2 = await firestore.readAllDataFromCollection('Products');
     const testProduct2 = products2.filter((product) => product.itemId == 'test')[0];
     expect(testProduct2.clicks.length).toEqual(1);
@@ -3401,7 +3401,7 @@ describe('test commission system', async () => {
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
       amount: 100000,
@@ -3409,7 +3409,7 @@ describe('test commission system', async () => {
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
       amount: 200000,
@@ -3417,7 +3417,7 @@ describe('test commission system', async () => {
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
   });
   test('check if transaction create payment added commissions to affiliate', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
@@ -3449,7 +3449,7 @@ describe('test commission system', async () => {
       data2: data2,
     };
     await cloudfirestore.onAffiliateClaim(data);
-    await delay(1500)
+    await delay(1500);
   });
   test('check if affiliate claims commission added to affiliate claims', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
@@ -3555,7 +3555,7 @@ describe('test commission system', async () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     const affiliateData = await cloudfirestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
     const commissions = affiliateData.affiliateCommissions;
     let found = false;
@@ -3812,7 +3812,7 @@ describe('test transaction create payment without an affiliate', () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
 
     const user = await firestore.readSelectedDataFromCollection('Users', 'NOAFFILIATETESTUSER');
     const payment = user.payments;
@@ -4099,7 +4099,7 @@ describe('Void payment', () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'www.testlink12.com',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
   });
 
   test('check values', async () => {
@@ -4120,7 +4120,7 @@ describe('Void payment', () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'www.testlink123.com',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     const testref123data = await cloudfirestore.readSelectedDataFromCollection('Orders', 'testref123');
 
     expect(testref123data.paid).toEqual(true);
@@ -4296,7 +4296,7 @@ describe('test edit customer order function', () => {
       proofOfPaymentLink: 'testlink3',
     });
 
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
 
     const order = await cloudfirestore.readSelectedDataFromCollection('Orders', 'testref1234');
     expect(order.paid).toEqual(true);
@@ -4340,7 +4340,7 @@ describe('test edit customer order function', () => {
       proofOfPaymentLink: 'testlink3',
     });
 
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
   });
   test('check values 2', async () => {
     const order = await cloudfirestore.readSelectedDataFromCollection('Orders', 'testref1234');
@@ -4386,7 +4386,7 @@ describe('test edit customer order function', () => {
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink4',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     const order = await cloudfirestore.readSelectedDataFromCollection('Orders', 'testref12345');
     expect(order.paid).toEqual(true);
   });
@@ -4644,7 +4644,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
     // expect error
     expect(res.data).toEqual('Error creating payment. Payment is less than total');
   });
@@ -4657,7 +4657,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
     });
-    await delay(transactionCreatePaymentDelay)
+    await delay(transactionCreatePaymentDelay);
   });
   test('check values 2', async () => {
     // check if middle order is paid
@@ -5065,7 +5065,7 @@ describe('test productsPriceHandler', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
-        userPrices: { test1: 600},
+        userPrices: { test1: 600 },
       },
       'testMemberWithSpecialPrice'
     );
@@ -5267,9 +5267,7 @@ describe('test productsPriceHandler', async () => {
       }
     });
   });
-  test('transactionPlaceOrder on guests', async () => {
-
-  })
+  test('transactionPlaceOrder on guests', async () => {});
   test('clean test data', async () => {
     await firestore.deleteDocumentFromCollection('Products', 'test1');
     await firestore.deleteDocumentFromCollection('Products', 'test2');
@@ -5280,7 +5278,6 @@ describe('test productsPriceHandler', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'GUEST');
   });
 });
-
 
 describe('test user creates 2 orders. The second order is bigger than the second order, and cancels the first order', async () => {
   test('setup test', async () => {
@@ -5315,7 +5312,7 @@ describe('test user creates 2 orders. The second order is bigger than the second
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
-    })
+    });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       testing: true,
@@ -5344,7 +5341,7 @@ describe('test user creates 2 orders. The second order is bigger than the second
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
-    })
+    });
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
@@ -5352,13 +5349,13 @@ describe('test user creates 2 orders. The second order is bigger than the second
       reference: 'testref12345',
       paymentprovider: 'Maya',
       proofOfPaymentLink: 'testlink3',
-    })
+    });
     await delay(transactionCreatePaymentDelay);
   });
   test('invoke function', async () => {
-    await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' })
+    await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' });
   });
-    await delay(transactionCreatePaymentDelay);
+  await delay(transactionCreatePaymentDelay);
   test('check values', async () => {
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
     expect(order).toEqual(undefined);
@@ -5369,6 +5366,125 @@ describe('test user creates 2 orders. The second order is bigger than the second
     await firestore.deleteDocumentFromCollection('Orders', 'testref12345');
     await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref1234');
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [], payments: [] });
+  });
+}, 1000000000);
+
+describe('test paymaya endpoint success', async () => {
+  const successPayload = {
+    id: '59cf27a1-8aa1-4eb3-b7d4-32a53251edec',
+    amount: 20000,
+    currency: 'PHP',
+    status: 'PAYMENT_SUCCESS',
+    requestReferenceNumber: 'testref12345',
+    forTesting: true,
+  };
+  const failedPaylod = {
+    id: '69361631-4fff-40a4-abea-3472b51ac2c7',
+    amount: 985,
+    currency: 'PHP',
+    status: 'PAYMENT_FAILED',
+    requestReferenceNumber: 'testref12345',
+    forTesting: true,
+  };
+  const expiredPayload = {
+    id: '3551576d-a7a4-4373-b3a6-10be94ff4a1f',
+    amount: 165,
+    currency: 'PHP',
+    status: 'PAYMENT_EXPIRED',
+    requestReferenceNumber: 'testref12345',
+    forTesting: true,
+  };
+  test('prepare test', async () => {
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      isInvoiceNeeded: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 18000,
+      vat: 1000,
+      shippingtotal: 1000,
+      grandTotal: 20000,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'gcash',
+      userRole: 'member',
+    });
+    await delay(transactionCreatePaymentDelay);
+
+    const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    const orders = user.orders
+    const payments = user.payments
+
+    expect(orders.length).toEqual(1);
+    expect(payments.length).toEqual(0);
+
+    const allPayments = await firestore.readAllDataFromCollection('Payments');
+    const filtered = allPayments.filter((payment) => {
+      if (payment.reference === 'testref12345') {
+        return payment;
+      }
+    })
+
+    expect(filtered.length).toEqual(0);
 
   });
-},1000000000);
+  test('invoke success endpoint', async () => {
+      const response = await cloudfirestore.testPayMayaEndpoint(successPayload)
+      expect(response.data.webhookDataProcessed).toEqual('success');
+      await delay(transactionCreatePaymentDelay)
+
+      const allPayments = await firestore.readAllDataFromCollection('Payments');
+      let found = false;
+      allPayments.forEach((payment) => {
+        if (payment.orderReference === 'testref12345') {
+          found = true;
+        }
+      })
+      expect(found).toEqual(true);
+
+      const order = await firestore.readSelectedDataFromCollection('Orders', 'testref12345');
+      const paid = order.paid;
+
+      expect(paid).toEqual(true);
+
+      const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
+      const orders = user.orders
+      const payments = user.payments
+
+      let foundOrder = false;
+      orders.forEach((order) => {
+        if (order.reference === 'testref12345') {
+          foundOrder = true;
+        }
+      })
+      expect(foundOrder).toEqual(true);
+
+      let foundPayment = false;
+      payments.forEach((payment) => {
+        if (payment.reference === 'testref12345') {
+          foundPayment = true;
+        }
+      })
+  });
+  test('clean test', async () => {
+    await firestore.deleteDocumentFromCollection('Orders', 'testref12345');
+    await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref1234');
+    await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [], payments: [] });
+    await resetOrdersAndPayments()
+  });
+},100000000);

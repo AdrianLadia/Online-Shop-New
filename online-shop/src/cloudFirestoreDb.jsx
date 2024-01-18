@@ -351,6 +351,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     }
   }
 
+  async testPayMayaEndpoint(data) {
+    const response = await axios.post(`${this.url}payMayaEndpoint`, data);
+    return response;
+  }
+
   async testPayMayaWebHookSuccess(data) {
     const dataSchema = schemas.mayaSuccessRequestSchema();
 

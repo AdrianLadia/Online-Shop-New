@@ -431,9 +431,6 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
 
-    console.log(beforeData);
-    console.log(afterData);
-
     let created = null;
     if (beforeData == undefined) {
       created = true;
@@ -469,20 +466,13 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
     }
 
     const orderSnapshot = await db.collection('Orders').where('userId', '==', userId).get();
-    console.log('orderSnapshot', orderSnapshot);
     const userOrders = orderSnapshot.docs.map((doc) => doc.data());
-    console.log('userOrders', userOrders);
     const paymentsSnapshot = await db
       .collection('Payments')
       .where('status', '==', 'approved')
       .where('userId', '==', userId)
       .get();
-    console.log('paymentsSnapshot', paymentsSnapshot);
     const userPayments = paymentsSnapshot.docs.map((doc) => doc.data());
-    console.log('userPayments', userPayments);
-    // logger.log('userOrders',userOrders)
-    // logger.log('userPayments' ,userPayments)
-
     const toUpdate = updateAccountStatement(userPayments, userOrders);
     logger.log(toUpdate);
     toUpdate.forEach(async (_toUpdate) => {
@@ -1315,7 +1305,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     const proofOfPaymentLink = data.proofOfPaymentLink;
     logger.log('Proof of payment link', proofOfPaymentLink);
     const db = admin.firestore();
-    const userId = data.userId;
+    let userId;
 
     let paymentNotAccepted = false;
     try {
@@ -1330,6 +1320,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const shippingTotal = orderDetail.shippingTotal;
         const grandTotal = orderDetail.grandTotal;
         const cart = orderDetail.cart;
+        userId = orderDetail.userId;
         const oldOrderProofOfPaymentLinks = orderDetail.proofOfPaymentLink;
         const newOrderPayments = [...oldOrderProofOfPaymentLinks, proofOfPaymentLink];
         let doNotAddProofOfPaymentLink = false;
@@ -1337,7 +1328,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           doNotAddProofOfPaymentLink = true;
         }
 
-        console.log('orderDetail', orderDetail)
+        console.log('orderDetail', orderDetail);
 
         const lessCommissionToShipping = parseFloat((shippingTotal * (depositAmount / itemsTotal)).toFixed(2));
 
@@ -1404,7 +1395,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
             });
           })
         );
-
 
         console.log('newStocksOnHold', newStocksOnHold);
 
@@ -1593,6 +1583,59 @@ exports.payMayaWebHookExpired = onRequest(async (req, res) => {
   res.send({
     success: true,
   });
+});
+
+exports.payMayaEndpoint = onRequest(async (req, res) => {
+  if (req.method != 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+  console.log('req.body', req.body);
+  const data = req.body;
+  const status = data.status;
+  const requestReferenceNumber = data.requestReferenceNumber;
+  const amount = data.amount;
+  const forTesting = data.forTesting ? data.forTesting : false;
+  const url = forTesting
+    ? 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
+    : 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/';
+  let response;
+  if (status == 'PAYMENT_SUCCESS') {
+    const data = {
+      amount: amount,
+      reference: requestReferenceNumber,
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'Maya',
+    };
+    const jsonData = JSON.stringify(data);
+    console.log('jsonData', jsonData);
+    console.log('url', url);
+    response = await axios.post(`${url}transactionCreatePayment`, jsonData, {
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg',
+      },
+    });
+    console.log('response', response);
+  }
+
+  if (status == 'PAYMENT_FAILED') {
+    response = {status: 200} // temporary. Replace when logic is implemented
+  }
+
+  if (status == 'PAYMENT_EXPIRED') {
+    response = {status: 200} // temporary. Replace when logic is implemented
+  }
+
+  if (response.status == 200) {
+    res.status(200).send({
+      webhookDataProcessed: 'success',
+    });
+  } else {
+    res.status(500).send({
+      webhookDataProcessed: 'failed',
+    });
+  }
 });
 
 exports.updateOrderProofOfPaymentLink = onRequest(async (req, res) => {
