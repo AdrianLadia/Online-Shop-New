@@ -20,6 +20,7 @@ import storeProductsOrganizer from '../utils/classes/storeProductsOrganizer';
 import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
 import disableCodHandler from '../utils/classes/disableCodHandler';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
+import stockManagementTableDataHandler from '../utils/classes/stockMangementTableDataHandler';
 
 // DELAYS
 const transactionCreatePaymentDelay = 500;
@@ -5488,3 +5489,11 @@ describe('test paymaya endpoint success', async () => {
     await resetOrdersAndPayments()
   });
 },100000000);
+
+describe.only('test stockManagementTableDataHandler', async () => {
+  test('invoke function', async () => {
+    const products = await firestore.readAllDataFromCollection('Products');
+    const itemAverageSalesPerDay = await firestore.readAllDataFromCollection('Analytics','ItemAverageSalesPerDay').data
+    const stockManagementTableData = new stockManagementTableDataHandler(products, itemAverageSalesPerDay);
+  });
+});

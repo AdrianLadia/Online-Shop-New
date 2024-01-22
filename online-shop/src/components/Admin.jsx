@@ -127,7 +127,7 @@ const Admin = () => {
           element={
             <div>
               <AdminNavBar />
-              <CompanyDashboard />
+              <CompanyDashboard products={products} />
             </div>
           }
         />

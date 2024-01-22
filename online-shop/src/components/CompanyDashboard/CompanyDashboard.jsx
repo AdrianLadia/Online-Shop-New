@@ -15,9 +15,10 @@ import {
   Legend,
 } from 'chart.js';
 import menuRules from '../../../utils/classes/menuRules';
+import StockManagementTable from './StockManagementTable';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const CompanyDashboard = () => {
+const CompanyDashboard = ({products}) => {
   const { firestore, categories, userdata } = useContext(AppContext);
   const businesscalculation = new businessCalculation();
   const [overallTotalSalesValue, setOverallTotalSalesValue] = useState(0);
@@ -29,6 +30,7 @@ const CompanyDashboard = () => {
   const monthNames = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
   const [allowedCategories, setAllowedCategories] = useState([]);
   const rules = new menuRules(userdata.userRole);
+  
 
   useEffect(() => {
     if (categories) {
@@ -211,6 +213,9 @@ const CompanyDashboard = () => {
               lastOrderDate={customersLastOrderDate}
               customerRanking={customerTotalValueRanking}
             />
+          </div>
+          <div className='flex w-screen '>
+            <StockManagementTable products={products}/>
           </div>
         </div>
       ) : null}
