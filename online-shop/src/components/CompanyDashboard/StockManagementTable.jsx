@@ -1,13 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import stockManagementTableDataHandler from '../../../utils/classes/stockMangementTableDataHandler';
+import AppContext from '../../AppContext';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { Typography } from '@mui/material';
 
 const StockManagementTable = ({ products }) => {
-  const columns = [
+  const { firestore } = useContext(AppContext);
+  const [rowsWholesale, setRowsWholesale] = useState([]);
+  const [wholesaleSearch, setWholesaleSearch] = useState('');
+  const [rowsRetail, setRowsRetail] = useState([]);
+  const [hideSlowMovingCheckbox, setHideSlowMovingCheckbox] = useState(true);
+  const columnsWholesale = [
     {
       field: 'itemName',
       headerName: 'Item Name',
-      width: 150,
+      width: 300,
       editable: false,
     },
     {
@@ -15,6 +26,7 @@ const StockManagementTable = ({ products }) => {
       headerName: 'Stocks Available',
       width: 150,
       editable: false,
+      align: 'center',
     },
     {
       field: 'suggestedStocks',
@@ -22,46 +34,126 @@ const StockManagementTable = ({ products }) => {
       type: 'number',
       width: 110,
       editable: false,
+      align: 'center',
     },
     {
-      field: 'Inventory Level',
+      field: 'inventoryLevel',
       headerName: 'Inventory Level',
-      // description: 'This column has a value getter and is not sortable.',
       width: 160,
+      align: 'center',
+      valueFormatter: (params) => {
+        return `${params.value}%`;
+      },
     },
   ];
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
+  const columnsRetail = [
+    {
+      field: 'itemName',
+      headerName: 'Item Name',
+      width: 300,
+      editable: false,
+    },
+    {
+      field: 'stocksAvailable',
+      headerName: 'Stocks Available',
+      width: 150,
+      editable: false,
+      align: 'center',
+    },
+    {
+      field: 'packsPerBox',
+      headerName: 'Suggested Stocks',
+      type: 'number',
+      width: 110,
+      editable: false,
+      align: 'center',
+    },
+    {
+      field: 'inventoryLevel',
+      headerName: 'Inventory Level',
+      width: 160,
+      align: 'center',
+      valueFormatter: (params) => {
+        return `${params.value}%`;
+      },
+    },
+  ]
 
   useEffect(() => {
-    console.log(products);
-  }, [products]);
+    async function getStockManagementTableData() {
+      const averageSalesPerDay = await firestore.readSelectedDataFromCollection('Analytics', 'itemAverageSalesPerDay');
+      const averageSalesPerDatData = averageSalesPerDay.data;
+      const stockManagementTableData = new stockManagementTableDataHandler(
+        products,
+        averageSalesPerDatData,
+        hideSlowMovingCheckbox,
+        0.5
+      );
+      const wholesaleData = stockManagementTableData.getWholesaleData();
+      const retailData = stockManagementTableData.getRetailData();
+      console.log(retailData);
+      setRowsWholesale(wholesaleData);
+      setRowsRetail(retailData);
+    }
+
+    getStockManagementTableData();
+  }, [products,hideSlowMovingCheckbox]);
 
   return (
-    <div className='flex overflow-x-auto '>
-      
+    <div className="flex w-full h-full flex-col items-center">
       {/* Item Name */}
       {/* Stocks Available */}
       {/* Suggested Stocks*/}
       {/*  */}
-      <Box sx={{ height: 400, width: '100%'}}>
+      <Typography variant="h5" className="mt-5">
+        Stock Management Table
+      </Typography>
+      <Typography variant="subtitle1" className="mt-2">
+        Wholesale
+      </Typography>
+
+      <div className="flex w-full ml-44">
+        <FormControlLabel
+          control={
+            <Checkbox
+              defaultChecked
+              checked={hideSlowMovingCheckbox}
+              onChange={() => {
+                setHideSlowMovingCheckbox(!hideSlowMovingCheckbox);
+              }}
+            />
+          }
+          label="Hide Slow Moving"
+        />
+      </div>
+      <Box sx={{ height: '80vh', width: '92%' }}>
         <DataGrid
-          rows={rows}
-          columns={columns}
+          rows={rowsWholesale}
+          columns={columnsWholesale}
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 5,
+                pageSize: 50,
+              },
+            },
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
+      </Box>
+      <Typography variant="subtitle1" className="my-10">
+        Retail
+      </Typography>
+      <Box sx={{ height: '80vh', width: '92%' }}>
+        <DataGrid
+          rows={rowsRetail}
+          columns={columnsRetail}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 50,
               },
             },
           }}

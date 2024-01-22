@@ -5493,7 +5493,10 @@ describe('test paymaya endpoint success', async () => {
 describe.only('test stockManagementTableDataHandler', async () => {
   test('invoke function', async () => {
     const products = await firestore.readAllDataFromCollection('Products');
-    const itemAverageSalesPerDay = await firestore.readAllDataFromCollection('Analytics','ItemAverageSalesPerDay').data
-    const stockManagementTableData = new stockManagementTableDataHandler(products, itemAverageSalesPerDay);
+    const itemAverageSalesPerDay = await firestore.readSelectedDataFromCollection('Analytics','itemAverageSalesPerDay')
+    const data = itemAverageSalesPerDay.data
+    const stockManagementTableData = new stockManagementTableDataHandler(products, data);
+    // stockManagementTableData.getWholesaleData();
+    stockManagementTableData.getRetailData();
   });
 });

@@ -1592,7 +1592,7 @@ exports.payMayaEndpoint = onRequest(async (req, res) => {
   }
   console.log('req.body', req.body);
   const data = req.body;
-  const status = data.status;
+  const status = data.paymentStatus;
   const requestReferenceNumber = data.requestReferenceNumber;
   const amount = data.amount;
   const forTesting = data.forTesting ? data.forTesting : false;
