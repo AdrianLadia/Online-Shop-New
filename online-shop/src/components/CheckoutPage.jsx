@@ -75,6 +75,7 @@ const CheckoutPage = () => {
     analytics,
     alertSnackbar,
     businesscalculations,
+    affiliateUid,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [localname, setLocalName] = React.useState('');
@@ -389,6 +390,7 @@ const CheckoutPage = () => {
         deliveryDate: startDate.toISOString(),
         paymentMethod: paymentMethodSelected,
         userRole: userdata ? userdata.userRole : 'GUEST',
+        affiliateUid: affiliateUid,
       });
 
       setTransactionStatus(res);

@@ -145,6 +145,25 @@ function App() {
   const [alertDuration, setAlertDuration] = useState(5000);
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
 
+  const [affiliateUid, setAffiliateUid] = useState(null);
+  useEffect(() => {
+    let foundAffiliateFromUserdata = false;
+    if (userdata) {
+      if (userdata.affiliateId) {
+        foundAffiliateFromUserdata = true;
+        setAffiliateUid(userdata.affiliate);
+      }
+    }
+
+    if (!foundAffiliateFromUserdata) {
+      let params = new URLSearchParams(window.location.search);
+      let affiliateId = params.get('aid');
+      if (affiliateId) {
+        setAffiliateUid(affiliateId);
+      }
+    }
+  }, [userdata]);
+
   function alertSnackbar(severity, message, duration) {
     console.log(duration)
     setShowAlert(true);
@@ -647,6 +666,7 @@ function App() {
     isDistributor: isDistributor,
     useDistributorPrice: useDistributorPrice,
     setUseDistributorPrice: setUseDistributorPrice,
+    affiliateUid: affiliateUid,
   };
 
   return (

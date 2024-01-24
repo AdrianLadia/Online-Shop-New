@@ -174,6 +174,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryDate: Joi.date().required(),
       paymentMethod: Joi.string().required(),
       userRole : Joi.string().required(),
+      affiliateUid : Joi.string().allow(null),
     }).unknown(false);
 
     if (data['testing'] == null) {
