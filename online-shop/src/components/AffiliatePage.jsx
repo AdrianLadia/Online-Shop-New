@@ -70,7 +70,7 @@ const AdminAffiliatePage = () => {
             window.location.reload()
             setLoading(false)
           }else{
-            alertSnackbar('error',"Something went wrong. Please try again.")
+            alertSnackbar(res)
             setLoading(false)
           }
         })

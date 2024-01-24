@@ -148,21 +148,29 @@ function App() {
   const [affiliateUid, setAffiliateUid] = useState(null);
   useEffect(() => {
     let foundAffiliateFromUserdata = false;
-    if (userdata) {
-      if (userdata.affiliateId) {
-        foundAffiliateFromUserdata = true;
-        setAffiliateUid(userdata.affiliate);
-      }
+    if (userdata && userdata.affiliateId) {
+      foundAffiliateFromUserdata = true;
+      setAffiliateUid(userdata.affiliate);
     }
-
+  
     if (!foundAffiliateFromUserdata) {
-      let params = new URLSearchParams(window.location.search);
-      let affiliateId = params.get('aid');
-      if (affiliateId) {
-        setAffiliateUid(affiliateId);
-      }
+      const checkAffiliateId = async () => {
+        let params = new URLSearchParams(window.location.search);
+        let affiliateId = params.get('aid');
+        const affiliateUsers = await cloudfirestore.getAllAffiliateUsers();
+        affiliateUsers.forEach((affiliateUser) => {
+          if (affiliateUser.affiliateId === affiliateId) {
+            console.log('affiliate found');
+            console.log(affiliateUser.uid);
+            setAffiliateUid(affiliateUser.uid);
+          }
+        });
+      };
+  
+      checkAffiliateId();
     }
   }, [userdata]);
+  
 
   function alertSnackbar(severity, message, duration) {
     console.log(duration)

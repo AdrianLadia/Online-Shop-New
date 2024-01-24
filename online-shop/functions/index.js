@@ -702,6 +702,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const deliveryDate = new Date(data.deliveryDate);
     const paymentMethod = data.paymentMethod;
     const userRole = data.userRole;
+    const affiliateUid = data.affiliateUid;
 
     let cartUniqueItems = [];
 
@@ -959,7 +960,9 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
             proofOfDeliveryLink: [],
             deliveryDate: deliveryDate,
             paymentMethod: paymentMethod,
+            affiliateUid: affiliateUid,
           };
+          
           const userOrderObject = { reference: reference, date: new Date() };
           const updatedOrders = [userOrderObject, ...oldOrders];
           transaction.update(userRef, { orders: updatedOrders });
@@ -1300,7 +1303,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     const orderReference = data.reference;
     const paymentprovider = data.paymentprovider;
 
-    const commissionPercentage = 0.03;
+    const commissionPercentage = 0.01;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
     logger.log('Proof of payment link', proofOfPaymentLink);
@@ -1314,6 +1317,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
+        const affiliateUid = orderDetail.affiliateUid;
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
@@ -1348,26 +1352,35 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const userRef = db.collection('Users').doc(userId);
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
-        const affiliateIdOfCustomer = userData.affiliate;
+        console.log('affiliateUid', affiliateUid)
+        const affiliateIdOfCustomer = affiliateUid
         let newAffiliateCommissions;
         let affiliateUserRef;
+        let foundAffiliate = false
         if (affiliateIdOfCustomer != null) {
-          affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
-          const affiliateUserSnap = await transaction.get(affiliateUserRef);
-          const affiliateUserData = affiliateUserSnap.data();
-          const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
-          const commission =
-            ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
-          newAffiliateCommissions = [
-            ...oldAffiliateCommissions,
-            {
-              customer: 'test',
-              dateOrdered: new Date().toDateString(),
-              commission: commission.toFixed(2),
-              status: 'claimable',
-              claimCode: '',
-            },
-          ];
+          try {
+            affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
+            const affiliateUserSnap = await transaction.get(affiliateUserRef);
+            const affiliateUserData = affiliateUserSnap.data();
+            const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
+            
+            const commission =
+              ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
+            newAffiliateCommissions = [
+              ...oldAffiliateCommissions,
+              {
+                customer: 'test',
+                dateOrdered: new Date().toDateString(),
+                commission: commission.toFixed(2),
+                status: 'claimable',
+                claimCode: '',
+              },
+            ];
+            foundAffiliate = true
+          }
+          catch (error) {
+            console.log('error', error)
+          }
         }
 
         const oldPayments = userData.payments;
@@ -1415,7 +1428,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           transaction.update(orderRef, { proofOfPaymentLink: newOrderPayments });
         }
 
-        if (affiliateIdOfCustomer != null) {
+        if (affiliateIdOfCustomer != null && foundAffiliate == true) {
           transaction.update(affiliateUserRef, { affiliateCommissions: newAffiliateCommissions });
         }
 
@@ -1458,6 +1471,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     }
   });
 });
+
 
 // Paymaya create checkout request
 exports.payMayaCheckout = onRequest(async (req, res) => {
@@ -2194,7 +2208,9 @@ exports.onAffiliateClaim = onRequest(async (req, res) => {
         const affiliateUserId = forClaims.affiliateUserId;
         const affiliateRef = await db.collection('Users').doc(affiliateUserId).get();
         const affiliateUserData = affiliateRef.data();
-        const oldAffiliateClaims = affiliateUserData.affiliateClaims;
+        const oldAffiliateClaims = affiliateUserData.affiliateCommissions;
+
+        if (oldAffiliateClaims.length > 0) {
 
         const updatedClaimData = [];
         oldAffiliateClaims.map((oldClaims) => {
