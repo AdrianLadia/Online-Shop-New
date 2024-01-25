@@ -21,6 +21,7 @@ import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
 import disableCodHandler from '../utils/classes/disableCodHandler';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import stockManagementTableDataHandler from '../utils/classes/stockMangementTableDataHandler';
+import { onAffiliateClaim, transactionPlaceOrder } from '../functions';
 
 // DELAYS
 const transactionCreatePaymentDelay = 500;
@@ -3338,7 +3339,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe('test commission system', async () => {
+describe.only('test commission system', async () => {
   test('Setup test', async () => {
     await resetOrdersAndPayments();
 
@@ -3456,31 +3457,19 @@ describe('test commission system', async () => {
   test('check if transaction create payment added commissions to affiliate', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
     const affiliateCommissions = affiliateData.affiliateCommissions;
-    expect(affiliateCommissions.length).toBeGreaterThan(0);
+    expect(affiliateCommissions.length).toEqual(3);
   });
   test('affiliate claims commission', async () => {
-    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
-    const affiliateCommissions = affiliateData.affiliateCommissions;
-    const data1 = {
+    const data = {
       date: new Date().toDateString(),
-      data: affiliateCommissions,
-      id: 'TESTAFFILIATE',
-      claimCode: 'testcode',
-    };
-    const data2 = {
       affiliateUserId: 'TESTAFFILIATE',
       affiliateClaimId: 'testcode',
       method: 'gcash',
       accountNumber: '0123456789',
       accountName: 'affiliate user',
-      transactionDate: new Date().toDateString(),
       amount: 17500,
       totalDeposited: 0,
       isDone: false,
-    };
-    const data = {
-      data1: data1,
-      data2: data2,
     };
     await cloudfirestore.onAffiliateClaim(data);
     await delay(1500);
@@ -3551,6 +3540,7 @@ describe('test commission system', async () => {
     });
   });
   test('create another order with vat and pay', async () => {
+    
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       isInvoiceNeeded: true,
@@ -3595,7 +3585,7 @@ describe('test commission system', async () => {
     const commissions = affiliateData.affiliateCommissions;
     let found = false;
     commissions.forEach((commission) => {
-      if (commission.commission == '261.64') {
+      if (commission.commission == '87.21') {
         found = true;
       }
     });
@@ -3665,6 +3655,145 @@ describe('test commission system', async () => {
       }
     });
   });
+  test('affiliate claim should not be allowed if there is a pending claim', async() => {
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 8928.57,
+      vat: 1071.43,
+      shippingtotal: 1000,
+      grandTotal: 11000,
+      reference: 'testref321',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+    });
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 8928.57,
+      vat: 1071.43,
+      shippingtotal: 1000,
+      grandTotal: 11000,
+      reference: 'testref4321',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+    });
+    await delay(transactionCreatePaymentDelay)
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 11000,
+      reference: 'testref321',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    });
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 11000,
+      reference: 'testref4321',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink34',
+    });
+    await delay(transactionCreatePaymentDelay)
+
+    await cloudfirestore.onAffiliateClaim({
+      date: new Date().toDateString(),
+      affiliateUserId: 'TESTAFFILIATE',
+      affiliateClaimId: 'testcode',
+      method: 'gcash',
+      accountNumber: '0123456789',
+      accountName: 'affiliate user',
+      amount: 220,
+      totalDeposited: 0,
+      isDone: false,
+    })
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 8928.57,
+      vat: 1071.43,
+      shippingtotal: 1000,
+      grandTotal: 11000,
+      reference: 'testref54321',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+    });
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 11000,
+      reference: 'testref54321',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink34',
+    });
+    const res = await cloudfirestore.onAffiliateClaim({
+      date: new Date().toDateString(),
+      affiliateUserId: 'TESTAFFILIATE',
+      affiliateClaimId: 'testcode',
+      method: 'gcash',
+      accountNumber: '0123456789',
+      accountName: 'affiliate user',
+      amount: 110,
+      totalDeposited: 0,
+      isDone: false,
+    })
+    expect(res.response.status).toEqual(400);
+  } )
 }, 500000);
 
 describe('test bir2303Link functions', () => {
@@ -5393,6 +5522,7 @@ describe('test user creates 2 orders. The second order is bigger than the second
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
     });
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
@@ -5407,8 +5537,8 @@ describe('test user creates 2 orders. The second order is bigger than the second
   test('invoke function', async () => {
     await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' });
   });
-  await delay(transactionCreatePaymentDelay);
   test('check values', async () => {
+    await delay(transactionCreatePaymentDelay);
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
     expect(order).toEqual(undefined);
     const secondOrder = await firestore.readSelectedDataFromCollection('Orders', 'testref12345');
@@ -5426,7 +5556,7 @@ describe('test paymaya endpoint success', async () => {
     id: '59cf27a1-8aa1-4eb3-b7d4-32a53251edec',
     amount: 20000,
     currency: 'PHP',
-    status: 'PAYMENT_SUCCESS',
+    paymentStatus: 'PAYMENT_SUCCESS',
     requestReferenceNumber: 'testref12345',
     forTesting: true,
   };
@@ -5434,7 +5564,7 @@ describe('test paymaya endpoint success', async () => {
     id: '69361631-4fff-40a4-abea-3472b51ac2c7',
     amount: 985,
     currency: 'PHP',
-    status: 'PAYMENT_FAILED',
+    paymentStatus: 'PAYMENT_FAILED',
     requestReferenceNumber: 'testref12345',
     forTesting: true,
   };
@@ -5442,7 +5572,7 @@ describe('test paymaya endpoint success', async () => {
     id: '3551576d-a7a4-4373-b3a6-10be94ff4a1f',
     amount: 165,
     currency: 'PHP',
-    status: 'PAYMENT_EXPIRED',
+    paymentStatus: 'PAYMENT_EXPIRED',
     requestReferenceNumber: 'testref12345',
     forTesting: true,
   };
@@ -5543,7 +5673,7 @@ describe('test paymaya endpoint success', async () => {
   });
 },100000000);
 
-describe.only('test stockManagementTableDataHandler', async () => {
+describe('test stockManagementTableDataHandler', async () => {
   test('invoke function', async () => {
     const products = await firestore.readAllDataFromCollection('Products');
     const itemAverageSalesPerDay = await firestore.readSelectedDataFromCollection('Analytics','itemAverageSalesPerDay')
@@ -5555,7 +5685,7 @@ describe.only('test stockManagementTableDataHandler', async () => {
 });
 
 
-describe.only('test guest opens link as guest and has params of aid / affiliateUid',async() => {
+describe('test guest opens link as guest and has params of aid / affiliateUid',async() => {
   test('prepare test', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE');
     
@@ -5614,8 +5744,33 @@ describe.only('test guest opens link as guest and has params of aid / affiliateU
       },
       'TESTNEWGUEST'
     );
-
-
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'GUEST',
+        name: 'affiliate user',
+        email: 'affiliate@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: { reason: null, isBanned: false },
+      },
+      'GUEST'
+    );
   })
   test('invoke function', async () => {
     await cloudfirestore.transactionPlaceOrder({
@@ -5671,5 +5826,6 @@ describe.only('test guest opens link as guest and has params of aid / affiliateU
     await resetOrdersAndPayments()
     await firestore.deleteDocumentFromCollection('Users', 'TESTNEWGUEST');
     await firestore.updateDocumentFromCollection('Users', 'GUEST', {affiliateCommissions:[]})
+    await firestore.deleteDocumentFromCollection('Users', 'GUEST');
   })
 })

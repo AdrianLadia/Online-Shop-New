@@ -1,177 +1,608 @@
-import React,{useContext, useEffect, useState} from 'react'
-import AppContext from '../AppContext'
-import useWindowDimensions from "./UseWindowDimensions";
+import React, { useContext, useEffect, useState } from 'react';
+import AppContext from '../AppContext';
+import useWindowDimensions from './UseWindowDimensions';
 import Autocomplete from '@mui/material/Autocomplete';
-import { TextField, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Button } from '@mui/material';
+import { TextField, Paper, Button, Typography } from '@mui/material';
 import AffiliateAddPaymentMethodModal from './AffiliateAddPaymentMethodModal';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '../colorPalette/MaterialUITheme';
+import Modal from '@mui/material/Modal';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import MyOrderCardModal from './MyOrderCardModal';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import IconButton from '@mui/material/IconButton';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import TableHead from '@mui/material/TableHead';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
+import StockManagementTable from './CompanyDashboard/StockManagementTable';
 
-const AdminAffiliatePage = () => {
+const isSmallScreen = () => {
+  return window.innerWidth <= 480; // iPhone screen width or similar
+};
 
-    const { userdata, cloudfirestore, refreshUser,firestore,alertSnackbar} = useContext(AppContext);
-    const { height} = useWindowDimensions()
-    const [paymentMethods, setPaymentMethods] = useState([]);
-    
-    // affiliate claim Id should be handled by backend
-    const affiliateClaimId = [...Array(20)].map(() => Math.random().toString(36)[2]).join('');
-    const [chosenMethod, setChosenMethod] = useState(null);
-    const [paymentMethodData, setPaymentMethodData] = useState(null);
-    const [total, setTotal] = useState(0);
-    const accountNumber = '152512'
-    const accountName = 'John Doe';
-    const currentDate = new Date().toDateString()
-    const [openAddPaymentMethodModal, setOpenAddPaymentMethodModal] = useState(false);
-    const [loading,setLoading] = useState(true)
+const LineChart = ({ affiliateCommissions }) => {
+  const values = [];
+  const months = [];
+  const x = {};
 
-    useEffect(() => {
-      if (userdata) {
-        firestore.readAllAvailableAffiliateBankAccounts(userdata.uid).then(bankAccounts=>{
-
-          setPaymentMethodData(bankAccounts)
-         
-          const bankNames = []
-          bankAccounts.forEach((bank)=>{
-            bankNames.push(bank.bank)
-          })
-
-          setPaymentMethods(bankNames)
-        })
-      }
-    }, [userdata]);
-
-
-
-    function onClaimClick(){
-      if(chosenMethod && total > 0 && userdata){
-        setLoading(true)
-        const data1 = {
-          date: new Date().toDateString(),
-          data: affiliateCommissions,
-          id: userdata.uid,
-          claimCode: affiliateClaimId,
-        }
-        const data2 = {
-          affiliateUserId: userdata.uid,
-          affiliateClaimId: affiliateClaimId,
-          method: chosenMethod,
-          accountNumber: accountNumber,
-          accountName: accountName,
-          transactionDate: currentDate,
-          amount: total,
-          totalDeposited:0,
-          isDone: false
-        }
-        const data = {
-          data1:data1,
-          data2:data2
-        }
-        cloudfirestore.onAffiliateClaim(data).then(res=>{
-          if(res.request.status==200){
-            alertSnackbar('success',"Your Claim Request is Submitted Successfully.")
-            window.location.reload()
-            setLoading(false)
-          }else{
-            alertSnackbar(res)
-            setLoading(false)
-          }
-        })
-      }
-      
+  affiliateCommissions.forEach((item) => {
+    const date = new Date(item.dateOrdered);
+    if (isNaN(date)) {
+      console.error('Invalid date:', item.dateOrdered);
+      return;
     }
 
-    let affiliateCommissions = userdata ? userdata.affiliateCommissions:null;
-
-    useEffect(() => {
-      if(userdata){
-        const claimables = affiliateCommissions.filter((item)=>item.status == 'claimable')
-        let totalUnclaimed = 0
-        claimables.forEach((item)=>{
-          totalUnclaimed += parseFloat(item.commission)
-        })
-
-
-        setTotal(totalUnclaimed.toFixed(2))
-      }
-    }, [affiliateCommissions, refreshUser]);
-
-    function disableColor(){
-      if(chosenMethod && total != 0){
-        return ' bg-color10b hover:bg-blue1'
-      }else{
-        return ' bg-gray-300 cursor-not-allowed'
-      }
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear();
+    const key = month + ' ' + year;
+    if (!x[key]) {
+      x[key] = 0; // Initialize to 0 if not already set
     }
 
-    function disableButton(){
-      if (chosenMethod && total != 0) {
-        return false
-      }
-      else if (loading == false) {
-        return false
-      }
-      else {
-        return true
-      }
+    const commission = parseFloat(item.commission);
+    if (isNaN(commission)) {
+      console.error('Invalid commission value:', item.commission);
+      return;
     }
 
-  return (  
-    <div className='flex flex-col justify-center items-center tracking-widest  font-sans'>
-      <div className='flex flex-col justify-evenly h-40per w-full p-5 '>
-        <div className='flex flex-col gap-1.5 items-center justify-center '>
-          <div className='text-color30'>{'Commission'}</div>
-          <div className='text-blue1 tracking-wider text-6xl font-semibold p-3.5 px-16 rounded-lg border-t border-x border-color30 shadow-md shadow-color30'>₱ {total}</div>
-        </div>
-        <div className='flex lg:flex-row flex-col items-center gap-8 justify-center '>
-          <div className='flex items-center justify-center mr-5 h-14 '>
-          <Button onClick={()=>{setOpenAddPaymentMethodModal(true)}} 
-            className={'h-full rounded-lg mb-0.5 '} variant='contained'>Add Payment Method
-          </Button>
-          </div>
-          <div className='h-1/2 items-center w-96 flex bg-red-100'>
-            <Autocomplete value={chosenMethod} options={paymentMethods}
-              className='w-full' disablePortal id="combo-box-demo"
-              onChange={(event, newValue) => { setChosenMethod(newValue) }}
-              sx={{ backgroundColor: '#D6EFC7', borderRadius: 2, color: '#bb9541',
-                '& .MuiOutlinedInput-notchedOutline': { border: 2, color: '#bb9541', borderRadius: 2, },
-                '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { color: '#bb9541', border: 2, },
-                '& .MuiOutlinedInput-root:after .MuiOutlinedInput-notchedOutline': { color: '#bb9541', border: 2, },
-              }}
-              renderInput={(params) => <TextField required {...params} label="Method" />}
-            />
-          </div>
-          <div className='h-full  flex'>
-            <Button disabled={ disableButton()} onClick={onClaimClick} 
-              className={'tracking-widest px-10 rounded-lg mb-0.5 w-3/12 ' + disableColor()} variant='contained'>Claim
-            </Button>
-          </div>
-        </div>
-      </div>
-      {userdata?<div className=' h-60per w-full flex justify-center items-start'>
-        <div className='h-9/10 w-9/10 rounded-lg '>
-          <TableContainer className="border-2 border-color30" component={Paper} sx={{ maxHeight: height - 250 }}>
-            <Table style={{ tableLayout: "auto" }} fixedHeader={true} aria-label="simple table">
-              <TableHead className="bg-color30 bg-opacity-100 h-16">
-                <TableCell className="font-sans text-lg tracking-wider text-white">Customer</TableCell>
-                <TableCell className="font-sans text-lg tracking-wider text-white">Date Ordered</TableCell>
-                <TableCell className="font-sans text-lg tracking-wider text-white">Status</TableCell>
-                <TableCell className="font-sans text-lg tracking-wider text-white">Commission</TableCell>
-              </TableHead>
-              <TableBody >
-                {affiliateCommissions != 0 ? affiliateCommissions.map((data, index)=>(
-                  <TableRow key={index}>
-                    <TableCell>{data.customer}</TableCell>
-                    <TableCell>{data.dateOrdered}</TableCell>
-                    <TableCell style={{color:data.status == 'claimable'? 'limegreen':data.status=='claimed'?"#429eff":'orange'}}>{data.status}</TableCell>
-                    <TableCell className="text-green-500">₱ {data.commission.toLocaleString()}</TableCell>
-                  </TableRow>
-                )):'No Commissions'}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-      </div>:"login"}
-      <AffiliateAddPaymentMethodModal paymentMethodData={paymentMethodData} open={openAddPaymentMethodModal} setOpen={setOpenAddPaymentMethodModal} />
-    </div>
-  )
+    x[key] += commission;
+  });
+
+  for (const [key, value] of Object.entries(x)) {
+    months.push(key);
+    values.push(value);
+  }
+
+  const data = {
+    labels: months,
+
+    datasets: [
+      {
+        label: 'Sales Over Months',
+        data: values,
+        fill: false,
+        backgroundColor: 'rgb(75, 192, 192)',
+        borderColor: 'rgba(75, 192, 192, 0.2)',
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      legend: {
+        display: false, // this will hide the legend
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+      },
+    },
+  };
+
+  return <Line data={data} options={options} />;
+};
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: isSmallScreen() ? '90%' : '400px', // Use 90% width for small screens
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+function TablePaginationActions(props) {
+  const { count, page, rowsPerPage, onPageChange } = props;
+
+  const handleFirstPageButtonClick = (event) => {
+    onPageChange(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onPageChange(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onPageChange(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+      <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page"
+      >
+        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </Box>
+  );
 }
 
-export default AdminAffiliatePage
+const AdminAffiliatePage = () => {
+  const { userdata, cloudfirestore, refreshUser, firestore, alertSnackbar } = useContext(AppContext);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+
+  // affiliate claim Id should be handled by backend
+  const affiliateClaimId = [...Array(20)].map(() => Math.random().toString(36)[2]).join('');
+  const [chosenMethod, setChosenMethod] = useState(null);
+  const [paymentMethodData, setPaymentMethodData] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [accountNumber, setAccountNumber] = useState('');
+  const [accountName, setAccountName] = useState('');
+  const currentDate = new Date().toDateString();
+  const [openAddPaymentMethodModal, setOpenAddPaymentMethodModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [openClaimModal, setOpenClaimModal] = useState(false);
+  const [affiliateCommissions, setAffiliateCommissions] = useState([]);
+  const [openOrderModal, setOpenOrderModal] = useState(false);
+  const [order, setOrder] = useState(null);
+  const [tableData, setTableData] = useState([]);
+  const [openHowToEarnModal, setOpenHowToEarnModal] = useState(false);
+  const [onlineStoreProductsData, setOnlineStoreProductsData] = useState([]);
+
+  useEffect(()=>{
+    cloudfirestore.readAllDataFromCollection('Products').then((res) => {
+      console.log(res)
+      setOnlineStoreProductsData(res);
+    });
+  },[])
+
+  useEffect(() => {
+    if (userdata) {
+      firestore.readAllAvailableAffiliateBankAccounts(userdata.uid).then((bankAccounts) => {
+        setPaymentMethodData(bankAccounts);
+
+        const bankNames = [];
+        bankAccounts.forEach((bank) => {
+          bankNames.push(bank.bank);
+        });
+
+        setPaymentMethods(bankNames);
+      });
+
+      const mockCommissions = [];
+      const startDate = new Date('Thu Oct 14 2021');
+
+      for (let i = 0; i < 100; i++) {
+        // Create a new Date object from the startDate
+        let date = new Date(startDate);
+
+        // Change the month every 5 iterations
+        const monthOffset = Math.floor(i / 2);
+        date.setMonth(date.getMonth() + monthOffset);
+
+        mockCommissions.push({
+          claimCode: '',
+          customer: 'test',
+          dateOrdered: date.toDateString(), // Convert the date back to a string
+          orderReference: 'Order ' + i,
+          status: 'claimable',
+          commission: (Math.random() * 1000).toString(),
+        });
+      }
+
+      setAffiliateCommissions(userdata.affiliateCommissions);
+      // setAffiliateCommissions(mockCommissions);
+    }
+    console.log(userdata.affiliateId)
+  }, [userdata]);
+
+  function onClaimClick() {
+    if (chosenMethod && total > 0 && userdata) {
+      setLoading(true);
+      const data = {
+        date: new Date().toDateString(),
+        affiliateUserId: userdata.uid,
+        affiliateClaimId: affiliateClaimId,
+        method: chosenMethod,
+        accountNumber: accountNumber,
+        accountName: accountName,
+        amount: total,
+        totalDeposited: 0,
+        isDone: false,
+      };
+      cloudfirestore.onAffiliateClaim(data).then((res) => {
+        if (res.status == 200) {
+          alertSnackbar('success', 'Your Claim Request is Submitted Successfully.');
+          window.location.reload();
+          setLoading(false);
+        } else {
+          alertSnackbar('error', res.response.data);
+          console.log(res);
+          setLoading(false);
+        }
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (userdata) {
+      const claimables = affiliateCommissions.filter((item) => item.status == 'claimable');
+      let totalUnclaimed = 0;
+      claimables.forEach((item) => {
+        totalUnclaimed += parseFloat(item.commission);
+      });
+
+      setTotal(totalUnclaimed.toFixed(2));
+    }
+  }, [affiliateCommissions, refreshUser]);
+
+  function disableColor() {
+    if (chosenMethod && total != 0) {
+      return ' bg-color10b hover:bg-blue1';
+    } else {
+      return ' bg-gray-300 cursor-not-allowed';
+    }
+  }
+
+  function disableButton() {
+    if (chosenMethod && total != 0) {
+      return false;
+    } else if (loading == false) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  useEffect(() => {
+    if (order) {
+      setOpenOrderModal(true);
+    }
+  }, [order]);
+
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  useEffect(() => {
+    function chunkArrayInGroups(arr, size) {
+      let result = [];
+
+      for (let i = 0; i < arr.length; i += size) {
+        result.push(arr.slice(i, i + size));
+      }
+
+      return result;
+    }
+
+    let data = chunkArrayInGroups(affiliateCommissions, rowsPerPage);
+    data = data[page];
+    if (data) {
+      setTableData(data);
+    }
+  }, [rowsPerPage, page, affiliateCommissions]);
+
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * affiliateCommissions - affiliateCommissions.length) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <div className="flex flex-col justify-center items-center tracking-widest  font-sans">
+        <Typography className="text-4xl font-bold mt-10 mb-5">Affiliate Dashboard</Typography>
+
+        <div className="flex flex-col justify-evenly my-10  w-full  ">
+          <div className="flex flex-col gap-1.5 items-center justify-center ">
+            <Box sx={{ minWidth: isSmallScreen() ? '90%' : '400px' }}>
+              <Card variant="outlined">
+                {' '}
+                <React.Fragment>
+                  <CardContent>
+                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                      Claimable Commissions
+                    </Typography>
+                    <Typography variant="h5" component="div">
+                      ₱ {total.toLocaleString()}
+                    </Typography>
+                    <Typography sx={{ fontSize: 14, marginTop: 2 }} color="text.secondary" gutterBottom>
+                      Total Earned
+                    </Typography>
+                    <Typography variant="h5" component="div">
+                      ₱ {total.toLocaleString()}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <div className="flex flex-row justify-between w-full">
+                      <Button
+                        onClick={() => {
+                          if (paymentMethods.length == 0) {
+                            setOpenAddPaymentMethodModal(true);
+                          } else {
+                            setOpenClaimModal(true);
+                          }
+                        }}
+                        size="small"
+                      >
+                        Claim Commissions
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setOpenHowToEarnModal(true);
+                        }}
+                        size="small"
+                      >
+                        How to Earn?
+                      </Button>
+                    </div>
+                  </CardActions>
+                </React.Fragment>
+              </Card>
+            </Box>
+          </div>
+          <div className="flex lg:flex-row flex-col items-center gap-8 justify-center "></div>
+        </div>
+
+        <div className="flex items-center flex-col justify-center w-9/10 lg:w-400px mb-10">
+          <Typography className="text-2xl font-bold">Commissions</Typography>
+          <LineChart affiliateCommissions={affiliateCommissions} />
+        </div>
+
+        <TableContainer
+          className=" "
+          component={Paper}
+          sx={{ width: isSmallScreen() ? '90%' : '600px', marginBottom: 8 }}
+        >
+          <Table style={{ tableLayout: 'auto' }} aria-label="simple table">
+            <TableHead className="bg-color10c bg-opacity-100 h-16">
+              <TableRow>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Reference</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Status</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Commission</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tableData.map((data, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <span
+                      style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}
+                      onClick={async () => {
+                        console.log(data.orderReference);
+                        const order = await firestore.readSelectedDataFromCollection('Orders', data.orderReference);
+                        setOrder(order);
+
+                        /* handle click event if needed */
+                      }}
+                    >
+                      {data.orderReference}
+                    </span>
+                  </TableCell>
+
+                  <TableCell
+                    style={{
+                      color:
+                        data.status === 'claimable' ? 'limegreen' : data.status === 'claimed' ? '#429eff' : 'orange',
+                    }}
+                  >
+                    {data.status}
+                  </TableCell>
+                  <TableCell className="text-green-500">₱ {data.commission.toLocaleString()}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                  colSpan={3}
+                  count={affiliateCommissions.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      'aria-label': 'rows per page',
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+
+        <AffiliateAddPaymentMethodModal
+          paymentMethodData={paymentMethodData}
+          open={openAddPaymentMethodModal}
+          setOpen={setOpenAddPaymentMethodModal}
+        />
+        <Modal
+          open={openHowToEarnModal}
+          onClose={() => {
+            setOpenHowToEarnModal(false);
+          }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <div className="flex flex-col gap-2">
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                How to Earn?
+              </Typography>
+
+              <Typography id="modal-modal-description">1. Share your affiliate link below to customers.</Typography>
+
+              <div className="flex flex-row">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText('https://starpack.ph/shop?aid=' + userdata.affiliateId);
+                    alertSnackbar('success', 'Copied to clipboard');
+                  }}
+                  className="p-3 bg-color10c rounded-lg text-white"
+                >
+                  Copy
+                </button>
+                <TextField
+                  value={ userdata ? 'https://starpack.ph/shop?aid=' + userdata.affiliateId : ''}
+                  className="ml-3"
+                  // disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  sx={{ width: 'full' }}
+                  label="Affiliate Link"
+                />
+              </div>
+              <Typography id="modal-modal-description">
+                2. When they purchase, you will get 1% of the total amount they paid less delivery fee and taxes.
+              </Typography>
+              <Divider/>
+              <Typography id="modal-modal-description">
+                Notes
+              </Typography>
+              <Typography id="modal-modal-description">
+                - To lock the commission forever, make sure they register an account using your affiliate link. Once they register, they will be tagged as your customer forever and you dont need to worry about them not using your affiliate link when they purchase they just need to use the same account.
+              </Typography>
+              <Typography id="modal-modal-description">
+                - You can still earn commission even if they dont register an account the customer just needs to order through your affiliate link.
+              </Typography>
+            </div>
+          </Box>
+        </Modal>
+        <Modal
+          open={openClaimModal}
+          onClose={() => {
+            setOpenClaimModal(false);
+          }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <div className=" flex flex-col">
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Claim Commissions
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
+                Please choose a bank account to send your commissions to.
+              </Typography>
+              <div className="flex flex-row gap-5 mt-5">
+                <Autocomplete
+                  value={chosenMethod}
+                  options={paymentMethods}
+                  className="w-full"
+                  disablePortal
+                  id="combo-box-demo"
+                  onChange={(event, newValue) => {
+                    // console.log(paymentMethodData)
+                    let found = false;
+                    for (let i of paymentMethodData) {
+                      if (i.bank == newValue) {
+                        setAccountNumber(i.accountNumber);
+                        setAccountName(i.accountName);
+                        found = true;
+                        break;
+                      }
+                    }
+                    if (!found) {
+                      setAccountNumber('');
+                      setAccountName('');
+                    }
+                    setChosenMethod(newValue);
+                  }}
+                  renderInput={(params) => <TextField required {...params} label="Bank / Wallet" />}
+                />
+                <Button
+                  onClick={() => {
+                    setOpenAddPaymentMethodModal(true);
+                  }}
+                  className="text-white h-14 text-sm"
+                  variant="contained"
+                >
+                  Add Bank
+                </Button>
+              </div>
+              <div className="flex flex-col -ml-3 mt-3">
+                {accountNumber == '' ? null : (
+                  <>
+                    <ListItem>
+                      <ListItemText primary={'Account Number'} secondary={accountNumber} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText primary={'Account Name'} secondary={accountName} />
+                    </ListItem>
+                  </>
+                )}
+              </div>
+              <Button
+                disabled={disableButton()}
+                onClick={onClaimClick}
+                className={'mt-4' + disableColor()}
+                variant="contained"
+              >
+                Claim
+              </Button>
+            </div>
+            <div className="h-full  flex"></div>
+          </Box>
+        </Modal>
+        {order ? (
+          <MyOrderCardModal
+            open={openOrderModal}
+            order={order}
+            handleClose={() => {
+              setOpenOrderModal(false);
+            }}
+          />
+        ) : null}
+      <StockManagementTable products={onlineStoreProductsData}/>
+      </div>
+    </ThemeProvider>
+  );
+};
+
+export default AdminAffiliatePage;

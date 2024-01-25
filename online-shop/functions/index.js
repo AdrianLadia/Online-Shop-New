@@ -962,7 +962,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
             paymentMethod: paymentMethod,
             affiliateUid: affiliateUid,
           };
-          
+
           const userOrderObject = { reference: reference, date: new Date() };
           const updatedOrders = [userOrderObject, ...oldOrders];
           transaction.update(userRef, { orders: updatedOrders });
@@ -1318,6 +1318,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
         const affiliateUid = orderDetail.affiliateUid;
+        console.log('affiliateUid', affiliateUid);
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
@@ -1332,10 +1333,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           doNotAddProofOfPaymentLink = true;
         }
 
-        console.log('orderDetail', orderDetail);
-
         const lessCommissionToShipping = parseFloat((shippingTotal * (depositAmount / itemsTotal)).toFixed(2));
-
         const paymentsRef = db.collection('Payments');
         const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
         const paymentSnapshot = await paymentQuery.get();
@@ -1352,18 +1350,18 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const userRef = db.collection('Users').doc(userId);
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
-        console.log('affiliateUid', affiliateUid)
-        const affiliateIdOfCustomer = affiliateUid
+        const affiliateIdOfCustomer = affiliateUid != null ? affiliateUid : userData.affiliate;
+        console.log('affiliateIdOfCustomer', affiliateIdOfCustomer);
         let newAffiliateCommissions;
         let affiliateUserRef;
-        let foundAffiliate = false
+        let foundAffiliate = false;
         if (affiliateIdOfCustomer != null) {
           try {
             affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
             const affiliateUserSnap = await transaction.get(affiliateUserRef);
             const affiliateUserData = affiliateUserSnap.data();
             const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
-            
+
             const commission =
               ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
             newAffiliateCommissions = [
@@ -1374,12 +1372,12 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
                 commission: commission.toFixed(2),
                 status: 'claimable',
                 claimCode: '',
+                orderReference: orderReference,
               },
             ];
-            foundAffiliate = true
-          }
-          catch (error) {
-            console.log('error', error)
+            foundAffiliate = true;
+          } catch (error) {
+            console.log('error', error);
           }
         }
 
@@ -1471,7 +1469,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     }
   });
 });
-
 
 // Paymaya create checkout request
 exports.payMayaCheckout = onRequest(async (req, res) => {
@@ -1634,13 +1631,13 @@ exports.payMayaEndpoint = onRequest(async (req, res) => {
   }
 
   if (status == 'PAYMENT_FAILED') {
-    response = {status: 200} // temporary. Replace when logic is implemented
+    response = { status: 200 }; // temporary. Replace when logic is implemented
   }
 
   if (status == 'PAYMENT_EXPIRED') {
-    response = {status: 200} // temporary. Replace when logic is implemented
+    response = { status: 200 }; // temporary. Replace when logic is implemented
   }
-
+  console.log('response', response);
   if (response.status == 200) {
     res.status(200).send({
       webhookDataProcessed: 'success',
@@ -2196,50 +2193,48 @@ exports.onAffiliateClaim = onRequest(async (req, res) => {
     }
     const db = admin.firestore();
     const data = req.body;
-    try {
-      db.runTransaction(async (transaction) => {
-        const forStatus = data.data1;
-        const commDate = forStatus.date;
-        const commData = forStatus.data;
-        const commId = forStatus.id;
-        const claimCode = forStatus.claimCode;
-        const userRef = db.collection('Users').doc(commId);
-        const forClaims = data.data2;
-        const affiliateUserId = forClaims.affiliateUserId;
-        const affiliateRef = await db.collection('Users').doc(affiliateUserId).get();
-        const affiliateUserData = affiliateRef.data();
-        const oldAffiliateClaims = affiliateUserData.affiliateCommissions;
+    db.runTransaction(async (transaction) => {
+      try {
+        const commDate = data.date;
+        const claimCode = data.affiliateClaimId;
+        const affiliateUserId = data.affiliateUserId;
+        const affiliateRef = db.collection('Users').doc(affiliateUserId);
+        const docSnap = await transaction.get(affiliateRef);
+        const affiliateUserData = docSnap.data();
+        console.log('affiliateUserData', affiliateUserData);
+        const oldAffiliateClaims = affiliateUserData.affiliateClaims;
+        const commissions = affiliateUserData.affiliateCommissions;
 
-        if (oldAffiliateClaims.length > 0) {
+        console.log('commissions', commissions);
 
-        const updatedClaimData = [];
-        oldAffiliateClaims.map((oldClaims) => {
-          updatedClaimData.push(oldClaims);
-        });
-        updatedClaimData.push(forClaims);
+        const hasPending = commissions.some((commission) => commission.status === 'pending');
+        if (hasPending) {
+          console.log('hasPending', hasPending);
+          res.status(400).send('Cannot claim if there is another pending claim.');
+        }
 
-        const updatedCommData = [];
-        commData.map((commissions) => {
+        const updatedClaimData = [...oldAffiliateClaims, data];
+
+        const updatedCommData = commissions.map((commission) => {
           if (
-            new Date(commissions.dateOrdered) <= new Date(commDate) &&
-            commissions.status == 'claimable' &&
-            commissions.claimCode == ''
+            new Date(commission.dateOrdered) <= new Date(commDate) &&
+            commission.status === 'claimable' &&
+            commission.claimCode === ''
           ) {
-            commissions.status = 'pending';
-            commissions.claimCode = claimCode;
-            updatedCommData.push(commissions);
-          } else {
-            updatedCommData.push(commissions);
+            return { ...commission, status: 'pending', claimCode: claimCode };
           }
+          return commission;
         });
-        transaction.update(userRef, { affiliateClaims: updatedClaimData });
-        transaction.update(userRef, { affiliateCommissions: updatedCommData });
-        res.status(200).send(data);
-      });
-    } catch (e) {
-      logger.log(e);
-      res.status(400).send('Error on affiliate claim.');
-    }
+
+        transaction.update(affiliateRef, { affiliateClaims: updatedClaimData });
+        transaction.update(affiliateRef, { affiliateCommissions: updatedCommData });
+
+        res.status(200).send('Success');
+      } catch (e) {
+        console.log(e);
+        res.status(400).send(e);
+      }
+    });
   });
 });
 

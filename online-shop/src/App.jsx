@@ -37,6 +37,7 @@ import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 
+
 const devEnvironment = true;
 
 function App() {
@@ -148,7 +149,7 @@ function App() {
   const [affiliateUid, setAffiliateUid] = useState(null);
   useEffect(() => {
     let foundAffiliateFromUserdata = false;
-    if (userdata && userdata.affiliateId) {
+    if (userdata && userdata.affiliate) {
       foundAffiliateFromUserdata = true;
       setAffiliateUid(userdata.affiliate);
     }
@@ -159,9 +160,7 @@ function App() {
         let affiliateId = params.get('aid');
         const affiliateUsers = await cloudfirestore.getAllAffiliateUsers();
         affiliateUsers.forEach((affiliateUser) => {
-          if (affiliateUser.affiliateId === affiliateId) {
-            console.log('affiliate found');
-            console.log(affiliateUser.uid);
+          if (affiliateUser.affiliateId === affiliateId && affiliateUser.affiliateId != null) {
             setAffiliateUid(affiliateUser.uid);
           }
         });
@@ -306,6 +305,7 @@ function App() {
       if (user) {
         setUserState('userloading');
         setUser(user);
+        console.log(user.uid);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           if (userExists) {
             setUserId(user.uid);
@@ -327,8 +327,7 @@ function App() {
                   favoriteItems: [],
                   payments: [],
                   userRole: 'member',
-                  // affiliate: affiliate, TURN ON AND REPLACE CURRENT AFFILIATE WITH THIS AFTER TESTS
-                  affiliate: 'LP6ARIs14qZm4qjj1YOLCSNjxsj1', // FOR TESTING
+                  affiliate: affiliate,
                   affiliateClaims: [],
                   affiliateDeposits: [],
                   affiliateCommissions: [],

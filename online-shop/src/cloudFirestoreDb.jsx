@@ -174,7 +174,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryDate: Joi.date().required(),
       paymentMethod: Joi.string().required(),
       userRole : Joi.string().required(),
-      affiliateUid : Joi.string().allow(null),
+      affiliateUid : Joi.string().required().allow(null),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -573,13 +573,19 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async onAffiliateClaim(data) {
     const jsonData = JSON.stringify(data);
-    const res = await axios.post(`${this.url}onAffiliateClaim`, jsonData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
-      },
-    });
-    return res;
+    try {
+      const res = await axios.post(`${this.url}onAffiliateClaim`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
+        },
+      });
+      console.log(res);
+      return res;
+    }
+    catch (error) {
+      return error
+    }
   }
 
   // async addClaimsToAffiliate(data) {

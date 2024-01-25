@@ -362,7 +362,7 @@ const CheckoutPage = () => {
       } else {
         sendEmail = true;
       }
-
+      console.log('affiliateUid', affiliateUid)
       const res = await cloudfirestore.transactionPlaceOrder({
         userid: userdata ? userdata.uid : null,
         localDeliveryAddress: localDeliveryAddress,
