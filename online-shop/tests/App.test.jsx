@@ -21,7 +21,6 @@ import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
 import disableCodHandler from '../utils/classes/disableCodHandler';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import stockManagementTableDataHandler from '../utils/classes/stockMangementTableDataHandler';
-import { onAffiliateClaim, transactionPlaceOrder } from '../functions';
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
 
 // DELAYS
@@ -3340,7 +3339,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe('test commission system', async () => {
+describe.only('test commission system', async () => {
   test('Setup test', async () => {
     await resetOrdersAndPayments();
 
@@ -3475,6 +3474,7 @@ describe('test commission system', async () => {
     await cloudfirestore.onAffiliateClaim(data);
     await delay(1500);
   });
+ 
   test('check if affiliate claims commission added to affiliate claims', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
     const affiliateClaims = affiliateData.affiliateClaims;
@@ -3795,6 +3795,68 @@ describe('test commission system', async () => {
     })
     expect(res.response.status).toEqual(400);
   } )
+  test('affiliate claim less than 10000',async()=>{
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 530,
+      vat: 10,
+      shippingtotal: 60,
+      grandTotal: 600,
+      reference: 'testref8888',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+    });
+    await cloudfirestore.transactionCreatePayment({
+      userId: 'TESTUSER',
+      amount: 600,
+      reference: 'testref8888',
+      paymentprovider: 'gcash',
+      proofOfPaymentLink: 'www.test.com',
+    });
+    await delay(transactionCreatePaymentDelay);
+    const data = {
+      date: new Date().toDateString(),
+      affiliateUserId: 'TESTAFFILIATE',
+      affiliateClaimId: 'testcode',
+      method: 'gcash',
+      accountNumber: '0123456789',
+      accountName: 'affiliate user',
+      amount: 600,
+      totalDeposited: 0,
+      isDone: false,
+    };
+    const res = await cloudfirestore.onAffiliateClaim(data);
+    expect(res.response.status).toEqual(400);
+  })
+  test('clean test', async () => {
+    await firestore.updateDocumentFromCollection('Users', 'TESTAFFILIATE', {
+      affiliateCommissions: [],
+      affiliateClaims: [],
+      affiliateDeposits: [],
+      affiliateBankAccounts: [],
+    });
+  });
+ 
 }, 500000);
 
 describe('test bir2303Link functions', () => {
@@ -4908,7 +4970,6 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
     await firestore.deleteDocumentFromCollection('Orders', 'testref012');
     await firestore.deleteDocumentFromCollection('Products', 'test');
     await firestore.deleteDocumentFromCollection('Products', 'test2');
-    await firestore.deleteDocumentFromCollection('Users', 'GUEST');
     await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref0');
     await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref01');
   });

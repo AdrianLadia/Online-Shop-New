@@ -31,6 +31,7 @@ import TableHead from '@mui/material/TableHead';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 import StockManagementTable from './CompanyDashboard/StockManagementTable';
+import { set } from 'date-fns';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -172,6 +173,7 @@ const AdminAffiliatePage = () => {
   const [chosenMethod, setChosenMethod] = useState(null);
   const [paymentMethodData, setPaymentMethodData] = useState(null);
   const [total, setTotal] = useState(0);
+  const [totalEarned, setTotalEarned] = useState(0); // total unclaimed commissions
   const [accountNumber, setAccountNumber] = useState('');
   const [accountName, setAccountName] = useState('');
   const currentDate = new Date().toDateString();
@@ -185,12 +187,12 @@ const AdminAffiliatePage = () => {
   const [openHowToEarnModal, setOpenHowToEarnModal] = useState(false);
   const [onlineStoreProductsData, setOnlineStoreProductsData] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     cloudfirestore.readAllDataFromCollection('Products').then((res) => {
-      console.log(res)
+      console.log(res);
       setOnlineStoreProductsData(res);
     });
-  },[])
+  }, []);
 
   useEffect(() => {
     if (userdata) {
@@ -205,31 +207,9 @@ const AdminAffiliatePage = () => {
         setPaymentMethods(bankNames);
       });
 
-      const mockCommissions = [];
-      const startDate = new Date('Thu Oct 14 2021');
-
-      for (let i = 0; i < 100; i++) {
-        // Create a new Date object from the startDate
-        let date = new Date(startDate);
-
-        // Change the month every 5 iterations
-        const monthOffset = Math.floor(i / 2);
-        date.setMonth(date.getMonth() + monthOffset);
-
-        mockCommissions.push({
-          claimCode: '',
-          customer: 'test',
-          dateOrdered: date.toDateString(), // Convert the date back to a string
-          orderReference: 'Order ' + i,
-          status: 'claimable',
-          commission: (Math.random() * 1000).toString(),
-        });
-      }
-
       setAffiliateCommissions(userdata.affiliateCommissions);
       // setAffiliateCommissions(mockCommissions);
     }
-    console.log(userdata.affiliateId)
   }, [userdata]);
 
   function onClaimClick() {
@@ -269,6 +249,14 @@ const AdminAffiliatePage = () => {
       });
 
       setTotal(totalUnclaimed.toFixed(2));
+
+      let totalEarned = 0;
+
+      affiliateCommissions.forEach((item) => {
+        totalEarned += parseFloat(item.commission);
+      });
+
+      setTotalEarned(totalEarned.toFixed(2));
     }
   }, [affiliateCommissions, refreshUser]);
 
@@ -351,7 +339,7 @@ const AdminAffiliatePage = () => {
                       Total Earned
                     </Typography>
                     <Typography variant="h5" component="div">
-                      ₱ {total.toLocaleString()}
+                      ₱ {totalEarned.toLocaleString()}
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -488,7 +476,7 @@ const AdminAffiliatePage = () => {
                   Copy
                 </button>
                 <TextField
-                  value={ userdata ? 'https://starpack.ph/shop?aid=' + userdata.affiliateId : ''}
+                  value={userdata ? 'https://starpack.ph/shop?aid=' + userdata.affiliateId : ''}
                   className="ml-3"
                   // disabled
                   InputProps={{
@@ -501,15 +489,16 @@ const AdminAffiliatePage = () => {
               <Typography id="modal-modal-description">
                 2. When they purchase, you will get 1% of the total amount they paid less delivery fee and taxes.
               </Typography>
-              <Divider/>
+              <Divider />
+              <Typography id="modal-modal-description">Notes</Typography>
               <Typography id="modal-modal-description">
-                Notes
+                - To lock the commission forever, make sure they register an account using your affiliate link. Once
+                they register, they will be tagged as your customer forever and you dont need to worry about them not
+                using your affiliate link when they purchase they just need to use the same account.
               </Typography>
               <Typography id="modal-modal-description">
-                - To lock the commission forever, make sure they register an account using your affiliate link. Once they register, they will be tagged as your customer forever and you dont need to worry about them not using your affiliate link when they purchase they just need to use the same account.
-              </Typography>
-              <Typography id="modal-modal-description">
-                - You can still earn commission even if they dont register an account the customer just needs to order through your affiliate link.
+                - You can still earn commission even if they dont register an account the customer just needs to order
+                through your affiliate link.
               </Typography>
             </div>
           </Box>
@@ -599,7 +588,7 @@ const AdminAffiliatePage = () => {
             }}
           />
         ) : null}
-      <StockManagementTable products={onlineStoreProductsData}/>
+        <StockManagementTable products={onlineStoreProductsData} />
       </div>
     </ThemeProvider>
   );

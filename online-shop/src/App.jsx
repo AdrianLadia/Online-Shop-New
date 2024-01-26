@@ -143,41 +143,14 @@ function App() {
   const [isDistributor, setIsDistributor] = useState(false);
   const [alertDuration, setAlertDuration] = useState(5000);
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
-
   const [affiliateUid, setAffiliateUid] = useState(null);
-  // useEffect(() => {
-  //   let foundAffiliateFromUserdata = false;
-  //   if (userdata && userdata.affiliate) {
-  //     foundAffiliateFromUserdata = true;
-  //     setAffiliateUid(userdata.affiliate);
-  //   }
-
-  //   if (!foundAffiliateFromUserdata) {
-  //     const checkAffiliateId = async () => {
-  //       let params = new URLSearchParams(window.location.search);
-  //       let affiliateId = params.get('aid');
-  //       if (affiliateId == null) {
-  //         return;
-  //       }
-  //       const affiliateUsers = await cloudfirestore.getAllAffiliateUsers();
-  //       for (let i of affiliateUsers) {
-  //         if (i.affiliateId === affiliateId && i.affiliateId != null) {
-  //           setAffiliateUid(i.uid);
-  //           break;
-  //         }
-  //       }
-  //     };
-  //     checkAffiliateId();
-  //   }
-
-  // }, [userdata]);
 
   useEffect(() => {
     // get affiliate users first
     cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
       const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
       const userAffiliateId = userdata ? userdata.affiliate : null;
-      const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'))
+      const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
       const affiliateHandler_ = new affiliateHandler(
         cookieAffiliateId,
         urlAffiliateId,
@@ -190,13 +163,12 @@ function App() {
     });
   }, [userdata]);
 
+  // This is used to get the affiliate id from the url and store it in the local storage
   useEffect(() => {
     const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
-    if (cookieAffiliateId == null) {
-      const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
-      if (urlAffiliateId != null) {
-        localStorage.setItem('affiliateId', urlAffiliateId);
-      }
+    const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
+    if (urlAffiliateId != cookieAffiliateId && urlAffiliateId != null) {
+      localStorage.setItem('affiliateId', urlAffiliateId);
     }
   }, []);
 

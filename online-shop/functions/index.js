@@ -2199,9 +2199,20 @@ exports.onAffiliateClaim = onRequest(async (req, res) => {
         const commDate = data.date;
         const claimCode = data.affiliateClaimId;
         const affiliateUserId = data.affiliateUserId;
+        const amount = data.amount;
+
+        if (amount <= 0) {
+          res.status(400).send('Cannot claim if amount is 0 or less.');
+        }
+        if (amount < 1000) {
+          res.status(400).send('Cannot claim if amount is less than 1000.');
+        } 
+
+
         const affiliateRef = db.collection('Users').doc(affiliateUserId);
         const docSnap = await transaction.get(affiliateRef);
         const affiliateUserData = docSnap.data();
+        console.log('commissionsData',data)
         console.log('affiliateUserData', affiliateUserData);
         const oldAffiliateClaims = affiliateUserData.affiliateClaims;
         const commissions = affiliateUserData.affiliateCommissions;
