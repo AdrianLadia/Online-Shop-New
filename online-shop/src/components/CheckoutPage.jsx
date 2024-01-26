@@ -395,6 +395,7 @@ const CheckoutPage = () => {
 
       setTransactionStatus(res);
       setPlacedOrder(!placedOrder);
+      localStorage.setItem('cart', JSON.stringify({}));
       analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);
     } catch (err) {
       console.log(err);
