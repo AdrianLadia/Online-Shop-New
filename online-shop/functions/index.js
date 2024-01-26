@@ -710,6 +710,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const userRef = db.collection('Users').doc(userid);
     const userSnap = await userRef.get();
     const userData = userSnap.data();
+    console.log('userId', userid);
     const userPrices = userData.userPrices ? userData.userPrices : {};
 
     let itemsTotalBackEnd = 0;
