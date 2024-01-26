@@ -22,6 +22,7 @@ import disableCodHandler from '../utils/classes/disableCodHandler';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import stockManagementTableDataHandler from '../utils/classes/stockMangementTableDataHandler';
 import { onAffiliateClaim, transactionPlaceOrder } from '../functions';
+import affiliateHandler from '../utils/classes/affiliateIdHandler';
 
 // DELAYS
 const transactionCreatePaymentDelay = 500;
@@ -3339,7 +3340,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe.only('test commission system', async () => {
+describe('test commission system', async () => {
   test('Setup test', async () => {
     await resetOrdersAndPayments();
 
@@ -5829,3 +5830,67 @@ describe('test guest opens link as guest and has params of aid / affiliateUid',a
     await firestore.deleteDocumentFromCollection('Users', 'GUEST');
   })
 })
+
+describe('AffiliateHandler', () => {
+  describe('constructor', () => {
+    test('correctly assigns properties', () => {
+      const affiliateUsers = [{ affiliateId: '123', uid: 'user1' }];
+      const handler = new affiliateHandler('cookie123', 'url123', 'user123', affiliateUsers);
+
+      expect(handler.urlAffiliateId).toBe('url123');
+      expect(handler.userAffiliateId).toBe('user123');
+      expect(handler.cookieAffiliateId).toBe('cookie123');
+      expect(handler.affiliateUsers).toBe(affiliateUsers);
+    });
+  });
+
+  describe('getAffiliateUserIdByTheirAffiliateLink', () => {
+    test('returns correct uid for a given affiliate link code', async () => {
+      const affiliateUsers = [{ affiliateId: '123', uid: 'user1' }];
+      const handler = new affiliateHandler(null, null, null, affiliateUsers);
+
+      const uid = await handler.getAffiliateUserIdByTheirAffiliateLink('123');
+      expect(uid).toBe('user1');
+    });
+
+    test('returns null for an unknown affiliate link code', async () => {
+      const affiliateUsers = [{ affiliateId: '123', uid: 'user1' }];
+      const handler = new affiliateHandler(null, null, null, affiliateUsers);
+
+      const uid = await handler.getAffiliateUserIdByTheirAffiliateLink('unknown');
+      expect(uid).toBeNull();
+    });
+  });
+
+  describe('runMain', () => {
+    test('prioritizes urlAffiliateId when available', async () => {
+      const affiliateUsers = [{ affiliateId: 'url123', uid: 'user1' }];
+      const handler = new affiliateHandler('cookie123', 'url123', null, affiliateUsers);
+
+      const result = await handler.runMain();
+      expect(result).toBe('user1');
+    });
+
+    test('uses userAffiliateId when urlAffiliateId is not available', async () => {
+      const handler = new affiliateHandler('cookie123', null, 'user123', []);
+
+      const result = await handler.runMain();
+      expect(result).toBe('user123');
+    });
+
+    test('falls back to cookieAffiliateId when others are not available', async () => {
+      const affiliateUsers = [{ affiliateId: 'cookie123', uid: 'user2' }];
+      const handler = new affiliateHandler('cookie123', null, null, affiliateUsers);
+
+      const result = await handler.runMain();
+      expect(result).toBe('user2');
+    });
+
+    test('returns null when no IDs are available', async () => {
+      const handler = new affiliateHandler(null, null, null, []);
+
+      const result = await handler.runMain();
+      expect(result).toBeNull();
+    });
+  });
+});
