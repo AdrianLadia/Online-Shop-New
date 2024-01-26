@@ -107,8 +107,13 @@ const ProductsSearchBar = ({
           sx={{ width: 300, margin: 'auto', marginTop: '20px' }}
           renderInput={(params) => <TextField  className='bg-white' {...params} label="Search Item" />}
           filterOptions={(options, { inputValue }) => {
-            const results = fuse.search(inputValue);
-            return results.map((res) => res.item.name); // Convert back to array format for Autocomplete
+            try{
+              const results = fuse.search(inputValue);
+              return results.map((res) => res.item.name); // Convert back to array format for Autocomplete
+            }
+            catch{
+              return options
+            }
           }}
         />
       </ThemeProvider>

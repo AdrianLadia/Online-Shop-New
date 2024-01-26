@@ -2328,21 +2328,30 @@ exports.markAffiliateClaimDone = onRequest(async (req, res) => {
 exports.getAllAffiliateUsers = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const apiKey = req.headers['apikey'];
+    console.log('apiKey', apiKey);
     if (!handleApiKey(apiKey, res)) {
       res.status(400).send('Invalid API Key');
       return;
     }
-    const db = admin.firestore();
-    const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
-    const snapshot = await usersRef.get();
-    const affiliateUsers = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      if (data.affiliateId != '') {
-        affiliateUsers.push(data);
-      }
-    });
-    res.status(200).send(affiliateUsers);
+    try{
+
+      const db = admin.firestore();
+      const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
+      const snapshot = await usersRef.get();
+      const affiliateUsers = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.affiliateId != '') {
+          affiliateUsers.push(data);
+        }
+      });
+      console.log('affiliateUsers',affiliateUsers);
+      res.status(200).send(affiliateUsers);
+    }
+    catch(e){
+      console.log(e);
+      res.status(400).send('Error getting affiliate users.');
+    }
   });
 });
 

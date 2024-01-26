@@ -36,8 +36,7 @@ import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
-
-const devEnvironment = true;
+import affiliateHandler from '../utils/classes/affiliateIdHandler';
 
 function App() {
   // get fbclid for faccebook pixel conversion api
@@ -146,32 +145,60 @@ function App() {
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
 
   const [affiliateUid, setAffiliateUid] = useState(null);
+  // useEffect(() => {
+  //   let foundAffiliateFromUserdata = false;
+  //   if (userdata && userdata.affiliate) {
+  //     foundAffiliateFromUserdata = true;
+  //     setAffiliateUid(userdata.affiliate);
+  //   }
+
+  //   if (!foundAffiliateFromUserdata) {
+  //     const checkAffiliateId = async () => {
+  //       let params = new URLSearchParams(window.location.search);
+  //       let affiliateId = params.get('aid');
+  //       if (affiliateId == null) {
+  //         return;
+  //       }
+  //       const affiliateUsers = await cloudfirestore.getAllAffiliateUsers();
+  //       for (let i of affiliateUsers) {
+  //         if (i.affiliateId === affiliateId && i.affiliateId != null) {
+  //           setAffiliateUid(i.uid);
+  //           break;
+  //         }
+  //       }
+  //     };
+  //     checkAffiliateId();
+  //   }
+
+  // }, [userdata]);
+
   useEffect(() => {
-    let foundAffiliateFromUserdata = false;
-    if (userdata && userdata.affiliate) {
-      foundAffiliateFromUserdata = true;
-      setAffiliateUid(userdata.affiliate);
-    }
-
-    if (!foundAffiliateFromUserdata) {
-      const checkAffiliateId = async () => {
-        let params = new URLSearchParams(window.location.search);
-        let affiliateId = params.get('aid');
-        if (affiliateId == null) {
-          return;
-        }
-        const affiliateUsers = await cloudfirestore.getAllAffiliateUsers();
-        for (let i of affiliateUsers) {
-          if (i.affiliateId === affiliateId && i.affiliateId != null) {
-            setAffiliateUid(i.uid);
-            break;
-          }
-        }
-      };
-
-      checkAffiliateId();
-    }
+    // get affiliate users first
+    cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
+      const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
+      const userAffiliateId = userdata ? userdata.affiliate : null;
+      const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'))
+      const affiliateHandler_ = new affiliateHandler(
+        cookieAffiliateId,
+        urlAffiliateId,
+        userAffiliateId,
+        affiliateUsers
+      );
+      affiliateHandler_.runMain().then((affiliateId) => {
+        setAffiliateUid(affiliateId);
+      });
+    });
   }, [userdata]);
+
+  useEffect(() => {
+    const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
+    if (cookieAffiliateId == null) {
+      const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
+      if (urlAffiliateId != null) {
+        localStorage.setItem('affiliateId', urlAffiliateId);
+      }
+    }
+  }, []);
 
   function alertSnackbar(severity, message, duration) {
     console.log(duration);
