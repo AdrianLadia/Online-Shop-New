@@ -29,9 +29,7 @@ import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
-import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 import AffiliatePage from './components/AffiliatePage';
-import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
@@ -128,7 +126,6 @@ function App() {
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
-  const [affiliate, setAffiliate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cartProductsData, setCartProductsData] = useState([]);
   const [localCartProductsData, setLocalCartProductsData] = useState([]);
@@ -155,10 +152,16 @@ function App() {
 
   useEffect(() => {
     // get affiliate users first
+    // urlAffiliateId is the parameter of the url after ?aid=
+    // userAffiliateId is the userdata affiliate
+    // cookie affiliate is the stored cookie on the device
     cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
       const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
       const userAffiliateId = userdata ? userdata.affiliate : null;
       const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
+      console.log(urlAffiliateId)
+      console.log(userAffiliateId)
+      console.log(cookieAffiliateId)
       const affiliateHandler_ = new affiliateHandler(
         cookieAffiliateId,
         urlAffiliateId,
@@ -166,6 +169,7 @@ function App() {
         affiliateUsers
       );
       affiliateHandler_.runMain().then((affiliateId) => {
+        console.log(affiliateId)
         setAffiliateUid(affiliateId);
       });
     });
@@ -335,7 +339,7 @@ function App() {
                   favoriteItems: [],
                   payments: [],
                   userRole: 'member',
-                  affiliate: affiliate,
+                  affiliate: affiliateUid,
                   affiliateClaims: [],
                   affiliateDeposits: [],
                   affiliateCommissions: [],
@@ -371,7 +375,7 @@ function App() {
         setUserState('guest');
       }
     });
-  }, [affiliate]);
+  }, [affiliateUid]);
 
   useEffect(() => {
     // GET ALL PRODUCTS
@@ -691,8 +695,6 @@ function App() {
     setUnreadCustomerServiceMessages: setUnreadCustomerServiceMessages,
     isAndroidDevice: isAndroidDevice,
     isGoogleChrome: isGoogleChrome,
-    affiliate: affiliate,
-    setAffiliate: setAffiliate,
     isAffiliate: isAffiliate,
     openProfileUpdaterModal: openProfileUpdaterModal,
     selectedCategory: selectedCategory,
@@ -886,22 +888,7 @@ function App() {
             </AppContext.Provider>
           }
         />
-        <Route
-          path="/signUp"
-          element={
-            <AppContext.Provider value={appContextValue}>
-              <AffiliateSignUpPage setAffiliate={setAffiliate} />
-            </AppContext.Provider>
-          }
-        />
-        <Route
-          path="/affiliateForm"
-          element={
-            <AppContext.Provider value={appContextValue}>
-              <AffiliateForm />
-            </AppContext.Provider>
-          }
-        />
+
         <Route
           path="/products"
           element={

@@ -57,6 +57,7 @@ await cloudfirestore.createNewUser(
     affiliateBankAccounts: [],
     joinedDate: new Date(),
     codBanned: { reason: null, isBanned: false },
+    userPrices:{},
   },
   'TESTAFFILIATE'
 );
@@ -84,6 +85,7 @@ await cloudfirestore.createNewUser(
     affiliateBankAccounts: [],
     joinedDate: new Date(),
     codBanned: { reason: null, isBanned: false },
+    userPrices:{},
   },
   'TESTUSER'
 );
@@ -111,6 +113,7 @@ await cloudfirestore.createNewUser(
     affiliateBankAccounts: [],
     joinedDate: new Date(),
     codBanned: { reason: null, isBanned: false },
+    userPrices:{},
   },
   'NOAFFILIATETESTUSER'
 );
@@ -705,6 +708,7 @@ describe('Transaction Create Payment', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -751,6 +755,7 @@ describe('firestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'test'
     );
@@ -779,6 +784,7 @@ describe('firestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -1078,7 +1084,7 @@ describe('getCartCount', () => {
   });
 });
 
-describe('cloudfirestoredb', async () => {
+describe.only('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -1127,6 +1133,8 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore : 5,
     });
+
+    await delay(transactionCreatePaymentDelay);
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
@@ -1430,6 +1438,8 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore : 1,
     });
+
+    await delay(transactionCreatePaymentDelay);
 
     const req = {
       totalAmount: {
@@ -1792,6 +1802,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -1923,6 +1934,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -2099,6 +2111,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -2135,6 +2148,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser2'
     );
@@ -3410,6 +3424,7 @@ describe('test commission system', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'TESTAFFILIATE'
     );
@@ -3437,6 +3452,7 @@ describe('test commission system', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'TESTUSER'
     );
@@ -4740,6 +4756,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'GUEST'
     );
@@ -5194,6 +5211,7 @@ describe('test banned cod users', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: 'did not receive', isBanned: true },
+        userPrices:{},
       },
       'codBannedUser'
     );
@@ -5229,6 +5247,7 @@ describe('test banned cod users', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'noCodBannedUser'
     );
@@ -5482,6 +5501,7 @@ describe('test productsPriceHandler', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'GUEST'
     );
@@ -5580,7 +5600,7 @@ describe('test productsPriceHandler', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'testMemberWithoutSpecialPrice');
     await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithSpecialPrice');
     await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithoutSpecialPrice');
-    await firestore.deleteDocumentFromCollection('Users', 'GUEST');
+
   });
 });
 
@@ -5813,7 +5833,7 @@ describe('test stockManagementTableDataHandler', async () => {
 });
 
 
-describe.only('test guest opens link as guest and has params of aid / affiliateUid',async() => {
+describe('test guest opens link as guest and has params of aid / affiliateUid',async() => {
   test('prepare test', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE');
     
@@ -5841,6 +5861,8 @@ describe.only('test guest opens link as guest and has params of aid / affiliateU
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
+        
       },
       'TESTAFFILIATE'
     );
@@ -5869,6 +5891,7 @@ describe.only('test guest opens link as guest and has params of aid / affiliateU
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'TESTNEWGUEST'
     );
@@ -5896,6 +5919,7 @@ describe.only('test guest opens link as guest and has params of aid / affiliateU
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'GUEST'
     );
@@ -5955,7 +5979,6 @@ describe.only('test guest opens link as guest and has params of aid / affiliateU
     await resetOrdersAndPayments()
     await firestore.deleteDocumentFromCollection('Users', 'TESTNEWGUEST');
     await firestore.updateDocumentFromCollection('Users', 'GUEST', {affiliateCommissions:[]})
-    await firestore.deleteDocumentFromCollection('Users', 'GUEST');
   })
 })
 
@@ -6049,6 +6072,7 @@ describe('test affiliate create customer', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'TESTUSERUNCLAIMED'
     );

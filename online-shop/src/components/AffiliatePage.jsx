@@ -167,7 +167,16 @@ function TablePaginationActions(props) {
 }
 
 const AdminAffiliatePage = () => {
-  const { setManualCustomerOrderProcess,setUserId, userdata, db, cloudfirestore, refreshUser, firestore, alertSnackbar } = useContext(AppContext);
+  const {
+    setManualCustomerOrderProcess,
+    setUserId,
+    userdata,
+    db,
+    cloudfirestore,
+    refreshUser,
+    firestore,
+    alertSnackbar,
+  } = useContext(AppContext);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   // affiliate claim Id should be handled by backend
@@ -377,7 +386,7 @@ const AdminAffiliatePage = () => {
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
         isAccountClaimed: false,
-        userPrices: {}
+        userPrices: {},
       },
       userId
     );
@@ -515,42 +524,54 @@ const AdminAffiliatePage = () => {
         </TableContainer>
 
         {/* <StockManagementTable products={onlineStoreProductsData} /> */}
-        <Typography className="text-2xl font-bold">Input Customer Order</Typography>
-        <div className="flex flex-row w-full justify-center items-center">
-          <Autocomplete
-            value={chosenMethod}
-            options={manualCustomers.map((option) => option.name)}
-            className="w-full"
-            disablePortal
-            id="combo-box-demo"
-            onChange={(event, newValue) => {
-              const customerData = manualCustomers.filter((item) => item.name == newValue)[0];
-              setSelectedManualCustomer(customerData);
-            }}
-            renderInput={(params) => <TextField required {...params} label="Customer Name" />}
-          />
-          <div className="">
+        <Typography className="text-2xl font-bold mb-10">Input Customer Order</Typography>
+
+        <div className="flex flex-col  w-9/10 lg:w-400px justify-center items-center ">
+          <div className="flex flex-row items-center w-full  gap-5 mb-5">
+            <Autocomplete
+              value={chosenMethod}
+              options={manualCustomers.map((option) => option.name)}
+              disablePortal
+              id="combo-box-demo"
+              className="w-full"
+              onChange={(event, newValue) => {
+                const customerData = manualCustomers.find((item) => item.name === newValue);
+                setSelectedManualCustomer(customerData);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  required
+                  {...params}
+                  label="Customer Name"
+                  className="w-full flex" // Apply w-full here
+                />
+              )}
+            />
+
             <button
-              className="p-3 rounded-lg bg-color10b"
+              className="flex items-center p-3 rounded-lg bg-color10b"
               onClick={() => {
                 setOpenAddCustomerModal(true);
               }}
             >
-              Add Customer
-            </button>
-            <button
-              className="p-3 rounded-lg bg-color10b"
-              onClick={() => {
-                console.log(selectedManualCustomer);
-                console.log(selectedManualCustomer.uid);
-                setUserId(selectedManualCustomer.uid);
-                setManualCustomerOrderProcess(true)
-                navigateTo('/shop');
-              }}
-            >
-              Create Order
+              <span className="text-white font-bold mr-1">Add Customer</span>
             </button>
           </div>
+
+          <button
+            className="flex items-center p-3 rounded-lg bg-color10b mb-20"
+            onClick={() => {
+              console.log(selectedManualCustomer);
+              console.log(selectedManualCustomer.uid);
+              setUserId(selectedManualCustomer.uid);
+              setManualCustomerOrderProcess(true);
+              navigateTo('/shop');
+            }}
+          >
+            <span className="text-white font-bold mr-1">Create Order</span>
+           
+            
+          </button>
         </div>
 
         <AffiliateAddPaymentMethodModal
@@ -633,13 +654,15 @@ const AdminAffiliatePage = () => {
               <Divider />
               <Typography id="modal-modal-description">Notes</Typography>
               <Typography id="modal-modal-description">
-                - To lock the commission forever, make sure they register an account using your affiliate link. Once
-                they register, they will be tagged as your customer forever and you dont need to worry about them not
-                using your affiliate link when they purchase they just need to use the same account.
+                - To ensure your commission stays locked in, make sure they sign up for an account using your affiliate
+                link. Once they're registered, they'll always be connected to your affiliate account, so you don't have
+                to worry about them using another link when they make a purchase. They just need to keep using the same
+                account.
               </Typography>
               <Typography id="modal-modal-description">
-                - You can still earn commission even if they dont register an account the customer just needs to order
-                through your affiliate link.
+                - You can still earn a commission even if they don't create an account. Just share the affiliate link,
+                and we will place a cookie on their device. They only need to make their purchase using the same device
+                to ensure you receive your commission.
               </Typography>
             </div>
           </Box>

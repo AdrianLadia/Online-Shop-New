@@ -324,9 +324,6 @@ const HomePage = ({ isAffiliateLink }) => {
     navigateTo('/shop');
   }
 
-  function handleAff() {
-    navigateTo('/signUp');
-  }
 
   useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
