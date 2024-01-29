@@ -427,6 +427,7 @@ exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (even
 exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => {
   console.log('________________________');
   console.log('RUNNING ON ORDERS CHANGE');
+  
   try {
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
@@ -444,6 +445,7 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
       }
     }
 
+    
     if (!beforeData.grandTotal) {
       return;
     }
@@ -672,6 +674,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
 
     const data = parseData(req.query.data);
     let userid = data.userid;
+    console.log('userid', userid);
     // If guest checkout
     if (userid == null) {
       userid = 'GUEST';
@@ -703,6 +706,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const paymentMethod = data.paymentMethod;
     const userRole = data.userRole;
     const affiliateUid = data.affiliateUid;
+    const kilometersFromStore = data.kilometersFromStore;
 
     let cartUniqueItems = [];
 
@@ -711,7 +715,11 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const userSnap = await userRef.get();
     const userData = userSnap.data();
     console.log('userId', userid);
-    const userPrices = userData.userPrices ? userData.userPrices : {};
+    console.log('userData', userData);
+
+
+    const userPrices = userData && userData.userPrices ? userData.userPrices : {};
+
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cart);
@@ -962,6 +970,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
             deliveryDate: deliveryDate,
             paymentMethod: paymentMethod,
             affiliateUid: affiliateUid,
+            kilometersFromStore: kilometersFromStore,
           };
 
           const userOrderObject = { reference: reference, date: new Date() };
@@ -1300,7 +1309,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     }
     const data = req.body;
 
-    const depositAmount = data.amount;
+    const depositAmount = parseFloat(data.amount);
     const orderReference = data.reference;
     const paymentprovider = data.paymentprovider;
 
@@ -2053,6 +2062,29 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
           const userDataObj = await transaction.get(userRef);
           const userData = userDataObj.data();
           let orders = userData.orders;
+          console.log('orderRef', orderReference);
+          const paymentsRef = db.collection('Payments').where('orderReference', '==', orderReference);
+          let docRef
+          paymentsRef.get().then(querySnapshot => {
+            if (!querySnapshot.empty) {
+                // If documents are found
+                querySnapshot.forEach(doc => {
+                    // doc is a document snapshot
+                    console.log('Document found:', doc.id, doc.data());
+        
+                    // To get a document reference
+                    docRef = doc.ref;
+        
+                    // Do something with the document reference
+                    // ...
+                });
+            } else {
+                // No documents found
+                console.log('No matching documents.');
+            }
+        }).catch(error => {
+            console.error("Error getting documents: ", error);
+        });
 
           const data = orders.filter((order) => order.reference != orderReference);
 
@@ -2069,7 +2101,6 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
           await Promise.all(
             Object.entries(cancelledDataCart).map(async ([itemId, quantity]) => {
               const productRef = db.collection('Products').doc(itemId);
-
               const prodSnap = await transaction.get(productRef);
               const prodData = prodSnap.data();
               const stocksOnHold = prodData.stocksOnHold;
@@ -2095,6 +2126,7 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
 
           transaction.update(userRef, { orders: orders });
           transaction.delete(cancelledOrderRef);
+          transaction.delete(docRef);
           res.status(200).send('success');
         } catch (error) {
           logger.log(error);

@@ -37,6 +37,8 @@ import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
+import { useLocation } from 'react-router-dom';
+import { onSnapshot } from 'firebase/firestore';
 
 function App() {
   // get fbclid for faccebook pixel conversion api
@@ -144,6 +146,12 @@ function App() {
   const [alertDuration, setAlertDuration] = useState(5000);
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
   const [affiliateUid, setAffiliateUid] = useState(null);
+  const [manualCustomerOrderProcess,setManualCustomerOrderProcess] = useState(false);
+
+  
+
+
+
 
   useEffect(() => {
     // get affiliate users first
@@ -336,6 +344,8 @@ function App() {
                   affiliateBankAccounts: [],
                   joinedDate: new Date(),
                   codBanned: { reason: null, isBanned: false },
+                  userPrices : {},
+                  isAccountClaimed: true,
                 },
                 user.uid
               );
@@ -538,6 +548,7 @@ function App() {
     setAllUserData();
   }, [userId, refreshUser]);
 
+
   useEffect(() => {
     if (userdata != null) {
       setUserState('userloaded');
@@ -550,8 +561,10 @@ function App() {
         const orderData = await cloudfirestore.readSelectedOrder(order.reference, userId);
         return orderData;
       });
+      
       Promise.all(orderPromises).then((data) => {
-        setOrders(data);
+        const cleanedData = data.filter((order) => order != null || order != undefined);
+        setOrders(cleanedData);
       });
     }
   }, [userOrderReference]);
@@ -567,16 +580,21 @@ function App() {
 
   // Checks if userdata is incomplete if it is show update profile modal
   useEffect(() => {
-    if (userdata) {
-      if (userdata.name == null) {
-        setOpenProfileUpdaterModal(true);
+    if (manualCustomerOrderProcess == false) {
+      if (userdata) {
+        if (userdata.name == null) {
+          setOpenProfileUpdaterModal(true);
+        }
+        if (userdata.email == null) {
+          setOpenProfileUpdaterModal(true);
+        }
+        if (userdata.phoneNumber == null || userdata.phoneNumber == '') {
+          setOpenProfileUpdaterModal(true);
+        }
       }
-      if (userdata.email == null) {
-        setOpenProfileUpdaterModal(true);
-      }
-      if (userdata.phoneNumber == null || userdata.phoneNumber == '') {
-        setOpenProfileUpdaterModal(true);
-      }
+    }
+    else {
+      setOpenProfileUpdaterModal(false);
     }
   }, [userdata]);
 
@@ -685,6 +703,8 @@ function App() {
     useDistributorPrice: useDistributorPrice,
     setUseDistributorPrice: setUseDistributorPrice,
     affiliateUid: affiliateUid,
+    setUserId: setUserId,
+    setManualCustomerOrderProcess: setManualCustomerOrderProcess,
   };
 
   return (
@@ -709,6 +729,7 @@ function App() {
                   userdata={userdata}
                   openProfileUpdaterModal={openProfileUpdaterModal}
                   setOpenProfileUpdaterModal={setOpenProfileUpdaterModal}
+                  manualCustomerOrderProcess={manualCustomerOrderProcess}
                 />
               ) : null}
             </AppContext.Provider>

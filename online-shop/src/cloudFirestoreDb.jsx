@@ -160,12 +160,12 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       shippingtotal: Joi.number().required(),
       grandTotal: Joi.number().required(),
       reference: Joi.string().required(),
-      userphonenumber: Joi.string().required().allow(''),
+      userphonenumber: Joi.string().required().allow('',null),
       deliveryNotes: Joi.string().allow(''),
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
-      eMail: Joi.string().required(),
+      eMail: Joi.string().required().allow(null),
       sendEmail: Joi.boolean().required(),
       testing: Joi.boolean().required(),
       isInvoiceNeeded: Joi.boolean().required(),
@@ -175,6 +175,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       paymentMethod: Joi.string().required(),
       userRole : Joi.string().required(),
       affiliateUid : Joi.string().required().allow(null),
+      kilometersFromStore : Joi.number().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -650,11 +651,17 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async readSelectedOrder(reference, userId) {
     const jsonData = JSON.stringify({ reference, userId });
-    const res = await axios.post(`${this.url}readSelectedOrder`, jsonData, {
-      headers: { 'Content-Type': 'application/json',
-      'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' },
-    });
-    return res.data;
+    try {
+      const res = await axios.post(`${this.url}readSelectedOrder`, jsonData, {
+        headers: { 'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' },
+      });
+      return res.data;
+    }
+    catch (error) {
+      console.log(error);
+      return
+    }
   }
 
   async voidPayment(data) {

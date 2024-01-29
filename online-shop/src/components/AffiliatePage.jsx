@@ -32,6 +32,8 @@ import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 import StockManagementTable from './CompanyDashboard/StockManagementTable';
 import { set } from 'date-fns';
+import { collection, where, query, onSnapshot } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -165,7 +167,7 @@ function TablePaginationActions(props) {
 }
 
 const AdminAffiliatePage = () => {
-  const { userdata, cloudfirestore, refreshUser, firestore, alertSnackbar } = useContext(AppContext);
+  const { setManualCustomerOrderProcess,setUserId, userdata, db, cloudfirestore, refreshUser, firestore, alertSnackbar } = useContext(AppContext);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   // affiliate claim Id should be handled by backend
@@ -186,6 +188,28 @@ const AdminAffiliatePage = () => {
   const [tableData, setTableData] = useState([]);
   const [openHowToEarnModal, setOpenHowToEarnModal] = useState(false);
   const [onlineStoreProductsData, setOnlineStoreProductsData] = useState([]);
+  const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
+  const [customerName, setCustomerName] = useState('');
+  const [manualCustomers, setManualCustomers] = useState([]);
+  const [selectedManualCustomer, setSelectedManualCustomer] = useState(null);
+  const navigateTo = useNavigate();
+
+  useEffect(() => {
+    const docRef = collection(db, 'Users');
+    const q = query(docRef, where('isAccountClaimed', '==', false));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const userData = [];
+      querySnapshot.forEach((doc) => {
+        userData.push(doc.data());
+      });
+
+      setManualCustomers(userData);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     cloudfirestore.readAllDataFromCollection('Products').then((res) => {
@@ -317,6 +341,52 @@ const AdminAffiliatePage = () => {
     setPage(0);
   };
 
+  async function createCustomer() {
+    function generateFirestoreId() {
+      var id = '';
+      var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      var charactersLength = characters.length;
+      for (var i = 0; i < 20; i++) {
+        id += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return id;
+    }
+    const userId = generateFirestoreId();
+    await cloudfirestore.createNewUser(
+      {
+        uid: userId,
+        name: customerName,
+        email: null,
+        emailVerified: false,
+        phoneNumber: null,
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+        affiliate: userdata.uid,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: { reason: null, isBanned: false },
+        isAccountClaimed: false,
+        userPrices: {}
+      },
+      userId
+    );
+    console.log('Customer Created with id: ' + userId);
+    alertSnackbar('success', 'Customer Created Successfully');
+    setCustomerName('');
+    setOpenAddCustomerModal(false);
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <div className="flex flex-col justify-center items-center tracking-widest  font-sans">
@@ -444,11 +514,82 @@ const AdminAffiliatePage = () => {
           </Table>
         </TableContainer>
 
+        {/* <StockManagementTable products={onlineStoreProductsData} /> */}
+        <Typography className="text-2xl font-bold">Input Customer Order</Typography>
+        <div className="flex flex-row w-full justify-center items-center">
+          <Autocomplete
+            value={chosenMethod}
+            options={manualCustomers.map((option) => option.name)}
+            className="w-full"
+            disablePortal
+            id="combo-box-demo"
+            onChange={(event, newValue) => {
+              const customerData = manualCustomers.filter((item) => item.name == newValue)[0];
+              setSelectedManualCustomer(customerData);
+            }}
+            renderInput={(params) => <TextField required {...params} label="Customer Name" />}
+          />
+          <div className="">
+            <button
+              className="p-3 rounded-lg bg-color10b"
+              onClick={() => {
+                setOpenAddCustomerModal(true);
+              }}
+            >
+              Add Customer
+            </button>
+            <button
+              className="p-3 rounded-lg bg-color10b"
+              onClick={() => {
+                console.log(selectedManualCustomer);
+                console.log(selectedManualCustomer.uid);
+                setUserId(selectedManualCustomer.uid);
+                setManualCustomerOrderProcess(true)
+                navigateTo('/shop');
+              }}
+            >
+              Create Order
+            </button>
+          </div>
+        </div>
+
         <AffiliateAddPaymentMethodModal
           paymentMethodData={paymentMethodData}
           open={openAddPaymentMethodModal}
           setOpen={setOpenAddPaymentMethodModal}
         />
+        <Modal
+          open={openAddCustomerModal}
+          onClose={() => {
+            setOpenAddCustomerModal(false);
+          }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Create Customer
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              Please input the customer's details. The customer you created will be tagged as your customer and you can
+              earn commission from them.
+            </Typography>
+            <div className="flex flex-col gap-2 mt-5">
+              <TextField
+                value={customerName}
+                className="ml-3"
+                sx={{ width: 'full' }}
+                label="Customer Name"
+                onChange={(e) => {
+                  setCustomerName(e.target.value);
+                }}
+              />
+              <button className="p-3 rounded-lg bg-color10b" onClick={createCustomer}>
+                Create Customer
+              </button>
+            </div>
+          </Box>
+        </Modal>
         <Modal
           open={openHowToEarnModal}
           onClose={() => {
@@ -588,7 +729,6 @@ const AdminAffiliatePage = () => {
             }}
           />
         ) : null}
-        <StockManagementTable products={onlineStoreProductsData} />
       </div>
     </ThemeProvider>
   );

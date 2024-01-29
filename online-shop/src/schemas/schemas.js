@@ -59,7 +59,8 @@ class schemas {
         isBanned : Joi.boolean().required(),
         reason : Joi.string().required().allow(null,''),
       }),
-      userPrices: Joi.object(),
+      userPrices: Joi.object().required(),
+      isAccountClaimed: Joi.boolean(),
       
  
     }).unknown(false);
