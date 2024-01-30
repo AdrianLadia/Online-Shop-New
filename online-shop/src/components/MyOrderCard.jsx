@@ -105,13 +105,13 @@ function MyOrderCard(props) {
     let kilometersFromStore;
     orders.map((s) => {
       if (order.reference === s.reference) {
-        console.log(s)
+
         price = s.grandTotal;
         kilometersFromStore = s.kilometersFromStore;
 
       }
     });
-    console.log('kilometersFromStore',kilometersFromStore)
+
 
     navigateTo('/AccountStatementPayment', {
       state: {

@@ -29,7 +29,7 @@ const Shop = () => {
 
   useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
-      analytics.logOpenStorePageEvent();
+      // analytics.logOpenStorePageEvent();
     }
   }, [fbclid, analytics]);
 

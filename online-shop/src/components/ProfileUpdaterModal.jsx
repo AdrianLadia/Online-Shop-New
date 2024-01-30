@@ -77,11 +77,9 @@ const ProfileUpdaterModal = (props) => {
 
   function openModal(){
     if (manualCustomerOrderProcess == false) {
-      console.log('openProfileUpdaterModal', openProfileUpdaterModal)
       return openProfileUpdaterModal
     }
     else {
-      console.log('manualCustomerOrderProcess', !manualCustomerOrderProcess)
       return !manualCustomerOrderProcess
     }
 

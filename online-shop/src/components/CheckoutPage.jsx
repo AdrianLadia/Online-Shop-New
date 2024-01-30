@@ -177,7 +177,6 @@ const CheckoutPage = () => {
   // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
   useEffect(() => {
     if (openProfileUpdaterModal) {
-      console.log('openProfileUpdaterModal', openProfileUpdaterModal);
       navigateTo('/shop');
     }
   }, [openProfileUpdaterModal]);
@@ -379,7 +378,7 @@ const CheckoutPage = () => {
       } else {
         sendEmail = true;
       }
-      console.log('affiliateUid', affiliateUid)
+
       const res = await cloudfirestore.transactionPlaceOrder({
         userid: userdata ? userdata.uid : null,
         localDeliveryAddress: localDeliveryAddress,
@@ -414,7 +413,7 @@ const CheckoutPage = () => {
       setTransactionStatus(res);
       setPlacedOrder(!placedOrder);
       localStorage.setItem('cart', JSON.stringify({}));
-      analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);
+      // analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);
     } catch (err) {
       console.log(err);
       setPlaceOrderLoading(false);
@@ -468,7 +467,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (total > 0) {
-      analytics.logOpenCheckoutPageEvent(cart, total);
+      // analytics.logOpenCheckoutPageEvent(cart, total);
     }
   }, [total]);
 

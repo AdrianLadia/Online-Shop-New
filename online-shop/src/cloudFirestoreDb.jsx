@@ -276,7 +276,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       });
       return res.data;
     } catch (error) {
-      console.log(productId);
+
       console.log(error);
       // throw new Error(error);
     }
@@ -556,7 +556,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
           'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
         },
       });
-      console.log(res);
+
       return res;
     }
     catch (error) {
@@ -608,10 +608,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async getIpAddress() {
     if ( window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      const res = await axios.get(`https://api64.ipify.org/?format=json`,{
-        headers: {
-          'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
-        }});
+      const res = await axios.get(`https://api64.ipify.org/?format=json`)
       return res.data.ip;
     }
   }

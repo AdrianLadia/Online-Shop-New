@@ -300,7 +300,7 @@ class firestoredb extends firestorefunctions {
     const orders = [];
     querySnapshot.forEach((doc) => {
       orders.push(doc.data());
-    })
+    });
     return orders;
   }
 
@@ -350,7 +350,6 @@ class firestoredb extends firestorefunctions {
       const userDoc = userData;
 
       if (userDoc === undefined) {
-
         return;
       }
 
@@ -370,10 +369,7 @@ class firestoredb extends firestorefunctions {
         // });
 
         await super.updateDocumentFromCollection('Users', userId, { orders: orders });
-
-  
       } else {
-
       }
     } catch (error) {
       console.error('Error deleting order:', error);
@@ -401,7 +397,6 @@ class firestoredb extends firestorefunctions {
   }
 
   async readPayments() {
-    
     return await this.readAllDataFromCollection('Payments');
   }
   // NOT USING THIS IF IN THE TRANSACTION CREATE PAYMENT CLOUD FIRESTORE WILL BE COMBINED WITH THIS FUNCTION
@@ -426,12 +421,10 @@ class firestoredb extends firestorefunctions {
   async deleteDeclinedPayment(reference, userId, link) {
     try {
       await runTransaction(this.db, async (transaction) => {
-
         const userRef = doc(this.db, 'Users/', userId);
         const userRefDoc = await transaction.get(userRef);
         const userDoc = userRefDoc.data();
         const orders = userDoc.orders;
-    
 
         const orderRef = doc(this.db, 'Orders/', reference);
         const orderRefDoc = await transaction.get(orderRef);
@@ -443,7 +436,6 @@ class firestoredb extends firestorefunctions {
             return url;
           }
         });
-
 
         transaction.update(orderRef, { proofOfPaymentLink: newProofOfPaymentLink });
 
@@ -479,14 +471,16 @@ class firestoredb extends firestorefunctions {
     this.addDocumentArrayFromCollection('ordersMessages', reference, messages, 'messages');
   }
 
-  async updateProductClicks(productid, userId = null,isAdminOrSuperAdmin = false) {
+  async updateProductClicks(productid, userId = null, userdata) {
     let id = productid;
     if (productid.endsWith('-RET')) {
       id = productid.substring(0, productid.length - 4);
     }
 
-    if (!isAdminOrSuperAdmin) {
-      console.log('updating clicks')
+    if (
+      !['affiliate', 'superAdmin', 'admin', 'driver'].includes(userdata ? userdata.userRole : null) ||
+      userdata == null
+    ) {
       await super.addDocumentArrayFromCollection('Products', id, { date: new Date(), userId: userId }, 'clicks');
     }
   }
@@ -540,14 +534,14 @@ class firestoredb extends firestorefunctions {
   }
 
   async readAllUnpaidOrdersByUserId(userId) {
-    const orderRef = collection(this.db, 'Orders')
+    const orderRef = collection(this.db, 'Orders');
     const q = query(orderRef, where('userId', '==', userId), where('paid', '==', false));
     const querySnapshot = await getDocs(q);
     const orders = [];
     querySnapshot.forEach((doc) => {
       orders.push(doc.data());
-    })
-    return orders; 
+    });
+    return orders;
   }
 
   async readAllAvailableAffiliateBankAccounts(userId) {
@@ -611,9 +605,8 @@ class firestoredb extends firestorefunctions {
     await this.updateDocumentFromCollection('ordersMessages', userId, { ownerName: name });
   }
 
-  async updateOrderAsDelivered(orderId,proofOfDeliveryLink,userData){
+  async updateOrderAsDelivered(orderId, proofOfDeliveryLink, userData) {
     try {
-  
       const userRole = userData.userRole;
       const userId = userData.uid;
       await runTransaction(this.db, async (transaction) => {
@@ -621,19 +614,28 @@ class firestoredb extends firestorefunctions {
         const orderRefDoc = await transaction.get(orderRef);
         const orderData = orderRefDoc.data();
 
-        
         const ordersMessagesRef = doc(this.db, 'ordersMessages/', orderId);
         const orderMessagesRefDoc = await transaction.get(ordersMessagesRef);
         const orderMesssagesData = orderMessagesRefDoc.data();
-        const oldMessages = orderMesssagesData.messages
-        const newMessages = [...oldMessages, {dateTime: new Date(), image: proofOfDeliveryLink, message: '', read: false, userId: userId, userRole: userRole}]
-        
+        const oldMessages = orderMesssagesData.messages;
+        const newMessages = [
+          ...oldMessages,
+          {
+            dateTime: new Date(),
+            image: proofOfDeliveryLink,
+            message: '',
+            read: false,
+            userId: userId,
+            userRole: userRole,
+          },
+        ];
+
         const oldProofOfDeliveryLinks = orderData.proofOfDeliveryLink;
         const newProofOfDeliveryLinks = [...oldProofOfDeliveryLinks, proofOfDeliveryLink];
 
         transaction.update(orderRef, { proofOfDeliveryLink: newProofOfDeliveryLinks });
         transaction.update(orderRef, { delivered: true });
-        transaction.update(ordersMessagesRef, { delivered: true , messages: newMessages});
+        transaction.update(ordersMessagesRef, { delivered: true, messages: newMessages });
       });
     } catch (error) {
       throw new Error(error);
@@ -641,11 +643,10 @@ class firestoredb extends firestorefunctions {
   }
 
   async readSelectedOrder(orderId) {
-    try{
+    try {
       const order = await retryApi(async () => await super.readSelectedDataFromCollection('Orders', orderId));
       return order;
-    }
-    catch{
+    } catch {
       throw new Error('Order not found');
     }
   }
@@ -656,7 +657,7 @@ class firestoredb extends firestorefunctions {
         const stocks = {};
         const promises = cartFinalData.map(async (item) => {
           const itemRef = doc(this.db, 'Products/', item.itemId);
-          const itemDoc = await transaction.get(itemRef)
+          const itemDoc = await transaction.get(itemRef);
           const itemData = itemDoc.data();
           const oldStocks = itemData.stocksAvailable;
           const newStocks = oldStocks - item.quantity;
@@ -672,17 +673,16 @@ class firestoredb extends firestorefunctions {
     } catch (error) {
       throw new Error(error);
     }
-
- 
-    
   }
 
   async readProductsSearchIndex() {
-    const products = await retryApi(async () => await super.readSelectedDataFromCollection('Index','ProductSearchIndex'));
-    const data = products.search
-    return data
+    const products = await retryApi(
+      async () => await super.readSelectedDataFromCollection('Index', 'ProductSearchIndex')
+    );
+    const data = products.search;
+    return data;
   }
-  
+
   // async markCommissionPending(data, date, id){
   //   const updatedData = []
   //   data.map((commissions)=>{

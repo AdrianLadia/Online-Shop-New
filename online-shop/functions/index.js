@@ -2333,6 +2333,7 @@ exports.readSelectedOrder = onRequest(async (req, res) => {
     const orderDoc = await orderRef.get();
     const orderData = orderDoc.data();
 
+    console.log(orderData)
     const orderUserId = orderData.userId;
     const userRef = db.collection('Users').doc(userId);
     const userDoc = await userRef.get();

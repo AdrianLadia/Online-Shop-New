@@ -78,7 +78,6 @@ const ProductsSearchBar = ({
     productsData.forEach((product) => {
    
       if (value == product.name) {
-        // console.log(value, product)
         matchedProduct = true;
         setSelectedCategory(product.category);
         setSearchedItemId(product.itemId);

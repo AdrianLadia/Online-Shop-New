@@ -136,7 +136,7 @@ const ProductCard = (props) => {
       // adds to cart
       props.addtocart(props.product.itemId, quantity);
       //analytics
-      analytics.logAddToCartEvent(props.product.itemId,props.product.itemName,props.product.category,quantity,props.product.price)
+      // analytics.logAddToCartEvent(props.product.itemId,props.product.itemName,props.product.category,quantity,props.product.price)
       //back to 0
       setQuantity('');
       //shake cart
@@ -198,7 +198,7 @@ const ProductCard = (props) => {
     setModal(true);
     setClickedProduct(product);
     firestore.updateProductClicks(product.itemId, userId, userdata?.userRole);
-    analytics.logOpenProductModalEvent(product.itemId, product.itemName,product.category)
+    // analytics.logOpenProductModalEvent(product.itemId, product.itemName,product.category)
   }
 
   function responsiveStyle() {
@@ -274,7 +274,7 @@ const ProductCard = (props) => {
   }
 
   function cssIfLastItemCard() {
-    console.log('isLastItem',isLastItem)
+
     if (isLastItem) {
       return ' mb-92';
     }

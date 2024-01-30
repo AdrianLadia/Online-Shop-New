@@ -477,7 +477,7 @@ const AdminAffiliatePage = () => {
                     <span
                       style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}
                       onClick={async () => {
-                        console.log(data.orderReference);
+      
                         const order = await firestore.readSelectedDataFromCollection('Orders', data.orderReference);
                         setOrder(order);
 
@@ -561,8 +561,7 @@ const AdminAffiliatePage = () => {
           <button
             className="flex items-center p-3 rounded-lg bg-color10b mb-20"
             onClick={() => {
-              console.log(selectedManualCustomer);
-              console.log(selectedManualCustomer.uid);
+             
               setUserId(selectedManualCustomer.uid);
               setManualCustomerOrderProcess(true);
               navigateTo('/shop');

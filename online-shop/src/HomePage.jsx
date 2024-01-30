@@ -327,7 +327,7 @@ const HomePage = ({ isAffiliateLink }) => {
 
   useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
-      analytics.logOpenHomePageEvent();
+      // analytics.logOpenHomePageEvent();
     }
   }, [fbclid, analytics]);
 

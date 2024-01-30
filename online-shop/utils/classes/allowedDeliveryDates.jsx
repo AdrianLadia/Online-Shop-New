@@ -80,7 +80,7 @@ class allowedDeliveryDates {
     // until we find a date that is not a holiday
     let foundMinDate
     while (foundMinDate != true) {
-        console.log(this.minDate.toLocaleDateString())
+
         // if it is a holiday or a sunday
         if (this.holidays.includes(this.minDate.toLocaleDateString()) || this.minDate.getDay() === 0) {
             this.minDate.setDate(this.minDate.getDate() + 1);

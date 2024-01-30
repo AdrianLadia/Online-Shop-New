@@ -29,7 +29,7 @@ const CheckoutButton = (props) => {
   }
 
   function onCheckoutButtonClick() {
-    analytics.logCheckoutInitiatedEvent(cart);
+    // analytics.logCheckoutInitiatedEvent(cart);
     const minimumOrder = new AppConfig().getMinimumOrder();
     if(isDistributor) {
       alertSnackbar('info', 'We are currently in the process of developing our distributor checkout system. In the meantime, for any orders, please reach out directly to your account manager. We appreciate your understanding and are here to assist with any of your ordering needs.',100000);

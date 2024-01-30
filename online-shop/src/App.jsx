@@ -35,8 +35,7 @@ import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
-import { useLocation } from 'react-router-dom';
-import { onSnapshot } from 'firebase/firestore';
+
 
 function App() {
   // get fbclid for faccebook pixel conversion api
@@ -158,10 +157,7 @@ function App() {
     cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
       const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
       const userAffiliateId = userdata ? userdata.affiliate : null;
-      const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
-      console.log(urlAffiliateId)
-      console.log(userAffiliateId)
-      console.log(cookieAffiliateId)
+      const cookieAffiliateId = localStorage.getItem('affiliateId')
       const affiliateHandler_ = new affiliateHandler(
         cookieAffiliateId,
         urlAffiliateId,
@@ -177,7 +173,7 @@ function App() {
 
   // This is used to get the affiliate id from the url and store it in the local storage
   useEffect(() => {
-    const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
+    const cookieAffiliateId = localStorage.getItem('affiliateId')
     const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
     if (urlAffiliateId != cookieAffiliateId && urlAffiliateId != null) {
       localStorage.setItem('affiliateId', urlAffiliateId);
@@ -185,7 +181,7 @@ function App() {
   }, []);
 
   function alertSnackbar(severity, message, duration) {
-    console.log(duration);
+
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
@@ -317,9 +313,10 @@ function App() {
       if (user) {
         setUserState('userloading');
         setUser(user);
+        console.log('Auth Changed')
         console.log(user.uid);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
-          if (userExists) {
+          if (userExists && manualCustomerOrderProcess == false) {
             setUserId(user.uid);
             return;
           } else {
@@ -375,7 +372,7 @@ function App() {
         setUserState('guest');
       }
     });
-  }, [affiliateUid]);
+  }, []);
 
   useEffect(() => {
     // GET ALL PRODUCTS
@@ -483,6 +480,7 @@ function App() {
 
   useEffect(() => {
     // FLOW FOR GUEST LOGIN
+    console.log('userId',userId)
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (localStorageCart) {
@@ -491,8 +489,8 @@ function App() {
         const newProductData = await Promise.all(productDataPromises);
         setLocalCartProductsData(newProductData);
       }
-
       if (userId) {
+        
         const data = await cloudfirestore.readSelectedUserById(userId);
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
@@ -505,7 +503,7 @@ function App() {
             setGoToCheckoutPage(true);
           });
         }
-        if (guestLoginClicked === false) {
+        if (guestLoginClicked === false && [null, undefined].includes(localStorageCart)) {
           setCart(data.cart);
         }
         // FLOW FOR GUEST LOGIN
@@ -550,6 +548,7 @@ function App() {
       }
     }
     setAllUserData();
+
   }, [userId, refreshUser]);
 
 

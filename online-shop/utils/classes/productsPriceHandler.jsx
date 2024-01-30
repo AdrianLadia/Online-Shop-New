@@ -53,7 +53,7 @@ class productsPriceHandler {
     const copyOfProducts = [...this.products]
     
     copyOfProducts.forEach(product => {
-      console.log(product)
+
         const distributorPrice = this.distributorPrice[product.itemId]
 
         product.price = distributorPrice ? parseFloat(distributorPrice) : product.price

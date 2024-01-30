@@ -87,12 +87,12 @@ const AffiliateClaimRequest = () => {
       const ids = [];
       const users = await cloudfirestore.getAllAffiliateUsers();
       users.forEach((doc) => {
-        console.log(doc.uid);
+
         ids.push(doc.uid);
       });
 
       const claims = await firestore.readAllClaims(ids);
-      console.log(claims);
+
       const toSet = [];
       claims.map((info) => {
         info.map((claim) => {

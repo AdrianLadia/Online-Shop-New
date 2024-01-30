@@ -60,10 +60,9 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
 
   function showModal() {
     setModal(true);
-    console.log('item clicked', itemData.itemId);
     setClickedProduct(itemData);
-    firestore.updateProductClicks(itemId, userdata ? userdata.uid : 'GUEST', userdata?.userRole);
-    analytics.logOpenProductModalEvent(itemId, itemName, category);
+    firestore.updateProductClicks(itemId, userdata ? userdata.uid : 'GUEST', userdata ? userdata : null);
+    // analytics.logOpenProductModalEvent(itemId, itemName, category);
   }
 
   useEffect(() => {
