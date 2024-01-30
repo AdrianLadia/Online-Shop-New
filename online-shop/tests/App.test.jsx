@@ -1084,7 +1084,7 @@ describe('getCartCount', () => {
   });
 });
 
-describe.only('cloudfirestoredb', async () => {
+describe('cloudfirestoredb', async () => {
   test('transactionCreatePayment', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { payments: [] });
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -3165,7 +3165,7 @@ describe('deleteDeclinedPayments', () => {
   });
 }, 100000);
 
-describe('testCancelOrder', () => {
+describe.only('testCancelOrder', () => {
   test('Setup test', async () => {
     await resetOrdersAndPayments();
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -3215,7 +3215,7 @@ describe('testCancelOrder', () => {
     const stocksAvailableOld = productDataOld.stocksAvailable;
 
     await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' });
-
+    await delay(transactionCreatePaymentDelay);
     const user = await cloudfirestore.readSelectedUserById(userTestId);
     const order = user.orders;
 
