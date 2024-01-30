@@ -358,32 +358,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     return response;
   }
 
-  async testPayMayaWebHookSuccess(data) {
-    const dataSchema = schemas.mayaSuccessRequestSchema();
 
-    const { error } = dataSchema.validate(data);
-
-    if (error) {
-      alert(error.message);
-      throw new Error(error.message);
-    }
-
-    try {
-      const response = await axios.post(`${this.url}payMayaWebHookSuccess`, data);
-      return response;
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        // Handle the 400 error messages
-        const errorMessage = error.response.data;
-        console.error('Error:', errorMessage);
-        alert(errorMessage);
-      } else {
-        // Handle other errors
-        console.error('An error occurred:', error);
-        alert('An error occurred. Please try again later.');
-      }
-    }
-  }
 
   async updateOrdersAsPaidOrNotPaid(userId) {
     const userIdSchema = Joi.string().required();
