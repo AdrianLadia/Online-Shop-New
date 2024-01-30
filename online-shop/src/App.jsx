@@ -29,15 +29,14 @@ import ChatApp from './components/ChatApp/src/ChatApp';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
-import AffiliateSignUpPage from './components/AffiliateSignUpPage';
 import AffiliatePage from './components/AffiliatePage';
-import AffiliateForm from './components/AffiliateForm';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
-
-const devEnvironment = true;
+import affiliateHandler from '../utils/classes/affiliateIdHandler';
+import { useLocation } from 'react-router-dom';
+import { onSnapshot } from 'firebase/firestore';
 
 function App() {
   // get fbclid for faccebook pixel conversion api
@@ -127,7 +126,6 @@ function App() {
   const [unreadOrderMessages, setUnreadOrderMessages] = useState(0);
   const [unreadCustomerServiceMessages, setUnreadCustomerServiceMessages] = useState(0);
   const [openProfileUpdaterModal, setOpenProfileUpdaterModal] = useState(false);
-  const [affiliate, setAffiliate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cartProductsData, setCartProductsData] = useState([]);
   const [localCartProductsData, setLocalCartProductsData] = useState([]);
@@ -144,35 +142,56 @@ function App() {
   const [isDistributor, setIsDistributor] = useState(false);
   const [alertDuration, setAlertDuration] = useState(5000);
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
-
   const [affiliateUid, setAffiliateUid] = useState(null);
-  useEffect(() => {
-    let foundAffiliateFromUserdata = false;
-    if (userdata) {
-      if (userdata.affiliateId) {
-        foundAffiliateFromUserdata = true;
-        setAffiliateUid(userdata.affiliate);
-      }
-    }
+  const [manualCustomerOrderProcess,setManualCustomerOrderProcess] = useState(false);
 
-    if (!foundAffiliateFromUserdata) {
-      let params = new URLSearchParams(window.location.search);
-      let affiliateId = params.get('aid');
-      if (affiliateId) {
+  
+
+
+
+
+  useEffect(() => {
+    // get affiliate users first
+    // urlAffiliateId is the parameter of the url after ?aid=
+    // userAffiliateId is the userdata affiliate
+    // cookie affiliate is the stored cookie on the device
+    cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
+      const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
+      const userAffiliateId = userdata ? userdata.affiliate : null;
+      const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
+      console.log(urlAffiliateId)
+      console.log(userAffiliateId)
+      console.log(cookieAffiliateId)
+      const affiliateHandler_ = new affiliateHandler(
+        cookieAffiliateId,
+        urlAffiliateId,
+        userAffiliateId,
+        affiliateUsers
+      );
+      affiliateHandler_.runMain().then((affiliateId) => {
+        console.log(affiliateId)
         setAffiliateUid(affiliateId);
-      }
-    }
+      });
+    });
   }, [userdata]);
 
+  // This is used to get the affiliate id from the url and store it in the local storage
+  useEffect(() => {
+    const cookieAffiliateId = JSON.parse(localStorage.getItem('affiliateId'));
+    const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
+    if (urlAffiliateId != cookieAffiliateId && urlAffiliateId != null) {
+      localStorage.setItem('affiliateId', urlAffiliateId);
+    }
+  }, []);
+
   function alertSnackbar(severity, message, duration) {
-    console.log(duration)
+    console.log(duration);
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
     if (duration != null) {
       setAlertDuration(duration);
-    }
-    else {
+    } else {
       setAlertDuration(5000);
     }
   }
@@ -195,7 +214,7 @@ function App() {
     });
   }, []);
 
-  // TEMPORARY DISABLED THIS BECAUSE WE ARE NOT USING THE CHAT FEATURE YET  
+  // TEMPORARY DISABLED THIS BECAUSE WE ARE NOT USING THE CHAT FEATURE YET
   // DO NOT DELETE THIS CODE
   // useEffect(() => {
   //   if (userdata != null) {
@@ -298,6 +317,7 @@ function App() {
       if (user) {
         setUserState('userloading');
         setUser(user);
+        console.log(user.uid);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           if (userExists) {
             setUserId(user.uid);
@@ -319,8 +339,7 @@ function App() {
                   favoriteItems: [],
                   payments: [],
                   userRole: 'member',
-                  // affiliate: affiliate, TURN ON AND REPLACE CURRENT AFFILIATE WITH THIS AFTER TESTS
-                  affiliate: 'LP6ARIs14qZm4qjj1YOLCSNjxsj1', // FOR TESTING
+                  affiliate: affiliateUid,
                   affiliateClaims: [],
                   affiliateDeposits: [],
                   affiliateCommissions: [],
@@ -328,7 +347,9 @@ function App() {
                   affiliateId: null,
                   affiliateBankAccounts: [],
                   joinedDate: new Date(),
-                  codBanned: {reason : null, isBanned : false},
+                  codBanned: { reason: null, isBanned: false },
+                  userPrices : {},
+                  isAccountClaimed: true,
                 },
                 user.uid
               );
@@ -354,7 +375,7 @@ function App() {
         setUserState('guest');
       }
     });
-  }, [affiliate]);
+  }, [affiliateUid]);
 
   useEffect(() => {
     // GET ALL PRODUCTS
@@ -412,25 +433,42 @@ function App() {
     }
   }, [userdata]);
 
-  let normalPriceCache = {}
+  let normalPriceCache = {};
   useEffect(() => {
-    const combinedProductsList = [...categoryProductsData, ...cartProductsData, ...favoriteProductData, ...localCartProductsData];
+    const combinedProductsList = [
+      ...categoryProductsData,
+      ...cartProductsData,
+      ...favoriteProductData,
+      ...localCartProductsData,
+    ];
     //remove duplicates
     const uniqueProducts = combinedProductsList.filter(
       (thing, index, self) => self.findIndex((t) => t.itemId === thing.itemId) === index
     );
 
-    const _productsPriceHandler = new productsPriceHandler(uniqueProducts, userdata ? userdata : null,useDistributorPrice,normalPriceCache);
+    const _productsPriceHandler = new productsPriceHandler(
+      uniqueProducts,
+      userdata ? userdata : null,
+      useDistributorPrice,
+      normalPriceCache
+    );
     _productsPriceHandler.runMain();
     const productsPriceHandlerFinalData = _productsPriceHandler.finalData;
- 
+
     // productsPriceHandlerFinalData.forEach((product) => {
     //   if (product.itemId == 'PPB#45') {
     //     console.log(product.price);
     //   }
     // });
-      setProducts(productsPriceHandlerFinalData);
-  }, [useDistributorPrice,localCartProductsData,cartProductsData, categoryProductsData, favoriteProductData, userdata ? userdata.userRole : null]);
+    setProducts(productsPriceHandlerFinalData);
+  }, [
+    useDistributorPrice,
+    localCartProductsData,
+    cartProductsData,
+    categoryProductsData,
+    favoriteProductData,
+    userdata ? userdata.userRole : null,
+  ]);
 
   useEffect(() => {
     if (userdata) {
@@ -443,19 +481,16 @@ function App() {
     }
   }, [userdata]);
 
-
-
   useEffect(() => {
     // FLOW FOR GUEST LOGIN
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (localStorageCart) {
         const keys = Object.keys(localStorageCart);
-        const productDataPromises = keys.map(key => cloudfirestore.readSelectedDataFromOnlineStore(key));
+        const productDataPromises = keys.map((key) => cloudfirestore.readSelectedDataFromOnlineStore(key));
         const newProductData = await Promise.all(productDataPromises);
         setLocalCartProductsData(newProductData);
       }
-      
 
       if (userId) {
         const data = await cloudfirestore.readSelectedUserById(userId);
@@ -475,7 +510,7 @@ function App() {
         }
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
-        const nonAdminRoles = ['member', 'affiliate','distributor'];
+        const nonAdminRoles = ['member', 'affiliate', 'distributor'];
         const userRole = await cloudfirestore.readUserRole(data.uid);
         if (nonAdminRoles.includes(userRole)) {
           setIsAdmin(false);
@@ -508,8 +543,7 @@ function App() {
         setContactPerson(data.contactPerson);
         setUserState('userloaded');
         setUserLoaded(true);
-      }
-      else {
+      } else {
         if (localStorageCart) {
           setCart(localStorageCart);
         }
@@ -517,7 +551,6 @@ function App() {
     }
     setAllUserData();
   }, [userId, refreshUser]);
-
 
 
   useEffect(() => {
@@ -532,8 +565,10 @@ function App() {
         const orderData = await cloudfirestore.readSelectedOrder(order.reference, userId);
         return orderData;
       });
+      
       Promise.all(orderPromises).then((data) => {
-        setOrders(data);
+        const cleanedData = data.filter((order) => order != null || order != undefined);
+        setOrders(cleanedData);
       });
     }
   }, [userOrderReference]);
@@ -549,16 +584,21 @@ function App() {
 
   // Checks if userdata is incomplete if it is show update profile modal
   useEffect(() => {
-    if (userdata) {
-      if (userdata.name == null) {
-        setOpenProfileUpdaterModal(true);
+    if (manualCustomerOrderProcess == false) {
+      if (userdata) {
+        if (userdata.name == null) {
+          setOpenProfileUpdaterModal(true);
+        }
+        if (userdata.email == null) {
+          setOpenProfileUpdaterModal(true);
+        }
+        if (userdata.phoneNumber == null || userdata.phoneNumber == '') {
+          setOpenProfileUpdaterModal(true);
+        }
       }
-      if (userdata.email == null) {
-        setOpenProfileUpdaterModal(true);
-      }
-      if (userdata.phoneNumber == null || userdata.phoneNumber == '') {
-        setOpenProfileUpdaterModal(true);
-      }
+    }
+    else {
+      setOpenProfileUpdaterModal(false);
     }
   }, [userdata]);
 
@@ -655,8 +695,6 @@ function App() {
     setUnreadCustomerServiceMessages: setUnreadCustomerServiceMessages,
     isAndroidDevice: isAndroidDevice,
     isGoogleChrome: isGoogleChrome,
-    affiliate: affiliate,
-    setAffiliate: setAffiliate,
     isAffiliate: isAffiliate,
     openProfileUpdaterModal: openProfileUpdaterModal,
     selectedCategory: selectedCategory,
@@ -667,6 +705,8 @@ function App() {
     useDistributorPrice: useDistributorPrice,
     setUseDistributorPrice: setUseDistributorPrice,
     affiliateUid: affiliateUid,
+    setUserId: setUserId,
+    setManualCustomerOrderProcess: setManualCustomerOrderProcess,
   };
 
   return (
@@ -691,6 +731,7 @@ function App() {
                   userdata={userdata}
                   openProfileUpdaterModal={openProfileUpdaterModal}
                   setOpenProfileUpdaterModal={setOpenProfileUpdaterModal}
+                  manualCustomerOrderProcess={manualCustomerOrderProcess}
                 />
               ) : null}
             </AppContext.Provider>
@@ -847,22 +888,7 @@ function App() {
             </AppContext.Provider>
           }
         />
-        <Route
-          path="/signUp"
-          element={
-            <AppContext.Provider value={appContextValue}>
-              <AffiliateSignUpPage setAffiliate={setAffiliate} />
-            </AppContext.Provider>
-          }
-        />
-        <Route
-          path="/affiliateForm"
-          element={
-            <AppContext.Provider value={appContextValue}>
-              <AffiliateForm />
-            </AppContext.Provider>
-          }
-        />
+
         <Route
           path="/products"
           element={
@@ -872,7 +898,13 @@ function App() {
           }
         />
       </Routes>
-      <Alert severity={alertSeverity} message={alertMessage} open={showAlert} setOpen={setShowAlert} autoHideDuration={alertDuration} />
+      <Alert
+        severity={alertSeverity}
+        message={alertMessage}
+        open={showAlert}
+        setOpen={setShowAlert}
+        autoHideDuration={alertDuration}
+      />
     </div>
   );
 }

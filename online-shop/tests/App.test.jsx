@@ -21,6 +21,7 @@ import allowedDeliveryDates from '../utils/classes/allowedDeliveryDates';
 import disableCodHandler from '../utils/classes/disableCodHandler';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import stockManagementTableDataHandler from '../utils/classes/stockMangementTableDataHandler';
+import affiliateHandler from '../utils/classes/affiliateIdHandler';
 
 // DELAYS
 const transactionCreatePaymentDelay = 500;
@@ -56,6 +57,7 @@ await cloudfirestore.createNewUser(
     affiliateBankAccounts: [],
     joinedDate: new Date(),
     codBanned: { reason: null, isBanned: false },
+    userPrices:{},
   },
   'TESTAFFILIATE'
 );
@@ -83,6 +85,7 @@ await cloudfirestore.createNewUser(
     affiliateBankAccounts: [],
     joinedDate: new Date(),
     codBanned: { reason: null, isBanned: false },
+    userPrices:{},
   },
   'TESTUSER'
 );
@@ -110,6 +113,7 @@ await cloudfirestore.createNewUser(
     affiliateBankAccounts: [],
     joinedDate: new Date(),
     codBanned: { reason: null, isBanned: false },
+    userPrices:{},
   },
   'NOAFFILIATETESTUSER'
 );
@@ -372,6 +376,8 @@ describe('Data Manipulation', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -421,6 +427,8 @@ describe('Data Manipulation', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 0,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -535,6 +543,8 @@ describe('Data Manipulation', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 3,
     });
 
     const orders = await firestore.readUserById(userTestId);
@@ -698,6 +708,7 @@ describe('Transaction Create Payment', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -744,6 +755,7 @@ describe('firestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'test'
     );
@@ -772,6 +784,7 @@ describe('firestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -1117,7 +1130,11 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 5,
     });
+
+    await delay(transactionCreatePaymentDelay);
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
       'testref1234',
@@ -1222,6 +1239,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 100,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1252,6 +1271,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 12,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1282,6 +1303,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 19,
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -1343,6 +1366,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     const data = {
@@ -1410,7 +1435,11 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'gcash',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
+
+    await delay(transactionCreatePaymentDelay);
 
     const req = {
       totalAmount: {
@@ -1509,6 +1538,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'gcash',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     const user2orders = await firestore.readSelectedDataFromCollection('Orders', 'testref12345');
@@ -1593,6 +1624,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'gcash',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1623,6 +1656,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'gcash',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1653,6 +1688,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'gcash',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     const req3 = {
@@ -1765,6 +1802,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -1896,6 +1934,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -1935,6 +1974,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(500);
 
@@ -1985,6 +2026,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(500);
 
@@ -2025,6 +2068,8 @@ describe('cloudfirestoredb', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
@@ -2066,6 +2111,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser'
     );
@@ -2102,6 +2148,7 @@ describe('cloudfirestoredb', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'testuser2'
     );
@@ -2192,6 +2239,8 @@ describe('deleteOrderFromUserFirestore', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2222,6 +2271,8 @@ describe('deleteOrderFromUserFirestore', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2252,6 +2303,8 @@ describe('deleteOrderFromUserFirestore', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     test('check if reference is added to orderMessages collection', async () => {
@@ -2355,6 +2408,8 @@ describe('updateOrderProofOfPaymentLink', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'bdo',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
   }, 100000);
 
@@ -2558,6 +2613,8 @@ describe('updatePaymentStatus', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
   });
   test('create Test Payment Proof Upload', async () => {
@@ -2622,6 +2679,8 @@ describe('deleteOldOrders', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2652,6 +2711,8 @@ describe('deleteOldOrders', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2682,6 +2743,8 @@ describe('deleteOldOrders', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2712,6 +2775,8 @@ describe('deleteOldOrders', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2742,6 +2807,8 @@ describe('deleteOldOrders', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await firestore.updateDocumentFromCollection('Orders', 'testref1234', { orderDate: twoDaysAgo });
     await firestore.updateDocumentFromCollection('Orders', 'testref12345', { orderDate: twoDaysAgo });
@@ -2849,6 +2916,8 @@ describe('deleteOldOrders', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'gcash',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     const currentDate = new Date(); // Get the current date
@@ -2887,6 +2956,8 @@ describe('deleteOldOrders', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(2000);
   }, 100000);
@@ -2981,6 +3052,8 @@ describe('transactionPlaceOrder test retail', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -3032,6 +3105,8 @@ describe('deleteDeclinedPayments', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -3090,8 +3165,9 @@ describe('deleteDeclinedPayments', () => {
   });
 }, 100000);
 
-describe('testCancelOrder', () => {
+describe.only('testCancelOrder', () => {
   test('Setup test', async () => {
+    await resetOrdersAndPayments();
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
     const ppb16 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
     const ppb16Price = ppb16.price;
@@ -3128,7 +3204,10 @@ describe('testCancelOrder', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
+    await delay(transactionCreatePaymentDelay)
   });
 
   test('deleteCancelledOrder invoke ', async () => {
@@ -3136,7 +3215,7 @@ describe('testCancelOrder', () => {
     const stocksAvailableOld = productDataOld.stocksAvailable;
 
     await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' });
-
+    await delay(transactionCreatePaymentDelay);
     const user = await cloudfirestore.readSelectedUserById(userTestId);
     const order = user.orders;
 
@@ -3151,6 +3230,13 @@ describe('testCancelOrder', () => {
         throw new Error('Stock not deleted');
       }
     });
+
+    const paymentsData = await firestore.readAllDataFromCollection('Payments');
+    paymentsData.map((payment) => {
+      if (payment.orderReference == 'testref1234') {
+        throw new Error('Payment not deleted');
+      }
+    })
 
     const stocksAvailableNew = productDataNew.stocksAvailable;
 
@@ -3270,6 +3356,8 @@ describe('testRetailTransactionPlaceOrder', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     const user = await cloudfirestore.readSelectedUserById(userTestId);
@@ -3336,6 +3424,7 @@ describe('test commission system', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'TESTAFFILIATE'
     );
@@ -3363,6 +3452,7 @@ describe('test commission system', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'TESTUSER'
     );
@@ -3394,6 +3484,8 @@ describe('test commission system', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
@@ -3423,35 +3515,24 @@ describe('test commission system', async () => {
   test('check if transaction create payment added commissions to affiliate', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
     const affiliateCommissions = affiliateData.affiliateCommissions;
-    expect(affiliateCommissions.length).toBeGreaterThan(0);
+    expect(affiliateCommissions.length).toEqual(3);
   });
   test('affiliate claims commission', async () => {
-    const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
-    const affiliateCommissions = affiliateData.affiliateCommissions;
-    const data1 = {
+    const data = {
       date: new Date().toDateString(),
-      data: affiliateCommissions,
-      id: 'TESTAFFILIATE',
-      claimCode: 'testcode',
-    };
-    const data2 = {
       affiliateUserId: 'TESTAFFILIATE',
       affiliateClaimId: 'testcode',
       method: 'gcash',
       accountNumber: '0123456789',
       accountName: 'affiliate user',
-      transactionDate: new Date().toDateString(),
       amount: 17500,
       totalDeposited: 0,
       isDone: false,
     };
-    const data = {
-      data1: data1,
-      data2: data2,
-    };
     await cloudfirestore.onAffiliateClaim(data);
     await delay(1500);
   });
+ 
   test('check if affiliate claims commission added to affiliate claims', async () => {
     const affiliateData = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
     const affiliateClaims = affiliateData.affiliateClaims;
@@ -3461,7 +3542,7 @@ describe('test commission system', async () => {
       expect(claim.status).toEqual('pending');
     });
   });
-  test('admin deposits to affiliate 10000 / 17500 only', async () => {
+  test('admin deposits to affiliate 10000 / 17500', async () => {
     await cloudfirestore.addDepositToAffiliate({
       depositImageUrl: 'www.testlink.com',
       amountDeposited: parseInt(10000),
@@ -3518,6 +3599,7 @@ describe('test commission system', async () => {
     });
   });
   test('create another order with vat and pay', async () => {
+    
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       isInvoiceNeeded: true,
@@ -3546,6 +3628,8 @@ describe('test commission system', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
   });
   test('pay order with vat', async () => {
@@ -3561,7 +3645,7 @@ describe('test commission system', async () => {
     const commissions = affiliateData.affiliateCommissions;
     let found = false;
     commissions.forEach((commission) => {
-      if (commission.commission == '261.64') {
+      if (commission.commission == '87.21') {
         found = true;
       }
     });
@@ -3631,6 +3715,211 @@ describe('test commission system', async () => {
       }
     });
   });
+  test('affiliate claim should not be allowed if there is a pending claim', async() => {
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 8928.57,
+      vat: 1071.43,
+      shippingtotal: 1000,
+      grandTotal: 11000,
+      reference: 'testref321',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
+    });
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 8928.57,
+      vat: 1071.43,
+      shippingtotal: 1000,
+      grandTotal: 11000,
+      reference: 'testref4321',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
+    });
+    await delay(transactionCreatePaymentDelay)
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 11000,
+      reference: 'testref321',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    });
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 11000,
+      reference: 'testref4321',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink34',
+    });
+    await delay(transactionCreatePaymentDelay)
+
+    await cloudfirestore.onAffiliateClaim({
+      date: new Date().toDateString(),
+      affiliateUserId: 'TESTAFFILIATE',
+      affiliateClaimId: 'testcode',
+      method: 'gcash',
+      accountNumber: '0123456789',
+      accountName: 'affiliate user',
+      amount: 220,
+      totalDeposited: 0,
+      isDone: false,
+    })
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 8928.57,
+      vat: 1071.43,
+      shippingtotal: 1000,
+      grandTotal: 11000,
+      reference: 'testref54321',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
+    });
+    await cloudfirestore.transactionCreatePayment({
+      userId: userTestId,
+      amount: 11000,
+      reference: 'testref54321',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink34',
+    });
+    const res = await cloudfirestore.onAffiliateClaim({
+      date: new Date().toDateString(),
+      affiliateUserId: 'TESTAFFILIATE',
+      affiliateClaimId: 'testcode',
+      method: 'gcash',
+      accountNumber: '0123456789',
+      accountName: 'affiliate user',
+      amount: 110,
+      totalDeposited: 0,
+      isDone: false,
+    })
+    expect(res.response.status).toEqual(400);
+  } )
+  test('affiliate claim less than 10000',async()=>{
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      isInvoiceNeeded: true,
+      testing: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
+      itemstotal: 530,
+      vat: 10,
+      shippingtotal: 60,
+      grandTotal: 600,
+      reference: 'testref8888',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
+    });
+    await cloudfirestore.transactionCreatePayment({
+      userId: 'TESTUSER',
+      amount: 600,
+      reference: 'testref8888',
+      paymentprovider: 'gcash',
+      proofOfPaymentLink: 'www.test.com',
+    });
+    await delay(transactionCreatePaymentDelay);
+    const data = {
+      date: new Date().toDateString(),
+      affiliateUserId: 'TESTAFFILIATE',
+      affiliateClaimId: 'testcode',
+      method: 'gcash',
+      accountNumber: '0123456789',
+      accountName: 'affiliate user',
+      amount: 600,
+      totalDeposited: 0,
+      isDone: false,
+    };
+    const res = await cloudfirestore.onAffiliateClaim(data);
+    expect(res.response.status).toEqual(400);
+  })
+  test('clean test', async () => {
+    await firestore.updateDocumentFromCollection('Users', 'TESTAFFILIATE', {
+      affiliateCommissions: [],
+      affiliateClaims: [],
+      affiliateDeposits: [],
+      affiliateBankAccounts: [],
+    });
+  });
+ 
 }, 500000);
 
 describe('test bir2303Link functions', () => {
@@ -3691,6 +3980,8 @@ describe('count all orders of a specific year', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -3720,6 +4011,8 @@ describe('count all orders of a specific year', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
   });
   test('count orders', async () => {
@@ -3772,6 +4065,8 @@ describe('test transaction create payment without an affiliate', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(1500);
     await cloudfirestore.transactionPlaceOrder({
@@ -3802,6 +4097,8 @@ describe('test transaction create payment without an affiliate', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(1500);
   }, 1000000);
@@ -3894,6 +4191,8 @@ describe('test transactionPlaceOrder should not allow order if cart stocks is mo
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     expect(res.status).toEqual(409);
@@ -3929,6 +4228,8 @@ describe('test transactionPlaceOrder data validation', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
 
     expect([400, 409].includes(res.status)).toEqual(true);
@@ -3966,6 +4267,8 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
   });
   test('invoke function', async () => {
@@ -4032,6 +4335,8 @@ describe('Void payment', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4061,6 +4366,8 @@ describe('Void payment', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4090,6 +4397,8 @@ describe('Void payment', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
   }, 10000);
   test('create payment of 20000', async () => {
@@ -4285,6 +4594,8 @@ describe('test edit customer order function', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(1500);
   });
@@ -4376,6 +4687,8 @@ describe('test edit customer order function', () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(2000);
   });
@@ -4443,6 +4756,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'GUEST'
     );
@@ -4556,6 +4870,8 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(1500);
   }, 10000);
@@ -4602,6 +4918,8 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4631,6 +4949,8 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(1500);
   }, 20000);
@@ -4729,7 +5049,6 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
     await firestore.deleteDocumentFromCollection('Orders', 'testref012');
     await firestore.deleteDocumentFromCollection('Products', 'test');
     await firestore.deleteDocumentFromCollection('Products', 'test2');
-    await firestore.deleteDocumentFromCollection('Users', 'GUEST');
     await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref0');
     await firestore.deleteDocumentFromCollection('ExpiredOrders', 'testref01');
   });
@@ -4802,6 +5121,8 @@ describe('test transactionPlaceOrder must include paymentMethod and proofOfPayme
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(1500);
   });
@@ -4890,6 +5211,7 @@ describe('test banned cod users', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: 'did not receive', isBanned: true },
+        userPrices:{},
       },
       'codBannedUser'
     );
@@ -4925,6 +5247,7 @@ describe('test banned cod users', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'noCodBannedUser'
     );
@@ -5178,6 +5501,7 @@ describe('test productsPriceHandler', async () => {
         affiliateBankAccounts: [],
         joinedDate: new Date(),
         codBanned: { reason: null, isBanned: false },
+        userPrices:{},
       },
       'GUEST'
     );
@@ -5276,7 +5600,7 @@ describe('test productsPriceHandler', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'testMemberWithoutSpecialPrice');
     await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithSpecialPrice');
     await firestore.deleteDocumentFromCollection('Users', 'testDistributorWithoutSpecialPrice');
-    await firestore.deleteDocumentFromCollection('Users', 'GUEST');
+
   });
 });
 
@@ -5313,6 +5637,8 @@ describe('test user creates 2 orders. The second order is bigger than the second
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -5342,6 +5668,8 @@ describe('test user creates 2 orders. The second order is bigger than the second
       countOfOrdersThisYear: 0,
       paymentMethod: 'cod',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
@@ -5356,8 +5684,8 @@ describe('test user creates 2 orders. The second order is bigger than the second
   test('invoke function', async () => {
     await cloudfirestore.transactionCancelOrder({ userId: userTestId, orderReference: 'testref1234' });
   });
-  await delay(transactionCreatePaymentDelay);
   test('check values', async () => {
+    await delay(transactionCreatePaymentDelay);
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
     expect(order).toEqual(undefined);
     const secondOrder = await firestore.readSelectedDataFromCollection('Orders', 'testref12345');
@@ -5375,7 +5703,7 @@ describe('test paymaya endpoint success', async () => {
     id: '59cf27a1-8aa1-4eb3-b7d4-32a53251edec',
     amount: 20000,
     currency: 'PHP',
-    status: 'PAYMENT_SUCCESS',
+    paymentStatus: 'PAYMENT_SUCCESS',
     requestReferenceNumber: 'testref12345',
     forTesting: true,
   };
@@ -5383,7 +5711,7 @@ describe('test paymaya endpoint success', async () => {
     id: '69361631-4fff-40a4-abea-3472b51ac2c7',
     amount: 985,
     currency: 'PHP',
-    status: 'PAYMENT_FAILED',
+    paymentStatus: 'PAYMENT_FAILED',
     requestReferenceNumber: 'testref12345',
     forTesting: true,
   };
@@ -5391,10 +5719,11 @@ describe('test paymaya endpoint success', async () => {
     id: '3551576d-a7a4-4373-b3a6-10be94ff4a1f',
     amount: 165,
     currency: 'PHP',
-    status: 'PAYMENT_EXPIRED',
+    paymentStatus: 'PAYMENT_EXPIRED',
     requestReferenceNumber: 'testref12345',
     forTesting: true,
   };
+  
   test('prepare test', async () => {
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -5424,6 +5753,8 @@ describe('test paymaya endpoint success', async () => {
       countOfOrdersThisYear: 0,
       paymentMethod: 'gcash',
       userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore : 1,
     });
     await delay(transactionCreatePaymentDelay);
 
@@ -5490,7 +5821,7 @@ describe('test paymaya endpoint success', async () => {
   });
 },100000000);
 
-describe.only('test stockManagementTableDataHandler', async () => {
+describe('test stockManagementTableDataHandler', async () => {
   test('invoke function', async () => {
     const products = await firestore.readAllDataFromCollection('Products');
     const itemAverageSalesPerDay = await firestore.readSelectedDataFromCollection('Analytics','itemAverageSalesPerDay')
@@ -5499,4 +5830,255 @@ describe.only('test stockManagementTableDataHandler', async () => {
     // stockManagementTableData.getWholesaleData();
     stockManagementTableData.getRetailData();
   });
+});
+
+
+describe('test guest opens link as guest and has params of aid / affiliateUid',async() => {
+  test('prepare test', async () => {
+    await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE');
+    
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'TESTAFFILIATE',
+        name: 'affiliate user',
+        email: 'affiliate@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'affiliate',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: { reason: null, isBanned: false },
+        userPrices:{},
+        
+      },
+      'TESTAFFILIATE'
+    );
+
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'TESTNEWGUEST',
+        name: 'affiliate user',
+        email: 'affiliate@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+        affiliate: 'GUEST',
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: { reason: null, isBanned: false },
+        userPrices:{},
+      },
+      'TESTNEWGUEST'
+    );
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'GUEST',
+        name: 'affiliate user',
+        email: 'affiliate@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: { reason: null, isBanned: false },
+        userPrices:{},
+      },
+      'GUEST'
+    );
+  })
+  test('invoke function', async () => {
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      isInvoiceNeeded: true,
+      userid: 'TESTNEWGUEST',
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 18000,
+      vat: 1000,
+      shippingtotal: 1000,
+      grandTotal: 20000,
+      reference: 'testref12345',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'gcash',
+      userRole: 'member',
+      affiliateUid: 'TESTAFFILIATE',
+      kilometersFromStore : 1,
+    });
+    await delay(transactionCreatePaymentDelay)
+    await cloudfirestore.transactionCreatePayment({
+      userId: 'TESTNEWGUEST',
+      amount: 20000,
+      reference: 'testref12345',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    })
+    await delay(transactionCreatePaymentDelay)
+  })
+  test('check values', async () => {
+    const user = await firestore.readSelectedDataFromCollection('Users', 'TESTAFFILIATE');
+    const commissions = user.affiliateCommissions
+    expect(commissions.length).toEqual(1)
+    const user2 = await firestore.readSelectedDataFromCollection('Users', 'GUEST');
+    const user2commissions = user2.affiliateCommissions
+    expect(user2commissions.length).toEqual(0)
+  })
+  test('clean test', async()=>{
+    await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE');
+    await resetOrdersAndPayments()
+    await firestore.deleteDocumentFromCollection('Users', 'TESTNEWGUEST');
+    await firestore.updateDocumentFromCollection('Users', 'GUEST', {affiliateCommissions:[]})
+  })
+})
+
+describe('AffiliateHandler', () => {
+  describe('constructor', () => {
+    test('correctly assigns properties', () => {
+      const affiliateUsers = [{ affiliateId: '123', uid: 'user1' }];
+      const handler = new affiliateHandler('cookie123', 'url123', 'user123', affiliateUsers);
+
+      expect(handler.urlAffiliateId).toBe('url123');
+      expect(handler.userAffiliateId).toBe('user123');
+      expect(handler.cookieAffiliateId).toBe('cookie123');
+      expect(handler.affiliateUsers).toBe(affiliateUsers);
+    });
+  });
+
+  describe('getAffiliateUserIdByTheirAffiliateLink', () => {
+    test('returns correct uid for a given affiliate link code', async () => {
+      const affiliateUsers = [{ affiliateId: '123', uid: 'user1' }];
+      const handler = new affiliateHandler(null, null, null, affiliateUsers);
+
+      const uid = await handler.getAffiliateUserIdByTheirAffiliateLink('123');
+      expect(uid).toBe('user1');
+    });
+
+    test('returns null for an unknown affiliate link code', async () => {
+      const affiliateUsers = [{ affiliateId: '123', uid: 'user1' }];
+      const handler = new affiliateHandler(null, null, null, affiliateUsers);
+
+      const uid = await handler.getAffiliateUserIdByTheirAffiliateLink('unknown');
+      expect(uid).toBeNull();
+    });
+  });
+
+  describe('runMain', () => {
+    test('prioritizes urlAffiliateId when available', async () => {
+      const affiliateUsers = [{ affiliateId: 'url123', uid: 'user1' }];
+      const handler = new affiliateHandler('cookie123', 'url123', null, affiliateUsers);
+
+      const result = await handler.runMain();
+      expect(result).toBe('user1');
+    });
+
+    test('uses userAffiliateId when urlAffiliateId is not available', async () => {
+      const handler = new affiliateHandler('cookie123', null, 'user123', []);
+
+      const result = await handler.runMain();
+      expect(result).toBe('user123');
+    });
+
+    test('falls back to cookieAffiliateId when others are not available', async () => {
+      const affiliateUsers = [{ affiliateId: 'cookie123', uid: 'user2' }];
+      const handler = new affiliateHandler('cookie123', null, null, affiliateUsers);
+
+      const result = await handler.runMain();
+      expect(result).toBe('user2');
+    });
+
+    test('returns null when no IDs are available', async () => {
+      const handler = new affiliateHandler(null, null, null, []);
+
+      const result = await handler.runMain();
+      expect(result).toBeNull();
+    });
+  });
+});
+
+describe('test affiliate create customer', async () => {
+  test('create customer', async () => {
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'TESTUSERUNCLAIMED',
+        name: 'unclaimed user',
+        email: 'unclaimedUser@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: { reason: null, isBanned: false },
+        userPrices:{},
+      },
+      'TESTUSERUNCLAIMED'
+    );
+  });
+  test('affiliate value of the created user should be the affiliate creator',async()=>{
+      
+  })
+
 });

@@ -7,12 +7,16 @@ import Modal from '@mui/material/Modal';
 import { Autocomplete, TextField } from '@mui/material';
 import AppContext from '../AppContext';
 
+const isSmallScreen = () => {
+  return window.innerWidth <= 480; // iPhone screen width or similar
+};
+
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: isSmallScreen() ? '90%' : '400px', // Use 90% width for small screens
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -20,7 +24,7 @@ const style = {
 };
 
 const AffiliateAddPaymentMethodModal = (props) => {
-  const {firestore,userdata,alertSnackbar} = useContext(AppContext);
+  const { firestore, userdata, alertSnackbar } = useContext(AppContext);
   const open = props.open;
   const setOpen = props.setOpen;
   const paymentMethodData = props.paymentMethodData;
@@ -29,54 +33,43 @@ const AffiliateAddPaymentMethodModal = (props) => {
   const [accountNumber, setAccountNumber] = useState('');
   const [accountName, setAccountName] = useState('');
 
-  function handleMethodChange(event){
-    
+  function handleMethodChange(event) {
     let found = false;
-    paymentMethodData.forEach((bank)=>{
+    paymentMethodData.forEach((bank) => {
       if (bank.bank == event) {
-        setAccountNumber(bank.accountNumber)
-        setAccountName(bank.accountName)
+        setAccountNumber(bank.accountNumber);
+        setAccountName(bank.accountName);
         found = true;
       }
-    })
+    });
 
     if (!found) {
-      setAccountNumber('')
-      setAccountName('')
+      setAccountNumber('');
+      setAccountName('');
     }
-
-
 
     setChosenMethod(event);
-    
-
   }
 
-  async function handleUpdateAndSave(){
-
+  async function handleUpdateAndSave() {
     if (accountName == '' || accountNumber == '' || chosenMethod == '') {
-      alertSnackbar('error','Please fill out all fields')
+      alertSnackbar('error', 'Please fill out all fields');
       return;
     }
-
-    
 
     const res = await firestore.updateAffiliateBankAccount(userdata.uid, {
       bank: chosenMethod,
       accountNumber: accountNumber,
-      accountName: accountName
-    })
-    
+      accountName: accountName,
+    });
 
     if (res) {
-      alertSnackbar('success','Updated Payment Method')
+      alertSnackbar('success', 'Updated Payment Method');
       window.location.reload();
-    }
-    else {
-      alertSnackbar('error','Failed to Update Payment Method')
+    } else {
+      alertSnackbar('error', 'Failed to Update Payment Method');
     }
   }
-
 
   return (
     <div>
@@ -87,18 +80,49 @@ const AffiliateAddPaymentMethodModal = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Add Your Bank Account
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
+            We need to know which bank account to send your commissions to. Please register it below and make sure all
+            details are correct
+          </Typography>
           <Autocomplete
             value={chosenMethod}
             disablePortal
             id="combo-box-demo"
             options={paymentMethods}
             sx={{ width: 'full' }}
-            onChange={(event, newValue) => {handleMethodChange(newValue);}}
-            renderInput={(params) => <TextField {...params} label="Methods" />}
+            onChange={(event, newValue) => {
+              handleMethodChange(newValue);
+            }}
+            renderInput={(params) => <TextField {...params} label="Bank / Wallet" />}
           />
-          <TextField value={accountNumber} onChange={(event)=>{setAccountNumber(event.target.value)}} sx={{marginTop:2}} required id="outlined-basic" label="Account Number" variant="outlined" />
-          <TextField value={accountName} onChange={(event)=>{setAccountName(event.target.value)}} sx={{marginTop:2}} required id="outlined-basic" label="Account Name" variant="outlined" />
-          <Button sx={{marginTop:2,height:40}} variant="contained" onClick={handleUpdateAndSave}>Update and Save</Button>
+          <TextField
+            value={accountNumber}
+            onChange={(event) => {
+              setAccountNumber(event.target.value);
+            }}
+            sx={{ marginTop: 2, width: '100%' }}
+            required
+            id="outlined-basic"
+            label="Account Number"
+            variant="outlined"
+          />
+          <TextField
+            value={accountName}
+            onChange={(event) => {
+              setAccountName(event.target.value);
+            }}
+            sx={{ marginTop: 2, width: '100%' }}
+            required
+            id="outlined-basic"
+            label="Account Name"
+            variant="outlined"
+          />
+          <Button className="flex w-full mt-5 text-white" variant="contained" onClick={handleUpdateAndSave}>
+            Update and Save
+          </Button>
         </Box>
       </Modal>
     </div>
