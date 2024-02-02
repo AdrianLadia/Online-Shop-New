@@ -20,9 +20,18 @@ function MyOrderCard(props) {
   const { datamanipulation,storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isAdmin, userdata,orders } =
     React.useContext(AppContext);
   const order = props.order;
+  const setOrders = props.setOrders;
   const paid = order.paid;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
-  const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(order.proofOfPaymentLink.length);
+  const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(()=>{
+    let count = 0;
+    order.proofOfPaymentLink.map((link) => {
+      if (isUrl(link)) {
+        count++;
+      }
+    });
+    return count;
+  });
 
 
   const [openModal, setOpenModal] = React.useState(false);
@@ -87,16 +96,22 @@ function MyOrderCard(props) {
 
   function handleCancel() {
     cloudfirestore.transactionCancelOrder({ userId: userdata.uid, orderReference: order.reference });
+    const newOrders = orders.filter((s) => s.reference !== order.reference);
+    setOrders(newOrders);
   }
 
   function handlePay() {
     let price;
+    let kilometersFromStore;
     orders.map((s) => {
       if (order.reference === s.reference) {
+
         price = s.grandTotal;
+        kilometersFromStore = s.kilometersFromStore;
 
       }
     });
+
 
     navigateTo('/AccountStatementPayment', {
       state: {
@@ -109,6 +124,7 @@ function MyOrderCard(props) {
         userId: userdata.uid,
         orderReference: order.reference,
         date: orderDateObject,
+        kilometersFromStore: kilometersFromStore,
       },
     });
   }

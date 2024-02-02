@@ -97,7 +97,7 @@ const ProductCardModalAddToCart = ({
       // adds to cart
       addtocart(itemId, count);
       //analytics
-      analytics.logAddToCartEvent(itemId, itemName, category, count, price);
+      // analytics.logAddToCartEvent(itemId, itemName, category, count, price);
       //back to 0
       setCount(0);
       //close modal

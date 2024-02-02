@@ -26,6 +26,7 @@ const style = {
 const ProfileUpdaterModal = (props) => {
   const openProfileUpdaterModal = props.openProfileUpdaterModal;
   const setOpenProfileUpdaterModal = props.setOpenProfileUpdaterModal;
+  const manualCustomerOrderProcess = props.manualCustomerOrderProcess;
   const { firestore, userdata, alertSnackbar } = React.useContext(AppContext);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -74,11 +75,21 @@ const ProfileUpdaterModal = (props) => {
     window.location.reload();
   }
 
+  function openModal(){
+    if (manualCustomerOrderProcess == false) {
+      return openProfileUpdaterModal
+    }
+    else {
+      return !manualCustomerOrderProcess
+    }
+
+  }
+
   return (
     
     <div>
       <Modal
-        open={openProfileUpdaterModal}
+        open={openModal()}
         onClose={() => setOpenProfileUpdaterModal(false)}
         aria-labelledby="profile-update-modal-title"
         aria-describedby="profile-update-modal-description"

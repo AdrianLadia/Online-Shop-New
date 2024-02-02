@@ -29,18 +29,18 @@ const ProductCardModalRadioButton = ({
     true
   );
 
-  let boxStocksAvailable 
+  const boxStocksAvailable = wholesaleData.stocksAvailable;
 
-  if (!['distributor','superAdmin'].includes(userdata ? userdata.userRole : 'GUEST') ) {
-    boxStocksAvailable = businesscalculations.getStocksAvailableLessSafetyStock(
-      wholesaleData.stocksAvailable,
-      wholesaleData.averageSalesPerDay,
-      false
-    );
-  }
-  else {
-    boxStocksAvailable = wholesaleData.stocksAvailable
-  }
+  // if (!['distributor','superAdmin'].includes(userdata ? userdata.userRole : 'GUEST') ) {
+  //   boxStocksAvailable = businesscalculations.getStocksAvailableLessSafetyStock(
+  //     wholesaleData.stocksAvailable,
+  //     wholesaleData.averageSalesPerDay,
+  //     false
+  //   );
+  // }
+  // else {
+  //   boxStocksAvailable = wholesaleData.stocksAvailable
+  // }
  
   const handleChange = (event) => {
     setCount(0)

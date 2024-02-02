@@ -84,8 +84,15 @@ const AffiliateClaimRequest = () => {
 
   useEffect(() => {
     async function readAllClaims() {
-      const ids = await firestore.readAllUserIds();
+      const ids = [];
+      const users = await cloudfirestore.getAllAffiliateUsers();
+      users.forEach((doc) => {
+
+        ids.push(doc.uid);
+      });
+
       const claims = await firestore.readAllClaims(ids);
+
       const toSet = [];
       claims.map((info) => {
         info.map((claim) => {

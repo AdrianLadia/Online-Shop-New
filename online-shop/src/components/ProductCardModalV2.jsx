@@ -8,6 +8,7 @@ import AppContext from '../AppContext';
 import ProductCardModalTableV2 from './ProductCardModalTableV2';
 import ProductCardModalAddToCart from './ProductCardModalAddToCart';
 import { set } from 'date-fns';
+import { RiShareBoxLine } from 'react-icons/ri';
 
 const style = {
   position: 'absolute',
@@ -34,48 +35,66 @@ const style = {
   },
 };
 
-const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModal, modal, setOpenSnackbar,modalSelected }) => {
+const ProductCardModalV2 = ({
+  setShakeCartAnimation,
+  addtocart,
+  product,
+  setModal,
+  modal,
+  setOpenSnackbar,
+  modalSelected,
+}) => {
   const images = product.imageLinks;
-  const { setProducts,products,cloudfirestore } = useContext(AppContext);
+  const { alertSnackbar, setProducts, products, cloudfirestore, userdata } = useContext(AppContext);
   const retailData = product;
   const [wholesaleData, setWholesaleData] = useState(null);
   const [radioButtonSelected, setRadioButtonSelected] = useState('Pack');
   const [count, setCount] = useState(0);
 
-
-
   useEffect(() => {
     const wholesaleItemId = product.itemId.replace(/-RET$/, '');
     const find = products.find((product) => product.itemId === wholesaleItemId);
-    
+
     async function getRetailAndWholesaleDataOfModalProduct() {
-      
-      const wholesaleData = await cloudfirestore.readSelectedDataFromOnlineStore(wholesaleItemId)
-      const reatailData = await cloudfirestore.readSelectedDataFromOnlineStore(product.itemId)
+      const wholesaleData = await cloudfirestore.readSelectedDataFromOnlineStore(wholesaleItemId);
+      const reatailData = await cloudfirestore.readSelectedDataFromOnlineStore(product.itemId);
       setProducts([...products, wholesaleData, reatailData]);
       setWholesaleData(wholesaleData);
     }
-   
+
     if (find === undefined) {
       getRetailAndWholesaleDataOfModalProduct();
     }
-  
-    setWholesaleData(find);
 
-  }, [product,modal]);
+    setWholesaleData(find);
+  }, [product, modal]);
 
   function onModalClose() {
     setModal(false);
     setCount(0);
   }
 
+  function shareButton() {
+    let affiliateId = null;
+    if (userdata && userdata.affiliateId !== undefined) {
+      affiliateId = userdata.affiliateId;
+    }
+
+    let url;
+    if (affiliateId) {
+      url = 'https://starpack.ph/shop?&affiliateId=' + affiliateId + '&modal=' + product.itemId  
+    } else {
+      url = 'https://starpack.ph/shop?modal=' + product.itemId;
+    }
+
+    navigator.clipboard.writeText(url);
+    alertSnackbar('success', 'Link copied to clipboard');
+  }
+
   return (
     <>
       {wholesaleData ? (
-        <Modal
-          open={modal}
-          onClose={onModalClose}
-        >
+        <Modal open={modal} onClose={onModalClose}>
           <Fade in={modal}>
             <Box sx={style} className="bg-colorbackground border-color60 overflow-x-hidden overflow-y-auto">
               <button
@@ -85,6 +104,11 @@ const ProductCardModalV2 = ({ setShakeCartAnimation, addtocart, product, setModa
               >
                 {/* Replace with your icon or text */}X
               </button>
+              <RiShareBoxLine
+                className="fixed cursor-pointer top-2 left-2 p-2 bg-gray-200 rounded-full z-50 h-10 w-10  text-black"
+                onClick={shareButton}
+              />
+
               <ImageCarousel images={images} setModal={setModal} />
 
               <ProductCardModalRadioButton

@@ -39,12 +39,14 @@ const MyOrderCardModal = (props) => {
   let { isLoaded } = useLoadScript({
     googleMapsApiKey: firebaseConfig.apiKey,
   });
-
+  
+  
   const hidePricing = props.hidePricing;
   const { storage, userId, cloudfirestore, userdata,datamanipulation } = useContext(AppContext);
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
+
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
   const { width } = useWindowDimensions();

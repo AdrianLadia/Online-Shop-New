@@ -78,13 +78,13 @@ const AdminCreatePaymentTableRow = (props) => {
         setLoading(false);
         return
       }
-      const customerEmail = await firestore.readEmailAddressByUserId(userId);
+      // const customerEmail = await firestore.readEmailAddressByUserId(userId);
      
-      cloudfirestore.sendEmail({
-        to: customerEmail,
-        subject: 'Payment Denied',
-        text: 'Your payment has been denied. For customer support please go to our website www.starpack.ph... Chat us in My Orders - Message',
-      });
+      // cloudfirestore.sendEmail({
+      //   to: customerEmail,
+      //   subject: 'Payment Denied',
+      //   text: 'Your payment has been denied. For customer support please go to our website www.starpack.ph... Chat us in My Orders - Message',
+      // });
 
       setLoading(false);
     }

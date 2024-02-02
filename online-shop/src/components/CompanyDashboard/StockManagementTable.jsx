@@ -92,7 +92,7 @@ const StockManagementTable = ({ products }) => {
       );
       const wholesaleData = stockManagementTableData.getWholesaleData();
       const retailData = stockManagementTableData.getRetailData();
-      console.log(retailData);
+
       setRowsWholesale(wholesaleData);
       setRowsRetail(retailData);
     }

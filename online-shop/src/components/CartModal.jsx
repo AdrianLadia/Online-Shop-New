@@ -106,13 +106,15 @@ const CartModal = (props) => {
         >
           <div className="flex flex-row justify-between mb-4">
             <div className="flex flex-row gap-5">
-              <button
-                onClick={() => setOpenCreateQuotationModal(true)}
-                className="py-2 px-3 bg-color10b rounded text-white hover:bg-blue-700 "
-                disabled={outStocksLoading}
-              >
-                Download as PDF
-              </button>
+              {['superAdmin', 'admin', 'distributor', 'affiliate'].includes(userdata?.userRole) ? (
+                <button
+                  onClick={() => setOpenCreateQuotationModal(true)}
+                  className="py-2 px-3 bg-color10b rounded text-white hover:bg-blue-700 "
+                  disabled={outStocksLoading}
+                >
+                  Download as PDF
+                </button>
+              ) : null}
 
               {userdata?.userRole === 'superAdmin' ? (
                 <button

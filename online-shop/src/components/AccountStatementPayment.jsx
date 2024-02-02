@@ -18,7 +18,7 @@ const AccountStatementPayment = (props) => {
 
   const location = useLocation();
   const navigateTo = useNavigate();
-  const { eMail, phoneNumber, totalPrice, userId, fullname, orderReference, date } = location.state;
+  const { eMail, phoneNumber, totalPrice, userId, fullname, orderReference, date,kilometersFromStore } = location.state;
 
   // WE DO THIS BECAUSE WE ARE USING THE SAME COMPONENT FOR CHECKOUT AND MY ORDER CARD PAYMENT
   // IF WE CHECKOUT NORMALLY WE NEED TO GENERATE A REFERENCENUMBER
@@ -67,6 +67,7 @@ const AccountStatementPayment = (props) => {
       itemsTotal: null,
       date: checkIfDateExists(),
       deliveryVehicle: null,
+      kilometersFromStore: kilometersFromStore,
     }).then((url) => {
       if (url) {
         // this is used for paymaya url

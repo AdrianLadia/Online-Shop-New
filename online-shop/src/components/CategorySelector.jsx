@@ -81,7 +81,7 @@ const CategorySelector = (props) => {
       setSelectedCategory(categories[categoryValue]);
       setCategoryClickCount(categoryClickCount + 1);
       if (categoryClickCount > 0) {
-        analytics.logChangeCategoryEvent(categories[categoryValue]);
+        // analytics.logChangeCategoryEvent(categories[categoryValue]);
       }
     }
   }, [categoryValue]);

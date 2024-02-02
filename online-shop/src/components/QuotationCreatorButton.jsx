@@ -3,7 +3,15 @@ import html2pdf from 'html2pdf.js';
 import { set } from 'date-fns';
 import AppContext from '../AppContext';
 
-const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee, companyName, senderName }) => {
+const QuotationCreatorButton = ({
+  arrayOfProductData,
+  balance,
+  note,
+  deliveryFee,
+  companyName,
+  senderName,
+  bankAccount,
+}) => {
   const grandTotal = arrayOfProductData.reduce((acc, product) => acc + product.total, 0);
   const _deliveryFee = deliveryFee == '' ? 0 : parseFloat(deliveryFee);
   const _balance = balance == '' ? 0 : parseFloat(balance);
@@ -13,6 +21,28 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
   const [hidden, setHidden] = React.useState(true);
   const [contentCss, setContentCss] = React.useState('');
   const [downloadButtonHidden, setDownloadButtonHidden] = React.useState('hidden');
+  const myBankDetails = [
+    {
+      bankName: 'BDO',
+      accountName: 'Adrian Ladia',
+      accountNumber: '00-60-800-21403',
+    },
+    {
+      bankName: 'Unionbank',
+      accountName: 'Adrian Anton D. Ladia',
+      accountNumber: '1093-5546-9422',
+    },
+    {
+      bankName: 'Gcash',
+      accountName: 'Adrian Anton D. Ladia',
+      accountNumber: '0917-892-7206',
+    },
+    {
+      bankName: 'Paymaya',
+      accountName: 'Adrian Anton Ladia',
+      accountNumber: '0917-892-7206',
+    },
+  ];
 
   useEffect(() => {
     if (userdata) {
@@ -65,7 +95,6 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
         <header className="text-center mb-6">
           <h1 className="text-xl font-bold">{companyName}</h1>
           <p className="text-gray-600">Quotation prepared by: {senderName}</p>
-          
         </header>
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
@@ -103,7 +132,7 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
               <td colSpan="4" className="py-2 px-3 font-medium">
                 Grand Total
               </td>
-              <td className="py-2 px-3">₱{ grandTotal.toFixed(2)}</td>
+              <td className="py-2 px-3">₱{grandTotal.toFixed(2)}</td>
             </tr>
             <tr>
               <td colSpan="4" className="py-2 px-3 font-medium">
@@ -128,12 +157,19 @@ const QuotationCreatorButton = ({ arrayOfProductData, balance, note, deliveryFee
                 Note : {note}
               </td>
             </tr>
+            {myBankDetails.map((bank, index) => {
+              return (
+                <tr key={index}>
+                  <td colSpan="4" className="py-2 px-3">
+                    {bank.bankName} : {bank.accountName} - {bank.accountNumber}
+                  </td>
+                </tr>
+              );
+            })}
           </tfoot>
         </table>
 
-        <footer className="">
-         
-        </footer>
+        <footer className=""></footer>
       </div>
     </div>
   );

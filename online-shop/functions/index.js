@@ -427,6 +427,7 @@ exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (even
 exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => {
   console.log('________________________');
   console.log('RUNNING ON ORDERS CHANGE');
+
   try {
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
@@ -672,6 +673,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
 
     const data = parseData(req.query.data);
     let userid = data.userid;
+    console.log('userid', userid);
     // If guest checkout
     if (userid == null) {
       userid = 'GUEST';
@@ -702,6 +704,8 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const deliveryDate = new Date(data.deliveryDate);
     const paymentMethod = data.paymentMethod;
     const userRole = data.userRole;
+    const affiliateUid = data.affiliateUid;
+    const kilometersFromStore = data.kilometersFromStore;
 
     let cartUniqueItems = [];
 
@@ -709,7 +713,10 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const userRef = db.collection('Users').doc(userid);
     const userSnap = await userRef.get();
     const userData = userSnap.data();
-    const userPrices = userData.userPrices ? userData.userPrices : {};
+    console.log('userId', userid);
+    console.log('userData', userData);
+
+    const userPrices = userData && userData.userPrices ? userData.userPrices : {};
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cart);
@@ -959,7 +966,10 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
             proofOfDeliveryLink: [],
             deliveryDate: deliveryDate,
             paymentMethod: paymentMethod,
+            affiliateUid: affiliateUid,
+            kilometersFromStore: kilometersFromStore,
           };
+
           const userOrderObject = { reference: reference, date: new Date() };
           const updatedOrders = [userOrderObject, ...oldOrders];
           transaction.update(userRef, { orders: updatedOrders });
@@ -1296,11 +1306,11 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     }
     const data = req.body;
 
-    const depositAmount = data.amount;
+    const depositAmount = parseFloat(data.amount);
     const orderReference = data.reference;
     const paymentprovider = data.paymentprovider;
 
-    const commissionPercentage = 0.03;
+    const commissionPercentage = 0.01;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
     logger.log('Proof of payment link', proofOfPaymentLink);
@@ -1314,6 +1324,8 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const orderRef = db.collection('Orders').doc(orderReference);
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
+        const affiliateUid = orderDetail.affiliateUid;
+        console.log('affiliateUid', affiliateUid);
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
@@ -1328,10 +1340,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           doNotAddProofOfPaymentLink = true;
         }
 
-        console.log('orderDetail', orderDetail);
-
         const lessCommissionToShipping = parseFloat((shippingTotal * (depositAmount / itemsTotal)).toFixed(2));
-
         const paymentsRef = db.collection('Payments');
         const paymentQuery = paymentsRef.where('proofOfPaymentLink', '==', proofOfPaymentLink);
         const paymentSnapshot = await paymentQuery.get();
@@ -1348,26 +1357,35 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const userRef = db.collection('Users').doc(userId);
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
-        const affiliateIdOfCustomer = userData.affiliate;
+        const affiliateIdOfCustomer = affiliateUid != null ? affiliateUid : userData.affiliate;
+        console.log('affiliateIdOfCustomer', affiliateIdOfCustomer);
         let newAffiliateCommissions;
         let affiliateUserRef;
+        let foundAffiliate = false;
         if (affiliateIdOfCustomer != null) {
-          affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
-          const affiliateUserSnap = await transaction.get(affiliateUserRef);
-          const affiliateUserData = affiliateUserSnap.data();
-          const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
-          const commission =
-            ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
-          newAffiliateCommissions = [
-            ...oldAffiliateCommissions,
-            {
-              customer: 'test',
-              dateOrdered: new Date().toDateString(),
-              commission: commission.toFixed(2),
-              status: 'claimable',
-              claimCode: '',
-            },
-          ];
+          try {
+            affiliateUserRef = db.collection('Users').doc(affiliateIdOfCustomer);
+            const affiliateUserSnap = await transaction.get(affiliateUserRef);
+            const affiliateUserData = affiliateUserSnap.data();
+            const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
+
+            const commission =
+              ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
+            newAffiliateCommissions = [
+              ...oldAffiliateCommissions,
+              {
+                customer: 'test',
+                dateOrdered: new Date().toDateString(),
+                commission: commission.toFixed(2),
+                status: 'claimable',
+                claimCode: '',
+                orderReference: orderReference,
+              },
+            ];
+            foundAffiliate = true;
+          } catch (error) {
+            console.log('error', error);
+          }
         }
 
         const oldPayments = userData.payments;
@@ -1415,7 +1433,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           transaction.update(orderRef, { proofOfPaymentLink: newOrderPayments });
         }
 
-        if (affiliateIdOfCustomer != null) {
+        if (affiliateIdOfCustomer != null && foundAffiliate == true) {
           transaction.update(affiliateUserRef, { affiliateCommissions: newAffiliateCommissions });
         }
 
@@ -1501,107 +1519,32 @@ exports.payMayaCheckout = onRequest(async (req, res) => {
   });
 });
 
-// Expose the Express app as a Cloud Function
-exports.payMayaWebHookSuccess = onRequest(async (req, res) => {
-  corsHandler(req, res, async () => {
-    if (req.method != 'POST') {
-      res.status(405).send('Method Not Allowed');
-      return;
-    }
-
-    try {
-      const totalAmount = req.body.totalAmount.value;
-      const userId = req.body.metadata.userId;
-      const referenceNumber = req.body.requestReferenceNumber;
-      const paymentprovider = 'Maya';
-
-      const fullName = String(req.body.buyer.firstName) + String(req.body.buyer.lastName);
-
-      const data = {
-        userId: userId,
-        amount: totalAmount,
-        reference: referenceNumber,
-        paymentprovider: paymentprovider,
-        userName: fullName,
-        date: new Date(),
-      };
-
-      const db = admin.firestore();
-
-      await db.runTransaction(async (transaction) => {
-        // READ
-        const paymentsRef = db.collection('Payments').doc();
-        const userRef = db.collection('Users').doc(userId);
-        const userSnap = await transaction.get(userRef);
-        const userData = userSnap.data();
-
-        const oldPayments = userData.payments;
-        const newPayments = [...oldPayments, data];
-
-        // WRITE
-        transaction.set(paymentsRef, {
-          amount: totalAmount,
-          orderReference: referenceNumber,
-          proofOfPaymentLink: '',
-          userId: userId,
-          status: 'approved',
-          userName: fullName,
-          paymentMethod: 'Maya',
-        });
-        transaction.update(userRef, { payments: newPayments });
-      });
-
-      res.status(200).send('success');
-    } catch (error) {
-      console.error('Error updating document:', error);
-      res.status(500).send('Error updating document.');
-    }
-  });
-});
-
-exports.payMayaWebHookFailed = onRequest(async (req, res) => {
-  if (req.method != 'POST') {
-    res.status(405).send('Method Not Allowed');
-    return;
-  }
-
-  // TODO: You will have to implement the logic of this method.
-
-  res.send({
-    success: true,
-  });
-});
-
-exports.payMayaWebHookExpired = onRequest(async (req, res) => {
-  if (req.method != 'POST') {
-    res.status(405).send('Method Not Allowed');
-    return;
-  }
-
-  // TODO: You will have to implement the logic of this method.
-
-  res.send({
-    success: true,
-  });
-});
-
 exports.payMayaEndpoint = onRequest(async (req, res) => {
   if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
   }
   console.log('req.body', req.body);
+
   const data = req.body;
   const status = data.paymentStatus;
   const requestReferenceNumber = data.requestReferenceNumber;
-  const amount = data.amount;
+
+  const db = admin.firestore();
+
+  const amount = parseFloat(data.totalAmount.value);
   const forTesting = data.forTesting ? data.forTesting : false;
   const url = forTesting
     ? 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
     : 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/';
   let response;
   if (status == 'PAYMENT_SUCCESS') {
+    const orderRef = db.collection('Orders').doc(requestReferenceNumber);
+    const order = await orderRef.get();
+    const orderData = order.data();
+    const userId = orderData.userId;
     const data = {
+      userId: userId,
       amount: amount,
       reference: requestReferenceNumber,
       paymentprovider: 'Maya',
@@ -1620,13 +1563,13 @@ exports.payMayaEndpoint = onRequest(async (req, res) => {
   }
 
   if (status == 'PAYMENT_FAILED') {
-    response = {status: 200} // temporary. Replace when logic is implemented
+    response = { status: 200 }; // temporary. Replace when logic is implemented
   }
 
   if (status == 'PAYMENT_EXPIRED') {
-    response = {status: 200} // temporary. Replace when logic is implemented
+    response = { status: 200 }; // temporary. Replace when logic is implemented
   }
-
+  console.log('response', response);
   if (response.status == 200) {
     res.status(200).send({
       webhookDataProcessed: 'success',
@@ -2041,6 +1984,32 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
           const userDataObj = await transaction.get(userRef);
           const userData = userDataObj.data();
           let orders = userData.orders;
+          console.log('orderRef', orderReference);
+          const paymentsRef = db.collection('Payments').where('orderReference', '==', orderReference);
+          let docRef;
+          paymentsRef
+            .get()
+            .then((querySnapshot) => {
+              if (!querySnapshot.empty) {
+                // If documents are found
+                querySnapshot.forEach((doc) => {
+                  // doc is a document snapshot
+                  console.log('Document found:', doc.id, doc.data());
+
+                  // To get a document reference
+                  docRef = doc.ref;
+
+                  // Do something with the document reference
+                  // ...
+                });
+              } else {
+                // No documents found
+                console.log('No matching documents.');
+              }
+            })
+            .catch((error) => {
+              console.error('Error getting documents: ', error);
+            });
 
           const data = orders.filter((order) => order.reference != orderReference);
 
@@ -2057,7 +2026,6 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
           await Promise.all(
             Object.entries(cancelledDataCart).map(async ([itemId, quantity]) => {
               const productRef = db.collection('Products').doc(itemId);
-
               const prodSnap = await transaction.get(productRef);
               const prodData = prodSnap.data();
               const stocksOnHold = prodData.stocksOnHold;
@@ -2083,6 +2051,7 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
 
           transaction.update(userRef, { orders: orders });
           transaction.delete(cancelledOrderRef);
+          transaction.delete(docRef);
           res.status(200).send('success');
         } catch (error) {
           logger.log(error);
@@ -2182,48 +2151,58 @@ exports.onAffiliateClaim = onRequest(async (req, res) => {
     }
     const db = admin.firestore();
     const data = req.body;
-    try {
-      db.runTransaction(async (transaction) => {
-        const forStatus = data.data1;
-        const commDate = forStatus.date;
-        const commData = forStatus.data;
-        const commId = forStatus.id;
-        const claimCode = forStatus.claimCode;
-        const userRef = db.collection('Users').doc(commId);
-        const forClaims = data.data2;
-        const affiliateUserId = forClaims.affiliateUserId;
-        const affiliateRef = await db.collection('Users').doc(affiliateUserId).get();
-        const affiliateUserData = affiliateRef.data();
+    db.runTransaction(async (transaction) => {
+      try {
+        const commDate = data.date;
+        const claimCode = data.affiliateClaimId;
+        const affiliateUserId = data.affiliateUserId;
+        const amount = data.amount;
+
+        if (amount <= 0) {
+          res.status(400).send('Cannot claim if amount is 0 or less.');
+        }
+        if (amount < 1000) {
+          res.status(400).send('Cannot claim if amount is less than 1000.');
+        }
+
+        const affiliateRef = db.collection('Users').doc(affiliateUserId);
+        const docSnap = await transaction.get(affiliateRef);
+        const affiliateUserData = docSnap.data();
+        console.log('commissionsData', data);
+        console.log('affiliateUserData', affiliateUserData);
         const oldAffiliateClaims = affiliateUserData.affiliateClaims;
+        const commissions = affiliateUserData.affiliateCommissions;
 
-        const updatedClaimData = [];
-        oldAffiliateClaims.map((oldClaims) => {
-          updatedClaimData.push(oldClaims);
-        });
-        updatedClaimData.push(forClaims);
+        console.log('commissions', commissions);
 
-        const updatedCommData = [];
-        commData.map((commissions) => {
+        const hasPending = commissions.some((commission) => commission.status === 'pending');
+        if (hasPending) {
+          console.log('hasPending', hasPending);
+          res.status(400).send('Cannot claim if there is another pending claim.');
+        }
+
+        const updatedClaimData = [...oldAffiliateClaims, data];
+
+        const updatedCommData = commissions.map((commission) => {
           if (
-            new Date(commissions.dateOrdered) <= new Date(commDate) &&
-            commissions.status == 'claimable' &&
-            commissions.claimCode == ''
+            new Date(commission.dateOrdered) <= new Date(commDate) &&
+            commission.status === 'claimable' &&
+            commission.claimCode === ''
           ) {
-            commissions.status = 'pending';
-            commissions.claimCode = claimCode;
-            updatedCommData.push(commissions);
-          } else {
-            updatedCommData.push(commissions);
+            return { ...commission, status: 'pending', claimCode: claimCode };
           }
+          return commission;
         });
-        transaction.update(userRef, { affiliateClaims: updatedClaimData });
-        transaction.update(userRef, { affiliateCommissions: updatedCommData });
-        res.status(200).send(data);
-      });
-    } catch (e) {
-      logger.log(e);
-      res.status(400).send('Error on affiliate claim.');
-    }
+
+        transaction.update(affiliateRef, { affiliateClaims: updatedClaimData });
+        transaction.update(affiliateRef, { affiliateCommissions: updatedCommData });
+
+        res.status(200).send('Success');
+      } catch (e) {
+        console.log(e);
+        res.status(400).send(e);
+      }
+    });
   });
 });
 
@@ -2317,21 +2296,28 @@ exports.markAffiliateClaimDone = onRequest(async (req, res) => {
 exports.getAllAffiliateUsers = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const apiKey = req.headers['apikey'];
+    console.log('apiKey', apiKey);
     if (!handleApiKey(apiKey, res)) {
       res.status(400).send('Invalid API Key');
       return;
     }
-    const db = admin.firestore();
-    const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
-    const snapshot = await usersRef.get();
-    const affiliateUsers = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      if (data.affiliateId != '') {
-        affiliateUsers.push(data);
-      }
-    });
-    res.status(200).send(affiliateUsers);
+    try {
+      const db = admin.firestore();
+      const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
+      const snapshot = await usersRef.get();
+      const affiliateUsers = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.affiliateId != '') {
+          affiliateUsers.push(data);
+        }
+      });
+      console.log('affiliateUsers', affiliateUsers);
+      res.status(200).send(affiliateUsers);
+    } catch (e) {
+      console.log(e);
+      res.status(400).send('Error getting affiliate users.');
+    }
   });
 });
 
@@ -2351,6 +2337,7 @@ exports.readSelectedOrder = onRequest(async (req, res) => {
     const orderDoc = await orderRef.get();
     const orderData = orderDoc.data();
 
+    console.log(orderData);
     const orderUserId = orderData.userId;
     const userRef = db.collection('Users').doc(userId);
     const userDoc = await userRef.get();
@@ -2660,3 +2647,19 @@ exports.updateCustomerSearchIndexScheduled = functions
   .onRun(async (context) => {
     await internalUpdateCustomerSearchIndex();
   });
+
+exports.createEmployeeApplication = onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const data = req.body;
+    const db = admin.firestore();
+    const applicationRef = db.collection('EmployeeApplications').doc();
+    const applicationId = applicationRef.id;
+    try {
+      await applicationRef.set(data);
+      res.status(200).send(applicationId);
+    } catch (error) {
+      logger.log(error);
+      res.status(400).send('Error creating employee application');
+    }
+  });
+});

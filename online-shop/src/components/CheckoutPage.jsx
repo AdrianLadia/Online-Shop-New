@@ -130,6 +130,8 @@ const CheckoutPage = () => {
   const [pickUpOrDeliver, setPickUpOrDeliver] = useState('deliver');
   const [allowedDates, setAllowedDates] = useState(null);
   const [kilometersFromStore, setKilometersFromStore] = useState(0);
+
+  const [isAccountClaimed, setIsAccountClaimed] = useState(false);
   useEffect(() => {
     const ad = new allowedDeliveryDates();
     ad.runMain();
@@ -157,6 +159,19 @@ const CheckoutPage = () => {
     if (userDataUrlOfBir2303) {
       setUrlOfBir2303(userDataUrlOfBir2303);
     }
+  }, [userdata]);
+
+  // This is to check if account is claimed if it is not claimed then we will not ask for email
+  useEffect(() => {
+    let isAccountClaimed = false;
+    
+    if (userdata ? userdata.isAccountClaimed : null != undefined) {
+      isAccountClaimed = userdata.isAccountClaimed;
+    }
+    else {
+      isAccountClaimed = true;
+    }
+    setIsAccountClaimed(isAccountClaimed);
   }, [userdata]);
 
   // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
@@ -333,11 +348,12 @@ const CheckoutPage = () => {
 
       return pattern.test(email);
     }
-
-    if (!isValidEmail(localemail)) {
-      alertSnackbar('error', 'Please enter a valid email');
-      setPlaceOrderLoading(false);
-      return;
+    if (isAccountClaimed) {
+      if (!isValidEmail(localemail)) {
+        alertSnackbar('error', 'Please enter a valid email');
+        setPlaceOrderLoading(false);
+        return;
+      }
     }
 
     if (localname === '') {
@@ -391,12 +407,13 @@ const CheckoutPage = () => {
         paymentMethod: paymentMethodSelected,
         userRole: userdata ? userdata.userRole : 'GUEST',
         affiliateUid: affiliateUid,
+        kilometersFromStore: kilometersFromStore,
       });
 
       setTransactionStatus(res);
       setPlacedOrder(!placedOrder);
       localStorage.setItem('cart', JSON.stringify({}));
-      analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);
+      // analytics.logPlaceOrderEvent(cart, grandTotal, localemail, localphonenumber, localname);
     } catch (err) {
       console.log(err);
       setPlaceOrderLoading(false);
@@ -409,7 +426,12 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (userdata) {
-      setLocalEmail(userdata.email);
+      if (isAccountClaimed) {
+        setLocalEmail(userdata.email);
+      }
+      else {
+        setLocalEmail(null);
+      }
 
       if (userdata.contactPerson.length > 0) {
         setLocalPhoneNumber(userdata.contactPerson[0].phoneNumber);
@@ -425,7 +447,7 @@ const CheckoutPage = () => {
         setLocalPhoneNumber(userdata.phoneNumber);
       }
     }
-  }, [userdata]);
+  }, [userdata,isAccountClaimed]);
 
   useEffect(() => {
     if (!area.includes('lalamoveServiceArea') && area.length > 0) {
@@ -445,7 +467,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (total > 0) {
-      analytics.logOpenCheckoutPageEvent(cart, total);
+      // analytics.logOpenCheckoutPageEvent(cart, total);
     }
   }, [total]);
 
@@ -609,6 +631,7 @@ const CheckoutPage = () => {
             onChange={(event) => setLocalName(event.target.value)}
             value={localname || ''}
           />
+          {isAccountClaimed ?  
           <TextField
             id="emailAddressEntry"
             label="E-mail (required)"
@@ -618,6 +641,7 @@ const CheckoutPage = () => {
             onChange={(event) => setLocalEmail(event.target.value)}
             value={localemail || ''}
           />
+          : null}
         </div>
 
         {allowShipping == false ? (

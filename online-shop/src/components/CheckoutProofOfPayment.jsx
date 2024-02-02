@@ -63,17 +63,17 @@ const CheckoutProofOfPayment = (props) => {
   }, [mayaRedirectUrl]);
 
   useEffect(() => {
-    analytics.logOpenPaymentPageEvent(
-      referenceNumber,
-      itemsTotal,
-      deliveryFee,
-      grandTotal,
-      vat,
-      area,
-      paymentMethodSelected,
-      date,
-      rows
-    );
+    // analytics.logOpenPaymentPageEvent(
+    //   referenceNumber,
+    //   itemsTotal,
+    //   deliveryFee,
+    //   grandTotal,
+    //   vat,
+    //   area,
+    //   paymentMethodSelected,
+    //   date,
+    //   rows
+    // );
   }, []);
 
   function delay(ms) {

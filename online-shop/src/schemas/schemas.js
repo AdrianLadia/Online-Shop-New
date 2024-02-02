@@ -1,6 +1,17 @@
 import Joi from 'joi';
 
 class schemas {
+  static employeeApplicationSchema() {
+    return Joi.object({
+      fullName: Joi.string().required(),
+      email: Joi.string().required(),
+      phoneNumber: Joi.string().required(),
+      gender: Joi.string().required(),
+      age: Joi.date().required(),
+      address: Joi.string().required(),
+      CVorResume: Joi.string().required(),
+    }).unknown(false);
+  }
   static mayaSuccessRequestSchema() {
     return Joi.object({
       totalAmount: Joi.object({
@@ -38,7 +49,7 @@ class schemas {
       name: Joi.string().allow(null, ''),
       email: Joi.string().allow(null, ''),
       emailVerified: Joi.boolean(),
-      phoneNumber: Joi.string().allow(null,''),
+      phoneNumber: Joi.string().allow(null, ''),
       deliveryAddress: Joi.array(),
       contactPerson: Joi.array(),
       isAnonymous: Joi.boolean(),
@@ -47,21 +58,20 @@ class schemas {
       favoriteItems: Joi.array(),
       payments: Joi.array(),
       userRole: Joi.string().required(),
-      affiliate : Joi.string().required().allow(null,''),
+      affiliate: Joi.string().required().allow(null, ''),
       affiliateClaims: Joi.array().required(),
       affiliateDeposits: Joi.array().required(),
       affiliateCommissions: Joi.array().required(),
-      bir2303Link: Joi.string().required().allow(null,''),
-      affiliateId : Joi.string().required().allow(null,''),
-      affiliateBankAccounts: Joi.array().required().allow(null,''),
+      bir2303Link: Joi.string().required().allow(null, ''),
+      affiliateId: Joi.string().required().allow(null, ''),
+      affiliateBankAccounts: Joi.array().required().allow(null, ''),
       joinedDate: Joi.date().required(),
-      codBanned : Joi.object({
-        isBanned : Joi.boolean().required(),
-        reason : Joi.string().required().allow(null,''),
+      codBanned: Joi.object({
+        isBanned: Joi.boolean().required(),
+        reason: Joi.string().required().allow(null, ''),
       }),
-      userPrices: Joi.object(),
-      
- 
+      userPrices: Joi.object().required(),
+      isAccountClaimed: Joi.boolean(),
     }).unknown(false);
   }
 
@@ -73,34 +83,34 @@ class schemas {
       price: Joi.number().required().invalid('', null, 0),
       description: Joi.string().required().allow(''),
       weight: Joi.number().required().invalid('', null, 0),
-      dimensions: Joi.string().allow('',null),
+      dimensions: Joi.string().allow('', null),
       category: Joi.string().required().invalid('', null),
       imageLinks: Joi.array(),
-      brand: Joi.string().allow('',null),
+      brand: Joi.string().allow('', null),
       pieces: Joi.number().required().invalid('', null, 0),
-      color: Joi.string().allow('',null),
-      material: Joi.string().allow('',null),
-      size: Joi.string().allow('',null),
+      color: Joi.string().allow('', null),
+      material: Joi.string().allow('', null),
+      size: Joi.string().allow('', null),
       stocksAvailable: Joi.number().required().invalid('').allow(null),
       stocksOnHold: Joi.array(),
       averageSalesPerDay: Joi.number().required().allow(null),
-      parentProductID: Joi.string().allow('',null),
+      parentProductID: Joi.string().allow('', null),
       stocksOnHoldCompleted: Joi.array(),
       forOnlineStore: Joi.boolean().invalid('', null),
       isCustomized: Joi.boolean().required().invalid('', null),
       salesPerMonth: Joi.array(),
       stocksIns: Joi.array().allow(null),
       clicks: Joi.array(),
-      piecesPerPack: Joi.number().allow(null,''),
-      packsPerBox: Joi.number().allow(null,''),
-      cbm: Joi.number().allow('',null),
+      piecesPerPack: Joi.number().allow(null, ''),
+      packsPerBox: Joi.number().allow(null, ''),
+      cbm: Joi.number().allow('', null),
       manufactured: Joi.boolean(),
-      machinesThatCanProduce: Joi.string().allow('',null),
+      machinesThatCanProduce: Joi.string().allow('', null),
       stocksLowestPoint: Joi.array(),
-      boxImage: Joi.string().allow('',null),
-      costPrice: Joi.number().allow('',null),
-      freightCost: Joi.number().allow('',null,'?'),
-      distributorPrice: Joi.number().allow('',null),
+      boxImage: Joi.string().allow('', null),
+      costPrice: Joi.number().allow('', null),
+      freightCost: Joi.number().allow('', null, '?'),
+      distributorPrice: Joi.number().allow('', null),
     }).unknown(false);
   }
 }

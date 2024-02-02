@@ -24,12 +24,6 @@ const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
   const {
     userdata,
-    setUserData,
-    auth,
-    setUserLoaded,
-    setUserState,
-    setUserId,
-    setCart,
     analytics,
     alertSnackbar,
     fbclid,
@@ -324,13 +318,10 @@ const HomePage = ({ isAffiliateLink }) => {
     navigateTo('/shop');
   }
 
-  function handleAff() {
-    navigateTo('/signUp');
-  }
 
   useEffect(() => {
     if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
-      analytics.logOpenHomePageEvent();
+      // analytics.logOpenHomePageEvent();
     }
   }, [fbclid, analytics]);
 

@@ -160,12 +160,12 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       shippingtotal: Joi.number().required(),
       grandTotal: Joi.number().required(),
       reference: Joi.string().required(),
-      userphonenumber: Joi.string().required().allow(''),
+      userphonenumber: Joi.string().required().allow('',null),
       deliveryNotes: Joi.string().allow(''),
       totalWeight: Joi.number().required(),
       deliveryVehicle: Joi.string().required(),
       needAssistance: Joi.boolean().required(),
-      eMail: Joi.string().required(),
+      eMail: Joi.string().required().allow(null),
       sendEmail: Joi.boolean().required(),
       testing: Joi.boolean().required(),
       isInvoiceNeeded: Joi.boolean().required(),
@@ -174,7 +174,8 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       deliveryDate: Joi.date().required(),
       paymentMethod: Joi.string().required(),
       userRole : Joi.string().required(),
-      affiliateUid : Joi.string().allow(null),
+      affiliateUid : Joi.string().required().allow(null),
+      kilometersFromStore : Joi.number().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -275,7 +276,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       });
       return res.data;
     } catch (error) {
-      console.log(productId);
+
       console.log(error);
       // throw new Error(error);
     }
@@ -357,32 +358,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
     return response;
   }
 
-  async testPayMayaWebHookSuccess(data) {
-    const dataSchema = schemas.mayaSuccessRequestSchema();
 
-    const { error } = dataSchema.validate(data);
-
-    if (error) {
-      alert(error.message);
-      throw new Error(error.message);
-    }
-
-    try {
-      const response = await axios.post(`${this.url}payMayaWebHookSuccess`, data);
-      return response;
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        // Handle the 400 error messages
-        const errorMessage = error.response.data;
-        console.error('Error:', errorMessage);
-        alert(errorMessage);
-      } else {
-        // Handle other errors
-        console.error('An error occurred:', error);
-        alert('An error occurred. Please try again later.');
-      }
-    }
-  }
 
   async updateOrdersAsPaidOrNotPaid(userId) {
     const userIdSchema = Joi.string().required();
@@ -573,13 +549,19 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async onAffiliateClaim(data) {
     const jsonData = JSON.stringify(data);
-    const res = await axios.post(`${this.url}onAffiliateClaim`, jsonData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
-      },
-    });
-    return res;
+    try {
+      const res = await axios.post(`${this.url}onAffiliateClaim`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
+        },
+      });
+
+      return res;
+    }
+    catch (error) {
+      return error
+    }
   }
 
   // async addClaimsToAffiliate(data) {
@@ -641,11 +623,17 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
   async readSelectedOrder(reference, userId) {
     const jsonData = JSON.stringify({ reference, userId });
-    const res = await axios.post(`${this.url}readSelectedOrder`, jsonData, {
-      headers: { 'Content-Type': 'application/json',
-      'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' },
-    });
-    return res.data;
+    try {
+      const res = await axios.post(`${this.url}readSelectedOrder`, jsonData, {
+        headers: { 'Content-Type': 'application/json',
+        'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' },
+      });
+      return res.data;
+    }
+    catch (error) {
+      console.log(error);
+      return
+    }
   }
 
   async voidPayment(data) {

@@ -124,7 +124,7 @@ const OpenCartButton = (props) => {
   }
 
   function ViewCart() {
-    analytics.logOpenCartEvent(cart);
+    // analytics.logOpenCartEvent(cart);
     setOpenCart(true);
   }
 
