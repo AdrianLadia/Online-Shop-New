@@ -222,7 +222,7 @@ const AdminAffiliatePage = () => {
 
   useEffect(() => {
     cloudfirestore.readAllDataFromCollection('Products').then((res) => {
-      console.log(res);
+      // console.log(res);
       setOnlineStoreProductsData(res);
     });
   }, []);
@@ -239,9 +239,84 @@ const AdminAffiliatePage = () => {
 
         setPaymentMethods(bankNames);
       });
+      console.log(userdata.affiliateCommissions);
+      // setAffiliateCommissions(userdata.affiliateCommissions);
 
-      setAffiliateCommissions(userdata.affiliateCommissions);
-      // setAffiliateCommissions(mockCommissions);
+      const mockCommissions = []
+      for (let i = 0; i < 100; i++) {
+
+        // create a function that returns 10% of the time claimable and 90% of the time claimed
+        const status = Math.random() < 0.1 ? 'claimable' : 'claimed';
+
+        
+        // create a function that randomly generates a date within the last 365 days
+        const randomDate = new Date(new Date('2024-01-31').getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000);
+        // create a function that randomly generates a commission amount
+
+        const randomNumber10digits = Math.floor(1000000000 + Math.random() * 9000000000);
+        
+        function getMultiplier(month,year) {
+          console.log(month,year)
+          if (month == 0 && year == 2023) {
+            return 1.5
+          }
+          if (month == 1 && year == 2023) {
+            return 2
+          }
+          if (month == 2 && year == 2023) {
+            return 2.5
+          }
+          if (month == 3 && year == 2023) {
+            return 3
+          }
+          if (month == 4 && year == 2023) {
+            return 3.5
+          }
+          if (month == 5 && year == 2023) {
+            return 4
+          }
+          if (month == 6 && year == 2023) {
+            return 4.5
+          }
+          if (month == 7 && year == 2023) {
+            return 5
+          }
+          if (month == 8 && year == 2023) {
+            return 5.5
+          }
+          if (month == 9 && year == 2023) {
+            return 6
+          }
+          if (month == 10 && year == 2023) {
+            return 6.5
+          }
+          if (month == 11 && year == 2023) {
+            return 7
+          }
+          if (month == 0 && year == 2024) {
+            return 7.5
+          }
+          if (month == 1 && year == 2024) {
+            return 8
+          }
+        }
+
+        const commission = Math.random() * 1000 * getMultiplier(randomDate.getMonth(),randomDate.getFullYear())
+
+
+        mockCommissions.push({
+          claimCode: "",
+          commission: commission,
+          customer: 'test',
+          dateOrdered: randomDate,
+          orderReference: randomNumber10digits.toString(),
+          status: status
+        });
+      }
+
+      const sorted = mockCommissions.sort((a, b) => a.dateOrdered - b.dateOrdered);
+
+      setAffiliateCommissions(mockCommissions);
     }
   }, [userdata]);
 

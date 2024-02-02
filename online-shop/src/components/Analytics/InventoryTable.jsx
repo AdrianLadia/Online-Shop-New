@@ -104,6 +104,7 @@ export function InventoryTable({name, category, customized, callback}) {
   useEffect(() => {
     const dataTable = [];
     const moreData = [];
+    console.log(dataUsedForTable)
     dataUsedForTable.map((row, index) => {
       const data = row.tableData;
       const more = row.moreInfoData;
@@ -139,7 +140,7 @@ export function InventoryTable({name, category, customized, callback}) {
     tableData
   );
 
-  const filteredTableData =
+  const filteredTableData = 
     customize === "true" && selectedOption
       ? filteredData.filter(
           (data) => data.isCustomized && data.category === selectedOption
@@ -151,6 +152,8 @@ export function InventoryTable({name, category, customized, callback}) {
   const filtered =
       name ? tableData.filter((data)=>  data.name.toLowerCase().includes(name.toLowerCase()))
       :(filteredTableData);
+
+  
 
   function responsiveFont() {
     if (width < 640) {
