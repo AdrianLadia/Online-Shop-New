@@ -81,7 +81,13 @@ export function InventoryTable({name, category, customized, callback}) {
     const tableData = [];
     productsData.map((product, index) => {
       const productName = product.itemName;
-      const totalStocks = businesslogic.getTotalStocks(product);
+      const totalStocks = product.stocksAvailable
+      const stocksOnHold = product.stocksOnHold;
+      let stocksOnHoldCount = 0
+      stocksOnHold.forEach((stock) => {
+        stocksOnHoldCount += stock.quantity
+      })
+      console.log(stocksOnHoldCount)
       const type = product.category;
       const custom = product.isCustomized;
       const itemId = product.itemId;
@@ -92,6 +98,7 @@ export function InventoryTable({name, category, customized, callback}) {
           name: productName,
           category: type,
           totalStocks: totalStocks,
+          stocksOnHold: stocksOnHoldCount,
           isCustomized: custom,
           itemId: itemId,
         },
@@ -337,6 +344,47 @@ export function InventoryTable({name, category, customized, callback}) {
           }}
         >
           STOCKS
+        </div>
+      ),
+      width: responsiveTableWidth(),
+      headerClassName: "super-app-theme--header",
+      align: "center",
+      headerAlign: "center",
+      editable: false,
+      disableColumnMenu: true,
+      renderCell: (filteredTableData) => (
+        <div
+          style={{
+            color:
+              filteredTableData.value < 20
+                ? "red"
+                : filteredTableData.value < 50
+                ? "#E6B325"
+                : "#3EC70B",
+            width: "100%",
+            align: "center",
+            textAlign: "center",
+            fontSize: responsiveFont(),
+            fontWeight: "600",
+          }}
+        >
+          {filteredTableData.value}
+        </div>
+      ),
+    },
+    {
+      field: "stocksOnHold",
+      headerName: (
+        <div
+          style={{
+            fontFamily: "Lucida Sans Unicode, sans-seriff",
+            padding: "10px",
+            letterSpacing: "2px",
+            fontSize: responsiveFont(),
+            fontWeight: "semibold",
+          }}
+        >
+          On Hold
         </div>
       ),
       width: responsiveTableWidth(),
@@ -1173,6 +1221,7 @@ export function InventoryTable({name, category, customized, callback}) {
             sortingOrder={['desc', 'asc']}
             // sortModel={[{field: 'totalStocks', sort: 'asc'}]}
           />
+          
         </Box>
       {/* )} */}
     </div>

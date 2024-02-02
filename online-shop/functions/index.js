@@ -427,7 +427,7 @@ exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (even
 exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => {
   console.log('________________________');
   console.log('RUNNING ON ORDERS CHANGE');
-  
+
   try {
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
@@ -445,7 +445,6 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
       }
     }
 
-    
     if (!beforeData.grandTotal) {
       return;
     }
@@ -717,9 +716,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     console.log('userId', userid);
     console.log('userData', userData);
 
-
     const userPrices = userData && userData.userPrices ? userData.userPrices : {};
-
 
     let itemsTotalBackEnd = 0;
     const itemKeys = Object.keys(cart);
@@ -1522,23 +1519,20 @@ exports.payMayaCheckout = onRequest(async (req, res) => {
   });
 });
 
-
-
 exports.payMayaEndpoint = onRequest(async (req, res) => {
   if (req.method != 'POST') {
     res.status(405).send('Method Not Allowed');
     return;
   }
   console.log('req.body', req.body);
-  
+
   const data = req.body;
   const status = data.paymentStatus;
   const requestReferenceNumber = data.requestReferenceNumber;
 
   const db = admin.firestore();
-  
 
-  const amount = parseFloat(data.totalAmount.value)
+  const amount = parseFloat(data.totalAmount.value);
   const forTesting = data.forTesting ? data.forTesting : false;
   const url = forTesting
     ? 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
@@ -1992,27 +1986,30 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
           let orders = userData.orders;
           console.log('orderRef', orderReference);
           const paymentsRef = db.collection('Payments').where('orderReference', '==', orderReference);
-          let docRef
-          paymentsRef.get().then(querySnapshot => {
-            if (!querySnapshot.empty) {
+          let docRef;
+          paymentsRef
+            .get()
+            .then((querySnapshot) => {
+              if (!querySnapshot.empty) {
                 // If documents are found
-                querySnapshot.forEach(doc => {
-                    // doc is a document snapshot
-                    console.log('Document found:', doc.id, doc.data());
-        
-                    // To get a document reference
-                    docRef = doc.ref;
-        
-                    // Do something with the document reference
-                    // ...
+                querySnapshot.forEach((doc) => {
+                  // doc is a document snapshot
+                  console.log('Document found:', doc.id, doc.data());
+
+                  // To get a document reference
+                  docRef = doc.ref;
+
+                  // Do something with the document reference
+                  // ...
                 });
-            } else {
+              } else {
                 // No documents found
                 console.log('No matching documents.');
-            }
-        }).catch(error => {
-            console.error("Error getting documents: ", error);
-        });
+              }
+            })
+            .catch((error) => {
+              console.error('Error getting documents: ', error);
+            });
 
           const data = orders.filter((order) => order.reference != orderReference);
 
@@ -2166,13 +2163,12 @@ exports.onAffiliateClaim = onRequest(async (req, res) => {
         }
         if (amount < 1000) {
           res.status(400).send('Cannot claim if amount is less than 1000.');
-        } 
-
+        }
 
         const affiliateRef = db.collection('Users').doc(affiliateUserId);
         const docSnap = await transaction.get(affiliateRef);
         const affiliateUserData = docSnap.data();
-        console.log('commissionsData',data)
+        console.log('commissionsData', data);
         console.log('affiliateUserData', affiliateUserData);
         const oldAffiliateClaims = affiliateUserData.affiliateClaims;
         const commissions = affiliateUserData.affiliateCommissions;
@@ -2305,8 +2301,7 @@ exports.getAllAffiliateUsers = onRequest(async (req, res) => {
       res.status(400).send('Invalid API Key');
       return;
     }
-    try{
-
+    try {
       const db = admin.firestore();
       const usersRef = db.collection('Users').where('userRole', '==', 'affiliate');
       const snapshot = await usersRef.get();
@@ -2317,10 +2312,9 @@ exports.getAllAffiliateUsers = onRequest(async (req, res) => {
           affiliateUsers.push(data);
         }
       });
-      console.log('affiliateUsers',affiliateUsers);
+      console.log('affiliateUsers', affiliateUsers);
       res.status(200).send(affiliateUsers);
-    }
-    catch(e){
+    } catch (e) {
       console.log(e);
       res.status(400).send('Error getting affiliate users.');
     }
@@ -2343,7 +2337,7 @@ exports.readSelectedOrder = onRequest(async (req, res) => {
     const orderDoc = await orderRef.get();
     const orderData = orderDoc.data();
 
-    console.log(orderData)
+    console.log(orderData);
     const orderUserId = orderData.userId;
     const userRef = db.collection('Users').doc(userId);
     const userDoc = await userRef.get();
@@ -2653,3 +2647,19 @@ exports.updateCustomerSearchIndexScheduled = functions
   .onRun(async (context) => {
     await internalUpdateCustomerSearchIndex();
   });
+
+exports.createEmployeeApplication = onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const data = req.body;
+    const db = admin.firestore();
+    const applicationRef = db.collection('EmployeeApplications').doc();
+    const applicationId = applicationRef.id;
+    try {
+      await applicationRef.set(data);
+      res.status(200).send(applicationId);
+    } catch (error) {
+      logger.log(error);
+      res.status(400).send('Error creating employee application');
+    }
+  });
+});

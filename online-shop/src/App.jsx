@@ -35,7 +35,7 @@ import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
-
+import JobOpenings from './components/JobOpenings';
 
 function App() {
   // get fbclid for faccebook pixel conversion api
@@ -716,6 +716,14 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <HomePage />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/jobOpenings"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <JobOpenings />
             </AppContext.Provider>
           }
         />
