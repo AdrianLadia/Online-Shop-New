@@ -24,12 +24,6 @@ const HomePage = ({ isAffiliateLink }) => {
   const navigateTo = useNavigate();
   const {
     userdata,
-    setUserData,
-    auth,
-    setUserLoaded,
-    setUserState,
-    setUserId,
-    setCart,
     analytics,
     alertSnackbar,
     fbclid,

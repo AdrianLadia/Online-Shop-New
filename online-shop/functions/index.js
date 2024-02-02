@@ -1530,17 +1530,27 @@ exports.payMayaEndpoint = onRequest(async (req, res) => {
     return;
   }
   console.log('req.body', req.body);
+  
   const data = req.body;
   const status = data.paymentStatus;
   const requestReferenceNumber = data.requestReferenceNumber;
-  const amount = data.amount;
+
+  const db = admin.firestore();
+  
+
+  const amount = parseFloat(data.totalAmount.value)
   const forTesting = data.forTesting ? data.forTesting : false;
   const url = forTesting
     ? 'http://127.0.0.1:5001/online-store-paperboy/asia-southeast1/'
     : 'https://asia-southeast1-online-store-paperboy.cloudfunctions.net/';
   let response;
   if (status == 'PAYMENT_SUCCESS') {
+    const orderRef = db.collection('Orders').doc(requestReferenceNumber);
+    const order = await orderRef.get();
+    const orderData = order.data();
+    const userId = orderData.userId;
     const data = {
+      userId: userId,
       amount: amount,
       reference: requestReferenceNumber,
       paymentprovider: 'Maya',
