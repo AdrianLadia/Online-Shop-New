@@ -3,12 +3,9 @@ import { useState } from 'react';
 import {
   Card,
   CardActionArea,
-  TextField,
   FormControl,
   FormLabel,
-  RadioGroup,
   FormControlLabel,
-  Radio,
   CardActions,
   CardContent,
   CardMedia,
@@ -18,6 +15,10 @@ import {
   ListItem,
   ListItemText,
 } from '@material-ui/core';
+import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import theme from '../colorPalette/MaterialUITheme';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -28,6 +29,7 @@ import DatePicker from 'react-datepicker';
 import Joi from 'joi';
 import schemas from '../schemas/schemas';
 import { ThemeProvider } from '@mui/material/styles';
+import { set } from 'date-fns';
 
 const style = {
   position: 'absolute',
@@ -132,8 +134,10 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
   const [age, setAge] = useState('');
   const [address, setAddress] = useState('');
   const [submittedCv, setSubmittedCv] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleSubmit = async (event) => {
+    setButtonLoading(true);
     event.preventDefault();
     // Here you would handle the submission of the form data, for example:
     console.log({ fullName, email, phoneNumber, gender, CVorResume });
@@ -155,6 +159,7 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
     if (error) {
       console.log(error);
       alertSnackbar('error', error.toString());
+      setButtonLoading(false);
       return;
     }
 
@@ -171,11 +176,13 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
         text: `Dear HR,\n\nA new application has been received from ${data.fullName}.\n\nBest Regards,\nHR Department`,
       });
       alertSnackbar('success', 'Application submitted successfully');
+      setButtonLoading(false);
       setOpenModal(false);
       setShowCard(true);
     } catch (error) {
       console.error('Error adding document:', error);
       alertSnackbar('error', 'Error submitting application');
+      setButtonLoading(false);
     }
 
     // After submission, you might want to close the modal and show the card or navigate away
@@ -209,6 +216,7 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
             Application Form
           </Typography>
           <TextField
+            variant="standard"
             required
             fullWidth
             id="fullName"
@@ -217,9 +225,13 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
             autoComplete="name"
             autoFocus
             value={fullName}
+            InputLabelProps={{
+              style: { color: theme.palette.primary.main },
+            }}
             onChange={(e) => setFullName(e.target.value)}
           />
           <TextField
+            variant="standard"
             required
             fullWidth
             id="email"
@@ -227,9 +239,13 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
             name="email"
             autoComplete="email"
             value={email}
+            InputLabelProps={{
+              style: { color: theme.palette.primary.main },
+            }}
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
+            variant="standard"
             required
             fullWidth
             id="phoneNumber"
@@ -237,9 +253,13 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
             name="phoneNumber"
             autoComplete="tel"
             value={phoneNumber}
+            InputLabelProps={{
+              style: { color: theme.palette.primary.main },
+            }}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
           <TextField
+            variant="standard"
             required
             fullWidth
             id="address"
@@ -247,10 +267,14 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
             name="address"
             autoComplete="address"
             value={address}
+            InputLabelProps={{
+              style: { color: theme.palette.primary.main },
+            }}
             onChange={(e) => setAddress(e.target.value)}
           />
 
           <TextField
+            variant="standard"
             required
             type="number"
             fullWidth
@@ -259,11 +283,15 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
             name="Age"
             autoComplete="Age"
             value={age}
+            InputLabelProps={{
+              style: { color: theme.palette.primary.main },
+            }}
             onChange={(e) => setAge(e.target.value)}
           />
           <FormControl component="fieldset">
             <FormLabel component="legend">Gender</FormLabel>
             <RadioGroup
+              className="ml-2 mt-2"
               aria-labelledby="demo-controlled-radio-buttons-group"
               name="controlled-radio-buttons-group"
               value={gender}
@@ -293,10 +321,19 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
             storage={storage}
             onUploadFunction={onUploadImage}
           />
+          <div className="flex w-full justify-center">
+            <Button
+              type="submit"
+              className="w-48 bg-color10a hover:bg-color10c  text-white"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 20, mb: 5 }}
 
-          <Button type="submit" className="bg-color10a text-white" fullWidth variant="contained" sx={{ mt: 20, mb: 5 }}>
-            Apply
-          </Button>
+            >
+              {buttonLoading ? <CircularProgress size={30} color="inherit" /> : 'Submit Application'}
+             
+            </Button>
+          </div>
         </Box>
       </Modal>
     </ThemeProvider>

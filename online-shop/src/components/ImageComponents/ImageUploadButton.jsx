@@ -133,7 +133,7 @@ const ImageUploadButton = (props) => {
       <Button
         id={id}
         className={
-          'w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter py-2 hover:bg-blue1 rounded-lg ' +
+          'w-max shadow-md focus:outline-none tracking-tightest 3xs:tracking-tighter py-2 hover:bg-color10c rounded-lg ' +
           disable()
         }
         variant="contained"
