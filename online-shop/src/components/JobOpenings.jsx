@@ -328,7 +328,7 @@ function JobOpenings() {
             setOpenModal={setOpenModal}
             imageUrl="https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/images%2Fd50fb8bc-4304-48dc-b3ca-4fdc29fbd204.webp?alt=media&token=a1268f7b-5e63-4d51-943f-fef843943366"
             title="Logistics and Inventory Coordinator"
-            jobDescription="We are looking for a software developer to join our team. The ideal candidate should have a strong understanding of the software development life cycle and experience in web and mobile application development."
+            jobDescription="We are looking for a Logistics and Inventory Coordinator to join our team. The ideal candidate will be responsible for coordinating deliveries, preparing orders, and managing inventory. The candidate must have a Bachelor’s degree, excellent computer skills, and strong communication skills. The position offers a competitive salary at minimum wage, plus a 1% commission on all sales."
           />
         </div>
       ) : null}
