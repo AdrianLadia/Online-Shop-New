@@ -33,7 +33,7 @@ class cloudFirestoreFunctions {
     try {
       let response;
       await retryApi(async () => {
-        const response = await axios.post(`${this.url}createDocument?data=${encodedData}`,{},{
+        const response = await axios.post(`${this.url}createDocument`,encodedData,{
           headers: {
             'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
           }});
