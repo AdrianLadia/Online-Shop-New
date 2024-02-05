@@ -24,7 +24,7 @@ import stockManagementTableDataHandler from '../utils/classes/stockMangementTabl
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
 
 // DELAYS
-const transactionCreatePaymentDelay = 600;
+const transactionCreatePaymentDelay = 1000;
 
 //
 const app = initializeApp(firebaseConfig);
@@ -682,7 +682,7 @@ describe('Database', async () => {
   });
 });
 
-describe.only('Transaction Create Payment', async () => {
+describe('Transaction Create Payment', async () => {
   test('Check if payment is added to payment field', async () => {
     await firestore.createNewUser(
       {
@@ -1985,7 +1985,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe.only('updateOrderProofOfPaymentLink', () => {
+describe('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
