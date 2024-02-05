@@ -471,17 +471,17 @@ class firestoredb extends firestorefunctions {
     this.addDocumentArrayFromCollection('ordersMessages', reference, messages, 'messages');
   }
 
-  async updateProductClicks(productid, userId = null, userdata) {
+  async updateProductClicks(productid, userdata) {
     let id = productid;
     if (productid.endsWith('-RET')) {
       id = productid.substring(0, productid.length - 4);
     }
 
     if (
-      !['affiliate', 'superAdmin', 'admin', 'driver'].includes(userdata ? userdata.userRole : null) ||
+      !['affiliate', 'superAdmin', 'admin', 'driver'].includes(userdata ? userdata.role : null) ||
       userdata == null
     ) {
-      await super.addDocumentArrayFromCollection('Products', id, { date: new Date(), userId: userId }, 'clicks');
+      await super.addDocumentArrayFromCollection('Products', id, { date: new Date(), userId: userdata ? userdata.uid : 'GUEST' }, 'clicks');
     }
   }
 

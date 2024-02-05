@@ -1228,7 +1228,7 @@ exports.createDocument = onRequest(async (req, res) => {
       res.status(400).send('Invalid API Key');
       return;
     }
-    const data = parseData(req.query.data);
+    const data = req.body;
     const collection = data.collection;
     const id = data.id;
     const firestoreData = data.firestoreData;
@@ -2648,18 +2648,4 @@ exports.updateCustomerSearchIndexScheduled = functions
     await internalUpdateCustomerSearchIndex();
   });
 
-exports.createEmployeeApplication = onRequest(async (req, res) => {
-  corsHandler(req, res, async () => {
-    const data = req.body;
-    const db = admin.firestore();
-    const applicationRef = db.collection('EmployeeApplications').doc();
-    const applicationId = applicationRef.id;
-    try {
-      await applicationRef.set(data);
-      res.status(200).send(applicationId);
-    } catch (error) {
-      logger.log(error);
-      res.status(400).send('Error creating employee application');
-    }
-  });
-});
+

@@ -29,11 +29,12 @@ class cloudFirestoreFunctions {
       throw new Error('Data Validation Error');
     }
 
-    const encodedData = encodeURIComponent(JSON.stringify({ collection, id, firestoreData }));
+    const data = { collection, id, firestoreData }
+    console.log(data);
     try {
       let response;
       await retryApi(async () => {
-        const response = await axios.post(`${this.url}createDocument`,encodedData,{
+        const response = await axios.post(`${this.url}createDocument`,data,{
           headers: {
             'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
           }});

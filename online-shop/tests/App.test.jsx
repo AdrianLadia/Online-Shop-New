@@ -24,7 +24,7 @@ import stockManagementTableDataHandler from '../utils/classes/stockMangementTabl
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
 
 // DELAYS
-const transactionCreatePaymentDelay = 500;
+const transactionCreatePaymentDelay = 600;
 
 //
 const app = initializeApp(firebaseConfig);
@@ -682,7 +682,7 @@ describe('Database', async () => {
   });
 });
 
-describe('Transaction Create Payment', async () => {
+describe.only('Transaction Create Payment', async () => {
   test('Check if payment is added to payment field', async () => {
     await firestore.createNewUser(
       {
@@ -1985,7 +1985,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe('updateOrderProofOfPaymentLink', () => {
+describe.only('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -2899,18 +2899,31 @@ describe('updateProductClicks', async () => {
   });
   test('invoking function', async () => {
     // isAdminOrSuperAdmin
-    await firestore.updateProductClicks('test', userTestId, true);
+    await firestore.updateDocumentFromCollection('Users', userTestId, { role: 'admin' });
+    let userdata = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    await firestore.updateProductClicks('test', userdata);
     const products = await firestore.readAllDataFromCollection('Products');
     const testProduct = products.filter((product) => product.itemId == 'test')[0];
     expect(testProduct.clicks.length).toEqual(0);
     // isNotAdminOrSuperAdmin
-    await firestore.updateProductClicks('test', userTestId, false);
+    await firestore.updateDocumentFromCollection('Users', userTestId, { role: 'member' });
+    userdata = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    await firestore.updateProductClicks('test', userdata);
     const products2 = await firestore.readAllDataFromCollection('Products');
     const testProduct2 = products2.filter((product) => product.itemId == 'test')[0];
     expect(testProduct2.clicks.length).toEqual(1);
+    // isGuest
+    await firestore.updateDocumentFromCollection('Users', userTestId, { role: 'GUEST' });
+    userdata = await firestore.readSelectedDataFromCollection('Users', userTestId);
+    await firestore.updateProductClicks('test', userdata);
+    const products3 = await firestore.readAllDataFromCollection('Products');
+    const testProduct3 = products3.filter((product) => product.itemId == 'test')[0];
+    expect(testProduct3.clicks.length).toEqual(2);
   });
   test('deleting test product', async () => {
     await firestore.deleteDocumentFromCollection('Products', 'test');
+    // convert back to member
+    await firestore.updateDocumentFromCollection('Users', userTestId, { role: 'member' });
   });
 
   // await cloudfirestore.updateProductClicks('PPB#16-RET');
@@ -5315,7 +5328,7 @@ describe('test user creates 2 orders. The second order is bigger than the second
 describe('test paymaya endpoint success', async () => {
   const successPayload = {
     id: '59cf27a1-8aa1-4eb3-b7d4-32a53251edec',
-    amount: 20000,
+    totalAmount: {value:20000},
     currency: 'PHP',
     paymentStatus: 'PAYMENT_SUCCESS',
     requestReferenceNumber: 'testref12345',
