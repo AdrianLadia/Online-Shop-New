@@ -3021,7 +3021,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe('test commission system', async () => {
+describe.only('test commission system', async () => {
   test('Setup test', async () => {
     await resetOrdersAndPayments();
 
@@ -3484,7 +3484,7 @@ describe('test commission system', async () => {
     })
     expect(res.response.status).toEqual(400);
   } )
-  test('affiliate claim less than 10000',async()=>{
+  test('affiliate claim less than 1000',async()=>{
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       isInvoiceNeeded: true,
@@ -3538,6 +3538,73 @@ describe('test commission system', async () => {
     const res = await cloudfirestore.onAffiliateClaim(data);
     expect(res.response.status).toEqual(400);
   })
+  // test('affiliate retail should be 3% commission and wholesale should be 1% commission', async () => {
+  //   await cloudfirestore.updateDocumentFromCollection('Users', 'TESTAFFILIATE', {affiliateCommissions:[]})
+  //   const ppb1wholesale = await firestore.readSelectedDataFromCollection('Products','PPB#1')
+  //   const ppb1Retail = await firestore.readSelectedDataFromCollection('Products','PPB#1-RET')
+  //   const ppb2wholesale = await firestore.readSelectedDataFromCollection('Products','PPB#2')
+  //   const ppb2retail = await firestore.readSelectedDataFromCollection('Products','PPB#2-RET')
+
+  //   const ppb1WholesalePrice = ppb1wholesale.price
+  //   const ppb1RetailPrice = ppb1Retail.price
+  //   const ppb2WholesalePrice = ppb2wholesale.price
+  //   const ppb2RetailPrice = ppb2retail.price
+  //   const cart = { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#1': 5, 'PPB#2' : 5}
+  //   const totalPpb1Retail = (cart['PPB#1-RET'] * ppb1RetailPrice) 
+  //   const totalPpb2Retail = (cart['PPB#2-RET'] * ppb2RetailPrice)
+  //   const totalPpb1Wholesale = (cart['PPB#1'] * ppb1WholesalePrice)
+  //   const totalPpb2Wholesale = (cart['PPB#2'] * ppb2WholesalePrice)
+  //   const totalPrice = totalPpb1Retail + totalPpb2Retail + totalPpb1Wholesale + totalPpb2Wholesale
+  //   await cloudfirestore.transactionPlaceOrder({
+  //     deliveryDate: new Date(),
+  //     isInvoiceNeeded: true,
+  //     testing: true,
+  //     userid: 'TESTUSER',
+  //     username: 'Adrian',
+  //     localDeliveryAddress: 'Test City',
+  //     locallatitude: 1.24,
+  //     locallongitude: 2.112,
+  //     localphonenumber: '09178927206',
+  //     localname: 'Adrian Ladia',
+  //     cart: cart,
+  //     itemstotal: totalPrice,
+  //     vat: 1000,
+  //     shippingtotal: 1000,
+  //     grandTotal: totalPrice + 2000,
+  //     reference: 'testref1212',
+  //     userphonenumber: '09178927206',
+  //     deliveryNotes: 'Test',
+  //     totalWeight: 122,
+  //     deliveryVehicle: 'Sedan',
+  //     needAssistance: true,
+  //     eMail: 'starpackph@gmail.com',
+  //     sendEmail: false,
+  //     urlOfBir2303: '',
+  //     countOfOrdersThisYear: 0,
+  //     paymentMethod: 'cod',
+  //     userRole: 'member',
+  //     affiliateUid: null,
+  //     kilometersFromStore : 1,
+  //   });
+  //   await cloudfirestore.transactionCreatePayment({
+  //     userId: 'TESTUSER',
+  //     amount: totalPrice + 2000,
+  //     reference: 'testref1212',
+  //     paymentprovider: 'gcash',
+  //     proofOfPaymentLink: 'www.test.com',
+  //   });
+
+  //   const expectedCommissionPpb1Retail = (totalPpb1Retail * 0.03)
+  //   const expectedCommissionPpb2Retail = (totalPpb2Retail * 0.03)
+  //   const expectedCommissionPpb1Wholesale = (totalPpb1Wholesale * 0.01)
+  //   const expectedCommissionPpb2Wholesale = (totalPpb2Wholesale * 0.01)
+
+  //   const testAffiliate = await cloudfirestore.readSelectedDataFromCollection('Users','TESTAFFILIATE')
+  //   const commissions = testAffiliate.affiliateCommissions
+  //   const selectedCommission = commissions.filter(commission => commission.orderReference == 'testref1212')
+  //   expect(selectedCommission.commission).toEqual(expectedCommissionPpb1Retail + expectedCommissionPpb2Retail + expectedCommissionPpb1Wholesale + expectedCommissionPpb2Wholesale)
+    
+  // });
   test('clean test', async () => {
     await firestore.updateDocumentFromCollection('Users', 'TESTAFFILIATE', {
       affiliateCommissions: [],
