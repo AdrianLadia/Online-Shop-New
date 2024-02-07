@@ -531,7 +531,7 @@ class dataManipulation {
           } else {
             productPrice = cartItemPrice[key];
           }
-
+          console.log(product.weight)
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
           const weight = product.weight * quantity;

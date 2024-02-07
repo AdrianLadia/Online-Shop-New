@@ -19,7 +19,6 @@ import ListItemText from '@mui/material/ListItemText';
 import AppConfig from '../AppConfig';
 
 const CheckoutSummary = (props) => {
-  const { firestore, cart, products } = useContext(AppContext);
 
   const [loading, setLoading] = React.useState(true);
   const { width } = useWindowDimensions();
@@ -45,6 +44,10 @@ const CheckoutSummary = (props) => {
   const rows = props.rows;
   
   const itemsTotal = vat + total
+
+  useEffect(() => {
+    console.log('rows', rows);
+  }, [rows]);
 
 
   function responsiveWidth() {
