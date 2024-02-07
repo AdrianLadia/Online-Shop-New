@@ -327,6 +327,19 @@ const AdminNavBar = () => {
               <CiDeliveryTruck size={20} />     <span>Delivery</span>
             </MenuItem>
           ) : null}
+           {rules.checkIfUserAuthorized('customerAccount') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="delivery"
+              onClick={()=>{
+                setAnchorEl(null)
+                navigateTo('/admin/customerAccount')
+              }}
+            >
+              {' '}
+              <CiDeliveryTruck size={20} />     <span>Customer Account</span>
+            </MenuItem>
+          ) : null}
         </Menu>
       </div>
     </div>

@@ -14,6 +14,7 @@ class menuRules {
             affiliateClaimRequest: ['superAdmin'],
             delivery: ['delivery','driver','admin','superAdmin'],
             editCustomerOrders: ['superAdmin'],
+            customerAccount: ['superAdmin'],
         }
         this.redirectPage = {
             admin : 'companyDashboard',

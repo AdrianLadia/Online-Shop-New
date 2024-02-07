@@ -21,7 +21,7 @@ const CartModal = (props) => {
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
   const [outStocksLoading, setOutStocksLoading] = useState(false);
-  const { userdata, firestore, setCart } = React.useContext(AppContext);
+  const { userdata, firestore, setCart, manualCustomerOrderProcess } = React.useContext(AppContext);
   const [openCreateQuotationModal, setOpenCreateQuotationModal] = useState(false);
   const [deliveryFee, setDeliveryFee] = useState('');
   const [balance, setBalance] = useState('');
@@ -106,7 +106,7 @@ const CartModal = (props) => {
         >
           <div className="flex flex-row justify-between mb-4">
             <div className="flex flex-row gap-5">
-              {['superAdmin', 'admin', 'distributor', 'affiliate'].includes(userdata?.userRole) ? (
+              {['superAdmin', 'admin', 'distributor', 'affiliate'].includes(userdata?.userRole) || manualCustomerOrderProcess == true ? (
                 <button
                   onClick={() => setOpenCreateQuotationModal(true)}
                   className="py-2 px-3 bg-color10b rounded text-white hover:bg-blue-700 "

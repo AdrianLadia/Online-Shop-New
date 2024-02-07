@@ -706,6 +706,7 @@ function App() {
     affiliateUid: affiliateUid,
     setUserId: setUserId,
     setManualCustomerOrderProcess: setManualCustomerOrderProcess,
+    manualCustomerOrderProcess:manualCustomerOrderProcess,
   };
 
   return (

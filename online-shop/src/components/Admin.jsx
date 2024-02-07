@@ -15,6 +15,7 @@ import AdminDelivery from './AdminDelivery';
 import { Routes, Route } from 'react-router-dom';
 import AdminVoidPayment from './AdminVoidPayment';
 import AdminEditOrders from './AdminEditOrders';
+import AdminCustomerAccount from './AdminCustomerAccount';
 
 const Admin = () => {
   const { firestore, allUserData, setAllUserData, categories } = React.useContext(AppContext);
@@ -37,6 +38,15 @@ const Admin = () => {
             </div>
           }
         /> */}
+         <Route
+          path="customerAccount"
+          element={
+            <div>
+              <AdminNavBar />
+              <AdminCustomerAccount/>
+            </div>
+          }
+        />
         <Route
           path="addItem"
           element={

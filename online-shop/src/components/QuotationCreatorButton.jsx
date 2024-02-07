@@ -44,17 +44,7 @@ const QuotationCreatorButton = ({
     },
   ];
 
-  useEffect(() => {
-    if (userdata) {
-      if (userdata.userRole === 'superAdmin' || userdata.userRole === 'distributor') {
-        setDownloadButtonHidden('');
-      } else {
-        setDownloadButtonHidden('hidden');
-      }
-    } else {
-      setDownloadButtonHidden('hidden');
-    }
-  }, [userdata]);
+
 
   const downloadPDF = () => {
     setHidden(false);
@@ -81,7 +71,7 @@ const QuotationCreatorButton = ({
   }, [hidden]);
 
   return (
-    <div className={downloadButtonHidden}>
+    <div >
       {/* This is the visible button */}
       <button
         onClick={downloadPDF}

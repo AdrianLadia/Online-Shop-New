@@ -34,6 +34,7 @@ import StockManagementTable from './CompanyDashboard/StockManagementTable';
 import { set } from 'date-fns';
 import { collection, where, query, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import UseCustomerAccount from './UseCustomerAccount';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -167,16 +168,7 @@ function TablePaginationActions(props) {
 }
 
 const AdminAffiliatePage = () => {
-  const {
-    setManualCustomerOrderProcess,
-    setUserId,
-    userdata,
-    db,
-    cloudfirestore,
-    refreshUser,
-    firestore,
-    alertSnackbar,
-  } = useContext(AppContext);
+  const { userdata, db, cloudfirestore, refreshUser, firestore, alertSnackbar } = useContext(AppContext);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   // affiliate claim Id should be handled by backend
@@ -197,28 +189,8 @@ const AdminAffiliatePage = () => {
   const [tableData, setTableData] = useState([]);
   const [openHowToEarnModal, setOpenHowToEarnModal] = useState(false);
   const [onlineStoreProductsData, setOnlineStoreProductsData] = useState([]);
-  const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
-  const [customerName, setCustomerName] = useState('');
-  const [manualCustomers, setManualCustomers] = useState([]);
-  const [selectedManualCustomer, setSelectedManualCustomer] = useState(null);
+
   const navigateTo = useNavigate();
-
-  useEffect(() => {
-    const docRef = collection(db, 'Users');
-    const q = query(docRef, where('isAccountClaimed', '==', false));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const userData = [];
-      querySnapshot.forEach((doc) => {
-        userData.push(doc.data());
-      });
-
-      setManualCustomers(userData);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     cloudfirestore.readAllDataFromCollection('Products').then((res) => {
@@ -240,83 +212,81 @@ const AdminAffiliatePage = () => {
         setPaymentMethods(bankNames);
       });
       console.log(userdata.affiliateCommissions);
-      // setAffiliateCommissions(userdata.affiliateCommissions);
+      setAffiliateCommissions(userdata.affiliateCommissions);
 
-      const mockCommissions = []
-      for (let i = 0; i < 100; i++) {
+      // const mockCommissions = []
+      // for (let i = 0; i < 100; i++) {
 
-        // create a function that returns 10% of the time claimable and 90% of the time claimed
-        const status = Math.random() < 0.1 ? 'claimable' : 'claimed';
+      //   // create a function that returns 10% of the time claimable and 90% of the time claimed
+      //   const status = Math.random() < 0.1 ? 'claimable' : 'claimed';
 
-        
-        // create a function that randomly generates a date within the last 365 days
-        const randomDate = new Date(new Date('2024-01-31').getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000);
-        // create a function that randomly generates a commission amount
+      //   // create a function that randomly generates a date within the last 365 days
+      //   const randomDate = new Date(new Date('2024-01-31').getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000);
+      //   // create a function that randomly generates a commission amount
 
-        const randomNumber10digits = Math.floor(1000000000 + Math.random() * 9000000000);
-        
-        function getMultiplier(month,year) {
-          console.log(month,year)
-          if (month == 0 && year == 2023) {
-            return 1.5
-          }
-          if (month == 1 && year == 2023) {
-            return 2
-          }
-          if (month == 2 && year == 2023) {
-            return 2.5
-          }
-          if (month == 3 && year == 2023) {
-            return 3
-          }
-          if (month == 4 && year == 2023) {
-            return 3.5
-          }
-          if (month == 5 && year == 2023) {
-            return 4
-          }
-          if (month == 6 && year == 2023) {
-            return 4.5
-          }
-          if (month == 7 && year == 2023) {
-            return 5
-          }
-          if (month == 8 && year == 2023) {
-            return 5.5
-          }
-          if (month == 9 && year == 2023) {
-            return 6
-          }
-          if (month == 10 && year == 2023) {
-            return 6.5
-          }
-          if (month == 11 && year == 2023) {
-            return 7
-          }
-          if (month == 0 && year == 2024) {
-            return 7.5
-          }
-          if (month == 1 && year == 2024) {
-            return 8
-          }
-        }
+      //   const randomNumber10digits = Math.floor(1000000000 + Math.random() * 9000000000);
 
-        const commission = Math.random() * 1000 * getMultiplier(randomDate.getMonth(),randomDate.getFullYear())
+      //   function getMultiplier(month,year) {
+      //     console.log(month,year)
+      //     if (month == 0 && year == 2023) {
+      //       return 1.5
+      //     }
+      //     if (month == 1 && year == 2023) {
+      //       return 2
+      //     }
+      //     if (month == 2 && year == 2023) {
+      //       return 2.5
+      //     }
+      //     if (month == 3 && year == 2023) {
+      //       return 3
+      //     }
+      //     if (month == 4 && year == 2023) {
+      //       return 3.5
+      //     }
+      //     if (month == 5 && year == 2023) {
+      //       return 4
+      //     }
+      //     if (month == 6 && year == 2023) {
+      //       return 4.5
+      //     }
+      //     if (month == 7 && year == 2023) {
+      //       return 5
+      //     }
+      //     if (month == 8 && year == 2023) {
+      //       return 5.5
+      //     }
+      //     if (month == 9 && year == 2023) {
+      //       return 6
+      //     }
+      //     if (month == 10 && year == 2023) {
+      //       return 6.5
+      //     }
+      //     if (month == 11 && year == 2023) {
+      //       return 7
+      //     }
+      //     if (month == 0 && year == 2024) {
+      //       return 7.5
+      //     }
+      //     if (month == 1 && year == 2024) {
+      //       return 8
+      //     }
+      //   }
 
+      //   const commission = Math.random() * 1000 * getMultiplier(randomDate.getMonth(),randomDate.getFullYear())
 
-        mockCommissions.push({
-          claimCode: "",
-          commission: commission,
-          customer: 'test',
-          dateOrdered: randomDate,
-          orderReference: randomNumber10digits.toString(),
-          status: status
-        });
-      }
+      //   mockCommissions.push({
+      //     claimCode: "",
+      //     commission: commission,
+      //     customer: 'test',
+      //     dateOrdered: randomDate,
+      //     orderReference: randomNumber10digits.toString(),
+      //     status: status
+      //   });
+      // }
 
-      const sorted = mockCommissions.sort((a, b) => a.dateOrdered - b.dateOrdered);
+      // const sorted = mockCommissions.sort((a, b) => a.dateOrdered - b.dateOrdered);
 
-      setAffiliateCommissions(mockCommissions);
+      // setAffiliateCommissions(mockCommissions);
     }
   }, [userdata]);
 
@@ -425,52 +395,6 @@ const AdminAffiliatePage = () => {
     setPage(0);
   };
 
-  async function createCustomer() {
-    function generateFirestoreId() {
-      var id = '';
-      var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      var charactersLength = characters.length;
-      for (var i = 0; i < 20; i++) {
-        id += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      return id;
-    }
-    const userId = generateFirestoreId();
-    await cloudfirestore.createNewUser(
-      {
-        uid: userId,
-        name: customerName,
-        email: null,
-        emailVerified: false,
-        phoneNumber: null,
-        deliveryAddress: [],
-        contactPerson: [],
-        isAnonymous: false,
-        orders: [],
-        cart: {},
-        favoriteItems: [],
-        payments: [],
-        userRole: 'member',
-        affiliate: userdata.uid,
-        affiliateClaims: [],
-        affiliateDeposits: [],
-        affiliateCommissions: [],
-        bir2303Link: null,
-        affiliateId: null,
-        affiliateBankAccounts: [],
-        joinedDate: new Date(),
-        codBanned: { reason: null, isBanned: false },
-        isAccountClaimed: false,
-        userPrices: {},
-      },
-      userId
-    );
-    console.log('Customer Created with id: ' + userId);
-    alertSnackbar('success', 'Customer Created Successfully');
-    setCustomerName('');
-    setOpenAddCustomerModal(false);
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <div className="flex flex-col justify-center items-center tracking-widest  font-sans">
@@ -552,7 +476,6 @@ const AdminAffiliatePage = () => {
                     <span
                       style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}
                       onClick={async () => {
-      
                         const order = await firestore.readSelectedDataFromCollection('Orders', data.orderReference);
                         setOrder(order);
 
@@ -601,90 +524,14 @@ const AdminAffiliatePage = () => {
         {/* <StockManagementTable products={onlineStoreProductsData} /> */}
         <Typography className="text-2xl font-bold mb-10">Input Customer Order</Typography>
 
-        <div className="flex flex-col  w-9/10 lg:w-400px justify-center items-center ">
-          <div className="flex flex-row items-center w-full  gap-5 mb-5">
-            <Autocomplete
-              value={chosenMethod}
-              options={manualCustomers.map((option) => option.name)}
-              disablePortal
-              id="combo-box-demo"
-              className="w-full"
-              onChange={(event, newValue) => {
-                const customerData = manualCustomers.find((item) => item.name === newValue);
-                setSelectedManualCustomer(customerData);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  required
-                  {...params}
-                  label="Customer Name"
-                  className="w-full flex" // Apply w-full here
-                />
-              )}
-            />
-
-            <button
-              className="flex items-center p-3 rounded-lg bg-color10b"
-              onClick={() => {
-                setOpenAddCustomerModal(true);
-              }}
-            >
-              <span className="text-white font-bold mr-1">Add Customer</span>
-            </button>
-          </div>
-
-          <button
-            className="flex items-center p-3 rounded-lg bg-color10b mb-20"
-            onClick={() => {
-             
-              setUserId(selectedManualCustomer.uid);
-              setManualCustomerOrderProcess(true);
-              navigateTo('/shop');
-            }}
-          >
-            <span className="text-white font-bold mr-1">Create Order</span>
-           
-            
-          </button>
-        </div>
+        <UseCustomerAccount chosenMethod={chosenMethod} manualCustomers={manualCustomers} />
 
         <AffiliateAddPaymentMethodModal
           paymentMethodData={paymentMethodData}
           open={openAddPaymentMethodModal}
           setOpen={setOpenAddPaymentMethodModal}
         />
-        <Modal
-          open={openAddCustomerModal}
-          onClose={() => {
-            setOpenAddCustomerModal(false);
-          }}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Create Customer
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Please input the customer's details. The customer you created will be tagged as your customer and you can
-              earn commission from them.
-            </Typography>
-            <div className="flex flex-col gap-2 mt-5">
-              <TextField
-                value={customerName}
-                className="ml-3"
-                sx={{ width: 'full' }}
-                label="Customer Name"
-                onChange={(e) => {
-                  setCustomerName(e.target.value);
-                }}
-              />
-              <button className="p-3 rounded-lg bg-color10b" onClick={createCustomer}>
-                Create Customer
-              </button>
-            </div>
-          </Box>
-        </Modal>
+
         <Modal
           open={openHowToEarnModal}
           onClose={() => {
