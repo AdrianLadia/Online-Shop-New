@@ -524,7 +524,7 @@ const AdminAffiliatePage = () => {
         {/* <StockManagementTable products={onlineStoreProductsData} /> */}
         <Typography className="text-2xl font-bold mb-10">Input Customer Order</Typography>
 
-        <UseCustomerAccount chosenMethod={chosenMethod} manualCustomers={manualCustomers} />
+        <UseCustomerAccount />
 
         <AffiliateAddPaymentMethodModal
           paymentMethodData={paymentMethodData}

@@ -76,6 +76,7 @@ const CheckoutPage = () => {
     alertSnackbar,
     businesscalculations,
     affiliateUid,
+    manualCustomerOrderProcess,
   } = React.useContext(AppContext);
   const [selectedAddress, setSelectedAddress] = useState(false);
   const [localname, setLocalName] = React.useState('');
@@ -162,16 +163,23 @@ const CheckoutPage = () => {
   }, [userdata]);
 
   // This is to check if account is claimed if it is not claimed then we will not ask for email
+
   useEffect(() => {
+    function getIsAccountClaimed() {
+      if (userdata) {
+        try {
+          if (userdata.isAccountClaimed) {
+            return userdata.isAccountClaimed;
+          }
+        } catch (error) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
     let isAccountClaimed = false;
-    
-    if (userdata ? userdata.isAccountClaimed : null != undefined) {
-      isAccountClaimed = userdata.isAccountClaimed;
-    }
-    else {
-      isAccountClaimed = true;
-    }
-    setIsAccountClaimed(isAccountClaimed);
+    setIsAccountClaimed(getIsAccountClaimed());
   }, [userdata]);
 
   // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
@@ -289,7 +297,6 @@ const CheckoutPage = () => {
       if (total >= new AppConfig().getFreeDeliveryThreshold()) {
         setDeliveryFee(0);
       } else {
-    
         setDeliveryFee(deliveryFee);
       }
       setDeliveryVehicle(vehicleObject);
@@ -428,8 +435,7 @@ const CheckoutPage = () => {
     if (userdata) {
       if (isAccountClaimed) {
         setLocalEmail(userdata.email);
-      }
-      else {
+      } else {
         setLocalEmail(null);
       }
 
@@ -447,7 +453,7 @@ const CheckoutPage = () => {
         setLocalPhoneNumber(userdata.phoneNumber);
       }
     }
-  }, [userdata,isAccountClaimed]);
+  }, [userdata, isAccountClaimed]);
 
   useEffect(() => {
     if (!area.includes('lalamoveServiceArea') && area.length > 0) {
@@ -631,17 +637,17 @@ const CheckoutPage = () => {
             onChange={(event) => setLocalName(event.target.value)}
             value={localname || ''}
           />
-          {isAccountClaimed ?  
-          <TextField
-            id="emailAddressEntry"
-            label="E-mail (required)"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 mt-1 bg-white"
-            onChange={(event) => setLocalEmail(event.target.value)}
-            value={localemail || ''}
-          />
-          : null}
+          {isAccountClaimed ? (
+            <TextField
+              id="emailAddressEntry"
+              label="E-mail (required)"
+              InputLabelProps={labelStyle}
+              variant="filled"
+              className=" w-11/12 mt-1 bg-white"
+              onChange={(event) => setLocalEmail(event.target.value)}
+              value={localemail || ''}
+            />
+          ) : null}
         </div>
 
         {allowShipping == false ? (
@@ -948,7 +954,7 @@ const CheckoutPage = () => {
                   >
                     {placeOrderLoading ? (
                       <div className="flex flex-col items-center justify-center h-full">
-                        <p>Processing your order.</p> 
+                        <p>Processing your order.</p>
                         <p>Please wait and do not refresh the page.</p>
                         <CircularProgress size={50} style={{ color: 'white' }} sx={{ marginTop: 1 }} />
                       </div>
