@@ -19,7 +19,6 @@ import ListItemText from '@mui/material/ListItemText';
 import AppConfig from '../AppConfig';
 
 const CheckoutSummary = (props) => {
-
   const [loading, setLoading] = React.useState(true);
   const { width } = useWindowDimensions();
 
@@ -29,6 +28,7 @@ const CheckoutSummary = (props) => {
   const vat = props.vat;
   const totalWeight = props.totalWeight;
   const kilometersFromStore = props.kilometersFromStore;
+  const firstOrderDiscount = props.firstOrderDiscount;
 
   let deliveryVehicle;
   let maxWeight;
@@ -42,13 +42,12 @@ const CheckoutSummary = (props) => {
 
   const area = props.area;
   const rows = props.rows;
-  
-  const itemsTotal = vat + total
+
+  const itemsTotal = vat + total;
 
   useEffect(() => {
     console.log('rows', rows);
   }, [rows]);
-
 
   function responsiveWidth() {
     if (width < 550) {
@@ -79,9 +78,8 @@ const CheckoutSummary = (props) => {
   function reactiveKilometersFromStore() {
     if (kilometersFromStore == null) {
       return '';
-    }
-    else {
-      return kilometersFromStore.toFixed(0).toLocaleString() + ' Kilometers'
+    } else {
+      return kilometersFromStore.toFixed(0).toLocaleString() + ' Kilometers';
     }
   }
 
@@ -168,8 +166,16 @@ const CheckoutSummary = (props) => {
               } */}
 
               <ListItem>
-                <ListItemText primary="Delivery Fee:" secondary={'₱' + deliveryFee.toLocaleString() + ' , ' + reactiveKilometersFromStore()  } />
+                <ListItemText
+                  primary="Delivery Fee:"
+                  secondary={'₱' + deliveryFee.toLocaleString() + ' , ' + reactiveKilometersFromStore()}
+                />
               </ListItem>
+              {firstOrderDiscount > 0 ? (
+                <ListItem>
+                  <ListItemText primary="First Order Discount:" secondary={'₱' + firstOrderDiscount} />
+                </ListItem>
+              ) : null}
               <ListItem>
                 <ListItemText primary="Grand Total:" secondary={'₱' + grandTotal.toLocaleString()} />
               </ListItem>

@@ -39,13 +39,13 @@ const MyOrderCardModal = (props) => {
   let { isLoaded } = useLoadScript({
     googleMapsApiKey: firebaseConfig.apiKey,
   });
-  
-  
+
   const hidePricing = props.hidePricing;
-  const { storage, userId, cloudfirestore, userdata,datamanipulation } = useContext(AppContext);
+  const { storage, userId, cloudfirestore, userdata, datamanipulation } = useContext(AppContext);
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
+  const firstOrderDiscount = order.firstOrderDiscount;
 
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
   const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
@@ -159,9 +159,13 @@ const MyOrderCardModal = (props) => {
                 }}
               >
                 <Divider />
+
                 {hidePricing ? null : (
                   <ListItem>
-                    <ListItemText primary="Items Total" secondary={'₱' + (order.itemsTotal + order.vat).toLocaleString()} />
+                    <ListItemText
+                      primary="Items Total"
+                      secondary={'₱' + (order.itemsTotal + order.vat).toLocaleString()}
+                    />
                   </ListItem>
                 )}
                 <Divider />
@@ -172,6 +176,14 @@ const MyOrderCardModal = (props) => {
                   </ListItem>
                 )}
                 <Divider />
+                {hidePricing ? null : firstOrderDiscount == undefined || firstOrderDiscount == 0 ? null : (
+                  <ListItem>
+                    <ListItemText
+                      primary="First Order Discount"
+                      secondary={'₱' + firstOrderDiscount}
+                    />
+                  </ListItem>
+                )}
                 {hidePricing ? null : (
                   <ListItem>
                     <ListItemText primary="Grand Total" secondary={'₱' + order.grandTotal.toLocaleString()} />

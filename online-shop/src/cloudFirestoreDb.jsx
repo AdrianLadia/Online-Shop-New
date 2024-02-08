@@ -176,6 +176,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       userRole : Joi.string().required(),
       affiliateUid : Joi.string().required().allow(null),
       kilometersFromStore : Joi.number().required(),
+      firstOrderDiscount : Joi.number().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -609,6 +610,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   async getIpAddress() {
     if ( window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
       const res = await axios.get(`https://api64.ipify.org/?format=json`)
+      
       return res.data.ip;
     }
   }

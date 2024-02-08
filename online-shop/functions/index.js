@@ -706,6 +706,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
     const userRole = data.userRole;
     const affiliateUid = data.affiliateUid;
     const kilometersFromStore = data.kilometersFromStore;
+    const firstOrderDiscount = data.firstOrderDiscount;
 
     let cartUniqueItems = [];
 
@@ -781,7 +782,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
         return;
       }
 
-      if (vat + itemstotal + shippingtotal != grandTotal) {
+      if (vat + itemstotal + shippingtotal - firstOrderDiscount != grandTotal) {
         logger.log('vat + itemstotal + shippingtotal != grandTotal');
         res.status(400).send('Invalid data submitted. Please try again later');
         return;
@@ -968,6 +969,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
             paymentMethod: paymentMethod,
             affiliateUid: affiliateUid,
             kilometersFromStore: kilometersFromStore,
+            firstOrderDiscount: firstOrderDiscount,
           };
 
           const userOrderObject = { reference: reference, date: new Date() };
@@ -2347,6 +2349,7 @@ exports.readSelectedOrder = onRequest(async (req, res) => {
     if (!['admin', 'superAdmin'].includes(userRole)) {
       if (orderUserId != userId) {
         res.status(401).send('Unauthorized');
+        
       }
     }
 

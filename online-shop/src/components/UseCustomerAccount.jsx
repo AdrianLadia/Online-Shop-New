@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import AppContext from '../AppContext';
 import { Autocomplete, TextField, Modal, Box, Typography } from '@mui/material';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import {CircularProgress} from '@mui/material';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -28,6 +29,7 @@ function UseCustomerAccount() {
     useContext(AppContext);
   const [selectedManualCustomer, setSelectedManualCustomer] = useState(null);
   const [manualCustomers, setManualCustomers] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigateTo = useNavigate();
   useEffect(() => {
     const docRef = collection(db, 'Users');
@@ -68,40 +70,49 @@ function UseCustomerAccount() {
       }
       return id;
     }
-    const userId = generateFirestoreId();
-    await cloudfirestore.createNewUser(
-      {
-        uid: userId,
-        name: customerName,
-        email: null,
-        emailVerified: false,
-        phoneNumber: null,
-        deliveryAddress: [],
-        contactPerson: [],
-        isAnonymous: false,
-        orders: [],
-        cart: {},
-        favoriteItems: [],
-        payments: [],
-        userRole: 'member',
-        affiliate: userdata.uid,
-        affiliateClaims: [],
-        affiliateDeposits: [],
-        affiliateCommissions: [],
-        bir2303Link: null,
-        affiliateId: null,
-        affiliateBankAccounts: [],
-        joinedDate: new Date(),
-        codBanned: { reason: null, isBanned: false },
-        isAccountClaimed: false,
-        userPrices: {},
-      },
-      userId
-    );
-    console.log('Customer Created with id: ' + userId);
-    alertSnackbar('success', 'Customer Created Successfully');
-    setCustomerName('');
-    setOpenAddCustomerModal(false);
+    setLoading(true);
+    try{
+      const userId = generateFirestoreId();
+      await cloudfirestore.createNewUser(
+        {
+          uid: userId,
+          name: customerName,
+          email: null,
+          emailVerified: false,
+          phoneNumber: null,
+          deliveryAddress: [],
+          contactPerson: [],
+          isAnonymous: false,
+          orders: [],
+          cart: {},
+          favoriteItems: [],
+          payments: [],
+          userRole: 'member',
+          affiliate: userdata.uid,
+          affiliateClaims: [],
+          affiliateDeposits: [],
+          affiliateCommissions: [],
+          bir2303Link: null,
+          affiliateId: null,
+          affiliateBankAccounts: [],
+          joinedDate: new Date(),
+          codBanned: { reason: null, isBanned: false },
+          isAccountClaimed: false,
+          userPrices: {},
+        },
+        userId
+      );
+      console.log('Customer Created with id: ' + userId);
+      alertSnackbar('success', 'Customer Created Successfully');
+      setCustomerName('');
+      setOpenAddCustomerModal(false);
+      setLoading(false);
+    }
+    catch(e){
+      console.log(e);
+      alertSnackbar('error', 'Error creating customer');
+      setLoading(false);
+    }
   }
 
   return (
@@ -162,8 +173,10 @@ function UseCustomerAccount() {
                   setCustomerName(e.target.value);
                 }}
               />
-              <button className="p-3 rounded-lg bg-color10b" onClick={createCustomer}>
-                Create Customer
+              <button className="p-3 rounded-lg  mt-4 bg-color10b" onClick={createCustomer}>
+                {!loading ? 
+                  <div className="text-white font-bold">Create Customer</div>
+                : <CircularProgress size={19} style={{color:'white'}} />}
               </button>
             </div>
           </Box>

@@ -146,7 +146,7 @@ const ProfileUpdaterModal = (props) => {
             <button className="rounded-lg p-3 bg-grey1" onClick={() => setOpenProfileUpdaterModal(false)}>
               Cancel
             </button>
-            <button className="rounded-lg p-3 bg-blue1" onClick={updateProfile}>
+            <button className="rounded-lg p-3 bg-color10a" onClick={updateProfile}>
               Save Changes
             </button>
           </div>

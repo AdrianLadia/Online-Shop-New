@@ -176,7 +176,7 @@ const OpenCartButton = (props) => {
               </div>
             </div>
           ) : (
-            <CircularProgress />
+            <CircularProgress style={{color:'white'}} />
           )}
         </button>
       </div>

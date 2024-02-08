@@ -492,7 +492,7 @@ class dataManipulation {
     return categoryWithFavorites;
   }
 
-  getCheckoutPageTableDate(product_list, cart, cartItemPrice, urlOfBir2303,isInvoiceNeeded) {
+  getCheckoutPageTableDate(product_list, cart, cartItemPrice, urlOfBir2303, isInvoiceNeeded, userdataOrders) {
     const productListSchema = Joi.array();
     const productListCart = Joi.object();
 
@@ -531,7 +531,7 @@ class dataManipulation {
           } else {
             productPrice = cartItemPrice[key];
           }
-          console.log(product.weight)
+          console.log(product.weight);
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
           const weight = product.weight * quantity;
@@ -561,17 +561,25 @@ class dataManipulation {
     const vat = this.businesscalculations.getValueAddedTax(total_non_state, urlOfBir2303, isInvoiceNeeded);
     const items_total = total_non_state - vat;
 
-    const toReturn = [rows_non_state, items_total, total_weight_non_state, vat];
+    let firstOrderDiscount = 0;
+    const discountCap = 500;
+    console.log(userdataOrders);
+    if (userdataOrders.length == 0) {
+      firstOrderDiscount = items_total * 0.05;
+      if (firstOrderDiscount > discountCap) {
+        firstOrderDiscount = discountCap;
+      }
+    }
 
-    const schema = Joi.array().ordered(Joi.array(), Joi.number(), Joi.number());
+    const toReturn = [rows_non_state, items_total, total_weight_non_state, vat, firstOrderDiscount];
+
+    const schema = Joi.array().ordered(Joi.array(), Joi.number(), Joi.number(), Joi.number());
 
     const { error3 } = schema.validate(toReturn);
 
     if (error3) {
       throw new Error(error3);
     }
-
-    
 
     return toReturn;
   }

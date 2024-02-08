@@ -14,7 +14,7 @@ import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
 
-  const {cloudfirestore,datamanipulation } = React.useContext(AppContext);
+  const {cloudfirestore,datamanipulation,userdata } = React.useContext(AppContext);
   
   const [products, setProducts] = React.useState([]);
   const { width, height } = useWindowDimensions();
@@ -38,6 +38,7 @@ const MyOrderCardModalTable = (props) => {
       });
 
       const data = await Promise.all(cartProductPromises);
+      console.log('data', data);
       const productsCombined = [...products, ...data];
 
     
@@ -51,12 +52,13 @@ const MyOrderCardModalTable = (props) => {
 
   useEffect(() => {
     async function getTableData() {
-    
-      const [rows_non_state, total_non_state, total_weight_non_state] = datamanipulation.getCheckoutPageTableDate(
+      const [rows_non_state, total_non_state, total_weight_non_state,firstOrderDiscount] = datamanipulation.getCheckoutPageTableDate(
         products,
         order.cart,
         cartItemsPrice,
-        urlOfBir2303
+        urlOfBir2303,
+        order.isInvoiceNeeded,
+        userdata.orders
       );
 
 

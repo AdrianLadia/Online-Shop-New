@@ -133,6 +133,7 @@ const CheckoutPage = () => {
   const [kilometersFromStore, setKilometersFromStore] = useState(0);
 
   const [isAccountClaimed, setIsAccountClaimed] = useState(false);
+  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   useEffect(() => {
     const ad = new allowedDeliveryDates();
     ad.runMain();
@@ -167,18 +168,15 @@ const CheckoutPage = () => {
   useEffect(() => {
     function getIsAccountClaimed() {
       if (userdata) {
-        try {
-          if (userdata.isAccountClaimed) {
-            return userdata.isAccountClaimed;
-          }
-        } catch (error) {
+        if (userdata.isAccountClaimed != undefined) {
+          return userdata.isAccountClaimed;
+        } else {
           return true;
         }
       } else {
         return true;
       }
     }
-    let isAccountClaimed = false;
     setIsAccountClaimed(getIsAccountClaimed());
   }, [userdata]);
 
@@ -208,18 +206,20 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     async function getTableData() {
-      const [rows_non_state, total_non_state, total_weight_non_state, vat] = datamanipulation.getCheckoutPageTableDate(
+      const [rows_non_state, total_non_state, total_weight_non_state, vat,firstOrderDiscount] = datamanipulation.getCheckoutPageTableDate(
         products,
         cart,
         null,
         urlOfBir2303,
-        isInvoiceNeeded
+        isInvoiceNeeded,
+        userdata ? userdata.orders : ['hasOrders']
       );
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
       setTotal(total_non_state);
       setTotalWeight(total_weight_non_state);
+      setFirstOrderDiscount(firstOrderDiscount);
     }
     getTableData();
   }, [urlOfBir2303, isInvoiceNeeded]);
@@ -415,6 +415,7 @@ const CheckoutPage = () => {
         userRole: userdata ? userdata.userRole : 'GUEST',
         affiliateUid: affiliateUid,
         kilometersFromStore: kilometersFromStore,
+        firstOrderDiscount : firstOrderDiscount,
       });
 
       setTransactionStatus(res);
@@ -467,9 +468,10 @@ const CheckoutPage = () => {
   }, [area]);
 
   useEffect(() => {
-    const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee);
+    console.log(firstOrderDiscount, 'firstOrderDiscount');
+    const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee,firstOrderDiscount);
     setGrandTotal(grandTotal);
-  }, [total, vat, deliveryFee]);
+  }, [total, vat, deliveryFee,firstOrderDiscount]);
 
   useEffect(() => {
     if (total > 0) {
@@ -669,21 +671,22 @@ const CheckoutPage = () => {
                 {area.includes('lalamoveServiceArea') &&
                 deliveryVehicle.name != 'motorcycle' &&
                 deliveryVehicle.name != 'storePickUp' ? (
-                  <div>
-                    <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-                    <div className="flex justify-center mt-7">
-                      <Typography variant="h4" className="font-bold">
-                        Assistance
-                      </Typography>
-                    </div>
-                    <div className="flex justify-center items-center mt-5 px-3">
-                      <Typography variant="h6">
-                        Driver helps unload items?
-                        {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
-                      </Typography>
-                      <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
-                    </div>
-                  </div>
+                  null
+                  // <div>
+                  //   <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+                  //   <div className="flex justify-center mt-7">
+                  //     <Typography variant="h4" className="font-bold">
+                  //       Assistance
+                  //     </Typography>
+                  //   </div>
+                  //   <div className="flex justify-center items-center mt-5 px-3">
+                  //     <Typography variant="h6">
+                  //       Driver helps unload items?
+                  //       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
+                  //     </Typography>
+                  //     <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
+                  //   </div>
+                  // </div>
                 ) : null}
 
                 {area.includes('lalamoveServiceArea') || area.length == 0 ? null : (
@@ -838,6 +841,7 @@ const CheckoutPage = () => {
                     setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
                     rows={rows}
                     kilometersFromStore={kilometersFromStore}
+                    firstOrderDiscount={firstOrderDiscount}
                   />
                 )}
                 {userdata ? (

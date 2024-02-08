@@ -11,6 +11,7 @@ import AppContext from '../AppContext';
 import QuotationCreatorButton from './QuotationCreatorButton';
 import { CircularProgress } from '@material-ui/core';
 import TextField from '@mui/material/TextField';
+import { set } from 'date-fns';
 
 const CartModal = (props) => {
   const openCart = props.openCart;
@@ -21,11 +22,27 @@ const CartModal = (props) => {
   const [cartisempty, setCartisempty] = useState(true);
   const { width, height } = useWindowDimensions();
   const [outStocksLoading, setOutStocksLoading] = useState(false);
-  const { userdata, firestore, setCart, manualCustomerOrderProcess } = React.useContext(AppContext);
+  const {
+    userdata,
+    firestore,
+    setCart,
+    manualCustomerOrderProcess,
+    isAppleDevice,
+    isAndroidDevice,
+    isGoogleChrome,
+    isAffiliate,
+    isDistributor,
+    affiliateUid,
+    ipAddress,
+    isSupportedBrowser,
+    isAdmin,
+    isSuperAdmin,
+  } = React.useContext(AppContext);
   const [openCreateQuotationModal, setOpenCreateQuotationModal] = useState(false);
   const [deliveryFee, setDeliveryFee] = useState('');
   const [balance, setBalance] = useState('');
   const [note, setNote] = useState('');
+  const [openSecretLog, setOpenSecretLog] = useState(false);
 
   const style = {
     position: 'absolute',
@@ -97,6 +114,10 @@ const CartModal = (props) => {
     setOutStocksLoading(false);
   }
 
+  function secretFunction() {
+    setOpenSecretLog(true);
+  }
+
   return (
     <Modal open={openCart} onClose={CloseCart}>
       <Fade in={openCart}>
@@ -106,7 +127,8 @@ const CartModal = (props) => {
         >
           <div className="flex flex-row justify-between mb-4">
             <div className="flex flex-row gap-5">
-              {['superAdmin', 'admin', 'distributor', 'affiliate'].includes(userdata?.userRole) || manualCustomerOrderProcess == true ? (
+              {['superAdmin', 'admin', 'distributor', 'affiliate'].includes(userdata?.userRole) ||
+              manualCustomerOrderProcess == true ? (
                 <button
                   onClick={() => setOpenCreateQuotationModal(true)}
                   className="py-2 px-3 bg-color10b rounded text-white hover:bg-blue-700 "
@@ -142,7 +164,7 @@ const CartModal = (props) => {
           </div>
 
           {/* TABLE  */}
-          {cartisempty ? <> Cart is empty </> : <CartTable rows={rows} />}
+          {cartisempty ? <div onClick={secretFunction}> Cart is empty </div> : <CartTable rows={rows} />}
 
           <div className="flex ">
             {cartisempty ? (
@@ -164,6 +186,22 @@ const CartModal = (props) => {
               </div>
             )}
           </div>
+          {openSecretLog ? (
+            <div className="flex flex-col gap-1 overflow-y-auto">
+              <div className='border-b-2' >manualCustomerOrderProcess: {manualCustomerOrderProcess.toString()}</div>
+              <div className='border-b-2' >isAppleDevice: {isAppleDevice.toString()}</div>
+              <div className='border-b-2' >isAndroidDevice: {isAndroidDevice.toString()}</div>
+              <div className='border-b-2' >isGoogleChrome: {isGoogleChrome.toString()}</div>
+              <div className='border-b-2' >affiliateUid: {affiliateUid}</div>
+              <div className='border-b-2' >ipAddress: {ipAddress}</div>
+              <div className='border-b-2' >device: {window.navigator.userAgent}</div>
+              <div className='border-b-2' >isSupportedBrowser: {isSupportedBrowser.toString()}</div>
+              <div className='border-b-2' >isAdmin: {isAdmin.toString()}</div>
+              <div className='border-b-2' >isSuperAdmin: {isSuperAdmin.toString()}</div>
+              <div className='border-b-2' >isAffiliate: {isAffiliate.toString()}</div>
+              <div className='border-b-2' >isDistributor: {isDistributor.toString()}</div>
+            </div>
+          ) : null}
           <Modal
             open={openCreateQuotationModal}
             onClose={() => setOpenCreateQuotationModal(false)}

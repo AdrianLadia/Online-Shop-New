@@ -143,6 +143,7 @@ function App() {
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
   const [affiliateUid, setAffiliateUid] = useState(null);
   const [manualCustomerOrderProcess,setManualCustomerOrderProcess] = useState(false);
+  const [ipAddress, setIpAddress] = useState(null);
 
   
 
@@ -199,16 +200,14 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    cloudfirestore.getIpAddress().then((ipAddress) => {
-      const data = {
-        ipAddress: ipAddress,
-        dateTime: new Date(),
-        pageOpened: window.location.href,
-      };
-      firestore.addDataToPageOpens(data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   cloudfirestore.getIpAddress().then((ip) => {
+      
+  //     setIpAddress(ip);
+  //   });
+  // }, []);
+
+
 
   // TEMPORARY DISABLED THIS BECAUSE WE ARE NOT USING THE CHAT FEATURE YET
   // DO NOT DELETE THIS CODE
@@ -707,6 +706,7 @@ function App() {
     setUserId: setUserId,
     setManualCustomerOrderProcess: setManualCustomerOrderProcess,
     manualCustomerOrderProcess:manualCustomerOrderProcess,
+    ipAddress: ipAddress,
   };
 
   return (

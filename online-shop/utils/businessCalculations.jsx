@@ -510,7 +510,7 @@ class businessCalculations {
     return roundedVat;
   }
 
-  getGrandTotal(totalPrice, valueAddedTax, deliveryFee) {
+  getGrandTotal(totalPrice, valueAddedTax, deliveryFee,firstOrderDiscount) {
     const totalPriceSchema = Joi.number().required();
     const valueAddedTaxSchema = Joi.number().required();
     const deliveryFeeSchema = Joi.number().required();
@@ -523,7 +523,7 @@ class businessCalculations {
       throw new Error('Data Validation Error');
     }
 
-    const grandTotal = totalPrice + valueAddedTax + deliveryFee;
+    const grandTotal = totalPrice + valueAddedTax + deliveryFee - firstOrderDiscount;
 
     const grandTotalSchema = Joi.number().required();
     const { error4 } = grandTotalSchema.validate(grandTotal);
