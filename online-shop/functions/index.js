@@ -2349,7 +2349,6 @@ exports.readSelectedOrder = onRequest(async (req, res) => {
     if (!['admin', 'superAdmin'].includes(userRole)) {
       if (orderUserId != userId) {
         res.status(401).send('Unauthorized');
-        
       }
     }
 
@@ -2652,3 +2651,41 @@ exports.updateCustomerSearchIndexScheduled = functions
   });
 
 
+exports.transactionClaimAccount = onRequest(async (req, res) => {
+  corsHandler(req, res, async () => {
+    const apiKey = req.headers['apikey'];
+    if (!handleApiKey(apiKey, res)) {
+      res.status(400).send('Invalid API Key');
+      return;
+    }
+    const db = admin.firestore();
+    const data = req.body;
+    const userId = data.userId;
+    const claimId = data.claimId;
+    const afiiliateId = data.aid
+  
+    try {
+      await db.runTransaction(async (transaction) => {
+        // read
+        const oldAccountRef = db.collection('Users').doc(claimId);
+        console.log('claimId', claimId)
+        const oldAccountSnap = await transaction.get(oldAccountRef);
+        const oldAccountData = oldAccountSnap.data();
+        console.log('oldAccountData', oldAccountData)
+
+
+        const newAccountRef = db.collection('Users').doc(userId);
+
+        // write
+        console.log({...oldAccountData ,affiliate:afiiliateId })
+        transaction.update(newAccountRef, {...oldAccountData ,uid:userId, affiliate:afiiliateId, isAccountClaimed:true, role:'member',email:null, phoneNumber:null });
+        transaction.delete(oldAccountRef);
+        // 
+      });
+      res.status(200).send('Claimed successfully');
+    } catch (error) {
+      console.log(error)
+      res.status(400).send('Error claiming account');
+    }
+  });
+});

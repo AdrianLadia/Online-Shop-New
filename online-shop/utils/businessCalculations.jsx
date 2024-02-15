@@ -379,8 +379,6 @@ class businessCalculations {
     const { error2 } = vehicleObjectSchema.validate(vehicleObject);
     const { error3 } = needAssistanceSchema.validate(needAssistance);
 
-    
-
     if (error1 || error2 || error3) {
       throw new Error('Data Validation Error');
     }
@@ -389,7 +387,6 @@ class businessCalculations {
     const delFeeWithoutMinimum = Math.round(kilometers * vehicleObject.deliveryFeePerKm);
     if (delFeeWithoutMinimum < vehicleObject.minDelFee) {
       finalDelFee = vehicleObject.minDelFee;
-      
     } else {
       finalDelFee = delFeeWithoutMinimum;
     }
@@ -397,15 +394,13 @@ class businessCalculations {
       finalDelFee = finalDelFee + vehicleObject.driverAssistsPrice;
     }
 
-    
-
     const finalDelFeeSchema = Joi.number().required();
     const { error4 } = finalDelFeeSchema.validate(finalDelFee);
     if (error4) {
       throw new Error('Data Validation Error');
     }
 
-    // round to nearest 
+    // round to nearest
     return finalDelFee;
   }
 
@@ -510,7 +505,7 @@ class businessCalculations {
     return roundedVat;
   }
 
-  getGrandTotal(totalPrice, valueAddedTax, deliveryFee,firstOrderDiscount) {
+  getGrandTotal(totalPrice, valueAddedTax, deliveryFee, firstOrderDiscount) {
     const totalPriceSchema = Joi.number().required();
     const valueAddedTaxSchema = Joi.number().required();
     const deliveryFeeSchema = Joi.number().required();
@@ -631,7 +626,7 @@ class businessCalculations {
       area: Joi.array().required().allow(null),
       fullName: Joi.string().required(),
       eMail: Joi.string().required().allow(null),
-      phoneNumber: Joi.string().required().allow('',null),
+      phoneNumber: Joi.string().required().allow('', null),
       setMayaRedirectUrl: Joi.func().required(),
       setMayaCheckoutId: Joi.func().required(),
       localDeliveryAddress: Joi.string().required().allow(null),
@@ -660,32 +655,31 @@ class businessCalculations {
     }
 
     // Preparing data to be passed to checkout redirect pages
-    let checkoutParameter
+    let checkoutParameter;
     const parameters = {
       rows: data.rows,
       vat: data.vat,
       deliveryFee: data.deliveryFee,
-      referenceNumber : data.referenceNumber,
+      referenceNumber: data.referenceNumber,
       itemsTotal: data.itemsTotal,
       grandTotal: data.grandTotal,
       date: data.date,
-    }
-    const stringify = JSON.stringify(parameters)
-    checkoutParameter = encodeURIComponent(stringify)
+    };
+    const stringify = JSON.stringify(parameters);
+    checkoutParameter = encodeURIComponent(stringify);
 
     // setting redirect url if its for production or testing
-    const isDevEnvironment = new AppConfig().getIsDevEnvironment()
-    let redirectUrl
+    const isDevEnvironment = new AppConfig().getIsDevEnvironment();
+    let redirectUrl;
     if (isDevEnvironment) {
-      redirectUrl = 'http://localhost:5173'}
-    else {
-      redirectUrl = 'https://starpack.ph'
+      redirectUrl = 'http://localhost:5173';
+    } else {
+      redirectUrl = 'https://starpack.ph';
     }
-  
 
     if (testing === false) {
       // FOR MAYA WITH WEBHOOK
-      if (['maya', 'visa', 'mastercard', 'gcash','shoppeepay','wechatpay'].includes(paymentMethodSelected)) {
+      if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected)) {
         const fullName = data.fullName;
         const nameParts = fullName.split(' ');
         const firstName = nameParts[0];
@@ -695,39 +689,39 @@ class businessCalculations {
         const totalPrice = data.grandTotal;
         if (testing === false) {
           const req = {
-            "totalAmount": {
-                 "value": parseFloat(totalPrice),
-                 "currency": "PHP"
+            totalAmount: {
+              value: parseFloat(totalPrice),
+              currency: 'PHP',
             },
-            "buyer": {
-                 "contact": {
-                      "email": eMail,
-                      "phone": phoneNumber
-                 },
-                 "shippingAddress": {
-                      "line1": data.localDeliveryAddress,
-                      "line2": data.addressText,
-                      "countryCode": "PH"
-                 },
-                 "firstName": firstName,
-                 "lastName": lastName ? lastName : '',
+            buyer: {
+              contact: {
+                email: eMail,
+                phone: phoneNumber,
+              },
+              shippingAddress: {
+                line1: data.localDeliveryAddress,
+                line2: data.addressText,
+                countryCode: 'PH',
+              },
+              firstName: firstName,
+              lastName: lastName ? lastName : '',
             },
-            "redirectUrl": {
-                 "success": redirectUrl + "/checkoutSuccess" + "?data=" + checkoutParameter,
-                 "failure": redirectUrl + "/checkoutFailed"+ "?data=" + checkoutParameter,
-                 "cancel": redirectUrl + "/checkoutCancelled" + "?data=" + checkoutParameter
+            redirectUrl: {
+              success: redirectUrl + '/checkoutSuccess' + '?data=' + checkoutParameter,
+              failure: redirectUrl + '/checkoutFailed' + '?data=' + checkoutParameter,
+              cancel: redirectUrl + '/checkoutCancelled' + '?data=' + checkoutParameter,
             },
-            "requestReferenceNumber": data.referenceNumber,
+            requestReferenceNumber: data.referenceNumber,
             // "metadata": {
             //   "userId" : userId
             // }
-        }
-          const isSandbox = new AppConfig().getIsPaymentSandBox()
-          const res = await this.cloudfirestore.payMayaCheckout({payload:req,isSandbox:isSandbox})
+          };
+          const isSandbox = new AppConfig().getIsPaymentSandBox();
+          const res = await this.cloudfirestore.payMayaCheckout({ payload: req, isSandbox: isSandbox });
           const url = res.data.redirectUrl;
           const checkoutId = res.data.checkoutId;
 
-          return url
+          return url;
           // data.setMayaRedirectUrl(url)
           // data.setMayaCheckoutId(checkoutId)
         } else {
@@ -767,6 +761,55 @@ class businessCalculations {
       date.getFullYear().toString() +
       randomNumber
     );
+  }
+
+  async createCustomer(customerName, affiliateId, cloudfirestore) {
+    function generateFirestoreId() {
+      var id = '';
+      var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      var charactersLength = characters.length;
+      for (var i = 0; i < 20; i++) {
+        id += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return id;
+    }
+
+    try {
+      const userId = generateFirestoreId();
+      await cloudfirestore.createNewUser(
+        {
+          uid: userId,
+          name: customerName,
+          email: null,
+          emailVerified: false,
+          phoneNumber: null,
+          deliveryAddress: [],
+          contactPerson: [],
+          isAnonymous: false,
+          orders: [],
+          cart: {},
+          favoriteItems: [],
+          payments: [],
+          userRole: 'member',
+          affiliate: affiliateId,
+          affiliateClaims: [],
+          affiliateDeposits: [],
+          affiliateCommissions: [],
+          bir2303Link: null,
+          affiliateId: null,
+          affiliateBankAccounts: [],
+          joinedDate: new Date(),
+          codBanned: { reason: null, isBanned: false },
+          isAccountClaimed: false,
+          userPrices: {},
+        },
+        userId
+      );
+      console.log('Customer Created with id: ' + userId);
+    } catch (e) {
+      console.log(e);
+      throw new Error('Error creating customer');
+    }
   }
 }
 

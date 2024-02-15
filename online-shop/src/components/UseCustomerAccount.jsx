@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import AppContext from '../AppContext';
 import { Autocomplete, TextField, Modal, Box, Typography } from '@mui/material';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import {CircularProgress} from '@mui/material';
+import { CircularProgress } from '@mui/material';
+import { Firestore } from '@google-cloud/firestore';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -25,8 +26,16 @@ const style = {
 function UseCustomerAccount() {
   const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
   const [customerName, setCustomerName] = useState('');
-  const { db, cloudfirestore, userdata, alertSnackbar, setUserId, setManualCustomerOrderProcess } =
-    useContext(AppContext);
+  const {
+    db,
+    cloudfirestore,
+    businesscalculations,
+    userdata,
+    alertSnackbar,
+    setUserId,
+    setManualCustomerOrderProcess,
+    firestore,
+  } = useContext(AppContext);
   const [selectedManualCustomer, setSelectedManualCustomer] = useState(null);
   const [manualCustomers, setManualCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -61,54 +70,15 @@ function UseCustomerAccount() {
   }, []);
 
   async function createCustomer() {
-    function generateFirestoreId() {
-      var id = '';
-      var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      var charactersLength = characters.length;
-      for (var i = 0; i < 20; i++) {
-        id += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      return id;
-    }
     setLoading(true);
-    try{
-      const userId = generateFirestoreId();
-      await cloudfirestore.createNewUser(
-        {
-          uid: userId,
-          name: customerName,
-          email: null,
-          emailVerified: false,
-          phoneNumber: null,
-          deliveryAddress: [],
-          contactPerson: [],
-          isAnonymous: false,
-          orders: [],
-          cart: {},
-          favoriteItems: [],
-          payments: [],
-          userRole: 'member',
-          affiliate: userdata.uid,
-          affiliateClaims: [],
-          affiliateDeposits: [],
-          affiliateCommissions: [],
-          bir2303Link: null,
-          affiliateId: null,
-          affiliateBankAccounts: [],
-          joinedDate: new Date(),
-          codBanned: { reason: null, isBanned: false },
-          isAccountClaimed: false,
-          userPrices: {},
-        },
-        userId
-      );
-      console.log('Customer Created with id: ' + userId);
+
+    try {
+      await businesscalculations.createCustomer(customerName, userdata.uid, cloudfirestore);
       alertSnackbar('success', 'Customer Created Successfully');
       setCustomerName('');
       setOpenAddCustomerModal(false);
       setLoading(false);
-    }
-    catch(e){
+    } catch (error) {
       console.log(e);
       alertSnackbar('error', 'Error creating customer');
       setLoading(false);
@@ -174,25 +144,50 @@ function UseCustomerAccount() {
                 }}
               />
               <button className="p-3 rounded-lg  mt-4 bg-color10b" onClick={createCustomer}>
-                {!loading ? 
+                {!loading ? (
                   <div className="text-white font-bold">Create Customer</div>
-                : <CircularProgress size={19} style={{color:'white'}} />}
+                ) : (
+                  <CircularProgress size={19} style={{ color: 'white' }} />
+                )}
               </button>
             </div>
           </Box>
         </Modal>
       </div>
+      <div className="flex flex-row gap-5">
+        <button
+          className="flex items-center p-3 rounded-lg bg-color10b mb-20"
+          onClick={() => {
+            setUserId(selectedManualCustomer.uid);
+            setManualCustomerOrderProcess(true);
+            navigateTo('/shop');
+          }}
+        >
+          <span className="text-white font-bold mr-1">Create Order</span>
+        </button>
+        <button
+          className="flex items-center p-3 rounded-lg bg-color10b mb-20"
+          onClick={async () => {
 
-      <button
-        className="flex items-center p-3 rounded-lg bg-color10b mb-20"
-        onClick={() => {
-          setUserId(selectedManualCustomer.uid);
-          setManualCustomerOrderProcess(true);
-          navigateTo('/shop');
-        }}
-      >
-        <span className="text-white font-bold mr-1">Create Order</span>
-      </button>
+            function isLocalhost() {
+              return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          }
+          
+            let url
+            if (isLocalhost()) {
+              url = 'http://localhost:5173/claimAccount' 
+            }
+            else {
+              url = 'https://starpack.ph/claimAccount'
+            }
+
+            navigator.clipboard.writeText(url + '?claimId=' + selectedManualCustomer.uid + '&aid=' + userdata.uid );
+            alertSnackbar('info', 'Copied Customer Share Link to Clipboard');
+          }}
+        >
+          <span className="text-white font-bold mr-1">Share</span>
+        </button>
+      </div>
     </div>
   );
 }

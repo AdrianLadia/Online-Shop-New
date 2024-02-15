@@ -95,6 +95,9 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   async createNewUser(data, userId) {
     const schema = schemas.userSchema();
 
+    console.log('data',data);
+    console.log('userId',userId);
+
     const { error } = schema.validate(data);
     if (error) {
       throw new Error(error);
@@ -102,20 +105,25 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
 
     try {
       await this.createDocument(data, userId, 'Users');
-      await this.createDocument(
-        {
-          messages: [],
-          ownerUserId: userId,
-          ownerName: data.name,
-          referenceNumber: userId,
-          isInquiry: true,
-          adminReadAll: true,
-          ownerReadAll: true,
-          delivered: false,
-        },
-        userId,
-        'ordersMessages'
-      );
+      try{
+        await this.createDocument(
+          {
+            messages: [],
+            ownerUserId: userId,
+            ownerName: data.name,
+            referenceNumber: userId,
+            isInquiry: true,
+            adminReadAll: true,
+            ownerReadAll: true,
+            delivered: false,
+          },
+          userId,
+          'ordersMessages'
+        );
+      }
+      catch (error) {
+        
+      }
     } catch (error) {
       // Handle the 400 error messages
       const errorMessage = error.response.data;
@@ -226,6 +234,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       return error.response;
     }
   }
+
 
   async readUserRole(userId) {
     const userIdSchema = Joi.string();
@@ -727,6 +736,28 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
 
+  async transactionClaimAccount(userId,claimId, aid) {
+    const data = {
+      userId: userId,
+      claimId: claimId,
+      aid: aid,
+    };
+
+    const jsonData = JSON.stringify(data);
+
+    try {
+      const res = await axios.post(`${this.url}transactionClaimAccount`, jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey' : 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg'
+        },
+      });
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error claiming account');
+    }
+  }
 }
 
 export default cloudFirestoreDb;

@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Button, Divider } from '@mui/material';
-import ReactPlayer from 'react-player';
+import AppContext from '../AppContext';
+
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   height: '80%',
+  maxHeight: '80%',
   transform: 'translate(-50%, -50%)',
   width: '95%',
   overflow: 'scroll',
@@ -29,10 +31,12 @@ function UnsupportedBrowserRedirect(props) {
   // const open = true
   const setOpen = props.setOpen;
 
+  const {alertSnackbar,affiliateUid,firestore} = useContext(AppContext);
+
 
   const handleClose = () => setOpen(false);
 
-  function copyLink() {
+  async function copyLink() {
     // /* Get the text field */
     // var copyText = document.getElementById("myInput");
 
@@ -41,10 +45,25 @@ function UnsupportedBrowserRedirect(props) {
     // copyText.setSelectionRange(0, 99999); /* For mobile devices */
 
     /* Copy the text inside the text field */
-    navigator.clipboard.writeText('www.starpack.ph');
+    try {
+      let url 
+      if (affiliateUid) {
+        const user = await firestore.readSelectedDataFromCollection('Users',affiliateUid)
+        const affiliateId = user.affiliateId
+        url =  'starpack.ph/shop?aid=' + affiliateId;
+      }
+      else {
+        url = 'starpack.ph/shop';
+      }
+      navigator.clipboard.writeText(url);
+    }
+    catch (error) {
+      console.log(error)
+      navigator.clipboard.writeText('www.starpack.ph');
+    }
 
     /* Alert the copied text */
-    alert('Copied the url: www.starpack.ph');
+    alertSnackbar('info','Copied the url: www.starpack.ph');
   }
 
   return (
@@ -59,6 +78,7 @@ function UnsupportedBrowserRedirect(props) {
           sx={{
             ...style,
             p: 4,
+            mb: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -83,7 +103,7 @@ function UnsupportedBrowserRedirect(props) {
             Click the button to <strong>Copy the URL</strong>
           </Typography>
 
-          <Button variant="contained" color="primary" onClick={copyLink} sx={{ mb: 1 }}>
+          <Button variant="contained" className='bg-color10a' onClick={copyLink} sx={{ mb: 1 }}>
             www.starpack.ph
           </Button>
           <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
@@ -101,15 +121,14 @@ function UnsupportedBrowserRedirect(props) {
             Authentication. Please use authorized browsers to login.
           </Typography> */}
           <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
-          <Typography variant="h5" gutterBottom className="mb-5 font-bold text-center">
+          {/* <Typography variant="h5" gutterBottom className="mb-5 font-bold text-center">
             Video Tutorial
+          </Typography> */}
+          <Typography variant="body1" gutterBottom className="mb-2 text-center">
+            Google Authentication is not supported by Facebook in-app browser. Please use authorized browsers to login.
           </Typography>
           <div className="w-full flex justify-center h-20 mb-20">
-          <ReactPlayer
-            url="https://www.youtube.com/watch?v=ogJ1XgR2bQo"
-            controls={true}
-            // ... other props
-          />
+         
         </div>
         </Box>
       </Modal>

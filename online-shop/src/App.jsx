@@ -36,14 +36,17 @@ import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
 import JobOpenings from './components/JobOpenings';
+import ClaimAccount from './components/ClaimAccount';
 
 function App() {
-  // get fbclid for faccebook pixel conversion api
   const [fbclid, setFbclid] = useState(undefined);
-  useEffect(() => {
-    const fbc = new URLSearchParams(window.location.search).get('fbclid');
-    setFbclid(fbc);
-  }, []);
+  // disable first because we are not using this
+  // get fbclid for faccebook pixel conversion api
+  // useEffect(() => {
+  //   const fbc = new URLSearchParams(window.location.search).get('fbclid');
+  //   setFbclid(fbc);
+  // }, []);
+  // ______________________________________________
 
   const appConfig = new AppConfig();
   // Initialize Firebase
@@ -142,13 +145,12 @@ function App() {
   const [alertDuration, setAlertDuration] = useState(5000);
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
   const [affiliateUid, setAffiliateUid] = useState(null);
-  const [manualCustomerOrderProcess,setManualCustomerOrderProcess] = useState(false);
+  const [manualCustomerOrderProcess, setManualCustomerOrderProcess] = useState(false);
   const [ipAddress, setIpAddress] = useState(null);
-
-  
-
-
-
+  const [claimAccountProcess, setClaimAccountProcess] = useState(false); // This is used to run the claim account process in claimAccount route
+  const [claimId, setClaimId] = useState(null);
+  const [aid, setAid] = useState(null);
+  const [triggerClaimAccountProcess, setTriggerClaimAccountProcess] = useState(false);
 
   useEffect(() => {
     // get affiliate users first
@@ -158,7 +160,7 @@ function App() {
     cloudfirestore.getAllAffiliateUsers().then((affiliateUsers) => {
       const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
       const userAffiliateId = userdata ? userdata.affiliate : null;
-      const cookieAffiliateId = localStorage.getItem('affiliateId')
+      const cookieAffiliateId = localStorage.getItem('affiliateId');
       const affiliateHandler_ = new affiliateHandler(
         cookieAffiliateId,
         urlAffiliateId,
@@ -166,7 +168,7 @@ function App() {
         affiliateUsers
       );
       affiliateHandler_.runMain().then((affiliateId) => {
-        console.log(affiliateId)
+        console.log(affiliateId);
         setAffiliateUid(affiliateId);
       });
     });
@@ -174,7 +176,7 @@ function App() {
 
   // This is used to get the affiliate id from the url and store it in the local storage
   useEffect(() => {
-    const cookieAffiliateId = localStorage.getItem('affiliateId')
+    const cookieAffiliateId = localStorage.getItem('affiliateId');
     const urlAffiliateId = new URLSearchParams(window.location.search).get('aid');
     if (urlAffiliateId != cookieAffiliateId && urlAffiliateId != null) {
       localStorage.setItem('affiliateId', urlAffiliateId);
@@ -182,7 +184,6 @@ function App() {
   }, []);
 
   function alertSnackbar(severity, message, duration) {
-
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
@@ -202,12 +203,10 @@ function App() {
 
   // useEffect(() => {
   //   cloudfirestore.getIpAddress().then((ip) => {
-      
+
   //     setIpAddress(ip);
   //   });
   // }, []);
-
-
 
   // TEMPORARY DISABLED THIS BECAUSE WE ARE NOT USING THE CHAT FEATURE YET
   // DO NOT DELETE THIS CODE
@@ -312,7 +311,7 @@ function App() {
       if (user) {
         setUserState('userloading');
         setUser(user);
-        console.log('Auth Changed')
+        console.log('Auth Changed');
         console.log(user.uid);
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           if (userExists && manualCustomerOrderProcess == false) {
@@ -344,7 +343,7 @@ function App() {
                   affiliateBankAccounts: [],
                   joinedDate: new Date(),
                   codBanned: { reason: null, isBanned: false },
-                  userPrices : {},
+                  userPrices: {},
                   isAccountClaimed: true,
                 },
                 user.uid
@@ -478,8 +477,31 @@ function App() {
   }, [userdata]);
 
   useEffect(() => {
+    async function claimAccount() {
+      console.log('claimAccountProcess', claimAccountProcess);
+      console.log('userLoaded', userLoaded);
+      if (claimAccountProcess && userLoaded) {
+        try {
+          console.log('userId', userId);
+          console.log('claimId', claimId);
+          console.log('aid', aid);
+          await cloudfirestore.transactionClaimAccount(userId, claimId, aid);
+          navigateTo('/shop');
+          await delay(1000)
+          window.location.reload()
+
+        } finally {
+          setClaimAccountProcess(false);
+        }
+      }
+    }
+
+    claimAccount();
+  }, [triggerClaimAccountProcess]);
+
+  useEffect(() => {
     // FLOW FOR GUEST LOGIN
-    console.log('userId',userId)
+    console.log('userId', userId);
     async function setAllUserData() {
       const localStorageCart = JSON.parse(localStorage.getItem('cart'));
       if (localStorageCart) {
@@ -489,8 +511,8 @@ function App() {
         setLocalCartProductsData(newProductData);
       }
       if (userId) {
-        
         const data = await cloudfirestore.readSelectedUserById(userId);
+
         setUserData(data);
         setFavoriteItems(data.favoriteItems);
 
@@ -540,6 +562,7 @@ function App() {
         setContactPerson(data.contactPerson);
         setUserState('userloaded');
         setUserLoaded(true);
+        setTriggerClaimAccountProcess(!claimAccountProcess)
       } else {
         if (localStorageCart) {
           setCart(localStorageCart);
@@ -547,9 +570,7 @@ function App() {
       }
     }
     setAllUserData();
-
   }, [userId, refreshUser]);
-
 
   useEffect(() => {
     if (userdata != null) {
@@ -563,7 +584,7 @@ function App() {
         const orderData = await cloudfirestore.readSelectedOrder(order.reference, userId);
         return orderData;
       });
-      
+
       Promise.all(orderPromises).then((data) => {
         const cleanedData = data.filter((order) => order != null || order != undefined);
         setOrders(cleanedData);
@@ -594,8 +615,7 @@ function App() {
           setOpenProfileUpdaterModal(true);
         }
       }
-    }
-    else {
+    } else {
       setOpenProfileUpdaterModal(false);
     }
   }, [userdata]);
@@ -705,8 +725,12 @@ function App() {
     affiliateUid: affiliateUid,
     setUserId: setUserId,
     setManualCustomerOrderProcess: setManualCustomerOrderProcess,
-    manualCustomerOrderProcess:manualCustomerOrderProcess,
+    manualCustomerOrderProcess: manualCustomerOrderProcess,
     ipAddress: ipAddress,
+    claimAccountProcess: claimAccountProcess,
+    setClaimAccountProcess: setClaimAccountProcess,
+    setClaimId: setClaimId,
+    setAid: setAid,
   };
 
   return (
@@ -725,6 +749,14 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <JobOpenings />
+            </AppContext.Provider>
+          }
+        />
+        <Route
+          path="/claimAccount"
+          element={
+            <AppContext.Provider value={appContextValue}>
+              <ClaimAccount />
             </AppContext.Provider>
           }
         />
