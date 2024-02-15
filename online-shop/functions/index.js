@@ -352,8 +352,6 @@ exports.postToConversionApi = onRequest((req, res) => {
 exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (event) => {
   const beforeData = event.data.before.data();
   const afterData = event.data.after.data();
-  logger.log('beforeData', beforeData);
-  logger.log('afterData', afterData);
 
   let created = null;
   if (beforeData == undefined) {
@@ -425,9 +423,6 @@ exports.onPaymentsChange = onDocumentWritten('Payments/{paymentId}', async (even
 });
 
 exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => {
-  console.log('________________________');
-  console.log('RUNNING ON ORDERS CHANGE');
-
   try {
     const beforeData = event.data.before.data();
     const afterData = event.data.after.data();
@@ -475,7 +470,6 @@ exports.onOrdersChange = onDocumentWritten('Orders/{orderId}', async (event) => 
       .get();
     const userPayments = paymentsSnapshot.docs.map((doc) => doc.data());
     const toUpdate = updateAccountStatement(userPayments, userOrders);
-    logger.log(toUpdate);
     toUpdate.forEach(async (_toUpdate) => {
       const orderRef = db.collection('Orders').doc(_toUpdate.reference);
       await orderRef.update({ paid: _toUpdate.paid });
@@ -665,7 +659,6 @@ exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
 exports.transactionPlaceOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const apiKey = req.headers['apikey'];
-    console.log('API KEY', apiKey);
     if (handleApiKey(apiKey, res) == false) {
       res.status(400).send('Invalid API Key');
       return;
@@ -673,6 +666,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
 
     const data = parseData(req.query.data);
     let userid = data.userid;
+    console.log('reqData', data);
     console.log('userid', userid);
     // If guest checkout
     if (userid == null) {
@@ -1315,7 +1309,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     const commissionPercentage = 0.01;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
-    logger.log('Proof of payment link', proofOfPaymentLink);
     const db = admin.firestore();
     let userId;
 
@@ -1327,7 +1320,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const orderSnapshot = await transaction.get(orderRef);
         const orderDetail = orderSnapshot.data();
         const affiliateUid = orderDetail.affiliateUid;
-        console.log('affiliateUid', affiliateUid);
         const itemsTotal = orderDetail.itemsTotal;
         const orderVat = orderDetail.vat;
         const vatPercentage = orderVat / itemsTotal;
@@ -1360,7 +1352,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const userSnap = await transaction.get(userRef);
         const userData = userSnap.data();
         const affiliateIdOfCustomer = affiliateUid != null ? affiliateUid : userData.affiliate;
-        console.log('affiliateIdOfCustomer', affiliateIdOfCustomer);
         let newAffiliateCommissions;
         let affiliateUserRef;
         let foundAffiliate = false;
@@ -1393,30 +1384,43 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         const oldPayments = userData.payments;
         const newPayments = [...oldPayments, data];
 
+        const cartData = {};
         const newStocksOnHold = {};
+        
 
         await Promise.all(
           Object.keys(cart).map(async (itemId) => {
             const ref = db.collection('Products').doc(itemId);
             const doc = await transaction.get(ref);
             const productData = doc.data();
-            const stocksOnHold = productData.stocksOnHold;
-
-            stocksOnHold.forEach((stock) => {
-              // Changed map to forEach
-              if (stock.reference != orderReference) {
-                // Initialize with empty array if not exist
-                if (!newStocksOnHold[itemId]) {
-                  newStocksOnHold[itemId] = [];
-                }
-                // Spread the existing array and add the new stock
-                newStocksOnHold[itemId] = [...newStocksOnHold[itemId], stock];
-              }
-            });
+            cartData[itemId] = productData;
           })
         );
 
+
+        Object.keys(cartData).forEach((itemId) => {
+          const stocksOnHold = cartData[itemId].stocksOnHold;
+          console.log('stockOnHold for ' + itemId, stocksOnHold);
+          stocksOnHold.forEach((stock) => {
+            // Changed map to forEach
+            console.log('stock.reference', stock.reference);
+            console.log('orderReference', orderReference);
+            if (!newStocksOnHold[itemId]) {
+              newStocksOnHold[itemId] = [];
+            }
+            if (stock.reference != orderReference) {
+              console.log('initializing ');
+              // Initialize with empty array if not exist
+              // Spread the existing array and add the new stock
+              newStocksOnHold[itemId] = [...newStocksOnHold[itemId], stock];
+            }
+          });
+        });
+        // const stocksOnHold = productData.stocksOnHold;
+        //     console.log('stockOnHold for ' + productData.itemId, stocksOnHold);
+
         console.log('newStocksOnHold', newStocksOnHold);
+
 
         // WRITE
 
@@ -1464,6 +1468,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           const ref = db.collection('Products').doc(itemId);
           transaction.update(ref, { stocksOnHold: newStocksOnHoldArray });
         });
+
       });
 
       if (paymentNotAccepted == true) {
@@ -1516,7 +1521,6 @@ exports.payMayaCheckout = onRequest(async (req, res) => {
     };
 
     const response = await axios.post(url, payload, { headers });
-    logger.log(response.data);
     res.send(response.data);
   });
 });
@@ -1561,7 +1565,6 @@ exports.payMayaEndpoint = onRequest(async (req, res) => {
         apikey: 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg',
       },
     });
-    console.log('response', response);
   }
 
   if (status == 'PAYMENT_FAILED') {
@@ -1571,7 +1574,7 @@ exports.payMayaEndpoint = onRequest(async (req, res) => {
   if (status == 'PAYMENT_EXPIRED') {
     response = { status: 200 }; // temporary. Replace when logic is implemented
   }
-  console.log('response', response);
+
   if (response.status == 200) {
     res.status(200).send({
       webhookDataProcessed: 'success',
@@ -2650,7 +2653,6 @@ exports.updateCustomerSearchIndexScheduled = functions
     await internalUpdateCustomerSearchIndex();
   });
 
-
 exports.transactionClaimAccount = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const apiKey = req.headers['apikey'];
@@ -2662,29 +2664,36 @@ exports.transactionClaimAccount = onRequest(async (req, res) => {
     const data = req.body;
     const userId = data.userId;
     const claimId = data.claimId;
-    const afiiliateId = data.aid
-  
+    const afiiliateId = data.aid;
+
     try {
       await db.runTransaction(async (transaction) => {
         // read
         const oldAccountRef = db.collection('Users').doc(claimId);
-        console.log('claimId', claimId)
+        console.log('claimId', claimId);
         const oldAccountSnap = await transaction.get(oldAccountRef);
         const oldAccountData = oldAccountSnap.data();
-        console.log('oldAccountData', oldAccountData)
-
+        console.log('oldAccountData', oldAccountData);
 
         const newAccountRef = db.collection('Users').doc(userId);
 
         // write
-        console.log({...oldAccountData ,affiliate:afiiliateId })
-        transaction.update(newAccountRef, {...oldAccountData ,uid:userId, affiliate:afiiliateId, isAccountClaimed:true, role:'member',email:null, phoneNumber:null });
+        console.log({ ...oldAccountData, affiliate: afiiliateId });
+        transaction.update(newAccountRef, {
+          ...oldAccountData,
+          uid: userId,
+          affiliate: afiiliateId,
+          isAccountClaimed: true,
+          role: 'member',
+          email: null,
+          phoneNumber: null,
+        });
         transaction.delete(oldAccountRef);
-        // 
+        //
       });
       res.status(200).send('Claimed successfully');
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(400).send('Error claiming account');
     }
   });

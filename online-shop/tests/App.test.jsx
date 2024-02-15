@@ -5454,7 +5454,7 @@ describe('test user creates 2 orders. The second order is bigger than the second
 describe('test paymaya endpoint success', async () => {
   const successPayload = {
     id: '59cf27a1-8aa1-4eb3-b7d4-32a53251edec',
-    totalAmount: { value: 20000 },
+    totalAmount: { value: 50000 },
     currency: 'PHP',
     paymentStatus: 'PAYMENT_SUCCESS',
     requestReferenceNumber: 'testref12345',
@@ -5478,6 +5478,9 @@ describe('test paymaya endpoint success', async () => {
   };
 
   test('prepare test', async () => {
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16', { stocksOnHold: [], stocksOnHoldCompleted: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#16-RET', { stocksOnHold: [], stocksOnHoldCompleted: [] });
+    await firestore.updateDocumentFromCollection('Products', 'PPB#20', { stocksOnHold: [], stocksOnHoldCompleted: [] });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
       testing: true,
@@ -5489,7 +5492,39 @@ describe('test paymaya endpoint success', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'PPB#16': 12 },
+      cart: { 'PPB#16-RET':20, 'PPB#20':5 },
+      itemstotal: 18000,
+      vat: 1000,
+      shippingtotal: 1000,
+      grandTotal: 20000,
+      reference: 'testref123456',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'gcash',
+      userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore: 1,
+      firstOrderDiscount: 0,
+    });
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      isInvoiceNeeded: true,
+      userid: userTestId,
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12, 'PPB#16-RET':20, 'PPB#20':5 },
       itemstotal: 18000,
       vat: 1000,
       shippingtotal: 1000,
@@ -5516,7 +5551,7 @@ describe('test paymaya endpoint success', async () => {
     const orders = user.orders;
     const payments = user.payments;
 
-    expect(orders.length).toEqual(1);
+    expect(orders.length).toEqual(2);
     expect(payments.length).toEqual(0);
 
     const allPayments = await firestore.readAllDataFromCollection('Payments');
@@ -5544,7 +5579,31 @@ describe('test paymaya endpoint success', async () => {
 
     const order = await firestore.readSelectedDataFromCollection('Orders', 'testref12345');
     const paid = order.paid;
+    const cart = order.cart;
+    
+    const cartStockOnHoldData = []
+    await Promise.all(
+      Object.keys(cart).map(async (key) => {
+        const productData = await firestore.readSelectedDataFromCollection('Products', key);
+        const stocksOnHold = productData.stocksOnHold;
+        cartStockOnHoldData.push({ itemId: key, stocksOnHold });
+      })
+    );
 
+    cartStockOnHoldData.forEach((data) => {
+      const itemId = data.itemId;
+      const stocksOnHold = data.stocksOnHold;
+      if (itemId == 'PPB#16') {
+        expect(stocksOnHold.length).toEqual(0);
+      }
+      if (itemId == 'PPB#16-RET') {
+        expect(stocksOnHold.length).toEqual(1);
+      }
+      if (itemId == 'PPB#20') {
+        expect(stocksOnHold.length).toEqual(1);
+      }
+    });
+    
     expect(paid).toEqual(true);
 
     const user = await firestore.readSelectedDataFromCollection('Users', userTestId);
@@ -5565,6 +5624,9 @@ describe('test paymaya endpoint success', async () => {
         foundPayment = true;
       }
     });
+
+
+
   });
   test('clean test', async () => {
     await firestore.deleteDocumentFromCollection('Orders', 'testref12345');
@@ -5801,7 +5863,7 @@ describe('AffiliateHandler', () => {
   });
 });
 
-describe.only('test transactionClaimAccount', async () => {
+describe('test transactionClaimAccount', async () => {
   let testCustomerId
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
