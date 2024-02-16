@@ -695,7 +695,7 @@ describe('Database', async () => {
   });
 });
 
-describe('Transaction Create Payment', async () => {
+describe.only('Transaction Create Payment', async () => {
   test('Check if payment is added to payment field', async () => {
     await firestore.createNewUser(
       {
@@ -726,7 +726,15 @@ describe('Transaction Create Payment', async () => {
       'testuser'
     );
 
-    await firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
+    const data = {
+      userId: 'testuser',
+      amount: 1000,
+      reference: '1234567890',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    };
+
+    await cloudfirestore.transactionCreatePayment(data);
     await delay(transactionCreatePaymentDelay);
     const user = await firestore.readUserById('testuser');
 
