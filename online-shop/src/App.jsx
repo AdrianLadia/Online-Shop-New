@@ -303,6 +303,7 @@ function App() {
   }
 
   useEffect(() => {
+    // setIsSupportedBrowser(false);
     setIsSupportedBrowser(checkIfBrowserSupported());
   }, []);
 
