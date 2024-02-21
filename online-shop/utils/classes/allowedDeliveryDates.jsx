@@ -30,7 +30,7 @@ class allowedDeliveryDates {
       '1/5/2023',
     ];
     this.daysAfterAllowed = 6;
-    this.cutOffTime = 14;
+    this.cutOffTime = 15;
     this.today = dateToday;
     this.minDate =  new Date(JSON.parse(JSON.stringify(dateToday)));
     this.maxDate = new Date(JSON.parse(JSON.stringify(dateToday)));

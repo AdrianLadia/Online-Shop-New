@@ -188,18 +188,19 @@ const CartModal = (props) => {
           </div>
           {openSecretLog ? (
             <div className="flex flex-col gap-1 overflow-y-auto">
-              <div className='border-b-2' >manualCustomerOrderProcess: {manualCustomerOrderProcess.toString()}</div>
-              <div className='border-b-2' >isAppleDevice: {isAppleDevice.toString()}</div>
-              <div className='border-b-2' >isAndroidDevice: {isAndroidDevice.toString()}</div>
-              <div className='border-b-2' >isGoogleChrome: {isGoogleChrome.toString()}</div>
-              <div className='border-b-2' >affiliateUid: {affiliateUid}</div>
-              <div className='border-b-2' >ipAddress: {ipAddress}</div>
-              <div className='border-b-2' >device: {window.navigator.userAgent}</div>
-              <div className='border-b-2' >isSupportedBrowser: {isSupportedBrowser.toString()}</div>
-              <div className='border-b-2' >isAdmin: {isAdmin.toString()}</div>
-              <div className='border-b-2' >isSuperAdmin: {isSuperAdmin.toString()}</div>
-              <div className='border-b-2' >isAffiliate: {isAffiliate.toString()}</div>
-              <div className='border-b-2' >isDistributor: {isDistributor.toString()}</div>
+              <div className="border-b-2">userId: {userdata ? userdata.uid : ''}</div>
+              <div className="border-b-2">manualCustomerOrderProcess: {manualCustomerOrderProcess.toString()}</div>
+              <div className="border-b-2">isAppleDevice: {isAppleDevice.toString()}</div>
+              <div className="border-b-2">isAndroidDevice: {isAndroidDevice.toString()}</div>
+              <div className="border-b-2">isGoogleChrome: {isGoogleChrome.toString()}</div>
+              <div className="border-b-2">affiliateUid: {affiliateUid}</div>
+              <div className="border-b-2">ipAddress: {ipAddress}</div>
+              <div className="border-b-2">device: {window.navigator.userAgent}</div>
+              <div className="border-b-2">isSupportedBrowser: {isSupportedBrowser.toString()}</div>
+              <div className="border-b-2">isAdmin: {isAdmin.toString()}</div>
+              <div className="border-b-2">isSuperAdmin: {isSuperAdmin.toString()}</div>
+              <div className="border-b-2">isAffiliate: {isAffiliate.toString()}</div>
+              <div className="border-b-2">isDistributor: {isDistributor.toString()}</div>
             </div>
           ) : null}
           <Modal
