@@ -11,6 +11,7 @@ const QuotationCreatorButton = ({
   companyName,
   senderName,
   bankAccount,
+  
 }) => {
   const grandTotal = arrayOfProductData.reduce((acc, product) => acc + product.total, 0);
   const _deliveryFee = deliveryFee == '' ? 0 : parseFloat(deliveryFee);
@@ -71,7 +72,7 @@ const QuotationCreatorButton = ({
   }, [hidden]);
 
   return (
-    <div >
+    <div className='flex bg-red-300'>
       {/* This is the visible button */}
       <button
         onClick={downloadPDF}

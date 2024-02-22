@@ -1801,7 +1801,7 @@ describe('cloudfirestoredb', async () => {
       return await cloudfirestore.readUserRole(userId);
     });
     const userRoles = await Promise.all(userRolesPromises);
-    const roles = ['member', 'admin', 'superAdmin', 'affiliate', 'distributor'];
+    const roles = ['member', 'admin', 'superAdmin', 'affiliate', 'distributor','cousin'];
     userRoles.map((userRole) => {
       expect(roles.includes(userRole)).toEqual(true);
     });
@@ -2009,7 +2009,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe('updateOrderProofOfPaymentLink', () => {
+describe.only('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -4889,7 +4889,7 @@ describe('test transactionPlaceOrder must include paymentMethod and proofOfPayme
   });
 }, 100000);
 
-describe('test closing hours', async () => {
+describe.only('test closing hours', async () => {
   test('test if closed', async () => {
     const currentDate = new Date();
     const GMT_OFFSET = 8; // for GMT+8

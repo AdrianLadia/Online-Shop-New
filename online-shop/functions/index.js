@@ -93,6 +93,10 @@ function parseData(data) {
   return parsedData;
 }
 
+function roundUpToNearest5(number) {
+  return Math.ceil(number / 5) * 5;
+}
+
 function updateAccountStatement(payments, orders) {
   let totalPayments = 0;
 
@@ -726,9 +730,14 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       let price = null;
       if (userRole == 'distributor') {
         price = item.data().distributorPrice;
-      } else {
+      }
+      if (userRole == 'cousin') {
+        price = roundUpToNearest5(item.data().distributorPrice * .97)
+      }
+      else {
         price = item.data().price;
       }
+      
 
       if (userPrices[itemId]) {
         price = parseFloat(userPrices[itemId]);
