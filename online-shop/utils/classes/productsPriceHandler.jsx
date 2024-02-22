@@ -24,6 +24,9 @@ class productsPriceHandler {
 
   runMain() {
     // if user is distributor
+    if (this.userRole == 'cousin') {
+        this.getCousinPrice()
+    }
     if (this.userRole == 'distributor' || this.useDistributorPrice) {
         this.getDistributorPrice()   
     }
@@ -57,6 +60,24 @@ class productsPriceHandler {
         const distributorPrice = this.distributorPrice[product.itemId]
 
         product.price = distributorPrice ? parseFloat(distributorPrice) : product.price
+    })
+
+    this.finalData = copyOfProducts
+  }
+
+  getCousinPrice() {
+    const percentDiscountFromDistributorPrice = 3
+    function roundUpToNearest5(number) {
+      return Math.ceil(number / 5) * 5;
+    }
+    const copyOfProducts = [...this.products]
+    
+    copyOfProducts.forEach(product => {
+
+        const distributorPrice = this.distributorPrice[product.itemId] 
+
+        product.price = distributorPrice ? parseFloat(distributorPrice) : product.price
+        product.price = roundUpToNearest5(product.price * (1 - percentDiscountFromDistributorPrice / 100))
     })
 
     this.finalData = copyOfProducts

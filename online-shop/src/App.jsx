@@ -530,7 +530,7 @@ function App() {
         }
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
-        const nonAdminRoles = ['member', 'affiliate', 'distributor'];
+        const nonAdminRoles = ['member', 'affiliate', 'distributor','cousin'];
         const userRole = await cloudfirestore.readUserRole(data.uid);
         if (nonAdminRoles.includes(userRole)) {
           setIsAdmin(false);

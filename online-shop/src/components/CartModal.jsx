@@ -43,6 +43,8 @@ const CartModal = (props) => {
   const [balance, setBalance] = useState('');
   const [note, setNote] = useState('');
   const [openSecretLog, setOpenSecretLog] = useState(false);
+  const [percentIncrease, setPercentIncrease] = useState(0);
+  const [_finalCartData, set_FinalCartData] = useState(finalCartData);
 
   const style = {
     position: 'absolute',
@@ -68,12 +70,11 @@ const CartModal = (props) => {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    height: '50%',
+    height: 'auto',
     transform: 'translate(-50%, -50%)',
     '@media (min-width: 1024px)': {
       width: '85%',
     },
-
     bgcolor: 'background.paper',
     border: '2px solid #000',
     bgcolor: 'background.paper',
@@ -118,6 +119,33 @@ const CartModal = (props) => {
     setOpenSecretLog(true);
   }
 
+  function roundUpToNearest5(number) {
+    return Math.ceil(number / 5) * 5;
+  }
+
+  useEffect(() => {
+    console.log('percentIncrease', percentIncrease);
+    console.log('finalCartData', finalCartData);
+    if (percentIncrease > 0) {
+      const newFinalCartData = finalCartData.map((item) => {
+        return {
+          ...item,
+          price: roundUpToNearest5(item.price * (1 + percentIncrease / 100)),
+          total: roundUpToNearest5(item.price * (1 + percentIncrease / 100) * item.quantity),
+        };
+      });
+      set_FinalCartData(newFinalCartData);
+    }
+    else{
+      set_FinalCartData(finalCartData);
+    }
+  }, [percentIncrease,openCreateQuotationModal]);
+
+  useEffect(() => {
+    console.log('_finalCartData', _finalCartData);
+  }, [_finalCartData]);
+
+
   return (
     <Modal open={openCart} onClose={CloseCart}>
       <Fade in={openCart}>
@@ -127,7 +155,7 @@ const CartModal = (props) => {
         >
           <div className="flex flex-row justify-between mb-4">
             <div className="flex flex-row gap-5">
-              {['superAdmin', 'admin', 'distributor', 'affiliate'].includes(userdata?.userRole) ||
+              {['superAdmin', 'admin', 'distributor', 'affiliate', 'cousin'].includes(userdata?.userRole) ||
               manualCustomerOrderProcess == true ? (
                 <button
                   onClick={() => setOpenCreateQuotationModal(true)}
@@ -238,9 +266,21 @@ const CartModal = (props) => {
                   sx={{ marginTop: 1 }}
                   onChange={(e) => setNote(e.target.value)}
                 />
+                {['cousin', 'superAdmin'].includes(userdata?.userRole) ? (
+                  <TextField
+                    required
+                    id="outlined-basic123"
+                    label="% Increase in Price"
+                    variant="outlined"
+                    value={percentIncrease}
+                    sx={{ marginTop: 1 }}
+                    onChange={(e) => setPercentIncrease(e.target.value)}
+                  />
+                ) : null}
+
                 <div className="flex justify-center">
                   <QuotationCreatorButton
-                    arrayOfProductData={finalCartData}
+                    arrayOfProductData={_finalCartData}
                     deliveryFee={deliveryFee}
                     balance={balance}
                     note={note}
