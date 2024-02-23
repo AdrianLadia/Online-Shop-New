@@ -240,6 +240,7 @@ const AdminAddOrEditItem = (props) => {
         boxImage: boxImage,
         costPrice: parseFloat(costPrice),
         freightCost: parseFloat(freightCost),
+        distributorPrice: parseFloat(price),
       },
       itemID,
       products
@@ -276,6 +277,7 @@ const AdminAddOrEditItem = (props) => {
           boxImage: boxImage,
           costPrice: null,
           freightCost: null,
+          distributorPrice: parseFloat(price)
         },
         itemID + '-RET',
         products
@@ -394,6 +396,7 @@ const AdminAddOrEditItem = (props) => {
           boxImage: boxImage,
           costPrice: null,
           freightCost: null,
+          distributorPrice: parseFloat(price)
         },
         itemID + '-RET',
         products
