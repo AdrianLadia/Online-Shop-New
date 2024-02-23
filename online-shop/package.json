@@ -30,7 +30,6 @@
     "firebase": "^10.2.0",
     "firebase-admin": "^11.5.0",
     "firebase-functions": "^4.5.0",
-    "fs": "^0.0.1-security",
     "fuse.js": "^7.0.0",
     "html2pdf.js": "^0.10.1",
     "joi": "^17.8.4",
