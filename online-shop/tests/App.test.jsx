@@ -5999,3 +5999,19 @@ describe('test transactionClaimAccount', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'claimerCustomer');
   });
 });
+
+
+describe('test transactionPlaceOrder with manualCustomerOrderProcess = true / false', async () => {
+  test('manualCustomerOrderProcess = true, paymentMethod = true', async () => {
+    throw new Error('Test not implemented');
+  });
+  test('manualCustomerOrderProcess = true, paymentMethod = false', async () => {
+    throw new Error('Test not implemented');
+  });
+  test('manualCustomerOrderProcess = false, paymentMethod = true', async () => {
+    throw new Error('Test not implemented');
+  });
+  test('manualCustomerOrderProcess = false, paymentMethod = false', async () => {
+    throw new Error('Test not implemented');
+  });
+})

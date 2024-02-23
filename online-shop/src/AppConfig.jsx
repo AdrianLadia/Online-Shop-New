@@ -2,14 +2,14 @@
 
 class AppConfig {
     constructor() {
-        this.isDevEnvironment = false 
-        this.isPaymentSandBox = false
+        this.isDevEnvironment = true 
+        this.isPaymentSandBox = true
         this.noVat = false
         this.retailSafetyStock = 0
         this.featuredCategory = 'Meal Box'
         this.firestoreDeveloperEmail = ['ladia.adrian@gmail.com']
         this.freeDeliveryThreshold = 10000
-        this.minimumOrder = 200
+        this.minimumOrder = 0
         this.cashEnabledThreshold = 2000
     }
 

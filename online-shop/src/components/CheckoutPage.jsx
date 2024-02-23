@@ -252,6 +252,7 @@ const CheckoutPage = () => {
             date: new Date(),
             deliveryVehicle: deliveryVehicle,
             kilometersFromStore: kilometersFromStore,
+            manualCustomerOrderProcess:manualCustomerOrderProcess
           })
           .then((url) => {
             if (url) {
@@ -416,6 +417,8 @@ const CheckoutPage = () => {
         affiliateUid: affiliateUid,
         kilometersFromStore: kilometersFromStore,
         firstOrderDiscount : firstOrderDiscount,
+        manualCustomerOrderProcess:manualCustomerOrderProcess,
+        
       });
 
       setTransactionStatus(res);
@@ -931,6 +934,7 @@ const CheckoutPage = () => {
                   userdata={userdata}
                   email={localemail}
                   phoneNumber={localphonenumber}
+                  manualCustomerOrderProcess={manualCustomerOrderProcess}
                 />
 
                 <Divider sx={{ marginTop: 5, marginBottom: 3 }} />

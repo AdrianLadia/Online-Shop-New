@@ -637,6 +637,7 @@ class businessCalculations {
       date: Joi.date().required(),
       deliveryVehicle: Joi.object().required().allow(null),
       kilometersFromStore: Joi.number().required().allow(null),
+      manualCustomerOrderProcess: Joi.boolean().required(),
     }).required();
 
     const { error } = dataSchema.validate(data);
@@ -646,6 +647,7 @@ class businessCalculations {
     }
 
     const paymentMethodSelected = data.paymentMethodSelected;
+    const manualCustomerOrderProcess = data.manualCustomerOrderProcess;
 
     let isGuestCheckout;
     if (data.userId === 'GUEST') {
@@ -679,7 +681,7 @@ class businessCalculations {
 
     if (testing === false) {
       // FOR MAYA WITH WEBHOOK
-      if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected)) {
+      if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected) && manualCustomerOrderProcess === false) {
         const fullName = data.fullName;
         const nameParts = fullName.split(' ');
         const firstName = nameParts[0];

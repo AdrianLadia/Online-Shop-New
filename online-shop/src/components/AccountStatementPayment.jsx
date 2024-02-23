@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import AppContext from '../AppContext';
 
 const AccountStatementPayment = (props) => {
-  const { setSelectedChatOrderId } = useContext(AppContext);
+  const { setSelectedChatOrderId,manualCustomerOrderProcess } = useContext(AppContext);
   // const { userdata, cart, setCart, userstate } = React.useContext(AppContext);
 
   const { alertSnackbar,businesscalculations,setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
@@ -68,6 +68,7 @@ const AccountStatementPayment = (props) => {
       date: checkIfDateExists(),
       deliveryVehicle: null,
       kilometersFromStore: kilometersFromStore,
+      manualCustomerOrderProcess:manualCustomerOrderProcess
     }).then((url) => {
       if (url) {
         // this is used for paymaya url

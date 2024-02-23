@@ -102,12 +102,16 @@ const CheckoutProofOfPayment = (props) => {
     accountName = 'CASH ON DELIVERY';
     accountNumber = 'CASH ON DELIVERY';
   }
-  const paymentOptions = new mayaCheckoutPaymentOptions().getMayaCheckoutPaymentOptions()
-  if (paymentOptions.includes(paymentMethodSelected)) {
-    bankName = paymentMethodSelected.toUpperCase();
-    qrLink = 'https://paymaya.me/starpack';
-    isMaya = true;
-    dateDifference = 3600;
+
+  if (paymentMethodSelected == 'maya' || paymentMethodSelected == 'gcash') {
+    if (paymentMethodSelected == 'maya') {
+      bankName = 'Maya';
+    }
+    if (paymentMethodSelected == 'gcash') {
+      bankName = 'GCash';
+    }
+    accountName = 'Adrian Ladia'
+    accountNumber = '09178927206'
   }
 
   async function onUpload(url) {

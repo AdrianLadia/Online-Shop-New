@@ -185,6 +185,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       affiliateUid : Joi.string().required().allow(null),
       kilometersFromStore : Joi.number().required(),
       firstOrderDiscount : Joi.number().required(),
+      manualCustomerOrderProcess: Joi.boolean().required(),
     }).unknown(false);
 
     if (data['testing'] == null) {
@@ -224,7 +225,7 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
       );
       
       const paymentOptions = new mayaCheckoutPaymentOptions().getMayaCheckoutPaymentOptions()
-      if (!paymentOptions.includes(data.paymentMethod)) {
+      if (!paymentOptions.includes(data.paymentMethod) || data.manualCustomerOrderProcess == true) {
         const paymentId = generateRandomString(30);
         await this.updateOrderProofOfPaymentLink(data.reference,data.userid ? data.userid : 'GUEST',paymentId,data.localname,data.paymentMethod,data.grandTotal)
       }
