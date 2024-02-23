@@ -2,9 +2,8 @@ import React, { useEffect, useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Button, Divider } from '@mui/material';
+import { TextField, Button, Divider } from '@mui/material';
 import AppContext from '../AppContext';
-
 
 const style = {
   position: 'absolute',
@@ -31,11 +30,27 @@ function UnsupportedBrowserRedirect(props) {
   // const open = true
   const setOpen = props.setOpen;
 
-  const {alertSnackbar,affiliateUid,firestore} = useContext(AppContext);
-
+  const { alertSnackbar, affiliateUid, firestore } = useContext(AppContext);
 
   const handleClose = () => setOpen(false);
+  const [urlToShare, setUrlToShare] = useState('');
 
+  async function getUrlToShare() {
+    let url;
+    if (affiliateUid) {
+      const user = await firestore.readSelectedDataFromCollection('Users', affiliateUid);
+      const affiliateId = user.affiliateId;
+      url = 'starpack.ph/shop?aid=' + affiliateId;
+    } else {
+      url = 'starpack.ph/shop';
+    }
+    console.log(url);
+    setUrlToShare(url);
+    return url;
+  }
+  useEffect(() => {
+    getUrlToShare();
+  }, []);
   async function copyLink() {
     // /* Get the text field */
     // var copyText = document.getElementById("myInput");
@@ -45,25 +60,16 @@ function UnsupportedBrowserRedirect(props) {
     // copyText.setSelectionRange(0, 99999); /* For mobile devices */
 
     /* Copy the text inside the text field */
+    const url = await getUrlToShare();
     try {
-      let url 
-      if (affiliateUid) {
-        const user = await firestore.readSelectedDataFromCollection('Users',affiliateUid)
-        const affiliateId = user.affiliateId
-        url =  'starpack.ph/shop?aid=' + affiliateId;
-      }
-      else {
-        url = 'starpack.ph/shop';
-      }
       navigator.clipboard.writeText(url);
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
       navigator.clipboard.writeText('www.starpack.ph');
     }
 
     /* Alert the copied text */
-    alertSnackbar('info','Copied the url: www.starpack.ph');
+    alertSnackbar('info', 'Copied the url: www.starpack.ph');
   }
 
   return (
@@ -86,7 +92,6 @@ function UnsupportedBrowserRedirect(props) {
             bgcolor: '#e1fadd',
             borderRadius: '1rem',
             boxShadow: 3,
-        
           }}
         >
           <Typography variant="h4" component="h2" gutterBottom className="font-bold mb-6 text-center">
@@ -100,10 +105,18 @@ function UnsupportedBrowserRedirect(props) {
       </Typography> */}
           <Divider sx={{ width: '100%', marginBottom: 1 }} />
           <Typography variant="body1" gutterBottom className="mb-2 text-center">
-            Click the button to <strong>Copy the URL</strong>
+            <strong>Copy the URL below</strong>
           </Typography>
 
-          <Button variant="contained" className='bg-color10a' onClick={copyLink} sx={{ mb: 1 }}>
+          <TextField
+            id="myInput"
+            variant="outlined"
+            value={urlToShare}
+            sx={{ width: '100%', background:'white', marginBottom: 1, marginTop: 1 }}
+          />
+          <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
+
+          <Button variant="contained" className="bg-color10a" onClick={copyLink} sx={{ mb: 1 }}>
             www.starpack.ph
           </Button>
           <Divider sx={{ width: '100%', marginBottom: 1, marginTop: 1 }} />
@@ -127,9 +140,7 @@ function UnsupportedBrowserRedirect(props) {
           <Typography variant="body1" gutterBottom className="mb-2 text-center">
             Google Authentication is not supported by Facebook in-app browser. Please use authorized browsers to login.
           </Typography>
-          <div className="w-full flex justify-center h-20 mb-20">
-         
-        </div>
+          <div className="w-full flex justify-center h-20 mb-20"></div>
         </Box>
       </Modal>
     </div>

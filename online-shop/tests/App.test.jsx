@@ -726,7 +726,48 @@ describe('Transaction Create Payment', async () => {
       'testuser'
     );
 
-    await firestore.transactionCreatePayment('testuser', 1000, '1234567890', 'GCASH');
+    await cloudfirestore.transactionPlaceOrder({
+      deliveryDate: new Date(),
+      testing: true,
+      isInvoiceNeeded: true,
+      userid: 'testuser',
+      username: 'Adrian',
+      localDeliveryAddress: 'Test City',
+      locallatitude: 1.24,
+      locallongitude: 2.112,
+      localphonenumber: '09178927206',
+      localname: 'Adrian Ladia',
+      cart: { 'PPB#16': 12 },
+      itemstotal: 10000,
+      vat: 1000,
+      shippingtotal: 2002,
+      grandTotal: 10000 + 1000 + 2002,
+      reference: '1234567890',
+      userphonenumber: '09178927206',
+      deliveryNotes: 'Test',
+      totalWeight: 122,
+      deliveryVehicle: 'Sedan',
+      needAssistance: true,
+      eMail: 'starpackph@gmail.com',
+      sendEmail: false,
+      urlOfBir2303: '',
+      countOfOrdersThisYear: 0,
+      paymentMethod: 'cod',
+      userRole: 'member',
+      affiliateUid: null,
+      kilometersFromStore: 100,
+      firstOrderDiscount: 0,
+    });
+
+    const data = {
+      userId: 'testuser',
+      amount: 15000,
+      reference: '1234567890',
+      paymentprovider: 'Maya',
+      proofOfPaymentLink: 'testlink3',
+    };
+
+    await cloudfirestore.transactionCreatePayment(data);
     await delay(transactionCreatePaymentDelay);
     const user = await firestore.readUserById('testuser');
 
@@ -734,9 +775,9 @@ describe('Transaction Create Payment', async () => {
     const amount = payments[0].amount;
     const reference = payments[0].reference;
     const paymentprovider = payments[0].paymentprovider;
-    expect(amount).toEqual(1000);
+    expect(amount).toEqual(15000);
     expect(reference).toEqual('1234567890');
-    expect(paymentprovider).toEqual('GCASH');
+    expect(paymentprovider).toEqual('Maya');
 
     await firestore.deleteUserByUserId('testuser');
   });

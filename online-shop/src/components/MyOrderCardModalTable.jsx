@@ -16,37 +16,20 @@ const MyOrderCardModalTable = (props) => {
 
   const {cloudfirestore,datamanipulation,userdata } = React.useContext(AppContext);
   
-  const [products, setProducts] = React.useState([]);
   const { width, height } = useWindowDimensions();
   function getMaxHeightTable() {
     return height - 10000;
   }
   const order = props.order;
+  const products = props.products;
+  console.log(products);
   const urlOfBir2303 = order.urlOfBir2303
   const cartItemsPrice = order.cartItemsPrice;
-
-
+  
+  
   const [rows, setRows] = React.useState([]);
-
-
-  useEffect(() => {
-
-    const fetchCartProductsData = async () => {
-      const cartProductPromises = Object.keys(order.cart).map(async (key) => {
-        const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
-        return productData;
-      });
-
-      const data = await Promise.all(cartProductPromises);
-      console.log('data', data);
-      const productsCombined = [...products, ...data];
-
-    
-      setProducts(productsCombined);
-    };
-
-    fetchCartProductsData();
-  }, []);
+  
+ 
 
 
 

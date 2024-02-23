@@ -1,10 +1,9 @@
-import firestorefunctions from './firestorefunctions';
+import firestorefunctions from './firestorefunctions.js';
 import Joi from 'joi';
-import schemas from './schemas/schemas';
-import retryApi from '../utils/retryApi';
-import db from '../firebase';
+import schemas from './schemas/schemas.js';
+import retryApi from '../utils/retryApi.js';
 import { query, where, collection, getDocs, runTransaction, doc } from 'firebase/firestore';
-import { CollectionsOutlined } from '@mui/icons-material';
+
 
 class firestoredb extends firestorefunctions {
   constructor(app, emulator = false) {

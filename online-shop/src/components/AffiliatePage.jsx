@@ -35,6 +35,7 @@ import { set } from 'date-fns';
 import { collection, where, query, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import UseCustomerAccount from './UseCustomerAccount';
+import dataManipulation from '../../utils/dataManipulation';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -189,8 +190,25 @@ const AdminAffiliatePage = () => {
   const [tableData, setTableData] = useState([]);
   const [openHowToEarnModal, setOpenHowToEarnModal] = useState(false);
   const [onlineStoreProductsData, setOnlineStoreProductsData] = useState([]);
-
+  const [unpaidOrders, setUnpaidOrders] = useState([]);
   const navigateTo = useNavigate();
+  const datamanipulation = new dataManipulation();
+
+
+  // get affiliate active orders
+  useEffect(() => {
+    const docRef = collection(db, 'Orders')
+    const q = query(docRef, where('affiliateUid', '==', userdata ? userdata.uid : null),where('paid','==',false));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      let unpaidOrders = [];
+      querySnapshot.forEach((doc) => {
+        const unpaidOrder = doc.data();
+        unpaidOrders.push(unpaidOrder);
+      });
+      console.log(unpaidOrders);
+      setUnpaidOrders(unpaidOrders)
+    });
+  }, []);
 
   useEffect(() => {
     cloudfirestore.readAllDataFromCollection('Products').then((res) => {
@@ -520,6 +538,81 @@ const AdminAffiliatePage = () => {
             </TableFooter>
           </Table>
         </TableContainer>
+
+
+        <Typography className="text-2xl font-bold mb-10">Unpaid and Active Orders</Typography>
+        <TableContainer
+          className=" "
+          component={Paper}
+          sx={{ width: isSmallScreen() ? '90%' : '600px', marginBottom: 8 }}
+        >
+          <Table style={{ tableLayout: 'auto' }} aria-label="simple table">
+            <TableHead className="bg-color10c bg-opacity-100 h-16">
+              <TableRow>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Date Ordered</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Reference</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Customer Name</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Phone Number</TableCell>
+                <TableCell className="font-sans text-lg tracking-wider text-white">Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {unpaidOrders.map((data, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <span
+                    
+                    >
+                      {datamanipulation.convertTimestampToDateStringWithoutTime(data.orderDate) }
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}
+                      onClick={async () => {
+                        const order = await firestore.readSelectedDataFromCollection('Orders', data.reference);
+                        setOrder(order);
+
+                        /* handle click event if needed */
+                      }}
+                    >
+                      {data.reference}
+                    </span>
+                  </TableCell>
+
+                  <TableCell
+                  >
+                    {data.contactName}
+                  </TableCell>
+                  <TableCell >{data.contactPhoneNumber}</TableCell>
+                  <TableCell className="text-green-500">₱ {data.grandTotal}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                  colSpan={5}
+                  count={affiliateCommissions.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      'aria-label': 'rows per page',
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+
+        
 
         {/* <StockManagementTable products={onlineStoreProductsData} /> */}
         <Typography className="text-2xl font-bold mb-10">Input Customer Order</Typography>

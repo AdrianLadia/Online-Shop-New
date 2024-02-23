@@ -14,6 +14,7 @@ import useWindowDimensions from './UseWindowDimensions';
 import Image from './ImageComponents/Image';
 import firebaseConfig from '../firebase_config';
 import isUrl from '../../utils/isUrl';
+import DeliveryReceipt from './DeliveryReceipt';
 
 const MyOrderCardModal = (props) => {
   const style = {
@@ -41,7 +42,7 @@ const MyOrderCardModal = (props) => {
   });
 
   const hidePricing = props.hidePricing;
-  const { storage, userId, cloudfirestore, userdata, datamanipulation } = useContext(AppContext);
+  const { datamanipulation, cloudfirestore } = useContext(AppContext);
   const open = props.open;
   const handleClose = props.handleClose;
   const order = props.order;
@@ -51,6 +52,25 @@ const MyOrderCardModal = (props) => {
   const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
   const { width } = useWindowDimensions();
   const [screenMobile, setScreenSizeMobile] = useState(null);
+  const [products, setProducts] = React.useState([]);
+
+  useEffect(() => {
+    const fetchCartProductsData = async () => {
+      const cartProductPromises = Object.keys(order.cart).map(async (key) => {
+        const productData = await cloudfirestore.readSelectedDataFromOnlineStore(key);
+        return productData;
+      });
+
+      const data = await Promise.all(cartProductPromises);
+      console.log('data', data);
+      const productsCombined = data;
+
+      console.log('productsCombined', productsCombined);
+      setProducts(productsCombined);
+    };
+
+    fetchCartProductsData();
+  }, [order]);
 
   useEffect(() => {
     if (width < 550) {
@@ -59,19 +79,6 @@ const MyOrderCardModal = (props) => {
       return setScreenSizeMobile(true);
     }
   }, [width]);
-
-  function getPaymentStatus(x, y, z) {
-    if (order.paid) {
-      return x;
-    } else {
-      if (linkCount > 0) {
-        return y;
-      }
-      if (linkCount === 0) {
-        return z;
-      }
-    }
-  }
 
   function countOrderProofOfPaymentLinks() {
     let count = 0;
@@ -148,7 +155,7 @@ const MyOrderCardModal = (props) => {
               </Typography>
             </div>
 
-            <MyOrderCardModalTable id={order.id} key={order.id} order={order} />
+            <MyOrderCardModalTable id={order.id} key={order.id} order={order} products={products} />
 
             <div className="mt-5 flex flex-col">
               <List
@@ -178,10 +185,7 @@ const MyOrderCardModal = (props) => {
                 <Divider />
                 {hidePricing ? null : firstOrderDiscount == undefined || firstOrderDiscount == 0 ? null : (
                   <ListItem>
-                    <ListItemText
-                      primary="First Order Discount"
-                      secondary={'₱' + firstOrderDiscount}
-                    />
+                    <ListItemText primary="First Order Discount" secondary={'₱' + firstOrderDiscount} />
                   </ListItem>
                 )}
                 {hidePricing ? null : (
@@ -272,6 +276,9 @@ const MyOrderCardModal = (props) => {
                 );
               })}
             </List>
+          </div>
+          <div className="flex justify-center">
+            <DeliveryReceipt order={order} products={products} />
           </div>
         </Box>
       </Modal>
