@@ -1376,7 +1376,7 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
             newAffiliateCommissions = [
               ...oldAffiliateCommissions,
               {
-                customer: 'test',
+                customer: userData.name,
                 dateOrdered: new Date().toDateString(),
                 commission: commission.toFixed(2),
                 status: 'claimable',
