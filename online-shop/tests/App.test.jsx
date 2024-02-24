@@ -380,6 +380,7 @@ describe('Data Manipulation', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -432,6 +433,7 @@ describe('Data Manipulation', async () => {
       affiliateUid: null,
       kilometersFromStore: 0,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -549,6 +551,7 @@ describe('Data Manipulation', async () => {
       affiliateUid: null,
       kilometersFromStore: 3,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     const user = await firestore.readUserById(userTestId);
@@ -757,6 +760,7 @@ describe('Transaction Create Payment', async () => {
       affiliateUid: null,
       kilometersFromStore: 100,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     const data = {
@@ -1187,6 +1191,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 5,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await delay(transactionCreatePaymentDelay);
@@ -1297,6 +1302,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 100,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1330,6 +1336,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 12,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1363,6 +1370,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 19,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionCreatePayment({
@@ -1427,6 +1435,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     const data = {
@@ -1650,6 +1659,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(500);
 
@@ -1703,6 +1713,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(500);
 
@@ -1746,6 +1757,7 @@ describe('cloudfirestoredb', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     const testUser3 = await firestore.readSelectedDataFromCollection('Users', 'testuser');
@@ -1918,6 +1930,7 @@ describe('deleteOrderFromUserFirestore', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1951,6 +1964,7 @@ describe('deleteOrderFromUserFirestore', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -1984,6 +1998,7 @@ describe('deleteOrderFromUserFirestore', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     test('check if reference is added to orderMessages collection', async () => {
@@ -2050,7 +2065,7 @@ describe('deleteOrderFromUserFirestore', () => {
   }, 100000);
 });
 
-describe.only('updateOrderProofOfPaymentLink', () => {
+describe('updateOrderProofOfPaymentLink', () => {
   let id1, id2;
   test('Create Test Order', async () => {
     await firestore.updateDocumentFromCollection('Users', userTestId, { orders: [] });
@@ -2090,6 +2105,7 @@ describe.only('updateOrderProofOfPaymentLink', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
   }, 100000);
 
@@ -2204,6 +2220,7 @@ describe('afterCheckoutRedirectLogic', async () => {
           date: new Date(),
           deliveryVehicle: this.deliveryVehicle,
           kilometersFromStore: 10,
+          manualCustomerOrderProcess: false,
         },
         true
       );
@@ -2296,6 +2313,7 @@ describe('updatePaymentStatus', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
   });
   test('create Test Payment Proof Upload', async () => {
@@ -2363,6 +2381,7 @@ describe('deleteOldOrders', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2396,6 +2415,7 @@ describe('deleteOldOrders', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2429,6 +2449,7 @@ describe('deleteOldOrders', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2462,6 +2483,7 @@ describe('deleteOldOrders', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.transactionPlaceOrder({
@@ -2495,6 +2517,7 @@ describe('deleteOldOrders', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await firestore.updateDocumentFromCollection('Orders', 'testref1234', { orderDate: twoDaysAgo });
     await firestore.updateDocumentFromCollection('Orders', 'testref12345', { orderDate: twoDaysAgo });
@@ -2605,6 +2628,7 @@ describe('deleteOldOrders', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     const currentDate = new Date(); // Get the current date
@@ -2646,6 +2670,7 @@ describe('deleteOldOrders', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(2000);
   }, 100000);
@@ -2743,6 +2768,7 @@ describe('transactionPlaceOrder test retail', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     const data2 = await firestore.readSelectedDataFromCollection('Products', 'PPB#16');
@@ -2797,6 +2823,7 @@ describe('deleteDeclinedPayments', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     await cloudfirestore.updateOrderProofOfPaymentLink(
@@ -2897,6 +2924,7 @@ describe('testCancelOrder', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(transactionCreatePaymentDelay);
   });
@@ -3063,6 +3091,7 @@ describe('testRetailTransactionPlaceOrder', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     const user = await cloudfirestore.readSelectedUserById(userTestId);
@@ -3192,6 +3221,7 @@ describe('test commission system', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
@@ -3336,6 +3366,7 @@ describe('test commission system', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
   });
   test('pay order with vat', async () => {
@@ -3453,6 +3484,7 @@ describe('test commission system', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -3485,6 +3517,7 @@ describe('test commission system', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
@@ -3545,6 +3578,7 @@ describe('test commission system', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionCreatePayment({
       userId: userTestId,
@@ -3598,6 +3632,7 @@ describe('test commission system', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
@@ -3760,6 +3795,7 @@ describe('count all orders of a specific year', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -3792,6 +3828,7 @@ describe('count all orders of a specific year', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
   });
   test('count orders', async () => {
@@ -3847,6 +3884,7 @@ describe('test transaction create payment without an affiliate', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(1500);
     await cloudfirestore.transactionPlaceOrder({
@@ -3880,6 +3918,7 @@ describe('test transaction create payment without an affiliate', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(1500);
   }, 1000000);
@@ -3975,6 +4014,7 @@ describe('test transactionPlaceOrder should not allow order if cart stocks is mo
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     expect(res.status).toEqual(409);
@@ -4013,6 +4053,7 @@ describe('test transactionPlaceOrder data validation', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
 
     expect([400, 409].includes(res.status)).toEqual(true);
@@ -4053,6 +4094,7 @@ describe('test updateOrderAsDelivered it should update order as paid and add pro
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
   });
   test('invoke function', async () => {
@@ -4122,6 +4164,7 @@ describe('Void payment', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4154,6 +4197,7 @@ describe('Void payment', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4186,6 +4230,7 @@ describe('Void payment', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
   }, 10000);
   test('create payment of 20000', async () => {
@@ -4384,6 +4429,7 @@ describe('test edit customer order function', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(1500);
   });
@@ -4478,6 +4524,7 @@ describe('test edit customer order function', () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(2000);
   });
@@ -4662,6 +4709,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(1500);
   }, 10000);
@@ -4711,6 +4759,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4743,6 +4792,7 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(1500);
   }, 20000);
@@ -4916,6 +4966,7 @@ describe('test transactionPlaceOrder must include paymentMethod and proofOfPayme
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(1500);
   });
@@ -4930,7 +4981,7 @@ describe('test transactionPlaceOrder must include paymentMethod and proofOfPayme
   });
 }, 100000);
 
-describe.only('test closing hours', async () => {
+describe('test closing hours', async () => {
   test('test if closed', async () => {
     const currentDate = new Date();
     const GMT_OFFSET = 8; // for GMT+8
@@ -4942,23 +4993,34 @@ describe.only('test closing hours', async () => {
     allowedDates.runMain();
     const minDate = allowedDates.minDate;
     const isStoreOpen = allowedDates.isStoreOpen;
-    expect(minDate.getDate()).toEqual(date.getDate() + 1);
+
+    // if today is saturday
+    if (currentDate.getDay() === 6) {
+    expect(minDate.getDate()).toEqual(date.getDate() + 2);
+    }
+    else {
+    expect(minDate.getDate()).toEqual(date.getDate() + 1);}
     expect(isStoreOpen).toEqual(false);
   });
   test('test if open', async () => {
-    const currentDate = new Date();
-    const GMT_OFFSET = 8; // for GMT+8
-    const HOUR_IN_MS = 3600000; // number of milliseconds in an hour
+    function getNextMonday() {
+      var today = new Date();
+      var day = today.getDay();
+      var diff = 1 - day + (day === 0 ? -6 : 1); // If today is Sunday, move forward 1 day (to Monday), otherwise move forward to next Monday
+      var nextMonday = new Date(today);
+      nextMonday.setDate(today.getDate() + diff);
+      return nextMonday;
+  }
+
     // Adjust current date to GMT+8
-    const adjustedDate = new Date(currentDate.getTime() + GMT_OFFSET * HOUR_IN_MS);
+    const monday = getNextMonday()
     // Set the time to 4:01 PM
-    adjustedDate.setHours(12, 1, 0, 0);
-    const allowedDates = new allowedDeliveryDates(adjustedDate);
-    const date = new Date();
+    monday.setHours(12, 1, 0, 0);
+    const allowedDates = new allowedDeliveryDates(monday);
     allowedDates.runMain();
     const minDate = allowedDates.minDate;
     const isStoreOpen = allowedDates.isStoreOpen;
-    expect(minDate.getDate()).toEqual(date.getDate());
+    expect(minDate.getDate()).toEqual(monday.getDate());
     expect(isStoreOpen).toEqual(true);
   });
   test('test sundays', async () => {
@@ -5432,6 +5494,7 @@ describe('test user creates 2 orders. The second order is bigger than the second
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -5464,6 +5527,7 @@ describe('test user creates 2 orders. The second order is bigger than the second
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
@@ -5553,6 +5617,7 @@ describe('test paymaya endpoint success', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -5585,6 +5650,7 @@ describe('test paymaya endpoint success', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(transactionCreatePaymentDelay);
 
@@ -5813,6 +5879,7 @@ describe('test guest opens link as guest and has params of aid / affiliateUid', 
       affiliateUid: 'TESTAFFILIATE',
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
@@ -5982,6 +6049,7 @@ describe('test transactionClaimAccount', async () => {
       affiliateUid: null,
       kilometersFromStore: 1,
       firstOrderDiscount: 0,
+      manualCustomerOrderProcess: false,
     });
     await delay(transactionCreatePaymentDelay);
 
@@ -6042,17 +6110,82 @@ describe('test transactionClaimAccount', async () => {
 });
 
 
-describe('test transactionPlaceOrder with manualCustomerOrderProcess = true / false', async () => {
-  test('manualCustomerOrderProcess = true, paymentMethod = true', async () => {
-    throw new Error('Test not implemented');
+describe.only('test transactionPlaceOrder with manualCustomerOrderProcess = true / false', async () => {
+
+
+    class transactionPlaceOrder {
+      constructor() {
+        this.count = 0
+      }
+      async transactionPlaceOrder(manualCustomerOrderProcess, paymentMethod) {
+        this.count++
+        await cloudfirestore.transactionPlaceOrder(
+          {
+            deliveryDate: new Date(),
+            testing: true,
+            userid: userTestId,
+            username: 'Adrian',
+            localDeliveryAddress: 'Test City',
+            locallatitude: 1.24,
+            locallongitude: 2.112,
+            localphonenumber: '09178927206',
+            localname: 'Adrian Ladia',
+            cart: { 'PPB#16': 12 },
+            itemstotal: 10000,
+            vat: 2000,
+            shippingtotal: 2002,
+            grandTotal: 10000 + 2000 + 2002,
+            reference: 'testreftest' + this.count,
+            userphonenumber: '09178927206',
+            deliveryNotes: 'Test',
+            totalWeight: 122,
+            deliveryVehicle: 'Sedan',
+            needAssistance: true,
+            eMail: 'starpackph@gmail.com',
+            sendEmail: false,
+            isInvoiceNeeded: true,
+            urlOfBir2303: '',
+            countOfOrdersThisYear: 0,
+            paymentMethod: paymentMethod,
+            userRole: 'member',
+            affiliateUid: null,
+            kilometersFromStore: 1,
+            firstOrderDiscount: 0,
+            manualCustomerOrderProcess: manualCustomerOrderProcess,
+          }
+        )
+      }
+    }
+   
+    const tpo = new transactionPlaceOrder()
+    // This test is to test if when we are in manualCustomerOrderProcess and we place an order
+    // the order should automatically be added to payments
+  test('setup test', async () => {
+    await resetOrdersAndPayments()
   });
-  test('manualCustomerOrderProcess = true, paymentMethod = false', async () => {
-    throw new Error('Test not implemented');
+  test('manualCustomerOrderProcess = true, paymentMethod = bdo', async () => {
+    await tpo.transactionPlaceOrder(true,'bdo')
   });
-  test('manualCustomerOrderProcess = false, paymentMethod = true', async () => {
-    throw new Error('Test not implemented');
+  test('manualCustomerOrderProcess = true, paymentMethod = gcash', async () => {
+    await tpo.transactionPlaceOrder(true,'gcash')
   });
-  test('manualCustomerOrderProcess = false, paymentMethod = false', async () => {
-    throw new Error('Test not implemented');
+  test('manualCustomerOrderProcess = false, paymentMethod = bdo', async () => {
+    await tpo.transactionPlaceOrder(false,'bdo')
+  });
+  test('manualCustomerOrderProcess = false, paymentMethod = gcash', async () => {
+    await tpo.transactionPlaceOrder(false,'gcash')
+  });
+  test('check values', async () => {
+    const allPayments = await firestore.readAllDataFromCollection('Payments');
+    let count = 0
+    allPayments.forEach((payment) => {
+      if (['testreftest1','testreftest2','testreftest3'].includes(payment.orderReference)) {
+        count ++
+      }
+    })
+    expect(count).toEqual(3)
+  });
+  test('clean test', async () => {
+    await resetOrdersAndPayments()
   });
 })
