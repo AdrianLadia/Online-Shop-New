@@ -11,14 +11,11 @@ import theme from '../colorPalette/MaterialUITheme';
 
 
 const ProductsSearchBar = ({
-  setWholesale,
-  setRetail,
-  searchedItemId,
   setSearchedItemId,
   selectedName,
   setSelectedName,
 }) => {
-  const { searchedItemSwitch,setSearchedItemSwitch, firestore, categories, setCategoryValue, selectedCategory, setSelectedCategory } = useContext(AppContext);
+  const {firestore, categories, setCategoryValue, selectedCategory, setSelectedCategory } = useContext(AppContext);
   const [productsData, setProductsData] = useState([]);
   const [productNames, setProductNames] = useState([]);
   const [fuse, setFuse] = useState(null);

@@ -27,7 +27,7 @@ const ProductCard = (props) => {
   const [outofstock, setOutOfStock] = useState(false);
   const [lowstock, setLowStock] = useState(false);
   // const safetyStock = Math.round(product.averageSalesPerDay) * 2;
-  const { businesscalculations,alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,analytics,userdata } = useContext(AppContext);
+  const { businesscalculations,alertSnackbar,cart, updateCartInfo, setUpdateCartInfo, firestore, userId,userdata } = useContext(AppContext);
   const [iconVisible, setIconVisible] = useState(false);
   const ref = useRef(null);
   const showTutorial = false

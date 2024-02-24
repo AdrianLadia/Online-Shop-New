@@ -15,7 +15,6 @@ const DisplayMessagesRight = (props) => {
   
   
   const user = props.user;
-  const loggedInUserId = props.loggedInUserId;
   const read = props.read;
   const image= props.image;
 

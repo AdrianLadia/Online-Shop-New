@@ -10,10 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import AppContext from '../AppContext';
 
 const AccountStatementPayment = () => {
-  const { manualCustomerOrderProcess } = useContext(AppContext);
-  // const { userdata, cart, setCart, userstate } = React.useContext(AppContext);
-
-  const { alertSnackbar,businesscalculations,setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
+  const { manualCustomerOrderProcess,alertSnackbar,businesscalculations,setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
 
 
   const location = useLocation();

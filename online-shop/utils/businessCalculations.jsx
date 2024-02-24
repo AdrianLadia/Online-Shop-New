@@ -1,9 +1,6 @@
 import serviceAreas from '../src/data/serviceAreas';
 import lalamoveDeliveryVehicles from '../src/data/lalamoveDeliveryVehicles';
 import Joi from 'joi';
-import cloudFirestoreDb from '../src/cloudFirestoreDb';
-import PaymayaSdk from '../src/components/PaymayaSdk';
-import { useNavigate } from 'react-router-dom';
 import AppConfig from '../src/AppConfig';
 
 class businessCalculations {

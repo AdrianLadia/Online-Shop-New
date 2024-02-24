@@ -9,7 +9,7 @@ import Joi from 'joi';
 import { v4 as uuidv4 } from 'uuid';
 
 const ImageUploadButton = (props) => {
-  const { selectedChatOrderId, payments, alertSnackbar } = useContext(AppContext);
+  const { alertSnackbar } = useContext(AppContext);
   const id = props.id;
   const folderName = props.folderName;
   let fileName = props.fileName;

@@ -6,7 +6,6 @@ import CheckoutContext from '../context/CheckoutContext';
 import AppContext from '../AppContext';
 
 const Checkout = () => {
-  const { firestore } = useContext(AppContext);
   const [rows, setRows] = useState(null);
   const [total, setTotal] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);

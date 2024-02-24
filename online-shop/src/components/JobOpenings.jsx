@@ -128,10 +128,8 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [gender, setGender] = useState('');
   const [CVorResume, setCvUrl] = useState('');
-  const [birthday, setBirthday] = useState(new Date());
   const [age, setAge] = useState('');
   const [address, setAddress] = useState('');
-  const [submittedCv, setSubmittedCv] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleSubmit = async (event) => {
@@ -186,7 +184,7 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
 
   function onUploadImage(url) {
     setCvUrl(url);
-    setSubmittedCv(true);
+
   }
 
   return (
@@ -338,7 +336,6 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
 function JobOpenings() {
   const [showCard, setShowCard] = useState(true);
   const [openModal, setOpenModal] = useState(false);
-  const { alertSnackbar, storage } = useContext(AppContext);
   return (
     <div
       className="flex w-full justify-center items-center h-screen relative"

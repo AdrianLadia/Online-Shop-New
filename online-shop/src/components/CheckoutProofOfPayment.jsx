@@ -22,10 +22,10 @@ const CheckoutProofOfPayment = (props) => {
     cloudfirestore,
     userId,
     userdata,
-    firestore,
+
     refreshUser,
     setRefreshUser,
-    analytics,
+
     datamanipulation,
     mayaRedirectUrl,
     setMayaRedirectUrl,

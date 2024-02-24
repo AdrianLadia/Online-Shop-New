@@ -11,7 +11,6 @@ const InvisibleRecaptcha = (props) => {
   const [code, setCode] = useState('');
   const confirmationResult = props.confirmationResult;
   const setConfirmationResult = props.setConfirmationResult;
-  const setHeight = props.setHeight
   const loading = props.loading
   const setLoading = props.setLoading
 

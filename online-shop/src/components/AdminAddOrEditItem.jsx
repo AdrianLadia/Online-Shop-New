@@ -21,7 +21,6 @@ import menuRules from '../../utils/classes/menuRules';
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
   const {
-    businesscalculations,
     firestore,
     storage,
     categories: initialCategories,

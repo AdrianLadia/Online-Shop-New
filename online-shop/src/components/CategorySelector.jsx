@@ -25,13 +25,12 @@ const CategorySelector = (props) => {
   const featuredCategory = new AppConfig().getFeaturedCategory();
   const setSearchedItemId = props.setSearchedItemId;
   const setSelectedCategory = props.setSelectedCategory;
-  const selectedCategory = props.selectedCategory;
   const setSelectedName = props.setSelectedName;
   const categoryRef = props.categoryRef;
   const [categoryFromUrl, setCategoryFromUrl] = useState(null);
-  const { analytics, firestore, categories, setCategories, categoryValue, setCategoryValue, datamanipulation } =
+  const { categories, categoryValue, setCategoryValue } =
     useContext(AppContext);
-  const { wholesale, retail, setWholesale, setRetail, setCategorySelectorInView } = props;
+  const { wholesale, retail, setRetail, setCategorySelectorInView } = props;
   const [categoryClickCount, setCategoryClickCount] = useState(0);
 
 

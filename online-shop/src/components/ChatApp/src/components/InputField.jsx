@@ -14,9 +14,7 @@ const InputField = (props) => {
   const [message, setMessage] = useState(null);
   const [newMessage, setNewMessage] = useState(null);
   const [imageLink, setImageLink] = useState(null);
-  const [newImageLink, setNewImageLink] = useState(null);
   const [send, setSend] = useState(false);
-  const date = new Date();
   const { userId, selectedChatOrderId, userdata, firestore, storage } = useContext(AppContext);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const dummy = useRef(null);

@@ -11,7 +11,7 @@ import { getStorage } from 'firebase/storage';
 // import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
 import firestoredb from './firestoredb';
-import PersonalInfoForm from './components/PersonalInfoForm';
+// import PersonalInfoForm from './components/PersonalInfoForm';
 import { CircularProgress, Typography } from '@mui/material';
 // import MyOrders from './components/MyOrders';
 // import AccountStatement from './components/AccountStatement';
@@ -22,7 +22,7 @@ import './App.css';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
-import Checkout from './components/Checkout';
+// import Checkout from './components/Checkout';
 // import AccountStatementPayment from './components/AccountStatementPayment';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
@@ -48,7 +48,7 @@ const AccountStatementPayment = lazy(() => import('./components/AccountStatement
 // const CheckoutSuccess = lazy(() => import('./components/CheckoutSuccess'));
 // const CheckoutFailed = lazy(() => import('./components/CheckoutFailed'));
 // const CheckoutCancelled = lazy(() => import('./components/CheckoutCancelled'));
-// const Checkout = lazy(() => import('./components/Checkout'));
+const Checkout = lazy(() => import('./components/Checkout'));
 // const ChatApp = lazy(() => import('./components/ChatApp/src/ChatApp'));
 // const ProfileUpdaterModal = lazy(() => import('./components/ProfileUpdaterModal'));
 const AffiliatePage = lazy(() => import('./components/AffiliatePage'));
@@ -610,7 +610,7 @@ function App() {
   useEffect(() => {
     if (goToCheckoutPage) {
       delay(2000).then(() => {
-        navigateTo('/checkout/checkoutPage');
+        startTransition(() => navigateTo('/checkout/checkoutPage'));
         setGoToCheckoutPage(false);
       });
     }
@@ -794,7 +794,7 @@ function App() {
             </AppContext.Provider>
           }
         />
-        <Route
+        {/* <Route
           path="/profile"
           element={
             <AppContext.Provider value={appContextValue}>
@@ -802,7 +802,7 @@ function App() {
               <PersonalInfoForm />
             </AppContext.Provider>
           }
-        />
+        /> */}
         <Route
           path="/affiliate"
           element={
@@ -818,6 +818,7 @@ function App() {
           path="/checkout/*"
           element={
             <AppContext.Provider value={appContextValue}>
+              <Suspense fallback={<SuspenseFallback />}>
               <NavBar />
               {userstate === 'userloading' || cart == {} ? (
                 <div className="flex h-screen">
@@ -835,6 +836,7 @@ function App() {
               ) : (
                 <Checkout />
               )}
+              </Suspense>
             </AppContext.Provider>
           }
         />

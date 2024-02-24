@@ -16,7 +16,7 @@ const ProductCardModalAddToCart = ({
   setShakeCartAnimation,
   radioButtonSelected,
 }) => {
-  const { analytics, cart, setUpdateCartInfo, updateCartInfo, alertSnackbar, userdata, businesscalculations } =
+  const { cart, setUpdateCartInfo, updateCartInfo, alertSnackbar, userdata, businesscalculations } =
     useContext(AppContext);
 
   

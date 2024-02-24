@@ -4,9 +4,6 @@ import firestoredb from '../firestoredb';
 import AppContext from '../AppContext';
 
 const GoogleMapsModalSelectContactModalButton = (props) => {
-
-  const contact = props.contact;
-  const contactPerson = props.contactPerson;
   const name = props.contact.name;
   const phonenumber = props.contact.phoneNumber;
   const setContactPerson = props.setContactPerson;

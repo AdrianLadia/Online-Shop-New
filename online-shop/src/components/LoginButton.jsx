@@ -32,9 +32,6 @@ const LoginButton = (props) => {
   const [openUnsupportedBrowserModal, setOpenUnsupportedBrowserModal] = useState(false);
   const [openPhoneNumberModal, setOpenPhoneNumberModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [showOTPInput, setShowOTPInput] = useState(false);
-  const [confirmObject, setConfirmObject] = useState(null);
-  const [OTP, setOTP] = useState('');
   const [height, setHeight] = useState('40%');
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [loading, setLoading] = useState(false);

@@ -12,7 +12,6 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
   const setDeliveryAddresses = props.setDeliveryAddresses;
 
   const { firestore, userId, refreshUser, setRefreshUser } = React.useContext(AppContext);
-  const [realAddress, setRealAddress] = useState(null);
 
   function handleAddressClick() {
     props.handleClose();
@@ -38,16 +37,6 @@ const GoogleMapsModalSelectSaveAddressButton = (props) => {
 
   }
 
-  useEffect(()=>{
-    Geocode.fromLatLng(savedlatitude, savedlongitude)
-      .then(response => {
-        const address = response.results[0].formatted_address;
-        setRealAddress(address)
-      })
-      .catch(error => {
-
-      });
-  },[])
 
   return (
     <React.Fragment>

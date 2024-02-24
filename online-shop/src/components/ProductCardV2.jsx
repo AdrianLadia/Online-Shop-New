@@ -10,7 +10,6 @@ const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, 
   const [heart, setHeart] = useState(false);
   const {
     firestore,
-    analytics,
     alertSnackbar,
     userdata,
     favoriteitems,

@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 
 const NavBar = () => {
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart, cloudfirestore } =
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart} =
     useContext(AppContext);
   const navigateTo = useNavigate();
 

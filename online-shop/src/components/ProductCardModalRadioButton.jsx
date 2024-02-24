@@ -18,7 +18,7 @@ const ProductCardModalRadioButton = ({
   wholesaleData,
   setCount,
 }) => {
-  const { businesscalculations,userdata } = useContext(AppContext);
+  const { businesscalculations} = useContext(AppContext);
   const packPieces = retailData.pieces;
   const boxPieces = wholesaleData.pieces;
   const packPrice = retailData.price;

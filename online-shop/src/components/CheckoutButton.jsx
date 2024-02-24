@@ -9,13 +9,11 @@ import AppConfig from '../AppConfig';
 const CheckoutButton = (props) => {
   const totalPrice = props.totalPrice;
   const {
-    analytics,
     userId,
     cart,
     setGuestLoginClicked,
     goToCheckoutPage,
     setGoToCheckoutPage,
-    userdata,
     isSupportedBrowser,
     alertSnackbar,
     isDistributor

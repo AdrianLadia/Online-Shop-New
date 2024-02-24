@@ -16,7 +16,6 @@ const AccountStatement = () => {
   const [tableData, setTableData] = useState([]);
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
-  // const {goToCheckoutPage, setGoToCheckoutPage } = useContext(AppContext);
   const [buttonClicked, setButtonClicked] = useState(null);
   const { width } = UseWindowDimensions();
 

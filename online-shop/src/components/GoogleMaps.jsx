@@ -37,7 +37,7 @@ const GoogleMaps = (props) => {
   const setAddressText = props.setAddressText;
   const [containerClassName, setContainerClassName] = useState('w-full h-[calc(100vh-200px)]');
 
-  const { datamanipulation, firestore, userId, deliveryaddress, latitude, setLatitude, longitude, setLongitude } =
+  const { firestore, userId, latitude, setLatitude, longitude, setLongitude } =
     React.useContext(AppContext);
 
   useEffect(() => {
