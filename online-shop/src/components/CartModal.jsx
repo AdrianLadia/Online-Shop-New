@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Modal, Typography } from '@material-ui/core';
 import Box from '@mui/material/Box';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { FaShoppingCart } from 'react-icons/fa';
 import useWindowDimensions from './UseWindowDimensions';
 import CheckoutButton from './CheckoutButton';
@@ -11,7 +11,7 @@ import AppContext from '../AppContext';
 import QuotationCreatorButton from './QuotationCreatorButton';
 import { CircularProgress } from '@material-ui/core';
 import TextField from '@mui/material/TextField';
-import { set } from 'date-fns';
+
 
 const CartModal = (props) => {
   const openCart = props.openCart;

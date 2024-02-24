@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext } from 'react';
+import { useContext, startTransition } from 'react';
 import UseWindowDimensions from './UseWindowDimensions';
 import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
@@ -39,6 +39,7 @@ const AdminNavBar = () => {
 
   const handleClickCompanyDashboard = () => {
     setAnchorEl(null);
+    s;
     navigateTo('/admin/companyDashboard');
   };
 
@@ -49,17 +50,17 @@ const AdminNavBar = () => {
 
   const handleClickCreatePayment = () => {
     setAnchorEl(null);
-    navigateTo('/admin/createPayment');
+    startTransition(() => navigateTo('/admin/createPayment'));
   };
 
   const handleClickVoidPayment = () => {
     setAnchorEl(null);
-    navigateTo('/admin/voidPayment');
+    startTransition(() => navigateTo('/admin/voidPayment'));
   };
 
   const handleClickCustomerOrders = () => {
     setAnchorEl(null);
-    navigateTo('/admin/orders');
+    startTransition(() => navigateTo('/admin/orders'));
   };
 
   const handleEditCustomerOrders = () => {
@@ -74,27 +75,31 @@ const AdminNavBar = () => {
 
   const handleClickCustomerAnalytics = () => {
     setAnchorEl(null);
-    navigateTo('/admin/customerAnalytics');
+    startTransition(() => {
+      navigateTo('/admin/customerAnalytics');
+    });
   };
 
-  const handleClickAdminChat = () => {
-    setAnchorEl(null);
-    navigateTo('/admin/chatMenu');
-  };
 
   const handleClickClaimRequest = () => {
     setAnchorEl(null);
-    navigateTo('/admin/affiliateClaimRequest');
+    startTransition(() => {
+      navigateTo('/admin/affiliateClaimRequest');
+    });
   };
 
   const handleClickAddItem = () => {
     setAnchorEl(null);
-    navigateTo('/admin/addItem');
+    startTransition(() => {
+      navigateTo('/admin/addItem');
+    });
   };
 
   const handleClickEditItem = () => {
     setAnchorEl(null);
-    navigateTo('/admin/editItem');
+    startTransition(() => {
+      navigateTo('/admin/editItem');
+    });
   };
 
   const handleBack = () => {
@@ -103,12 +108,12 @@ const AdminNavBar = () => {
 
   const handleClickDelivery = () => {
     setAnchorEl(null);
-    navigateTo('/admin/delivery');
+    startTransition(() => navigateTo('/admin/delivery'));
   };
 
   const handleEditOrders = () => {
     setAnchorEl(null);
-    navigateTo('/admin/editOrders');
+    startTransition(() => navigateTo('/admin/editOrders'));
   };
 
   function responsiveSize() {
@@ -297,16 +302,6 @@ const AdminNavBar = () => {
             </MenuItem>
           ) : null}
           {/* <Divider className="mt-0.5"/>   */}
-          {rules.checkIfUserAuthorized('adminChat') ? (
-            <MenuItem
-              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-              id="Admin Chat"
-              onClick={handleClickAdminChat}
-            >
-              {' '}
-              <HiOutlineChatAlt size={20} />     <span>Admin Chat</span>
-            </MenuItem>
-          ) : null}
           {rules.checkIfUserAuthorized('affiliateClaimRequest') ? (
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
@@ -327,13 +322,13 @@ const AdminNavBar = () => {
               <CiDeliveryTruck size={20} />     <span>Delivery</span>
             </MenuItem>
           ) : null}
-           {rules.checkIfUserAuthorized('customerAccount') ? (
+          {rules.checkIfUserAuthorized('customerAccount') ? (
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
               id="delivery"
-              onClick={()=>{
-                setAnchorEl(null)
-                navigateTo('/admin/customerAccount')
+              onClick={() => {
+                setAnchorEl(null);
+                startTransition(() => navigateTo('/admin/customerAccount'));
               }}
             >
               {' '}

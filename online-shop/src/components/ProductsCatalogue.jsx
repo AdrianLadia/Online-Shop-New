@@ -301,8 +301,14 @@ const ProductsCatalogue = () => {
     {
       categoryName: 'Plastic Spoon and Fork',
       imagePath: [
-        { id: 'FRKMWSKZ', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FPlastic%20Spoon%20And%20Fork%2FFRKMWSKZ.webp?alt=media&token=13cc7689-7ed6-490f-8cbb-4036212e9f4f' },
-        { id: 'SPNMWSKZ', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FPlastic%20Spoon%20And%20Fork%2FSPNMWSKZ.webp?alt=media&token=6991c027-da36-4431-8a54-d67860d649cc' },
+        {
+          id: 'FRKMWSKZ',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FPlastic%20Spoon%20And%20Fork%2FFRKMWSKZ.webp?alt=media&token=13cc7689-7ed6-490f-8cbb-4036212e9f4f',
+        },
+        {
+          id: 'SPNMWSKZ',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FPlastic%20Spoon%20And%20Fork%2FSPNMWSKZ.webp?alt=media&token=6991c027-da36-4431-8a54-d67860d649cc',
+        },
       ],
       description:
         "Our Plastic Spoon and Fork Set offers a blend of convenience and practicality for all dining occasions. Made with precision, these utensils ensure a comfortable grip and reliable performance, whether you're at a picnic, office luncheon, or catering event. Lightweight yet sturdy, they're designed for single-use without compromising on quality. Perfect for those who prioritize ease without skimping on functionality.",
@@ -310,9 +316,18 @@ const ProductsCatalogue = () => {
     {
       categoryName: 'Sauce Cups',
       imagePath: [
-        { id: 'HCUP2SKZ', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSauce%20Cups%2FHCUP2SKZ.webp?alt=media&token=be4c7416-084c-4a0d-8a63-ab561d50e752' },
-        { id: 'HCUP3SKZ', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSauce%20Cups%2FHCUP3SKZ.webp?alt=media&token=dafce5bf-21ab-4fd6-99b3-28c97b02b5da' },
-        { id: 'HCUP4SKZ', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSauce%20Cups%2FHCUP4SKZ.webp?alt=media&token=54a12460-bcf0-4a48-bc09-3bdf6b359ecb' },
+        {
+          id: 'HCUP2SKZ',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSauce%20Cups%2FHCUP2SKZ.webp?alt=media&token=be4c7416-084c-4a0d-8a63-ab561d50e752',
+        },
+        {
+          id: 'HCUP3SKZ',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSauce%20Cups%2FHCUP3SKZ.webp?alt=media&token=dafce5bf-21ab-4fd6-99b3-28c97b02b5da',
+        },
+        {
+          id: 'HCUP4SKZ',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSauce%20Cups%2FHCUP4SKZ.webp?alt=media&token=54a12460-bcf0-4a48-bc09-3bdf6b359ecb',
+        },
       ],
       description:
         "Elevate your dining experience with our Sauce Cups, the ultimate solution for portioning and presenting your favorite condiments and dips. Crafted for clarity and durability, these cups ensure your sauces shine through with visual appeal. Their secure seal guarantees no messy spills, making them ideal for takeout, events, or casual gatherings. Compact and versatile, they're a must-have for any occasion that calls for that extra touch of flavor.",
@@ -330,17 +345,50 @@ const ProductsCatalogue = () => {
     {
       categoryName: 'Sushi Tray',
       imagePath: [
-        { id: 'ST5DIVR10', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FST5DIVR10.webp?alt=media&token=d7d1d121-5a88-4a8d-b94c-c46fb7173f7f' },
-        { id: 'ST5DIVR14', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FST5DIVR14.webp?alt=media&token=6932664c-e059-47a7-ad06-43a313b9ce9a' },
-        { id: 'STREC1100', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1100.webp?alt=media&token=b6c6e72d-0436-47e9-9d12-e37bb9600765' },
-        { id: 'STR14', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTR14.webp?alt=media&token=fff6fd2f-3e9b-4097-b105-31428b4fd5ec' },
-        { id: 'STSL8', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTSL8.webp?alt=media&token=a33078b9-32c5-4a31-83c7-976bc872e2ca' },
-        { id: 'STREC1101', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1101.webp?alt=media&token=d2241bd9-80ca-43a1-b8d1-b7ceca74c8d7' },
-        { id: 'STREC1102', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1102.webp?alt=media&token=350de595-ed4e-42ce-9380-3e69de58f40e' },
-        { id: 'STREC1109', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1109.webp?alt=media&token=91441f05-9552-489c-b16f-400fc7191856' },
-        { id: 'STREC1111', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1111.webp?alt=media&token=34b96cec-10d1-4da5-9afd-050174cd9a17' },
-        { id: 'STR10', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTR10.webp?alt=media&token=83fb3d2b-416f-4e78-8710-dd81b7054baf' },
-        { id: 'STR12', url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTR12.webp?alt=media&token=f1158614-203e-4e4e-a05d-963feb94f50e' },
+        {
+          id: 'ST5DIVR10',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FST5DIVR10.webp?alt=media&token=d7d1d121-5a88-4a8d-b94c-c46fb7173f7f',
+        },
+        {
+          id: 'ST5DIVR14',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FST5DIVR14.webp?alt=media&token=6932664c-e059-47a7-ad06-43a313b9ce9a',
+        },
+        {
+          id: 'STREC1100',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1100.webp?alt=media&token=b6c6e72d-0436-47e9-9d12-e37bb9600765',
+        },
+        {
+          id: 'STR14',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTR14.webp?alt=media&token=fff6fd2f-3e9b-4097-b105-31428b4fd5ec',
+        },
+        {
+          id: 'STSL8',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTSL8.webp?alt=media&token=a33078b9-32c5-4a31-83c7-976bc872e2ca',
+        },
+        {
+          id: 'STREC1101',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1101.webp?alt=media&token=d2241bd9-80ca-43a1-b8d1-b7ceca74c8d7',
+        },
+        {
+          id: 'STREC1102',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1102.webp?alt=media&token=350de595-ed4e-42ce-9380-3e69de58f40e',
+        },
+        {
+          id: 'STREC1109',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1109.webp?alt=media&token=91441f05-9552-489c-b16f-400fc7191856',
+        },
+        {
+          id: 'STREC1111',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTREC1111.webp?alt=media&token=34b96cec-10d1-4da5-9afd-050174cd9a17',
+        },
+        {
+          id: 'STR10',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTR10.webp?alt=media&token=83fb3d2b-416f-4e78-8710-dd81b7054baf',
+        },
+        {
+          id: 'STR12',
+          url: 'https://firebasestorage.googleapis.com/v0/b/online-store-paperboy.appspot.com/o/homePage%2FProduct%20Catalogue%2FSushi%20Tray%2FSTR12.webp?alt=media&token=f1158614-203e-4e4e-a05d-963feb94f50e',
+        },
       ],
       description:
         'Our sushi trays are practical and cost-effective solutions designed to showcase and transport sushi selections with ease. Typically transparent or with clear lids, these trays allow for the vibrant colors and designs of sushi rolls and sashimi pieces to shine through, ensuring an appetizing presentation. They provide convenience for takeout and delivery services, minimizing cleanup and ensuring freshness upon arrival. Equipped with dedicated compartments for soy sauce, wasabi, and pickled ginger, these trays encapsulate the full sushi dining experience in a portable format.',
@@ -397,12 +445,12 @@ const ProductsCatalogue = () => {
   }, [scrolledUpOrDown]);
 
   function onLogoClick() {
-    navigateTo('/');
+    startTransition(() => {navigateTo('/')});
   }
 
   return (
     <div className="flex flex-col">
-       <Helmet>
+      <Helmet>
         <title>Product Catalogue of Star Pack</title>
         <meta
           property="og:description"

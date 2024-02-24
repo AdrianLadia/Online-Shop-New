@@ -25,11 +25,9 @@ import Modal from '@mui/material/Modal';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import AppContext from '../AppContext';
 import { useContext } from 'react';
-import DatePicker from 'react-datepicker';
-import Joi from 'joi';
 import schemas from '../schemas/schemas';
 import { ThemeProvider } from '@mui/material/styles';
-import { set } from 'date-fns';
+
 
 const style = {
   position: 'absolute',

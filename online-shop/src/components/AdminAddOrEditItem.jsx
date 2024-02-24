@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import useWindowDimensions from './UseWindowDimensions';
 import AddCategoryModal from './AddCategoryModal';
@@ -12,33 +11,12 @@ import Select from '@mui/material/Select';
 import { Checkbox, Typography } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import AppContext from '../AppContext';
-import cloudFirestoreDb from '../cloudFirestoreDb';
-import businessCalculations from '../../utils/businessCalculations';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import { CircularProgress } from '@mui/material';
-import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import menuRules from '../../utils/classes/menuRules';
 
-// Style for Modal
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  height: '80%',
-  transform: 'translate(-50%, -50%)',
-  width: '95%',
-
-  '@media (min-width: 1024px)': {
-    width: '50%',
-  },
-
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
 
 const AdminAddOrEditItem = (props) => {
   const addOrEditItem = props.addOrEditItem;
@@ -64,7 +42,6 @@ const AdminAddOrEditItem = (props) => {
     }
   }, []);
 
-  const { width, height } = useWindowDimensions();
   const products = props.products;
   const productNames = [];
 
@@ -103,9 +80,7 @@ const AdminAddOrEditItem = (props) => {
   const [imageLink10, setImageLink10] = useState('');
   const [startingInventory, setStartingInventory] = useState('');
   const [isThisRetail, setIsThisRetail] = useState(false);
-  const [parentProductID, setParentProductID] = useState('');
   const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false);
-  const [parentProducts, setParentProducts] = useState([]);
   const [isCustomized, setIsCustomized] = useState(false);
   const [retailPrice, setRetailPrice] = useState(0);
   const [packWeight, setPackWeight] = useState(0);
@@ -120,7 +95,6 @@ const AdminAddOrEditItem = (props) => {
   const [loading, setLoading] = useState(false);
   const [costPrice, setCostPrice] = useState(0);
   const [freightCost, setFreightCost] = useState(0);
-  const [timeoutId, setTimeoutId] = useState(null);
   const rules = new menuRules(userdata.userRole);
   const [forOnlineStore, setForOnlineStore] = useState(true);
 
@@ -422,10 +396,7 @@ const AdminAddOrEditItem = (props) => {
     }
   }
 
-  useEffect(() => {
-    const parentProductsList = businesscalculations.readAllParentProductsFromOnlineStoreProducts(products);
-    setParentProducts(parentProductsList);
-  }, []);
+
 
   function onRetailCheckBoxClick(result) {
     if (result) {

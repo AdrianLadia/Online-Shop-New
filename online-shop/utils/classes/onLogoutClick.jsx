@@ -1,7 +1,7 @@
-import { blue, green, red, yellow } from "@mui/material/colors";
+
+import {startTransition} from "react";
 import { signOut } from "firebase/auth";
-import { FaBlackTie } from "react-icons/fa";
-import { GiWhiteBook } from "react-icons/gi";
+;
 
 class onLogoutClick {
     constructor(setUserId,setUserdata,setUserLoaded,setUserState,setCart,navigateTo,auth) {
@@ -20,7 +20,7 @@ class onLogoutClick {
         this.setUserLoaded(true);
         this.setUserState('guest');
         this.setCart({});
-        this.navigateTo('/');
+        startTransition(() => this.navigateTo('/'));
     }
 }
 

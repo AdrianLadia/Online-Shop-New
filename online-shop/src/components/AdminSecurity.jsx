@@ -1,7 +1,6 @@
 import React from 'react'
-import { useState,useEffect,useContext } from 'react'
+import {useContext } from 'react'
 import AppContext from '../AppContext'
-import AdminMenu from './AdminMenu'
 import Admin from './Admin'
 
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
 import AppContext from '../../AppContext';
-import businessCalculation from '../customerAnalytics/businessCalculation';
 import PastAverageTimeOrders from './PastAverageTimeOrders';
 import CategoryCheckboxes from './CategoryCheckboxes';
 import { Chart } from 'react-chartjs-2';
@@ -20,7 +19,6 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const CompanyDashboard = ({products}) => {
   const { firestore, categories, userdata } = useContext(AppContext);
-  const businesscalculation = new businessCalculation();
   const [overallTotalSalesValue, setOverallTotalSalesValue] = useState(0);
   const [overallSalesPerItem, setOverallSalesPerItem] = useState([]);
   const [customersLastOrderDate, setCustomersLastOrderDate] = useState({});
@@ -30,6 +28,8 @@ const CompanyDashboard = ({products}) => {
   const monthNames = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
   const [allowedCategories, setAllowedCategories] = useState([]);
   const rules = new menuRules(userdata.userRole);
+
+  console.log(products)
   
 
   useEffect(() => {

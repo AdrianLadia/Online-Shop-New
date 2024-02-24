@@ -4,7 +4,6 @@ import dataManipulation from "./dataManipulation/dataManipulation";
 import businessLogic from "./businessLogic/businessLogic";
 import AppContext from "../../AppContext";
 import { DataGrid } from "@mui/x-data-grid";
-import * as React from "react";
 import Box from "@mui/material/Box";
 import StockInsButton from "./StockInsButton";
 import RecentOrdersButton from "./RecentOrdersButton";

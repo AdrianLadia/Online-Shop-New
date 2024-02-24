@@ -11,11 +11,7 @@ import menuRules from '../../../utils/classes/menuRules';
 const App = () => {
   const { firestore, setCategories, userdata } = useContext(AppContext);
 
-  // connectAuthEmulator(auth, "http://localhost:9099");
 
-  const [user, setUser] = useState(null);
-  const [authorized, setAuthorized] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [customized, setCustomized] = useState(null);
   const [selectedName, setSelectedName] = useState(null);

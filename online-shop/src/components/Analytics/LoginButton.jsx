@@ -1,19 +1,19 @@
 import React from "react";
-import { useState, useContext } from "react";
+
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import {
   GoogleAuthProvider,
   signInWithRedirect,
-  signInWithPopup,
+
   FacebookAuthProvider,
   getAuth,
-  signOut,
+
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
-import AppContext from "../../AppContext";
+
 import {FaSignInAlt} from 'react-icons/fa' 
 
 const LoginButton = (props) => {

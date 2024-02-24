@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
-import { set } from 'date-fns';
+
 
 const ProductCardModalTableV2 = ({ wholesaleData, retailData, radioButtonSelected }) => {
   const [specs, setSpecs] = React.useState(null);
@@ -12,7 +12,7 @@ const ProductCardModalTableV2 = ({ wholesaleData, retailData, radioButtonSelecte
     const color = itemData.color;
     const dimensions = itemData.dimensions;
     const material = itemData.material;
-    const pieces = itemData.pieces;
+
     const size = itemData.size;
     const weight = itemData.weight;
     const packsPerBox = itemData.packsPerBox;

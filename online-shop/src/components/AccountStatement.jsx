@@ -4,28 +4,24 @@ import AppContext from '../AppContext';
 import { useContext, useState, useEffect } from 'react';
 import AccountStatementTable from './AccountStatementTable';
 import MyOrderCardModal from './MyOrderCardModal';
-import dataManipulation from '../../utils/dataManipulation';
 import { useNavigate } from 'react-router-dom';
 import { BsBookHalf } from 'react-icons/bs';
 import UseWindowDimensions from './useWindowDimensions';
 
 const AccountStatement = () => {
-  const { orders, payments, userdata,datamanipulation} = useContext(AppContext);
+  const { orders, payments, userdata, datamanipulation } = useContext(AppContext);
   const navigateTo = useNavigate();
 
   const [orderInfoData, setOrderInfoData] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   // const {goToCheckoutPage, setGoToCheckoutPage } = useContext(AppContext);
-  const [openButton, setOpenButton] = useState(null);
   const [buttonClicked, setButtonClicked] = useState(null);
-  const [total, setTotal] = useState(0);
   const { width } = UseWindowDimensions();
 
   if (userdata == null) {
-    return
+    return;
   }
   const fullName = userdata.name;
   let firstName = fullName.split(' ')[0];
@@ -39,18 +35,14 @@ const AccountStatement = () => {
 
   const [remainingBalance, setRemainingBalance] = useState(0);
 
-
-
   useEffect(() => {
     try {
       const dataToUse = datamanipulation.accountStatementData(orders, payments);
-      const remainingBalance = (dataToUse[dataToUse.length - 1])[4]
-      setRemainingBalance(remainingBalance)
+      const remainingBalance = dataToUse[dataToUse.length - 1][4];
+      setRemainingBalance(remainingBalance);
 
       setTableData(dataToUse);
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   }, [orders]);
 
   useEffect(() => {
@@ -58,10 +50,6 @@ const AccountStatement = () => {
     orders.map((s) => {
       total += s.grandTotal;
     });
-    if (total > 0) {
-      setOpenButton(true);
-      setTotal(total);
-    }
   }, [orders]);
 
   useEffect(() => {
@@ -70,16 +58,17 @@ const AccountStatement = () => {
 
   function onPayButtonClick() {
     if (buttonClicked) {
-      navigateTo(
-        '/AccountStatementPayment',
-        {state : {
-          firstName: firstName,
-          lastName: lastName,
-          eMail: userdata.email,
-          phoneNumber: userdata.phoneNumber,
-          totalPrice: remainingBalance,
-          userId: userdata.uid,
-        }}
+      startTransition(() =>
+        navigateTo('/AccountStatementPayment', {
+          state: {
+            firstName: firstName,
+            lastName: lastName,
+            eMail: userdata.email,
+            phoneNumber: userdata.phoneNumber,
+            totalPrice: remainingBalance,
+            userId: userdata.uid,
+          },
+        })
       );
     }
   }
@@ -91,8 +80,6 @@ const AccountStatement = () => {
       return 'h2';
     }
   }
-
-
 
   return (
     <div className="overflow-x-hidden flex flex-col justify-center items-center bg-gradient-to-r from-colorbackground via-color2 to-color1">
@@ -109,16 +96,6 @@ const AccountStatement = () => {
           setOrderInfoData={setOrderInfoData}
           setOpen={setOpen}
         />
-        {/* <div className="flex justify-end mt-4">
-          {openButton ? (
-            <button
-              className="flex self-center w-1/2 xs:w-1/3 justify-center p-2 mr-2 text-white text-lg font-semibold rounded-lg bg-blue1 hover:bg-color10b"
-              onClick={onPayButtonClick}
-            >
-              Pay   ({'₱' + ' ' + remainingBalance})
-            </button>
-          ) : null}
-        </div> */}
       </div>
 
       {orderInfoData ? <MyOrderCardModal order={orderInfoData} open={open} handleClose={handleClose} /> : null}

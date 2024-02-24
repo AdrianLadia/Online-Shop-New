@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {  useEffect, useContext } from 'react';
 import PaymentMethods from './PaymentMethods';
-import CheckoutContext from '../context/CheckoutContext';
+
 import { Typography, Button } from '@mui/material';
 
 import { HiCash } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
-import PaymayaSdk from './PaymayaSdk';
+
 import { useNavigate } from 'react-router-dom';
 import AppContext from '../AppContext';
 
-const AccountStatementPayment = (props) => {
-  const { setSelectedChatOrderId,manualCustomerOrderProcess } = useContext(AppContext);
+const AccountStatementPayment = () => {
+  const { manualCustomerOrderProcess } = useContext(AppContext);
   // const { userdata, cart, setCart, userstate } = React.useContext(AppContext);
 
   const { alertSnackbar,businesscalculations,setMayaRedirectUrl, setMayaCheckoutId, mayaRedirectUrl, paymentMethodSelected } = useContext(AppContext);
-  const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
+
 
   const location = useLocation();
   const navigateTo = useNavigate();
@@ -74,7 +74,6 @@ const AccountStatementPayment = (props) => {
         // this is used for paymaya url
         alertSnackbar('info','Moving you to the payment page. Do not exit this page.')
         window.location.href = url;
-        setPlaceOrderLoading(false);
       }
     });
   }

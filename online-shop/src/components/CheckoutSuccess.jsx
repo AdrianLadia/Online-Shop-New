@@ -1,4 +1,5 @@
 import React from 'react';
+import {startTransition} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 import CheckoutSummary from './CheckoutSummary';
 
@@ -42,7 +43,9 @@ const CheckoutSuccess = () => {
         />
         <button
           className="mt-6 bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-          onClick={() => navigateTo('/shop')}
+          onClick={() => 
+            startTransition(() => navigateTo('/shop'))
+          }
         >
           Back to shop
         </button>

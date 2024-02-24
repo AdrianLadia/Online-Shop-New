@@ -3,7 +3,6 @@ import { useEffect, useContext, useState } from 'react';
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
 import AppContext from '../AppContext';
-import dataManipulation from '../../utils/dataManipulation';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { CircularProgress, Typography } from '@mui/material';
@@ -12,7 +11,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import menuRules from '../../utils/classes/menuRules';
-import { set } from 'date-fns';
 
 const AdminVoidPayment = ({ users }) => {
   const { cloudfirestore, userdata,datamanipulation } = useContext(AppContext);

@@ -25,7 +25,7 @@ const style = {
   p: 4,
 };
 function UnsupportedBrowserRedirect(props) {
-  const isSupportedBrowser = props.isSupportedBrowser;
+
   const open = props.open;
   // const open = true
   const setOpen = props.setOpen;

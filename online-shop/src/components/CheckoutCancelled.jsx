@@ -1,4 +1,5 @@
 import React from 'react';
+import { startTransition } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 function CheckoutCancelled() {
@@ -9,7 +10,7 @@ function CheckoutCancelled() {
   const data = JSON.parse(stringData);
 
   function handleHome() {
-    navigateTo('/shop');
+    startTransition(() => navigateTo('/shop'));
   }
 
   return (

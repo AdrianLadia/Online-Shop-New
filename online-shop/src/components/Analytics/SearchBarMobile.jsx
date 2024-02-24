@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import {FaEraser} from 'react-icons/fa' 
 
-export const SearchBarMobile = ({name, products, callback}) => {
+export const SearchBarMobile = ({ products, callback}) => {
 
     const [selectedOption, setSelectedOption] = useState("");
     const [inputText, setInputText] = useState([]);

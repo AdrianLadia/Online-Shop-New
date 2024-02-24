@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import stockManagementTableDataHandler from '../../../utils/classes/stockMangementTableDataHandler';
 import AppContext from '../../AppContext';
-import FormGroup from '@mui/material/FormGroup';
+
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { Typography } from '@mui/material';
@@ -11,7 +11,7 @@ import { Typography } from '@mui/material';
 const StockManagementTable = ({ products }) => {
   const { firestore } = useContext(AppContext);
   const [rowsWholesale, setRowsWholesale] = useState([]);
-  const [wholesaleSearch, setWholesaleSearch] = useState('');
+
   const [rowsRetail, setRowsRetail] = useState([]);
   const [hideSlowMovingCheckbox, setHideSlowMovingCheckbox] = useState(true);
   const columnsWholesale = [

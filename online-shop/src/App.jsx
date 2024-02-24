@@ -1,21 +1,20 @@
 import './App.css';
 import NavBar from './components/NavBar';
-import HomePage from './HomePage';
-import Shop from './components/Shop';
-import { useEffect, useState } from 'react';
+// import HomePage from './HomePage';
+// import Shop from './components/Shop';
+import { useEffect, useState, lazy, Suspense, startTransition } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import firebaseAnalytics from './firebaseAnalytics';
 import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
-import AdminSecurity from './components/AdminSecurity';
+// import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
 import firestoredb from './firestoredb';
 import PersonalInfoForm from './components/PersonalInfoForm';
 import { CircularProgress, Typography } from '@mui/material';
-import MyOrders from './components/MyOrders';
-import AccountStatement from './components/AccountStatement';
+// import MyOrders from './components/MyOrders';
+// import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
 import AppConfig from './AppConfig';
@@ -24,22 +23,42 @@ import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
 import Checkout from './components/Checkout';
-import AccountStatementPayment from './components/AccountStatementPayment';
-import ChatApp from './components/ChatApp/src/ChatApp';
+// import AccountStatementPayment from './components/AccountStatementPayment';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
-import AffiliatePage from './components/AffiliatePage';
+// import AffiliatePage from './components/AffiliatePage';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
-import JobOpenings from './components/JobOpenings';
-import ClaimAccount from './components/ClaimAccount';
+import SuspenseFallback from './SuspenseFallback';
+// import JobOpenings from './components/JobOpenings';
+// import ClaimAccount from './components/ClaimAccount';
+
+// const NavBar = lazy(() => import('./components/NavBar'));
+const HomePage = lazy(() => import('./HomePage'));
+const Shop = lazy(() => import('./components/Shop'));
+const AdminSecurity = lazy(() => import('./components/AdminSecurity'));
+// const PersonalInfoForm = lazy(() => import('./components/PersonalInfoForm'));
+const MyOrders = lazy(() => import('./components/MyOrders'));
+const AccountStatement = lazy(() => import('./components/AccountStatement'));
+const AccountStatementPayment = lazy(() => import('./components/AccountStatementPayment'));
+// const CheckoutSuccess = lazy(() => import('./components/CheckoutSuccess'));
+// const CheckoutFailed = lazy(() => import('./components/CheckoutFailed'));
+// const CheckoutCancelled = lazy(() => import('./components/CheckoutCancelled'));
+// const Checkout = lazy(() => import('./components/Checkout'));
+// const ChatApp = lazy(() => import('./components/ChatApp/src/ChatApp'));
+// const ProfileUpdaterModal = lazy(() => import('./components/ProfileUpdaterModal'));
+const AffiliatePage = lazy(() => import('./components/AffiliatePage'));
+// const ProductsCatalogue = lazy(() => import('./components/ProductsCatalogue'));
+// const Alert = lazy(() => import('./components/Alert'));
+const JobOpenings = lazy(() => import('./components/JobOpenings'));
+const ClaimAccount = lazy(() => import('./components/ClaimAccount'));
 
 function App() {
-  const [fbclid, setFbclid] = useState(undefined);
+  // const [fbclid, setFbclid] = useState(undefined);
   // disable first because we are not using this
   // get fbclid for faccebook pixel conversion api
   // useEffect(() => {
@@ -73,21 +92,24 @@ function App() {
   const [userdata, setUserData] = useState(null);
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
-  const [cloudfirestore, setCloudFirestore] = useState(new cloudFirestoreDb(app));
-  const [businesscalculations, setBusinessCalculations] = useState(new businessCalculations(cloudfirestore));
-  const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations));
-  const [analytics, setAnalytics] = useState(new firebaseAnalytics(app, cloudfirestore));
-  useEffect(() => {
-    const cloudfirestore = new cloudFirestoreDb(app, false, fbclid, userdata);
-    const businesscalculations = new businessCalculations(cloudfirestore);
-    const datamanipulation = new dataManipulation(businesscalculations);
-    // Get Analytics
-    const analytics = new firebaseAnalytics(app, cloudfirestore);
-    setCloudFirestore(cloudfirestore);
-    setBusinessCalculations(businesscalculations);
-    setDataManipulation(datamanipulation);
-    setAnalytics(analytics);
-  }, [fbclid, userdata]);
+  const cloudfirestore = new cloudFirestoreDb(app);
+  const businesscalculations = new businessCalculations(cloudfirestore);
+  const datamanipulation = new dataManipulation(businesscalculations);
+  // const [cloudfirestore, setCloudFirestore] = useState(new cloudFirestoreDb(app));
+  // const [businesscalculations, setBusinessCalculations] = useState(new businessCalculations(cloudfirestore));
+  // const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations));
+  // // const [analytics, setAnalytics] = useState(new firebaseAnalytics(app, cloudfirestore));
+  // useEffect(() => {
+  //   const cloudfirestore = new cloudFirestoreDb(app, false, fbclid, userdata);
+  //   const businesscalculations = new businessCalculations(cloudfirestore);
+  //   const datamanipulation = new dataManipulation(businesscalculations);
+  //   // Get Analytics
+  //   // const analytics = new firebaseAnalytics(app, cloudfirestore);
+  //   setCloudFirestore(cloudfirestore);
+  //   setBusinessCalculations(businesscalculations);
+  //   setDataManipulation(datamanipulation);
+  //   setAnalytics(analytics);
+  // }, [fbclid, userdata]);
 
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
@@ -146,7 +168,7 @@ function App() {
   const [useDistributorPrice, setUseDistributorPrice] = useState(false); // This is used to change the price of the products to distributor price or not
   const [affiliateUid, setAffiliateUid] = useState(null);
   const [manualCustomerOrderProcess, setManualCustomerOrderProcess] = useState(false);
-  const [ipAddress, setIpAddress] = useState(null);
+  // const [ipAddress, setIpAddress] = useState(null);
   const [claimAccountProcess, setClaimAccountProcess] = useState(false); // This is used to run the claim account process in claimAccount route
   const [claimId, setClaimId] = useState(null);
   const [aid, setAid] = useState(null);
@@ -168,7 +190,6 @@ function App() {
         affiliateUsers
       );
       affiliateHandler_.runMain().then((affiliateId) => {
-
         setAffiliateUid(affiliateId);
       });
     });
@@ -478,14 +499,12 @@ function App() {
 
   useEffect(() => {
     async function claimAccount() {
-
       if (claimAccountProcess && userLoaded) {
         try {
           await cloudfirestore.transactionClaimAccount(userId, claimId, aid);
-          navigateTo('/shop');
-          await delay(1000)
-          window.location.reload()
-
+          startTransition(() => navigateTo('/shop'));
+          await delay(1000);
+          window.location.reload();
         } finally {
           setClaimAccountProcess(false);
         }
@@ -525,7 +544,7 @@ function App() {
         }
         // FLOW FOR GUEST LOGIN
         // ADMIN CHECK
-        const nonAdminRoles = ['member', 'affiliate', 'distributor','cousin'];
+        const nonAdminRoles = ['member', 'affiliate', 'distributor', 'cousin'];
         const userRole = await cloudfirestore.readUserRole(data.uid);
         if (nonAdminRoles.includes(userRole)) {
           setIsAdmin(false);
@@ -558,7 +577,7 @@ function App() {
         setContactPerson(data.contactPerson);
         setUserState('userloaded');
         setUserLoaded(true);
-        setTriggerClaimAccountProcess(!claimAccountProcess)
+        setTriggerClaimAccountProcess(!claimAccountProcess);
       } else {
         if (localStorageCart) {
           setCart(localStorageCart);
@@ -622,9 +641,9 @@ function App() {
     isSuperAdmin: isSuperAdmin,
     datamanipulation: datamanipulation,
     businesscalculations: businesscalculations,
-    fbclid: fbclid,
+    // fbclid: fbclid,
     alertSnackbar: alertSnackbar,
-    analytics: analytics,
+    // analytics: analytics,
     cardSelected: cardSelected,
     setCardSelected: setCardSelected,
     changeCard: changeCard,
@@ -685,13 +704,6 @@ function App() {
     chatSwitch: chatSwitch,
     setChatSwitch: setChatSwitch,
     isSupportedBrowser: isSupportedBrowser,
-    updateCartInfo: updateCartInfo,
-    setUpdateCartInfo: setUpdateCartInfo,
-    isAppleDevice: isAppleDevice,
-    allUserData: allUserData,
-    setAllUserData: setAllUserData,
-    inquiryMessageSwitch: inquiryMessageSwitch,
-    setInquiryMessageSwitch: setInquiryMessageSwitch,
     unreadOrderMessages: unreadOrderMessages,
     setUnreadOrderMessages: setUnreadOrderMessages,
     unreadCustomerServiceMessages: unreadCustomerServiceMessages,
@@ -705,10 +717,6 @@ function App() {
     setAllUserData: setAllUserData,
     inquiryMessageSwitch: inquiryMessageSwitch,
     setInquiryMessageSwitch: setInquiryMessageSwitch,
-    unreadCustomerServiceMessages: unreadCustomerServiceMessages,
-    setUnreadCustomerServiceMessages: setUnreadCustomerServiceMessages,
-    isAndroidDevice: isAndroidDevice,
-    isGoogleChrome: isGoogleChrome,
     isAffiliate: isAffiliate,
     openProfileUpdaterModal: openProfileUpdaterModal,
     selectedCategory: selectedCategory,
@@ -719,10 +727,9 @@ function App() {
     useDistributorPrice: useDistributorPrice,
     setUseDistributorPrice: setUseDistributorPrice,
     affiliateUid: affiliateUid,
-    setUserId: setUserId,
     setManualCustomerOrderProcess: setManualCustomerOrderProcess,
     manualCustomerOrderProcess: manualCustomerOrderProcess,
-    ipAddress: ipAddress,
+    // ipAddress: ipAddress,
     claimAccountProcess: claimAccountProcess,
     setClaimAccountProcess: setClaimAccountProcess,
     setClaimId: setClaimId,
@@ -735,9 +742,11 @@ function App() {
         <Route
           path="/"
           element={
-            <AppContext.Provider value={appContextValue}>
-              <HomePage />
-            </AppContext.Provider>
+            <Suspense fallback={<SuspenseFallback />}>
+              <AppContext.Provider value={appContextValue}>
+                <HomePage />
+              </AppContext.Provider>
+            </Suspense>
           }
         />
         <Route
@@ -760,16 +769,18 @@ function App() {
           path="/shop"
           element={
             <AppContext.Provider value={appContextValue}>
-              <NavBar />
-              <Shop />
-              {userdata ? (
-                <ProfileUpdaterModal
-                  userdata={userdata}
-                  openProfileUpdaterModal={openProfileUpdaterModal}
-                  setOpenProfileUpdaterModal={setOpenProfileUpdaterModal}
-                  manualCustomerOrderProcess={manualCustomerOrderProcess}
-                />
-              ) : null}
+              <Suspense fallback={<SuspenseFallback />}>
+                <NavBar />
+                <Shop />
+                {userdata ? (
+                  <ProfileUpdaterModal
+                    userdata={userdata}
+                    openProfileUpdaterModal={openProfileUpdaterModal}
+                    setOpenProfileUpdaterModal={setOpenProfileUpdaterModal}
+                    manualCustomerOrderProcess={manualCustomerOrderProcess}
+                  />
+                ) : null}
+              </Suspense>
             </AppContext.Provider>
           }
         />
@@ -777,7 +788,9 @@ function App() {
           path="/admin/*"
           element={
             <AppContext.Provider value={appContextValue}>
-              <AdminSecurity />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminSecurity />
+              </Suspense>
             </AppContext.Provider>
           }
         />
@@ -794,8 +807,10 @@ function App() {
           path="/affiliate"
           element={
             <AppContext.Provider value={appContextValue}>
-              <NavBar />
-              <AffiliatePage />
+              <Suspense fallback={<SuspenseFallback />}>
+                <NavBar />
+                <AffiliatePage />
+              </Suspense>
             </AppContext.Provider>
           }
         />
@@ -827,59 +842,63 @@ function App() {
           path="/myorders/*"
           element={
             <AppContext.Provider value={appContextValue}>
-              <NavBar />
-              {userstate === 'userloading' ? (
-                <div className="flex h-screen">
-                  <div className="flex flex-col justify-center m-auto">
-                    <div className="flex justify-center ">
-                      <CircularProgress size="20vh" />
-                    </div>
-                    <div>
-                      <Typography variant="h4" className="text-center">
-                        Fetching data...
-                      </Typography>
+              <Suspense fallback={<SuspenseFallback />}>
+                <NavBar />
+                {userstate === 'userloading' ? (
+                  <div className="flex h-screen">
+                    <div className="flex flex-col justify-center m-auto">
+                      <div className="flex justify-center ">
+                        <CircularProgress size="20vh" />
+                      </div>
+                      <div>
+                        <Typography variant="h4" className="text-center">
+                          Fetching data...
+                        </Typography>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <MyOrders />
-                </div>
-              )}
+                ) : (
+                  <div>
+                    <MyOrders />
+                  </div>
+                )}
+              </Suspense>
             </AppContext.Provider>
           }
         />
-        <Route
+        {/* <Route
           path="/orderChat"
           element={
             <AppContext.Provider value={appContextValue}>
               <ChatApp />
             </AppContext.Provider>
           }
-        />
+        /> */}
         <Route
           path="/accountstatement"
           element={
             <AppContext.Provider value={appContextValue}>
-              <NavBar />
-              {userstate === 'userloading' ? (
-                <div className="flex h-screen">
-                  <div className="flex flex-col justify-center m-auto">
-                    <div className="flex justify-center ">
-                      <CircularProgress size="20vh" />
-                    </div>
-                    <div>
-                      <Typography variant="h4" className="text-center">
-                        Fetching data...
-                      </Typography>
+              <Suspense fallback={<SuspenseFallback />}>
+                <NavBar />
+                {userstate === 'userloading' ? (
+                  <div className="flex h-screen">
+                    <div className="flex flex-col justify-center m-auto">
+                      <div className="flex justify-center ">
+                        <CircularProgress size="20vh" />
+                      </div>
+                      <div>
+                        <Typography variant="h4" className="text-center">
+                          Fetching data...
+                        </Typography>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <AccountStatement />
-                </div>
-              )}
+                ) : (
+                  <div>
+                    <AccountStatement />
+                  </div>
+                )}
+              </Suspense>
             </AppContext.Provider>
           }
         />
@@ -887,8 +906,10 @@ function App() {
           path="/AccountStatementPayment"
           element={
             <AppContext.Provider value={appContextValue}>
-              <NavBar />
-              <AccountStatementPayment />
+              <Suspense fallback={<SuspenseFallback />}>
+                <NavBar />
+                <AccountStatementPayment />
+              </Suspense>
             </AppContext.Provider>
           }
         />

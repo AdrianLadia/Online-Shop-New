@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import AppContext from '../AppContext';
-import useWindowDimensions from './UseWindowDimensions';
+
 import Autocomplete from '@mui/material/Autocomplete';
 import { TextField, Paper, Button, Typography } from '@mui/material';
 import AffiliateAddPaymentMethodModal from './AffiliateAddPaymentMethodModal';
@@ -30,8 +30,7 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import TableHead from '@mui/material/TableHead';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
-import StockManagementTable from './CompanyDashboard/StockManagementTable';
-import { set } from 'date-fns';
+
 import { collection, where, query, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import UseCustomerAccount from './UseCustomerAccount';

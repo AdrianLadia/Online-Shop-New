@@ -7,8 +7,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link, Typography } from '@mui/material';
-import { format, utcToZonedTime } from 'date-fns-tz';
-import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
 
 const AccountStatementTable = (props) => {

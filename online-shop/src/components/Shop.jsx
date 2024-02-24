@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState, useContext, useRef } from 'react';
 import CategorySelector from './CategorySelector';
-import WholesaleOrRetail from './WholesaleOrRetail';
+
 import ProductList from './ProductList';
 import AppContext from '../AppContext';
 import { CircularProgress, Typography } from '@mui/material';
@@ -9,29 +9,24 @@ import useWindowDimensions from './UseWindowDimensions';
 import { Helmet } from 'react-helmet';
 import ScrollTopButton from './ScrollTopButton';
 import ShopHero from './ShopHero';
-import AnnouncementNotification from './AnnouncementNotification';
+
 import ProductsSearchBar from './ProductsSearchBar';
 
 // Use `searchAlgolia` in your React component to get search results
 
 const Shop = () => {
-  const { width } = useWindowDimensions();
+
   const [wholesale, setWholesale] = useState(false);
   const [retail, setRetail] = useState(true);
   const [loading, setLoading] = useState(true);
   const [categorySelectorInView, setCategorySelectorInView] = useState(true);
   const [selectedName, setSelectedName] = useState('');
-  const { fbclid, isSuperAdmin, selectedCategory, setSelectedCategory, products, analytics } = useContext(AppContext);
+  const { selectedCategory, setSelectedCategory, products,  } = useContext(AppContext);
   // const wholesaleOrRetailRef = useRef();
   const categoryRef = useRef();
   const [shopHeroInView, setShopHeroInView] = useState(true);
   const [searchedItemId, setSearchedItemId] = useState(null);
 
-  useEffect(() => {
-    if (fbclid !== undefined && analytics.cloudFirestoreDb.fbclid !== undefined) {
-      // analytics.logOpenStorePageEvent();
-    }
-  }, [fbclid, analytics]);
 
   useEffect(() => {
     if (products != []) {

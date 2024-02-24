@@ -1,11 +1,10 @@
 import React from 'react';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, startTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppContext from '../AppContext';
 import { Autocomplete, TextField, Modal, Box, Typography } from '@mui/material';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { CircularProgress } from '@mui/material';
-import { Firestore } from '@google-cloud/firestore';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -34,7 +33,6 @@ function UseCustomerAccount() {
     alertSnackbar,
     setUserId,
     setManualCustomerOrderProcess,
-    firestore,
   } = useContext(AppContext);
   const [selectedManualCustomer, setSelectedManualCustomer] = useState(null);
   const [manualCustomers, setManualCustomers] = useState([]);
@@ -157,7 +155,9 @@ function UseCustomerAccount() {
           onClick={() => {
             setUserId(selectedManualCustomer.uid);
             setManualCustomerOrderProcess(true);
-            navigateTo('/shop');
+            startTransition(() => {
+              navigateTo('/shop');
+            });
           }}
         >
           <span className="text-white font-bold mr-1">Create Order</span>
@@ -165,20 +165,18 @@ function UseCustomerAccount() {
         <button
           className="flex items-center p-3 rounded-lg bg-color10b mb-20"
           onClick={async () => {
-
             function isLocalhost() {
               return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-          }
-          
-            let url
-            if (isLocalhost()) {
-              url = 'http://localhost:5173/claimAccount' 
-            }
-            else {
-              url = 'https://starpack.ph/claimAccount'
             }
 
-            navigator.clipboard.writeText(url + '?claimId=' + selectedManualCustomer.uid + '&aid=' + userdata.uid );
+            let url;
+            if (isLocalhost()) {
+              url = 'http://localhost:5173/claimAccount';
+            } else {
+              url = 'https://starpack.ph/claimAccount';
+            }
+
+            navigator.clipboard.writeText(url + '?claimId=' + selectedManualCustomer.uid + '&aid=' + userdata.uid);
             alertSnackbar('info', 'Copied Customer Share Link to Clipboard');
           }}
         >

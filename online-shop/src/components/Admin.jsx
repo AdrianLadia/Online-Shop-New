@@ -1,21 +1,34 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 // import AdminInventory from './AdminInventory';
-import AdminCreatePayment from './AdminCreatePayment';
-import AdminOrders from './AdminOrders';
+// import AdminCreatePayment from './AdminCreatePayment';
+// import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';
 import App from './Analytics/App';
-import AdminChatMenu from './AdminChatMenu';
-import AdminAddOrEditItem from './AdminAddOrEditItem';
-import CustomerAnalytics from './customerAnalytics/App';
-import CompanyDashboard from './CompanyDashboard/CompanyDashboard';
-import AffiliateClaimRequest from './AdminAffiliateClaimRequest';
-import AdminNavBar from './AdminNavBar';
-import AdminDelivery from './AdminDelivery';
+// import AdminAddOrEditItem from './AdminAddOrEditItem';
+// import CustomerAnalytics from './customerAnalytics/App';
+// import CompanyDashboard from './CompanyDashboard/CompanyDashboard';
+// import AffiliateClaimRequest from './AdminAffiliateClaimRequest';
+// import AdminNavBar from './AdminNavBar';
+// import AdminDelivery from './AdminDelivery';
 import { Routes, Route } from 'react-router-dom';
-import AdminVoidPayment from './AdminVoidPayment';
-import AdminEditOrders from './AdminEditOrders';
-import AdminCustomerAccount from './AdminCustomerAccount';
+// import AdminVoidPayment from './AdminVoidPayment';
+// import AdminEditOrders from './AdminEditOrders';
+// import AdminCustomerAccount from './AdminCustomerAccount';
+import SuspenseFallback from '../SuspenseFallback';
+
+// const AdminCustomerAccount = lazy(() => import('./AdminCustomerAccount'))
+const AdminNavBar = lazy(() => import('./AdminNavBar'));
+const CompanyDashboard = lazy(() => import('./CompanyDashboard/CompanyDashboard'));
+const AdminCreatePayment = lazy(() => import('./AdminCreatePayment'));
+const AdminOrders = lazy(() => import('./AdminOrders'));
+const AdminAddOrEditItem = lazy(() => import('./AdminAddOrEditItem'));
+const CustomerAnalytics = lazy(() => import('./customerAnalytics/App'));
+const AffiliateClaimRequest = lazy(() => import('./AdminAffiliateClaimRequest'));
+const AdminDelivery = lazy(() => import('./AdminDelivery'));
+const AdminVoidPayment = lazy(() => import('./AdminVoidPayment'));
+const AdminEditOrders = lazy(() => import('./AdminEditOrders'));
+const AdminCustomerAccount = lazy(() => import('./AdminCustomerAccount'));
 
 const Admin = () => {
   const { firestore, allUserData, setAllUserData, categories } = React.useContext(AppContext);
@@ -38,12 +51,14 @@ const Admin = () => {
             </div>
           }
         /> */}
-         <Route
+        <Route
           path="customerAccount"
           element={
             <div>
-              <AdminNavBar />
-              <AdminCustomerAccount/>
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <AdminCustomerAccount />
+              </Suspense>
             </div>
           }
         />
@@ -51,14 +66,16 @@ const Admin = () => {
           path="addItem"
           element={
             <div>
-              <AdminNavBar />
-              <AdminAddOrEditItem
-                products={products}
-                categories={categories}
-                refresh={refresh}
-                setRefresh={setRefresh}
-                addOrEditItem={'Add'}
-              />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <AdminAddOrEditItem
+                  products={products}
+                  categories={categories}
+                  refresh={refresh}
+                  setRefresh={setRefresh}
+                  addOrEditItem={'Add'}
+                />
+              </Suspense>
             </div>
           }
         />
@@ -66,14 +83,16 @@ const Admin = () => {
           path="editItem"
           element={
             <div>
-              <AdminNavBar />
-              <AdminAddOrEditItem
-                products={products}
-                categories={categories}
-                refresh={refresh}
-                setRefresh={setRefresh}
-                addOrEditItem={'Edit'}
-              />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <AdminAddOrEditItem
+                  products={products}
+                  categories={categories}
+                  refresh={refresh}
+                  setRefresh={setRefresh}
+                  addOrEditItem={'Edit'}
+                />
+              </Suspense>
             </div>
           }
         />
@@ -90,8 +109,10 @@ const Admin = () => {
           path="voidPayment"
           element={
             <div>
+              <Suspense fallback={<SuspenseFallback />}>
               <AdminNavBar />
               <AdminVoidPayment users={allUserData} setUsers={setAllUserData} />
+              </Suspense>
             </div>
           }
         />
@@ -100,8 +121,10 @@ const Admin = () => {
           path="orders"
           element={
             <div>
-              <AdminNavBar />
-              <AdminOrders users={allUserData} />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <AdminOrders users={allUserData} />
+              </Suspense>
             </div>
           }
         />
@@ -118,17 +141,10 @@ const Admin = () => {
           path="customerAnalytics"
           element={
             <div>
-              <AdminNavBar />
-              <CustomerAnalytics />
-            </div>
-          }
-        />
-        <Route
-          path="chatMenu"
-          element={
-            <div>
-              <AdminNavBar />
-              <AdminChatMenu />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <CustomerAnalytics />
+              </Suspense>
             </div>
           }
         />
@@ -136,8 +152,10 @@ const Admin = () => {
           path="companyDashboard"
           element={
             <div>
-              <AdminNavBar />
-              <CompanyDashboard products={products} />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <CompanyDashboard products={products} />
+              </Suspense>
             </div>
           }
         />
@@ -145,8 +163,10 @@ const Admin = () => {
           path="affiliateClaimRequest"
           element={
             <div>
-              <AdminNavBar />
-              <AffiliateClaimRequest />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <AffiliateClaimRequest />
+              </Suspense>
             </div>
           }
         />
@@ -154,8 +174,10 @@ const Admin = () => {
           path="delivery"
           element={
             <div>
-              <AdminNavBar />
-              <AdminDelivery />
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <AdminDelivery />
+              </Suspense>
             </div>
           }
         />
@@ -163,8 +185,10 @@ const Admin = () => {
           path="editOrders"
           element={
             <div>
+              <Suspense fallback={<SuspenseFallback />}>
               <AdminNavBar />
               <AdminEditOrders />
+              </Suspense>
             </div>
           }
         />

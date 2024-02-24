@@ -2,18 +2,15 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@material-ui/core';
 import ChatApp from './ChatApp/src/ChatApp';
 import AppContext from '../AppContext';
-import { HiOutlineChatAlt, HiChatAlt } from 'react-icons/hi';
-import { doc, onSnapshot, collection,where,query } from 'firebase/firestore';
-import { set } from 'date-fns';
+import { HiChatAlt } from 'react-icons/hi';
+import {  onSnapshot, collection,where,query } from 'firebase/firestore';
 import AdminChatMenuOpenButton from './AdminChatMenuOpenButton';
-import firestoredb from '../firestoredb';
 import menuRules from '../../utils/classes/menuRules';
 import NotificationSound from '../sounds/chat.mp3';
 
 const AdminChatMenu = () => {
   const dummy = useRef(null);
-  const [openChat, setOpenChat] = useState(false);
-  const { firestore, selectedChatOrderId, chatSwitch, isAdmin, db, userdata } = useContext(AppContext);
+  const { firestore, selectedChatOrderId, chatSwitch, db, userdata } = useContext(AppContext);
   const [chatData, setChatData] = useState([]);
   const [chatButtonState, setChatButtonState] = useState(null);
   const [chatButtonStateTrigger, setChatButtonStateTrigger] = useState(false);
@@ -89,9 +86,6 @@ const AdminChatMenu = () => {
   }, [chatData]);
 
   useEffect(() => {
-    if (chatSwitch === false) {
-      setOpenChat(false);
-    }
     if (rules.checkIfUserAuthorized('adminChat')) {
       dummy.current.scrollIntoView({ behavior: 'smooth' });
     }

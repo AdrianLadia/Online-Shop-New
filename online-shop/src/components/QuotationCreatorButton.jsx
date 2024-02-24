@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useContext } from 'react';
 import html2pdf from 'html2pdf.js';
-import { set } from 'date-fns';
-import AppContext from '../AppContext';
+
+
 
 const QuotationCreatorButton = ({
   arrayOfProductData,
@@ -10,7 +10,6 @@ const QuotationCreatorButton = ({
   deliveryFee,
   companyName,
   senderName,
-  bankAccount,
   
 }) => {
   const grandTotal = arrayOfProductData.reduce((acc, product) => acc + product.total, 0);
@@ -18,10 +17,10 @@ const QuotationCreatorButton = ({
   const _balance = balance == '' ? 0 : parseFloat(balance);
   const finalTotal = grandTotal + _deliveryFee + _balance;
   const contentRef = useRef(null);
-  const { userdata } = useContext(AppContext);
+
   const [hidden, setHidden] = React.useState(true);
   const [contentCss, setContentCss] = React.useState('');
-  const [downloadButtonHidden, setDownloadButtonHidden] = React.useState('hidden');
+
   const myBankDetails = [
     {
       bankName: 'BDO',

@@ -7,7 +7,7 @@ import ProductCardModalRadioButton from './ProductCardModalRadioButton';
 import AppContext from '../AppContext';
 import ProductCardModalTableV2 from './ProductCardModalTableV2';
 import ProductCardModalAddToCart from './ProductCardModalAddToCart';
-import { set } from 'date-fns';
+
 import { RiShareBoxLine } from 'react-icons/ri';
 
 const style = {

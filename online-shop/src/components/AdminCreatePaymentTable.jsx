@@ -5,15 +5,12 @@ import AdminCreatePaymentTableRow from './AdminCreatePaymentTableRow';
 import { collection, where, query, onSnapshot } from 'firebase/firestore';
 import NotificationSound from '../sounds/payment.mp3';
 import MyOrderCardModal from './MyOrderCardModal';
-import { set } from 'date-fns';
 
 const AdminCreatePaymentTable = () => {
-  const { firestore, selectedChatOrderId, setSelectedChatOrderId, cloudfirestore, db } = useContext(AppContext);
+  const { selectedChatOrderId, db } = useContext(AppContext);
   const [paymentsData, setPaymentsData] = useState([]);
   const [reference, setReference] = useState('');
   const [status, setStatus] = useState('');
-  const [link, setLink] = useState([]);
-  const [amount, setAmount] = useState(null);
   const [order, setOrder] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
@@ -79,7 +76,6 @@ const AdminCreatePaymentTable = () => {
         playSound();
       }
       setPaymentsData(pendingPayments);
-      setLink([photoLink]);
     });
     // }
     // readPayments();

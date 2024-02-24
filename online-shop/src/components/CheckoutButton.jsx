@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import AppContext from '../AppContext';
 import GuestSignInModal from './GuestSignInModal';
 import { CircularProgress } from '@mui/material';

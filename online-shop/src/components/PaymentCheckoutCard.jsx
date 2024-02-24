@@ -1,9 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { Paper } from '@material-ui/core';
 import { useState } from 'react';
-import CheckoutContext from '../context/CheckoutContext';
 import AppContext from '../AppContext';
-import AppConfig from '../AppConfig';
 
 const PaymentCheckoutCard = (props) => {
   const [cardElevate, setCardElevate] = useState(false);

@@ -1,38 +1,20 @@
 import React from 'react';
-import { IoArrowBackCircle } from 'react-icons/io5';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { GiHamburgerMenu } from 'react-icons/gi';
-import { useNavigate } from 'react-router-dom';
 import AdminInventory from './AdminInventory';
 import { useEffect, useState } from 'react';
 import AdminCreatePayment from './AdminCreatePayment';
 import AdminOrders from './AdminOrders';
 import AppContext from '../AppContext';
-import { BsBoxes, BsBagCheck, BsGraphUp } from 'react-icons/bs';
-import { HiOutlineCash } from 'react-icons/hi';
 import App from './Analytics/App';
-import { RiAdminFill } from 'react-icons/ri';
-import UseWindowDimensions from './UseWindowDimensions';
 import AdminChatMenu from './AdminChatMenu';
-import { HiOutlineChatAlt } from 'react-icons/hi';
 import AdminAddOrEditItem from './AdminAddOrEditItem';
 import CustomerAnalytics from './customerAnalytics/App';
-import { VscGraph } from 'react-icons/vsc';
 import CompanyDashboard from './CompanyDashboard/CompanyDashboard';
-import { RiDashboard2Line } from "react-icons/ri";
-import Tooltip from '@mui/material/Tooltip';
 import AffiliateClaimRequest from './AdminAffiliateClaimRequest';
-import { TbAffiliate } from "react-icons/tb";
+
 
 const AdminMenu = () => {
   const { firestore, allUserData, setAllUserData, categories } = React.useContext(AppContext);
-  const { width } = UseWindowDimensions();
   const [refresh, setRefresh] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const navigateTo = useNavigate();
   const [selectedMenu, setSelectedMenu] = React.useState('Claim Request');
   const [products, setProducts] = useState([]);
 

@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect,startTransition } from 'react';
 import CheckoutSummary from './CheckoutSummary';
 import GoogleMaps from './GoogleMaps';
 import AppContext from '../AppContext';
@@ -183,7 +183,7 @@ const CheckoutPage = () => {
   // IF PROFILE DETAILS LACKING REDIRECT TO PROFILE UPDATER MODAL
   useEffect(() => {
     if (openProfileUpdaterModal) {
-      navigateTo('/shop');
+      startTransition(() => navigateTo('/shop'));
     }
   }, [openProfileUpdaterModal]);
 
@@ -195,7 +195,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (rowsMountCount >= 2) {
       if (rows.length === 0) {
-        navigateTo('/shop');
+        startTransition(() => navigateTo('/shop'));
       }
     }
   }, [rowsMountCount]);

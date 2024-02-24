@@ -17,7 +17,6 @@ import {
   Box,
   Divider,
 } from '@mui/material';
-import { arEG } from 'date-fns/locale';
 import menuRules from '../../utils/classes/menuRules';
 
 const style = {
@@ -34,7 +33,7 @@ const style = {
 
 const AffiliateClaimRequest = () => {
   const { storage, cloudfirestore, userdata, firestore } = useContext(AppContext);
-  const { height, width } = useWindowDimensions();
+  const { height} = useWindowDimensions();
   const [imageProof, setImageProof] = useState(null);
   const [affiliateClaimId, setAffiliateClaimId] = useState(null);
   const [affiliateUserId, setAffiliateUserId] = useState(null);

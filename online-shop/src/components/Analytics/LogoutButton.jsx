@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import { signOut,getAuth } from 'firebase/auth'
 import {FaSignOutAlt} from 'react-icons/fa' 
-import PulseLoader from "react-spinners/PulseLoader";
+
 
 
 const LogoutButton = () => {

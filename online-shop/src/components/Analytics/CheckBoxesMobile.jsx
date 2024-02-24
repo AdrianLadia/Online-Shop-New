@@ -1,14 +1,14 @@
 import React, { useState, useEffect,useContext } from "react";
 import AppContext from "../../AppContext";
-import {FaList} from 'react-icons/fa' 
+
 
 export const CheckBoxesMobile = ({name, callback}) => {
   
   const [selectedOption, setSelectedOption] = useState("");
   const [customized, setCustomized] = useState("");
-  const [loading, setLoading] = useState(false);
+
   const {categories}= useContext(AppContext)
-  const [showDiv, setShowDiv] = useState(false);
+
 
   useEffect(() => {
     setLoading(true);

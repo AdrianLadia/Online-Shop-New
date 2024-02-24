@@ -1,20 +1,13 @@
 import React from 'react';
-import firestoredb from '../firestoredb';
 import { useEffect, useState, useRef } from 'react';
-import OrdersCalendar from './OrdersCalendar';
 import { Typography } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 import AdminOrdersTable from './AdminOrdersTable';
 import MyOrderCardModal from './MyOrderCardModal';
-import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from '../colorPalette/MaterialUITheme';
 import Divider from '@mui/material/Divider';
 import textFieldStyle from '../colorPalette/textFieldStyle';
 import textFieldLabelStyle from '../colorPalette/textFieldLabelStyle';
@@ -24,7 +17,7 @@ import menuRules from '../../utils/classes/menuRules';
 import NotificationSound from '../sounds/delivery.mp3';
 
 const AdminOrders = (props) => {
-  const { userdata, cloudfirestore, db, firestore,datamanipulation } = React.useContext(AppContext);
+  const { userdata, cloudfirestore, db, firestore} = React.useContext(AppContext);
 
   const styles = textFieldStyle();
   const labelStyle = textFieldLabelStyle();

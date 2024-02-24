@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import { DataGrid } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import useWindowDimensions from '../customerAnalytics/UseWindowDimentions';

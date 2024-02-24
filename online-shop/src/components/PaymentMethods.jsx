@@ -4,7 +4,6 @@ import PaymentCheckoutCard from './PaymentCheckoutCard';
 
 import useWindowDimensions from './UseWindowDimensions';
 import AppContext from '../AppContext';
-import AppConfig from '../AppConfig';
 import disableCodHandler from '../../utils/classes/disableCodHandler';
 
 function PaymentMethods({

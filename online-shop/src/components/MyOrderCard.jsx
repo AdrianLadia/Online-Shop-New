@@ -1,29 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,startTransition } from 'react';
 import Typography from '@mui/material/Typography';
 import MyOrderCardModal from './MyOrderCardModal';
-import ImageUploadButton from './ImageComponents/ImageUploadButton';
+
 import AppContext from '../AppContext';
-import dataManipulation from '../../utils/dataManipulation';
+
 import UseWindowDimensions from './useWindowDimensions';
 import { useNavigate } from 'react-router-dom';
 import { HiChatBubbleLeftEllipsis } from 'react-icons/hi2';
 import CountdownTimer from './CountDownTimer';
 import { Timestamp } from 'firebase/firestore';
-import { AiOutlineFileSearch, AiOutlineSearch } from 'react-icons/ai';
-import { date } from 'joi';
-import { useLocation } from 'react-router-dom';
+import { AiOutlineFileSearch } from 'react-icons/ai';
+
 import isUrl from '../../utils/isUrl';
 
 function MyOrderCard(props) {
-  const { pathname } = useLocation();
-
-  const { datamanipulation,storage, userId, cloudfirestore, setSelectedChatOrderId, firestore, isAdmin, userdata,orders } =
-    React.useContext(AppContext);
+  const { datamanipulation, cloudfirestore, firestore, userdata, orders } = React.useContext(AppContext);
   const order = props.order;
   const setOrders = props.setOrders;
   const paid = order.paid;
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
-  const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(()=>{
+  const [proofOfPaymentLinkCount, setProofOfPaymentLinkCount] = useState(() => {
     let count = 0;
     order.proofOfPaymentLink.map((link) => {
       if (isUrl(link)) {
@@ -32,7 +28,6 @@ function MyOrderCard(props) {
     });
     return count;
   });
-
 
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpenModal = () => setOpenModal(true);
@@ -83,7 +78,6 @@ function MyOrderCard(props) {
     }
   }
 
-
   function onMessageClick() {
     // setUnRead(false)
     // firestore.updateOrderMessagesAsReadForUser(order.reference);
@@ -91,7 +85,7 @@ function MyOrderCard(props) {
     // navigateTo('/orderChat', {
     //   state: { orderReference: order.reference, isInquiry: false, backButtonRedirect: pathname },
     // });
-    window.open('https://www.m.me/starpackph', '_blank')
+    window.open('https://www.m.me/starpackph', '_blank');
   }
 
   function handleCancel() {
@@ -105,28 +99,27 @@ function MyOrderCard(props) {
     let kilometersFromStore;
     orders.map((s) => {
       if (order.reference === s.reference) {
-
         price = s.grandTotal;
         kilometersFromStore = s.kilometersFromStore;
-
       }
     });
 
-
-    navigateTo('/AccountStatementPayment', {
-      state: {
-        firstName: userdata.firstName,
-        lastName: userdata.lastName,
-        fullname: userdata.name,
-        eMail: userdata.email,
-        phoneNumber: userdata.contactPerson[0].phoneNumber,
-        totalPrice: price,
-        userId: userdata.uid,
-        orderReference: order.reference,
-        date: orderDateObject,
-        kilometersFromStore: kilometersFromStore,
-      },
-    });
+    startTransition(() =>
+      navigateTo('/AccountStatementPayment', {
+        state: {
+          firstName: userdata.firstName,
+          lastName: userdata.lastName,
+          fullname: userdata.name,
+          eMail: userdata.email,
+          phoneNumber: userdata.contactPerson[0].phoneNumber,
+          totalPrice: price,
+          userId: userdata.uid,
+          orderReference: order.reference,
+          date: orderDateObject,
+          kilometersFromStore: kilometersFromStore,
+        },
+      })
+    );
   }
 
   function responsiveCssPaperColorIfDelivered() {
@@ -209,7 +202,7 @@ function MyOrderCard(props) {
     if (order.paid) {
       return false;
     }
-    if (order.paid == false  && countOrderProofOfPaymentLinks() <= 0) {
+    if (order.paid == false && countOrderProofOfPaymentLinks() <= 0) {
       return true;
     }
     if (order.paid == false && countOrderProofOfPaymentLinks() > 0) {
@@ -225,7 +218,7 @@ function MyOrderCard(props) {
     >
       <div className="flex flex-col p-2 xs:p-5 m-5 rounded-lg bg-white ">
         <div className="flex flex-row justify-between mb-4">
-          {shouldShowTimer()  ? (
+          {shouldShowTimer() ? (
             <CountdownTimer
               className="ml-2 mt-1"
               size={3}
@@ -326,8 +319,6 @@ function MyOrderCard(props) {
                 ) : null}
               </p>
             </button>
-
-
           </div>
         </div>
       </div>

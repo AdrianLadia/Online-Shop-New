@@ -1,4 +1,4 @@
-import React, { useContext, use, useEffect } from 'react';
+import React, { useContext,startTransition } from 'react';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -7,12 +7,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AppContext from '../AppContext';
 import { useNavigate } from 'react-router-dom';
 import { FaStore } from 'react-icons/fa';
-import { CgProfile } from 'react-icons/cg';
 import { AiOutlineHistory } from 'react-icons/ai';
 import { BsBook } from 'react-icons/bs';
 import { RiAdminLine } from 'react-icons/ri';
@@ -26,7 +24,6 @@ import menuRules from '../../utils/classes/menuRules';
 import TextField from '@mui/material/TextField';
 
 const AccountMenu = (props) => {
-  const { pathname } = useLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const {
     userdata,
@@ -57,31 +54,29 @@ const AccountMenu = (props) => {
 
   function adminClick() {
     const redirectPage = rules.getAdminRedirectPage();
+    // startTransition(() => navigateTo('/admin/' + redirectPage));
     navigateTo('/admin/' + redirectPage);
   }
 
-  function profileClick() {
-    navigateTo('/profile');
-  }
 
   function storeClick() {
     // setUserState('userloading');
     // setRefreshUser(!refreshUser);
-    navigateTo('/shop');
+    startTransition(() => navigateTo('/shop'));
     handleClose();
   }
 
   function myOrdersClick() {
     // setUserState('userloading');
     // setRefreshUser(!refreshUser);
-    navigateTo('/myorders/orderList');
+    startTransition(() => navigateTo('/myorders/orderList'));
     handleClose();
   }
 
   function accountStatementCLick() {
     // setUserState('userloading');
     // setRefreshUser(!refreshUser);
-    navigateTo('/accountstatement');
+    startTransition(() => navigateTo('/accountstatement'));
     handleClose();
   }
 
@@ -92,7 +87,7 @@ const AccountMenu = (props) => {
   }
 
   function affiliateClick() {
-    navigateTo('/affiliate');
+    startTransition(() => navigateTo('/affiliate'));
     handleClose();
   }
 

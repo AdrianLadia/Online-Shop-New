@@ -1,7 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import firestoredb from '../firestoredb';
-// import fireststore from firestored
 import AppContext from '../AppContext';
 
 const GoogleMapsModalSelectContactModalButton = (props) => {

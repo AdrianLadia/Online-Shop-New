@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AppContext from '../AppContext';
 import { useContext, useState } from 'react';
-import { Button, Menu, MenuItem } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -16,8 +16,7 @@ import UnsupportedBrowserRedirect from './UnsupportedBrowserRedirect';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { set } from 'date-fns';
-import TextField from '@mui/material/TextField';
+
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { GiSmartphone } from 'react-icons/gi';

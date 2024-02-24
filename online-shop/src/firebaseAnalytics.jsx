@@ -1,5 +1,4 @@
 import { getAnalytics, logEvent } from 'firebase/analytics';
-import cloudFirestoreDb from './cloudFirestoreDb';
 
 class firebaseAnalytics {
   constructor(app,cloudfirestore) {

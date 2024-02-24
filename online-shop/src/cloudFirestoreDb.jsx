@@ -5,7 +5,7 @@ import schemas from './schemas/schemas';
 import AppConfig from './AppConfig';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import mayaCheckoutPaymentOptions from './data/mayaCheckoutPaymentOptions';
-import App from './App';
+
 
 class cloudFirestoreDb extends cloudFirestoreFunctions {
   constructor(app, test = false, fbclid = undefined, userdata = undefined) {
@@ -30,12 +30,11 @@ class cloudFirestoreDb extends cloudFirestoreFunctions {
   }
 
   async updateProductSearchIndex() {
-    const res = await axios.get(`${this.url}updateProductSearchIndex`,{
+    await axios.get(`${this.url}updateProductSearchIndex`,{
       headers: {
         'apikey': 'starpackjkldrfjklhdjljkfggfjmnxmnxcbbltrpiermjrnsddqqasdfg' // Replace 'YOUR_API_KEY' with your actual API key
       }
     });
-    // return res;
   }
 
   async changeUserRole(userId, role) {

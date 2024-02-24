@@ -12,10 +12,8 @@ const AdminCreatePaymentTableRow = (props) => {
   const userName = props.userName;
   const setOrder = props.setOrder;
   const setOpenModal = props.setOpenModal;
-  const setPaymentsData = props.setPaymentsData;
   const [amount, setAmount] = useState('');
   const { cloudfirestore, firestore } = useContext(AppContext);
-  const paymentsData = props.paymentsData;
   const paymentMethod = props.paymentMethod;
   const [loading, setLoading] = useState(false);
 

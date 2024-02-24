@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
-import isFirstDayOfMonth from 'date-fns/isFirstDayOfMonth/index';
-import React, { useContext,useRef } from 'react';
-import { useState } from 'react';
+
+import React, { useContext } from 'react';
+
 import AppContext from '../AppContext';
 import { AiFillHeart } from 'react-icons/ai';
 import AppConfig from '../AppConfig';

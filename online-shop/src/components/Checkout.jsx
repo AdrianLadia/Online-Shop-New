@@ -1,7 +1,7 @@
-import { React, useState, useContext, useEffect } from 'react';
+import { React, useState, useContext } from 'react';
 import CheckoutPage from './CheckoutPage';
 import CheckoutProofOfPayment from './CheckoutProofOfPayment';
-import { Link, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import CheckoutContext from '../context/CheckoutContext';
 import AppContext from '../AppContext';
 

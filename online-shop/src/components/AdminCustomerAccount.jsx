@@ -1,6 +1,6 @@
 import React from 'react';
 import AppContext from '../AppContext';
-import { useContext, useState, useEffect } from 'react';
+import { useContext } from 'react';
 import menuRules from '../../utils/classes/menuRules';
 import UseCustomerAccount from './UseCustomerAccount';
 import { Typography } from '@mui/material';

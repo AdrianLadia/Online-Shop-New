@@ -7,35 +7,24 @@ export const CheckBoxes = ({name, callback}) => {
   
   const [selectedOption, setSelectedOption] = useState("");
   const [customized, setCustomized] = useState("");
-  const [loading, setLoading] = useState(false);
+
   const {categories}= useContext(AppContext)
   const [showDiv, setShowDiv] = useState(false);
-  const { width } = useWindowDimensions();
-  const [gridDiv, setgridDiv] = useState(null)
+
+
 
   const toggleDiv = () => {
     setShowDiv(!showDiv);
   };
 
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  }, []);
+
 
   useEffect(()=>{
     setCustomized("");
     setSelectedOption("");
   },[name])
 
-  useEffect(()=>{
-    if (width < 90) {
-      return setgridDiv(true);
-     }else {
-      return setgridDiv(false);
-     }
-  },[width])
+
 
   const handleCheckboxChange = (event) => {
     const selectedOption = event.target.name;

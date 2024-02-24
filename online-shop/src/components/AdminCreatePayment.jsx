@@ -1,19 +1,10 @@
 import {
   TextField,
   Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
 } from '@mui/material';
 import React from 'react';
 import { useEffect, useRef } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
-import dataManipulation from '../../utils/dataManipulation';
 import AppContext from '../AppContext';
 import { useContext } from 'react';
 import Divider from '@mui/material/Divider';

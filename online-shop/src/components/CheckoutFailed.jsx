@@ -1,4 +1,5 @@
 import React from 'react';
+import { startTransition } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const CheckoutFailed = () => {
@@ -27,7 +28,9 @@ const CheckoutFailed = () => {
         </div>
         <button
           className="mt-6 bg-red1 text-white w-full py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-          onClick={() => navigateTo('/')}
+          onClick={() => 
+            startTransition(() => navigateTo('/'))
+          }
         >
           Back to Shop
         </button>

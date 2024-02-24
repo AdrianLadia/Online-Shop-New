@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import ProductCard from './ProductCard';
+
 import OpenCartButton from './OpenCartButton';
 import AppContext from '../AppContext';
 import CircularProgress from '@mui/material/CircularProgress';
 import UseWindowDimensions from './UseWindowDimensions';
 import storeProductsOrganizer from '../../utils/classes/storeProductsOrganizer';
-import ProductCardModal from './ProductCardModal';
+
 import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
 import ProductCardV2 from './ProductCardV2';
 import ProductCardModalV2 from './ProductCardModalV2';

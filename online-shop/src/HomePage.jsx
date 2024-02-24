@@ -1,18 +1,17 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
+import React, { useRef, useEffect, useState, useContext,startTransition  } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import useWindowDimensions from './components/UseWindowDimensions';
-import { BsBookHalf, BsList, BsArrowLeftShort, BsArrowRightShort, BsX } from 'react-icons/bs';
-import { FaFacebookF, FaViber, FaInstagram, FaGoogle, FaPhoneAlt, FaMapMarkerAlt, FaShoppingBag } from 'react-icons/fa';
+import { BsBookHalf, BsArrowLeftShort, BsArrowRightShort } from 'react-icons/bs';
+import { FaFacebookF, FaShoppingBag } from 'react-icons/fa';
 import { FaPlay, FaPause, FaPenSquare, FaForward, FaBackward } from 'react-icons/fa';
 import AppContext from './AppContext';
-import GoogleMaps from './components/GoogleMaps';
 import { useLocation } from 'react-router-dom';
 import { AiFillMessage } from 'react-icons/ai';
 import LoginButton from './components/LoginButton';
-import AccountMenu from './components/AccountMenu';
-import onLogoutClick from '../utils/classes/onLogoutClick';
-import { Tooltip, Typography } from '@mui/material';
+
+
+import {Typography } from '@mui/material';
 import { Helmet } from 'react-helmet';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -162,9 +161,7 @@ const HomePage = ({ isAffiliateLink }) => {
   const [showButton, setShowButton] = useState(false);
   const { width } = useWindowDimensions();
   const [showMenu, setShowMenu] = useState(false);
-  const [showShopToolTip, setShowShopToolTip] = useState(false);
-  const [showMessageToolTip, setShowMessageToolTip] = useState(false);
-  const { pathname } = useLocation();
+
   const [photoUrl, setPhotoUrl] = useState('');
 
   function handleAlert(severity, message) {
@@ -315,7 +312,7 @@ const HomePage = ({ isAffiliateLink }) => {
   }
 
   function handleShop() {
-    navigateTo('/shop');
+    startTransition  (() => {navigateTo('/shop');});
   }
 
 

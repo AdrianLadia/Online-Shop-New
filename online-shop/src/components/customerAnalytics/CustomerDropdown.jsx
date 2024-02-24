@@ -3,15 +3,9 @@ import dataManipulation from './dataManipulation';
 import Autocomplete from '@mui/material/Autocomplete';
 import { TextField } from '@mui/material';
 
-const CustomerDropdown = ({ data, setChosen, customerTotalValueRanking }) => {
-  const datamanipulation = new dataManipulation();
-  const [customers, setCustomers] = useState([]);
-  const [chosenCustomer, setChosenCustomer] = useState([]);
-  const [inputText, setInputText] = useState([]);
+const CustomerDropdown = ({setChosen, customerTotalValueRanking }) => {
 
-  useEffect(() => {
-    setCustomers(datamanipulation.getAllCustomers(data));
-  }, [data]);
+  const [chosenCustomer, setChosenCustomer] = useState([]);
 
   useEffect(()=>{
     setChosen(customerTotalValueRanking[0])

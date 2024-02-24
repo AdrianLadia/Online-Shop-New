@@ -3,11 +3,13 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { BrowserRouter } from 'react-router-dom';
+import SuspenseFallback from './SuspenseFallback';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <App />
+      {/* <SuspenseFallback /> */}
     </BrowserRouter>
   </React.StrictMode>
 );

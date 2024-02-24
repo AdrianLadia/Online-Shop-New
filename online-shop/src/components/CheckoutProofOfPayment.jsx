@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect,startTransition } from 'react';
 import ImageUploadButton from './ImageComponents/ImageUploadButton';
 import { Button, Divider, Typography } from '@mui/material';
 import CheckoutSummary from './CheckoutSummary';
@@ -122,7 +122,7 @@ const CheckoutProofOfPayment = (props) => {
       setRefreshUser(!refreshUser);
       await cloudfirestore.updateOrderProofOfPaymentLink(referenceNumber, userId, url, userdata.name, bankName);
       await delay(5000);
-      navigateTo('/myorders/orderList');
+      startTransition(() => navigateTo('/myorders/orderList'));
     } catch (error) {
       alertSnackbar('error', 'Failed to upload proof of payment. Please try again.');
       return;

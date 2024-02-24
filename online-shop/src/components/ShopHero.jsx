@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactPlayer from 'react-player';
 import { useRef,useEffect } from 'react';
-import { Typography } from '@mui/material';
 
-const ShopHero = ({ shopHeroInView, setShopHeroInView }) => {
+
+const ShopHero = ({  setShopHeroInView }) => {
   const shopHeroRef = useRef(null);
 
   function isElementOutOfView(el) {

@@ -6,17 +6,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import firestoredb from '../firestoredb';
+
 import useWindowDimensions from './useWindowDimensions';
-import dataManipulation from '../../utils/dataManipulation';
-import { ContentCutOutlined } from '@mui/icons-material';
+
 import AppContext from '../AppContext';
 
 const MyOrderCardModalTable = (props) => {
 
-  const {cloudfirestore,datamanipulation,userdata } = React.useContext(AppContext);
+  const {datamanipulation,userdata } = React.useContext(AppContext);
   
-  const { width, height } = useWindowDimensions();
+  const { height } = useWindowDimensions();
   function getMaxHeightTable() {
     return height - 10000;
   }

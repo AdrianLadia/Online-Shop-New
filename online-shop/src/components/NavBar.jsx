@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useContext } from 'react';
+import { useState, useContext,startTransition } from 'react';
 import AppContext from '../AppContext';
 import Button from '@mui/material/Button';
 import AccountMenu from './AccountMenu';
@@ -24,19 +24,21 @@ const NavBar = () => {
     setUserLoaded(true);
     setUserState('guest');
     setCart({});
-    navigateTo('/');
+
+    startTransition(() => navigateTo('/'));
+  
   }
 
   function storeClick() {
-    navigateTo('/');
+    startTransition(() => navigateTo('/'));
   }
 
   function homeClick() {
-    navigateTo('/');
+    startTransition(() => navigateTo('/'));
   }
 
   function cartClick() {
-    navigateTo('/shop');
+    startTransition(() => navigateTo('/shop'));
   }
 
   return (

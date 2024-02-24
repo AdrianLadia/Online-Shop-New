@@ -7,13 +7,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useState } from 'react';
 import { Typography } from '@mui/material';
 import UseWindowDimensions from './UseWindowDimensions';
-import { Paper } from '@mui/material';
 import ProductCardModalTable from './ProductCardModalTable';
 import AppContext from '../AppContext';
-import firestoredb from '../firestoredb';
+
 import { useEffect } from 'react';
 import Divider from '@mui/material/Divider';
-import { Scrollbars } from 'react-custom-scrollbars';
+
 import { Timestamp } from 'firebase/firestore';
 import ImageSlider from './ImageSlider';
 import {RiShareBoxLine} from 'react-icons/ri';

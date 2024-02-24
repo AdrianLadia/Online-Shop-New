@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect,startTransition } from 'react'
 import AppContext from '../AppContext';
 import { useNavigate } from 'react-router-dom';
 import HomePage from '../HomePage';
 
-const AffiliateSignUpPage = (props) => {
+const AffiliateSignUpPage = () => {
     const { userdata } = React.useContext(AppContext);
     const navigateTo = useNavigate();
 
     useEffect(() => {
         if (userdata != null) {
-            navigateTo('/shop')
+          startTransition(() => navigateTo('/shop'))
         }
     }, [userdata]);
 

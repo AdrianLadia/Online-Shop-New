@@ -9,7 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api';
 import AppContext from '../AppContext';
-import dataManipulation from '../../utils/dataManipulation';
 import useWindowDimensions from './UseWindowDimensions';
 import Image from './ImageComponents/Image';
 import firebaseConfig from '../firebase_config';
@@ -49,9 +48,8 @@ const MyOrderCardModal = (props) => {
   const firstOrderDiscount = order.firstOrderDiscount;
 
   const orderDate = datamanipulation.convertDateTimeStampToDateString(order.orderDate);
-  const [linkCount, setLinkCount] = useState(order.proofOfPaymentLink.length);
-  const { width } = useWindowDimensions();
-  const [screenMobile, setScreenSizeMobile] = useState(null);
+
+
   const [products, setProducts] = React.useState([]);
 
   useEffect(() => {
@@ -69,13 +67,7 @@ const MyOrderCardModal = (props) => {
     fetchCartProductsData();
   }, [order]);
 
-  useEffect(() => {
-    if (width < 550) {
-      return setScreenSizeMobile(false);
-    } else {
-      return setScreenSizeMobile(true);
-    }
-  }, [width]);
+
 
   function countOrderProofOfPaymentLinks() {
     let count = 0;

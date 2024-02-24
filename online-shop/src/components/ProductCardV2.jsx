@@ -4,8 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
-import { set } from 'date-fns';
-import { is } from 'date-fns/locale';
+
 
 const ProductCardV2 = ({ searchedItemId, itemData, setModal, setClickedProduct, openSnackbar, setOpenSnackbar }) => {
   const [heart, setHeart] = useState(false);

@@ -4,11 +4,10 @@ import { useContext, useEffect, useState } from 'react';
 import { Typography } from '@mui/material';
 import CartModal from './CartModal';
 
-import { Outlet, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import AppContext from '../AppContext';
 import CircularProgress from '@mui/material/CircularProgress';
-import businessCalculations from '../../utils/businessCalculations';
-import dataManipulation from '../../utils/dataManipulation';
+
 import AppConfig from '../AppConfig';
 
 const OpenCartButton = (props) => {
@@ -17,9 +16,7 @@ const OpenCartButton = (props) => {
   let [finalCartData, setFinalCartData] = useState([]);
   const shakeCartAnimation = props.shakeCartAnimation;
   const setShakeCartAnimation = props.setShakeCartAnimation;
-
-  const location = useLocation();
-  const { businesscalculations,alertSnackbar,analytics,refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
+  const { businesscalculations,alertSnackbar,refreshUser, setRefreshUser, userstate, cart, setCart, products, updateCartInfo, setUpdateCartInfo } =
     useContext(AppContext);
 
   function onAddToCartClick(product) {
