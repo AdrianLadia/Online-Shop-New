@@ -62,10 +62,7 @@ const MyOrderCardModal = (props) => {
       });
 
       const data = await Promise.all(cartProductPromises);
-      console.log('data', data);
       const productsCombined = data;
-
-      console.log('productsCombined', productsCombined);
       setProducts(productsCombined);
     };
 

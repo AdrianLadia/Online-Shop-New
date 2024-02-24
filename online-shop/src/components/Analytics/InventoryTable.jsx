@@ -87,7 +87,6 @@ export function InventoryTable({name, category, customized, callback}) {
       stocksOnHold.forEach((stock) => {
         stocksOnHoldCount += stock.quantity
       })
-      console.log(stocksOnHoldCount)
       const type = product.category;
       const custom = product.isCustomized;
       const itemId = product.itemId;
@@ -111,7 +110,6 @@ export function InventoryTable({name, category, customized, callback}) {
   useEffect(() => {
     const dataTable = [];
     const moreData = [];
-    console.log(dataUsedForTable)
     dataUsedForTable.map((row, index) => {
       const data = row.tableData;
       const more = row.moreInfoData;

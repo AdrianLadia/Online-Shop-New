@@ -168,7 +168,7 @@ function App() {
         affiliateUsers
       );
       affiliateHandler_.runMain().then((affiliateId) => {
-        console.log(affiliateId);
+
         setAffiliateUid(affiliateId);
       });
     });
@@ -312,8 +312,7 @@ function App() {
       if (user) {
         setUserState('userloading');
         setUser(user);
-        console.log('Auth Changed');
-        console.log(user.uid);
+
         cloudfirestore.checkIfUserIdAlreadyExist(user.uid).then((userExists) => {
           if (userExists && manualCustomerOrderProcess == false) {
             setUserId(user.uid);
@@ -479,13 +478,9 @@ function App() {
 
   useEffect(() => {
     async function claimAccount() {
-      console.log('claimAccountProcess', claimAccountProcess);
-      console.log('userLoaded', userLoaded);
+
       if (claimAccountProcess && userLoaded) {
         try {
-          console.log('userId', userId);
-          console.log('claimId', claimId);
-          console.log('aid', aid);
           await cloudfirestore.transactionClaimAccount(userId, claimId, aid);
           navigateTo('/shop');
           await delay(1000)

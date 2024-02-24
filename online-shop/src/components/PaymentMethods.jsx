@@ -31,7 +31,6 @@ function PaymentMethods({
           }
         });
       }
-      console.log('providers', providers);
       setPaymentMethods(providers);
     });
   }, []);

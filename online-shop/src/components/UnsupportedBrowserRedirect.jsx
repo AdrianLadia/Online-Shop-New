@@ -44,7 +44,6 @@ function UnsupportedBrowserRedirect(props) {
     } else {
       url = 'starpack.ph/shop';
     }
-    console.log(url);
     setUrlToShare(url);
     return url;
   }

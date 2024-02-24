@@ -79,10 +79,8 @@ const ImageUploadButton = (props) => {
           if (onUploadFunction !== undefined) {
             try {
               if (resize) {
-                console.log('Resized Image URL:', downloadURLResized);
                 await onUploadFunction(downloadURLResized);
               } else {
-                console.log('Original Image URL:', downloadURL);
                 await onUploadFunction(downloadURL);
               }
               setButtonText('Uploaded Successfully');

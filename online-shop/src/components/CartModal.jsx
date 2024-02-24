@@ -124,8 +124,7 @@ const CartModal = (props) => {
   }
 
   useEffect(() => {
-    console.log('percentIncrease', percentIncrease);
-    console.log('finalCartData', finalCartData);
+
     if (percentIncrease > 0) {
       const newFinalCartData = finalCartData.map((item) => {
         return {
@@ -141,9 +140,7 @@ const CartModal = (props) => {
     }
   }, [percentIncrease,openCreateQuotationModal]);
 
-  useEffect(() => {
-    console.log('_finalCartData', _finalCartData);
-  }, [_finalCartData]);
+
 
 
   return (

@@ -471,7 +471,6 @@ const CheckoutPage = () => {
   }, [area]);
 
   useEffect(() => {
-    console.log(firstOrderDiscount, 'firstOrderDiscount');
     const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee,firstOrderDiscount);
     setGrandTotal(grandTotal);
   }, [total, vat, deliveryFee,firstOrderDiscount]);

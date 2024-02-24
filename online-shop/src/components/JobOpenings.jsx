@@ -140,7 +140,6 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
     setButtonLoading(true);
     event.preventDefault();
     // Here you would handle the submission of the form data, for example:
-    console.log({ fullName, email, phoneNumber, gender, CVorResume });
 
     const data = {
       fullName,
@@ -153,7 +152,6 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
     };
 
     const schema = schemas.employeeApplicationSchema();
-    console.log('Schema:', schema);
     const { error } = schema.validate(data);
 
     if (error) {
@@ -189,7 +187,6 @@ function JobOpeningModal({ openModal, setOpenModal, setShowCard }) {
   };
 
   function onUploadImage(url) {
-    console.log('CV URL:', url);
     setCvUrl(url);
     setSubmittedCv(true);
   }

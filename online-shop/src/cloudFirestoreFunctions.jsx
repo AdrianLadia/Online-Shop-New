@@ -30,7 +30,7 @@ class cloudFirestoreFunctions {
     }
 
     const data = { collection, id, firestoreData }
-    console.log(data);
+
     try {
       let response;
       await retryApi(async () => {

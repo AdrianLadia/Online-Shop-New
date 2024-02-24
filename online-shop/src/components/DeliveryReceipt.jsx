@@ -13,7 +13,6 @@ const DeliveryReceipt = ({ order, products }) => {
   const downloadPdfDocument = () => {
     setTimeout(() => {
       const estimatedLength = products.length * 22
-      console.log('estimatedLength', estimatedLength)
       const content = printRef.current;
       const opt = {
         margin: 0,
@@ -38,8 +37,6 @@ const DeliveryReceipt = ({ order, products }) => {
   const cart = order.cart;
   const cartItemsPrice = order.cartItemsPrice;
 
-  console.log(cart)
-  console.log('products', products)
 
   let correctProductData = 0
   Object.keys(cart).map((key) => {
@@ -47,9 +44,7 @@ const DeliveryReceipt = ({ order, products }) => {
     const quantity = cart[key];
     const price = cartItemsPrice[key];
     const itemDataFromProducts = products.filter((product) => product.itemId === itemId)[0];
-    console.log('itemDataFromProducts', itemDataFromProducts);
-    console.log('itemId', itemId);
-    console.log('products', products);
+
     try {
       const itemName = itemDataFromProducts.itemName;
       const pieces = itemDataFromProducts.pieces;

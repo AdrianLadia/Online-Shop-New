@@ -531,7 +531,7 @@ class dataManipulation {
           } else {
             productPrice = cartItemPrice[key];
           }
-          console.log(product.weight);
+
           total_weight_non_state += product.weight * quantity;
           total_non_state += productPrice * quantity;
           const weight = product.weight * quantity;
@@ -563,7 +563,7 @@ class dataManipulation {
 
     let firstOrderDiscount = 0;
     const discountCap = 500;
-    console.log(userdataOrders);
+
     if (userdataOrders.length == 0) {
       firstOrderDiscount = items_total * 0.05;
       if (firstOrderDiscount > discountCap) {

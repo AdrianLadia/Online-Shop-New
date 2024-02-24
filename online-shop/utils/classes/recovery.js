@@ -21,4 +21,3 @@ products.forEach(product => {
 const PPB45 = products.filter(p => p.itemId == 'PPB#45')[0]
 const stocksOnHoldCompleted = PPB45.stocksOnHoldCompleted
 const last = stocksOnHoldCompleted[stocksOnHoldCompleted.length - 1]
-console.log(products)

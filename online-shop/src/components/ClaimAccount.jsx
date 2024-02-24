@@ -10,7 +10,6 @@ const ClaimAccount = () => {
 
   function claimAccount() {
     if (claimId && aid) {
-      console.log('Claiming Account');
       setClaimAccountProcess(true);
       setClaimId(claimId);
       setAid(aid);

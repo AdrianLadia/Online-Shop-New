@@ -22,7 +22,6 @@ const MyOrderCardModalTable = (props) => {
   }
   const order = props.order;
   const products = props.products;
-  console.log(products);
   const urlOfBir2303 = order.urlOfBir2303
   const cartItemsPrice = order.cartItemsPrice;
   

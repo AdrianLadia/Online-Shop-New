@@ -59,8 +59,6 @@ function UseCustomerAccount() {
         return 0;
       });
 
-      console.log('Manual Customers', _userData);
-
       setManualCustomers(_userData);
     });
 
@@ -96,7 +94,6 @@ function UseCustomerAccount() {
           className="w-full"
           onChange={(event, newValue) => {
             const customerData = manualCustomers.find((item) => item.name === newValue);
-            console.log(customerData);
             setSelectedManualCustomer(customerData);
           }}
           renderInput={(params) => (

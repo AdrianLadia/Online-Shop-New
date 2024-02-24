@@ -45,9 +45,6 @@ const CheckoutSummary = (props) => {
 
   const itemsTotal = vat + total;
 
-  useEffect(() => {
-    console.log('rows', rows);
-  }, [rows]);
 
   function responsiveWidth() {
     if (width < 550) {

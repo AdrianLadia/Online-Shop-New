@@ -205,7 +205,7 @@ const AdminAffiliatePage = () => {
         const unpaidOrder = doc.data();
         unpaidOrders.push(unpaidOrder);
       });
-      console.log(unpaidOrders);
+  
       setUnpaidOrders(unpaidOrders)
     });
   }, []);
@@ -229,7 +229,7 @@ const AdminAffiliatePage = () => {
 
         setPaymentMethods(bankNames);
       });
-      console.log(userdata.affiliateCommissions);
+
       setAffiliateCommissions(userdata.affiliateCommissions);
 
       // const mockCommissions = []
