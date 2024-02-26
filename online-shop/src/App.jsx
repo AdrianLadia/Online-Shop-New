@@ -79,11 +79,11 @@ function App() {
 
   // Initialize firestore class
   const [userdata, setUserData] = useState(null);
-  const db = firestore.db;
   const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const cloudfirestore = new cloudFirestoreDb(app);
   const businesscalculations = new businessCalculations(cloudfirestore);
   const datamanipulation = new dataManipulation(businesscalculations);
+  const db = firestore.db;
   // const [cloudfirestore, setCloudFirestore] = useState(new cloudFirestoreDb(app));
   // const [businesscalculations, setBusinessCalculations] = useState(new businessCalculations(cloudfirestore));
   // const [datamanipulation, setDataManipulation] = useState(new dataManipulation(businesscalculations));

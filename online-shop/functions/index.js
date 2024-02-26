@@ -659,7 +659,33 @@ exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
 });
 
 // ##############
-
+function getPriceToUse(itemId,userPrices,userRole, itemUnit, itemDistributorPrice,itemPrice) { 
+      console.log('itemId', itemId)
+      console.log('userPrices', userPrices)
+      console.log('userRole', userRole)
+      console.log('itemUnit', itemUnit)
+      console.log('itemDistributorPrice', itemDistributorPrice)
+      console.log('itemPrice', itemPrice)
+      if (userPrices[itemId]) {
+        return parseFloat(userPrices[itemId]);
+      }
+      if (userRole == 'distributor') {
+        return itemDistributorPrice
+      }
+      if (userRole == 'cousin') {
+        if (itemUnit.toLowerCase() != 'pack') {
+          return roundUpToNearest5(itemDistributorPrice * .97)
+        }
+        else {
+          return itemPrice;
+        }
+      }
+      else {
+        return itemPrice
+      }
+    
+    
+}
 exports.transactionPlaceOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
     const apiKey = req.headers['apikey'];
@@ -727,22 +753,8 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       const itemId = key;
       const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
-      let price = null;
-      if (userRole == 'distributor') {
-        price = item.data().distributorPrice;
-      }
-      if (userRole == 'cousin') {
-        price = roundUpToNearest5(item.data().distributorPrice * .97)
-      }
-      else {
-        price = item.data().price;
-      }
-      
-
-      if (userPrices[itemId]) {
-        price = parseFloat(userPrices[itemId]);
-      }
-
+      let price = getPriceToUse(itemId,userPrices,userData.userRole, item.data().unit, item.data().distributorPrice, item.data().price)
+      console.log('price', price)
       const total = price * itemQuantity;
       const stocksAvailable = item.data().stocksAvailable;
       const itemName = item.data().itemName;
