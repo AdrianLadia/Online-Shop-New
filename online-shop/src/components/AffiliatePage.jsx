@@ -168,7 +168,7 @@ function TablePaginationActions(props) {
 }
 
 const AdminAffiliatePage = () => {
-  const { userdata, db, cloudfirestore, refreshUser, firestore, alertSnackbar } = useContext(AppContext);
+  const { userdata, db, cloudfirestore, refreshUser, firestore, alertSnackbar,datamanipulation } = useContext(AppContext);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   // affiliate claim Id should be handled by backend
@@ -191,7 +191,7 @@ const AdminAffiliatePage = () => {
   const [onlineStoreProductsData, setOnlineStoreProductsData] = useState([]);
   const [unpaidOrders, setUnpaidOrders] = useState([]);
   const navigateTo = useNavigate();
-  const datamanipulation = new dataManipulation();
+
 
 
   // get affiliate active orders

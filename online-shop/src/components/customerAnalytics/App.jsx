@@ -9,7 +9,7 @@ import dataManipulation from './dataManipulation';
 import menuRules from '../../../utils/classes/menuRules';
 
 const App = () => {
-  const { firestore, userdata } = useContext(AppContext);
+  const { firestore, userdata,datamanipulation } = useContext(AppContext);
   const [customerMonthlySales, setCustomerMonthlySales] = useState({});
   const [purchaseFrequencyAndTimeBetweenPurchases, setPurchaseFrequencyAndTimeBetweenPurchases] = useState({});
   const [totalValueOfOrder, setTotalValueOfOrder] = useState({});
@@ -18,7 +18,6 @@ const App = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [productsData, setProductsData] = useState([]);
-  const datamanipulation = new dataManipulation();
   const dummy = useRef(null);
   const rules = new menuRules(userdata.userRole);
 

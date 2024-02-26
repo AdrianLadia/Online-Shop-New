@@ -1,20 +1,14 @@
 import './App.css';
 import NavBar from './components/NavBar';
-// import HomePage from './HomePage';
-// import Shop from './components/Shop';
 import { useEffect, useState, lazy, Suspense, startTransition } from 'react';
 import AppContext from './AppContext';
 import { Routes, Route } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
-// import AdminSecurity from './components/AdminSecurity';
 import firebaseConfig from './firebase_config';
 import firestoredb from './firestoredb';
-// import PersonalInfoForm from './components/PersonalInfoForm';
 import { CircularProgress, Typography } from '@mui/material';
-// import MyOrders from './components/MyOrders';
-// import AccountStatement from './components/AccountStatement';
 import cloudFirestoreDb from './cloudFirestoreDb';
 import { useNavigate } from 'react-router-dom';
 import AppConfig from './AppConfig';
@@ -22,22 +16,17 @@ import './App.css';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import CheckoutFailed from './components/CheckoutFailed';
 import CheckoutCancelled from './components/CheckoutCancelled';
-// import Checkout from './components/Checkout';
-// import AccountStatementPayment from './components/AccountStatementPayment';
 import useWindowDimensions from './components/UseWindowDimensions';
 import businessCalculations from '../utils/businessCalculations';
 import ProfileUpdaterModal from './components/ProfileUpdaterModal';
-// import AffiliatePage from './components/AffiliatePage';
 import dataManipulation from '../utils/dataManipulation';
 import ProductsCatalogue from './components/ProductsCatalogue';
 import Alert from './components/Alert';
 import productsPriceHandler from '../utils/classes/productsPriceHandler';
 import affiliateHandler from '../utils/classes/affiliateIdHandler';
 import SuspenseFallback from './SuspenseFallback';
-// import JobOpenings from './components/JobOpenings';
-// import ClaimAccount from './components/ClaimAccount';
 
-// const NavBar = lazy(() => import('./components/NavBar'));
+
 const HomePage = lazy(() => import('./HomePage'));
 const Shop = lazy(() => import('./components/Shop'));
 const AdminSecurity = lazy(() => import('./components/AdminSecurity'));
@@ -90,8 +79,8 @@ function App() {
 
   // Initialize firestore class
   const [userdata, setUserData] = useState(null);
-  const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const db = firestore.db;
+  const firestore = new firestoredb(app, appConfig.getIsDevEnvironment());
   const cloudfirestore = new cloudFirestoreDb(app);
   const businesscalculations = new businessCalculations(cloudfirestore);
   const datamanipulation = new dataManipulation(businesscalculations);

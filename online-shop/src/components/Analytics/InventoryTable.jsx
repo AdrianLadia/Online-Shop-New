@@ -18,12 +18,10 @@ import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function InventoryTable({name, category, customized, callback}) {
-  const datamanipulation = new dataManipulation();
-  const businesslogic = new businessLogic();
   const [productsData, setProductsData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [dataUsedForTable, setDataUsedForTable] = useState([]);
-  const { firestore,allUserData } = useContext(AppContext);
+  const { firestore,allUserData,datamanipulation } = useContext(AppContext);
 
   const { ref: p1, inView: p1inView } = useInView();
   const [loading, setLoading] = useState(false);
