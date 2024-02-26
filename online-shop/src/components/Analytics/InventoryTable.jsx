@@ -21,7 +21,8 @@ export function InventoryTable({name, category, customized, callback}) {
   const [productsData, setProductsData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [dataUsedForTable, setDataUsedForTable] = useState([]);
-  const { firestore,allUserData,datamanipulation } = useContext(AppContext);
+  const { firestore,allUserData } = useContext(AppContext);
+  const datamanipulation = new dataManipulation();
 
   const { ref: p1, inView: p1inView } = useInView();
   const [loading, setLoading] = useState(false);
