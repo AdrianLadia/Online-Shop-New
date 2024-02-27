@@ -9,19 +9,31 @@ const formatNumber = (number) => {
 };
 
 const DeliveryReceipt = ({ order, products }) => {
+  // {userid:reason}
+  const doNotAllowPrintUsers = {
+    '3Wk0kFFwHPT8ct3x2DJHPU6uR3e2':
+      'Not allowed to print this document because this user will give his/her own receipt to the customer.'
+  };
+  const doNotAllowPrintUserIds = Object.keys(doNotAllowPrintUsers);
   const printRef = useRef();
+  console.log(order);
   const downloadPdfDocument = () => {
+    console.log('order', order);
+    if (doNotAllowPrintUserIds.includes(order.userId)) {
+      alert(doNotAllowPrintUsers[order.userId]);
+      return;
+    }
     setTimeout(() => {
-      const estimatedLength = products.length * 22
+      const estimatedLength = products.length * 22;
       const content = printRef.current;
       const opt = {
         margin: 0,
         filename: 'DR.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
-        jsPDF: { 
-          unit: 'mm', 
-          format: [80,  estimatedLength + 100], // Specify width as 80mm, and auto height
+        jsPDF: {
+          unit: 'mm',
+          format: [80, estimatedLength + 100], // Specify width as 80mm, and auto height
           orientation: 'portrait',
         },
       };
@@ -37,8 +49,7 @@ const DeliveryReceipt = ({ order, products }) => {
   const cart = order.cart;
   const cartItemsPrice = order.cartItemsPrice;
 
-
-  let correctProductData = 0
+  let correctProductData = 0;
   Object.keys(cart).map((key) => {
     const itemId = key;
     const quantity = cart[key];
@@ -49,14 +60,13 @@ const DeliveryReceipt = ({ order, products }) => {
       const itemName = itemDataFromProducts.itemName;
       const pieces = itemDataFromProducts.pieces;
       orderDetails.cart.push({ id: itemId, name: itemName, price: price, quantity: quantity, pieces: pieces });
-    }
-    catch {
-      correctProductData += 1
+    } catch {
+      correctProductData += 1;
     }
   });
 
   if (correctProductData > 0) {
-    return null
+    return null;
   }
 
   let grandTotal = 0;
