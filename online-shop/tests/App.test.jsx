@@ -6110,7 +6110,7 @@ describe('test transactionClaimAccount', async () => {
 });
 
 
-describe.only('test transactionPlaceOrder with manualCustomerOrderProcess = true / false', async () => {
+describe('test transactionPlaceOrder with manualCustomerOrderProcess = true / false', async () => {
 
 
     class transactionPlaceOrder {

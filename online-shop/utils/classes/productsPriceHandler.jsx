@@ -23,13 +23,15 @@ class productsPriceHandler {
 
 
   runMain() {
-    // if user is distributor
     if (this.userRole == 'cousin') {
+        console.log('cousin',this.userPrices)
         this.getCousinPrice()
+        this.getUserSpecialPrices()
         return
     }
     if (this.userRole == 'distributor') {
         this.getDistributorPrice()  
+        this.getUserSpecialPrices()
         return 
     }
     if (this.userPrices != null) {
