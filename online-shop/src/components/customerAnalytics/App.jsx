@@ -9,7 +9,8 @@ import dataManipulation from './dataManipulation';
 import menuRules from '../../../utils/classes/menuRules';
 
 const App = () => {
-  const { firestore, userdata,datamanipulation } = useContext(AppContext);
+  const datamanipulation = new dataManipulation();
+  const { firestore, userdata } = useContext(AppContext);
   const [customerMonthlySales, setCustomerMonthlySales] = useState({});
   const [purchaseFrequencyAndTimeBetweenPurchases, setPurchaseFrequencyAndTimeBetweenPurchases] = useState({});
   const [totalValueOfOrder, setTotalValueOfOrder] = useState({});
@@ -32,6 +33,7 @@ const App = () => {
       setTotalValueOfOrder(data);
     });
     firestore.readAllDataFromCollection('Products').then((data) => {
+      console.log(data);
       const filteredData = datamanipulation.appRemovePacksFromProducts(data);
       setProductsData(filteredData);
     });

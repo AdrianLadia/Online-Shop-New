@@ -5,11 +5,17 @@ import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const CustomerGraph = ({data, products}) => {
+
+    
+
     const datamanipulation = new dataManipulation();
     const [ productData, setProductData ] = useState([])
 
     useEffect(()=>{
+      console.log(data)
+      console.log(products)
       const productsData = products.filter((info) => info.itemName == data.name);
+      console.log(productsData)
       setProductData(productsData[0])
     },[])
 
