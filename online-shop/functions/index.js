@@ -660,12 +660,6 @@ exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
 
 // ##############
 function getPriceToUse(itemId,userPrices,userRole, itemUnit, itemDistributorPrice,itemPrice) { 
-      console.log('itemId', itemId)
-      console.log('userPrices', userPrices)
-      console.log('userRole', userRole)
-      console.log('itemUnit', itemUnit)
-      console.log('itemDistributorPrice', itemDistributorPrice)
-      console.log('itemPrice', itemPrice)
       if (userPrices[itemId]) {
         return parseFloat(userPrices[itemId]);
       }
