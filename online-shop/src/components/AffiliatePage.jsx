@@ -197,7 +197,7 @@ const AdminAffiliatePage = () => {
   // get affiliate active orders
   useEffect(() => {
     const docRef = collection(db, 'Orders')
-    const q = query(docRef, where('affiliateUid', '==', userdata ? userdata.uid : null),where('paid','==',false));
+    const q = query(docRef, where('affiliateUid', '==', userdata.uid),where('paid','==',false));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let unpaidOrders = [];
       querySnapshot.forEach((doc) => {
