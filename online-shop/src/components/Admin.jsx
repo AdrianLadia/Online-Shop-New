@@ -16,6 +16,7 @@ import { Routes, Route } from 'react-router-dom';
 // import AdminEditOrders from './AdminEditOrders';
 // import AdminCustomerAccount from './AdminCustomerAccount';
 import SuspenseFallback from '../SuspenseFallback';
+import AdminMonitor from './AdminMonitor';
 
 // const AdminCustomerAccount = lazy(() => import('./AdminCustomerAccount'))
 const AdminNavBar = lazy(() => import('./AdminNavBar'));
@@ -51,6 +52,17 @@ const Admin = () => {
             </div>
           }
         /> */}
+          <Route
+          path="monitor"
+          element={
+            <div>
+              <Suspense fallback={<SuspenseFallback />}>
+                <AdminNavBar />
+                <AdminMonitor />
+              </Suspense>
+            </div>
+          }
+        />
         <Route
           path="customerAccount"
           element={

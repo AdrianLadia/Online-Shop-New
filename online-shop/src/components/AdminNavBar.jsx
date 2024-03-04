@@ -20,6 +20,8 @@ import AppContext from '../AppContext';
 import { CiDeliveryTruck } from 'react-icons/ci';
 import { MdOutlineCancelPresentation } from 'react-icons/md';
 import { AiFillEdit } from 'react-icons/ai';
+import { SlScreenDesktop } from "react-icons/sl";
+import { IoIosPerson } from "react-icons/io";
 
 const AdminNavBar = () => {
   const { width } = UseWindowDimensions();
@@ -325,14 +327,27 @@ const AdminNavBar = () => {
           {rules.checkIfUserAuthorized('customerAccount') ? (
             <MenuItem
               className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
-              id="delivery"
+              id="customerAccount"
               onClick={() => {
                 setAnchorEl(null);
                 startTransition(() => navigateTo('/admin/customerAccount'));
               }}
             >
               {' '}
-              <CiDeliveryTruck size={20} />     <span>Customer Account</span>
+              <IoIosPerson size={20} />     <span>Customer Account</span>
+            </MenuItem>
+          ) : null}
+          {rules.checkIfUserAuthorized('monitor') ? (
+            <MenuItem
+              className="hover:bg-color10b w-11/12 justify-start p-2 ml-2"
+              id="monitor"
+              onClick={() => {
+                setAnchorEl(null);
+                startTransition(() => navigateTo('/admin/monitor'));
+              }}
+            >
+              {' '}
+              <SlScreenDesktop size={20} />     <span>Monitor</span>
             </MenuItem>
           ) : null}
         </Menu>

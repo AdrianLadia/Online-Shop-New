@@ -15,6 +15,7 @@ class menuRules {
             delivery: ['delivery','driver','admin','superAdmin'],
             editCustomerOrders: ['superAdmin'],
             customerAccount: ['superAdmin'],
+            monitor: ['superAdmin'],
         }
         this.redirectPage = {
             admin : 'companyDashboard',
