@@ -6,7 +6,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { set } from 'date-fns';
+import { parse, set } from 'date-fns';
 
 function extractInfo(str) {
   // Split the string based on underscore (_) and dash (-) delimiters
@@ -85,6 +85,7 @@ const AdminMonitor = () => {
   const [selectedHour, setSelectedHour] = useState('');
   const [selectedMinute, setSelectedMinute] = useState('');
   const [screenImage, setScreenImage] = useState(''); // [i
+  const [activityLevel,setActivityLevel] = useState('')
 
   useEffect(() => {
     const fetchComputers = async () => {
@@ -157,21 +158,18 @@ const AdminMonitor = () => {
   }, [computerSelected, dateSelected]);
 
   useEffect(() => {
-    console.log(files);
     const allDates = files.map((file) => file.date);
     const uniqueDates = [...new Set(allDates)];
     setAllDates(uniqueDates);
   }, [files]);
 
   useEffect(() => {
-    console.log('ran date effect');
     const allTimes = files.map((file) => {
       if (file.date === dateSelected) {
         return file.hour + ':' + file.minute + ', ' + file.activityLevel;
       }
     });
     const uniqueTimes = [...new Set(allTimes)];
-    console.log(uniqueTimes);
     setAllTimes(uniqueTimes);
   }, [files]);
 
@@ -185,10 +183,16 @@ const AdminMonitor = () => {
     if (selectedMinute === '') {
       return;
     }
+
     const data = files.filter((file) => {
       return file.date === dateSelected && file.hour === selectedHour && file.minute === selectedMinute;
     });
 
+    if (data.length === 0) {
+      return;
+    }
+    
+    setActivityLevel(data[0].activityLevel)
     setScreenImage(data[0].imageUrl);
   }, [selectedHour, dateSelected, selectedMinute]);
 
@@ -252,6 +256,7 @@ const AdminMonitor = () => {
                 setTimeSelected(event.target.value);
                 setSelectedHour(hour);
                 setSelectedMinute(minute);
+                
               }}
               MenuProps={{
                 PaperProps: {
@@ -269,13 +274,61 @@ const AdminMonitor = () => {
         </Box>
       </div>
       {screenImage === '' ? null : (
-        <div className="flex justify-center h-screen">
-          <img
-            src={screenImage}
-            alt="screen"
-            className="max-w-full h-4/5 object-contain cursor-pointer"
-            onClick={handleImageClick}
-          />
+        <div className="flex flex-col items-center">
+          <div className="flex justify-center w-1/2">
+            <img
+              src={screenImage}
+              alt="screen"
+              className="max-w-full h-4/5 object-contain cursor-pointer"
+              onClick={handleImageClick}
+            />
+          </div>
+          <div className="flex flex-col justify-center items-center mt-10">
+            <div className='flex w-full justify-center flex-col items-center'>
+              <h1>
+                Selected Time: {selectedHour}:{selectedMinute}
+              </h1>
+              <h1>
+                Activity Level: {activityLevel}
+              </h1>
+            </div>
+            <div className="flex flex-row gap-5 mt-10">
+              <button
+                className="p-3 rounded-lg bg-color10a"
+                onClick={() => {
+                  const selectedMinuteInt = parseInt(selectedMinute);
+                  const toSetMinute = selectedMinuteInt - 1;
+                  const selectedHourInt = parseInt(selectedHour);
+                  if (toSetMinute < 0) {
+                    setSelectedHour((selectedHourInt - 1).toString().padStart(2, '0'));
+                    setSelectedMinute((59).toString().padStart(2, '0'));
+                    return;
+                  } else {
+                    setSelectedMinute(toSetMinute.toString().padStart(2, '0'));
+                  }
+                }}
+              >
+                prev
+              </button>
+              <button
+                className="p-3 rounded-lg bg-color10a"
+                onClick={() => {
+                  const selectedMinuteInt = parseInt(selectedMinute);
+                  const toSetMinute = selectedMinuteInt + 1;
+                  const selectedHourInt = parseInt(selectedHour);
+                  if (toSetMinute > 59) {
+                    setSelectedHour((selectedHourInt + 1).toString().padStart(2, '0'));
+                    setSelectedMinute((0).toString().padStart(2, '0'));
+                    return;
+                  } else {
+                    setSelectedMinute(toSetMinute.toString().padStart(2, '0'));
+                  }
+                }}
+              >
+                next
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
