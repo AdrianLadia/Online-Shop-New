@@ -40,7 +40,6 @@ export default function Graph(props) {
       } else {
         latestStocksLowestPoint = stock.lowestPoint;
       }
-      console.log(stock.year, stock.month);
       const date = new Date(stock.year, stock.month, 1);
 
       //  date to exclude because all data in these dates is invalid
