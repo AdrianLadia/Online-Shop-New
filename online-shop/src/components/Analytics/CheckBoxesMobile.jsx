@@ -6,16 +6,8 @@ export const CheckBoxesMobile = ({name, callback}) => {
   
   const [selectedOption, setSelectedOption] = useState("");
   const [customized, setCustomized] = useState("");
-
   const {categories}= useContext(AppContext)
 
-
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  }, []);
 
   useEffect(()=>{
     setCustomized("");

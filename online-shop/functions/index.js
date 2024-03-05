@@ -1797,7 +1797,7 @@ async function deleteOldOrders() {
       }
 
       // IF ORDER IS NOT EXPIRED DO NOT DELETE (24 hr window)
-      let orderTimeStamp = order.orderDate;
+      let orderTimeStamp = order.deliveryDate;
       try {
         orderTimeStamp = orderTimeStamp.toDate();
       } catch {
