@@ -2221,6 +2221,7 @@ describe('afterCheckoutRedirectLogic', async () => {
           deliveryVehicle: this.deliveryVehicle,
           kilometersFromStore: 10,
           manualCustomerOrderProcess: false,
+          contactName: 'Test User',
         },
         true
       );
@@ -2521,6 +2522,8 @@ describe('deleteOldOrders', async () => {
     });
     await firestore.updateDocumentFromCollection('Orders', 'testref1234', { orderDate: twoDaysAgo });
     await firestore.updateDocumentFromCollection('Orders', 'testref12345', { orderDate: twoDaysAgo });
+    await firestore.updateDocumentFromCollection('Orders', 'testref1234', { deliveryDate: twoDaysAgo });
+    await firestore.updateDocumentFromCollection('Orders', 'testref12345', { deliveryDate: twoDaysAgo });
   }, 100000);
 
   test('check if order deleted', async () => {
@@ -2638,6 +2641,7 @@ describe('deleteOldOrders', async () => {
     const orders = userdata.orders;
 
     cloudfirestore.updateDocumentFromCollection('Orders', 'testref1234', { orderDate: twoDaysAgo });
+    await firestore.updateDocumentFromCollection('Orders', 'testref1234', { deliveryDate: twoDaysAgo });
 
     await cloudfirestore.transactionPlaceOrder({
       deliveryDate: new Date(),
@@ -4566,6 +4570,7 @@ describe('test edit customer order function', () => {
   });
 }, 100000000);
 
+// .only
 describe('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
@@ -4854,6 +4859,8 @@ describe('test transactionPlaceOrder and transactionCreatePayment with Guest Use
 
     await cloudfirestore.updateDocumentFromCollection('Orders', 'testref0', { orderDate: date });
     await cloudfirestore.updateDocumentFromCollection('Orders', 'testref012', { orderDate: date });
+    await cloudfirestore.updateDocumentFromCollection('Orders', 'testref0', { deliveryDate: date });
+    await cloudfirestore.updateDocumentFromCollection('Orders', 'testref012', { deliveryDate: date });
     await delay(500);
 
     const testref0 = await firestore.readSelectedDataFromCollection('Orders', 'testref0');

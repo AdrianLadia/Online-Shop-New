@@ -688,7 +688,7 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       return;
     }
 
-    const data = parseData(req.query.data);
+    const data = req.body;
     let userid = data.userid;
     console.log('reqData', data);
     console.log('userid', userid);
@@ -1534,9 +1534,14 @@ exports.payMayaCheckout = onRequest(async (req, res) => {
       Authorization: `Basic ${convertToBase64(publicKey)}`,
       'Content-Type': 'application/json',
     };
-
-    const response = await axios.post(url, payload, { headers });
-    res.send(response.data);
+    try{
+      const response = await axios.post(url, payload, { headers });
+      res.send(response.data);
+    }
+    catch (error) {
+      console.log('error', error);
+      res.status(400).send('Error creating checkout request.');
+    }
   });
 });
 
@@ -1780,7 +1785,6 @@ async function deleteOldOrders() {
       // IF THERE IS PAYMENT UNDER REVIEW DO NOT DELETE
       let paymentLinks;
       const order = orderObj.data();
-      logger.log(order);
       paymentLinks = order.proofOfPaymentLink;
       if (paymentLinks == null) {
         paymentLinks = [];
@@ -1808,7 +1812,6 @@ async function deleteOldOrders() {
       const msInHour = 1000 * 60 * 60;
       const diffHours = Math.floor(diffTime / msInHour);
       const lessThanExpiryHours = diffHours < expiryHours;
-
       if (lessThanExpiryHours) {
         return;
       }

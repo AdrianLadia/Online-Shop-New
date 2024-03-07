@@ -249,7 +249,8 @@ const CheckoutPage = () => {
             date: new Date(),
             deliveryVehicle: deliveryVehicle,
             kilometersFromStore: kilometersFromStore,
-            manualCustomerOrderProcess:manualCustomerOrderProcess
+            manualCustomerOrderProcess:manualCustomerOrderProcess,
+            contactName: localname,
           })
           .then((url) => {
             if (url) {

@@ -635,9 +635,11 @@ class businessCalculations {
       deliveryVehicle: Joi.object().required().allow(null),
       kilometersFromStore: Joi.number().required().allow(null),
       manualCustomerOrderProcess: Joi.boolean().required(),
+      contactName: Joi.string().required().allow(null),
     }).required();
 
     const { error } = dataSchema.validate(data);
+    console.log(data)
 
     if (error) {
       throw new Error(error);
@@ -679,13 +681,20 @@ class businessCalculations {
     if (testing === false) {
       // FOR MAYA WITH WEBHOOK
       if (['maya', 'visa', 'mastercard', 'gcash', 'shoppeepay', 'wechatpay'].includes(paymentMethodSelected) && manualCustomerOrderProcess === false) {
-        const fullName = data.fullName;
+        let fullName
+        if (data.fullName == 'Guest') {
+          fullName = data.contactName
+        }
+        else {
+          fullName = data.fullName
+        }
         const nameParts = fullName.split(' ');
         const firstName = nameParts[0];
-        const lastName = nameParts[nameParts.length - 1];
+        const lastName = nameParts.length > 1 ? nameParts[nameParts.length -1] : '';
         const eMail = data.eMail;
         const phoneNumber = data.phoneNumber;
         const totalPrice = data.grandTotal;
+       
         if (testing === false) {
           const req = {
             totalAmount: {
@@ -706,15 +715,13 @@ class businessCalculations {
               lastName: lastName ? lastName : '',
             },
             redirectUrl: {
-              success: redirectUrl + '/checkoutSuccess' + '?data=' + checkoutParameter,
-              failure: redirectUrl + '/checkoutFailed' + '?data=' + checkoutParameter,
-              cancel: redirectUrl + '/checkoutCancelled' + '?data=' + checkoutParameter,
+              success: redirectUrl + '/checkoutSuccess' ,
+              failure: redirectUrl + '/checkoutFailed',
+              cancel: redirectUrl + '/checkoutCancelled',
             },
             requestReferenceNumber: data.referenceNumber,
-            // "metadata": {
-            //   "userId" : userId
-            // }
           };
+          console.log(req)
           const isSandbox = new AppConfig().getIsPaymentSandBox();
           const res = await this.cloudfirestore.payMayaCheckout({ payload: req, isSandbox: isSandbox });
           const url = res.data.redirectUrl;
