@@ -10,6 +10,7 @@ class disableCodHandler {
     this.bannedPhoneNumbers = [
       { number: '+639178927202', reason: 'test' }, //do not delete because this is used for testing
       { number: '+639654000844', reason: 'Order on 10/25 was not received' },
+      { number: '+639178519095', reason: 'Order on 03/11 was not received' },
     ];
     this.bannedEmails = [
       { email: 'test@gmail.com', reason: 'test' }, //do not delete because this is used for testing

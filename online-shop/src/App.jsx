@@ -173,7 +173,7 @@ function App() {
       const userAffiliateId = userdata ? userdata.affiliate : null;
       const cookieAffiliateId = localStorage.getItem('affiliateId');
       const affiliateHandler_ = new affiliateHandler(
-        cookieAffiliateId,
+        cookieAffiliateId,a
         urlAffiliateId,
         userAffiliateId,
         affiliateUsers
