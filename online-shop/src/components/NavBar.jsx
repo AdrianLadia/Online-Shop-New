@@ -1,11 +1,11 @@
 import React from 'react';
-import { useState, useContext,startTransition } from 'react';
+import { useState, useContext, startTransition } from 'react';
 import AppContext from '../AppContext';
 import Button from '@mui/material/Button';
 import AccountMenu from './AccountMenu';
 import Logo from './Logo';
 import LoginButton from './LoginButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AiFillHome } from 'react-icons/ai';
 import onLogoutClick from '../../utils/classes/onLogoutClick';
 import { FaShoppingCart } from 'react-icons/fa';
@@ -13,9 +13,9 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 
 const NavBar = () => {
-  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart} =
-    useContext(AppContext);
+  const { userdata, setUserData, auth, setUserLoaded, setUserState, setUserId, setCart } = useContext(AppContext);
   const navigateTo = useNavigate();
+  let location = useLocation();
 
   async function logOutClick() {
     await signOut(auth);
@@ -26,7 +26,6 @@ const NavBar = () => {
     setCart({});
 
     startTransition(() => navigateTo('/'));
-  
   }
 
   function storeClick() {
@@ -46,21 +45,24 @@ const NavBar = () => {
       <div className="flex items-center justify-between  bg-color10c w-full h-16 ">
         <Logo onClick={storeClick} />
         <div className="flex flex-row items-center lg:gap-5 mr-5">
-          <Tooltip title="Shop">
-            <IconButton aria-label="Shop" size="large" color="primary">
-              <FaShoppingCart className="cursor-pointer" size={35} color="#69b05c" onClick={cartClick} />
-            </IconButton>
-          </Tooltip>
-          <div className="hover:cursor-pointer " onClick={homeClick}>
-            <Tooltip title="Home">
-              <IconButton aria-label="Home" size="large" color="primary">
-                <AiFillHome className="cursor-pointer" size={35} color="#69b05c" />
+          {location.pathname === '/shop' ? null : (
+            <Tooltip title="Shop">
+              <IconButton aria-label="Shop" size="large" color="primary">
+                <FaShoppingCart className="cursor-pointer" size={35} color="#69b05c" onClick={cartClick} />
               </IconButton>
             </Tooltip>
-          </div>
+          )}
+          {location.pathname === '/' ? null : (
+            <div className="hover:cursor-pointer " onClick={homeClick}>
+              <Tooltip title="Home">
+                <IconButton aria-label="Home" size="large" color="primary">
+                  <AiFillHome className="cursor-pointer" size={35} color="#69b05c" />
+                </IconButton>
+              </Tooltip>
+            </div>
+          )}
           <div className="flex flex-row">
             {userdata ? (
-              
               <AccountMenu
                 userdata={userdata}
                 signout={() => {
