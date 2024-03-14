@@ -69,7 +69,7 @@ const Admin = () => {
             <div>
               <Suspense fallback={<SuspenseFallback />}>
                 <AdminNavBar />
-                <AdminCustomerAccount />
+                <AdminCustomerAccount products={products}/>
               </Suspense>
             </div>
           }

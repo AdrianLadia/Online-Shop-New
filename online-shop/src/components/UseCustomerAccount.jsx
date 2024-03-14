@@ -5,6 +5,8 @@ import AppContext from '../AppContext';
 import { Autocomplete, TextField, Modal, Box, Typography } from '@mui/material';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { CircularProgress } from '@mui/material';
+import AdminCustomerAccountEditPrice from './AdminCustomerAccountEditPrice';
+import AdminCustomerAccountAddUserPrice from './AdminCustomerAccountAddUserPrice';
 
 const isSmallScreen = () => {
   return window.innerWidth <= 480; // iPhone screen width or similar
@@ -22,7 +24,7 @@ const style = {
   p: 4,
 };
 
-function UseCustomerAccount() {
+function UseCustomerAccount({products}) {
   const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const {
@@ -33,6 +35,7 @@ function UseCustomerAccount() {
     alertSnackbar,
     setUserId,
     setManualCustomerOrderProcess,
+    isSuperAdmin,
   } = useContext(AppContext);
   const [selectedManualCustomer, setSelectedManualCustomer] = useState(null);
   const [manualCustomers, setManualCustomers] = useState([]);
@@ -40,14 +43,31 @@ function UseCustomerAccount() {
   const navigateTo = useNavigate();
   useEffect(() => {
     const docRef = collection(db, 'Users');
-    const q = query(docRef, where('isAccountClaimed', '==', false));
+    let q
+    if (isSuperAdmin) {
+      console.log('Super Admin');
+      q = query(docRef);
+    }
+    else {
+      q = query(docRef, where('isAccountClaimed', '==', false));
+    }
+    // const q = query(docRef, where('isAccountClaimed', '==', false));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const userData = [];
       querySnapshot.forEach((doc) => {
         userData.push(doc.data());
       });
 
-      const _userData = userData.sort((a, b) => {
+      let _userData = userData.filter((user) => {
+        if (user.name) {
+          return user;
+        }
+        else {
+          return null;
+        }
+      });
+
+      _userData = _userData.sort((a, b) => {
         if (a.name.toLowerCase() < b.name.toLowerCase()) {
           return -1;
         }
@@ -56,7 +76,7 @@ function UseCustomerAccount() {
         }
         return 0;
       });
-
+      
       setManualCustomers(_userData);
     });
 
@@ -81,17 +101,24 @@ function UseCustomerAccount() {
     }
   }
 
+  useEffect(() => {
+    console.log(selectedManualCustomer);
+  }, [selectedManualCustomer]);
+
   return (
     <div className="flex flex-col  w-9/10 lg:w-400px justify-center items-center ">
       <div className="flex flex-row items-center w-full  gap-5 mb-5">
         <Autocomplete
-          value={selectedManualCustomer ? selectedManualCustomer.name : ''}
-          options={manualCustomers.map((option) => option.name)}
+          value={selectedManualCustomer ?{name : selectedManualCustomer?.name, uid: selectedManualCustomer?.uid} : ''}
+          options={manualCustomers.map((option) => ({ uid: option.uid, name: option.name }))}
+          getOptionLabel={(option) => option.name}
           disablePortal
           id="combo-box-demo"
           className="w-full"
           onChange={(event, newValue) => {
-            const customerData = manualCustomers.find((item) => item.name === newValue);
+            console.log(newValue.uid)
+            const customerData = manualCustomers.find((user) => user.uid === newValue.uid);
+            console.log(customerData);
             setSelectedManualCustomer(customerData);
           }}
           renderInput={(params) => (
@@ -183,6 +210,35 @@ function UseCustomerAccount() {
           <span className="text-white font-bold mr-1">Share</span>
         </button>
       </div>
+      <div className="flex flex-col">
+        <div className="flex flex-row">
+          <Typography variant="p">Customer Account : </Typography>
+          <Typography variant="p" className="ml-1">
+            {selectedManualCustomer?.role || null}
+          </Typography>
+        </div>
+        <div className="flex flex-row">
+          <Typography variant="p">Customer Affiliate : </Typography>
+          <Typography variant="p" className="ml-1">
+            {selectedManualCustomer?.affiliate}
+          </Typography>
+        </div>
+      </div>
+      <Typography variant="h4">Customer Prices</Typography>
+      {Object.keys(selectedManualCustomer?.userPrices || {}).map((key) => {
+        const item = key;
+        const price = selectedManualCustomer?.userPrices[key];
+        return (
+          <div className="flex flex-row gap-5">
+            <AdminCustomerAccountEditPrice item={item} price={price} />
+          </div>
+        );
+      })}
+      <div className='w-full  flex justify-center mt-5'>
+
+      <AdminCustomerAccountAddUserPrice products={products} />
+      </div>
+
     </div>
   );
 }

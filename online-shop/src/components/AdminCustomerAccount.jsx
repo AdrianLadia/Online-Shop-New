@@ -5,7 +5,8 @@ import menuRules from '../../utils/classes/menuRules';
 import UseCustomerAccount from './UseCustomerAccount';
 import { Typography } from '@mui/material';
 
-const AdminCustomerAccount = () => {
+
+const AdminCustomerAccount = ({products}) => {
   const { userdata } = useContext(AppContext);
   const rules = new menuRules(userdata.userRole);
   return !rules.checkIfUserAuthorized('customerAccount') ? (
@@ -15,7 +16,8 @@ const AdminCustomerAccount = () => {
   ) : (
     <div className="flex flex-col w-full justify-center items-center gap-10 mt-10">
       <Typography variant="h4">Customer Account</Typography>
-      <UseCustomerAccount />
+      <UseCustomerAccount products={products} />
+      
     </div>
   );
 };
