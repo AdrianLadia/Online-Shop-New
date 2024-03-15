@@ -24,7 +24,7 @@ const style = {
   p: 4,
 };
 
-function UseCustomerAccount({products}) {
+function UseCustomerAccount({ products }) {
   const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const {
@@ -37,18 +37,19 @@ function UseCustomerAccount({products}) {
     setManualCustomerOrderProcess,
     isSuperAdmin,
   } = useContext(AppContext);
-  const [selectedManualCustomer, setSelectedManualCustomer] = useState(null);
+  const [selectedManualCustomer, setSelectedManualCustomer] = useState({ name: '', uid: '' });
   const [manualCustomers, setManualCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [userPrices, setUserPrices] = useState({});
+
   const navigateTo = useNavigate();
   useEffect(() => {
     const docRef = collection(db, 'Users');
-    let q
+    let q;
     if (isSuperAdmin) {
       console.log('Super Admin');
       q = query(docRef);
-    }
-    else {
+    } else {
       q = query(docRef, where('isAccountClaimed', '==', false));
     }
     // const q = query(docRef, where('isAccountClaimed', '==', false));
@@ -61,8 +62,7 @@ function UseCustomerAccount({products}) {
       let _userData = userData.filter((user) => {
         if (user.name) {
           return user;
-        }
-        else {
+        } else {
           return null;
         }
       });
@@ -76,7 +76,7 @@ function UseCustomerAccount({products}) {
         }
         return 0;
       });
-      
+
       setManualCustomers(_userData);
     });
 
@@ -102,24 +102,26 @@ function UseCustomerAccount({products}) {
   }
 
   useEffect(() => {
-    console.log(selectedManualCustomer);
+    setUserPrices(selectedManualCustomer?.userPrices);
   }, [selectedManualCustomer]);
 
   return (
     <div className="flex flex-col  w-9/10 lg:w-400px justify-center items-center ">
       <div className="flex flex-row items-center w-full  gap-5 mb-5">
         <Autocomplete
-          value={selectedManualCustomer ?{name : selectedManualCustomer?.name, uid: selectedManualCustomer?.uid} : ''}
+          value={selectedManualCustomer ? { name: selectedManualCustomer?.name, uid: selectedManualCustomer?.uid } : ''}
           options={manualCustomers.map((option) => ({ uid: option.uid, name: option.name }))}
           getOptionLabel={(option) => option.name}
           disablePortal
           id="combo-box-demo"
           className="w-full"
           onChange={(event, newValue) => {
-            console.log(newValue.uid)
-            const customerData = manualCustomers.find((user) => user.uid === newValue.uid);
-            console.log(customerData);
-            setSelectedManualCustomer(customerData);
+            if (newValue) {
+              console.log(newValue.uid);
+              const customerData = manualCustomers.find((user) => user.uid === newValue.uid);
+              console.log(customerData);
+              setSelectedManualCustomer(customerData);
+            }
           }}
           renderInput={(params) => (
             <TextField
@@ -210,35 +212,54 @@ function UseCustomerAccount({products}) {
           <span className="text-white font-bold mr-1">Share</span>
         </button>
       </div>
-      <div className="flex flex-col">
-        <div className="flex flex-row">
+      {isSuperAdmin ? (
+        <>
+          <div className="flex flex-col">
+            {/* <div className="flex flex-row">
           <Typography variant="p">Customer Account : </Typography>
           <Typography variant="p" className="ml-1">
             {selectedManualCustomer?.role || null}
           </Typography>
-        </div>
-        <div className="flex flex-row">
-          <Typography variant="p">Customer Affiliate : </Typography>
-          <Typography variant="p" className="ml-1">
-            {selectedManualCustomer?.affiliate}
-          </Typography>
-        </div>
-      </div>
-      <Typography variant="h4">Customer Prices</Typography>
-      {Object.keys(selectedManualCustomer?.userPrices || {}).map((key) => {
-        const item = key;
-        const price = selectedManualCustomer?.userPrices[key];
-        return (
-          <div className="flex flex-row gap-5">
-            <AdminCustomerAccountEditPrice item={item} price={price} />
+        </div> */}
+            <div className="flex flex-row">
+              <Typography variant="p">UserId : </Typography>
+              <Typography variant="p" className="ml-1">
+                {selectedManualCustomer?.uid || null}
+              </Typography>
+            </div>
+            <div className="flex flex-row w-full">
+              <Typography variant="p">Affiliate : </Typography>
+              <Typography variant="p" className="ml-1">
+                {selectedManualCustomer?.affiliate}
+              </Typography>
+            </div>
           </div>
-        );
-      })}
-      <div className='w-full  flex justify-center mt-5'>
-
-      <AdminCustomerAccountAddUserPrice products={products} />
-      </div>
-
+          <div className="flex  flex-col  items-center mt-5">
+            <Typography variant="h4">Customer Prices</Typography>
+            {Object.keys(userPrices || {}).map((key) => {
+              const item = key;
+              const price = userPrices[key];
+              return (
+                <div className="flex flex-row gap-5">
+                  <AdminCustomerAccountEditPrice
+                    selectedCustomer={selectedManualCustomer}
+                    item={item}
+                    price={price}
+                    setUserPrices={setUserPrices}
+                  />
+                </div>
+              );
+            })}
+            <div className="w-full  flex justify-center mt-5 mb-10">
+              <AdminCustomerAccountAddUserPrice
+                products={products}
+                selectedCustomer={selectedManualCustomer}
+                setUserPrices={setUserPrices}
+              />
+            </div>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }

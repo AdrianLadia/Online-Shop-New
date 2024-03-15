@@ -2947,6 +2947,19 @@ describe('testCancelOrder', () => {
     const data = await firestore.readSelectedDataFromCollection('Orders', 'testref1234');
     expect(data).toEqual(undefined);
 
+    const payments = await firestore.readAllDataFromCollection('Payments');
+    let found = false;
+    payments.map((payment) => {
+      const reference = payment.orderReference;
+      if (reference == 'testref1234') {
+        found = true;
+      }
+    });
+
+    if (found) {
+      throw new Error('Payment not deleted');
+    }
+
     const productDataNew = await cloudfirestore.readSelectedDataFromCollection('Products', 'PPB#16');
     productDataNew.stocksOnHold.map((stock) => {
       if (stock.reference == 'testref1234') {
@@ -3138,6 +3151,114 @@ describe('test commission system', async () => {
 
     await firestore.deleteDocumentFromCollection('Users', 'TESTAFFILIATE');
     await firestore.deleteDocumentFromCollection('Users', 'TESTUSER');
+    await firestore.createProduct(
+      {
+        itemId: 'comtest1',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 1000,
+        description: 'none',
+        weight: 15,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: [],
+      },
+      'comtest1',
+      allProducts
+    );
+    await firestore.createProduct(
+      {
+        itemId: 'comtest2',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 10000,
+        description: 'none',
+        weight: 15,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: [],
+      },
+      'comtest2',
+      allProducts
+    );
+    await firestore.createProduct(
+      {
+        itemId: 'comtest3-RET',
+        itemName: 'testname',
+        unit: 'bale',
+        price: 100000,
+        description: 'none',
+        weight: 15,
+        dimensions: '10x12',
+        category: 'Paper Bag',
+        imageLinks: ['testlink'],
+        brand: 'testbrand',
+        pieces: 1999,
+        color: 'red',
+        material: 'material',
+        size: '10',
+        stocksAvailable: 23,
+        stocksOnHold: [],
+        averageSalesPerDay: 0,
+        parentProductID: 'test',
+        stocksOnHoldCompleted: [],
+        forOnlineStore: true,
+        isCustomized: false,
+        salesPerMonth: [],
+        stocksIns: [],
+        clicks: [],
+        piecesPerPack: 1,
+        packsPerBox: 10,
+        cbm: 1,
+        manufactured: true,
+        machinesThatCanProduce: '',
+        stocksLowestPoint: [],
+      },
+      'comtest3-RET',
+      allProducts
+    );
     await cloudfirestore.createNewUser(
       {
         uid: 'TESTAFFILIATE',
@@ -3205,11 +3326,11 @@ describe('test commission system', async () => {
       locallongitude: 2.112,
       localphonenumber: '09178927206',
       localname: 'Adrian Ladia',
-      cart: { 'PPB#1-RET': 10, 'PPB#2-RET': 10, 'PPB#3': 1 },
-      itemstotal: 350000,
+      cart: { 'comtest1': 10, 'comtest2': 10, 'comtest3-RET': 1 },
+      itemstotal: 210000,
       vat: 0,
-      shippingtotal: 100,
-      grandTotal: 1000,
+      shippingtotal: 5000,
+      grandTotal: 215000,
       reference: 'testref12',
       userphonenumber: '09178927206',
       deliveryNotes: 'Test',
@@ -3237,7 +3358,7 @@ describe('test commission system', async () => {
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
-      amount: 100000,
+      amount: 150000,
       reference: 'testref12',
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
@@ -3245,7 +3366,7 @@ describe('test commission system', async () => {
     await delay(transactionCreatePaymentDelay);
     await cloudfirestore.transactionCreatePayment({
       userId: 'TESTUSER',
-      amount: 200000,
+      amount: 10000,
       reference: 'testref12',
       paymentprovider: 'gcash',
       proofOfPaymentLink: 'www.test.com',
@@ -3386,7 +3507,7 @@ describe('test commission system', async () => {
     const commissions = affiliateData.affiliateCommissions;
     let found = false;
     commissions.forEach((commission) => {
-      if (commission.commission == '87.21') {
+      if (commission.commission == '976.19') {
         found = true;
       }
     });
@@ -4570,7 +4691,7 @@ describe('test edit customer order function', () => {
   });
 }, 100000000);
 
-// .only
+
 describe('test transactionPlaceOrder and transactionCreatePayment with Guest User', () => {
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
@@ -6197,7 +6318,7 @@ describe('test transactionPlaceOrder with manualCustomerOrderProcess = true / fa
   });
 })
 
-describe.only('test editUserPrice', async () => {
+describe('test editUserPrice', async () => {
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
       {
@@ -6236,14 +6357,25 @@ describe.only('test editUserPrice', async () => {
     expect(user.userPrices['PPB#1']).toEqual(1000)
     // add another user price
     await firestore.editUserPrice('testEditUser', 'PPB#2', 2000)
+    user = await firestore.readSelectedDataFromCollection('Users', 'testEditUser');
+    expect(user.userPrices['PPB#1']).toEqual(1000)
+    expect(user.userPrices['PPB#2']).toEqual(2000)
     // edit user price
     await firestore.editUserPrice('testEditUser', 'PPB#1', 1500)
+    user = await firestore.readSelectedDataFromCollection('Users', 'testEditUser');
+    expect(user.userPrices['PPB#1']).toEqual(1500)
+    expect(user.userPrices['PPB#2']).toEqual(2000)
     // edit user price
     await firestore.editUserPrice('testEditUser', 'PPB#2', 2500)
+    user = await firestore.readSelectedDataFromCollection('Users', 'testEditUser');
+    expect(user.userPrices['PPB#1']).toEqual(1500)
+    expect(user.userPrices['PPB#2']).toEqual(2500)
     // delete user price
     await firestore.deleteUserPrice('testEditUser', 'PPB#1')
+    user = await firestore.readSelectedDataFromCollection('Users', 'testEditUser');
+    expect(user.userPrices['PPB#1']).toEqual(undefined)
   })
   test('clean test', async () => {
     await firestore.deleteDocumentFromCollection('Users', 'testEditUser');
   })
-});
+},9999999);

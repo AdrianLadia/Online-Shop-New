@@ -684,28 +684,29 @@ class firestoredb extends firestorefunctions {
 
   async editUserPrice(userId, itemId, price) {
     const user = await this.readSelectedDataFromCollection('Users', userId);
-    const oldUserPrices = user.userPrices;
-    let newUserPrices = Object.keys(oldUserPrices).map(userPriceKey => {
-      let userPrice = userPrice[userPriceKey];
-      if (userPrice.itemId === itemId) {
-        return { ...userPrice, price: price };
+    let userPrices = user.userPrices;
+    console.log('userPrices',userPrices)
+    Object.keys(userPrices).map(userPriceKey => {
+      if (userPriceKey === itemId) {
+        userPrices[userPriceKey] = parseFloat(price);
       }
-      return userPrice;
     });
     
     // If itemId does not exist in oldUserPrices, add it
-    if (!newUserPrices.find((userPrice) => userPrice.itemId === itemId)) {
-      newUserPrices = {...oldUserPrices, [itemId]:price}
+    if (!userPrices.hasOwnProperty(itemId)) {
+      userPrices = {...userPrices, [itemId]:parseFloat(price)}
     }
-
-    await this.updateDocumentFromCollection('Users',userId,{userPrices:newUserPrices})
+    console.log('userPrices',userPrices)
+    await this.updateDocumentFromCollection('Users',userId,{userPrices:userPrices})
   }
 
   async deleteUserPrice(userId, itemId) {
     const user = await this.readSelectedDataFromCollection('Users', userId);
-    const oldUserPrices = user.userPrices;
-    let newUserPrices = oldUserPrices.filter((userPrice) => userPrice.itemId !== itemId);
-    await this.updateDocumentFromCollection('Users',userId,{userPrices:newUserPrices})
+    let userPrices = user.userPrices;
+    if (userPrices.hasOwnProperty(itemId)) {
+      delete userPrices[itemId];
+    }
+    await this.updateDocumentFromCollection('Users',userId,{userPrices:userPrices})
   }
 
   // async markCommissionPending(data, date, id){

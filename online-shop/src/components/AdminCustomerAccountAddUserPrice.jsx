@@ -4,7 +4,8 @@ import { useState, useContext } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import AppContext from '../AppContext';
 
-const AdminCustomerAccountAddUserPrice = ({ products, userId }) => {
+const AdminCustomerAccountAddUserPrice = ({ products, selectedCustomer,setUserPrices }) => {
+  const {firestore,alertSnackbar} = useContext(AppContext);
   const [_price, _setPrice] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const _filiteredProducts = products.filter((option) => {
@@ -16,13 +17,22 @@ const AdminCustomerAccountAddUserPrice = ({ products, userId }) => {
     
   }, [selectedProduct]);
 
-  function updateUserPrice() {
+  async function updateUserPrice() {
     const itemId = selectedProduct.itemId;
     const itemName = selectedProduct.itemName;
     const price = _price;
     console.log(itemId);
     console.log(itemName);
     console.log(price);
+    console.log(selectedCustomer.uid);
+    await firestore.editUserPrice(selectedCustomer.uid, itemId, price);
+    alertSnackbar('success', 'New Price Added Successfully');
+    setUserPrices((prev) => {
+      return {
+        ...prev,
+        [itemId]: price,
+      };
+    });
   }
 
   return (
@@ -53,11 +63,11 @@ const AdminCustomerAccountAddUserPrice = ({ products, userId }) => {
             _setPrice(e.target.value);
           }}
         />
-        <Button onClick={()=>{
+        <button onClick={()=>{
             updateUserPrice();
-        }} variant="contained" color="primary">
+        }} className='p-3 bg-color10b rounded-lg text-white'>
           Save
-        </Button>
+        </button>
       </div>
     </div>
   );

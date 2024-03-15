@@ -1321,10 +1321,44 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     const orderReference = data.reference;
     const paymentprovider = data.paymentprovider;
 
+    
     const commissionPercentage = 0.01;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
     const db = admin.firestore();
+    const orderRef = db.collection('Orders').doc(orderReference);
+    const orderSnapshot = await orderRef.get();
+    const orderData = orderSnapshot.data();
+    const cart = orderData.cart;
+    const cartItemPrice = orderData.cartItemsPrice;
+    let commissionObjectsList = [];
+    Object.keys(cart).forEach((key) => {
+        const itemId = key;
+        const itemQuantity = cart[key];
+        const itemPrice = cartItemPrice[key];
+        let unit
+        let commissionPercentage
+        if (itemId.slice(-4) === '-RET') {
+            unit = 'retail'     
+            commissionPercentage = 0.03;       
+        }
+        else {
+            unit = 'wholesale'
+            commissionPercentage = 0.01;
+        }
+        const itemTotal = itemPrice * itemQuantity;
+        const commission = itemTotal * commissionPercentage;
+        const commissionObject = {
+          itemId,itemQuantity,itemPrice,itemTotal,unit,commissionPercentage,commission
+        }
+        commissionObjectsList.push(commissionObject)
+    });
+    console.log('commissionObjectsList', commissionObjectsList);
+    let totalCommission = commissionObjectsList.reduce((a, b) => a + b.commission, 0);
+    totalCommission = parseFloat(totalCommission.toFixed(2));
+    
+
+    console.log('totalCommission', totalCommission);
     let userId;
 
     let paymentNotAccepted = false;
@@ -1376,9 +1410,9 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
             const affiliateUserSnap = await transaction.get(affiliateUserRef);
             const affiliateUserData = affiliateUserSnap.data();
             const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
-
-            const commission =
-              ((parseFloat(depositAmount) - lessCommissionToShipping) / (1 + vatPercentage)) * commissionPercentage;
+            let commission = depositAmount / itemsTotal * totalCommission;
+            commission = Math.round(commission * 100) / 100;
+            console.log('commission', commission );
             newAffiliateCommissions = [
               ...oldAffiliateCommissions,
               {
@@ -2009,31 +2043,14 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
           let orders = userData.orders;
           console.log('orderRef', orderReference);
           const paymentsRef = db.collection('Payments').where('orderReference', '==', orderReference);
+          console.log('paymentsRef', paymentsRef);
           let docRef;
-          paymentsRef
-            .get()
-            .then((querySnapshot) => {
-              if (!querySnapshot.empty) {
-                // If documents are found
-                querySnapshot.forEach((doc) => {
-                  // doc is a document snapshot
-                  console.log('Document found:', doc.id, doc.data());
-
-                  // To get a document reference
-                  docRef = doc.ref;
-
-                  // Do something with the document reference
-                  // ...
-                });
-              } else {
-                // No documents found
-                console.log('No matching documents.');
-              }
-            })
-            .catch((error) => {
-              console.error('Error getting documents: ', error);
-            });
-
+          const paymentsSnapshot = await transaction.get(paymentsRef);
+          paymentsSnapshot.forEach((doc) => {
+            docRef = doc.ref;
+          });
+        
+          console.log('docRef', docRef);
           const data = orders.filter((order) => order.reference != orderReference);
 
           const cancelledOrderRef = db.collection('Orders').doc(orderReference);

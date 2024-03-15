@@ -197,6 +197,9 @@ const AdminAffiliatePage = () => {
   // get affiliate active orders
   useEffect(() => {
     const docRef = collection(db, 'Orders')
+    if (!userdata) {
+      return;
+    }
     const q = query(docRef, where('affiliateUid', '==', userdata.uid),where('paid','==',false));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let unpaidOrders = [];
@@ -207,7 +210,7 @@ const AdminAffiliatePage = () => {
   
       setUnpaidOrders(unpaidOrders)
     });
-  }, []);
+  }, [userdata]);
 
   useEffect(() => {
     cloudfirestore.readAllDataFromCollection('Products').then((res) => {
