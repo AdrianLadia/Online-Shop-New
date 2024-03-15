@@ -516,8 +516,13 @@ const CheckoutPage = () => {
     }
   }
 
+  const [step, setStep] = useState('delivery');
+
   return (
     <ThemeProvider theme={theme}>
+      <div className='h-screen flex-col bg-colorbackground'>
+          test
+      </div>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
         <div className="flex flex-col justify-center w-full items-center">
