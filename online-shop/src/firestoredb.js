@@ -682,6 +682,31 @@ class firestoredb extends firestorefunctions {
     return data;
   }
 
+  async editUserPrice(userId, itemId, price) {
+    const user = await this.readSelectedDataFromCollection('Users', userId);
+    const oldUserPrices = user.userPrices;
+    let newUserPrices = oldUserPrices.map((userPrice) => {
+      if (userPrice.itemId === itemId) {
+        return { ...userPrice, price: price };
+      }
+      return userPrice;
+    });
+    
+    // If itemId does not exist in oldUserPrices, add it
+    if (!newUserPrices.find((userPrice) => userPrice.itemId === itemId)) {
+      newUserPrices.push({ itemId: itemId, price: price });
+    }
+
+    await this.updateDocumentFromCollection('Users',userId,{userPrices:newUserPrices})
+  }
+
+  async deleteUserPrice(userId, itemId) {
+    const user = await this.readSelectedDataFromCollection('Users', userId);
+    const oldUserPrices = user.userPrices;
+    let newUserPrices = oldUserPrices.filter((userPrice) => userPrice.itemId !== itemId);
+    await this.updateDocumentFromCollection('Users',userId,{userPrices:newUserPrices})
+  }
+
   // async markCommissionPending(data, date, id){
   //   const updatedData = []
   //   data.map((commissions)=>{

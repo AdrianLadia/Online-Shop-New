@@ -6196,3 +6196,54 @@ describe('test transactionPlaceOrder with manualCustomerOrderProcess = true / fa
     await resetOrdersAndPayments()
   });
 })
+
+describe.only('test editUserPrice', async () => {
+  test('setup test', async () => {
+    await cloudfirestore.createNewUser(
+      {
+        uid: 'testUser',
+        name: 'test user ',
+        email: 'test@gmail.com',
+        emailVerified: true,
+        phoneNumber: '09178927206',
+        deliveryAddress: [],
+        contactPerson: [],
+        isAnonymous: false,
+        orders: [],
+        cart: {},
+        favoriteItems: [],
+        payments: [],
+        userRole: 'member',
+        affiliate: null,
+        affiliateClaims: [],
+        affiliateDeposits: [],
+        affiliateCommissions: [],
+        bir2303Link: null,
+        affiliateId: null,
+        affiliateBankAccounts: [],
+        joinedDate: new Date(),
+        codBanned: { reason: null, isBanned: false },
+        userPrices: {},
+      },
+      'claimerCustomer'
+    );
+  })
+  test('invoke function', async () => {
+    let user
+    // add user price
+    await firestore.editUserPrice('testUser', 'PPB#1', 1000)
+    user = await firestore.readSelectedDataFromCollection('Users', 'testUser');
+    expect(user.userPrices['PPB#1']).toEqual(1000)
+    // add another user price
+    await firestore.editUserPrice('testUser', 'PPB#2', 2000)
+    // edit user price
+    await firestore.editUserPrice('testUser', 'PPB#1', 1500)
+    // edit user price
+    await firestore.editUserPrice('testUser', 'PPB#2', 2500)
+    // delete user price
+    await firestore.deleteUserPrice('testUser', 'PPB#1')
+  })
+  test('clean test', async () => {
+    await firestore.deleteDocumentFromCollection('Users', 'testUser');
+  })
+});
