@@ -6201,7 +6201,7 @@ describe.only('test editUserPrice', async () => {
   test('setup test', async () => {
     await cloudfirestore.createNewUser(
       {
-        uid: 'testUser',
+        uid: 'testEditUser',
         name: 'test user ',
         email: 'test@gmail.com',
         emailVerified: true,
@@ -6225,25 +6225,25 @@ describe.only('test editUserPrice', async () => {
         codBanned: { reason: null, isBanned: false },
         userPrices: {},
       },
-      'claimerCustomer'
+      'testEditUser'
     );
   })
   test('invoke function', async () => {
     let user
     // add user price
-    await firestore.editUserPrice('testUser', 'PPB#1', 1000)
-    user = await firestore.readSelectedDataFromCollection('Users', 'testUser');
+    await firestore.editUserPrice('testEditUser', 'PPB#1', 1000)
+    user = await firestore.readSelectedDataFromCollection('Users', 'testEditUser');
     expect(user.userPrices['PPB#1']).toEqual(1000)
     // add another user price
-    await firestore.editUserPrice('testUser', 'PPB#2', 2000)
+    await firestore.editUserPrice('testEditUser', 'PPB#2', 2000)
     // edit user price
-    await firestore.editUserPrice('testUser', 'PPB#1', 1500)
+    await firestore.editUserPrice('testEditUser', 'PPB#1', 1500)
     // edit user price
-    await firestore.editUserPrice('testUser', 'PPB#2', 2500)
+    await firestore.editUserPrice('testEditUser', 'PPB#2', 2500)
     // delete user price
-    await firestore.deleteUserPrice('testUser', 'PPB#1')
+    await firestore.deleteUserPrice('testEditUser', 'PPB#1')
   })
   test('clean test', async () => {
-    await firestore.deleteDocumentFromCollection('Users', 'testUser');
+    await firestore.deleteDocumentFromCollection('Users', 'testEditUser');
   })
 });

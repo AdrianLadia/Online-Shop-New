@@ -685,7 +685,8 @@ class firestoredb extends firestorefunctions {
   async editUserPrice(userId, itemId, price) {
     const user = await this.readSelectedDataFromCollection('Users', userId);
     const oldUserPrices = user.userPrices;
-    let newUserPrices = oldUserPrices.map((userPrice) => {
+    let newUserPrices = Object.keys(oldUserPrices).map(userPriceKey => {
+      let userPrice = userPrice[userPriceKey];
       if (userPrice.itemId === itemId) {
         return { ...userPrice, price: price };
       }
@@ -694,7 +695,7 @@ class firestoredb extends firestorefunctions {
     
     // If itemId does not exist in oldUserPrices, add it
     if (!newUserPrices.find((userPrice) => userPrice.itemId === itemId)) {
-      newUserPrices.push({ itemId: itemId, price: price });
+      newUserPrices = {...oldUserPrices, [itemId]:price}
     }
 
     await this.updateDocumentFromCollection('Users',userId,{userPrices:newUserPrices})
