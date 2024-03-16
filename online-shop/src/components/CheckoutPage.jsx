@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Step, Typography } from '@mui/material';
 import React from 'react';
 import { useEffect, startTransition } from 'react';
 import CheckoutSummary from './CheckoutSummary';
@@ -29,11 +29,63 @@ import allowedDeliveryDates from '../../utils/classes/allowedDeliveryDates';
 import CheckoutNotification from './CheckoutNotification';
 import isValidPhilippinePhoneNumber from '../../utils/isValidPhilippinePhoneNumber';
 import NavBar from './NavBar';
+import { Radio } from '@mui/material';
+import { set } from 'date-fns';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
+
+const RadioButton = ({ step, setStep, stepName, steps, index }) => {
+  const [checked, setChecked] = useState(false);
+
+  const handleChange = () => {
+    console.log('setting step', stepName);
+    setStep(stepName);
+  };
+
+  useEffect(() => {
+    const toCheckIncludeList = steps.slice(index);
+    console.log(stepName, toCheckIncludeList);
+    if (toCheckIncludeList.includes(step)) {
+      setChecked(true);
+    } else {
+      setChecked(false);
+    }
+  }, [step]);
+
+  return (
+    <>
+      {index !== 0 && (
+        <hr style={{ border: checked ? '1px solid green' : '1px solid black', width: '100%' }} />
+      )}
+      <Radio
+        checked={checked}
+        onClick={handleChange}
+        value="a"
+        name="radio-buttons"
+        inputProps={{ 'aria-label': 'A' }}
+      />
+    </>
+  );
+};
+
+const StepBar = () => {
+  const steps = ['pickUpOrDeliver', 'deliveryAddress', 'contactDetails', 'reviewCart'];
+  const [step, setStep] = useState(steps[0]);
+  return (
+    <div className="flex flex-row items-center">
+      {steps.map((stepName, index) => {
+        return (
+          <>
+            <RadioButton step={step} setStep={setStep} stepName={stepName} steps={steps} index={index} />
+          </>
+        );
+      })}
+    </div>
+  );
+};
 
 const CheckoutPage = () => {
   const {
@@ -521,10 +573,10 @@ const CheckoutPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="h-screen bg-red-300 flex-col ">
-        <NavBar />
-        <div className="h-full">test</div>
-      </div>
+      <NavBar />
+      {/* <div className="h-screen bg-red-300 flex-col ">
+        <StepBar />
+      </div> */}
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
         <div className="flex flex-col justify-center w-full items-center">
