@@ -808,7 +808,8 @@ function App() {
           element={
             <AppContext.Provider value={appContextValue}>
               <Suspense fallback={<SuspenseFallback />}>
-              <NavBar />
+            
+              
               {userstate === 'userloading' || cart == {} ? (
                 <div className="flex h-screen">
                   <div className="flex flex-col justify-center m-auto">

@@ -2,8 +2,8 @@
 
 class AppConfig {
     constructor() {
-        this.isDevEnvironment = true 
-        this.isPaymentSandBox = true
+        this.isDevEnvironment = false 
+        this.isPaymentSandBox = false
         this.noVat = false
         this.retailSafetyStock = 0
         this.featuredCategory = 'Meal Box'

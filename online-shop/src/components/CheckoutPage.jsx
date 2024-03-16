@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import { useEffect,startTransition } from 'react';
+import { useEffect, startTransition } from 'react';
 import CheckoutSummary from './CheckoutSummary';
 import GoogleMaps from './GoogleMaps';
 import AppContext from '../AppContext';
@@ -28,6 +28,7 @@ import OrdersCalendar from './OrdersCalendar';
 import allowedDeliveryDates from '../../utils/classes/allowedDeliveryDates';
 import CheckoutNotification from './CheckoutNotification';
 import isValidPhilippinePhoneNumber from '../../utils/isValidPhilippinePhoneNumber';
+import NavBar from './NavBar';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -203,14 +204,15 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     async function getTableData() {
-      const [rows_non_state, total_non_state, total_weight_non_state, vat,firstOrderDiscount] = datamanipulation.getCheckoutPageTableDate(
-        products,
-        cart,
-        null,
-        urlOfBir2303,
-        isInvoiceNeeded,
-        userdata ? userdata.orders : ['hasOrders']
-      );
+      const [rows_non_state, total_non_state, total_weight_non_state, vat, firstOrderDiscount] =
+        datamanipulation.getCheckoutPageTableDate(
+          products,
+          cart,
+          null,
+          urlOfBir2303,
+          isInvoiceNeeded,
+          userdata ? userdata.orders : ['hasOrders']
+        );
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
@@ -249,7 +251,7 @@ const CheckoutPage = () => {
             date: new Date(),
             deliveryVehicle: deliveryVehicle,
             kilometersFromStore: kilometersFromStore,
-            manualCustomerOrderProcess:manualCustomerOrderProcess,
+            manualCustomerOrderProcess: manualCustomerOrderProcess,
             contactName: localname,
           })
           .then((url) => {
@@ -414,9 +416,8 @@ const CheckoutPage = () => {
         userRole: userdata ? userdata.userRole : 'GUEST',
         affiliateUid: affiliateUid,
         kilometersFromStore: kilometersFromStore,
-        firstOrderDiscount : firstOrderDiscount,
-        manualCustomerOrderProcess:manualCustomerOrderProcess,
-        
+        firstOrderDiscount: firstOrderDiscount,
+        manualCustomerOrderProcess: manualCustomerOrderProcess,
       });
 
       setTransactionStatus(res);
@@ -469,9 +470,9 @@ const CheckoutPage = () => {
   }, [area]);
 
   useEffect(() => {
-    const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee,firstOrderDiscount);
+    const grandTotal = businesscalculations.getGrandTotal(total, vat, deliveryFee, firstOrderDiscount);
     setGrandTotal(grandTotal);
-  }, [total, vat, deliveryFee,firstOrderDiscount]);
+  }, [total, vat, deliveryFee, firstOrderDiscount]);
 
   useEffect(() => {
     if (total > 0) {
@@ -520,8 +521,9 @@ const CheckoutPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className='h-screen flex-col bg-colorbackground'>
-          test
+      <div className="h-screen bg-red-300 flex-col ">
+        <NavBar />
+        <div className="h-full">test</div>
       </div>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
@@ -675,24 +677,24 @@ const CheckoutPage = () => {
               <>
                 {area.includes('lalamoveServiceArea') &&
                 deliveryVehicle.name != 'motorcycle' &&
-                deliveryVehicle.name != 'storePickUp' ? (
-                  null
-                  // <div>
-                  //   <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-                  //   <div className="flex justify-center mt-7">
-                  //     <Typography variant="h4" className="font-bold">
-                  //       Assistance
-                  //     </Typography>
-                  //   </div>
-                  //   <div className="flex justify-center items-center mt-5 px-3">
-                  //     <Typography variant="h6">
-                  //       Driver helps unload items?
-                  //       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
-                  //     </Typography>
-                  //     <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
-                  //   </div>
-                  // </div>
-                ) : null}
+                deliveryVehicle.name != 'storePickUp'
+                  ? null
+                  : // <div>
+                    //   <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+                    //   <div className="flex justify-center mt-7">
+                    //     <Typography variant="h4" className="font-bold">
+                    //       Assistance
+                    //     </Typography>
+                    //   </div>
+                    //   <div className="flex justify-center items-center mt-5 px-3">
+                    //     <Typography variant="h6">
+                    //       Driver helps unload items?
+                    //       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
+                    //     </Typography>
+                    //     <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
+                    //   </div>
+                    // </div>
+                    null}
 
                 {area.includes('lalamoveServiceArea') || area.length == 0 ? null : (
                   <div className="flex justify-center mt-5 mb-5">
