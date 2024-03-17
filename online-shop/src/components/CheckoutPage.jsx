@@ -1,4 +1,4 @@
-import { Step, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { useEffect, startTransition } from 'react';
 import CheckoutSummary from './CheckoutSummary';
@@ -32,6 +32,9 @@ import NavBar from './NavBar';
 import { Radio } from '@mui/material';
 import { AiOutlineShopping } from 'react-icons/ai';
 import { CiDeliveryTruck } from 'react-icons/ci';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { FaRegSave } from 'react-icons/fa';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -575,7 +578,7 @@ const CheckoutPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="h-screen flex flex-col items-center">
+      <div className="h-screen flex flex-col items-center gap-5">
         <div className="w-full">
           <NavBar />
         </div>
@@ -608,6 +611,104 @@ const CheckoutPage = () => {
               </button>
             </div>
           </div>
+        ) : null}
+        {step == 'Enter Delivery Address' ? (
+          pickUpOrDeliver == 'deliver' ? (
+            <div className=" flex flex-col h-full   w-full items-center gap-5 ">
+              <div className="w-full flex flex-row justify-between">
+                <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
+                  <Typography>
+                    • <strong>Click on the map</strong> to change the delivery point.
+                  </Typography>
+                  <Typography>
+                    • Please <strong>pinpoint</strong> your delivery address below.
+                  </Typography>
+                  <Typography>
+                    • Use the <strong>search button</strong> to easily find your address and{' '}
+                    <strong>adjust the pin</strong> to your address.
+                  </Typography>
+                </div>
+                {/* <div className='w-56'>
+                  <button
+                    id="selectFromSavedAddressButton"
+                    className="hover:bg-color10c bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
+                    onClick={handleOpenModalSavedAddress}
+                  >
+                    Select From Saved Address
+                  </button>
+                </div> */}
+              </div>
+
+              <div className="flex flex-row w-11/12 gap-5 items-center">
+                <TextField
+                  // disabled
+                  id="address search"
+                  label="Search for a City / Barangay"
+                  InputLabelProps={labelStyle}
+                  variant="filled"
+                  className=" w-full self-center bg-white"
+                  value={addressGeocodeSearch}
+                  onChange={(e) => setAddressGeocodeSearch(e.target.value)}
+                />
+                <button
+                  onClick={searchAddress}
+                  className="p-3 text-white font-bold bg-color10b hover:bg-color10c rounded-lg "
+                >
+                  Search
+                </button>
+                <button
+                  onClick={() => {
+                    setOpenModalSavedAddress(true);
+                  }}
+                  className="bg-color10b text-white rounded-lg p-2"
+                >
+                  <FaRegSave size={30} />
+                </button>
+              </div>
+              <div className="flex w-full h-full lg:px-12">
+                <GoogleMaps
+                  selectedAddress={selectedAddress}
+                  setSelectedAddress={setSelectedAddress}
+                  locallatitude={locallatitude}
+                  setLocalLatitude={setLocalLatitude}
+                  locallongitude={locallongitude}
+                  setLocalLongitude={setLocalLongitude}
+                  setLocalDeliveryAddress={setLocalDeliveryAddress}
+                  zoom={zoom}
+                  setZoom={setZoom}
+                  setAddressText={setAddressText}
+                />
+              </div>
+              <div className="flex flex-row w-11/12 mb-5 gap-5">
+                <TextField
+                  id="addressEntry"
+                  label="Address (required)"
+                  InputLabelProps={labelStyle}
+                  variant="filled"
+                  className=" w-full self-center bg-white"
+                  onChange={(event) => setLocalDeliveryAddress(event.target.value)}
+                  value={localDeliveryAddress}
+                />
+                <button className="p-3 rounded-lg font-bold text-white bg-color10a hover:bg-color10c">Next</button>
+              </div>
+            </div>
+          ) : (
+            <div className="h-full flex justify-center items-center text-center">
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    You have selected pick up.
+                  </Typography>
+                  <Typography variant="h5" component="h2">
+                    No need to fill up this part.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </div>
+          )
+        ) : null}
+        {step == 'Provide Contact Information' ? (
+          <div className=" flex flex-col h-full  w-full items-center gap-5 "></div>
         ) : null}
       </div>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
@@ -670,7 +771,7 @@ const CheckoutPage = () => {
               />
             </div>
             <div className="lg:mx-14 mt-5">
-              <GoogleMaps
+              {/* <GoogleMaps
                 selectedAddress={selectedAddress}
                 setSelectedAddress={setSelectedAddress}
                 locallatitude={locallatitude}
@@ -681,7 +782,7 @@ const CheckoutPage = () => {
                 zoom={zoom}
                 setZoom={setZoom}
                 setAddressText={setAddressText}
-              />
+              /> */}
             </div>
             <TextField
               id="addressEntry"
