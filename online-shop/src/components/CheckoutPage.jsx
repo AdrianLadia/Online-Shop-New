@@ -30,7 +30,8 @@ import CheckoutNotification from './CheckoutNotification';
 import isValidPhilippinePhoneNumber from '../../utils/isValidPhilippinePhoneNumber';
 import NavBar from './NavBar';
 import { Radio } from '@mui/material';
-import { set } from 'date-fns';
+import { AiOutlineShopping } from 'react-icons/ai';
+import { CiDeliveryTruck } from 'react-icons/ci';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -57,9 +58,7 @@ const RadioButton = ({ step, setStep, stepName, steps, index }) => {
 
   return (
     <>
-      {index !== 0 && (
-        <hr style={{ border: checked ? '1px solid green' : '1px solid black', width: '100%' }} />
-      )}
+      {index !== 0 && <hr style={{ border: checked ? '1px solid green' : '1px solid black', width: '100%' }} />}
       <Radio
         checked={checked}
         onClick={handleChange}
@@ -71,9 +70,7 @@ const RadioButton = ({ step, setStep, stepName, steps, index }) => {
   );
 };
 
-const StepBar = () => {
-  const steps = ['pickUpOrDeliver', 'deliveryAddress', 'contactDetails', 'reviewCart'];
-  const [step, setStep] = useState(steps[0]);
+const StepBar = ({ step, setStep, steps }) => {
   return (
     <div className="flex flex-row items-center">
       {steps.map((stepName, index) => {
@@ -568,15 +565,51 @@ const CheckoutPage = () => {
       setLocalDeliveryAddress('Pick Up at Store');
     }
   }
-
-  const [step, setStep] = useState('delivery');
+  const steps = [
+    'Choose Delivery Method',
+    'Enter Delivery Address',
+    'Provide Contact Information',
+    'Review and Confirm Order',
+  ];
+  const [step, setStep] = useState(steps[0]);
 
   return (
     <ThemeProvider theme={theme}>
-      <NavBar />
-      {/* <div className="h-screen bg-red-300 flex-col ">
-        <StepBar />
-      </div> */}
+      <div className="h-screen flex flex-col items-center">
+        <div className="w-full">
+          <NavBar />
+        </div>
+        <div className="w-full lg:w-1/2">
+          <StepBar step={step} setStep={setStep} steps={steps} />
+        </div>
+        {step}
+        {step == 'Choose Delivery Method' ? (
+          <div className=" flex h-full  w-full items-center justify-center">
+            <div className=" flex flex-col lg:flex-row gap-20 -mt-12  ">
+              <button
+                onClick={() => {
+                  setStep('Provide Contact Information');
+                  setPickUpOrDeliver('pickup');
+                }}
+                className="flex flex-col rounded-lg p-3 bg-color10a text-white items-center  w-52 h-52 justify-center hover:bg-color10c"
+              >
+                <AiOutlineShopping size={150} />
+                Pick Up
+              </button>
+              <button
+                onClick={() => {
+                  setStep('Enter Delivery Address');
+                  setPickUpOrDeliver('deliver');
+                }}
+                className="flex flex-col items-center justify-center rounded-lg p-3 bg-color10a text-white  w-52 h-52  hover:bg-color10c"
+              >
+                <CiDeliveryTruck size={150} />
+                Deliver
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </div>
       <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
         <div className="flex flex-col justify-center w-full items-center">
