@@ -569,10 +569,13 @@ const CheckoutPage = () => {
     }
   }
   const steps = [
-    'Choose Delivery Method',
+    'Choose A Method',
     'Enter Delivery Address',
+    'Delivery Date and Time',
     'Provide Contact Information',
+    'BIR 2303 Information',
     'Review and Confirm Order',
+    'Payment Method'
   ];
   const [step, setStep] = useState(steps[0]);
 
@@ -586,7 +589,7 @@ const CheckoutPage = () => {
           <StepBar step={step} setStep={setStep} steps={steps} />
         </div>
         {step}
-        {step == 'Choose Delivery Method' ? (
+        {step == 'Choose A Method' ? (
           <div className=" flex h-full  w-full items-center justify-center">
             <div className=" flex flex-col lg:flex-row gap-20 -mt-12  ">
               <button
@@ -628,15 +631,6 @@ const CheckoutPage = () => {
                     <strong>adjust the pin</strong> to your address.
                   </Typography>
                 </div>
-                {/* <div className='w-56'>
-                  <button
-                    id="selectFromSavedAddressButton"
-                    className="hover:bg-color10c bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
-                    onClick={handleOpenModalSavedAddress}
-                  >
-                    Select From Saved Address
-                  </button>
-                </div> */}
               </div>
 
               <div className="flex flex-row w-11/12 gap-5 items-center">
@@ -679,17 +673,28 @@ const CheckoutPage = () => {
                   setAddressText={setAddressText}
                 />
               </div>
-              <div className="flex flex-row w-11/12 mb-5 gap-5">
+              <div className="flex flex-row w-11/12 mb-5 gap- justify-between">
                 <TextField
                   id="addressEntry"
                   label="Address (required)"
                   InputLabelProps={labelStyle}
                   variant="filled"
-                  className=" w-full self-center bg-white"
+                  className=" bg-white lg:w-11/12"
                   onChange={(event) => setLocalDeliveryAddress(event.target.value)}
                   value={localDeliveryAddress}
                 />
-                <button className="p-3 rounded-lg font-bold text-white bg-color10a hover:bg-color10c">Next</button>
+                <button
+                  onClick={() => {
+                    if (localDeliveryAddress.length > 0) {
+                      setStep('Delivery Date and Time');
+                    } else {
+                      alertSnackbar('error', 'Please enter your address');
+                    }
+                  }}
+                  className="p-3 rounded-lg font-bold text-white bg-color10a hover:bg-color10c"
+                >
+                  Set Address
+                </button>
               </div>
             </div>
           ) : (
@@ -707,11 +712,427 @@ const CheckoutPage = () => {
             </div>
           )
         ) : null}
+           {step == 'Delivery Date and Time' ? (
+          pickUpOrDeliver == 'deliver' ? (
+           <div>
+                Delivery Date and Time
+            </div>
+          ) : (
+            <div className="h-full flex justify-center items-center text-center">
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    You have selected pick up.
+                  </Typography>
+                  <Typography variant="h5" component="h2">
+                    No need to fill up this part.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </div>
+          )
+        ) : null}
         {step == 'Provide Contact Information' ? (
-          <div className=" flex flex-col h-full  w-full items-center gap-5 "></div>
+          <div className=" flex flex-col h-full justify-center -mt-28  w-full items-center gap-5 ">
+            <div className="flex flex-col lg:w-1/2 w-11/12 items-center  rounded-lg border-2 ">
+              <div className="flex justify-start w-full  p-5 rounded-t-lg border-b-2 ">
+                <button
+                  id="selectFromSavedContactsButton"
+                  className="bg-color10b hover:bg-color10c text-white rounded-lg p-3 flex flex-row items-center justify-center gap-2 "
+                  onClick={handleOpenContactModal}
+                >
+                  <FaRegSave size={30} />
+                  Select from saved contacts
+                </button>
+              </div>
+              <div className=" flex w-full flex-col gap-5 p-5">
+                <TextField
+                  id="contactNumberEntry"
+                  label="Contact # (required)"
+                  InputLabelProps={labelStyle}
+                  variant="filled"
+                  className=" w-full mt-1 bg-white"
+                  onChange={(event) => setLocalPhoneNumber(event.target.value)}
+                  value={localphonenumber || ''}
+                />
+                <TextField
+                  id="contactNameEntry"
+                  label="Name (required)"
+                  InputLabelProps={labelStyle}
+                  variant="filled"
+                  className=" w-full mt-1 bg-white"
+                  onChange={(event) => setLocalName(event.target.value)}
+                  value={localname || ''}
+                />
+                {isAccountClaimed ? (
+                  <TextField
+                    id="emailAddressEntry"
+                    label="E-mail (required)"
+                    InputLabelProps={labelStyle}
+                    variant="filled"
+                    className=" w-full mt-1 bg-white"
+                    onChange={(event) => setLocalEmail(event.target.value)}
+                    value={localemail || ''}
+                  />
+                ) : null}
+                <div className="flex flex-row w-full bg-red-300">
+                  <button
+                    onClick={() => {
+                      if (localname.length > 0 && localphonenumber.length > 0) {
+                        if (isAccountClaimed) {
+                          if (localemail.length > 0) {
+                            setStep('Review and Confirm Order');
+                          } else {
+                            alertSnackbar('error', 'Please enter your email');
+                          }
+                        } else {
+                          setStep('Review and Confirm Order');
+                        }
+                      } else {
+                        alertSnackbar('error', 'Please enter your name and phone number');
+                      }
+                    }}
+                    className="p-3 rounded-lg font-bold text-white bg-color10a hover:bg-color10c w-full"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {step == 'Review and Confirm Order' ? (
+          <div className=" flex flex-col h-full justify-center lg:w-1/2 w-full items-center gap-5 overflow-auto ">
+            {allowShipping == false ? (
+              <div className="flex justify-center my-5">
+                <Typography variant="h7" color="red">
+                  Minimum order outside Cebu is 10000 pesos
+                </Typography>
+              </div>
+            ) : (
+              <>
+                {area.length == 0 ? (
+                  <div className="flex justify-center my-5">
+                    <Typography variant="h7" color="red">
+                      Sorry we cant deliver to your selected area
+                    </Typography>
+                  </div>
+                ) : (
+                  <>
+                    {area.includes('lalamoveServiceArea') &&
+                    deliveryVehicle.name != 'motorcycle' &&
+                    deliveryVehicle.name != 'storePickUp'
+                      ? null
+                      : // <div>
+                        //   <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
+                        //   <div className="flex justify-center mt-7">
+                        //     <Typography variant="h4" className="font-bold">
+                        //       Assistance
+                        //     </Typography>
+                        //   </div>
+                        //   <div className="flex justify-center items-center mt-5 px-3">
+                        //     <Typography variant="h6">
+                        //       Driver helps unload items?
+                        //       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
+                        //     </Typography>
+                        //     <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
+                        //   </div>
+                        // </div>
+                        null}
+
+                    {area.includes('lalamoveServiceArea') || area.length == 0 ? null : (
+                      <div className="flex justify-center mt-5 mb-5">
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                          Shipping Option
+                        </Typography>
+                      </div>
+                    )}
+
+                    {area.includes('davaoArea') ? (
+                      <div className="flex flex-col justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Davao Port via Sulpicio Lines</Typography>
+                        <Typography variant="h6" sx={{ marginTop: 2 }}>
+                          When we ship to your place we will charge 500 pesos to deliver it to the port. This includes
+                          Cebu Port Authority, and Handling Charges.
+                        </Typography>
+                        <Typography variant="h6" sx={{ marginTop: 2 }}>
+                          In order to claim the items from the Port you need to pay the shipping fee in their office.
+                        </Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('iloiloArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Iloilo Port via Cokaliong or Trans Asia</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('leyteMaasinArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Leyte Maasin Port via Cokaliong.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('cagayanDeOroArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">
+                          We can ship to Cagayan De Oro Port cia Trans Asia, Cokaliong or Sulpicio.
+                        </Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('surigaoArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Surigao Port via Cokaliong.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('butuanArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Butuan Port via Cokaliong.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('dapitanArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Dapitan Port via Cokaliong.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('zamboangaArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Zamboanga Port via Alison.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('pagadianArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Pagadian Port via Roble.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('generalSantosArea text-center mx-10') ? (
+                      <div className="flex justify-center">
+                        <Typography variant="h6">We can ship to General Santos Port via Sulpicio.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('bacolodArea text-center mx-10') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">
+                          We can ship to Bacolod Port via Diamante trucking, or your preferred logistics company.
+                        </Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('dumagueteArea text-center mx-10') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">
+                          We can ship to Dumaguete using Matiao Trucking, or your preferred logistics company.
+                        </Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('boholArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Bohol Port via Lite Shipping.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('masbateArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Masbate Port via Cokaliong.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('manilaArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Manila Port via 2GO, or Cokaliong.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('samarArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Samar Port via Cokaliong.</Typography>
+                      </div>
+                    ) : null}
+
+                    {area.includes('leytePalomponArea') ? (
+                      <div className="flex justify-center text-center mx-10">
+                        <Typography variant="h6">We can ship to Leyte Palompon Port via Cokaliong</Typography>
+                      </div>
+                    ) : null}
+
+                    {/* <Divider sx={{ marginTop: 5, marginBottom: 3 }} /> */}
+
+                    {/* {area.includes("lalamoveServiceArea") ||
+              area.length == 0 ? null : (
+               
+              )} */}
+
+                    {/* <div className="flex justify-center mt-7 m-5">
+                  <Typography variant="h4" className="font-bold">
+                    Checkout Summary
+                  </Typography>
+                </div> */}
+                    <div className="w-full flex flex-col h-full gap-5  justify-evenly">
+                      {area.length == 0 ? null : (
+                        <CheckoutSummary
+                          total={total}
+                          setTotal={setTotal}
+                          vat={vat}
+                          deliveryFee={deliveryFee}
+                          grandTotal={grandTotal}
+                          totalWeight={totalWeight}
+                          setTotalWeight={setTotalWeight}
+                          deliveryVehicleObject={deliveryVehicle}
+                          setDeliveryVehicle={setDeliveryVehicle}
+                          setVat={setVat}
+                          area={area}
+                          setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
+                          rows={rows}
+                          kilometersFromStore={kilometersFromStore}
+                          firstOrderDiscount={firstOrderDiscount}
+                        />
+                      )}
+                      <div className="w-full fle px-3 mb-3">
+                        <button className="w-full rounded-lg p-3 bg-color10b text-white font-bold">
+                          Confirm Order
+                        </button>
+                      </div>
+                    </div>
+                    {/* {userdata ? (
+                  <div className="flex flex-col lg:flex-row justify-center">
+                    <div className="flex justify-center m-5">
+                      <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
+                    </div>
+                    <div className="flex justify-center items-center">
+                      <Switch
+                        {...label}
+                        checked={isInvoiceNeeded}
+                        color="secondary"
+                        onClick={() => setIsInvoiceNeeded(!isInvoiceNeeded)}
+                      />
+                    </div>
+                  </div>
+                ) : null} */}
+
+                    {/* {isInvoiceNeeded ? (
+                  urlOfBir2303 != '' ? (
+                    <>
+                      <div className="flex justify-center m-5">
+                        <Image imageUrl={urlOfBir2303} />
+                      </div>
+                      <div className="flex justify-center m-5">
+                        <ImageUploadButton
+                          buttonTitle={'Update BIR 2303 Form'}
+                          storage={storage}
+                          folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
+                          onUploadFunction={on2303Upload}
+                        >
+                          update BIR 2303
+                        </ImageUploadButton>
+                        <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">
+                          Remove BIR 2303
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <Typography variant="h7" className="flex justify-center mb-5 mx-5">
+                        Please upload a photo below of your BIR 2303 form if you have one.
+                      </Typography>
+                      <ImageUploadButton
+                        buttonTitle={'Upload BIR 2303 Form'}
+                        storage={storage}
+                        folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
+                        onUploadFunction={on2303Upload}
+                      />
+                      <div className="flex justify-center mt-5 mx-5">
+                        <Image imageUrl={urlOfBir2303} />
+                      </div>
+                    </div>
+                  )
+                ) : null} */}
+
+                    {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
+                    {/* <div className="flex flex-col justify-center m-5">
+                  <div className=" flex justify-center">
+                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                      {pickUpOrDeliver == 'deliver' ? <>Delivery Date</> : <>Pick Up Date</>}
+                    </Typography>
+                  </div>
+                  <div className="flex justify-center mt-5 mb-5">
+                    <OrdersCalendar
+                      startDate={startDate}
+                      setStartDate={setStartDate}
+                      minDate={allowedDates ? allowedDates.minDate : null}
+                      maxDate={allowedDates ? allowedDates.maxDate : null}
+                      filterDate={allowedDates ? allowedDates.excludeDates : null}
+                      disabledDates={allowedDates ? allowedDates.holidays : null}
+                    />
+                  </div>
+                </div> */}
+
+                    {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
+
+                    {/* <div className="flex justify-center m-5">
+                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                    Payment
+                  </Typography>
+                </div> */}
+
+                    {/* <PaymentMethods
+                  pickUpOrDeliver={pickUpOrDeliver}
+                  itemsTotalPrice={total}
+                  userdata={userdata}
+                  email={localemail}
+                  phoneNumber={localphonenumber}
+                  manualCustomerOrderProcess={manualCustomerOrderProcess}
+                /> */}
+
+                    {/* <Divider sx={{ marginTop: 5, marginBottom: 3 }} /> */}
+
+                    {/* <div className="flex w-full justify-center my-5 items ">
+                  <TextField
+                    id="outlined-multiline-static"
+                    multiline
+                    rows={5}
+                    onChange={(e) => setDeliveryNotes(e.target.value)}
+                    label="Delivery Notes"
+                    color="primary"
+                    InputLabelProps={labelStyle}
+                    className="rounded-md w-9/12 2xl:w-2/6 xl:w-3/6  "
+                    sx={style}
+                  />
+                </div> */}
+
+                    {/* <div className="flex justify-center mt-2 mb-6">
+                  <button
+                    id="placeorderbutton"
+                    onClick={onPlaceOrder}
+                    className="hover:bg-color10c bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 "
+                    disabled={placeOrderLoading}
+                  >
+                    {placeOrderLoading ? (
+                      <div className="flex flex-col items-center justify-center h-full">
+                        <p>Processing your order.</p>
+                        <p>Please wait and do not refresh the page.</p>
+                        <CircularProgress size={50} style={{ color: 'white' }} sx={{ marginTop: 1 }} />
+                      </div>
+                    ) : (
+                      'Place Order'
+                    )}
+                  </button>
+                </div> */}
+                  </>
+                )}
+              </>
+            )}
+          </div>
         ) : null}
       </div>
-      <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
+      {/* <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
         <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
         <div className="flex flex-col justify-center w-full items-center">
           <Typography variant="h6">Would you like to pick up items?</Typography>
@@ -771,28 +1192,9 @@ const CheckoutPage = () => {
               />
             </div>
             <div className="lg:mx-14 mt-5">
-              {/* <GoogleMaps
-                selectedAddress={selectedAddress}
-                setSelectedAddress={setSelectedAddress}
-                locallatitude={locallatitude}
-                setLocalLatitude={setLocalLatitude}
-                locallongitude={locallongitude}
-                setLocalLongitude={setLocalLongitude}
-                setLocalDeliveryAddress={setLocalDeliveryAddress}
-                zoom={zoom}
-                setZoom={setZoom}
-                setAddressText={setAddressText}
-              /> */}
+
             </div>
-            <TextField
-              id="addressEntry"
-              label="Address (required)"
-              InputLabelProps={labelStyle}
-              variant="filled"
-              className=" w-11/12 self-center bg-white mt-7"
-              onChange={(event) => setLocalDeliveryAddress(event.target.value)}
-              value={localDeliveryAddress}
-            />
+          
           </>
         ) : null}
         <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
@@ -845,326 +1247,7 @@ const CheckoutPage = () => {
           ) : null}
         </div>
 
-        {allowShipping == false ? (
-          <div className="flex justify-center my-5">
-            <Typography variant="h7" color="red">
-              Minimum order outside Cebu is 10000 pesos
-            </Typography>
-          </div>
-        ) : (
-          <>
-            {area.length == 0 ? (
-              <div className="flex justify-center my-5">
-                <Typography variant="h7" color="red">
-                  Sorry we cant deliver to your selected area
-                </Typography>
-              </div>
-            ) : (
-              <>
-                {area.includes('lalamoveServiceArea') &&
-                deliveryVehicle.name != 'motorcycle' &&
-                deliveryVehicle.name != 'storePickUp'
-                  ? null
-                  : // <div>
-                    //   <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-                    //   <div className="flex justify-center mt-7">
-                    //     <Typography variant="h4" className="font-bold">
-                    //       Assistance
-                    //     </Typography>
-                    //   </div>
-                    //   <div className="flex justify-center items-center mt-5 px-3">
-                    //     <Typography variant="h6">
-                    //       Driver helps unload items?
-                    //       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
-                    //     </Typography>
-                    //     <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
-                    //   </div>
-                    // </div>
-                    null}
 
-                {area.includes('lalamoveServiceArea') || area.length == 0 ? null : (
-                  <div className="flex justify-center mt-5 mb-5">
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                      Shipping Option
-                    </Typography>
-                  </div>
-                )}
-
-                {area.includes('davaoArea') ? (
-                  <div className="flex flex-col justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Davao Port via Sulpicio Lines</Typography>
-                    <Typography variant="h6" sx={{ marginTop: 2 }}>
-                      When we ship to your place we will charge 500 pesos to deliver it to the port. This includes Cebu
-                      Port Authority, and Handling Charges.
-                    </Typography>
-                    <Typography variant="h6" sx={{ marginTop: 2 }}>
-                      In order to claim the items from the Port you need to pay the shipping fee in their office.
-                    </Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('iloiloArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Iloilo Port via Cokaliong or Trans Asia</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('leyteMaasinArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Leyte Maasin Port via Cokaliong.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('cagayanDeOroArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">
-                      We can ship to Cagayan De Oro Port cia Trans Asia, Cokaliong or Sulpicio.
-                    </Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('surigaoArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Surigao Port via Cokaliong.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('butuanArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Butuan Port via Cokaliong.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('dapitanArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Dapitan Port via Cokaliong.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('zamboangaArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Zamboanga Port via Alison.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('pagadianArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Pagadian Port via Roble.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('generalSantosArea text-center mx-10') ? (
-                  <div className="flex justify-center">
-                    <Typography variant="h6">We can ship to General Santos Port via Sulpicio.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('bacolodArea text-center mx-10') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">
-                      We can ship to Bacolod Port via Diamante trucking, or your preferred logistics company.
-                    </Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('dumagueteArea text-center mx-10') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">
-                      We can ship to Dumaguete using Matiao Trucking, or your preferred logistics company.
-                    </Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('boholArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Bohol Port via Lite Shipping.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('masbateArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Masbate Port via Cokaliong.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('manilaArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Manila Port via 2GO, or Cokaliong.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('samarArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Samar Port via Cokaliong.</Typography>
-                  </div>
-                ) : null}
-
-                {area.includes('leytePalomponArea') ? (
-                  <div className="flex justify-center text-center mx-10">
-                    <Typography variant="h6">We can ship to Leyte Palompon Port via Cokaliong</Typography>
-                  </div>
-                ) : null}
-
-                <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-
-                {/* {area.includes("lalamoveServiceArea") ||
-              area.length == 0 ? null : (
-               
-              )} */}
-
-                <div className="flex justify-center mt-7 m-5">
-                  <Typography variant="h4" className="font-bold">
-                    Checkout Summary
-                  </Typography>
-                </div>
-
-                {area.length == 0 ? null : (
-                  <CheckoutSummary
-                    total={total}
-                    setTotal={setTotal}
-                    vat={vat}
-                    deliveryFee={deliveryFee}
-                    grandTotal={grandTotal}
-                    totalWeight={totalWeight}
-                    setTotalWeight={setTotalWeight}
-                    deliveryVehicleObject={deliveryVehicle}
-                    setDeliveryVehicle={setDeliveryVehicle}
-                    setVat={setVat}
-                    area={area}
-                    setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
-                    rows={rows}
-                    kilometersFromStore={kilometersFromStore}
-                    firstOrderDiscount={firstOrderDiscount}
-                  />
-                )}
-                {userdata ? (
-                  <div className="flex flex-col lg:flex-row justify-center">
-                    <div className="flex justify-center m-5">
-                      <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
-                    </div>
-                    <div className="flex justify-center items-center">
-                      <Switch
-                        {...label}
-                        checked={isInvoiceNeeded}
-                        color="secondary"
-                        onClick={() => setIsInvoiceNeeded(!isInvoiceNeeded)}
-                      />
-                    </div>
-                  </div>
-                ) : null}
-
-                {isInvoiceNeeded ? (
-                  urlOfBir2303 != '' ? (
-                    <>
-                      <div className="flex justify-center m-5">
-                        <Image imageUrl={urlOfBir2303} />
-                      </div>
-                      <div className="flex justify-center m-5">
-                        <ImageUploadButton
-                          buttonTitle={'Update BIR 2303 Form'}
-                          storage={storage}
-                          folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
-                          onUploadFunction={on2303Upload}
-                        >
-                          update BIR 2303
-                        </ImageUploadButton>
-                        <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">
-                          Remove BIR 2303
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <div>
-                      <Typography variant="h7" className="flex justify-center mb-5 mx-5">
-                        Please upload a photo below of your BIR 2303 form if you have one.
-                      </Typography>
-                      <ImageUploadButton
-                        buttonTitle={'Upload BIR 2303 Form'}
-                        storage={storage}
-                        folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
-                        onUploadFunction={on2303Upload}
-                      />
-                      <div className="flex justify-center mt-5 mx-5">
-                        <Image imageUrl={urlOfBir2303} />
-                      </div>
-                    </div>
-                  )
-                ) : null}
-
-                <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
-                <div className="flex flex-col justify-center m-5">
-                  <div className=" flex justify-center">
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                      {pickUpOrDeliver == 'deliver' ? <>Delivery Date</> : <>Pick Up Date</>}
-                    </Typography>
-                  </div>
-                  <div className="flex justify-center mt-5 mb-5">
-                    <OrdersCalendar
-                      startDate={startDate}
-                      setStartDate={setStartDate}
-                      minDate={allowedDates ? allowedDates.minDate : null}
-                      maxDate={allowedDates ? allowedDates.maxDate : null}
-                      filterDate={allowedDates ? allowedDates.excludeDates : null}
-                      disabledDates={allowedDates ? allowedDates.holidays : null}
-                    />
-                  </div>
-                </div>
-
-                <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
-
-                <div className="flex justify-center m-5">
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Payment
-                  </Typography>
-                </div>
-
-                <PaymentMethods
-                  pickUpOrDeliver={pickUpOrDeliver}
-                  itemsTotalPrice={total}
-                  userdata={userdata}
-                  email={localemail}
-                  phoneNumber={localphonenumber}
-                  manualCustomerOrderProcess={manualCustomerOrderProcess}
-                />
-
-                <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-
-                <div className="flex w-full justify-center my-5 items ">
-                  <TextField
-                    id="outlined-multiline-static"
-                    multiline
-                    rows={5}
-                    onChange={(e) => setDeliveryNotes(e.target.value)}
-                    label="Delivery Notes"
-                    color="primary"
-                    InputLabelProps={labelStyle}
-                    className="rounded-md w-9/12 2xl:w-2/6 xl:w-3/6  "
-                    sx={style}
-                  />
-                </div>
-
-                <div className="flex justify-center mt-2 mb-6">
-                  <button
-                    id="placeorderbutton"
-                    onClick={onPlaceOrder}
-                    className="hover:bg-color10c bg-color10b text-white text-lg font-bold py-3 px-6 rounded-xl mb-5 "
-                    disabled={placeOrderLoading}
-                  >
-                    {placeOrderLoading ? (
-                      <div className="flex flex-col items-center justify-center h-full">
-                        <p>Processing your order.</p>
-                        <p>Please wait and do not refresh the page.</p>
-                        <CircularProgress size={50} style={{ color: 'white' }} sx={{ marginTop: 1 }} />
-                      </div>
-                    ) : (
-                      'Place Order'
-                    )}
-                  </button>
-                </div>
-              </>
-            )}
-          </>
-        )}
         <GoogleMapsModalSelectSaveAddress
           open={openModalSavedAddress}
           handleClose={handleCloseModalSavedAddress}
@@ -1180,7 +1263,7 @@ const CheckoutPage = () => {
           setLocalPhoneNumber={setLocalPhoneNumber}
         />
         <CheckoutNotification allowedDates={allowedDates} />
-      </div>
+      </div> */}
     </ThemeProvider>
   );
 };
