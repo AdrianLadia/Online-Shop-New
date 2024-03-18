@@ -4,6 +4,7 @@ import CheckoutProofOfPayment from './CheckoutProofOfPayment';
 import { Routes, Route } from 'react-router-dom';
 import CheckoutContext from '../context/CheckoutContext';
 import AppContext from '../AppContext';
+import NavBar from './NavBar';
 
 const Checkout = () => {
   const [rows, setRows] = useState(null);
@@ -40,8 +41,8 @@ const Checkout = () => {
         <Route
           path="checkoutPage"
           element={
-            <CheckoutContext.Provider value={checkoutContextValues}>
-              <CheckoutPage />
+            <CheckoutContext.Provider value={checkoutContextValues}>       
+                <CheckoutPage />
             </CheckoutContext.Provider>
           }
         />
@@ -49,6 +50,7 @@ const Checkout = () => {
           path="proofOfPayment"
           element={
             <CheckoutContext.Provider value={checkoutContextValues}>
+              <NavBar />
               <CheckoutProofOfPayment referenceNumber={referenceNumber} />
             </CheckoutContext.Provider>
           }

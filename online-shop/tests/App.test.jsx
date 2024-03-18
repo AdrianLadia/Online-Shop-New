@@ -333,7 +333,7 @@ describe('Business Calcualtions', () => {
   });
 });
 
-describe('Data Manipulation', async () => {
+describe.only('Data Manipulation', async () => {
   test('getSecondsDifferenceBetweentTwoDates', async () => {
     const date1 = new Date(2023, 1, 1);
     const date2 = new Date(2023, 1, 2);
@@ -348,9 +348,14 @@ describe('Data Manipulation', async () => {
     const ppb16Price = ppb16.price;
     const itemsTotal = (ppb16Price * 12) / 1.12;
     const vat = ppb16Price * 12 - itemsTotal;
-
+    const date2daysago = new Date();
+    date2daysago.setDate(date2daysago.getDate() - 2);
+    const date1dayago = new Date();
+    date1dayago.setDate(date1dayago.getDate() - 1);
+    const datetomorrow = new Date();
+    datetomorrow.setDate(datetomorrow.getDate() + 1);
     await cloudfirestore.transactionPlaceOrder({
-      deliveryDate: new Date(),
+      deliveryDate: date2daysago,
       testing: true,
       userid: userTestId,
       username: 'Adrian',
@@ -466,7 +471,7 @@ describe('Data Manipulation', async () => {
     const orders = await Promise.all(orderPromises);
 
     const payments = testuser.payments;
-    const tableData = datamanipulation.accountStatementData(orders, payments);
+    const tableData = datamanipulation.accountStatementData(orders, payments,date1dayago,datetomorrow);
     const table = datamanipulation.accountStatementTable(tableData);
     const endingBalance = table[3].runningBalance;
 

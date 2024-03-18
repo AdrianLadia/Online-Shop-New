@@ -37,7 +37,7 @@ class dataManipulation {
     return result;
   }
 
-  accountStatementData(orders, payments, forTesting = false) {
+  accountStatementData(orders, payments, startDate, endDate, forTesting = false) {
     const data = [];
 
     const schemaOrder = Joi.object({
@@ -159,12 +159,48 @@ class dataManipulation {
 
     const dataToUseSchema = Joi.array().required();
 
+    // filter by start and end date
+    let filteredData = [];
+    if (startDate != '' && endDate != '') {
+      dataToUse.map((item) => {
+        const date = item[0];
+        //convert timestamp to date
+        let dateObject;
+        console.log('date', date);
+
+        if (date.seconds) {
+          dateObject = new Date(date.seconds * 1000 + date.nanoseconds / 1000000);
+        } else {
+          const seconds = date._seconds;
+          const nanoseconds = date._nanoseconds;
+          console.log('seconds', seconds);
+          console.log('nanoseconds', nanoseconds);
+          dateObject = new Date(date._seconds * 1000 + date._nanoseconds / 1000000);
+        }
+
+        console.log('_______________________');
+        console.log('dateObject', dateObject);
+        console.log('startDate', startDate);
+        console.log('endDate', endDate);
+        console.log('_______________________');
+        //check if date is within the range
+        console.log('within range', dateObject >= startDate && dateObject <= endDate);
+        if (dateObject >= startDate && dateObject <= endDate) {
+          filteredData.push(item);
+        }
+      });
+    } else {
+      filteredData = dataToUse;
+    }
+    console.log('dataToUse', dataToUse);
+    console.log('filteredData', filteredData);
+
     const { error } = dataToUseSchema.validate(dataToUse);
     if (error) {
       throw new Error(error);
     }
 
-    return dataToUse;
+    return filteredData;
   }
 
   accountStatementTable(tableData, forTesting = false) {

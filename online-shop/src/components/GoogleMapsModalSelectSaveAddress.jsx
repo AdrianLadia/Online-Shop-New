@@ -48,7 +48,7 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
         className=''
       >
         <Box sx={style} className="bg-colorbackground">
-          <div className="flex flex-col ">
+          <div className="flex flex-col h-full  ">
             <div className="flex items-center justify-between my-3">
               <div className='xs:ml-2 text-2xl xs:text-3xl font-semibold tracking-wider xs:tracking-widest'>
                 Saved Addresses
@@ -83,10 +83,10 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
                   );
                 })
               ) : (
-                <>Create an account to save</>
+                <>- Create an account to automatically save addresses from past orders.</>
               )}
             </div>
-            <>Delivery addresses from your past orders will be saved here</>
+            <div>- Delivery addresses from your past orders will be saved here.</div>
           </div>
         </Box>
       </Modal>

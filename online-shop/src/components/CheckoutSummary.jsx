@@ -45,7 +45,6 @@ const CheckoutSummary = (props) => {
 
   const itemsTotal = vat + total;
 
-
   function responsiveWidth() {
     if (width < 550) {
       return '90%';
@@ -90,9 +89,14 @@ const CheckoutSummary = (props) => {
         </div>
       ) : (
         <div className="flex flex-col align-center items-center gap-4 justify-center">
-          <TableContainer component={Paper} elevation={10} className="flex align-center w-11/12 m-2 mb-4">
+          <TableContainer
+            component={Paper}
+            elevation={10}
+            className="flex align-center w-11/12 m-2 mb-4"
+            style={{ maxHeight: '35vh', overflow: 'auto' }}
+          >
             <Table sx={{ minWidth: 650 }} className=" font-bold border-2 border-color60" aria-label="simple table">
-              <TableHead>
+              <TableHead style={{ position: 'sticky', top: 0, backgroundColor: '#fff', zIndex: 1 }}>
                 <TableRow className="bg-color10c">
                   <TableCell>Image</TableCell>
                   <TableCell> Item</TableCell>
@@ -125,6 +129,75 @@ const CheckoutSummary = (props) => {
             sx={{
               width: responsiveWidth(),
               bgcolor: 'background.paper',
+              borderRadius: '8px',
+              border: 1,
+              borderColor: '#99A98F',
+              maxHeight: '20vh', // Maximum height of the container
+              overflowY: 'auto', // Makes the list scrollable if content exceeds the container's height
+              overflowX: 'hidden', // Hides the horizontal scrollbar
+              '& .list-item-container': {
+                minWidth: '50%', // Makes sure each item takes at least half of the container width
+                flex: '1 1 50%', // Allows items to grow and shrink as needed
+              },
+            }}
+          >
+            <div className="flex flex-row flex-wrap -m-1">
+              <div className="list-item-container">
+                <ListItem>
+                  <ListItemText primary="Items Total:" secondary={'₱' + itemsTotal.toLocaleString()} />
+                </ListItem>
+              </div>
+
+              <div className="list-item-container">
+                <ListItem>
+                  <ListItemText
+                    primary="Delivery Fee:"
+                    secondary={'₱' + deliveryFee.toLocaleString() + ' , ' + reactiveKilometersFromStore()}
+                  />
+                </ListItem>
+              </div>
+
+              {firstOrderDiscount > 0 && (
+                <div className="list-item-container">
+                  <ListItem>
+                    <ListItemText primary="First Order Discount:" secondary={'₱' + firstOrderDiscount} />
+                  </ListItem>
+                </div>
+              )}
+              <div className="list-item-container">
+                <ListItem>
+                  <ListItemText primary="Grand Total:" secondary={'₱' + grandTotal.toLocaleString()} />
+                </ListItem>
+              </div>
+              {deliveryVehicle && deliveryVehicle != 'storePickUp' && (
+                <div className="list-item-container">
+                  <ListItem>
+                    <ListItemText primary="Delivery Vehicle:" secondary={deliveryVehicle} />
+                  </ListItem>
+                </div>
+              )}
+              {maxWeight && deliveryVehicle != 'storePickUp' && (
+                <div className="list-item-container">
+                  <ListItem>
+                    <ListItemText primary="Max Weight:" secondary={maxWeight + ' Kg'} />
+                  </ListItem>
+                </div>
+              )}
+
+              {totalWeight && (
+                <div className="list-item-container">
+                  <ListItem>
+                    <ListItemText primary="Weight of Items:" secondary={totalWeight.toFixed(2) + ' Kg'} />
+                  </ListItem>
+                </div>
+              )}
+            </div>
+          </List>
+
+          {/* <List
+            sx={{
+              width: responsiveWidth(),
+              bgcolor: 'background.paper',
               // bgcolor: 'red',
               marginLeft: -2,
               borderRadius: '8px',
@@ -153,14 +226,6 @@ const CheckoutSummary = (props) => {
               <ListItem>
                 <ListItemText primary="Items Total:" secondary={'₱' + itemsTotal.toLocaleString()} />
               </ListItem>
-              {/* {new AppConfig().getNoVat() ? null : 
-              (vat > 0) ?
-              (
-                <ListItem>
-                  <ListItemText primary="Tax:" secondary={'₱' + vat.toLocaleString()} />
-                </ListItem>
-              ) : null
-              } */}
 
               <ListItem>
                 <ListItemText
@@ -177,7 +242,7 @@ const CheckoutSummary = (props) => {
                 <ListItemText primary="Grand Total:" secondary={'₱' + grandTotal.toLocaleString()} />
               </ListItem>
             </div>
-          </List>
+          </List> */}
 
           {/* <div className="flex flex-col justify-between lg:flex-row w-8/12 ">
             <div className="flex xl:w-2/6 lg:w-2/6 md:w-full sm:w-full flex-col m-5 gap-3">

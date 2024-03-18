@@ -35,7 +35,7 @@ const GoogleMaps = (props) => {
   const setZoom = props.setZoom;
   const setLocalDeliveryAddress = props.setLocalDeliveryAddress;
   const setAddressText = props.setAddressText;
-  const [containerClassName, setContainerClassName] = useState('w-full h-[calc(100vh-200px)]');
+  const [containerClassName, setContainerClassName] = useState('w-full');
 
   const { firestore, userId, latitude, setLatitude, longitude, setLongitude } =
     React.useContext(AppContext);
@@ -49,6 +49,7 @@ const GoogleMaps = (props) => {
   let getLocation = () => {
     
     navigator.geolocation.getCurrentPosition((position) => {
+      
       setLocalLatitude(position.coords.latitude);
       setLocalLongitude(position.coords.longitude);
     });
