@@ -575,7 +575,7 @@ const CheckoutPage = () => {
     'Provide Contact Information',
     'BIR 2303 Information',
     'Review and Confirm Order',
-    'Payment Method'
+    'Payment Method',
   ];
   const [step, setStep] = useState(steps[0]);
 
@@ -712,10 +712,26 @@ const CheckoutPage = () => {
             </div>
           )
         ) : null}
-           {step == 'Delivery Date and Time' ? (
+        {step == 'Delivery Date and Time' ? (
           pickUpOrDeliver == 'deliver' ? (
-           <div>
-                Delivery Date and Time
+            <div>
+              <div className="flex flex-col justify-center m-5">
+                <div className=" flex justify-center">
+                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                    {pickUpOrDeliver == 'deliver' ? <>Delivery Date</> : <>Pick Up Date</>}
+                  </Typography>
+                </div>
+                <div className="flex justify-center mt-5 mb-5">
+                  <OrdersCalendar
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    minDate={allowedDates ? allowedDates.minDate : null}
+                    maxDate={allowedDates ? allowedDates.maxDate : null}
+                    filterDate={allowedDates ? allowedDates.excludeDates : null}
+                    disabledDates={allowedDates ? allowedDates.holidays : null}
+                  />
+                </div>
+              </div>
             </div>
           ) : (
             <div className="h-full flex justify-center items-center text-center">
@@ -1056,23 +1072,6 @@ const CheckoutPage = () => {
                 ) : null} */}
 
                     {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
-                    {/* <div className="flex flex-col justify-center m-5">
-                  <div className=" flex justify-center">
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                      {pickUpOrDeliver == 'deliver' ? <>Delivery Date</> : <>Pick Up Date</>}
-                    </Typography>
-                  </div>
-                  <div className="flex justify-center mt-5 mb-5">
-                    <OrdersCalendar
-                      startDate={startDate}
-                      setStartDate={setStartDate}
-                      minDate={allowedDates ? allowedDates.minDate : null}
-                      maxDate={allowedDates ? allowedDates.maxDate : null}
-                      filterDate={allowedDates ? allowedDates.excludeDates : null}
-                      disabledDates={allowedDates ? allowedDates.holidays : null}
-                    />
-                  </div>
-                </div> */}
 
                     {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
 
