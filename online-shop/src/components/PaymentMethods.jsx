@@ -60,12 +60,12 @@ function PaymentMethods({
     if (width < 366) {
       return ' grid-flow-col overflow-x-auto bg-color2 rounded-2xl pt-14';
     } else {
-      return ' 3xl:grid-cols-8 2xl:grid-cols-7 xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 2xs:grid-cols-2';
+      return ' 3xl:grid-cols-5 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 2xs:grid-cols-2';
     }
   }
 
   return (
-    <div className={'self-center w-11/12 gap-2 grid ' + overFlow()}>
+    <div className={'mt-10 mb-5  gap-2 grid ' + overFlow()}>
       {paymentMethods.map((payments) => {
         // ONLY SHOW CARD IF ENABLED
         if (payments.enabled === true) {

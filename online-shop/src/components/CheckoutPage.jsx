@@ -35,9 +35,10 @@ import { CiDeliveryTruck } from 'react-icons/ci';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { FaRegSave } from 'react-icons/fa';
-import { FaArrowRight } from "react-icons/fa";
-import { FaArrowLeft } from "react-icons/fa";
-import { IoMdPhotos } from "react-icons/io";
+import { FaArrowRight } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
+import { BiImageAdd } from 'react-icons/bi';
+import uploadFileToFirebaseStorage from './ImageComponents/ImageUploadFunction.js';
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -176,7 +177,7 @@ const CheckoutPage = () => {
 
   const [rowsMountCount, setRowsMountCount] = useState(0);
 
-  const [urlOfBir2303, setUrlOfBir2303] = useState('');
+  const [urlOfBir2303, setUrlOfBir2303] = useState(null);
 
   const [countOfOrdersThisYear, setCountOfOrdersThisYear] = useState(0);
 
@@ -187,6 +188,22 @@ const CheckoutPage = () => {
 
   const [isAccountClaimed, setIsAccountClaimed] = useState(false);
   const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
+
+  const handleFileChange = async (event) => {
+    try {
+      const file = event.target.files[0];
+      const url = await uploadFileToFirebaseStorage({
+        file,
+        fileName: null,
+        folderName: `2303Forms/${userdata ? userdata.uid : 'GUEST'}`,
+        storage,
+        resize: false,
+      });
+      on2303Upload(url);
+    } catch (error) {
+      alertSnackbar('error', error.message);
+    }
+  };
   useEffect(() => {
     const ad = new allowedDeliveryDates();
     ad.runMain();
@@ -268,6 +285,9 @@ const CheckoutPage = () => {
           isInvoiceNeeded,
           userdata ? userdata.orders : ['hasOrders']
         );
+      console.log(vat);
+      console.log(total_non_state);
+      console.log(firstOrderDiscount);
       setVat(vat);
       setMayaCheckoutItemDetails(rows_non_state);
       setRows(rows_non_state);
@@ -383,7 +403,7 @@ const CheckoutPage = () => {
     }
 
     if (isInvoiceNeeded) {
-      if (urlOfBir2303 === '') {
+      if (urlOfBir2303 === null) {
         alertSnackbar(
           'error',
           'Please upload BIR 2303 form. If BIR 2303 is not available, We will just send a delivery receipt instead.'
@@ -558,8 +578,21 @@ const CheckoutPage = () => {
 
   async function removeBir2303() {
     await firestore.deleteBir2303Link(userdata ? userdata.uid : 'GUEST');
-    setUrlOfBir2303('');
+    setIsInvoiceNeeded(false);
+    setUrlOfBir2303(null);
   }
+
+  useEffect(() => {
+    if (userdata) {
+      if (userdata.bir2303Link != '') {
+        setUrlOfBir2303(userdata.bir2303Link);
+        setIsInvoiceNeeded(true);
+      } else {
+        setIsInvoiceNeeded(false);
+        setUrlOfBir2303('');
+      }
+    }
+  }, []);
 
   function handlePickUpOrDeliverSwitch() {
     if (pickUpOrDeliver == 'pickup') {
@@ -577,38 +610,51 @@ const CheckoutPage = () => {
     'Provide Contact Information',
     'BIR 2303 Information',
     'Review and Confirm Order',
+    'Add Delivery Note',
     'Payment Method',
   ];
   const [step, setStep] = useState(steps[0]);
 
+  useEffect(() => {
+    console.log('urlOfBir2303', urlOfBir2303);
+  }, [urlOfBir2303]);
+
   return (
     <ThemeProvider theme={theme}>
-      <div className="h-screen flex flex-col items-center gap-5">
+      <div className="h-screen flex flex-col items-center justify-evenly gap-5">
         {/* <div className="w-full">
           <NavBar />
         </div> */}
-        <div className="w-full lg:w-1/2">
+        <div className="w-full  lg:w-1/2">
           <StepBar step={step} setStep={setStep} steps={steps} />
         </div>
-        <div className='flex flex-row items-center justify-between w-full lg:w-1/2 px-2 '>
-        <FaArrowLeft onClick={()=>{
-          if(step == steps[0]){
-            return;
-          }else{
-            setStep(steps[steps.indexOf(step)-1])
-          }
-        }} size={30} className='text-color10b hover:cursor-pointer'/>
-        {step}
-        <FaArrowRight onClick={()=>{
-          if(step == steps[steps.length-1]){
-            return;
-          }else{
-            setStep(steps[steps.indexOf(step)+1])
-          }
-        }} size={30} className='text-color10b hover:cursor-pointer' />
+        <div className="flex flex-row items-center justify-between w-full lg:w-1/2 px-2 ">
+          <FaArrowLeft
+            onClick={() => {
+              if (step == steps[0]) {
+                navigateTo('/shop');
+              } else {
+                setStep(steps[steps.indexOf(step) - 1]);
+              }
+            }}
+            size={30}
+            className="text-color10b hover:cursor-pointer"
+          />
+          {step}
+          <FaArrowRight
+            onClick={() => {
+              if (step == steps[steps.length - 1]) {
+                return;
+              } else {
+                setStep(steps[steps.indexOf(step) + 1]);
+              }
+            }}
+            size={30}
+            className="text-color10b hover:cursor-pointer"
+          />
         </div>
         {step == 'Choose A Method' ? (
-          <div className=" flex h-full  w-full items-center justify-center">
+          <div className=" flex h-full w-full items-center justify-center">
             <div className=" flex flex-col lg:flex-row gap-10 lg:gap-20 -mt-12  ">
               <button
                 onClick={() => {
@@ -635,7 +681,7 @@ const CheckoutPage = () => {
         ) : null}
         {step == 'Enter Delivery Information' ? (
           pickUpOrDeliver == 'deliver' ? (
-            <div className=" flex flex-col h-full   w-full items-center gap-2 ">
+            <div className=" flex flex-col h-full w-full items-center gap-2 ">
               <div className="w-full flex flex-row justify-between">
                 <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
                   {/* <Typography>
@@ -651,20 +697,20 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-row w-11/12 gap-5 items-center">
+              <div className="flex flex-row w-11/12 gap-5  items-center">
                 <TextField
                   // disabled
                   id="address search"
                   label="Search for a City / Barangay"
                   InputLabelProps={labelStyle}
                   variant="filled"
-                  className=" w-full self-center bg-white"
+                  className=" w-full self-center bg-white  rounded-lg"
                   value={addressGeocodeSearch}
                   onChange={(e) => setAddressGeocodeSearch(e.target.value)}
                 />
                 <button
                   onClick={searchAddress}
-                  className="p-3 text-white font-bold bg-color10b hover:bg-color10c rounded-lg "
+                  className="hover:bg-gray-400 bg-gray-200 p-3 rounded-lg text-black w-32 font-bold h-full"
                 >
                   Search
                 </button>
@@ -672,12 +718,12 @@ const CheckoutPage = () => {
                   onClick={() => {
                     setOpenModalSavedAddress(true);
                   }}
-                  className="bg-color10b text-white rounded-lg p-2"
+                  className="hover:bg-gray-400 bg-gray-200 h-full p-2.5 w-32 flex justify-center items-center rounded-lg text-black"
                 >
                   <FaRegSave size={30} />
                 </button>
               </div>
-              <div className="flex w-full h-full lg:px-12 min-h-64">
+              <div className="flex w-full h-full lg:px-12 ">
                 <GoogleMaps
                   selectedAddress={selectedAddress}
                   setSelectedAddress={setSelectedAddress}
@@ -748,11 +794,11 @@ const CheckoutPage = () => {
 
         {step == 'Provide Contact Information' ? (
           <div className=" flex flex-col h-full justify-center w-full items-center gap-5">
-            <div className="flex flex-col lg:w-1/2 w-11/12 items-center  rounded-lg border-2 ">
+            <div className="flex flex-col lg:w-1/2 w-11/12 items-center  rounded-lg border-2 shadow-2xl ">
               <div className="flex justify-start w-full  p-5 rounded-t-lg border-b-2 ">
                 <button
                   id="selectFromSavedContactsButton"
-                  className="bg-color10b hover:bg-color10c text-white rounded-lg p-3 flex flex-row items-center justify-center gap-2 "
+                  className="hover:bg-gray-400 bg-gray-200 text-black rounded-lg p-3 flex flex-row items-center justify-center gap-2  "
                   onClick={handleOpenContactModal}
                 >
                   <FaRegSave size={30} />
@@ -789,7 +835,7 @@ const CheckoutPage = () => {
                     value={localemail || ''}
                   />
                 ) : null}
-                <div className="flex flex-row w-full bg-red-300">
+                <div className="flex flex-row w-full ">
                   <button
                     onClick={() => {
                       if (localname.length > 0 && localphonenumber.length > 0) {
@@ -808,7 +854,7 @@ const CheckoutPage = () => {
                     }}
                     className="p-3 rounded-lg font-bold text-white bg-color10a hover:bg-color10c w-full"
                   >
-                    Done
+                    Continue
                   </button>
                 </div>
               </div>
@@ -829,7 +875,7 @@ const CheckoutPage = () => {
                     onClick={() => {
                       setIsInvoiceNeeded(true);
                     }}
-                    className="p-3 bg-color10b rounded-lg text-white w-20"
+                    className="hover:bg-gray-400 bg-gray-200 p-3 rounded-lg text-black w-20"
                   >
                     Yes
                   </button>
@@ -838,7 +884,7 @@ const CheckoutPage = () => {
                       setIsInvoiceNeeded(false);
                       setStep('Review and Confirm Order');
                     }}
-                    className="p-3 bg-color10b rounded-lg text-white w-20"
+                    className="p-3 bg-color10b rounded-lg text-white w-20 hover:bg-color10c font-bold"
                   >
                     No
                   </button>
@@ -846,293 +892,181 @@ const CheckoutPage = () => {
               </>
             ) : null}
             {isInvoiceNeeded ? (
-              urlOfBir2303 != '' ? (
-                <>
-                  <div className="flex justify-center m-5">
-                    <Image imageUrl={urlOfBir2303} />
+              <div className=" h-full flex flex-col">
+                <div className="h-8/10 flex flex-col">
+                  <div className="flex cursor-pointer m-5 h-full rounded-lg justify-center items-center bg-slate-50 border-2 border-color-black ">
+                    <div>
+                      <input
+                        type="file"
+                        id={`imageUpload`}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handleFileChange}
+                      />
+                      <label htmlFor={`imageUpload`}>
+                        {urlOfBir2303 != null ? (
+                          <img className="w-full h-full object-contain" src={urlOfBir2303} alt="bir image" />
+                        ) : (
+                          <BiImageAdd className="cursor-pointer" size={150} />
+                        )}
+                      </label>
+                    </div>
                   </div>
-                  <div className="flex justify-center m-5">
-                    <ImageUploadButton
-                      buttonTitle={'Update BIR 2303 Form'}
+                  <Divider className="border-2 mb-5 mx-5" />
+                </div>
+                <div className="h-3/10  flex flex-col">
+                  <Typography variant="h7" className="flex justify-center mb-5 mx-5">
+                    Please upload a photo below of your BIR 2303 form if you have one.
+                  </Typography>
+                  <div className="flex flex-row justify-evenly h-12 ">
+                    <button onClick={removeBir2303} className="hover:bg-gray-400 bg-gray-200 p-3 rounded-lg text-black">
+                      Remove BIR 2303
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (urlOfBir2303 != null) {
+                          setStep('Review and Confirm Order');
+                        } else {
+                          alertSnackbar('error', 'Please upload BIR 2303');
+                        }
+                      }}
+                      className="p-3 rounded-lg bg-color10b hover:bg-color10c text-white font-bold"
+                    >
+                      Continue
+                    </button>
+                    {/* <ImageUploadButton
+                      buttonTitle={'Upload BIR 2303 Form'}
                       storage={storage}
                       folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
                       onUploadFunction={on2303Upload}
-                    >
-                      update BIR 2303
-                    </ImageUploadButton>
-                    <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">
-                      Remove BIR 2303
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="bg-red-300 h-full flex flex-col">
-                  <div className="h-8/10 bg-yellow-300 flex flex-col">
-                    <div className="flex bg-sky-50 m-5 h-full rounded-lg justify-center items-center">
-
-                        <IoMdPhotos size={150} />
-                        {/* <Image imageUrl={urlOfBir2303} /> */}
-                    </div>
-                    <Divider className='border-2 mb-5 mx-5' />
-                  </div>
-                  <div className="h-3/10 bg-blue-300 flex flex-col">
-                    <Typography variant="h7" className="flex justify-center mb-5 mx-5">
-                      Please upload a photo below of your BIR 2303 form if you have one.
-                    </Typography>
-                    <div className="h-12 bg-orange-300">
-                      <ImageUploadButton
-                        buttonTitle={'Upload BIR 2303 Form'}
-                        storage={storage}
-                        folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
-                        onUploadFunction={on2303Upload}
-                      />
-                    </div>
+                    /> */}
                   </div>
                 </div>
-              )
+              </div>
             ) : null}
           </div>
         ) : null}
         {step == 'Review and Confirm Order' ? (
           <div className=" flex flex-col h-full justify-center lg:w-1/2 w-full items-center gap-5 overflow-auto ">
-            {allowShipping == false ? (
-              <div className="flex justify-center my-5">
-                <Typography variant="h7" color="red">
-                  Minimum order outside Cebu is 10000 pesos
-                </Typography>
+            <div className="w-full flex flex-col h-full gap-5  justify-evenly">
+              <CheckoutSummary
+                total={total}
+                setTotal={setTotal}
+                vat={vat}
+                deliveryFee={deliveryFee}
+                grandTotal={grandTotal}
+                totalWeight={totalWeight}
+                setTotalWeight={setTotalWeight}
+                deliveryVehicleObject={deliveryVehicle}
+                setDeliveryVehicle={setDeliveryVehicle}
+                setVat={setVat}
+                area={area}
+                setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
+                rows={rows}
+                kilometersFromStore={kilometersFromStore}
+                firstOrderDiscount={firstOrderDiscount}
+              />
+              <Divider className="border-2 mb-5 mx-5" />
+              <div className="w-full flex justify-center px-3 mb-3">
+                <button
+                  onClick={() => {
+                    setStep('Add Delivery Note');
+                  }}
+                  className="w-full lg:w-1/2 rounded-lg p-3 bg-color10b text-white font-bold"
+                >
+                  Confirm Order
+                </button>
               </div>
-            ) : (
-              <>
-                {area.length == 0 ? (
-                  <div className="flex justify-center my-5">
-                    <Typography variant="h7" color="red">
-                      Sorry we cant deliver to your selected area
-                    </Typography>
-                  </div>
-                ) : (
-                  <>
-                    {area.includes('lalamoveServiceArea') &&
-                    deliveryVehicle.name != 'motorcycle' &&
-                    deliveryVehicle.name != 'storePickUp'
-                      ? null
-                      : // <div>
-                        //   <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-                        //   <div className="flex justify-center mt-7">
-                        //     <Typography variant="h4" className="font-bold">
-                        //       Assistance
-                        //     </Typography>
-                        //   </div>
-                        //   <div className="flex justify-center items-center mt-5 px-3">
-                        //     <Typography variant="h6">
-                        //       Driver helps unload items?
-                        //       {deliveryVehicle != null ? ' ₱' + deliveryVehicle.driverAssistsPrice : null}
-                        //     </Typography>
-                        //     <Switch {...label} color="secondary" onClick={() => setNeedAssistance(!needAssistance)} />
-                        //   </div>
-                        // </div>
-                        null}
+            </div>
+          </div>
+        ) : null}
+        {step == 'Add Delivery Note' ? (
+          <div className=" flex h-full w-full lg:w-1/2 items-center flex-col justify-evenly">
+            <div className=" shadow-2xl flex flex-col w-5/6 lg:w-1/2 items-center  rounded-lg border-2 p-10 justify-evenly gap-10 ">
+              <TextField
+                id="outlined-multiline-static"
+                multiline
+                rows={5}
+                onChange={(e) => setDeliveryNotes(e.target.value)}
+                label="Delivery Notes (Not required)"
+                color="primary"
+                InputLabelProps={labelStyle}
+                className="rounded-md w-full   "
+                sx={style}
+              />
+              <div className="w-full flex justify-center lg:w-1/2 flex-col items-center">
+              <Divider className="border-2 mb-5 mx-5 w-full" />
+                <button
+                  onClick={() => {
+                    setStep('Payment Method');
+                  }}
+                  className="p-3 w-full lg:w-1/2 mx-10 rounded-lg bg-color10a hover:bg-color10c text-white font-bold"
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {step == 'Payment Method' ? (
+          <div className=" flex flex-col h-full  lg:w-1/2 w-full items-center overflow-auto justify-evenly  ">
+            <div className=" max-h-[80%] border-2 rounded-lg flex flex-col justify-start overflow-auto ">
+              <PaymentMethods
+                pickUpOrDeliver={pickUpOrDeliver}
+                itemsTotalPrice={total}
+                userdata={userdata}
+                email={localemail}
+                phoneNumber={localphonenumber}
+                manualCustomerOrderProcess={manualCustomerOrderProcess}
+              />
+            </div>
+            <div className="flex w-full justify-center">
+              <button onClick={()=>{
+                // log all states
+                console.log('localname', localname)
+                console.log('localemail', localemail)
+                console.log('localphonenumber', localphonenumber)
+                console.log('localDeliveryAddress', localDeliveryAddress)
+                console.log('locallatitude', locallatitude)
+                console.log('locallongitude', locallongitude)
+                console.log('zoom', zoom)
+                console.log('deliveryVehicle', deliveryVehicle)
+                console.log('needAssistance', needAssistance)
+                console.log('deliveryNotes', deliveryNotes)
+                console.log('allowShipping', allowShipping)
+                console.log('useShippingLine', useShippingLine)
+                console.log('placedOrder', placedOrder)
+                console.log('transactionStatus', transactionStatus)
+                console.log('mayaCheckoutItemDetails', mayaCheckoutItemDetails)
+                console.log('addressText', addressText)
+                console.log('addressGeocodeSearch', addressGeocodeSearch)
+                console.log('placeOrderLoading', placeOrderLoading)
+                console.log('isInvoiceNeeded', isInvoiceNeeded)
+                console.log('rowsMountCount', rowsMountCount)
+                console.log('urlOfBir2303', urlOfBir2303)
+                console.log('countOfOrdersThisYear', countOfOrdersThisYear)
+                console.log('startDate', startDate)
+                console.log('pickUpOrDeliver', pickUpOrDeliver)
+                console.log('allowedDates', allowedDates)
+                console.log('kilometersFromStore', kilometersFromStore)
+                console.log('isAccountClaimed', isAccountClaimed)
+                console.log('firstOrderDiscount', firstOrderDiscount)
+                console.log('total', total)
+                console.log('vat', vat)
+                console.log('deliveryFee', deliveryFee)
+                console.log('grandTotal', grandTotal)
+                console.log('totalWeight', totalWeight)
+                console.log('rows', rows)
+                console.log('step', step)
 
-                    {area.includes('lalamoveServiceArea') || area.length == 0 ? null : (
-                      <div className="flex justify-center mt-5 mb-5">
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                          Shipping Option
-                        </Typography>
-                      </div>
-                    )}
 
-                    {area.includes('davaoArea') ? (
-                      <div className="flex flex-col justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Davao Port via Sulpicio Lines</Typography>
-                        <Typography variant="h6" sx={{ marginTop: 2 }}>
-                          When we ship to your place we will charge 500 pesos to deliver it to the port. This includes
-                          Cebu Port Authority, and Handling Charges.
-                        </Typography>
-                        <Typography variant="h6" sx={{ marginTop: 2 }}>
-                          In order to claim the items from the Port you need to pay the shipping fee in their office.
-                        </Typography>
-                      </div>
-                    ) : null}
 
-                    {area.includes('iloiloArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Iloilo Port via Cokaliong or Trans Asia</Typography>
-                      </div>
-                    ) : null}
+              }} className="p-3 w-full lg:w-1/2 mx-5 rounded-lg bg-color10a text-white font-bold">Continue</button>
+            </div>
+          </div>
+        ) : null}
 
-                    {area.includes('leyteMaasinArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Leyte Maasin Port via Cokaliong.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('cagayanDeOroArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">
-                          We can ship to Cagayan De Oro Port cia Trans Asia, Cokaliong or Sulpicio.
-                        </Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('surigaoArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Surigao Port via Cokaliong.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('butuanArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Butuan Port via Cokaliong.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('dapitanArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Dapitan Port via Cokaliong.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('zamboangaArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Zamboanga Port via Alison.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('pagadianArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Pagadian Port via Roble.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('generalSantosArea text-center mx-10') ? (
-                      <div className="flex justify-center">
-                        <Typography variant="h6">We can ship to General Santos Port via Sulpicio.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('bacolodArea text-center mx-10') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">
-                          We can ship to Bacolod Port via Diamante trucking, or your preferred logistics company.
-                        </Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('dumagueteArea text-center mx-10') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">
-                          We can ship to Dumaguete using Matiao Trucking, or your preferred logistics company.
-                        </Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('boholArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Bohol Port via Lite Shipping.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('masbateArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Masbate Port via Cokaliong.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('manilaArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Manila Port via 2GO, or Cokaliong.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('samarArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Samar Port via Cokaliong.</Typography>
-                      </div>
-                    ) : null}
-
-                    {area.includes('leytePalomponArea') ? (
-                      <div className="flex justify-center text-center mx-10">
-                        <Typography variant="h6">We can ship to Leyte Palompon Port via Cokaliong</Typography>
-                      </div>
-                    ) : null}
-
-                    {/* <Divider sx={{ marginTop: 5, marginBottom: 3 }} /> */}
-
-                    {/* {area.includes("lalamoveServiceArea") ||
-              area.length == 0 ? null : (
-               
-              )} */}
-
-                    {/* <div className="flex justify-center mt-7 m-5">
-                  <Typography variant="h4" className="font-bold">
-                    Checkout Summary
-                  </Typography>
-                </div> */}
-                    <div className="w-full flex flex-col h-full gap-5  justify-evenly">
-                      {area.length == 0 ? null : (
-                        <CheckoutSummary
-                          total={total}
-                          setTotal={setTotal}
-                          vat={vat}
-                          deliveryFee={deliveryFee}
-                          grandTotal={grandTotal}
-                          totalWeight={totalWeight}
-                          setTotalWeight={setTotalWeight}
-                          deliveryVehicleObject={deliveryVehicle}
-                          setDeliveryVehicle={setDeliveryVehicle}
-                          setVat={setVat}
-                          area={area}
-                          setMayaCheckoutItemDetails={setMayaCheckoutItemDetails}
-                          rows={rows}
-                          kilometersFromStore={kilometersFromStore}
-                          firstOrderDiscount={firstOrderDiscount}
-                        />
-                      )}
-                      <div className="w-full fle px-3 mb-3">
-                        <button className="w-full rounded-lg p-3 bg-color10b text-white font-bold">
-                          Confirm Order
-                        </button>
-                      </div>
-                    </div>
-                    {/* {userdata ? (
-                 
-                ) : null} */}
-
-                    {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
-
-                    {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
-
-                    {/* <div className="flex justify-center m-5">
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Payment
-                  </Typography>
-                </div> */}
-
-                    {/* <PaymentMethods
-                  pickUpOrDeliver={pickUpOrDeliver}
-                  itemsTotalPrice={total}
-                  userdata={userdata}
-                  email={localemail}
-                  phoneNumber={localphonenumber}
-                  manualCustomerOrderProcess={manualCustomerOrderProcess}
-                /> */}
-
-                    {/* <Divider sx={{ marginTop: 5, marginBottom: 3 }} /> */}
-
-                    {/* <div className="flex w-full justify-center my-5 items ">
-                  <TextField
-                    id="outlined-multiline-static"
-                    multiline
-                    rows={5}
-                    onChange={(e) => setDeliveryNotes(e.target.value)}
-                    label="Delivery Notes"
-                    color="primary"
-                    InputLabelProps={labelStyle}
-                    className="rounded-md w-9/12 2xl:w-2/6 xl:w-3/6  "
-                    sx={style}
-                  />
-                </div> */}
-
-                    {/* <div className="flex justify-center mt-2 mb-6">
+        {/* <div className="flex justify-center mt-2 mb-6">
                   <button
                     id="placeorderbutton"
                     onClick={onPlaceOrder}
@@ -1149,146 +1083,24 @@ const CheckoutPage = () => {
                       'Place Order'
                     )}
                   </button>
-                </div> */}
-                  </>
-                )}
-              </>
-            )}
-          </div>
-        ) : null}
+                    </div> */}
+
+        <GoogleMapsModalSelectSaveAddress
+          open={openModalSavedAddress}
+          handleClose={handleCloseModalSavedAddress}
+          setLocalDeliveryAddress={setLocalDeliveryAddress}
+          setLocalLatitude={setLocalLatitude}
+          setLocalLongitude={setLocalLongitude}
+          setZoom={setZoom}
+        />
+        <GoogleMapsModalSelectContactModal
+          open={openContactModal}
+          handleClose={handleCloseContactModal}
+          setLocalName={setLocalName}
+          setLocalPhoneNumber={setLocalPhoneNumber}
+        />
+        <CheckoutNotification allowedDates={allowedDates} />
       </div>
-      {/* <div className="flex flex-col bg-gradient-to-r overflow-x-hidden bg-colorbackground ">
-        <Divider sx={{ marginTop: 0.1, marginBottom: 3 }} />
-        <div className="flex flex-col justify-center w-full items-center">
-          <Typography variant="h6">Would you like to pick up items?</Typography>
-          <Switch {...label} color="secondary" onClick={handlePickUpOrDeliverSwitch} />
-        </div>
-
-        {pickUpOrDeliver == 'deliver' ? (
-          <>
-            <div className="flex flex-col self-center items-center gap-6 w-full">
-              <div className="flex flex-row w-full justify-between ml-4 my-5">
-                <div className="flex justify-center w-full p-3">
-                  <Typography variant="h4" className="font-bold">
-                    Delivery Address
-                  </Typography>
-                </div>
-                <div className="flex justify-center w-full">
-                  <button
-                    id="selectFromSavedAddressButton"
-                    className="hover:bg-color10c bg-color10b text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
-                    onClick={handleOpenModalSavedAddress}
-                  >
-                    Select From Saved Address
-                  </button>
-                </div>
-              </div>
-            </div>
-            <Divider sx={{ marginTop: 1, marginBottom: 3 }} />
-            <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
-              <Typography>
-                • <strong>Click on the map</strong> to change the delivery point.
-              </Typography>
-              <Typography>
-                • Please <strong>pinpoint</strong> your delivery address below.
-              </Typography>
-              <Typography>
-                • Use the <strong>search button</strong> to easily find your address and <strong>adjust the pin</strong>{' '}
-                to your address.
-              </Typography>
-            </div>
-
-            <div className="gap-2 p-2 flex flex-row-reverse justify-between w-11/12 self-center">
-              <button
-                onClick={searchAddress}
-                className="p-4 text-white font-bold bg-color10b hover:bg-color10c rounded-lg mr-2 lg:mr-5"
-              >
-                Search
-              </button>
-              <TextField
-                // disabled
-                id="address search"
-                label="Search for a landmark"
-                InputLabelProps={labelStyle}
-                variant="filled"
-                className="w-full self-center bg-white"
-                value={addressGeocodeSearch}
-                onChange={(e) => setAddressGeocodeSearch(e.target.value)}
-              />
-            </div>
-            <div className="lg:mx-14 mt-5">
-
-            </div>
-          
-          </>
-        ) : null}
-        <Divider sx={{ marginTop: 5, marginBottom: 3 }} />
-        <div className="flex flex-col self-center items-center gap-6 w-full">
-          <div className="flex flex-row w-full justify-between ml-4 my-5">
-            <div className="flex justify-center w-full p-3">
-              <Typography variant="h4" className="font-bold">
-                Contact Details
-              </Typography>
-            </div>
-            <div className="flex justify-center w-full ">
-              <button
-                id="selectFromSavedContactsButton"
-                className="bg-color10b hover:bg-color10c text-white rounded-lg w-4/6 xs:w-3/6 p-1 font-bold "
-                onClick={handleOpenContactModal}
-              >
-                Select From Saved Contacts
-              </button>
-            </div>
-          </div>
-
-          <TextField
-            id="contactNumberEntry"
-            label="Contact # (required)"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 mt-1 bg-white"
-            onChange={(event) => setLocalPhoneNumber(event.target.value)}
-            value={localphonenumber || ''}
-          />
-          <TextField
-            id="contactNameEntry"
-            label="Name (required)"
-            InputLabelProps={labelStyle}
-            variant="filled"
-            className=" w-11/12 mt-1 bg-white"
-            onChange={(event) => setLocalName(event.target.value)}
-            value={localname || ''}
-          />
-          {isAccountClaimed ? (
-            <TextField
-              id="emailAddressEntry"
-              label="E-mail (required)"
-              InputLabelProps={labelStyle}
-              variant="filled"
-              className=" w-11/12 mt-1 bg-white"
-              onChange={(event) => setLocalEmail(event.target.value)}
-              value={localemail || ''}
-            />
-          ) : null}
-        </div>
-
-
-      </div> */}
-      <GoogleMapsModalSelectSaveAddress
-        open={openModalSavedAddress}
-        handleClose={handleCloseModalSavedAddress}
-        setLocalDeliveryAddress={setLocalDeliveryAddress}
-        setLocalLatitude={setLocalLatitude}
-        setLocalLongitude={setLocalLongitude}
-        setZoom={setZoom}
-      />
-      <GoogleMapsModalSelectContactModal
-        open={openContactModal}
-        handleClose={handleCloseContactModal}
-        setLocalName={setLocalName}
-        setLocalPhoneNumber={setLocalPhoneNumber}
-      />
-      <CheckoutNotification allowedDates={allowedDates} />
     </ThemeProvider>
   );
 };

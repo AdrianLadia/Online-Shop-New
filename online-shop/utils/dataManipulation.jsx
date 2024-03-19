@@ -592,7 +592,8 @@ class dataManipulation {
     });
 
     const vat = this.businesscalculations.getValueAddedTax(total_non_state, urlOfBir2303, isInvoiceNeeded);
-    const items_total = total_non_state - vat;
+    const items_total = total_non_state;
+    console.log('items_total',items_total)
 
     let firstOrderDiscount = 0;
     const discountCap = 500;

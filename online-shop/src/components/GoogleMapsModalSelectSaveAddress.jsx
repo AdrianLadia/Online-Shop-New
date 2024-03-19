@@ -39,7 +39,7 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
   
 
   return (
-    <div className='flex flex-col '>
+
       <Modal
         open={props.open}
         onClose={props.handleClose}
@@ -90,7 +90,7 @@ const GoogleMapsModalSelectSaveAddress = (props) => {
           </div>
         </Box>
       </Modal>
-    </div>
+
   );
 };
 

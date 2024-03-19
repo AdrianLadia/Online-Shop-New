@@ -43,7 +43,7 @@ const CheckoutSummary = (props) => {
   const area = props.area;
   const rows = props.rows;
 
-  const itemsTotal = vat + total;
+  const itemsTotal = total;
 
   function responsiveWidth() {
     if (width < 550) {
@@ -147,6 +147,14 @@ const CheckoutSummary = (props) => {
                   <ListItemText primary="Items Total:" secondary={'₱' + itemsTotal.toLocaleString()} />
                 </ListItem>
               </div>
+
+              {vat != 0 ? (
+                <div className="list-item-container">
+                  <ListItem>
+                    <ListItemText primary="Vat (12%):" secondary={'₱' + vat.toLocaleString()} />
+                  </ListItem>
+                </div>
+              ) : null}
 
               <div className="list-item-container">
                 <ListItem>

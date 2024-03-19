@@ -28,7 +28,7 @@ const GoogleMapsModalSelectContactModal = (props) => {
   const [contactPerson, setContactPerson] = React.useState(userdata ? userdata.contactPerson : []);
 
   return (
-    <div class>
+  
       <Modal
         open={props.open}
         onClose={props.handleClose}
@@ -69,7 +69,7 @@ const GoogleMapsModalSelectContactModal = (props) => {
           </div>
         </Box>
       </Modal>
-    </div>
+
   );
 };
 

@@ -25,6 +25,7 @@ const ImageUploadButton = (props) => {
   const [buttonText, setButtonText] = useState(buttonTitle);
   const [loading, setLoading] = useState(false);
 
+  
 
   const handleFileChange = async (event) => {
     setLoading(true);

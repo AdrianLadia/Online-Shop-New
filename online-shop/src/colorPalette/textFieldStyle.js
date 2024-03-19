@@ -10,7 +10,7 @@ const textFieldStyle = () => ({
         },
         '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
             border:2,
-            color: '#429eff'
+            color: '#69b05c'
         }
 });
 

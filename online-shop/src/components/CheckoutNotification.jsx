@@ -15,7 +15,7 @@ const CheckoutNotification = ({ allowedDates }) => {
   const handleClose = () => setOpen(false);
 
   return (
-    <div>
+
       <Modal
         open={open}
         onClose={handleClose}
@@ -65,7 +65,7 @@ const CheckoutNotification = ({ allowedDates }) => {
 
         {/* </Box> */}
       </Modal>
-    </div>
+
   );
 };
 

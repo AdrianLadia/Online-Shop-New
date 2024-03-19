@@ -491,7 +491,7 @@ class businessCalculations {
       vatPercentage = 1.12;
     }
 
-    const vat = totalPrice - totalPrice / vatPercentage;
+    const vat = (totalPrice * 1.12) - totalPrice ;
     const roundedVat = Math.round(vat * 100) / 100;
 
     const vatSchema = Joi.number().required();
