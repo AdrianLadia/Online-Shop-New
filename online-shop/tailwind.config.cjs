@@ -100,6 +100,7 @@ module.exports = {
         'semifull': '20rem'
       },
       colors: {
+        colorMaterialUi: '#f0f0f0',
         color60: '#69b05c', //logo green
         color30: '#bb9541', //logo brown
         color10a: '#6ab15d', // dark green

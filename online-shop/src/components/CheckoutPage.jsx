@@ -584,7 +584,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (userdata) {
-      if (userdata.bir2303Link != '') {
+      if (userdata.bir2303Link != null) {
         setUrlOfBir2303(userdata.bir2303Link);
         setIsInvoiceNeeded(true);
       } else {
@@ -748,9 +748,9 @@ const CheckoutPage = () => {
                   value={localDeliveryAddress}
                 />
               </div>
-              <div className="flex flex-row justify-between px-5 w-full mb-8 lg:justify-center lg:gap-5  ">
-                <div className="flex flex-col">
-                  <span className="text-color10b">Delivery Date</span>
+              <div className="flex flex-row justify-between px-5 w-full mb-8 lg:justify-center lg:gap-5 gap-10 ">
+                <div className="flex flex-col w-1/2">
+                  <span className="text-color10b ">Delivery Date</span>
                   <OrdersCalendar
                     startDate={startDate}
                     setStartDate={setStartDate}
@@ -760,7 +760,7 @@ const CheckoutPage = () => {
                     disabledDates={allowedDates ? allowedDates.holidays : null}
                   />
                 </div>
-                <div className="flex flex-col  h-full  justify-end ">
+                <div className="flex flex-col  h-full  justify-end w-1/2 ">
                   <button
                     onClick={() => {
                       if (localDeliveryAddress.length > 0) {
@@ -769,7 +769,7 @@ const CheckoutPage = () => {
                         alertSnackbar('error', 'Please enter your address');
                       }
                     }}
-                    className="p-3 rounded-lg flex-end font-bold text-white bg-color10a hover:bg-color10c h-12"
+                    className="p-3 rounded-lg flex-end font-bold text-white bg-color10a hover:bg-color10c h-14"
                   >
                     Continue
                   </button>
