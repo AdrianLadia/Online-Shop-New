@@ -35,6 +35,8 @@ import { CiDeliveryTruck } from 'react-icons/ci';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { FaRegSave } from 'react-icons/fa';
+import { FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -582,13 +584,29 @@ const CheckoutPage = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="h-screen flex flex-col items-center gap-5">
-        <div className="w-full">
+        {/* <div className="w-full">
           <NavBar />
-        </div>
+        </div> */}
         <div className="w-full lg:w-1/2">
           <StepBar step={step} setStep={setStep} steps={steps} />
         </div>
+        <div className='flex flex-row items-center justify-between w-full lg:w-1/2 px-2 '>
+        <FaArrowLeft onClick={()=>{
+          if(step == steps[0]){
+            return;
+          }else{
+            setStep(steps[steps.indexOf(step)-1])
+          }
+        }} size={30} className='text-color10b hover:cursor-pointer'/>
         {step}
+        <FaArrowRight onClick={()=>{
+          if(step == steps[steps.length-1]){
+            return;
+          }else{
+            setStep(steps[steps.indexOf(step)+1])
+          }
+        }} size={30} className='text-color10b hover:cursor-pointer' />
+        </div>
         {step == 'Choose A Method' ? (
           <div className=" flex h-full  w-full items-center justify-center">
             <div className=" flex flex-col lg:flex-row gap-20 -mt-12  ">
@@ -733,7 +751,7 @@ const CheckoutPage = () => {
           )
         ) : null}
         {step == 'Provide Contact Information' ? (
-          <div className=" flex flex-col h-full justify-center -mt-28  w-full items-center gap-5 ">
+          <div className=" flex flex-col h-full justify-center w-full items-center gap-5">
             <div className="flex flex-col lg:w-1/2 w-11/12 items-center  rounded-lg border-2 ">
               <div className="flex justify-start w-full  p-5 rounded-t-lg border-b-2 ">
                 <button

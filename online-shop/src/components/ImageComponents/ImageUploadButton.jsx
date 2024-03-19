@@ -57,6 +57,10 @@ const ImageUploadButton = (props) => {
           if (resize) {
             const resizedFileName = fileName.split('.')[0] + '_612x820.' + fileName.split('.')[1];
             const resizedRefStorage = ref(storage, folderName + '/' + _uuidv4 + resizedFileName);
+
+            console.log(folderName)
+            console.log(_uuidv4)
+            console.log(resizedFileName)
             let retries = 0;
             while (downloadURLResized === undefined) {
               if (retries > 10) {
