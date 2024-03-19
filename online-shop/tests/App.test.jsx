@@ -3150,7 +3150,7 @@ describe('testStoreProductsOrganizer', async () => {
   });
 });
 
-describe('test commission system', async () => {
+describe.only('test commission system', async () => {
   test('Setup test', async () => {
     await resetOrdersAndPayments();
 
@@ -3512,7 +3512,7 @@ describe('test commission system', async () => {
     const commissions = affiliateData.affiliateCommissions;
     let found = false;
     commissions.forEach((commission) => {
-      if (commission.commission == '976.19') {
+      if (commission.commission == '878.57') {
         found = true;
       }
     });

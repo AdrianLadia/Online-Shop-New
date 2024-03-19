@@ -659,26 +659,22 @@ exports.updateOrdersAsPaidOrNotPaid = onRequest(async (req, res) => {
 });
 
 // ##############
-function getPriceToUse(itemId,userPrices,userRole, itemUnit, itemDistributorPrice,itemPrice) { 
-      if (userPrices[itemId]) {
-        return parseFloat(userPrices[itemId]);
-      }
-      if (userRole == 'distributor') {
-        return itemDistributorPrice
-      }
-      if (userRole == 'cousin') {
-        if (itemUnit.toLowerCase() != 'pack') {
-          return roundUpToNearest5(itemDistributorPrice * .97)
-        }
-        else {
-          return itemPrice;
-        }
-      }
-      else {
-        return itemPrice
-      }
-    
-    
+function getPriceToUse(itemId, userPrices, userRole, itemUnit, itemDistributorPrice, itemPrice) {
+  if (userPrices[itemId]) {
+    return parseFloat(userPrices[itemId]);
+  }
+  if (userRole == 'distributor') {
+    return itemDistributorPrice;
+  }
+  if (userRole == 'cousin') {
+    if (itemUnit.toLowerCase() != 'pack') {
+      return roundUpToNearest5(itemDistributorPrice * 0.97);
+    } else {
+      return itemPrice;
+    }
+  } else {
+    return itemPrice;
+  }
 }
 exports.transactionPlaceOrder = onRequest(async (req, res) => {
   corsHandler(req, res, async () => {
@@ -747,8 +743,15 @@ exports.transactionPlaceOrder = onRequest(async (req, res) => {
       const itemId = key;
       const itemQuantity = cart[key];
       const item = await db.collection('Products').doc(itemId).get();
-      let price = getPriceToUse(itemId,userPrices,userData.userRole, item.data().unit, item.data().distributorPrice, item.data().price)
-      console.log('price', price)
+      let price = getPriceToUse(
+        itemId,
+        userPrices,
+        userData.userRole,
+        item.data().unit,
+        item.data().distributorPrice,
+        item.data().price
+      );
+      console.log('price', price);
       const total = price * itemQuantity;
       const stocksAvailable = item.data().stocksAvailable;
       const itemName = item.data().itemName;
@@ -1321,7 +1324,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     const orderReference = data.reference;
     const paymentprovider = data.paymentprovider;
 
-    
     const commissionPercentage = 0.01;
     data['date'] = new Date();
     const proofOfPaymentLink = data.proofOfPaymentLink;
@@ -1333,30 +1335,34 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
     const cartItemPrice = orderData.cartItemsPrice;
     let commissionObjectsList = [];
     Object.keys(cart).forEach((key) => {
-        const itemId = key;
-        const itemQuantity = cart[key];
-        const itemPrice = cartItemPrice[key];
-        let unit
-        let commissionPercentage
-        if (itemId.slice(-4) === '-RET') {
-            unit = 'retail'     
-            commissionPercentage = 0.03;       
-        }
-        else {
-            unit = 'wholesale'
-            commissionPercentage = 0.01;
-        }
-        const itemTotal = itemPrice * itemQuantity;
-        const commission = itemTotal * commissionPercentage;
-        const commissionObject = {
-          itemId,itemQuantity,itemPrice,itemTotal,unit,commissionPercentage,commission
-        }
-        commissionObjectsList.push(commissionObject)
+      const itemId = key;
+      const itemQuantity = cart[key];
+      const itemPrice = cartItemPrice[key];
+      let unit;
+      let commissionPercentage;
+      if (itemId.slice(-4) === '-RET') {
+        unit = 'retail';
+        commissionPercentage = 0.03;
+      } else {
+        unit = 'wholesale';
+        commissionPercentage = 0.01;
+      }
+      const itemTotal = itemPrice * itemQuantity;
+      const commission = itemTotal * commissionPercentage;
+      const commissionObject = {
+        itemId,
+        itemQuantity,
+        itemPrice,
+        itemTotal,
+        unit,
+        commissionPercentage,
+        commission,
+      };
+      commissionObjectsList.push(commissionObject);
     });
     console.log('commissionObjectsList', commissionObjectsList);
     let totalCommission = commissionObjectsList.reduce((a, b) => a + b.commission, 0);
     totalCommission = parseFloat(totalCommission.toFixed(2));
-    
 
     console.log('totalCommission', totalCommission);
     let userId;
@@ -1410,9 +1416,9 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
             const affiliateUserSnap = await transaction.get(affiliateUserRef);
             const affiliateUserData = affiliateUserSnap.data();
             const oldAffiliateCommissions = affiliateUserData.affiliateCommissions;
-            let commission = depositAmount / itemsTotal * totalCommission;
+            let commission = ((depositAmount - shippingTotal - orderVat) / itemsTotal) * totalCommission;
             commission = Math.round(commission * 100) / 100;
-            console.log('commission', commission );
+            console.log('commission', commission);
             newAffiliateCommissions = [
               ...oldAffiliateCommissions,
               {
@@ -1435,7 +1441,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
 
         const cartData = {};
         const newStocksOnHold = {};
-        
 
         await Promise.all(
           Object.keys(cart).map(async (itemId) => {
@@ -1445,7 +1450,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
             cartData[itemId] = productData;
           })
         );
-
 
         Object.keys(cartData).forEach((itemId) => {
           const stocksOnHold = cartData[itemId].stocksOnHold;
@@ -1469,7 +1473,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
         //     console.log('stockOnHold for ' + productData.itemId, stocksOnHold);
 
         console.log('newStocksOnHold', newStocksOnHold);
-
 
         // WRITE
 
@@ -1517,7 +1520,6 @@ exports.transactionCreatePayment = onRequest(async (req, res) => {
           const ref = db.collection('Products').doc(itemId);
           transaction.update(ref, { stocksOnHold: newStocksOnHoldArray });
         });
-
       });
 
       if (paymentNotAccepted == true) {
@@ -1568,11 +1570,10 @@ exports.payMayaCheckout = onRequest(async (req, res) => {
       Authorization: `Basic ${convertToBase64(publicKey)}`,
       'Content-Type': 'application/json',
     };
-    try{
+    try {
       const response = await axios.post(url, payload, { headers });
       res.send(response.data);
-    }
-    catch (error) {
+    } catch (error) {
       console.log('error', error);
       res.status(400).send('Error creating checkout request.');
     }
@@ -2049,7 +2050,7 @@ exports.transactionCancelOrder = onRequest(async (req, res) => {
           paymentsSnapshot.forEach((doc) => {
             docRef = doc.ref;
           });
-        
+
           console.log('docRef', docRef);
           const data = orders.filter((order) => order.reference != orderReference);
 

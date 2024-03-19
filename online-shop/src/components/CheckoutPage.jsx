@@ -37,6 +37,7 @@ import CardContent from '@mui/material/CardContent';
 import { FaRegSave } from 'react-icons/fa';
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
+import { IoMdPhotos } from "react-icons/io";
 
 const style = textFieldStyle();
 const labelStyle = textFieldLabelStyle();
@@ -572,12 +573,11 @@ const CheckoutPage = () => {
   }
   const steps = [
     'Choose A Method',
-    'Enter Delivery Address',
-    'Delivery Date and Time',
+    'Enter Delivery Information',
     'Provide Contact Information',
     'BIR 2303 Information',
     'Review and Confirm Order',
-    'Payment Method'
+    'Payment Method',
   ];
   const [step, setStep] = useState(steps[0]);
 
@@ -609,7 +609,7 @@ const CheckoutPage = () => {
         </div>
         {step == 'Choose A Method' ? (
           <div className=" flex h-full  w-full items-center justify-center">
-            <div className=" flex flex-col lg:flex-row gap-20 -mt-12  ">
+            <div className=" flex flex-col lg:flex-row gap-10 lg:gap-20 -mt-12  ">
               <button
                 onClick={() => {
                   setStep('Provide Contact Information');
@@ -622,7 +622,7 @@ const CheckoutPage = () => {
               </button>
               <button
                 onClick={() => {
-                  setStep('Enter Delivery Address');
+                  setStep('Enter Delivery Information');
                   setPickUpOrDeliver('deliver');
                 }}
                 className="flex flex-col items-center justify-center rounded-lg p-3 bg-color10a text-white  w-52 h-52  hover:bg-color10c"
@@ -633,21 +633,21 @@ const CheckoutPage = () => {
             </div>
           </div>
         ) : null}
-        {step == 'Enter Delivery Address' ? (
+        {step == 'Enter Delivery Information' ? (
           pickUpOrDeliver == 'deliver' ? (
-            <div className=" flex flex-col h-full   w-full items-center gap-5 ">
+            <div className=" flex flex-col h-full   w-full items-center gap-2 ">
               <div className="w-full flex flex-row justify-between">
                 <div className="flex justify-start ml-2 lg:mx-14 flex-col mb-2 ">
-                  <Typography>
+                  {/* <Typography>
                     • <strong>Click on the map</strong> to change the delivery point.
-                  </Typography>
+                  </Typography> */}
                   <Typography>
                     • Please <strong>pinpoint</strong> your delivery address below.
                   </Typography>
-                  <Typography>
+                  {/* <Typography>
                     • Use the <strong>search button</strong> to easily find your address and{' '}
                     <strong>adjust the pin</strong> to your address.
-                  </Typography>
+                  </Typography> */}
                 </div>
               </div>
 
@@ -677,7 +677,7 @@ const CheckoutPage = () => {
                   <FaRegSave size={30} />
                 </button>
               </div>
-              <div className="flex w-full h-full lg:px-12">
+              <div className="flex w-full h-full lg:px-12 min-h-64">
                 <GoogleMaps
                   selectedAddress={selectedAddress}
                   setSelectedAddress={setSelectedAddress}
@@ -691,28 +691,43 @@ const CheckoutPage = () => {
                   setAddressText={setAddressText}
                 />
               </div>
-              <div className="flex flex-row w-11/12 mb-5 gap- justify-between">
+              <div className="flex flex-row w-11/12 lg:w-full  justify-between lg:justify-center">
                 <TextField
                   id="addressEntry"
                   label="Address (required)"
                   InputLabelProps={labelStyle}
                   variant="filled"
-                  className=" bg-white lg:w-11/12"
+                  className=" bg-white lg:w-11/12 w-full"
                   onChange={(event) => setLocalDeliveryAddress(event.target.value)}
                   value={localDeliveryAddress}
                 />
-                <button
-                  onClick={() => {
-                    if (localDeliveryAddress.length > 0) {
-                      setStep('Delivery Date and Time');
-                    } else {
-                      alertSnackbar('error', 'Please enter your address');
-                    }
-                  }}
-                  className="p-3 rounded-lg font-bold text-white bg-color10a hover:bg-color10c"
-                >
-                  Set Address
-                </button>
+              </div>
+              <div className="flex flex-row justify-between px-5 w-full mb-8 lg:justify-center lg:gap-5  ">
+                <div className="flex flex-col">
+                  <span className="text-color10b">Delivery Date</span>
+                  <OrdersCalendar
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    minDate={allowedDates ? allowedDates.minDate : null}
+                    maxDate={allowedDates ? allowedDates.maxDate : null}
+                    filterDate={allowedDates ? allowedDates.excludeDates : null}
+                    disabledDates={allowedDates ? allowedDates.holidays : null}
+                  />
+                </div>
+                <div className="flex flex-col  h-full  justify-end ">
+                  <button
+                    onClick={() => {
+                      if (localDeliveryAddress.length > 0) {
+                        setStep('Provide Contact Information');
+                      } else {
+                        alertSnackbar('error', 'Please enter your address');
+                      }
+                    }}
+                    className="p-3 rounded-lg flex-end font-bold text-white bg-color10a hover:bg-color10c h-12"
+                  >
+                    Continue
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -730,26 +745,7 @@ const CheckoutPage = () => {
             </div>
           )
         ) : null}
-           {step == 'Delivery Date and Time' ? (
-          pickUpOrDeliver == 'deliver' ? (
-           <div>
-                Delivery Date and Time
-            </div>
-          ) : (
-            <div className="h-full flex justify-center items-center text-center">
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    You have selected pick up.
-                  </Typography>
-                  <Typography variant="h5" component="h2">
-                    No need to fill up this part.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </div>
-          )
-        ) : null}
+
         {step == 'Provide Contact Information' ? (
           <div className=" flex flex-col h-full justify-center w-full items-center gap-5">
             <div className="flex flex-col lg:w-1/2 w-11/12 items-center  rounded-lg border-2 ">
@@ -799,7 +795,7 @@ const CheckoutPage = () => {
                       if (localname.length > 0 && localphonenumber.length > 0) {
                         if (isAccountClaimed) {
                           if (localemail.length > 0) {
-                            setStep('Review and Confirm Order');
+                            setStep('BIR 2303 Information');
                           } else {
                             alertSnackbar('error', 'Please enter your email');
                           }
@@ -817,6 +813,84 @@ const CheckoutPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+        ) : null}
+        {step == 'BIR 2303 Information' ? (
+          <div className=" flex flex-col h-full justify-center lg:w-1/2 w-full items-center gap-5 ">
+            {!isInvoiceNeeded ? (
+              <>
+                <div className="flex justify-center m-5 -mt-20 ">
+                  <Typography className="text-center" variant="h6">
+                    Do you have a BIR 2303 form or COR?
+                  </Typography>
+                </div>
+                <div className="flex justify-center items-center gap-5">
+                  <button
+                    onClick={() => {
+                      setIsInvoiceNeeded(true);
+                    }}
+                    className="p-3 bg-color10b rounded-lg text-white w-20"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsInvoiceNeeded(false);
+                      setStep('Review and Confirm Order');
+                    }}
+                    className="p-3 bg-color10b rounded-lg text-white w-20"
+                  >
+                    No
+                  </button>
+                </div>
+              </>
+            ) : null}
+            {isInvoiceNeeded ? (
+              urlOfBir2303 != '' ? (
+                <>
+                  <div className="flex justify-center m-5">
+                    <Image imageUrl={urlOfBir2303} />
+                  </div>
+                  <div className="flex justify-center m-5">
+                    <ImageUploadButton
+                      buttonTitle={'Update BIR 2303 Form'}
+                      storage={storage}
+                      folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
+                      onUploadFunction={on2303Upload}
+                    >
+                      update BIR 2303
+                    </ImageUploadButton>
+                    <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">
+                      Remove BIR 2303
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="bg-red-300 h-full flex flex-col">
+                  <div className="h-8/10 bg-yellow-300 flex flex-col">
+                    <div className="flex bg-sky-50 m-5 h-full rounded-lg justify-center items-center">
+
+                        <IoMdPhotos size={150} />
+                        {/* <Image imageUrl={urlOfBir2303} /> */}
+                    </div>
+                    <Divider className='border-2 mb-5 mx-5' />
+                  </div>
+                  <div className="h-3/10 bg-blue-300 flex flex-col">
+                    <Typography variant="h7" className="flex justify-center mb-5 mx-5">
+                      Please upload a photo below of your BIR 2303 form if you have one.
+                    </Typography>
+                    <div className="h-12 bg-orange-300">
+                      <ImageUploadButton
+                        buttonTitle={'Upload BIR 2303 Form'}
+                        storage={storage}
+                        folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
+                        onUploadFunction={on2303Upload}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )
+            ) : null}
           </div>
         ) : null}
         {step == 'Review and Confirm Order' ? (
@@ -1020,77 +1094,10 @@ const CheckoutPage = () => {
                       </div>
                     </div>
                     {/* {userdata ? (
-                  <div className="flex flex-col lg:flex-row justify-center">
-                    <div className="flex justify-center m-5">
-                      <Typography variant="h6">Do you have a BIR 2303 form or COR?</Typography>
-                    </div>
-                    <div className="flex justify-center items-center">
-                      <Switch
-                        {...label}
-                        checked={isInvoiceNeeded}
-                        color="secondary"
-                        onClick={() => setIsInvoiceNeeded(!isInvoiceNeeded)}
-                      />
-                    </div>
-                  </div>
-                ) : null} */}
-
-                    {/* {isInvoiceNeeded ? (
-                  urlOfBir2303 != '' ? (
-                    <>
-                      <div className="flex justify-center m-5">
-                        <Image imageUrl={urlOfBir2303} />
-                      </div>
-                      <div className="flex justify-center m-5">
-                        <ImageUploadButton
-                          buttonTitle={'Update BIR 2303 Form'}
-                          storage={storage}
-                          folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
-                          onUploadFunction={on2303Upload}
-                        >
-                          update BIR 2303
-                        </ImageUploadButton>
-                        <button onClick={removeBir2303} className="p-2 ml-5 rounded-lg bg-red-400 text-white">
-                          Remove BIR 2303
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <div>
-                      <Typography variant="h7" className="flex justify-center mb-5 mx-5">
-                        Please upload a photo below of your BIR 2303 form if you have one.
-                      </Typography>
-                      <ImageUploadButton
-                        buttonTitle={'Upload BIR 2303 Form'}
-                        storage={storage}
-                        folderName={`2303Forms/${userdata ? userdata.uid : 'GUEST'}`}
-                        onUploadFunction={on2303Upload}
-                      />
-                      <div className="flex justify-center mt-5 mx-5">
-                        <Image imageUrl={urlOfBir2303} />
-                      </div>
-                    </div>
-                  )
+                 
                 ) : null} */}
 
                     {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
-                    {/* <div className="flex flex-col justify-center m-5">
-                  <div className=" flex justify-center">
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                      {pickUpOrDeliver == 'deliver' ? <>Delivery Date</> : <>Pick Up Date</>}
-                    </Typography>
-                  </div>
-                  <div className="flex justify-center mt-5 mb-5">
-                    <OrdersCalendar
-                      startDate={startDate}
-                      setStartDate={setStartDate}
-                      minDate={allowedDates ? allowedDates.minDate : null}
-                      maxDate={allowedDates ? allowedDates.maxDate : null}
-                      filterDate={allowedDates ? allowedDates.excludeDates : null}
-                      disabledDates={allowedDates ? allowedDates.holidays : null}
-                    />
-                  </div>
-                </div> */}
 
                     {/* <Divider sx={{ marginTop: 1, marginBottom: 3 }} /> */}
 
@@ -1266,22 +1273,22 @@ const CheckoutPage = () => {
         </div>
 
 
-        <GoogleMapsModalSelectSaveAddress
-          open={openModalSavedAddress}
-          handleClose={handleCloseModalSavedAddress}
-          setLocalDeliveryAddress={setLocalDeliveryAddress}
-          setLocalLatitude={setLocalLatitude}
-          setLocalLongitude={setLocalLongitude}
-          setZoom={setZoom}
-        />
-        <GoogleMapsModalSelectContactModal
-          open={openContactModal}
-          handleClose={handleCloseContactModal}
-          setLocalName={setLocalName}
-          setLocalPhoneNumber={setLocalPhoneNumber}
-        />
-        <CheckoutNotification allowedDates={allowedDates} />
       </div> */}
+      <GoogleMapsModalSelectSaveAddress
+        open={openModalSavedAddress}
+        handleClose={handleCloseModalSavedAddress}
+        setLocalDeliveryAddress={setLocalDeliveryAddress}
+        setLocalLatitude={setLocalLatitude}
+        setLocalLongitude={setLocalLongitude}
+        setZoom={setZoom}
+      />
+      <GoogleMapsModalSelectContactModal
+        open={openContactModal}
+        handleClose={handleCloseContactModal}
+        setLocalName={setLocalName}
+        setLocalPhoneNumber={setLocalPhoneNumber}
+      />
+      <CheckoutNotification allowedDates={allowedDates} />
     </ThemeProvider>
   );
 };
